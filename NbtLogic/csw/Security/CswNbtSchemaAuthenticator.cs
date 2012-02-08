@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Security
             if( UserAsNode != null )
             {
                 CswNbtObjClassUser UserObjClass = CswNbtNodeCaster.AsUser( UserAsNode );
-                if( !UserObjClass.IsAccountLocked() )
+                if( false == UserObjClass.IsAccountLocked() )
                 {
                     string encryptedpassword = CswEncryption.getMd5Hash( password );
                     if( UserObjClass.EncryptedPassword == encryptedpassword )

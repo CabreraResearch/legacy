@@ -230,7 +230,7 @@ namespace ChemSW.NbtWebControls
                                     else
                                     {
                                         CswNbtMetaDataObjectClassProp ThisOCProp = _CswNbtResources.MetaData.getObjectClassProp( ChildNodeViewProp.ObjectClassPropId );
-                                        ThisNTProp = ChildNodeType.getNodeTypePropByObjectClassPropName( ThisOCProp.PropName );
+                                        ThisNTProp = ChildNodeType.getNodeTypePropByObjectClassProp( ThisOCProp.PropName );
                                     }
                                     CswNbtNodePropWrapper ThisProp = ChildNode.Properties[ThisNTProp];
                                     ThisPropString += ThisProp.PropName + ": " + ThisProp.Gestalt + "<BR>";

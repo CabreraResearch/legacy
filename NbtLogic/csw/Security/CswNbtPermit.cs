@@ -160,26 +160,28 @@ namespace ChemSW.Nbt.Security
                                     ret = false;
                                 }
 
+                                CswNbtMetaDataObjectClassProp OCP = MetaDataProp.getObjectClassProp();
+                                
                                 // case 8218 - Certain properties on the user's preferences are not allowed to be edited
                                 if( ret &&
-                                    Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                                    Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
                                     !User.IsAdministrator() &&
-                                    MetaDataProp.ObjectClassProp != null &&
-                                    ( MetaDataProp.ObjectClassProp.PropName == CswNbtObjClassUser.UsernamePropertyName ||
-                                      MetaDataProp.ObjectClassProp.PropName == CswNbtObjClassUser.RolePropertyName ||
-                                      MetaDataProp.ObjectClassProp.PropName == CswNbtObjClassUser.FailedLoginCountPropertyName ||
-                                      MetaDataProp.ObjectClassProp.PropName == CswNbtObjClassUser.AccountLockedPropertyName ) )
+                                    OCP != null &&
+                                    ( OCP.PropName == CswNbtObjClassUser.UsernamePropertyName ||
+                                      OCP.PropName == CswNbtObjClassUser.RolePropertyName ||
+                                      OCP.PropName == CswNbtObjClassUser.FailedLoginCountPropertyName ||
+                                      OCP.PropName == CswNbtObjClassUser.AccountLockedPropertyName ) )
                                 {
                                     ret = false;
                                 }
 
                                 // Only admins can change other people's passwords
                                 if( ret &&
-                                    Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                                    Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
                                     !User.IsAdministrator() &&
                                     User.UserNode.NodeId != Node.NodeId &&
-                                    MetaDataProp.ObjectClassProp != null &&
-                                    MetaDataProp.ObjectClassProp.PropName == CswNbtObjClassUser.PasswordPropertyName )
+                                    OCP != null &&
+                                    OCP.PropName == CswNbtObjClassUser.PasswordPropertyName )
                                 {
                                     ret = false;
                                 }
@@ -230,7 +232,7 @@ namespace ChemSW.Nbt.Security
             {
                 //Role.NodeTypePermissions.SetValue( Permission.ToString(), NodeType.FirstVersionNodeTypeId.ToString(), value );
                 //Role.NodeTypePermissions.Save();
-                CswNbtMetaDataNodeType NodeType = NodeTypeTab.NodeType;
+                CswNbtMetaDataNodeType NodeType = NodeTypeTab.getNodeType();
                 if( value )
                 {
                     Role.NodeTypePermissions.AddValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, NodeTypeTab.FirstTabVersionId, Permission ) );

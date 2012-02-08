@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     Collection<CswNbtMetaDataNodeTypeProp> PropsToPush = new Collection<CswNbtMetaDataNodeTypeProp>();
                     CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "makeSpaceForProp_Update", "nodetype_layout" );
-                    DataTable LayoutTable = LayoutUpdate.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + InsertAfterProp.NodeType.NodeTypeId.ToString() );
+                    DataTable LayoutTable = LayoutUpdate.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + InsertAfterProp.NodeTypeId.ToString() );
                     foreach( DataRow Row in LayoutTable.Rows )
                     {
                         if( ( InsertAfterPropLayout.TabId == Int32.MinValue || InsertAfterPropLayout.TabId == CswConvert.ToInt32( Row["nodetypetabsetid"] ) ) &&
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt.MetaData
                     }
                     LayoutUpdate.update( LayoutTable );
 
-                    updatePropLayout( LayoutType, Prop.NodeType.NodeTypeId, Prop.PropId, InsertAfterPropLayout.TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn );
+                    updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, InsertAfterPropLayout.TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn );
                 }
             }
         } // updatePropLayout()

@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.WebServices
                     where View.ContainsNodeType( NodeType )
                     from CswNbtMetaDataNodeTypeProp MetaDataProp in NodeType.getNodeTypeProps()
                     where MetaDataProp.MobileSearch
-                    let PropId = ( MetaDataProp.ObjectClassProp != null ) ? "search_ocp_" + MetaDataProp.ObjectClassPropId : "search_ntp_" + MetaDataProp.PropId
+                    let PropId = ( MetaDataProp.ObjectClassPropId != Int32.MinValue ) ? "search_ocp_" + MetaDataProp.ObjectClassPropId : "search_ntp_" + MetaDataProp.PropId
                     select new JProperty( PropId, CswTools.SafeJavascriptParam( MetaDataProp.PropNameWithQuestionNo ) ) ) );
             return ReturnJson;
         } // _getSearchNodes
@@ -164,8 +164,8 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 NodeProps["node_name"] = CswTools.SafeJavascriptParam( ThisNodeName );
-                NodeProps["nodetype"] = CswTools.SafeJavascriptParam( ThisNode.NodeType.NodeTypeName );
-                NodeProps["objectclass"] = CswTools.SafeJavascriptParam( ThisNode.ObjectClass.ObjectClass.ToString() );
+                NodeProps["nodetype"] = CswTools.SafeJavascriptParam( ThisNode.getNodeType().NodeTypeName );
+                NodeProps["objectclass"] = CswTools.SafeJavascriptParam( ThisNode.getObjectClass().ObjectClass.ToString() );
                 NodeProps["nodespecies"] = CswTools.SafeJavascriptParam( NodeSpecie.ToString() );
                 if( RunProps )
                 {
@@ -178,18 +178,18 @@ namespace ChemSW.Nbt.WebServices
                 {
                     NodeProps["iconfilename"] = "Images/quota/lock.gif";
                 }
-                else if( false == string.IsNullOrEmpty( ThisNode.NodeType.IconFileName ) )
+                else if( false == string.IsNullOrEmpty( ThisNode.IconFileName ) )
                 {
-                    NodeProps["iconfilename"] = "Images/icons/" + CswTools.SafeJavascriptParam( ThisNode.NodeType.IconFileName );
+                    NodeProps["iconfilename"] = "Images/icons/" + CswTools.SafeJavascriptParam( ThisNode.IconFileName );
                 }
 
                 _addObjectClassProps( ThisNode, NodeProps );
 
-                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.getNodeTypeProps()
+                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( ThisNode.NodeTypeId )
                                                                             .Cast<CswNbtMetaDataNodeTypeProp>()
                                                                             .Where( MetaDataProp => MetaDataProp.MobileSearch ) )
                 {
-                    if( ( MetaDataProp.ObjectClassProp != null ) )
+                    if( ( MetaDataProp.getObjectClassProp() != null ) )
                     {
                         NodeProps["search_ocp_" + MetaDataProp.ObjectClassPropId] = CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt );
                     }
@@ -197,7 +197,6 @@ namespace ChemSW.Nbt.WebServices
                     {
                         NodeProps["search_ntp_" + MetaDataProp.PropId] = CswTools.SafeJavascriptParam( ThisNode.Properties[MetaDataProp].Gestalt );
                     }
-
                 }
             }
             return Ret;
@@ -205,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _addObjectClassProps( CswNbtNode Node, JObject NodeProps )
         {
-            switch( Node.ObjectClass.ObjectClass )
+            switch( Node.getObjectClass().ObjectClass )
             {
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
                     {
@@ -230,7 +229,7 @@ namespace ChemSW.Nbt.WebServices
         private void _runProperties( CswNbtNode Node, JObject SubItemsJProp )
         {
             Collection<CswNbtMetaDataNodeTypeTab> Tabs = new Collection<CswNbtMetaDataNodeTypeTab>();
-            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.getNodeTypeTabs() )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId ) )
             {
                 Tabs.Add( Tab );
             }
@@ -258,15 +257,15 @@ namespace ChemSW.Nbt.WebServices
                 foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.NodeTypePropsByDisplayOrder
                                                                 .Cast<CswNbtMetaDataNodeTypeProp>()
                                                                 .Where( Prop => !Prop.HideInMobile &&
-                                                                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
-                                                                        Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) )
+                                                                        Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
+                                                                        Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) )
                 {
                     CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
                     string PropId = PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId;
                     TabObj[PropId] = new JObject();
                     TabObj[PropId]["prop_name"] = CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo );
-                    TabObj[PropId]["fieldtype"] = Prop.FieldType.FieldType.ToString();
+                    TabObj[PropId]["fieldtype"] = Prop.getFieldType().FieldType.ToString();
                     TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
@@ -368,16 +367,16 @@ namespace ChemSW.Nbt.WebServices
 
                     JObject PropObj = (JObject) Prop.Value;
 
-                    CswNbtMetaDataNodeTypeTab Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToString( PropObj["currenttab"] ) );
+                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( Node.NodeTypeId, CswConvert.ToString( PropObj["currenttab"] ) );
                     Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit, Tab );
 
                     //Case 20964. Client needs to know whether the inspection is complete.
-                    if( false == Ret && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                    if( false == Ret && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                     {
-                        CswNbtMetaDataObjectClassProp Finished = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
-                        CswNbtMetaDataObjectClassProp Cancelled = Node.ObjectClass.getObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-                        if( MetaDataProp.ObjectClassProp == Finished ||
-                            MetaDataProp.ObjectClassProp == Cancelled )
+                        CswNbtMetaDataObjectClassProp Finished = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishedPropertyName );
+                        CswNbtMetaDataObjectClassProp Cancelled = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelledPropertyName );
+                        if( MetaDataProp.getObjectClassProp() == Finished ||
+                            MetaDataProp.getObjectClassProp() == Cancelled )
                         {
                             Ret = Ret || Node.Properties[MetaDataProp].AsLogical.Checked == Tristate.True;
                         }

@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.WebServices
 
 			CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-			Int32 NodeTypeId = MetaDataProp.NodeType.NodeTypeId;
+			Int32 NodeTypeId = MetaDataProp.NodeTypeId;
 
 			string PrintLabelNodeTypesPropertyName = "NodeTypes";
 			CswNbtMetaDataObjectClass PrintLabelObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );

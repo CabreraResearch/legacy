@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
                 {
                     if( NodeType.IsLatestVersion() && false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
                     {
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
             switch( ObjectClass.ObjectClass )
             {
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
-                    CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+                    CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
                     ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
                     if( InspectionTargetNTP.FKType == CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString() )
                     {

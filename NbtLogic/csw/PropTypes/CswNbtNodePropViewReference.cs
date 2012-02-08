@@ -20,17 +20,17 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropViewReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
-            {
-                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-                                            "CswNbtNodePropViewReference() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            }
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
+            //{
+            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+            //                                "CswNbtNodePropViewReference() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
+            //}
+            _FieldTypeRule = (CswNbtFieldTypeRuleViewReference) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _ViewIdSubField = _FieldTypeRule.ViewIdSubField;
+            _CachedViewNameSubField = _FieldTypeRule.CachedViewNameSubField;
 
-            _ViewIdSubField = ( (CswNbtFieldTypeRuleViewReference) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ViewIdSubField;
-            _CachedViewNameSubField = ( (CswNbtFieldTypeRuleViewReference) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CachedViewNameSubField;
-
-        }//generic
-
+        }
+        private CswNbtFieldTypeRuleViewReference _FieldTypeRule;
         private CswNbtSubField _ViewIdSubField;
         private CswNbtSubField _CachedViewNameSubField;
 

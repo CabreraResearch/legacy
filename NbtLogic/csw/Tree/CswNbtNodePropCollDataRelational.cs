@@ -31,7 +31,7 @@ namespace ChemSW.Nbt
                     CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
                     foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
                     {
-                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                         {
                             if( CurrentSubField.RelationalColumn != string.Empty )
                                 SelectColumns.Add( CurrentSubField.RelationalColumn.ToLower() );
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt
                             NewRow["nodeid"] = CswConvert.ToDbVal( _NodePk.PrimaryKey );
                             NewRow["nodeidtablename"] = _NodePk.TableName;
                         }
-                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                         {
                             if( DataTable.Rows.Count > 0 && CurrentSubField.RelationalColumn != string.Empty )
                                 NewRow[CurrentSubField.Column.ToString()] = DataTable.Rows[0][CurrentSubField.RelationalColumn];
@@ -133,7 +133,7 @@ namespace ChemSW.Nbt
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
             foreach ( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
             {
-                foreach ( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                foreach ( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                 {
                     if ( CurrentSubField.RelationalColumn != string.Empty )
                         SelectColumns.Add( CurrentSubField.RelationalColumn );
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt
             foreach ( DataRow CurrentRow in _PropsTable.Rows )
             {
                 CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow[ "nodetypepropid" ] ) );
-                foreach ( CswNbtSubField CurrentSubField in CswNbtMetaDataNodeTypeProp.FieldTypeRule.SubFields )
+                foreach ( CswNbtSubField CurrentSubField in CswNbtMetaDataNodeTypeProp.getFieldTypeRule().SubFields )
                 {
                     if ( CurrentSubField.RelationalColumn != string.Empty )
                     {

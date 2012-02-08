@@ -155,7 +155,7 @@ namespace ChemSW.Nbt
         {
             CswNbtNode ret = null;
             string SQLQuery = string.Empty;
-            foreach( CswNbtSubField SubField in MetaDataProp.FieldTypeRule.SubFields )
+            foreach( CswNbtSubField SubField in MetaDataProp.getFieldTypeRule().SubFields )
             {
                 if( SQLQuery != string.Empty ) SQLQuery += " INTERSECT ";
                 if( SubField.RelationalTable == string.Empty )

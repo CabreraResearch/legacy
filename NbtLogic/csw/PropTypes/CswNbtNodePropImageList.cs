@@ -16,19 +16,20 @@ namespace ChemSW.Nbt.PropTypes
 	{
 		private char _delimiter = '\n';
 
-		public CswNbtNodePropImageList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-			: base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        public CswNbtNodePropImageList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
 		{
-			if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList )
-			{
-				throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-											"CswNbtNodePropImageList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-			}
-
-			_ValueSubField = ( (CswNbtFieldTypeRuleImageList) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ValueSubField;
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList )
+            //{
+            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+            //                                "CswNbtNodePropImageList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
+            //}
+            _FieldTypeRule = (CswNbtFieldTypeRuleImageList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+			_ValueSubField = _FieldTypeRule.ValueSubField;
 
 		}//generic
 
+        private CswNbtFieldTypeRuleImageList _FieldTypeRule;
 		private CswNbtSubField _ValueSubField;
 
 		override public bool Empty

@@ -137,11 +137,11 @@ namespace ChemSW.Nbt.Sched
             Int32 NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
             if( NodesCreated > 0 )
             {
-                RetMessage = "Created " + NodesCreated.ToString() + " " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.NodeType.NodeTypeName;
+                RetMessage = "Created " + NodesCreated.ToString() + " " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.getNodeType().NodeTypeName;
             }
             else
             {
-                RetMessage = "No " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " targets created from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.NodeType.NodeTypeName;
+                RetMessage = "No " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " targets created from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.getNodeType().NodeTypeName;
             }
             return RetMessage;
         }

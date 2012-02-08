@@ -75,7 +75,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             CswFieldTypeWebControl Control = null;
 
-            switch( MetaDataProp.FieldType.FieldType )
+            switch( MetaDataProp.getFieldType().FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
                     Control = new CswBarcode( CswNbtResources, MetaDataProp, EditMode ); //, (EditMode == NodeEditMode.AddInPopup));
@@ -242,9 +242,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
                                        ( PropWrapper.ReadOnly ||
                                          PropWrapper.NodeTypeProp.ServerManaged ||
                                          ( EditMode == NodeEditMode.Add &&
-                                           !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, PropWrapper.NodeTypeProp.NodeType ) ) ||
+                                           !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, PropWrapper.NodeTypeProp.getNodeType() ) ) ||
                                          ( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) &&
-                                           !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.NodeType, false, null, null, Node, PropWrapper.NodeTypeProp ) ) ) ) );
+                                           !CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, PropWrapper.NodeTypeProp.getNodeType(), false, null, null, Node, PropWrapper.NodeTypeProp ) ) ) ) );
             }
 
             // BZ 8307

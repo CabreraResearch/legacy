@@ -397,7 +397,7 @@ namespace ChemSW.NbtWebControls
             bool FilterMatches = false;
             CswNbtMetaDataNodeTypeProp FilterMetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.FilterNodeTypePropId );
 
-            CswNbtSubField SubField = FilterMetaDataProp.FieldTypeRule.SubFields.Default;
+            CswNbtSubField SubField = FilterMetaDataProp.getFieldTypeRule().SubFields.Default;
             CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
             string FilterValue = null;
             MetaDataProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
@@ -414,7 +414,7 @@ namespace ChemSW.NbtWebControls
                     // we are using the unsaved form contents to decide, rather than the DB value.
 
                     // Logical needs a special case
-                    if( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+                    if( FilterMetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
                     {
                         if( SubField.Name == CswNbtSubField.SubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                         {
@@ -435,7 +435,7 @@ namespace ChemSW.NbtWebControls
                     {
                         string ValueToCompare = string.Empty;
 
-                        switch( FilterMetaDataProp.FieldType.FieldType )
+                        switch( FilterMetaDataProp.getFieldType().FieldType )
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.List:
                                 ValueToCompare = ( (CswList) FilterControl ).SelectedValue;
@@ -444,7 +444,7 @@ namespace ChemSW.NbtWebControls
                                 ValueToCompare = ( (CswText) FilterControl ).Text;
                                 break;
                             default:
-                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
+                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldType().FieldType.ToString() );
                         } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                         switch( FilterMode )
@@ -622,7 +622,7 @@ namespace ChemSW.NbtWebControls
 
                             if( _PropertyControlSetHash.ContainsKey( ParentProp.FirstPropVersionId ) )
                             {// The parent needs to use postback
-                                switch( ParentProp.FieldType.FieldType )
+                                switch( ParentProp.getFieldType().FieldType )
                                 {
                                     case CswNbtMetaDataFieldType.NbtFieldType.Logical:
                                         ( (CswLogical) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;

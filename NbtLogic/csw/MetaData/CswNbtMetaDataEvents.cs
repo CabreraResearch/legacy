@@ -87,9 +87,9 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( Action != NbtPropAction.Delete )
                 {
-                    CswNbtMetaDataNodeType EquipmentNodeType = EditedProp.NodeType;
+                    CswNbtMetaDataNodeType EquipmentNodeType = EditedProp.getNodeType();
                     //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment();
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.AssemblyPropertyName );
+                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
                     if( RelationshipProp != null )
                     {
                         //if (RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString())
@@ -159,14 +159,14 @@ namespace ChemSW.Nbt.MetaData
             }
             else if( EditedPropObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
             {
-                CswNbtMetaDataNodeType AssemblyNodeType = EditedProp.NodeType;
+                CswNbtMetaDataNodeType AssemblyNodeType = EditedProp.getNodeType();
                 CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass );
-                foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
+                foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.getNodeTypes() )
                 {
                     //if( EquipmentNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                     //{
                     //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment(); 
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassEquipment.AssemblyPropertyName );
+                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
                     if( RelationshipProp != null )
                     {
                         if( ( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
@@ -218,8 +218,8 @@ namespace ChemSW.Nbt.MetaData
 
 		public void OnMakeNewInspectionDesignNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
-            CswNbtMetaDataNodeTypeProp NameProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
-            CswNbtMetaDataNodeTypeProp DateProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
+            CswNbtMetaDataNodeTypeProp NameProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
+            CswNbtMetaDataNodeTypeProp DateProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
 
             // Set 'Name' default value = nodetypename
             NameProp.DefaultValue.AsText.Text = NewNodeType.NodeTypeName;
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.MetaData
 			if( NewNodeType.VersionNo == 1 && !IsCopy )
 			{
 				// Set nametemplate = Name + Date
-				NewNodeType.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( NameProp.PropName.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName.ToString() );
+                NewNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( NameProp.PropName.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName.ToString() ) );
 
 				// Set first tab to be "Details"
 				CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getFirstNodeTypeTab();
@@ -243,19 +243,19 @@ namespace ChemSW.Nbt.MetaData
 					ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
 				}
 
-				CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.FinishedPropertyName );
+				CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
 				//FinishedProp.NodeTypeTab = ActionTab;
 				//FinishedProp.DisplayRow = 1;
 				//FinishedProp.DisplayColumn = 1;
 				FinishedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 1, 1 );
 
-				CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.CancelledPropertyName );
+				CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
 				//CancelledProp.NodeTypeTab = ActionTab;
 				//CancelledProp.DisplayRow = 2;
 				//CancelledProp.DisplayColumn = 1;
 				CancelledProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 2, 1 );
 
-				CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
+				CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
 				//CancelReasonProp.NodeTypeTab = ActionTab;
 				//CancelReasonProp.DisplayRow = 3;  // even though webapp interprets this independently, Mobile needs this to be 3
 				//CancelReasonProp.DisplayColumn = 1;
@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.MetaData
 
         public void OnUpdateInspectionDesignNodeType( CswNbtMetaDataNodeType NodeType )
         {
-            CswNbtMetaDataNodeTypeProp NameProp = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
+            CswNbtMetaDataNodeTypeProp NameProp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
 
             // Set 'Name' default value = nodetypename
             NameProp.DefaultValue.AsText.Text = NodeType.NodeTypeName;

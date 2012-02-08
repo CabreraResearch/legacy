@@ -141,10 +141,13 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
-        public string NameTemplateText
+        public string getNameTemplateText()
         {
-            get { return CswNbtMetaData.TemplateValueToTemplateText( getNodeTypeProps(), NameTemplateValue ); }
-            set { NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value ); }
+            return CswNbtMetaData.TemplateValueToTemplateText( getNodeTypeProps(), NameTemplateValue );
+        }
+        public void setNameTemplateText( string value )
+        {
+            NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
         }
 
         public Int32 PriorVersionNodeTypeId
@@ -249,7 +252,7 @@ namespace ChemSW.Nbt.MetaData
             bool ret = false;
             foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
             {
-                if( Prop.IsRequired && Prop.IsUnique )
+                if( Prop.IsRequired && Prop.IsUnique() )
                 {
                     ErrorPropName = Prop.PropName;
                     ret = true;
@@ -375,9 +378,9 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getNodeTypePropByFirstVersionId()
 
-        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassPropName( string ObjectClassPropName )
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( string ObjectClassPropName )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassPropName( NodeTypeId, ObjectClassPropName );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassPropName );
         }
 
         public Int32 GetMaximumTabOrder()
@@ -464,7 +467,7 @@ namespace ChemSW.Nbt.MetaData
             XmlNode.Attributes.Append( TableNameAttr );
 
             XmlAttribute NameTemplateAttr = XmlDoc.CreateAttribute( _Attribute_NameTemplate );
-            NameTemplateAttr.Value = NameTemplateText;
+            NameTemplateAttr.Value = getNameTemplateText();
             XmlNode.Attributes.Append( NameTemplateAttr );
 
             foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
@@ -483,7 +486,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {
                         if( _BarcodeProperty != null )
                             throw new CswDniException( ErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );

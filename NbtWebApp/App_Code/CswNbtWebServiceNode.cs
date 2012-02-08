@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtNode NewNode = null;
                 CswNbtActCopyNode CswNbtActCopyNode = new CswNbtActCopyNode( _CswNbtResources );
-                switch( OriginalNode.ObjectClass.ObjectClass )
+                switch( OriginalNode.getObjectClass().ObjectClass )
                 {
                     case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass:
                         NewNode = CswNbtActCopyNode.CopyEquipmentNode( OriginalNode );
@@ -82,13 +82,13 @@ namespace ChemSW.Nbt.WebServices
                 throw new CswDniException( ErrorType.Error, "Cannot find a valid node with the provided parameters.", "No node exists for NodePk " + PropId.NodeId.ToString() + "." );
             }
 
-            CswNbtMetaDataNodeTypeProp NodeTypeProp = Node.NodeType.getNodeTypeProp( PropId.NodeTypePropId );
+            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             if( null == NodeTypeProp )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot find a valid property with the provided parameters.", "No property exists for NodeTypePropId " + PropId.NodeTypePropId.ToString() + "." );
             }
 
-            CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.ObjectClass.ObjectClassId, Node );
+            CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
             NbtObjClass.onButtonClick( NodeTypeProp, RetObj );
             RetObj["success"] = true;
 

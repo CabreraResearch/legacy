@@ -69,31 +69,26 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId );
         }
 
+
         public CswNbtMetaDataNodeType getNodeTypeLatestVersion( Int32 NodeTypeId )
         {
-            IEnumerable<CswNbtMetaDataNodeType> AllVersions = _CollImpl.getWhere( "where firstversionid in (select firstversionid from nodetypes where nodetypeid = " + NodeTypeId + ")" ).Cast<CswNbtMetaDataNodeType>();
-            CswNbtMetaDataNodeType MaxNT = null;
-            foreach( CswNbtMetaDataNodeType NT in AllVersions )
-            {
-                if( MaxNT == null || MaxNT.NodeTypeId < NT.NodeTypeId )
-                {
-                    MaxNT = NT;
-                }
-            }
-            return MaxNT;
+            return (CswNbtMetaDataNodeType) _CollImpl.getWhereFirst( @"where nodetypeid = (select max(nodetypeid) maxntid
+                                                                                             from nodetypes 
+                                                                                            where firstversionid = (select firstversionid 
+                                                                                                                      from nodetypes
+                                                                                                                     where nodetypeid = " + NodeTypeId.ToString() + "))" );
         }
+
         public CswNbtMetaDataNodeType getNodeTypeLatestVersion( CswNbtMetaDataNodeType NodeType )
         {
-            IEnumerable<CswNbtMetaDataNodeType> AllVersions = _CollImpl.getWhere( "where firstversionid = " + NodeType.FirstVersionNodeTypeId.ToString() ).Cast<CswNbtMetaDataNodeType>();
-            CswNbtMetaDataNodeType MaxNT = null;
-            foreach( CswNbtMetaDataNodeType NT in AllVersions )
-            {
-                if( MaxNT == null || MaxNT.NodeTypeId < NT.NodeTypeId )
-                {
-                    MaxNT = NT;
-                }
-            }
-            return MaxNT;
+            return (CswNbtMetaDataNodeType) _CollImpl.getWhereFirst( @"where nodetypeid = (select max(nodetypeid) maxntid
+                                                                                             from nodetypes 
+                                                                                            where firstversionid = " + NodeType.FirstVersionNodeTypeId.ToString() + ")" );
+        }
+
+        public CswNbtMetaDataNodeType getNodeTypeFirstVersion( Int32 NodeTypeId )
+        {
+            return (CswNbtMetaDataNodeType) _CollImpl.getWhereFirst( "where nodetypeid = (select firstversionid from nodetypes where nodetypeid = " + NodeTypeId.ToString() + ")" );
         }
 
         public CswNbtMetaDataNodeType getNodeTypeLatestVersion( string NodeTypeName )
@@ -101,16 +96,11 @@ namespace ChemSW.Nbt.MetaData
             // Get any nodetype matching by name 
             // (which is guaranteed to have the same version history as any other nodetype matching by name)
             // Then fetch the latest version of that nodetype
-            IEnumerable<CswNbtMetaDataNodeType> AllVersions = _CollImpl.getWhere( "where firstversionid in (select firstversionid from nodetypes where lower(nodetypename) = '" + NodeTypeName.ToLower() + "')" ).Cast<CswNbtMetaDataNodeType>();
-            CswNbtMetaDataNodeType MaxNT = null;
-            foreach( CswNbtMetaDataNodeType NT in AllVersions )
-            {
-                if( MaxNT == null || MaxNT.NodeTypeId < NT.NodeTypeId )
-                {
-                    MaxNT = NT;
-                }
-            }
-            return MaxNT;
+            return (CswNbtMetaDataNodeType) _CollImpl.getWhereFirst( @"where nodetypeid = (select max(nodetypeid) maxntid
+                                                                                             from nodetypes 
+                                                                                            where firstversionid = (select firstversionid 
+                                                                                                                      from nodetypes
+                                                                                                                     where lower(nodetypename) = '" + NodeTypeName.ToLower() + "'))" );
         }
 
         //public void ClearKeys()

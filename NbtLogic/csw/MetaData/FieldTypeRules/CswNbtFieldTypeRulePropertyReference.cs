@@ -72,7 +72,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( false == RetIsInvalid )
                     {
                         CswNbtMetaDataNodeTypeProp ValueNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inValuePropId );
-                        RetIsInvalid = ( null == ValueNtp || ( ValueNtp.NodeType.getFirstVersionNodeType() != FkRelationshipTargetNt.getFirstVersionNodeType() ) );
+                        RetIsInvalid = ( null == ValueNtp ||
+                                         _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeFirstVersion( ValueNtp.NodeTypeId ) != FkRelationshipTargetNt.getFirstVersionNodeType() );
                     }
                     break;
                 case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
@@ -82,7 +83,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( false == RetIsInvalid )
                     {
                         CswNbtMetaDataObjectClassProp ValueOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inValuePropId );
-                        RetIsInvalid = ( null == ValueOcp || ( ValueOcp.ObjectClass.ObjectClass != FkRelationshipTargetOc.ObjectClass ) );
+                        RetIsInvalid = ( null == ValueOcp || ( ValueOcp.getObjectClass().ObjectClass != FkRelationshipTargetOc.ObjectClass ) );
                     }
                     break;
             }

@@ -398,7 +398,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if( Prop.hasFilter() )
                     {
-                        CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).LatestVersionNodeTypeProp;
+                        CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
                         if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
                         {
                             Prop.QuestionNo = ParentProp.QuestionNo;

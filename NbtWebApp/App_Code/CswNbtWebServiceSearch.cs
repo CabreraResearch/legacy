@@ -79,9 +79,9 @@ namespace ChemSW.Nbt.WebServices
                     SearchOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass );
                 }
 
-                if( null != SearchOC.NodeTypes )
+                if( null != SearchOC.getNodeTypes() )
                 {
-                    SelectedNodeType = SearchOC.NodeTypes.OfType<CswNbtMetaDataNodeType>().First().getNodeTypeLatestVersion();
+                    SelectedNodeType = SearchOC.getNodeTypes().OfType<CswNbtMetaDataNodeType>().First().getNodeTypeLatestVersion();
                 }
             }
 
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses().Cast<CswNbtMetaDataObjectClass>()
                                                               .Where( ObjectClass => CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
                                                                       ( ObjectClass.ObjectClassProps.Count() > 0 &&
-                                                                        ObjectClass.NodeTypes.Count() > 0 ) ) )
+                                                                        ObjectClass.getNodeTypes().Count() > 0 ) ) )
             {
                 string OptionId = "option_" + ObjectClass.ObjectClassId;
                 ObjectClassSelObj[OptionId] = new JObject();
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NbtNodeKey.NodeId );
                     if( null != Node )
                     {
-                        SelectedNodeType = Node.NodeType;
+                        SelectedNodeType = Node.getNodeType();
                     }
                 }
 
@@ -311,7 +311,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
                             if( string.IsNullOrEmpty( ViewName ) ) ViewName = ObjectClass.ObjectClass + " Search";
-                            if( NodeTypeProp.NodeType.getObjectClass() == ObjectClass )
+                            if( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeProp.NodeTypeId ) == ObjectClass )
                             {
 
                                 CswNbtViewRelationship OcRelationship;
@@ -325,7 +325,7 @@ namespace ChemSW.Nbt.WebServices
                                     ViewOcRelationships.TryGetValue( ObjectClass, out OcRelationship );
                                 }
 
-                                CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.ObjectClassProp;
+                                CswNbtMetaDataObjectClassProp ObjectClassProp = NodeTypeProp.getObjectClassProp();
                                 CswNbtViewProperty ViewOcProperty = SearchView.AddViewProperty( OcRelationship, ObjectClassProp );
                                 SearchView.AddViewPropertyFilter( ViewOcProperty, SubField, FilterMode, FilterValue, false );
                                 _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
@@ -339,7 +339,7 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 ViewName = NodeType.NodeTypeName + " Search";
                             }
-                            if( NodeTypeProp.NodeType == NodeType )
+                            if( NodeTypeProp.getNodeType() == NodeType )
                             {
                                 CswNbtViewRelationship NtRelationship;
                                 if( false == ViewNtRelationships.ContainsKey( NodeType ) )

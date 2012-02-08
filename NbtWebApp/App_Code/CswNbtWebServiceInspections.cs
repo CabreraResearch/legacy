@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewProperty StatusViewProp = OOCView.AddViewProperty( InspectionRel, InspectionStatusOCP );
             CswNbtViewPropertyFilter StatusOOCFilter = OOCView.AddViewPropertyFilter(
                 StatusViewProp,
-                InspectionStatusOCP.FieldTypeRule.SubFields.Default.Name,
+                InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals,
                 CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required ),
                 false );

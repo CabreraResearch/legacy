@@ -152,9 +152,9 @@ namespace ChemSW.Nbt
                 {
                     // Set the subfield to be the default subfield for the new parent's field type:
                     if( _Parent.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-                        SubfieldName = _Parent.NodeTypeProp.FieldTypeRule.SubFields.Default.Name;
+                        SubfieldName = _Parent.NodeTypeProp.getFieldTypeRule().SubFields.Default.Name;
                     else if( _Parent.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-                        SubfieldName = _Parent.ObjectClassProp.FieldTypeRule.SubFields.Default.Name;
+                        SubfieldName = _Parent.ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
                 }
             }
         }

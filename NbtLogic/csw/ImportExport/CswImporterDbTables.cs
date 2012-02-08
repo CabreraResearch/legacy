@@ -939,9 +939,9 @@ namespace ChemSW.Nbt.ImportExport
                             {
 
                                 //First check for dundancy
-                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in CurrentNbtNode.NodeType.getNodeTypeProps() )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( CurrentNbtNode.NodeTypeId ) )
                                 {
-                                    if( MetaDataProp.IsUnique )
+                                    if( MetaDataProp.IsUnique() )
                                     {
                                         CswNbtNode OtherNode = _CswNbtResources.Nodes.FindNodeByUniqueProperty( MetaDataProp, CurrentNbtNode.Properties[MetaDataProp] );
                                         if( OtherNode != null && OtherNode.NodeId != CurrentNbtNode.NodeId )
@@ -967,9 +967,9 @@ namespace ChemSW.Nbt.ImportExport
 
                                 if( false == DeletedImportNodesThisCycle.Contains( CurrentNbtNode.NodeId ) )
                                 {
-                                    if( CurrentNbtNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                                    if( CurrentNbtNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                                     {
-                                        if( CurrentNbtNode.Properties[CurrentNbtNode.NodeType.getNodeTypePropByObjectClassPropName( "Assembly" )].AsRelationship.RelatedNodeId != null )
+                                        if( CurrentNbtNode.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( CurrentNbtNode.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                                         {
                                             CurrentNbtNode.PendingUpdate = true;
                                             CurrentNbtNode.postChanges( false, false, true );
@@ -1202,20 +1202,20 @@ namespace ChemSW.Nbt.ImportExport
                 {
                     CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SourceNodeTypeProp.FKValue );
 
-                    if( RelatedNodeType.NodeTypeName != DestinationNode.NodeType.NodeTypeName )
+                    if( RelatedNodeType.NodeTypeName != DestinationNode.getNodeType().NodeTypeName )
                     {
                         DestinationTypeMatchesSourcesType = false;
-                        ErrorMessage = " the node type of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.NodeType.NodeTypeName + " but the " + SourceNodeTypeProp.PropName + " must reference a node of node type " + RelatedNodeType.NodeTypeName;
+                        ErrorMessage = " the node type of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.getNodeType().NodeTypeName + " but the " + SourceNodeTypeProp.PropName + " must reference a node of node type " + RelatedNodeType.NodeTypeName;
                     }
 
                 }
                 else if( SourceNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
                 {
                     CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( SourceNodeTypeProp.FKValue );
-                    if( RelatedObjectClass.ObjectClass != DestinationNode.ObjectClass.ObjectClass )
+                    if( RelatedObjectClass.ObjectClass != DestinationNode.getObjectClass().ObjectClass )
                     {
                         DestinationTypeMatchesSourcesType = false;
-                        ErrorMessage = " object class of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.ObjectClass.ObjectClass.ToString() + " but the " + SourceNodeTypeProp.PropName + " must reference a node of object class " + RelatedObjectClass.ObjectClass.ToString();
+                        ErrorMessage = " object class of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.getObjectClass().ObjectClass.ToString() + " but the " + SourceNodeTypeProp.PropName + " must reference a node of object class " + RelatedObjectClass.ObjectClass.ToString();
                     }
                 }
                 else

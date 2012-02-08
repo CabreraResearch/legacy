@@ -17,10 +17,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropLink( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _TextSubField = ( (CswNbtFieldTypeRuleLink) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).TextSubField;
-            _HrefSubField = ( (CswNbtFieldTypeRuleLink) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).HrefSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleLink) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _TextSubField = _FieldTypeRule.TextSubField;
+            _HrefSubField = _FieldTypeRule.HrefSubField;
         }
 
+        private CswNbtFieldTypeRuleLink _FieldTypeRule;
         private CswNbtSubField _TextSubField;
         private CswNbtSubField _HrefSubField;
 

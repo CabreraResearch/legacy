@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
                     Relationship.SecondId != Int32.MinValue )
                 {
                     CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
-                    foreach( CswNbtMetaDataNodeType NT in SecondOc.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType NT in SecondOc.getNodeTypes() )
                     {
                         FirstLevelNodeTypes.Add( NT );
                     }

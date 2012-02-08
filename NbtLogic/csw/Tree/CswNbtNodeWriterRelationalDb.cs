@@ -23,7 +23,7 @@ namespace ChemSW.Nbt
         public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
         {
 
-            string TableName = Node.NodeType.TableName;
+            string TableName = Node.getNodeType().TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
             CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.makeNewNodeEntry_update", TableName );
 

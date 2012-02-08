@@ -23,17 +23,17 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropViewPickList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
-            {
-                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-                                            "CswNbtNodePropViewPickList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            }
-
-            _SelectedViewIdsSubField = ( (CswNbtFieldTypeRuleViewPickList) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).SelectedViewIdsSubField;
-            _CachedViewNameSubField = ( (CswNbtFieldTypeRuleViewPickList) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CachedViewNameSubField;
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewPickList )
+            //{
+            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+            //                                "CswNbtNodePropViewPickList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
+            //}
+            _FieldTypeRule = (CswNbtFieldTypeRuleViewPickList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _SelectedViewIdsSubField = _FieldTypeRule.SelectedViewIdsSubField;
+            _CachedViewNameSubField = _FieldTypeRule.CachedViewNameSubField;
 
         }//generic
-
+        private CswNbtFieldTypeRuleViewPickList _FieldTypeRule;
         private CswNbtSubField _SelectedViewIdsSubField;
         private CswNbtSubField _CachedViewNameSubField;
 

@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
             // case 22512
             // also case 22557 - use the original name, not the new one
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-            if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule(NamePropWrapper.getFieldType().FieldType).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             // case 22635 - prevent deleting the chemsw admin role
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-            if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue(  _CswNbtResources.MetaData.getFieldTypeRule(NamePropWrapper.getFieldType().FieldType).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
             {
                 // set NodeType Permissions options
                 // Could be a performance problem!!!
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[ActionPermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            if( _CswNbtNode.Properties[ActionPermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
             {
                 // set Action Permissions options
                 Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
@@ -255,11 +255,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
-            if( null != NodeTypeProp &&
-                   null != NodeTypeProp.ObjectClassProp )
-            {
+            //CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            //if( null != NodeTypeProp && null != OCP )
+            //{
 
-            }
+            //}
         }
         #endregion
 

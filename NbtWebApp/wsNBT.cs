@@ -1054,7 +1054,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswPrimaryKey NodeId = _getNodeId( NodePk );
                         CswNbtNode Node = _CswNbtResources.Nodes[NodeId];
-                        CswNbtView View = Node.NodeType.CreateDefaultView();
+                        CswNbtView View = Node.getNodeType().CreateDefaultView();
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
                         var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );

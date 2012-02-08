@@ -17,9 +17,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMemo( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _TextSubField = ( (CswNbtFieldTypeRuleMemo) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).TextSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleMemo) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _TextSubField = _FieldTypeRule.TextSubField;
         }
 
+        private CswNbtFieldTypeRuleMemo _FieldTypeRule;
         private CswNbtSubField _TextSubField;
 
 

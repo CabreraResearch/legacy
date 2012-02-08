@@ -283,7 +283,7 @@ namespace ChemSW.Nbt
                         CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ChildRelationship.SecondId );
                         if( ObjectClass != null )
                         {
-                            foreach( CswNbtMetaDataNodeType PotentialNodeType in ObjectClass.NodeTypes )
+                            foreach( CswNbtMetaDataNodeType PotentialNodeType in ObjectClass.getNodeTypes() )
                             {
                                 PotentialNodeTypes.Add( PotentialNodeType.getFirstVersionNodeType() );
                             }

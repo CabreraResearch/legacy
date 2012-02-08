@@ -441,11 +441,11 @@ namespace ChemSW.NbtWebControls
                                 break;
                             case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
                                 CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( DesignSelectedValue ) );
-                                NodeType = NodeTypeProp.NodeType;
+                                NodeType = NodeTypeProp.getNodeType();
                                 break;
                             case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
                                 CswNbtMetaDataNodeTypeTab NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-                                NodeType = NodeTypeTab.NodeType;
+                                NodeType = NodeTypeTab.getNodeType();
                                 break;
                         }
 
@@ -534,9 +534,9 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab )
                     {
                         CswNbtMetaDataNodeTypeTab SelectedTab = CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedTab.NodeType ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedTab.getNodeType() ) )
                         {
-                            if( SelectedTab.NodeType.IsLatestVersion() )
+                            if( SelectedTab.getNodeType().IsLatestVersion() )
                             {
                                 _AddMenuItem.Visible = true;
                                 RadMenuItem AddPropMenuItem = new RadMenuItem();
@@ -918,7 +918,7 @@ namespace ChemSW.NbtWebControls
                     {
                         // Can't delete the first tab
                         if( ( DesignSelectedType != CswNodeTypeTree.NodeTypeTreeSelectedType.Tab ) ||
-                            ( _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) ).NodeType.getNodeTypeTabs().Count() > 1 ) )
+                            ( _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) ).getNodeType().getNodeTypeTabs().Count() > 1 ) )
                         {
                             DeleteMenuItem.Visible = true;
 

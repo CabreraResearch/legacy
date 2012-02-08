@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.WebPages
                     if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( _SelectedValue ) );
-                        _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
+                        _SelectedNodeType = _SelectedNodeTypeProp.getNodeType();
                         _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
                     }
                     else
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.WebPages
                     if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
                         _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( _SelectedValue ) );
-                        _SelectedNodeType = _SelectedNodeTypeTab.NodeType;
+                        _SelectedNodeType = _SelectedNodeTypeTab.getNodeType();
                     }
                     else
                     {
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.WebPages
                 switch( _AddType )
                 {
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-                        if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.NodeType ) )
+                        if( !Master.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.getNodeType() ) )
                             throw new CswDniException( "You do not have permission to add properties to this NodeType" );
 
                         create_AddPropertyPage();

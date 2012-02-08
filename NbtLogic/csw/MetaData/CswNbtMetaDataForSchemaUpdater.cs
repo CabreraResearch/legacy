@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.MetaData
                     foreach( Int32 NodeTypeId in this.getNodeTypeIds( ObjectClassId ) )
                     {
                         // Find exact matches first
-                        CswNbtMetaDataNodeTypeProp MatchingNTP = getNodeTypeProp( NodeTypeId, ObjectClassProp.ObjectClassPropId );
+                        CswNbtMetaDataNodeTypeProp MatchingNTP = getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassProp.ObjectClassPropId );
 
                         if( MatchingNTP == null )
                         {
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.MetaData
                                 }
                                 else
                                 {
-                                    PropName += " " + ObjectClassProp.FieldType.FieldType.ToString();
+                                    PropName += " " + ObjectClassProp.getFieldType().FieldType.ToString();
                                     PropName += " " + ObjectClassProp.ObjectClassPropId;
                                 }
                             } // while( KeepSearching )
@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.MetaData
             Collection<CswNbtMetaDataNodeTypeProp> Ret = new Collection<CswNbtMetaDataNodeTypeProp>();
             Collection<CswNbtMetaDataNodeTypeProp> DoomedProps = new Collection<CswNbtMetaDataNodeTypeProp>();
 
-            foreach( CswNbtMetaDataNodeTypeProp Prop in ObjectClassProp.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in ObjectClassProp.getNodeTypeProps() )
             {
                 Prop._DataRow["objectclasspropid"] = DBNull.Value;
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.MetaData
         public void DeleteObjectClass( CswNbtMetaDataObjectClass ObjectClass )
         {
             // Delete Nodetype Props first
-            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
             {
                 DeleteNodeTypeAllVersions( NodeType );
             }
@@ -223,13 +223,13 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="Value"></param>
         public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtSubField.SubFieldName SubFieldName, object Value )
         {
-            ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, Value );
+            ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
             // We're going to regret this day
             ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
 
-            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
             {
-                NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.FieldTypeRule.SubFields[SubFieldName].Column, Value );
+                NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
                 NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
             }
         }
@@ -253,7 +253,7 @@ namespace ChemSW.Nbt.MetaData
                     }
                     _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
 
-                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                     {
                         CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes NodeTypeAttribute;
                         Enum.TryParse( AttributeName, true, out NodeTypeAttribute );

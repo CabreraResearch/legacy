@@ -38,7 +38,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    CswNbtMetaDataFieldType CurrentFieldType = ((CswNbtNodePropWrapper)_PropList[_Position]).FieldType;
+                    CswNbtMetaDataFieldType CurrentFieldType = ((CswNbtNodePropWrapper)_PropList[_Position]).getFieldType();
                     if( CurrentFieldType.FieldType == _FieldType )
                     {
                         FoundProp = true;

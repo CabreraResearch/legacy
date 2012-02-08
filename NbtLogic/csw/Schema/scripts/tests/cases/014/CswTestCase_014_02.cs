@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
             foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
             {
-                foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                 {
                     if( CurrentSubField.RelationalColumn != string.Empty )
                         SelectColumns.Add( CurrentSubField.RelationalColumn );

@@ -173,7 +173,7 @@ namespace ChemSW.NbtWebControls
                     SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( PriorSelectedValue ) );
                     if( SelectedTab != null )
                     {
-                        SelectedNodeType = SelectedTab.NodeType;
+                        SelectedNodeType = SelectedTab.getNodeType();
                         SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
                         SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                     }
@@ -191,7 +191,7 @@ namespace ChemSW.NbtWebControls
                     if( SelectedProperty != null )
                     {
 						SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( SelectedProperty.EditLayout.TabId );
-                        SelectedNodeType = SelectedTab.NodeType;
+                        SelectedNodeType = SelectedTab.getNodeType();
                         SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
                         SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                         if( SelectedProperty.hasFilter() )
@@ -210,7 +210,7 @@ namespace ChemSW.NbtWebControls
                     if( SelectedProperty != null )
                     {
 						SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( SelectedProperty.EditLayout.TabId );
-                        SelectedNodeType = SelectedTab.NodeType;
+                        SelectedNodeType = SelectedTab.getNodeType();
                         SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
                         SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                     }
@@ -413,7 +413,7 @@ namespace ChemSW.NbtWebControls
                                 if( OtherPropNode.Attributes["Value"].Value.Substring( 0, NodeTypePropPrefix.Length ) == NodeTypePropPrefix )
                                 {
                                     Int32 OtherPropId = CswConvert.ToInt32( OtherPropNode.Attributes["Value"].Value.Substring( NodeTypePropPrefix.Length ) );
-                                    CswNbtMetaDataNodeTypeProp OtherProp = ConditionalProp.NodeType.getNodeTypeProp( OtherPropId );
+                                    CswNbtMetaDataNodeTypeProp OtherProp = _CswNbtResources.MetaData.getNodeTypeProp( OtherPropId );
                                     if( SelectedProp != null &&
                                         ConditionalProp.FilterNodeTypePropId == OtherProp.FirstPropVersionId &&
                                         ( ConditionalProp.PropId == SelectedProp.PropId ||
@@ -432,7 +432,7 @@ namespace ChemSW.NbtWebControls
                                         }
                                         if( PropParentNode == null )
                                         {
-                                            CswNbtSubField SubField = _CswNbtResources.MetaData.getNodeTypeProp( ConditionalProp.FilterNodeTypePropId ).FieldTypeRule.SubFields.Default;
+                                            CswNbtSubField SubField = _CswNbtResources.MetaData.getNodeTypeProp( ConditionalProp.FilterNodeTypePropId ).getFieldTypeRule().SubFields.Default;
                                             CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
                                             string FilterValue = null;
                                             ConditionalProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );

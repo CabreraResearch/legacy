@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Reference to FieldType Meta Data object for this property
         /// </summary>
-        public CswNbtMetaDataFieldType FieldType { get { return ( _CswNbtMetaDataNodeTypeProp.FieldType ); } }
+        public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtMetaDataNodeTypeProp.getFieldType() ); }
         /// <summary>
         /// If the property derives from an Object Class Property, the Object Class Property's Primary Key
         /// </summary>
@@ -129,10 +129,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.ObjectClassProp != null )
-                    return ( _CswNbtMetaDataNodeTypeProp.ObjectClassProp.PropId );
-                else
-                    return Int32.MinValue;
+                return _CswNbtMetaDataNodeTypeProp.ObjectClassPropId;
             }
         }
         /// <summary>
@@ -142,8 +139,9 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.ObjectClassProp != null )
-                    return ( _CswNbtMetaDataNodeTypeProp.ObjectClassProp.PropName );
+                CswNbtMetaDataObjectClassProp OCP = _CswNbtMetaDataNodeTypeProp.getObjectClassProp();
+                if( OCP != null )
+                    return OCP.PropName;
                 else
                     return string.Empty;
             }
@@ -152,7 +150,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if the property must must be unique
         /// </summary>
-        public bool IsUnique { get { return _CswNbtMetaDataNodeTypeProp.IsUnique; } } //set { _CswNbtMetaDataNodeTypeProp.IsUnique = value; } }
+        public bool IsUnique() { return _CswNbtMetaDataNodeTypeProp.IsUnique(); } //set { _CswNbtMetaDataNodeTypeProp.IsUnique = value; } }
         /// <summary>
         /// True if the property must have a value
         /// </summary>
@@ -210,16 +208,16 @@ namespace ChemSW.Nbt.PropTypes
         virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             //bz # 6686
-            if( IsUnique && WasModified && !OverrideUniqueValidation )
+            if( IsUnique() && WasModified && !OverrideUniqueValidation )
             {
                 CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                 CswNbtView.ViewName = "Other Nodes, for Property Uniqueness";
 
                 CswNbtViewRelationship ViewRel = null;
-                if( NodeTypeProp.IsGlobalUnique )  // BZ 9754
-                    ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.NodeType.getObjectClass(), false );
+                if( NodeTypeProp.IsGlobalUnique() )  // BZ 9754
+                    ViewRel = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeProp.NodeTypeId ), false );
                 else
-                    ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.NodeType, false );
+                    ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.getNodeType(), false );
 
                 if( NodeId != null )
                     ViewRel.NodeIdsToFilterOut.Add( NodeId );
@@ -228,7 +226,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, NodeTypeProp );
 
                 // BZ 10099
-                this.NodeTypeProp.FieldTypeRule.AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtNodePropData );
+                this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtNodePropData );
 
                 ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
 
@@ -241,7 +239,7 @@ namespace ChemSW.Nbt.PropTypes
                         string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
                         EsotericMessage += "of property '" + NodeTypeProp.PropName + "' ";
                         EsotericMessage += "for nodeid (" + this.NodeId.ToString() + ") ";
-                        EsotericMessage += "of nodetype '" + NodeTypeProp.NodeType.NodeTypeName + "' ";
+                        EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
                         EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
                         string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
                         throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );

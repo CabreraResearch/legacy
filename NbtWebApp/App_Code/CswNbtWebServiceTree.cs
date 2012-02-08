@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.WebServices
                     IncludeNodeKey = Tree.getNodeKeyByNodeId( IncludeNodeId );
                     if( IncludeNodeRequired && IncludeNodeKey == null )
                     {
-                        CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.Nodes[IncludeNodeId].NodeType;
+                        CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.Nodes[IncludeNodeId].getNodeType();
                         _View = IncludeKeyNodeType.CreateDefaultView();
                         _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
                         _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeId );
@@ -491,7 +491,7 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
-                    foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
                     {
                         if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                         {

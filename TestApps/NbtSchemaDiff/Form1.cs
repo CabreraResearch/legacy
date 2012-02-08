@@ -232,7 +232,7 @@ namespace ChemSW.NbtSchemaDiff
                     foreach( CswNbtNode RightNode in RightNodes )
                     {
                         if( LeftNode.NodeName == RightNode.NodeName &&
-                            LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            LeftNode.getNodeType().NodeTypeName == RightNode.getNodeType().NodeTypeName )
                         {
                             MatchingRightNode = RightNode;
                             NodeMatches.Add( LeftNode, RightNode );
@@ -262,15 +262,17 @@ namespace ChemSW.NbtSchemaDiff
                         CswNbtNode MatchingRightNode = null;
                         foreach( CswNbtNode RightNode in RightNodes )
                         {
-                            if( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            if( LeftNode.getNodeType().NodeTypeName == RightNode.getNodeType().NodeTypeName )
                             {
                                 Int32 PropCount = 0;
                                 Int32 MatchCount = 0;
-                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.getNodeTypeProps() )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.getNodeType().getNodeTypeProps() )
                                 {
                                     PropCount++;
-                                    if( LeftNode.Properties[MetaDataProp].Field1 == RightNode.Properties[RightNode.NodeType.getNodeTypeProp( MetaDataProp.PropName )].Field1 )
+                                    if( LeftNode.Properties[MetaDataProp].Field1 == RightNode.Properties[_CswNbtResourcesRight.MetaData.getNodeTypeProp( RightNode.NodeTypeId, MetaDataProp.PropName )].Field1 )
+                                    {
                                         MatchCount++;
+                                    }
                                 } // foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.NodeTypeProps )
                                 if( PropCount > 0 &&
                                     ( Convert.ToDouble( MatchCount ) / Convert.ToDouble( PropCount ) ) >= CurrentTolerance )
@@ -305,7 +307,7 @@ namespace ChemSW.NbtSchemaDiff
                         CswNbtNode MatchingRightNode = null;
                         foreach( CswNbtNode RightNode in RightNodes )
                         {
-                            if( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            if( LeftNode.getNodeType().NodeTypeName == RightNode.getNodeType().NodeTypeName )
                             {
 
                                 MatchingRightNode = RightNode;
@@ -416,14 +418,14 @@ namespace ChemSW.NbtSchemaDiff
                 foreach( CswNbtNodePropWrapper RightPropWrapper in RightProps )
                 {
                     if( LeftPropWrapper.PropName == RightPropWrapper.PropName &&
-                        LeftPropWrapper.FieldType.FieldType == RightPropWrapper.FieldType.FieldType )
+                        LeftPropWrapper.getFieldType().FieldType == RightPropWrapper.getFieldType().FieldType )
                     {
                         MatchingRightProp = RightPropWrapper;
 
                         //bool SpecialCase = _CompareValue( Subfield.Name, LeftPropWrapper, RightPropWrapper, NodeMatches );
-                        CompareValueMatchCase SpecialCase = _CompareValue( LeftPropWrapper.NodeTypeProp.FieldType.FieldType, LeftPropWrapper, RightPropWrapper, NodeMatches );
+                        CompareValueMatchCase SpecialCase = _CompareValue( LeftPropWrapper.getFieldType().FieldType, LeftPropWrapper, RightPropWrapper, NodeMatches );
 
-                        foreach( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.FieldTypeRule.SubFields )
+                        foreach( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.getFieldTypeRule().SubFields )
                         {
                             //string LeftValue = LeftPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );
                             //string RightValue = RightPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );

@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Sched
                     if( Node == null )
                         throw new CswDniException( "Node not found (" + nodeid.ToString() + ")" );
                     // Don't update nodes of disabled nodetypes
-                    if( Node.NodeType != null )
+                    if( Node.getNodeType() != null )
                     {
                         CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                         CswNbtActUpdatePropertyValue.UpdateNode( Node, false );

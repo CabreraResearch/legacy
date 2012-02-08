@@ -62,10 +62,10 @@ namespace ChemSW.Nbt.WebServices
 				{
 					ret["objectclasses"][OCId]["quota"] = "";
 				}
-				ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.NodeTypes.Count().ToString();
+				ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.getNodeTypes().Count().ToString();
 
 				ret["objectclasses"][OCId]["nodetypes"] = new JObject();
-				foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+				foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
 				{
 					if( NodeType.IsLatestVersion() )
 					{

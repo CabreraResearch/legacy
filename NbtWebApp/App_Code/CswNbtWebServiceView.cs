@@ -395,8 +395,8 @@ namespace ChemSW.Nbt.WebServices
                             foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )
                             {
                                 // BZs 7085, 6651, 6644, 7092
-                                if( ThisProp.FieldTypeRule.SearchAllowed ||
-                                    ThisProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
+                                if( ThisProp.getFieldTypeRule().SearchAllowed ||
+                                    ThisProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
                                 {
                                     CswNbtViewProperty ViewProp = View.AddViewProperty( null, (CswNbtMetaDataNodeTypeProp) ThisProp );
                                     if( !CurrentRelationship.Properties.Contains( ViewProp ) )
@@ -404,8 +404,8 @@ namespace ChemSW.Nbt.WebServices
                                         ViewProp.Parent = CurrentRelationship;
 
                                         string PropName = ViewProp.Name;
-                                        if( false == ThisProp.NodeType.IsLatestVersion() )
-                                            PropName += "&nbsp;(v" + ThisProp.NodeType.VersionNo + ")";
+                                        if( false == ThisProp.getNodeType().IsLatestVersion() )
+                                            PropName += "&nbsp;(v" + ThisProp.getNodeType().VersionNo + ")";
 
                                         JProperty PropJProp = ViewProp.ToJson( PropName, true );
                                         ret.Add( PropJProp );
@@ -769,7 +769,7 @@ namespace ChemSW.Nbt.WebServices
             // Need to generate all properties on all nodetypes of this object class
             SortedList AllProps = new SortedList();
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
             {
                 ICollection NodeTypeProps = _getNodeTypePropsCollection( NodeType.NodeTypeId );
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeProps )

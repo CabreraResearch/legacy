@@ -17,10 +17,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropImage( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _FileNameSubField = ( (CswNbtFieldTypeRuleImage) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).FileNameSubField;
-            _ContentTypeSubField = ( (CswNbtFieldTypeRuleImage) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ContentTypeSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleImage) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _FileNameSubField = _FieldTypeRule.FileNameSubField;
+            _ContentTypeSubField = _FieldTypeRule.ContentTypeSubField;
         }
-
+        private CswNbtFieldTypeRuleImage _FieldTypeRule;
         private CswNbtSubField _FileNameSubField;
         private CswNbtSubField _ContentTypeSubField;
 

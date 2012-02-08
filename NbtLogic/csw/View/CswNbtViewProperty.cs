@@ -52,7 +52,7 @@ namespace ChemSW.Nbt
                     _NodeTypePropId = value;
                     CswNbtMetaDataNodeTypeProp thisNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
                     if( thisNodeTypeProp != null )
-                        FieldType = thisNodeTypeProp.FieldType;
+                        FieldType = thisNodeTypeProp.getFieldType().FieldType;
                 }
             }
         }
@@ -80,7 +80,9 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataObjectClassProp ThisObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId );
                     // case 20031
                     if( ThisObjectClassProp != null )
-                        FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).FieldType;
+                    {
+                        FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldType().FieldType;
+                    }
                 }
             }
         }
@@ -133,7 +135,8 @@ namespace ChemSW.Nbt
             set { _SortMethod = value; }
         }
 
-        public CswNbtMetaDataFieldType FieldType = null;
+        //public CswNbtMetaDataFieldType FieldType = null;
+        public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
         public Int32 Order = Int32.MinValue;
         public Int32 Width = Int32.MinValue;
 
@@ -186,7 +189,7 @@ namespace ChemSW.Nbt
                 if( PropertyString[6] != String.Empty )
                     SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropertyString[6], true );
                 if( PropertyString[7] != String.Empty )
-                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] ) );
+                    FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] );
                 if( PropertyString[8] != String.Empty )
                     Order = CswConvert.ToInt32( PropertyString[8] );
                 if( PropertyString[9] != String.Empty )
@@ -226,7 +229,7 @@ namespace ChemSW.Nbt
                 if( PropNode.Attributes["sortmethod"] != null )
                     SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropNode.Attributes["sortmethod"].Value, true );
                 if( PropNode.Attributes["fieldtype"] != null && PropNode.Attributes["fieldtype"].Value != string.Empty )
-                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value ) );
+                    FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value );
                 if( PropNode.Attributes["order"] != null && PropNode.Attributes["order"].Value != string.Empty )
                     Order = CswConvert.ToInt32( PropNode.Attributes["order"].Value );
                 if( PropNode.Attributes["width"] != null && PropNode.Attributes["width"].Value != string.Empty )
@@ -314,7 +317,7 @@ namespace ChemSW.Nbt
                 string _FieldType = CswConvert.ToString( PropObj["fieldtype"] );
                 if( !string.IsNullOrEmpty( _FieldType ) )
                 {
-                    FieldType = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.getFieldTypeFromString( _FieldType ) );
+                    FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( _FieldType );
                 }
 
                 Int32 _Order = CswConvert.ToInt32( PropObj["order"] );
@@ -395,8 +398,8 @@ namespace ChemSW.Nbt
             NewPropNode.Attributes.Append( SortMethodAttribute );
 
             XmlAttribute FieldTypeAttribute = XmlDoc.CreateAttribute( "fieldtype" );
-            if( FieldType != null )
-                FieldTypeAttribute.Value = FieldType.FieldType.ToString();
+            if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown )
+                FieldTypeAttribute.Value = FieldType.ToString();
             else
                 FieldTypeAttribute.Value = string.Empty;
             NewPropNode.Attributes.Append( FieldTypeAttribute );
@@ -442,7 +445,7 @@ namespace ChemSW.Nbt
                                             new JProperty( "arbitraryid", ArbitraryId ),
                                             new JProperty( "sortby", SortBy.ToString() ),
                                             new JProperty( "sortmethod", SortMethod.ToString() ),
-                                            new JProperty( "fieldtype", ( FieldType != null ) ? FieldType.FieldType.ToString() : "" ),
+                                            new JProperty( "fieldtype", ( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown ) ? FieldType.ToString() : "" ),
                                             new JProperty( "order", ( Order != Int32.MinValue ) ? Order.ToString() : "" ),
                                             new JProperty( "width", ( Width != Int32.MinValue ) ? Width.ToString() : "" ),
                                             new JProperty( "filters", FilterObj )
@@ -474,8 +477,8 @@ namespace ChemSW.Nbt
             ret.Add( SortBy.ToString() );
             ret.Add( SortMethod.ToString() );
 
-            if( FieldType != null )
-                ret.Add( FieldType.FieldType.ToString() );
+            if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown )
+                ret.Add( FieldType.ToString() );
             else
                 ret.Add( "" );
 
@@ -529,7 +532,7 @@ namespace ChemSW.Nbt
         //}
         private void _setProp( ICswNbtMetaDataProp Prop )
         {
-            this.FieldType = Prop.FieldType;
+            this.FieldType = Prop.getFieldType().FieldType;
             this.Name = Prop.PropNameWithQuestionNo;
         }
 

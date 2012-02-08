@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.ImportExport
                                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in DestNodeType.getNodeTypeProps() )
                                 {
                                     if( MetaDataProp.PropName.ToLower() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString().ToLower() &&
-                                        MetaDataProp.FieldType.FieldType.ToString() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() )
+                                        MetaDataProp.getFieldType().FieldType.ToString() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() )
                                     {
                                         ThisProp = MetaDataProp;
                                         break;
@@ -347,7 +347,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( DestNodeType != null )
                     {
                         // We have to do this after we've restored the properties
-                        DestNodeType.NameTemplateText = NodeTypeRow[CswNbtMetaDataNodeType._Attribute_NameTemplate].ToString();
+                        DestNodeType.setNameTemplateText( NodeTypeRow[CswNbtMetaDataNodeType._Attribute_NameTemplate].ToString() );
 
                         // Record the matching nodetype in the table
                         NodeTypeMap.Add( SourceNodeTypeId, DestNodeType.NodeTypeId );          // for property value references
@@ -573,9 +573,9 @@ namespace ChemSW.Nbt.ImportExport
                             }
 
                             // Is this node redundant with another existing node?
-                            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in Node.NodeType.getNodeTypeProps() )
+                            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( Node.NodeTypeId ) )
                             {
-                                if( MetaDataProp.IsUnique )
+                                if( MetaDataProp.IsUnique() )
                                 {
                                     CswNbtNode OtherNode = _CswNbtResources.Nodes.FindNodeByUniqueProperty( MetaDataProp, Node.Properties[MetaDataProp] );
                                     if( OtherNode != null && OtherNode.NodeId != Node.NodeId )
@@ -629,9 +629,9 @@ namespace ChemSW.Nbt.ImportExport
                 if( x % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + x.ToString() + " of " + NodesTable.Rows.Count.ToString() );
 
-                if( Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                 {
-                    if( Node.Properties[Node.NodeType.getNodeTypePropByObjectClassPropName( "Assembly" )].AsRelationship.RelatedNodeId != null )
+                    if( Node.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( Node.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                     {
                         Node.PendingUpdate = true;
                         Node.postChanges( false, false, true );
