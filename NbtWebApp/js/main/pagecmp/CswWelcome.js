@@ -36,7 +36,8 @@
                             .css('text-align', 'center')
                             .css('font-size', '1.2em');
 
-                    var layoutTable = $WelcomeDiv.CswLayoutTable('init', {
+                    var layoutTable = Csw.controls.layoutTable({
+                        $parent: $WelcomeDiv,
                         ID: 'welcometable',
                         cellset: { rows: 2, columns: 1 },
                         TableCssClass: 'WelcomeTable',
@@ -73,7 +74,7 @@
                         if (Csw.contains(data, welcomeId)) {
                             var thisItem = data[welcomeId];
                             if (false === Csw.isNullOrEmpty(thisItem)) {
-                                var $cellset = layoutTable.$.CswLayoutTable('cellset', thisItem.displayrow, thisItem.displaycol);
+                                var $cellset = layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
                                 var $imagecell = $cellset[1][1].children('div');
                                 var $textcell = $cellset[2][1].children('div');
 
@@ -82,7 +83,7 @@
 
                                 var clickopts = {
                                     itemData: thisItem,
-                                    $table: layoutTable,
+                                    layoutTable: layoutTable,
                                     onAddClick: o.onAddClick,
                                     onLinkClick: o.onLinkClick,
                                     onSearchClick: o.onSearchClick
@@ -252,11 +253,11 @@
 
     function _clickItem(clickopts) {
         var c = {
-            itemData: '',
-            $table: '',
-            onAddClick: function () { },
-            onLinkClick: function () { },
-            onSearchClick: function () { }
+            itemData: {},
+            layoutTable: {},
+            onAddClick: null,
+            onLinkClick: null,
+            onSearchClick: null
         };
         if (clickopts) $.extend(c, clickopts);
 
@@ -274,11 +275,10 @@
             linktype: c.itemData.linktype
         };
 
-        if (c.$table.CswLayoutTable('isConfig') === false)   // case 22288
-        {
+        if (c.layoutTable.isConfig() === false) {   // case 22288
             switch (optSelect.linktype.toLowerCase()) {
                 case 'add':
-                    if (Csw.isFunction(c.onAddClick)) { c.onAddClick(c.itemData.nodetypeid); }
+                    Csw.tryExec(c.onAddClick, c.itemData.nodetypeid);
                     break;
                 case 'link':
                     if (Csw.isFunction(c.onLinkClick)) { c.onLinkClick(optSelect); }

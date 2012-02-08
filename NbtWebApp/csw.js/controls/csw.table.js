@@ -57,8 +57,8 @@
                 OddCellRightAlign: internal.OddCellRightAlign
             });
 
-            external.bind('CswTable_onCreateCell', function (e, $eTable, $cell, row, column) {
-                Csw.tryExec(internal.onCreateCell(e, $eTable, $cell, row, column));
+            external.bind('CswTable_onCreateCell', function (e, $cell, row, column) {
+                Csw.tryExec(internal.onCreateCell(e, $cell, row, column));
                 e.stopPropagation(); // prevents events from triggering in nested tables
             });
             external.trigger('CswTable_onCreateCell', [external.$, external.$.find('td'), 1, 1]);
@@ -99,7 +99,7 @@
                     }
                     $newcell = $('<td class="' + external.$.CswAttrDom('cellcssclass') + '" align="' + align + '" valign="' + external.$.CswAttrDom('cellvalign') + '"></td>')
                         .appendTo($row);
-                    external.$.trigger('CswTable_onCreateCell', [external.$, $newcell, row, $row.children('td').length]);
+                    external.$.trigger('CswTable_onCreateCell', [$newcell, row, $row.children('td').length]);
                 }
                 $cell = $($row.children('td')[col - 1]);
             }
