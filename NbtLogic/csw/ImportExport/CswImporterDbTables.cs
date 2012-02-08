@@ -42,14 +42,14 @@ namespace ChemSW.Nbt.ImportExport
 
         public void reset()
         {
-            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_TempNodes ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_TempNodes ) ) //belt and suspenders
+            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_ImportNodes ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_ImportNodes ) ) //belt and suspenders
             {
-                _CswNbtSchemaModTrnsctn.dropTable( _TblName_TempNodes );
+                _CswNbtSchemaModTrnsctn.dropTable( _TblName_ImportNodes );
             }
 
-            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_TempProps ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_TempProps ) ) //belt and suspenders
+            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_ImportProps ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_ImportProps ) ) //belt and suspenders
             {
-                _CswNbtSchemaModTrnsctn.dropTable( _TblName_TempProps );
+                _CswNbtSchemaModTrnsctn.dropTable( _TblName_ImportProps );
             }
 
             _CswNbtImportStatus.reset();
@@ -77,8 +77,8 @@ namespace ChemSW.Nbt.ImportExport
             }
         }//stop() 
 
-        private string _TblName_TempNodes = "tmp_import_nodes";
-        private string _TblName_TempProps = "tmp_import_props";
+        private string _TblName_ImportNodes = "import_nodes";
+        private string _TblName_ImportProps = "import_props";
         private string _ColName_ProcessStatus = "processstatus";
         private string _ColName_StatusMessage = "statusmessage";
         private string _ColName_Source = "source";
@@ -91,6 +91,48 @@ namespace ChemSW.Nbt.ImportExport
         private string _StatusMessageDivider = "==================================";
 
         ImportProcessPhase _LastCompletedProcessPhase = ImportProcessPhase.NothingDoneYet;
+
+
+
+        private bool _importTablesAreAbsent( ref string ImportTableInconsistencyMessage )
+        {
+            bool ReturnVal = true;
+
+
+            if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_ImportNodes ) )
+            {
+                if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_ImportNodes ) )
+                {
+                    if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_ImportProps ) )
+                    {
+                        if( _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_ImportProps ) )
+                        {
+                            ReturnVal = false;
+                            ImportTableInconsistencyMessage = string.Empty;
+                        }
+                        else
+                        {
+                            ImportTableInconsistencyMessage = "The import nodes table is defined properly; however, the import props table is defined in the database but not in meta data";
+                        }//if-else propstable is defined in meta data
+                    }
+                    else
+                    {
+                        ImportTableInconsistencyMessage = "The import nodes nodes table is defined properly; however the import props table is not defined in the database";
+                    }//if-else props table is defined in db
+                }
+                else
+                {
+                    ImportTableInconsistencyMessage = "The import nodes table is defined in the database, but not in the meta data";
+                }//if-else Nodes table is defined in meta data
+            }
+            else
+            {
+                ImportTableInconsistencyMessage = string.Empty; //not necessarily an error condition: it just aint there
+            }//if-else Nodes table is defined in db
+
+            return ( ReturnVal );
+        }//_importTablesAreAbsent()
+
 
         /// <summary>
         /// Imports data from an Xml String
@@ -111,7 +153,7 @@ namespace ChemSW.Nbt.ImportExport
 
             //*********************************************************************************************************
             //*********************** Load to dataset
-            _LastCompletedProcessPhase = _CswNbtImportStatus.CompletedProcessPhase;
+            //            _LastCompletedProcessPhase = _CswNbtImportStatus.CompletedProcessPhase;
 
             _CswImportExportStatusReporter.reportProgress( "Loading XML document to in memory tables" );
 
@@ -143,79 +185,73 @@ namespace ChemSW.Nbt.ImportExport
             _CswImportExportStatusReporter.MessageTypesToBeLogged.Add( ImportExportMessageType.Timing );
             //*********************************************************************************************************
             //*********************** Create Temporary Tables
-            if( ( false == _Stop ) && ( ImportProcessPhase.NothingDoneYet == _LastCompletedProcessPhase ) )
+
+
+            DataSet DataSet = _CswNbtImportExportFrame.AsDataSet();
+            DataTable TableOfNodesFromXml = DataSet.Tables["Node"];
+            TableOfNodesFromXml.Columns["nodeid"].ColumnName = _ColName_ImportNodeId;
+
+
+            DataTable TableOfPropsFromXml = DataSet.Tables["PropValue"];
+            TableOfPropsFromXml.Columns["NodeID"].ColumnName = _ColName_Props_ImportTargetNodeIdUnique; //This is not a joke
+            TableOfPropsFromXml.Columns["nodeid"].ColumnName = _ColName_ImportNodeId;
+
+
+
+            string ImportTableInconsistencyMessage = string.Empty;
+            if( _importTablesAreAbsent( ref ImportTableInconsistencyMessage ) )
             {
-
-                _LastCompletedProcessPhase = ImportProcessPhase.LoadingInputFile;
-
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
-
-                DataSet DataSet = _CswNbtImportExportFrame.AsDataSet();
-                DataTable TableOfNodesFromXml = DataSet.Tables["Node"];
-                TableOfNodesFromXml.Columns["nodeid"].ColumnName = _ColName_ImportNodeId;
-
-
-                DataTable TableOfPropsFromXml = DataSet.Tables["PropValue"];
-                TableOfPropsFromXml.Columns["NodeID"].ColumnName = _ColName_Props_ImportTargetNodeIdUnique; //This is not a joke
-                TableOfPropsFromXml.Columns["nodeid"].ColumnName = _ColName_ImportNodeId;
-
-
-
-                _CswNbtSchemaModTrnsctn.beginTransaction();
-
-                if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_TempNodes ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_TempNodes ) ) //belt and suspenders
+                if( string.Empty == ImportTableInconsistencyMessage )
                 {
-                    _CswNbtSchemaModTrnsctn.dropTable( _TblName_TempNodes );
-                }
+                    _LastCompletedProcessPhase = ImportProcessPhase.LoadingInputFile;
 
-                if( _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( _TblName_TempProps ) || _CswNbtSchemaModTrnsctn.isTableDefinedInMetaData( _TblName_TempProps ) ) //belt and suspenders
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.InProcess );
+
+                    _CswNbtSchemaModTrnsctn.beginTransaction();
+
+                    _makeImportTable( _TblName_ImportNodes, ColName_TempNodesTablePk, TableOfNodesFromXml.Columns, 512, _AdditonalColumns, _IndexColumns );
+                    _CswNbtSchemaModTrnsctn.addLongColumn( _TblName_ImportNodes, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
+
+
+
+                    _makeImportTable( _TblName_ImportProps, ColName_TempPropsTablePk, TableOfPropsFromXml.Columns, 512, _AdditonalColumns, _IndexColumns );
+                    //            _CswNbtSchemaModTrnsctn.addForeignKeyColumn( TempPropsTableName, TempNodesTablePkColName, "refers to node records in " + TempNodesTableName + ";", false, false, TempNodesTableName, TempNodesTablePkColName );
+                    _CswNbtSchemaModTrnsctn.addLongColumn( _TblName_ImportProps, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
+                    _CswNbtSchemaModTrnsctn.addLongColumn( _TblName_ImportProps, ColName_TempPropsRealPropId, "to be filled in when the node is actually created", false, false );
+
+
+
+                    _CswNbtSchemaModTrnsctn.commitTransaction();
+
+                    _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
+
+                }
+                else
                 {
-                    _CswNbtSchemaModTrnsctn.dropTable( _TblName_TempProps );
-                }
+                    _CswImportExportStatusReporter.reportError( "The import tables are in an inconsistent state: " + ImportTableInconsistencyMessage );
 
-                _CswNbtSchemaModTrnsctn.commitTransaction();
+                }//if-else import tables are inconsistent
 
-
-
-
-                _CswNbtSchemaModTrnsctn.beginTransaction();
-
-                _makeTempTable( _TblName_TempNodes, ColName_TempNodesTablePk, TableOfNodesFromXml.Columns, 512, _AdditonalColumns, _IndexColumns );
-                _CswNbtSchemaModTrnsctn.addLongColumn( _TblName_TempNodes, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
+            }//if import tables are absent
 
 
+            //*********************************************************************************************************
+            //*********************** Fill Temporary tables
+            //_CswImportExportStatusReporter.reportProgress( "Filling temporary tables (this may take a while)" );
+            _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableNodes;
 
-                _makeTempTable( _TblName_TempProps, ColName_TempPropsTablePk, TableOfPropsFromXml.Columns, 512, _AdditonalColumns, _IndexColumns );
-                //            _CswNbtSchemaModTrnsctn.addForeignKeyColumn( TempPropsTableName, TempNodesTablePkColName, "refers to node records in " + TempNodesTableName + ";", false, false, TempNodesTableName, TempNodesTablePkColName );
-                _CswNbtSchemaModTrnsctn.addLongColumn( _TblName_TempProps, Colname_NbtNodeId, "to be filled in when the node is actually created", false, false );
-                _CswNbtSchemaModTrnsctn.addLongColumn( _TblName_TempProps, ColName_TempPropsRealPropId, "to be filled in when the node is actually created", false, false );
+            //            CswArbitrarySelect CswArbitrarySelectNodesCriterion = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "importnodesrecorddoesnotexist", "select " + _ColName_ImportNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "=:" + _ColName_ImportNodeId );
+            _createTempRecords( TableOfNodesFromXml, _TblName_ImportNodes, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
+            _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
+            _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableProps;
+            //CswArbitrarySelect CswArbitrarySelectNodesCriterion = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "importnodesrecorddoesnotexist", "select " + _ColName_ImportNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "=:" + _ColName_ImportNodeId );
+            _createTempRecords( TableOfPropsFromXml, _TblName_ImportProps, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
+            _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
 
+            _CswNbtSchemaModTrnsctn.commitTransaction();
 
-                _CswNbtSchemaModTrnsctn.commitTransaction();
-
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
-
-
-                //*********************************************************************************************************
-                //*********************** Fill Temporary tables
-                //_CswImportExportStatusReporter.reportProgress( "Filling temporary tables (this may take a while)" );
-                _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableNodes;
-                _createTempRecords( TableOfNodesFromXml, _TblName_TempNodes, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
-
-                _LastCompletedProcessPhase = ImportProcessPhase.PopulatingTempTableProps;
-                _createTempRecords( TableOfPropsFromXml, _TblName_TempProps, _CswNbtImportOptions.MaxInsertRecordsPerTransaction, _CswNbtImportOptions.MaxInsertRecordsPerDisplayUpdate );
-                _CswImportExportStatusReporter.updateProcessPhase( _LastCompletedProcessPhase, 0, 0, ProcessStates.Complete );
-
-                _CswNbtSchemaModTrnsctn.commitTransaction();
-
-                _CswNbtImportExportFrame.clear();
-
-
-            }//if we haven't done anything yet
-
-
+            _CswNbtImportExportFrame.clear();
 
             //*********************************************************************************************************
             //*********************** Check integrity of temporary tables
@@ -223,7 +259,7 @@ namespace ChemSW.Nbt.ImportExport
             {
 
                 string DuplicateCountColumnName = "duplicate";
-                string DuplicatesQuery = " SELECT " + _ColName_ImportNodeId + ", COUNT(" + _ColName_ImportNodeId + ") AS " + DuplicateCountColumnName + " FROM " + _TblName_TempNodes + " GROUP BY " + _ColName_ImportNodeId + " HAVING (COUNT(importnodeid) > 1) ";
+                string DuplicatesQuery = " SELECT " + _ColName_ImportNodeId + ", COUNT(" + _ColName_ImportNodeId + ") AS " + DuplicateCountColumnName + " FROM " + _TblName_ImportNodes + " GROUP BY " + _ColName_ImportNodeId + " HAVING (COUNT(importnodeid) > 1) ";
                 CswArbitrarySelect CswArbitrarySelectDuplicateCheck = _CswNbtResources.makeCswArbitrarySelect( "tmp node table duplicate count", DuplicatesQuery );
                 DataTable DataTableDuplicatesCheck = CswArbitrarySelectDuplicateCheck.getTable();
                 if( DataTableDuplicatesCheck.Rows.Count == 0 )
@@ -238,7 +274,7 @@ namespace ChemSW.Nbt.ImportExport
                         CswCommaDelimitedString.Add( CurrentDataRow[_ColName_ImportNodeId].ToString() );
                     }
 
-                    _CswImportExportStatusReporter.reportError( "Processing cannot proceed because the " + _TblName_TempNodes + "." + _ColName_ImportNodeId + " column contains the following non-unique values: " + CswCommaDelimitedString );
+                    _CswImportExportStatusReporter.reportError( "Processing cannot proceed because the " + _TblName_ImportNodes + "." + _ColName_ImportNodeId + " column contains the following non-unique values: " + CswCommaDelimitedString );
 
 
                 }//if-else there are duplicate column values 
@@ -265,7 +301,7 @@ namespace ChemSW.Nbt.ImportExport
 
 
             CswNbtNode GeneralUserRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( _CswNbtImportOptions.NameOfDefaultRoleForUserNodes );
-            CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", _TblName_TempNodes );
+            CswTableUpdate CswTableUpdateTempNodesTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatenodesfornodeid", _TblName_ImportNodes );
             if( ( false == _Stop ) && ( ImportProcessPhase.TempTableIntegrityChecked == _LastCompletedProcessPhase ) )
             {
 
@@ -275,7 +311,7 @@ namespace ChemSW.Nbt.ImportExport
                 //string WhereClauseForUnprocessedRecords = " where " + _ProcessStatusColumnName + "='" + ProcessStati.Unprocessed.ToString() + "' and nodetypename <> 'User'";
                 //string WhereClauseForUnprocessedRecords = " where " + _ColName_ProcessStatus + "='" + ProcessStati.Unprocessed.ToString() + "'" + " and nodetypename <> 'User'";
                 string WhereClauseForUnprocessedRecords = " where " + _ColName_ProcessStatus + "='" + ImportProcessStati.Unprocessed.ToString() + "'";
-                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + _TblName_TempNodes + WhereClauseForUnprocessedRecords );
+                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + _TblName_ImportNodes + WhereClauseForUnprocessedRecords );
                 Int32 TotalNodesToProcess = Convert.ToInt32( CswArbitrarySelectCountOfUnprocessedNodes.getTable().Rows[0][0] );
                 Int32 TotalNodesProcesssedSoFar = 0;
 
@@ -284,9 +320,9 @@ namespace ChemSW.Nbt.ImportExport
                 SelectColumns.Add( "nodetypename" );
                 SelectColumns.Add( _ColName_ImportNodeId );
                 SelectColumns.Add( Colname_NbtNodeId );
-                string RawNodesQuery = "select " + SelectColumns + " from " + _TblName_TempNodes + WhereClauseForUnprocessedRecords;
+                string RawNodesQuery = "select " + SelectColumns + " from " + _TblName_ImportNodes + WhereClauseForUnprocessedRecords;
                 CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", RawNodesQuery );
-                CswTableUpdate CswTableUpdateTempPropsTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatepropsfornodeid", _TblName_TempProps );
+                CswTableUpdate CswTableUpdateTempPropsTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatepropsfornodeid", _TblName_ImportProps );
                 DataTable RawNodesTable = null;
                 do
                 {
@@ -551,7 +587,7 @@ namespace ChemSW.Nbt.ImportExport
 
 
                 string WhereClauseForImportedNodeRecords = " where " + _ColName_ProcessStatus + "='" + ImportProcessStati.Imported.ToString() + "'";
-                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + _TblName_TempNodes + WhereClauseForImportedNodeRecords );
+                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + _TblName_ImportNodes + WhereClauseForImportedNodeRecords );
                 Int32 TotalNodesToProcess = Convert.ToInt32( CswArbitrarySelectCountOfUnprocessedNodes.getTable().Rows[0][0] );
                 Int32 TotalNodesProcesssedSoFar = 0;
 
@@ -562,13 +598,13 @@ namespace ChemSW.Nbt.ImportExport
                 SelectColumns.Add( "nodetypename" );
                 SelectColumns.Add( _ColName_ImportNodeId );
                 SelectColumns.Add( Colname_NbtNodeId );
-                string SelectStatementForUnprocessedNodes = "select " + SelectColumns + " from " + _TblName_TempNodes + WhereClauseForImportedNodeRecords + " order by " + ColName_TempNodesTablePk;
+                string SelectStatementForUnprocessedNodes = "select " + SelectColumns + " from " + _TblName_ImportNodes + WhereClauseForImportedNodeRecords + " order by " + ColName_TempNodesTablePk;
                 CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", SelectStatementForUnprocessedNodes );
-                CswTableUpdate CswTableUpdateNodes = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatefornodepropupdatestatus", _TblName_TempNodes );
+                CswTableUpdate CswTableUpdateNodes = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatefornodepropupdatestatus", _TblName_ImportNodes );
 
 
 
-                CswTableUpdate CswTableUpdateImportNodeRecords = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "update nodes table", _TblName_TempNodes );
+                CswTableUpdate CswTableUpdateImportNodeRecords = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "update nodes table", _TblName_ImportNodes );
 
 
                 DataTable NodeRecordsToProcess = null;
@@ -612,10 +648,11 @@ namespace ChemSW.Nbt.ImportExport
                                     try
                                     {
 
+
                                         //Select he corresponding property records
                                         CurrentImportNodeId = CurrentImportNodeRow[_ColName_ImportNodeId].ToString();
                                         CurrentImportNodeName = CurrentImportNodeRow[_ColName_Nodes_NodeName].ToString();
-                                        string TheQuery = "select n.importnodeid, n.nodename,p.* from tmp_import_nodes n join tmp_import_props p on (n.importnodeid=p.importnodeid) where  n.importnodeid='" + CurrentImportNodeId + "'";
+                                        string TheQuery = "select n.importnodeid, n.nodename,p.* from " + _TblName_ImportNodes + " n join " + _TblName_ImportProps + " p on (n.importnodeid=p.importnodeid) where  n.importnodeid='" + CurrentImportNodeId + "'";
                                         CswArbitrarySelect CswArbitrarySelectUnProcessedProps = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssedprops", TheQuery );
                                         DataTable CurrentUnprocssedPropsTable = CswArbitrarySelectUnProcessedProps.getTable();
 
@@ -642,28 +679,72 @@ namespace ChemSW.Nbt.ImportExport
                                                     if( false == CurrentImportProprow.IsNull( _ColName_Props_ImportTargetNodeIdUnique ) ) //populate ImportNodeIdToNbtNodeId for relationships and locations
                                                     {
                                                         string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
-                                                        CswNbtImportNodeId CswNbtImportTargetNodeId = new ImportExport.CswNbtImportNodeId( CurrentImportTargetNodeId );
-                                                        if( false == CswNbtImportTargetNodeId.IsNull )
+
+                                                        if( ( false == CurrentImportNodeId.Contains( "--" ) ) || 3 == CurrentImportNodeId.Split( new string[] { "--" }, StringSplitOptions.None ).Length ) //IMCS import references must have all three components in order to be not null
                                                         {
 
-                                                            string Query = "select " + Colname_NbtNodeId + " from " + _TblName_TempNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";
+                                                            string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";
                                                             CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "findtargetnodeid", Query );
                                                             DataTable DataTable = CswArbitrarySelect.getTable();
                                                             if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
                                                             {
-                                                                ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
-                                                                RelationshipPropAddCounter++;
-                                                            }
-                                                            else
-                                                            {
 
-                                                                Int32 ExistingNbtNodeId = _getNodeIdForNodeName( CurrentImportTargetNodeId );
-                                                                if( Int32.MinValue != ExistingNbtNodeId )
+                                                                Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ); 
+                                                                if( Int32.MinValue != NodeIdOfDestinationNode )
                                                                 {
-                                                                    ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
-                                                                    RelationshipPropAddCounter++;
+                                                                    string CandidateValidationErrorMessage = string.Empty;
+                                                                    if( _validateTargetNodeType( CurrentNodeTypeProp, NodeIdOfDestinationNode, ref CandidateValidationErrorMessage ) )
+                                                                    {
+                                                                        ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
+                                                                        RelationshipPropAddCounter++;
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                        CurrentErrorStatus = ImportProcessStati.Error;
+
+                                                                    }//if-else
                                                                 }
                                                                 else
+                                                                {
+                                                                    CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
+                                                                    CurrentErrorStatus = ImportProcessStati.Error;
+
+                                                                }
+                                                            }
+                                                            else //_ColName_ImportNodeId did not specify a row in the target schema that provides the nodeid of an imported node; so perhaps it specifies the nbtnodeid of a node that already exists in the schema
+                                                            {
+
+                                                                CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
+                                                                DataTable ExistingNodeDataTable = CswTableSelectFromNodes.getTable( " where nodeid=" + CurrentImportTargetNodeId );
+
+              
+                                                                if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
+                                                                {
+                                                                    Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); //review 24884
+                                                                    if( Int32.MinValue != ExistingNbtNodeId )
+                                                                    {
+
+                                                                        string CandidateValidationErrorMessage = string.Empty;
+                                                                        if( _validateTargetNodeType( CurrentNodeTypeProp, ExistingNbtNodeId, ref CandidateValidationErrorMessage ) )
+                                                                        {
+
+                                                                            ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
+                                                                            RelationshipPropAddCounter++;
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                            CurrentErrorStatus = ImportProcessStati.Error;
+                                                                        }
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
+                                                                        CurrentErrorStatus = ImportProcessStati.Error;
+                                                                    }
+                                                                }
+                                                                else //it is neither in the import data nor in the target schema
                                                                 {
                                                                     //having eliminated null node IDs, this condition would be a true error
                                                                     //(as a opposed to a who-knew-from-null-nodeids error . . . 
@@ -685,17 +766,21 @@ namespace ChemSW.Nbt.ImportExport
                                                     //and then we need to change it back; 
                                                     //this is major kludgedelia
                                                     //Need a mechanism for dynamically changing the column names that ReadDataRow expects
-                                                    CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdUnique].ColumnName = _ColName_Props_ImportTargetNodeIdOriginal;
-                                                    try
+                                                    if( ImportProcessStati.Error != CurrentErrorStatus )
                                                     {
-                                                        CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
-                                                        PropAddCounter++;
-                                                    }
+                                                        CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdUnique].ColumnName = _ColName_Props_ImportTargetNodeIdOriginal;
+                                                        try
+                                                        {
 
-                                                    finally
-                                                    {
-                                                        CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdOriginal].ColumnName = _ColName_Props_ImportTargetNodeIdUnique;
-                                                    }
+                                                            CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
+                                                            PropAddCounter++;
+                                                        }
+
+                                                        finally
+                                                        {
+                                                            CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdOriginal].ColumnName = _ColName_Props_ImportTargetNodeIdUnique;
+                                                        }
+                                                    }//if we have not encountered any errors so far
 
                                                 }
                                                 else
@@ -818,15 +903,15 @@ namespace ChemSW.Nbt.ImportExport
                 _LastCompletedProcessPhase = ImportProcessPhase.PostProcessingNbtNodes;
 
                 string WhereClauseForImportedNodeRecords = " where " + _ColName_ProcessStatus + "='" + ImportProcessStati.PropsAdded.ToString() + "'";
-                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + _TblName_TempNodes + WhereClauseForImportedNodeRecords );
+                CswArbitrarySelect CswArbitrarySelectCountOfUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssednodes", "select count(*) from " + _TblName_ImportNodes + WhereClauseForImportedNodeRecords );
                 Int32 TotalNodesToProcess = Convert.ToInt32( CswArbitrarySelectCountOfUnprocessedNodes.getTable().Rows[0][0] );
                 Int32 TotalNodesProcesssedSoFar = 0;
 
                 CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
                 SelectColumns.Add( _ColName_ImportNodeId );
                 SelectColumns.Add( Colname_NbtNodeId );
-                CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectpossibleduplicatenodes", "select " + SelectColumns + " from " + _TblName_TempNodes + WhereClauseForImportedNodeRecords );
-                CswTableUpdate CswTableUpdateNodes = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatefornodepropupdatestatus", _TblName_TempNodes );
+                CswArbitrarySelect CswArbitrarySelectUnprocessedNodes = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectpossibleduplicatenodes", "select " + SelectColumns + " from " + _TblName_ImportNodes + WhereClauseForImportedNodeRecords );
+                CswTableUpdate CswTableUpdateNodes = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updatefornodepropupdatestatus", _TblName_ImportNodes );
 
                 DataTable NodeRecordsToProcess = null;
                 do
@@ -900,7 +985,6 @@ namespace ChemSW.Nbt.ImportExport
                                 CurrentRowError += "Unable to retrieve NBT node with " + _ColName_ImportNodeId + " of " + CurrentImportNodeId + " and NodeId of " + CurrentNbtNode.ToString();
                             }//if-else we were able to retrieve the node
 
-                            TotalNodesProcesssedSoFar++;
 
 
                             DataTable DataTableCurrentNodeTable = CswTableUpdateNodes.getTable( " where " + _ColName_ImportNodeId + "='" + CurrentImportNodeId + "'" );
@@ -919,11 +1003,12 @@ namespace ChemSW.Nbt.ImportExport
                                 }//if else there was an error on the current row
 
                                 CurrentRowError = string.Empty;
-                                TotalNodesProcesssedSoFar++;
                                 CswTableUpdateNodes.update( DataTableCurrentNodeTable );
 
                             }//for some reason, it _can_ happen that this row is empty
 
+
+                            TotalNodesProcesssedSoFar++;
 
                         }//iterate node records
 
@@ -994,7 +1079,7 @@ namespace ChemSW.Nbt.ImportExport
             UserNode.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
         }//rehabilitateUser() 
 
-        private void _makeTempTable( string TableName, string PkColumnName, DataColumnCollection Columns, Int32 ArbitraryStringColumnLength, Collection<string> AdditionalStringColumns, Collection<string> IndexColumns )
+        private void _makeImportTable( string TableName, string PkColumnName, DataColumnCollection Columns, Int32 ArbitraryStringColumnLength, Collection<string> AdditionalStringColumns, Collection<string> IndexColumns )
         {
 
             _CswNbtSchemaModTrnsctn.addTable( TableName, PkColumnName );
@@ -1018,33 +1103,58 @@ namespace ChemSW.Nbt.ImportExport
 
         private void _createTempRecords( DataTable SourceTable, string DestinationTableName, Int32 MaxInsertRecordsPerTransaction, Int32 MaxInsertRecordsPerDisplayUpdate )
         {
+
+            CswTableSelect DestinationTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "queryforprexistingimportrecord", DestinationTableName );
+
+
+
+
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "insertimportrecordsfortable_" + SourceTable.TableName, DestinationTableName );
             DataTable DestinationDataTable = CswTableUpdate.getEmptyTable();
             Int32 TotalRecordsToInsert = SourceTable.Rows.Count;
             Int32 TotalRecordsInsertedSoFar = 0;
-
-            //_CswImportExportStatusReporter.reportProgress( "inserting " + TotalRecordsToInsert.ToString() + " into table " + DestinationTableName );
             Int32 TotalInsertsThisTransaction = 0;
+
             foreach( DataRow CurrentSourceRow in SourceTable.Rows )
             {
-                TotalInsertsThisTransaction++;
-                TotalRecordsInsertedSoFar++;
-                DataRow NewRow = DestinationDataTable.NewRow();
-                DestinationDataTable.Rows.Add( NewRow );
 
-
-                NewRow[_ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
-
-                foreach( DataColumn CurrentColum in SourceTable.Columns )
+                DataTable ExistingImportRecord = DestinationTableSelect.getTable( " where " + _ColName_ImportNodeId + "='" + CurrentSourceRow[_ColName_ImportNodeId].ToString() + "' " );
+                if( 0 == ExistingImportRecord.Rows.Count )
                 {
-                    if( DestinationDataTable.Columns.Contains( CurrentColum.ColumnName ) )
+
+                    TotalInsertsThisTransaction++;
+                    TotalRecordsInsertedSoFar++;
+                    DataRow NewRow = DestinationDataTable.NewRow();
+                    DestinationDataTable.Rows.Add( NewRow );
+
+
+                    NewRow[_ColName_ProcessStatus] = ImportProcessStati.Unprocessed.ToString();
+
+                    foreach( DataColumn CurrentColum in SourceTable.Columns )
                     {
-                        NewRow[CurrentColum.ColumnName] = CurrentSourceRow[CurrentColum.ColumnName].ToString();
+                        if( DestinationDataTable.Columns.Contains( CurrentColum.ColumnName ) )
+                        {
+                            NewRow[CurrentColum.ColumnName] = CurrentSourceRow[CurrentColum.ColumnName].ToString();
+                        }
+
+                    }//iterate source table columns
+                }
+                else
+                {
+                    TotalRecordsToInsert--;
+                }
+
+                bool MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe = false;
+                Int32 CurrentRowIndex = SourceTable.Rows.IndexOf( CurrentSourceRow );
+                if( ( CurrentRowIndex + 1 ) < SourceTable.Rows.Count )
+                {
+                    if( SourceTable.Rows[CurrentRowIndex + 1][_ColName_ImportNodeId].ToString() == CurrentSourceRow[_ColName_ImportNodeId].ToString() )
+                    {
+                        MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe = true;
                     }
+                }
 
-                }//iterate source table columns
-
-                if( ( TotalInsertsThisTransaction >= _CswNbtImportOptions.MaxInsertRecordsPerTransaction ) || ( TotalRecordsInsertedSoFar >= TotalRecordsToInsert ) )
+                if( ( ( TotalInsertsThisTransaction >= _CswNbtImportOptions.MaxInsertRecordsPerTransaction ) && ( false == MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe ) ) || ( TotalRecordsInsertedSoFar >= TotalRecordsToInsert ) )
                 {
                     CswTableUpdate.update( DestinationDataTable );
                     _CswNbtSchemaModTrnsctn.commitTransaction();
@@ -1079,98 +1189,53 @@ namespace ChemSW.Nbt.ImportExport
 
         }//_doesNodeNameAlreadyExist() 
 
-        /// <summary>
-        /// Return node id for a nodename iff the name is unique
-        /// </summary>
-        /// <param name="NodeName"></param>
-        /// <returns></returns>
-        private Int32 _getNodeIdForNodeName( string NodeName )
+        private bool _validateTargetNodeType( CswNbtMetaDataNodeTypeProp SourceNodeTypeProp, Int32 DestinationNodeId, ref string ErrorMessage )
         {
-            Int32 ReturnVal = Int32.MinValue;
+            bool DestinationTypeMatchesSourcesType = true;
 
-            CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
-            DataTable DataTable = CswTableSelectFromNodes.getTable( " where lower(nodename)='" + NodeName.ToLower() + "'" );
+            CswNbtNode DestinationNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", DestinationNodeId )];
 
-            if( 1 == DataTable.Rows.Count )
+            if( null != DestinationNode )
             {
-                ReturnVal = CswConvert.ToInt32( DataTable.Rows[0]["nodeid"] );
+
+                if( SourceNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                {
+                    CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SourceNodeTypeProp.FKValue );
+
+                    if( RelatedNodeType.NodeTypeName != DestinationNode.NodeType.NodeTypeName )
+                    {
+                        DestinationTypeMatchesSourcesType = false;
+                        ErrorMessage = " the node type of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.NodeType.NodeTypeName + " but the " + SourceNodeTypeProp.PropName + " must reference a node of node type " + RelatedNodeType.NodeTypeName;
+                    }
+
+                }
+                else if( SourceNodeTypeProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                {
+                    CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( SourceNodeTypeProp.FKValue );
+                    if( RelatedObjectClass.ObjectClass != DestinationNode.ObjectClass.ObjectClass )
+                    {
+                        DestinationTypeMatchesSourcesType = false;
+                        ErrorMessage = " object class of the destination node " + DestinationNode.NodeId.ToString() + " named " + DestinationNode.NodeName + " is " + DestinationNode.ObjectClass.ObjectClass.ToString() + " but the " + SourceNodeTypeProp.PropName + " must reference a node of object class " + RelatedObjectClass.ObjectClass.ToString();
+                    }
+                }
+                else
+                {
+                    DestinationTypeMatchesSourcesType = false;
+                    ErrorMessage = " The FK Type of the node type prop" + SourceNodeTypeProp.PropName + " cannot be determined";
+                }
             }
+            else
+            {
+                DestinationTypeMatchesSourcesType = false;
+                ErrorMessage = "The target node ID " + DestinationNodeId.ToString() + " does not resolve to a known node";
+            }//if-else the destnation node id is for real
 
-            return ( ReturnVal );
+            return ( DestinationTypeMatchesSourcesType );
 
-        }//_getNodeIdForNodeName() 
-
+        }//_validateTargetNodeType()
 
     } // class CswImporterExperimental
 
 } // namespace ChemSW.Nbt
 
 
-//foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
-//{
-//    CswNbtSubField.PropColumn.Field1
-
-//    CurrentSubField.Column
-//    CurrentNbtNode.Properties[CurrentNodeTypeProp].Field1 = "foo"; 
-//}
-
-//switch( CurrentNodeTypeProp.FieldType.FieldType )
-//{
-//    case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-//        string foo = string.Empty;
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Button:
-//        foo = string.Empty;
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Link:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.List:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Location:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Number:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Password:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.Text:
-//        break;
-
-//    case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
-//        break;
-
-//    default:
-//        CurrentRowError += "Unhandled field type for property " + CurrentNodeTypePropname + ": " + CurrentNodeTypeProp.FieldType.FieldType.ToString();
-//        break;
-
-//}//deal with each field type
