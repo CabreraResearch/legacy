@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
         public void overrideFirst( CswNbtMetaDataNodeType NodeType )
         {
             if( NodeType != null )
-                setFirst( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.LatestVersionNodeType.NodeTypeName );
+                setFirst( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName );
             else
                 setFirst( RelatedIdType.Unknown, Int32.MinValue, string.Empty );
         }
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
 
         public void overrideSecond( CswNbtMetaDataNodeType NodeType )
         {
-            setSecond( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.LatestVersionNodeType.NodeTypeName, NodeType.LatestVersionNodeType.IconFileName );
+            setSecond( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
         }
         public void overrideSecond( CswNbtMetaDataObjectClass ObjectClass )
         {
@@ -729,7 +729,7 @@ namespace ChemSW.Nbt
             {
                 CswNbtMetaDataNodeType DefaultFilterNT = _CswNbtResources.MetaData.getNodeType( SecondId );
                 if( DefaultFilterNT != null )
-                    DefaultFilterOC = DefaultFilterNT.ObjectClass;
+                    DefaultFilterOC = DefaultFilterNT.getObjectClass();
             }
             if( DefaultFilterOC != null )
             {

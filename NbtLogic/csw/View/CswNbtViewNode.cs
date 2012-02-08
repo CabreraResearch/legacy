@@ -276,7 +276,7 @@ namespace ChemSW.Nbt
                     {
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( ChildRelationship.SecondId );
                         if( NodeType != null )
-                            PotentialNodeTypes.Add( NodeType.FirstVersionNodeType );
+                            PotentialNodeTypes.Add( NodeType.getFirstVersionNodeType() );
                     }
                     else if( ChildRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                     {
@@ -285,18 +285,19 @@ namespace ChemSW.Nbt
                         {
                             foreach( CswNbtMetaDataNodeType PotentialNodeType in ObjectClass.NodeTypes )
                             {
-                                PotentialNodeTypes.Add( PotentialNodeType.FirstVersionNodeType );
+                                PotentialNodeTypes.Add( PotentialNodeType.getFirstVersionNodeType() );
                             }
                         }
                     }
 
                     foreach( CswNbtMetaDataNodeType FirstVersionNodeType in PotentialNodeTypes )
                     {
-                        CswNbtViewAddNodeTypeEntry NewEntry = new CswNbtViewAddNodeTypeEntry( FirstVersionNodeType.LatestVersionNodeType, ChildRelationship );
+                        CswNbtViewAddNodeTypeEntry NewEntry = new CswNbtViewAddNodeTypeEntry( FirstVersionNodeType.getNodeTypeLatestVersion(), ChildRelationship );
                         //if( !ret.Contains( NewEntry ) )
                         //{
-                        if( ( ( FirstVersionNodeType.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
-                                FirstVersionNodeType.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
+                        CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
+                        if( ( ( ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                                ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
                               _CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
                             _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType ) )
                         {
@@ -350,7 +351,7 @@ namespace ChemSW.Nbt
                         ( ( CswNbtViewRelationship.RelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
                          ( CurrentRelationship.SecondId == NodeTypeID ) ) ||
                         ( ( CswNbtViewRelationship.RelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
-                         ( CurrentRelationship.SecondId == _CswNbtResources.MetaData.getNodeType( NodeTypeID ).ObjectClass.ObjectClassId ) ) )
+                         ( CurrentRelationship.SecondId == _CswNbtResources.MetaData.getNodeType( NodeTypeID ).ObjectClassId ) ) )
                     {
                         ReturnVal = true;
                         break;

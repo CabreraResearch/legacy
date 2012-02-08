@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate ftsTbl = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "field_types_subfields_upd", "field_types_subfields" );
             DataTable ftsDataTbl = ftsTbl.getTable();
 
-            Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> FieldTypeIds = _CswNbtSchemaModTrnsctn.MetaData.FieldTypeIds;
-            foreach( CswNbtMetaDataFieldType.NbtFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.FieldTypeIds.Keys )
+            Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> FieldTypeIds = _CswNbtSchemaModTrnsctn.MetaData.getFieldTypeIds();
+            foreach( CswNbtMetaDataFieldType.NbtFieldType FieldType in FieldTypeIds.Keys )
             {
                 ICswNbtFieldTypeRule Rule = _CswNbtSchemaModTrnsctn.MetaData.getFieldTypeRule( FieldType );
                 bool reportable = false;

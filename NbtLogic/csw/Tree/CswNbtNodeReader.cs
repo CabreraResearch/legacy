@@ -147,7 +147,7 @@ namespace ChemSW.Nbt
             if( NodeType != null )
             {
                 //CswNbtNode.NameTemplate = NodeType.NameTemplateValue;
-                CswNbtNode.ObjectClassId = NodeType.ObjectClass.ObjectClassId;
+                CswNbtNode.ObjectClassId = NodeType.ObjectClassId;
                 CswNbtNode.IconFileName = NodeType.IconFileName;
             }
         }//fillFromNodeTypeId() 

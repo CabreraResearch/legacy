@@ -36,61 +36,121 @@ namespace ChemSW.Nbt.MetaData
             // We need to prevent versioning.  Furthermore, even though we theoretically prevent any changes to locked NodeTypes, 
             // we have to apply these changes to prior versions for compatibility.
 
-            foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypesByObjectClass )
+
+            //foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypesByObjectClass )
+            //{
+            //    foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
+            //    {
+            //        // Find exact matches
+            //        string PropName = ObjectClassProp.PropName;
+            //        bool DoSync = false;
+            //        CswNbtMetaDataNodeTypeProp MatchingNodeTypeProp = null;
+            //        foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
+            //        {
+            //            if( NodeTypeProp.ObjectClassProp != null && NodeTypeProp.ObjectClassProp.PropId == ObjectClassProp.PropId )
+            //            {
+            //                MatchingNodeTypeProp = NodeTypeProp;
+            //                break;
+            //            }
+            //        }
+            //        // Find name & fieldtype matches
+            //        if( MatchingNodeTypeProp == null )
+            //        {
+            //            foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
+            //            {
+            //                if( false == DoSync &&
+            //                    NodeTypeProp.PropName.ToLower() == PropName.ToLower() &&
+            //                    NodeTypeProp.FieldType.FieldType == ObjectClassProp.FieldType.FieldType )
+            //                {
+            //                    MatchingNodeTypeProp = NodeTypeProp;
+            //                    DoSync = true;
+            //                }
+            //                else if( NodeTypeProp.PropName.ToLower() == PropName.ToLower() )
+            //                {
+            //                    PropName += " " + NodeTypeProp.FieldType.FieldType.ToString();
+            //                }
+            //            }
+            //            while( null != NodeType.getNodeTypeProp( PropName ) )
+            //            {
+            //                PropName += " " + ObjectClassProp.ObjectClassPropId;
+            //            }
+
+            //        }
+            //        // Make missing ones
+            //        if( MatchingNodeTypeProp == null )
+            //        {
+            //            //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
+            //            makeNewProp( NodeType, null, ObjectClassProp.FieldType.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp );
+            //            DoSync = false;
+            //        }
+
+            //        if( DoSync )
+            //        {
+            //            CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp._DataRow );
+            //            CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp );
+            //        }
+
+            //    } // foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
+            //} // foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypes )
+
+
+            foreach( Int32 ObjectClassId in this.getObjectClassIds().Values )
             {
-                foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
+                foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProps( ObjectClassId ) )
                 {
-                    // Find exact matches
-                    string PropName = ObjectClassProp.PropName;
-                    bool DoSync = false;
-                    CswNbtMetaDataNodeTypeProp MatchingNodeTypeProp = null;
-                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
+                    foreach( Int32 NodeTypeId in this.getNodeTypeIds( ObjectClassId ) )
                     {
-                        if( NodeTypeProp.ObjectClassProp != null && NodeTypeProp.ObjectClassProp.PropId == ObjectClassProp.PropId )
+                        // Find exact matches first
+                        CswNbtMetaDataNodeTypeProp MatchingNTP = getNodeTypeProp( NodeTypeId, ObjectClassProp.ObjectClassPropId );
+
+                        if( MatchingNTP == null )
                         {
-                            MatchingNodeTypeProp = NodeTypeProp;
-                            break;
-                        }
-                    }
-                    // Find name & fieldtype matches
-                    if( MatchingNodeTypeProp == null )
-                    {
-                        foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeType.NodeTypeProps )
-                        {
-                            if( false == DoSync &&
-                                NodeTypeProp.PropName.ToLower() == PropName.ToLower() &&
-                                NodeTypeProp.FieldType.FieldType == ObjectClassProp.FieldType.FieldType )
+                            //string PropName = ObjectClassProp.PropName;
+                            bool DoSync = false;
+
+                            // Find name & fieldtype matches
+                            // Our objective is either to find a match, or to determine a unique propname
+                            bool KeepSearching = true;
+                            string PropName = ObjectClassProp.PropName;
+                            while( KeepSearching )
                             {
-                                MatchingNodeTypeProp = NodeTypeProp;
-                                DoSync = true;
-                            }
-                            else if( NodeTypeProp.PropName.ToLower() == PropName.ToLower() )
+                                MatchingNTP = getNodeTypeProp( NodeTypeId, PropName );
+                                if( MatchingNTP == null )
+                                {
+                                    KeepSearching = false;
+                                }
+                                else if( MatchingNTP.FieldTypeId == ObjectClassProp.FieldTypeId )
+                                {
+                                    DoSync = true;
+                                    KeepSearching = false;
+                                }
+                                else
+                                {
+                                    PropName += " " + ObjectClassProp.FieldType.FieldType.ToString();
+                                    PropName += " " + ObjectClassProp.ObjectClassPropId;
+                                }
+                            } // while( KeepSearching )
+
+                            // Make missing ones
+                            if( MatchingNTP == null )
                             {
-                                PropName += " " + NodeTypeProp.FieldType.FieldType.ToString();
+                                //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
+                                CswNbtMetaDataNodeType NodeType = getNodeType( NodeTypeId );
+                                makeNewProp( NodeType, null, ObjectClassProp.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp );
+                                DoSync = false;
                             }
-                        }
-                        while( null != NodeType.getNodeTypeProp( PropName ) )
-                        {
-                            PropName += " " + ObjectClassProp.ObjectClassPropId;
-                        }
 
-                    }
-                    // Make missing ones
-                    if( MatchingNodeTypeProp == null )
-                    {
-                        //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
-                        makeNewProp( NodeType, null, ObjectClassProp.FieldType.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp );
-                        DoSync = false;
-                    }
+                            if( DoSync )
+                            {
+                                CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNTP._DataRow );
+                                CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNTP );
+                            }
 
-                    if( DoSync )
-                    {
-                        CopyNodeTypePropFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp._DataRow );
-                        CopyNodeTypePropDefaultValueFromObjectClassProp( ObjectClassProp, MatchingNodeTypeProp );
-                    }
+                        } // if( MatchingNodeTypeProp == null )
+                    } // foreach( CswNbtMetaDataNodeType NodeType in this.getNodeTypesByObjectClass( ObjectClassId ) )
+                } // foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in getObjectClassProps(ObjectClassId) )
+            } // foreach( Int32 ObjectClassId in this.getObjectClassIds() )
 
-                } // foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in NodeType.ObjectClass.ObjectClassProps )
-            } // foreach( CswNbtMetaDataNodeType NodeType in this.NodeTypes )
 
 
             // Now reset the "real" meta data collection in CswNbtResources for these changes

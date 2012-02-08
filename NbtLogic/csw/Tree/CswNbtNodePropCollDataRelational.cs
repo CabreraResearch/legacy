@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
                     CswTableSelect CswTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodePropCollDataRelational_PropsTable", NodeType.TableName );
                     string FilterColumn = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
                     CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
                     {
                         foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
                         {
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt
                         DataTable = CswTableSelect.getEmptyTable();
 
                     _PropsTable = makeEmptyJctNodesProps();
-                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
                     {
                         DataRow NewRow = _PropsTable.NewRow();
                         NewRow["nodetypepropid"] = CurrentNodeTypeProp.PropId.ToString();
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
 
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-            foreach ( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+            foreach ( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
             {
                 foreach ( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
                 {

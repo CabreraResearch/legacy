@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId );
                 if( TargetNodeType != null )
                 {
-                    CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.ObjectClass;
+                    CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.getObjectClass();
 
                     CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
                     if( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )

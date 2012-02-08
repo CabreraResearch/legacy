@@ -118,9 +118,13 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _ObjectClassPropRow["objectclassid"] ) ); }
         }
+        public Int32 FieldTypeId
+        {
+            get { return CswConvert.ToInt32( _ObjectClassPropRow["fieldtypeid"] ); }
+        }
         public CswNbtMetaDataFieldType FieldType
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( CswConvert.ToInt32( _ObjectClassPropRow["fieldtypeid"] ) ); }
+            get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId ); }
         }
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps
@@ -419,7 +423,7 @@ namespace ChemSW.Nbt.MetaData
                     if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     }
                     else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                     {

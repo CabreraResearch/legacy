@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             // Enforce only one Location property per nodetype
-            foreach( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp in NodeTypeProp.NodeType.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp in NodeTypeProp.NodeType.getNodeTypeProps() )
             {
                 if( OtherNodeTypeProp != NodeTypeProp &&
                     NodeTypeProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )

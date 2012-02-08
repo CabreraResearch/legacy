@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.Security
                             }
                             else if( CheckAllTabPermissions )
                             {
-                                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                                 {
                                     TabsToCheck.Add( Tab );
                                 }
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.Security
 
                         // Only Administrators can edit Roles
                         if( ret &&
-                            NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                            NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
                             Permission != NodeTypePermission.View &&
                             !User.IsAdministrator() )
                         {

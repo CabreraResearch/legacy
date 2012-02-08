@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.WebPages
 
         private bool _CheckVersioning()
         {
-            bool CauseVersioning = ( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
+            bool CauseVersioning = ( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
                                 _VersionSelect == _NewNodesNewVersion );
             if( CauseVersioning )
             {
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.WebPages
                         AddTable.addControl( 1, 1, AddPropTabSelect );
                         AddTable.addControl( 2, 0, AddPropNameLabel );
                         AddTable.addControl( 2, 1, AddPropName );
-                        if( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                        if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                         {
                             AddTable.addControl( 3, 0, AddNewPropVersionLabel );
                             AddTable.addControl( 3, 1, AddNewPropVersionSelect );
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.WebPages
                         AddTable.addControl( 0, 1, AddTabNameTextBox );
                         AddTable.addControl( 1, 0, AddTabOrderLabel );
                         AddTable.addControl( 1, 1, AddTabOrderTextBox );
-                        if( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
+                        if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                         {
                             AddTable.addControl( 2, 0, AddNewTabVersionLabel );
                             AddTable.addControl( 2, 1, AddNewTabVersionSelect );
@@ -396,7 +396,7 @@ namespace ChemSW.Nbt.WebPages
         private void init_AddNodeTypePage()
         {
             ObjectClassSelect.Items.Clear();
-            foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.ObjectClasses )
+            foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.getObjectClasses() )
             {
                 ListItem ClassItem = new ListItem( ObjectClass.ObjectClass.ToString(),
                                                   ObjectClass.ObjectClassId.ToString() );
@@ -560,7 +560,7 @@ namespace ChemSW.Nbt.WebPages
             else
             {
 
-                foreach( CswNbtMetaDataFieldType FieldType in Master.CswNbtResources.MetaData.FieldTypes )
+                foreach( CswNbtMetaDataFieldType FieldType in Master.CswNbtResources.MetaData.getFieldTypes() )
                 {
                     // Temporarily skip unimplemented ones
                     // If Inspection, filter to allowed question field types
@@ -576,7 +576,7 @@ namespace ChemSW.Nbt.WebPages
             }
             // Tab Select
             AddPropTabSelect.Items.Clear();
-            foreach( CswNbtMetaDataNodeTypeTab Tab in SelectedNodeType.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in SelectedNodeType.getNodeTypeTabs() )
                 AddPropTabSelect.Items.Add( new ListItem( Tab.TabName, Tab.TabId.ToString() ) );
 
             if( SelectedNodeTypeTab != null )

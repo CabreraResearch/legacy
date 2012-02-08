@@ -939,7 +939,7 @@ namespace ChemSW.Nbt.ImportExport
                             {
 
                                 //First check for dundancy
-                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in CurrentNbtNode.NodeType.NodeTypeProps )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in CurrentNbtNode.NodeType.getNodeTypeProps() )
                                 {
                                     if( MetaDataProp.IsUnique )
                                     {

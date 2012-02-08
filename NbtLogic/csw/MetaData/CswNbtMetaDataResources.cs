@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void RecalculateQuestionNumbers( CswNbtMetaDataNodeType NodeType )
         {
-            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
             {
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first

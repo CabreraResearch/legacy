@@ -40,10 +40,10 @@ namespace ChemSW.Nbt.WebServices
             var Props = UniqueProps ?? new Dictionary<int, string>();
             if( null != NodeType )
             {
-                CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getLatestVersion( NodeType );
+                CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType );
                 while( ThisVersionNodeType != null )
                 {
-                    foreach( CswViewBuilderProp ViewBuilderProp in ThisVersionNodeType.NodeTypeProps.Cast<CswNbtMetaDataNodeTypeProp>()
+                    foreach( CswViewBuilderProp ViewBuilderProp in ThisVersionNodeType.getNodeTypeProps().Cast<CswNbtMetaDataNodeTypeProp>()
                                                          .Where( ThisProp => !Props.ContainsValue( ThisProp.PropNameWithQuestionNo.ToLower() ) &&
                                                                  !Props.ContainsKey( ThisProp.FirstPropVersionId ) )
                                                          .Select( ThisProp => new CswViewBuilderProp( ThisProp ) ) )
@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.WebServices
                         Props.Add( ViewBuilderProp.MetaDataPropId, ViewBuilderProp.MetaDataPropNameWithQuestionNo.ToLower() );
                         NtProps.Add( ViewBuilderProp );
                     }
-                    ThisVersionNodeType = ThisVersionNodeType.PriorVersionNodeType;
+                    ThisVersionNodeType = ThisVersionNodeType.getPriorVersionNodeType();
                 }
             }
             UniqueProps = Props;

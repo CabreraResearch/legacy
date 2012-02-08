@@ -523,8 +523,8 @@ namespace ChemSW.Nbt.MetaData
 
         public string CompositeTemplateText
         {
-            get { return CswNbtMetaData.TemplateValueToTemplateText( NodeType.NodeTypeProps, CompositeTemplateValue ); }
-            set { CompositeTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( NodeType.NodeTypeProps, value ); }
+            get { return CswNbtMetaData.TemplateValueToTemplateText( NodeType.getNodeTypeProps(), CompositeTemplateValue ); }
+            set { CompositeTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( NodeType.getNodeTypeProps(), value ); }
         }
         public string CompositeTemplateValue
         {
@@ -701,9 +701,14 @@ namespace ChemSW.Nbt.MetaData
             set { _NodeTypePropRow["isquicksearch"] = CswConvert.ToDbVal( value ); }
         }
 
+        public Int32 FieldTypeId
+        {
+            get { return CswConvert.ToInt32( _NodeTypePropRow["fieldtypeid"] ); }
+        }
+
         public CswNbtMetaDataFieldType FieldType
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( CswConvert.ToInt32( _NodeTypePropRow["fieldtypeid"].ToString() ) ); }
+            get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId ); }
         }
 
         public CswNbtMetaDataNodeType NodeType
@@ -899,7 +904,7 @@ namespace ChemSW.Nbt.MetaData
         public bool HasSubProps()
         {
             bool ret = false;
-            foreach( CswNbtMetaDataNodeTypeProp OtherProp in NodeType.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp OtherProp in NodeType.getNodeTypeProps() )
             {
                 if( OtherProp.FilterNodeTypePropId == this.FirstPropVersionId )
                 {
@@ -1067,7 +1072,7 @@ namespace ChemSW.Nbt.MetaData
         public bool HasConditionalProperties()
         {
             bool ret = false;
-            foreach( CswNbtMetaDataNodeTypeProp OtherProp in NodeType.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp OtherProp in NodeType.getNodeTypeProps() )
             {
                 if( OtherProp.hasFilter() && OtherProp.FilterNodeTypePropId == this.PropId )
                 {
@@ -1083,13 +1088,13 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 CswNbtMetaDataNodeTypeProp ret = null;
-                if( this.NodeType.IsLatestVersion )
+                if( this.NodeType.IsLatestVersion() )
                 {
                     ret = this;
                 }
                 else
                 {
-                    foreach( CswNbtMetaDataNodeTypeProp OtherProp in this.NodeType.LatestVersionNodeType.NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp OtherProp in this.NodeType.getNodeTypeLatestVersion().getNodeTypeProps() )
                     {
                         if( OtherProp.FirstPropVersionId == this.FirstPropVersionId )
                             ret = OtherProp;
@@ -1514,7 +1519,7 @@ namespace ChemSW.Nbt.MetaData
                     if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     }
                     else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                     {

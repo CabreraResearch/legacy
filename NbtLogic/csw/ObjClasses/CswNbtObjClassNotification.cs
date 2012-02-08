@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
                 if( NodeType != null )
                 {
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
                     {
                         PropertyOptions.Add( Prop.PropName );
                     }

@@ -70,8 +70,8 @@ namespace ChemSW.Nbt.WebPages
             get
             {
                 bool CanVersion = ( false == SelectedNodeType.IsLocked &&
-                                    SelectedNodeType.IsLatestVersion &&
-                                    SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                                    SelectedNodeType.IsLatestVersion() &&
+                                    SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                 return CanVersion;
             }
         }
@@ -524,7 +524,7 @@ namespace ChemSW.Nbt.WebPages
 
                 if( _SelectedNodeType != null )
                 {
-                    if( !_SelectedNodeType.CanSave )
+                    if( false == _SelectedNodeType.CanSave() )
                     {
                         if( _SaveButton != null )
                         {
@@ -556,7 +556,7 @@ namespace ChemSW.Nbt.WebPages
                         _SaveButton.Visible = true;   // BZ 7877
                     }
 
-                    if( !_SelectedNodeType.CanDelete )
+                    if( false == _SelectedNodeType.CanDelete() )
                     {
                         DesignMenu.AllowDelete = false;
                     }
@@ -663,9 +663,10 @@ namespace ChemSW.Nbt.WebPages
         {
             try
             {
-                if( SelectedNodeType.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
+                CswNbtMetaDataObjectClass SelectedObjectClass = SelectedNodeType.getObjectClass();
+                if( SelectedObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
                 {
-                    string ObjectClass = SelectedNodeType.ObjectClass.ObjectClass.ToString();
+                    string ObjectClass = SelectedObjectClass.ObjectClass.ToString();
                     string NodeTypeName = SelectedNodeType.NodeTypeName;
                     throw ( new CswDniException( "Only " + LabelNodeType + "s of the GenericObject class can be changed to other " + LabelNodeType + "s; the object class of the current " + LabelNodeType + " (" + NodeTypeName + ") is " + ObjectClass ) );
                 }
@@ -695,7 +696,7 @@ namespace ChemSW.Nbt.WebPages
                     string NewCategory = EditCategoryTextBox.Text;
                     if( OldCategory != NewCategory )
                     {
-                        foreach( CswNbtMetaDataNodeType NodeType in Master.CswNbtResources.MetaData.NodeTypes )
+                        foreach( CswNbtMetaDataNodeType NodeType in Master.CswNbtResources.MetaData.getNodeTypes() )
                         {
                             if( NodeType.Category == OldCategory )
                                 NodeType.Category = NewCategory;
@@ -720,7 +721,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // BZ 8372 - Do this first, since after versioning we don't want the new version to be locked
                     bool IsVersioning = _CheckVersioning();
-                    if( false == IsVersioning && SelectedNodeType.IsLatestVersion )
+                    if( false == IsVersioning && SelectedNodeType.IsLatestVersion() )
                     {
                         SelectedNodeType.IsLocked = LockedCheckbox.Checked;
                     }
@@ -1221,7 +1222,7 @@ namespace ChemSW.Nbt.WebPages
         private void init_EditNodeTypePage()
         {
             ChangeObjectClassSelect.Items.Clear();
-            foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.ObjectClasses )
+            foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.getObjectClasses() )
             {
                 ListItem ObjectClassItem = new ListItem( ObjectClass.ObjectClass.ToString(),
                                                          ObjectClass.ObjectClassId.ToString() );
@@ -1246,7 +1247,7 @@ namespace ChemSW.Nbt.WebPages
             _ChangeObjectClassButton.Visible = false;
             if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType && CswConvert.ToInt32( _SelectedValue ) > 0 )
             {
-                CswNbtMetaDataObjectClass ObjectClass = SelectedNodeType.ObjectClass;
+                CswNbtMetaDataObjectClass ObjectClass = SelectedNodeType.getObjectClass();
                 if( ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass )
                 {
                     ChangeObjectClassLabel.Visible = true;
@@ -1258,7 +1259,7 @@ namespace ChemSW.Nbt.WebPages
                 EditNodeTypeName.Text = SelectedNodeType.NodeTypeName;
 
                 // case 24294 part 6
-                if( SelectedNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass &&
+                if( SelectedNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass &&
                     SelectedNodeType.NodeTypeName == CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName )
                 {
                     EditNodeTypeName.Enabled = false;
@@ -1288,7 +1289,7 @@ namespace ChemSW.Nbt.WebPages
                 // Prop select options
                 AddToNameTemplatePropSelect.Items.Clear();
                 AddToNameTemplatePropSelect.Items.Add( new ListItem( "Select " + LabelNodeTypeProp + " To Add...", "" ) );
-                foreach( CswNbtMetaDataNodeTypeProp Prop in SelectedNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in SelectedNodeType.getNodeTypeProps() )
                 {
                     ListItem AddToNameTemplatePropItem = new ListItem( Prop.PropName, Prop.PropName );
                     AddToNameTemplatePropSelect.Items.Add( AddToNameTemplatePropItem );
@@ -1459,7 +1460,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // Tab Select
                     EditPropTabSelect.Items.Clear();
-                    foreach( CswNbtMetaDataNodeTypeTab Tab in SelectedNodeType.NodeTypeTabs )
+                    foreach( CswNbtMetaDataNodeTypeTab Tab in SelectedNodeType.getNodeTypeTabs() )
                     {
                         EditPropTabSelect.Items.Add( new ListItem( Tab.TabName, Tab.TabName ) );
                     }
@@ -1635,7 +1636,7 @@ namespace ChemSW.Nbt.WebPages
                             AddPropToCompositeTemplateSelect.Items.Clear();
                             AddPropToCompositeTemplateSelect.Items.Add( new ListItem( "Select " + LabelNodeTypeProp + " To Add...", "" ) );
                             AddPropToCompositeTemplateSelect.Attributes.Add( "onchange", "addPropToTemplate(this, '" + TemplateValue.ClientID + "', '" + CswNbtMetaData._TemplateLeftDelimiter.ToString() + "', '" + CswNbtMetaData._TemplateRightDelimiter.ToString() + "');" );
-                            foreach( CswNbtMetaDataNodeTypeProp OtherProp in SelectedNodeTypeProp.NodeType.NodeTypeProps )
+                            foreach( CswNbtMetaDataNodeTypeProp OtherProp in SelectedNodeTypeProp.NodeType.getNodeTypeProps() )
                             {
                                 if( OtherProp.PropId != SelectedNodeTypeProp.PropId )
                                     AddPropToCompositeTemplateSelect.Items.Add( new ListItem( OtherProp.PropName, OtherProp.PropName ) );
@@ -2013,7 +2014,7 @@ namespace ChemSW.Nbt.WebPages
 
                             DropDownList NodeTypeSelectFkValue = new DropDownList();
                             NodeTypeSelectFkValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
-                            foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.ObjectClasses )
+                            foreach( CswNbtMetaDataObjectClass ObjectClass in Master.CswNbtResources.MetaData.getObjectClasses() )
                             {
                                 NodeTypeSelectFkValue.Items.Add( new ListItem( ObjectClass.ObjectClass.ToString(), ObjectClass.ObjectClassId.ToString() ) );
                             }
@@ -2072,7 +2073,7 @@ namespace ChemSW.Nbt.WebPages
 
                             DropDownList RelationshipValue = new DropDownList();
                             RelationshipValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
-                            foreach( CswNbtMetaDataNodeTypeProp OtherProp in SelectedNodeTypeProp.NodeType.NodeTypeProps )
+                            foreach( CswNbtMetaDataNodeTypeProp OtherProp in SelectedNodeTypeProp.NodeType.getNodeTypeProps() )
                             {
                                 if( OtherProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                                     RelationshipValue.Items.Add( new ListItem( OtherProp.PropName, OtherProp.PropId.ToString() ) );
@@ -2102,7 +2103,7 @@ namespace ChemSW.Nbt.WebPages
                                     if( RelatedNodeType != null )
                                     {
                                         RelatedPropType.Value = CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString();
-                                        RelatedProps = RelatedNodeType.NodeTypeProps;
+                                        RelatedProps = RelatedNodeType.getNodeTypeProps();
                                     }
                                 }
                                 else

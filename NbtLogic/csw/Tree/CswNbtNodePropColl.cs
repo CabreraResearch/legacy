@@ -271,7 +271,7 @@ namespace ChemSW.Nbt
         private void _populateProps()// CswPrimaryKey NodePk, Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
-            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
             {
                 DataRow PropRow = null;
                 ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
@@ -301,7 +301,7 @@ namespace ChemSW.Nbt
 
             if( _CswNbtNode != null )
             {
-                CswNbtObjClass _CswNbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, MetaDataNodeType.ObjectClass.ObjectClassId, _CswNbtNode );
+                CswNbtObjClass _CswNbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, MetaDataNodeType.ObjectClassId, _CswNbtNode );
                 _CswNbtObjClass.afterPopulateProps();
             }
 
@@ -364,7 +364,7 @@ namespace ChemSW.Nbt
             {
                 CswNbtNodePropWrapper ReturnVal = null;
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in _NodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in _NodeType.getNodeTypeProps() )
                 {
                     if( Prop.ObjectClassProp != null )
                     {

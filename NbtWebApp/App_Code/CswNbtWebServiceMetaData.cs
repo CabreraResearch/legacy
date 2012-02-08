@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( null == ObjectClass )
             {
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
                     if( false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
                     {
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
                 {
-                    if( NodeType.IsLatestVersion && false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
+                    if( NodeType.IsLatestVersion() && false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
                     {
                         _addNodeTypeAttributes( NodeType, ReturnVal );
                     }
@@ -48,14 +48,15 @@ namespace ChemSW.Nbt.WebServices
 
         private void _addNodeTypeAttributes( CswNbtMetaDataNodeType NodeType, JObject ReturnVal )
         {
+            CswNbtMetaDataObjectClass ObjectClass = NodeType.getObjectClass();
             string NtName = "nodetype_" + NodeType.NodeTypeId;
             ReturnVal[NtName] = new JObject();
             ReturnVal[NtName]["id"] = NodeType.NodeTypeId;
             ReturnVal[NtName]["name"] = NodeType.NodeTypeName;
-            ReturnVal[NtName]["objectclass"] = NodeType.ObjectClass.ObjectClass.ToString();
-            ReturnVal[NtName]["objectclassid"] = NodeType.ObjectClass.ObjectClassId.ToString();
+            ReturnVal[NtName]["objectclass"] = ObjectClass.ObjectClass.ToString();
+            ReturnVal[NtName]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
 
-            switch( NodeType.ObjectClass.ObjectClass )
+            switch( ObjectClass.ObjectClass )
             {
                 case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
                     CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );

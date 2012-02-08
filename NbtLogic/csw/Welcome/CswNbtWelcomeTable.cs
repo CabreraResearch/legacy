@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Welcome
             Int32 TaskNodeTypeId = Int32.MinValue;
             Int32 ScheduleNodeTypeId = Int32.MinValue;
             Int32 EquipmentNodeTypeId = Int32.MinValue;
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getLatestVersionNodeTypes() )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
                 string NodeTypeName = NodeType.NodeTypeName;
                 Int32 FirstVersionNTId = NodeType.FirstVersionNodeTypeId;

@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.ImportExport
                             _StatusUpdate( "Processing NodeTypeTab " + t.ToString() + " of " + TabRows.Length );
 
                             CswNbtMetaDataNodeTypeTab ThisTab = null;
-                            foreach( CswNbtMetaDataNodeTypeTab ExistingTab in DestNodeType.NodeTypeTabs )
+                            foreach( CswNbtMetaDataNodeTypeTab ExistingTab in DestNodeType.getNodeTypeTabs() )
                             {
                                 if( NodeTypeTabRow[CswNbtMetaDataNodeTypeTab._Attribute_TabName].ToString() == ExistingTab.TabName )
                                 {
@@ -313,7 +313,7 @@ namespace ChemSW.Nbt.ImportExport
                                     _StatusUpdate( "Processing NodeTypeProp " + p.ToString() + " of " + PropRows.Length );
                                 // The nodetype might have object class props, so we have to handle that case
                                 CswNbtMetaDataNodeTypeProp ThisProp = null;
-                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in DestNodeType.NodeTypeProps )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in DestNodeType.getNodeTypeProps() )
                                 {
                                     if( MetaDataProp.PropName.ToLower() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString().ToLower() &&
                                         MetaDataProp.FieldType.FieldType.ToString() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() )
@@ -573,7 +573,7 @@ namespace ChemSW.Nbt.ImportExport
                             }
 
                             // Is this node redundant with another existing node?
-                            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in Node.NodeType.NodeTypeProps )
+                            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in Node.NodeType.getNodeTypeProps() )
                             {
                                 if( MetaDataProp.IsUnique )
                                 {

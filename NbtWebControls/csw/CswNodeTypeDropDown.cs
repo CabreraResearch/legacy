@@ -34,13 +34,13 @@ namespace ChemSW.NbtWebControls
             if( IncludeBlank )
                 this.Items.Add( new ListItem( "Select...", "" ) );
 
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                if( ConstrainToObjectClassId == Int32.MinValue || NodeType.ObjectClass.ObjectClassId == ConstrainToObjectClassId ) 
+                if( ConstrainToObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainToObjectClassId ) 
                     this.Items.Add( new ListItem( NodeType.NodeTypeName, _NodeTypePrefix + NodeType.FirstVersionNodeTypeId.ToString() ) );
             }
 
-            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
                 if( ConstrainToObjectClassId == Int32.MinValue || ObjectClass.ObjectClassId == ConstrainToObjectClassId )
                     this.Items.Add( new ListItem( "All " + ObjectClass.ObjectClass.ToString(), _ObjectClassPrefix + ObjectClass.ObjectClassId.ToString() ) );
@@ -90,7 +90,7 @@ namespace ChemSW.NbtWebControls
                 CswNbtMetaDataNodeType ret = null;
                 Int32 SNTId = SelectedNodeTypeFirstVersionId;
                 if( SNTId != Int32.MinValue )
-                    ret = _CswNbtResources.MetaData.getNodeType( SNTId ).LatestVersionNodeType;
+                    ret = _CswNbtResources.MetaData.getNodeTypeLatestVersion( SNTId );
                 return ret;
             }
         }

@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.Schema
 
         public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
         {
-            return _CswNbtResources.MetaData.NodeTypes;
+            return _CswNbtResources.MetaData.getNodeTypes();
         }
 
         public void writeNodeTypesAsXml()

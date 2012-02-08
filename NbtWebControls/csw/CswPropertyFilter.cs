@@ -481,10 +481,10 @@ namespace ChemSW.NbtWebControls
             SortedList PropsById = new SortedList();
 
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getLatestVersion( NodeType );
+            CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType );
             while( ThisVersionNodeType != null )
             {
-                foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.getNodeTypeProps() )
                 {
                     if( !PropsByName.ContainsKey( ThisProp.PropNameWithQuestionNo.ToLower() ) &&
                         !PropsById.ContainsKey( ThisProp.FirstPropVersionId ) )
@@ -493,7 +493,7 @@ namespace ChemSW.NbtWebControls
                         PropsById.Add( ThisProp.FirstPropVersionId, ThisProp );
                     }
                 }
-                ThisVersionNodeType = ThisVersionNodeType.PriorVersionNodeType;
+                ThisVersionNodeType = ThisVersionNodeType.getPriorVersionNodeType();
             }
             return PropsByName.Values;
         }

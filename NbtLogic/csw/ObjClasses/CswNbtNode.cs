@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
             _NodeSpecies = NodeSpecies;
 
             if( NodeType != null )
-                ObjectClassId = NodeType.ObjectClass.ObjectClassId;
+                ObjectClassId = NodeType.ObjectClassId;
 
         }//ctor()
 

@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
                     AddedProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( TestNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "AddedProp", 0 );
                 }
 
-                CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( TestNodeType.NodeTypeId ).LatestVersionNodeType;
+                CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeLatestVersion( TestNodeType.NodeTypeId );
                 TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             }//if we haven't already made a node
 

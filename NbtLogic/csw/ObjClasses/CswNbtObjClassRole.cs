@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // set NodeType Permissions options
                 // Could be a performance problem!!!
                 Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getLatestVersionNodeTypes() )
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
                     foreach( CswNbtPermit.NodeTypePermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypePermission ) ) )
                     {
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.ObjClasses
                         NodeTypeOptions.Add( Key, Value );
 
                     }
-                    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                     {
                         foreach( CswNbtPermit.NodeTypeTabPermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypeTabPermission ) ) )
                         {

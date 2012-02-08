@@ -266,7 +266,7 @@ namespace ChemSW.NbtSchemaDiff
                             {
                                 Int32 PropCount = 0;
                                 Int32 MatchCount = 0;
-                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.NodeTypeProps )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.getNodeTypeProps() )
                                 {
                                     PropCount++;
                                     if( LeftNode.Properties[MetaDataProp].Field1 == RightNode.Properties[RightNode.NodeType.getNodeTypeProp( MetaDataProp.PropName )].Field1 )
@@ -605,7 +605,7 @@ namespace ChemSW.NbtSchemaDiff
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
                                   ( (CswNbtMetaDataNodeType) LeftObj ).NodeTypeName == ( (CswNbtMetaDataNodeType) RightObj ).NodeTypeName &&
-                                  ( (CswNbtMetaDataNodeType) LeftObj ).ObjectClass.ObjectClass == ( (CswNbtMetaDataNodeType) RightObj ).ObjectClass.ObjectClass );
+                                  ( (CswNbtMetaDataNodeType) LeftObj ).getObjectClass().ObjectClass == ( (CswNbtMetaDataNodeType) RightObj ).getObjectClass().ObjectClass );
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
                     Applies = true;

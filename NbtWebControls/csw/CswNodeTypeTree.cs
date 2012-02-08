@@ -151,7 +151,7 @@ namespace ChemSW.NbtWebControls
                 case NodeTypeTreeSelectedType.NodeTypeBaseVersion:
                     SelectedBaseVersion = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PriorSelectedValue ) );
                     if(SelectedBaseVersion != null)
-                        SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
+                        SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                     CategoryXmlNode = _makeCategories( XmlDoc, SelectedCategory, Root );
                     if( CategoryXmlNode != null ) 
                         NodeTypeXmlNode = _makeNodeTypes( XmlDoc, SelectedBaseVersion, SelectedCategory, CategoryXmlNode );
@@ -160,8 +160,8 @@ namespace ChemSW.NbtWebControls
                     SelectedNodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PriorSelectedValue ) );
                     if( SelectedNodeType != null )
                     {
-                        SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
-                        SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
+                        SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
+                        SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                     }
                     CategoryXmlNode = _makeCategories( XmlDoc, SelectedCategory, Root );
                     if( CategoryXmlNode != null ) 
@@ -174,8 +174,8 @@ namespace ChemSW.NbtWebControls
                     if( SelectedTab != null )
                     {
                         SelectedNodeType = SelectedTab.NodeType;
-                        SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
-                        SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
+                        SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
+                        SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                     }
                     CategoryXmlNode = _makeCategories( XmlDoc, SelectedCategory, Root );
                     if( CategoryXmlNode != null ) 
@@ -192,8 +192,8 @@ namespace ChemSW.NbtWebControls
                     {
 						SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( SelectedProperty.EditLayout.TabId );
                         SelectedNodeType = SelectedTab.NodeType;
-                        SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
-                        SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
+                        SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
+                        SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                         if( SelectedProperty.hasFilter() )
                             SelectedPropFilter = SelectedNodeType.getNodeTypePropByFirstVersionId( SelectedProperty.FilterNodeTypePropId ).PropId.ToString() + "_" + SelectedProperty.FilterNodeTypePropId + "_" + SelectedProperty.getFilterString();
                     }
@@ -211,8 +211,8 @@ namespace ChemSW.NbtWebControls
                     {
 						SelectedTab = _CswNbtResources.MetaData.getNodeTypeTab( SelectedProperty.EditLayout.TabId );
                         SelectedNodeType = SelectedTab.NodeType;
-                        SelectedBaseVersion = SelectedNodeType.FirstVersionNodeType;
-                        SelectedCategory = SelectedBaseVersion.LatestVersionNodeType.Category;
+                        SelectedBaseVersion = SelectedNodeType.getFirstVersionNodeType();
+                        SelectedCategory = SelectedBaseVersion.getNodeTypeLatestVersion().Category;
                     }
                     CategoryXmlNode = _makeCategories( XmlDoc, SelectedCategory, Root );
                     if( CategoryXmlNode != null )
@@ -243,7 +243,7 @@ namespace ChemSW.NbtWebControls
         {
             XmlNode ret = null;
             SortedList CategoryNodes = new SortedList();
-            foreach( CswNbtMetaDataNodeType LatestVersionNodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+            foreach( CswNbtMetaDataNodeType LatestVersionNodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
                 if( _IncludeThisNodeType( LatestVersionNodeType ) )
                 {
@@ -281,9 +281,9 @@ namespace ChemSW.NbtWebControls
         private XmlNode _makeNodeTypes( XmlDocument XmlDoc, CswNbtMetaDataNodeType SelectedNodeType, string Category, XmlNode ParentNode )
         {
             XmlNode ret = null;
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
-                CswNbtMetaDataNodeType LatestVersionNodeType = NodeType.LatestVersionNodeType;
+                CswNbtMetaDataNodeType LatestVersionNodeType = NodeType.getNodeTypeLatestVersion();
                 if( ( LatestVersionNodeType.Category == Category || !ShowCategories ) && _IncludeThisNodeType( LatestVersionNodeType ) )
                 {
                     // Is this a versioned nodetype?
@@ -304,8 +304,8 @@ namespace ChemSW.NbtWebControls
                             BaseVersionNode = _makeTreeViewXmlNode( XmlDoc,
                                                                     NodeTypeBaseVersionPrefix + NodeType.FirstVersionNodeTypeId.ToString(),
                                                                     NodeTypeBaseVersionPrefix + NodeType.FirstVersionNodeTypeId.ToString(),
-                                                                    _CswNbtResources.MetaData.getLatestVersion( NodeType ).NodeTypeName,
-                                                                    "Images/icons/" + _CswNbtResources.MetaData.getLatestVersion( NodeType ).IconFileName,
+                                                                    _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType ).NodeTypeName,
+                                                                    "Images/icons/" + _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType ).IconFileName,
                                                                     false,
                                                                     ( SelectedNodeType != null && NodeType.NodeTypeId == SelectedNodeType.NodeTypeId ),
                                                                     "" );
@@ -323,9 +323,10 @@ namespace ChemSW.NbtWebControls
 
                         // Add this nodetype
                         string NodeTypeName = NodeType.NodeTypeName.ToString();
-                        if( NodeType.VersionNo > 1 || !NodeType.IsLatestVersion )
+                        bool IsLatest = NodeType.IsLatestVersion();
+                        if( NodeType.VersionNo > 1 || false == IsLatest )
                             NodeTypeName += " (v" + NodeType.VersionNo.ToString() + ")";
-                        if( !NodeType.IsLatestVersion )
+                        if( false == IsLatest )
                             NodeTypeName = "<span style=\"color: #6699cc\">" + NodeTypeName + "</span>";
 
                         XmlNode Node = _makeTreeViewXmlNode( XmlDoc,
@@ -350,7 +351,7 @@ namespace ChemSW.NbtWebControls
             XmlNode ret = null;
             if( ShowTabsAndProperties )
             {
-                foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NodeType.NodeTypeTabs )
+                foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NodeType.getNodeTypeTabs() )
                 {
                     XmlNode TabNode = _makeTreeViewXmlNode( XmlDoc,
                                                            NodeTypeTabPrefix + NodeTypeTab.TabId.ToString(),
@@ -481,10 +482,10 @@ namespace ChemSW.NbtWebControls
         private bool _IncludeThisNodeType( CswNbtMetaDataNodeType NodeType )
         {
             // BZ 7121 - Must have view permission on the nodetype
-			return ( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType.FirstVersionNodeType ) &&
+			return ( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType.getFirstVersionNodeType() ) &&
                      ( ( NodeTypeIdsToFilterOut == null || !( delimiter + NodeTypeIdsToFilterOut + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( NodeTypeIdsToInclude == null || ( delimiter + NodeTypeIdsToInclude + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
-                       ( ObjectClassIdsToInclude == null || ( delimiter + ObjectClassIdsToInclude + delimiter ).Contains( delimiter + NodeType.ObjectClass.ObjectClassId.ToString() + delimiter ) ) ) );
+                       ( ObjectClassIdsToInclude == null || ( delimiter + ObjectClassIdsToInclude + delimiter ).Contains( delimiter + NodeType.ObjectClassId.ToString() + delimiter ) ) ) );
         }
 
 

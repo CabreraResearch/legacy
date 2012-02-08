@@ -35,8 +35,8 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType ThisCreatedNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                     if( null != ThisCreatedNodeType )
                     {
-                        CswNbtMetaDataNodeType CreatedNodeType = ThisCreatedNodeType.LatestVersionNodeType;
-                        CswNbtMetaDataObjectClass CreatedMetaDataObjectClass = CreatedNodeType.ObjectClass;
+                        CswNbtMetaDataNodeType CreatedNodeType = ThisCreatedNodeType.getNodeTypeLatestVersion();
+                        CswNbtMetaDataObjectClass CreatedMetaDataObjectClass = CreatedNodeType.getObjectClass();
 
                         CswNbtObjClass CreatedObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, CreatedMetaDataObjectClass );
                         if( !( CreatedObjClass is ICswNbtPropertySetGeneratorTarget ) )
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.Actions
                         SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
                         foreach( Int32 refNodeTypeId in SelectedNodeTypeIds )
                         {
-                            CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).LatestVersionNodeType;
+                            CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).getNodeTypeLatestVersion();
 
                             CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                             NewNode.copyPropertyValues( CswNbtNodeGenerator );

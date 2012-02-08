@@ -85,9 +85,9 @@ namespace ChemSW.Nbt.WebServices
         {
             JProperty ReturnJson = new JProperty( "searches",
                 new JObject(
-                    from CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes
+                    from CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion()
                     where View.ContainsNodeType( NodeType )
-                    from CswNbtMetaDataNodeTypeProp MetaDataProp in NodeType.NodeTypeProps
+                    from CswNbtMetaDataNodeTypeProp MetaDataProp in NodeType.getNodeTypeProps()
                     where MetaDataProp.MobileSearch
                     let PropId = ( MetaDataProp.ObjectClassProp != null ) ? "search_ocp_" + MetaDataProp.ObjectClassPropId : "search_ntp_" + MetaDataProp.PropId
                     select new JProperty( PropId, CswTools.SafeJavascriptParam( MetaDataProp.PropNameWithQuestionNo ) ) ) );
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt.WebServices
 
                 _addObjectClassProps( ThisNode, NodeProps );
 
-                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.NodeTypeProps
+                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in ThisNode.NodeType.getNodeTypeProps()
                                                                             .Cast<CswNbtMetaDataNodeTypeProp>()
                                                                             .Where( MetaDataProp => MetaDataProp.MobileSearch ) )
                 {
@@ -230,7 +230,7 @@ namespace ChemSW.Nbt.WebServices
         private void _runProperties( CswNbtNode Node, JObject SubItemsJProp )
         {
             Collection<CswNbtMetaDataNodeTypeTab> Tabs = new Collection<CswNbtMetaDataNodeTypeTab>();
-            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.getNodeTypeTabs() )
             {
                 Tabs.Add( Tab );
             }

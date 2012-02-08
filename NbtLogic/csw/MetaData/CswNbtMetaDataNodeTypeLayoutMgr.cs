@@ -208,7 +208,7 @@ namespace ChemSW.Nbt.MetaData
         public Collection<CswNbtMetaDataNodeTypeProp> getPropsNotInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, LayoutType LayoutType )
         {
             Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
-            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps)
+            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps())
             {
                 ret.Add( Prop );
             }

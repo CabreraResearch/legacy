@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
                 //}
 
                 bool first = true;
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getLatestVersionNodeTypes() )
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
                     if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainObjectClassId )
                     {
@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
                     if( null != NodeType )
                     {
-                        NodeTypeNames.Add( NodeType.LatestVersionNodeType.NodeTypeName );
+                        NodeTypeNames.Add( NodeType.getNodeTypeLatestVersion().NodeTypeName );
                     }
                 }
             } // foreach(string NodeTypeId in SelectedNodeTypeIds)

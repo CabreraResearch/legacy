@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
 
             //bz # 9102: This is the way of getting the record that causes the updated record disappear
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-            foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
             {
                 foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
                 {

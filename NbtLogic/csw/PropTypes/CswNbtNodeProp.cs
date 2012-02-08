@@ -217,7 +217,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 CswNbtViewRelationship ViewRel = null;
                 if( NodeTypeProp.IsGlobalUnique )  // BZ 9754
-                    ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.NodeType.ObjectClass, false );
+                    ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.NodeType.getObjectClass(), false );
                 else
                     ViewRel = CswNbtView.AddViewRelationship( NodeTypeProp.NodeType, false );
 

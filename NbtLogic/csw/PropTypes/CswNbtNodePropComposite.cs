@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public string RecalculateCompositeValue()
         {
-            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtMetaDataNodeTypeProp.NodeType.NodeTypeProps, TemplateValue, _CswNbtNodePropData );
+            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtMetaDataNodeTypeProp.NodeType.getNodeTypeProps(), TemplateValue, _CswNbtNodePropData );
             _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
             _CswNbtNodePropData.Gestalt = Value;
             _CswNbtNodePropData.PendingUpdate = false;

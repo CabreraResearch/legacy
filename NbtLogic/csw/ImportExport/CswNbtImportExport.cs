@@ -333,7 +333,7 @@ namespace ChemSW.Nbt.ImportExport
 
             Frame.AddView( View );
 
-            foreach( CswNbtMetaDataNodeType MetaDataNodeType in _CswNbtResources.MetaData.NodeTypes )
+            foreach( CswNbtMetaDataNodeType MetaDataNodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
                 if( View.ContainsNodeType( MetaDataNodeType ) )
                     Frame.AddNodeType( MetaDataNodeType );

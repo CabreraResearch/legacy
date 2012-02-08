@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.WebServices
                 //    default:
                 if( Node != null )
                 {
-                    foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.NodeTypeTabs
+                    foreach( CswNbtMetaDataNodeTypeTab Tab in Node.NodeType.getNodeTypeTabs()
                                                                 .Cast<CswNbtMetaDataNodeTypeTab>()
                                                                 .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.NodeType, false, Tab ) ) )
                     {

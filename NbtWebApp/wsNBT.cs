@@ -1641,7 +1641,7 @@ namespace ChemSW.Nbt.WebServices
                         if( Type == "NodeTypeId" )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( nId );
-                            Props = NodeType.NodeTypeProps;
+                            Props = NodeType.getNodeTypeProps();
                             PropType = CswNbtViewProperty.CswNbtPropType.NodeTypePropId.ToString();
                         }
                         else if( Type == "ObjectClassId" )

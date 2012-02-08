@@ -302,7 +302,7 @@ namespace ChemSW.NbtWebControls
                     CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                     if( MetaDataNodeType != null )
                     {
-                        foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.NodeTypeProps )
+                        foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
                         {
                             if( MetaDataProp.hasFilter() )
                             {
@@ -504,7 +504,7 @@ namespace ChemSW.NbtWebControls
 
                 if( NodeType != null )
                 {
-                    foreach( CswNbtMetaDataNodeTypeTab TabDef in NodeType.NodeTypeTabs )
+                    foreach( CswNbtMetaDataNodeTypeTab TabDef in NodeType.getNodeTypeTabs() )
                     {
                         RadTab Tab = new RadTab();
                         Tab.Text = TabDef.TabName;
@@ -576,7 +576,7 @@ namespace ChemSW.NbtWebControls
 
                 // If any property uses numbering, align left
                 bool OddCellRightAlign = true;
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( Prop.UseNumbering )
                     {
@@ -594,7 +594,7 @@ namespace ChemSW.NbtWebControls
                 }
 
                 // Non-conditionals first
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( Prop.EditLayout.TabId != Int32.MinValue && Prop.EditLayout.TabId.ToString() == SelectedTabId.ToString() )
                     {
@@ -610,7 +610,7 @@ namespace ChemSW.NbtWebControls
                 }
 
                 // Conditionals second
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( Prop.EditLayout.TabId != Int32.MinValue && Prop.EditLayout.TabId.ToString() == SelectedTabId.ToString() )
                     {
@@ -674,7 +674,7 @@ namespace ChemSW.NbtWebControls
             else if( EditMode == NodeEditMode.Add && _SelectedNodeTypeId > 0 )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) || SelectedNode.Properties[Prop].TemporarilyRequired || Prop.AddLayout != null ) && Prop.FilterNodeTypePropId == Int32.MinValue )
                     {

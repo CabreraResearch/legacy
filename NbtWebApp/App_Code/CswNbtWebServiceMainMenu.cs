@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.WebServices
                     null != Node &&
                     null != Node.NodeType )
                 {
-                    CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.BarcodeProperty;
+                    CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.getBarcodeProperty();
                     if( null != BarcodeProperty )
                     {
                         Ret["Print Label"] = new JObject();
