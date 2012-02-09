@@ -127,7 +127,7 @@
                     .empty();
 
                 //Subfield default value (hidden)
-                $defaultSubField = subfieldCell.$.CswSpan('init', {
+                $defaultSubField = subfieldCell.CswSpan('init', {
                     ID: defaultSubFieldId,
                     value: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
@@ -155,7 +155,7 @@
                 }
 
                 //Subfield picklist
-                $subfieldsList = subfieldCell.$.CswSelect('init', { ID: subfieldOptionsId,
+                $subfieldsList = subfieldCell.CswSelect('init', { ID: subfieldOptionsId,
                     values: subFieldVals,
                     selected: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.subfield_select.name,
@@ -175,7 +175,7 @@
                 }
 
                 //Filter picklist
-                $filterModesList = filterModesCell.$.CswSelect('init', { ID: filterModesId,
+                $filterModesList = filterModesCell.CswSelect('init', { ID: filterModesId,
                     values: filterModeVals,
                     selected: defaultFilterModeVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name,
@@ -207,7 +207,7 @@
                                 filtValAry.push({ value: Csw.string(filt).trim(), display: Csw.string(filtValOpt[filt]).trim() });
                             }
                         }
-                        $filtInput = propFilterValueCell.$.CswSelect('init', { ID: filtValInputId,
+                        $filtInput = propFilterValueCell.CswSelect('init', { ID: filtValInputId,
                             values: filtValAry,
                             selected: filtSelected,
                             cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name
@@ -215,7 +215,7 @@
                     }
                 }
                 else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
-                    $filtInput = propFilterValueCell.$.CswTristateCheckBox('init', { ID: filtValInputId,
+                    $filtInput = propFilterValueCell.CswTristateCheckBox('init', { ID: filtValInputId,
                         Checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
@@ -226,7 +226,7 @@
                             placeholder += "'s " + $subfieldsList.find(':selected').text();
                         }
                     }
-                    $filtInput = propFilterValueCell.$.CswInput('init', {
+                    $filtInput = propFilterValueCell.CswInput('init', {
                         ID: filtValInputId,
                         type: Csw.enums.inputTypes.text,
                         cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name,
@@ -276,7 +276,7 @@
                         .css('padding', '2px');
 
                     var propCellId = makePropFilterId(propertyName, filtOpt);
-                    propSelectCell.$.CswSpan('init', { ID: propCellId, value: propertyName });
+                    propSelectCell.CswSpan('init', { ID: propCellId, value: propertyName });
                 }
 
                 var selectedSubfield = Csw.string(propsData.subfieldname, propsData.subfield);
@@ -302,21 +302,21 @@
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
 
                 //Subfield
-                subfieldCell.$.CswSpan('init', {
+                subfieldCell.CswSpan('init', {
                     ID: defaultSubFieldId,
                     value: selectedSubfield,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 //Selected Filter
-                filtersCell.$.CswSpan('init', {
+                filtersCell.CswSpan('init', {
                     ID: filtersOptionsId,
                     value: selectedFilterMode,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name
                 })
                     .css({ 'text-align': "center" });
                 //Filter Input
-                propFilterValueCell.$.CswSpan('init', {
+                propFilterValueCell.CswSpan('init', {
                     ID: filtValInputId,
                     value: filterValue,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name

@@ -347,7 +347,7 @@
             }
             var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
             currentViewJson.formobile = formobile;
-            currentViewJson.width = gridWidthTextboxCell.CswNumberTextBox('value', o.ID + '_gridwidth');
+            currentViewJson.width = gridWidthTextboxCell.$.CswNumberTextBox('value', o.ID + '_gridwidth');
         }
 
         function _handlePrevious($wizard, newstepno) {
@@ -559,11 +559,11 @@
                     }
                 } // makeAllowCB()
 
-                _makeAllowCB(row, 'editrel_view', 'View', isTrue(viewnodejson.allowview), function (checked) { viewnodejson.allowview = checked; });
+                _makeAllowCB(row, 'editrel_view', 'View', Csw.bool(viewnodejson.allowview), function (checked) { viewnodejson.allowview = checked; });
                 row += 1;
-                _makeAllowCB(row, 'editrel_edit', 'Edit', isTrue(viewnodejson.allowedit), function (checked) { viewnodejson.allowedit = checked; });
+                _makeAllowCB(row, 'editrel_edit', 'Edit', Csw.bool(viewnodejson.allowedit), function (checked) { viewnodejson.allowedit = checked; });
                 row += 1;
-                _makeAllowCB(row, 'editrel_del', 'Delete', isTrue(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
+                _makeAllowCB(row, 'editrel_del', 'Delete', Csw.bool(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
                 row += 1;
 
                 subTable.add(row, 1, 'Group By');
