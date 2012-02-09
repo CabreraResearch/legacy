@@ -143,10 +143,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
-            if( null != NodeTypeProp &&
-                    null != NodeTypeProp.ObjectClassProp )
+            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            if( null != NodeTypeProp && null != OCP )
             {
-                if( RunNowPropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                if( RunNowPropertyName == OCP.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
                     RunStatus.StaticText = string.Empty;

@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 2. mark property references attached to relationships whose values changed as pending update
-                    if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
                         foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
                         {
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
                         //CISPro NG will break this
                         Int32 FirstNodeTypePropId = CswConvert.ToInt32( PropRefsTable.Rows[0]["nodetypepropid"] );
                         CswNbtMetaDataNodeTypeProp FirstNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( FirstNodeTypePropId );
-                        CswNbtFieldTypeRulePropertyReference PropRefFieldTypeRule = (CswNbtFieldTypeRulePropertyReference) FirstNodeTypeProp.FieldTypeRule;
+                        CswNbtFieldTypeRulePropertyReference PropRefFieldTypeRule = (CswNbtFieldTypeRulePropertyReference) FirstNodeTypeProp.getFieldTypeRule();
                         CswNbtSubField.PropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
 
                         // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a prop ref to this prop
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
                     // 4. For locations, if this node's location changed, we need to update the pathname on the children
-                    if( CurrentProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                    if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
                     {
                         _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
                     }

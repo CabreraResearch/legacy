@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
         public void overrideFirst( CswNbtMetaDataNodeType NodeType )
         {
             if( NodeType != null )
-                setFirst( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.LatestVersionNodeType.NodeTypeName );
+                setFirst( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName );
             else
                 setFirst( RelatedIdType.Unknown, Int32.MinValue, string.Empty );
         }
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
 
         public void overrideSecond( CswNbtMetaDataNodeType NodeType )
         {
-            setSecond( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.LatestVersionNodeType.NodeTypeName, NodeType.LatestVersionNodeType.IconFileName );
+            setSecond( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
         }
         public void overrideSecond( CswNbtMetaDataObjectClass ObjectClass )
         {
@@ -130,17 +130,18 @@ namespace ChemSW.Nbt
 
         private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
         {
-            if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
+            CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
+            if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
             {
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
-            setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.LatestVersionNodeTypeProp.PropName );
+            setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.getNodeTypePropLatestVersion().PropName );
 
             if( InOwnerType == PropOwnerType.First )
             {
-                overrideFirst( Prop.NodeType );
+                overrideFirst( Prop.getNodeType() );
                 if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                     overrideSecond( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
                 else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
@@ -152,7 +153,7 @@ namespace ChemSW.Nbt
                     overrideFirst( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
                 else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
                     overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
-                overrideSecond( Prop.NodeType );
+                overrideSecond( Prop.getNodeType() );
             }
             else
             {
@@ -162,8 +163,9 @@ namespace ChemSW.Nbt
 
         private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop )
         {
-            if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
+            CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
+            if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
             {
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
@@ -172,13 +174,13 @@ namespace ChemSW.Nbt
 
             if( InOwnerType == PropOwnerType.First )
             {
-                overrideFirst( Prop.ObjectClass );
+                overrideFirst( Prop.getObjectClass() );
                 overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
             }
             else if( InOwnerType == PropOwnerType.Second )
             {
                 overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
-                overrideSecond( Prop.ObjectClass );
+                overrideSecond( Prop.getObjectClass() );
             }
             else
             {
@@ -729,7 +731,7 @@ namespace ChemSW.Nbt
             {
                 CswNbtMetaDataNodeType DefaultFilterNT = _CswNbtResources.MetaData.getNodeType( SecondId );
                 if( DefaultFilterNT != null )
-                    DefaultFilterOC = DefaultFilterNT.ObjectClass;
+                    DefaultFilterOC = DefaultFilterNT.getObjectClass();
             }
             if( DefaultFilterOC != null )
             {

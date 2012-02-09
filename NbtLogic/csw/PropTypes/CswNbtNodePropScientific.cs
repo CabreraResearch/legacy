@@ -17,10 +17,12 @@ namespace ChemSW.Nbt.PropTypes
 		public CswNbtNodePropScientific( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
 			: base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
 		{
-			_BaseSubField = ( (CswNbtFieldTypeRuleScientific) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).BaseSubField;
-			_ExponentSubField = ( (CswNbtFieldTypeRuleScientific) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ExponentSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleScientific) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+			_BaseSubField = _FieldTypeRule.BaseSubField;
+			_ExponentSubField = _FieldTypeRule.ExponentSubField;
 		}
 
+        private CswNbtFieldTypeRuleScientific _FieldTypeRule;
 		private CswNbtSubField _BaseSubField;
 		private CswNbtSubField _ExponentSubField;
 

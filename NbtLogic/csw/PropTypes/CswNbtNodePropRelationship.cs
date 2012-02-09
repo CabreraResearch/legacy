@@ -18,10 +18,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _NameSubField = ( (CswNbtFieldTypeRuleRelationship) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).NameSubField;
-            _NodeIDSubField = ( (CswNbtFieldTypeRuleRelationship) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).NodeIDSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleRelationship) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _NameSubField = _FieldTypeRule.NameSubField;
+            _NodeIDSubField = _FieldTypeRule.NodeIDSubField;
         }
-
+        private CswNbtFieldTypeRuleRelationship _FieldTypeRule;
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIDSubField;
 

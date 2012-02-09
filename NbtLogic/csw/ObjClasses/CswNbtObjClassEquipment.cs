@@ -121,10 +121,10 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp StatusOCP = this.ObjectClass.getObjectClassProp( StatusPropertyName );
             CswNbtViewProperty StatusViewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, StatusOCP );
             CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp,
-                                                                        StatusOCP.FieldTypeRule.SubFields.Default.Name,
-                                                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                                                                        StatusOptionToDisplayString( StatusOption.Retired ),
-                                                                        false );
+                                                                                                           StatusOCP.getFieldTypeRule().SubFields.Default.Name,
+                                                                                                           CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                                                                           StatusOptionToDisplayString( StatusOption.Retired ),
+                                                                                                           false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
                         bool FoundMatch = false;
                         foreach( CswNbtNodePropWrapper AssemblyProp in AssemblyNode.Properties )
                         {
-                            if( EquipProp.PropName.ToLower() == AssemblyProp.PropName.ToLower() && EquipProp.FieldType == AssemblyProp.FieldType )
+                            if( EquipProp.PropName.ToLower() == AssemblyProp.PropName.ToLower() && EquipProp.getFieldType() == AssemblyProp.getFieldType() )
                             {
                                 // Found a match -- copy the value and set readonly
                                 EquipProp.copy( AssemblyProp );

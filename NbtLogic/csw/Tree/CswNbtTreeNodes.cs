@@ -366,7 +366,7 @@ namespace ChemSW.Nbt
                 ReturnVal.NodeTypeId = CswConvert.ToInt32( XmlNode.Attributes[_AttrName_NodeTypeId].Value );
                 //ReturnVal.NodeTypeName = XmlNode.Attributes[ _AttrName_NodeTypeName ].Value;
                 //ReturnVal.ObjectClass = _CswNbtResources.MetaData.getObjectClass(CswNbtMetaDataObjectClass.getObjectClassFromString(XmlNode.Attributes[_AttrName_ObjectClass].Value));
-                ReturnVal.ObjectClassId = CswConvert.ToInt32( XmlNode.Attributes[_AttrName_ObjectClassId].Value );
+                //ReturnVal.getObjectClassId() = CswConvert.ToInt32( XmlNode.Attributes[_AttrName_ObjectClassId].Value );
                 //ReturnVal.Modified = false; //bz #5943
             }
             if( XmlNode.Attributes[_AttrName_Selectable] != null )

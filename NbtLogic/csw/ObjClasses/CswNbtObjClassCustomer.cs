@@ -224,10 +224,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
-            if( null != NodeTypeProp &&
-                null != NodeTypeProp.ObjectClassProp )
+            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            if( null != NodeTypeProp && null != OCP )
             {
-                if( LoginPropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                if( LoginPropertyName == OCP.PropName )
                 {
                     ActionObj["action"] = CswNbtMetaDataObjectClass.OnButtonClickEvents.reauthenticate.ToString();
                 }

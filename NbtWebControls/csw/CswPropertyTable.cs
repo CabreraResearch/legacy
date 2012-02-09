@@ -302,7 +302,7 @@ namespace ChemSW.NbtWebControls
                     CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                     if( MetaDataNodeType != null )
                     {
-                        foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.NodeTypeProps )
+                        foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
                         {
                             if( MetaDataProp.hasFilter() )
                             {
@@ -397,7 +397,7 @@ namespace ChemSW.NbtWebControls
             bool FilterMatches = false;
             CswNbtMetaDataNodeTypeProp FilterMetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.FilterNodeTypePropId );
 
-            CswNbtSubField SubField = FilterMetaDataProp.FieldTypeRule.SubFields.Default;
+            CswNbtSubField SubField = FilterMetaDataProp.getFieldTypeRule().SubFields.Default;
             CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
             string FilterValue = null;
             MetaDataProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
@@ -414,7 +414,7 @@ namespace ChemSW.NbtWebControls
                     // we are using the unsaved form contents to decide, rather than the DB value.
 
                     // Logical needs a special case
-                    if( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+                    if( FilterMetaDataProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
                     {
                         if( SubField.Name == CswNbtSubField.SubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                         {
@@ -435,7 +435,7 @@ namespace ChemSW.NbtWebControls
                     {
                         string ValueToCompare = string.Empty;
 
-                        switch( FilterMetaDataProp.FieldType.FieldType )
+                        switch( FilterMetaDataProp.getFieldType().FieldType )
                         {
                             case CswNbtMetaDataFieldType.NbtFieldType.List:
                                 ValueToCompare = ( (CswList) FilterControl ).SelectedValue;
@@ -444,7 +444,7 @@ namespace ChemSW.NbtWebControls
                                 ValueToCompare = ( (CswText) FilterControl ).Text;
                                 break;
                             default:
-                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.FieldType.FieldType.ToString() );
+                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldType().FieldType.ToString() );
                         } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                         switch( FilterMode )
@@ -504,7 +504,7 @@ namespace ChemSW.NbtWebControls
 
                 if( NodeType != null )
                 {
-                    foreach( CswNbtMetaDataNodeTypeTab TabDef in NodeType.NodeTypeTabs )
+                    foreach( CswNbtMetaDataNodeTypeTab TabDef in NodeType.getNodeTypeTabs() )
                     {
                         RadTab Tab = new RadTab();
                         Tab.Text = TabDef.TabName;
@@ -576,7 +576,7 @@ namespace ChemSW.NbtWebControls
 
                 // If any property uses numbering, align left
                 bool OddCellRightAlign = true;
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( Prop.UseNumbering )
                     {
@@ -594,7 +594,7 @@ namespace ChemSW.NbtWebControls
                 }
 
                 // Non-conditionals first
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( Prop.EditLayout.TabId != Int32.MinValue && Prop.EditLayout.TabId.ToString() == SelectedTabId.ToString() )
                     {
@@ -610,7 +610,7 @@ namespace ChemSW.NbtWebControls
                 }
 
                 // Conditionals second
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( Prop.EditLayout.TabId != Int32.MinValue && Prop.EditLayout.TabId.ToString() == SelectedTabId.ToString() )
                     {
@@ -622,7 +622,7 @@ namespace ChemSW.NbtWebControls
 
                             if( _PropertyControlSetHash.ContainsKey( ParentProp.FirstPropVersionId ) )
                             {// The parent needs to use postback
-                                switch( ParentProp.FieldType.FieldType )
+                                switch( ParentProp.getFieldType().FieldType )
                                 {
                                     case CswNbtMetaDataFieldType.NbtFieldType.Logical:
                                         ( (CswLogical) _PropertyControlSetHash[ParentProp.FirstPropVersionId].Control ).AutoPostBack = true;
@@ -674,7 +674,7 @@ namespace ChemSW.NbtWebControls
             else if( EditMode == NodeEditMode.Add && _SelectedNodeTypeId > 0 )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
-                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
                     if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) || SelectedNode.Properties[Prop].TemporarilyRequired || Prop.AddLayout != null ) && Prop.FilterNodeTypePropId == Int32.MinValue )
                     {

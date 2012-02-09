@@ -21,12 +21,13 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropPassword( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _EncryptedPasswordSubField = ( (CswNbtFieldTypeRulePassword) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).EncryptedPasswordSubField;
-            _ChangedDateSubField = ( (CswNbtFieldTypeRulePassword) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ChangedDateSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRulePassword) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _EncryptedPasswordSubField = _FieldTypeRule.EncryptedPasswordSubField;
+            _ChangedDateSubField = _FieldTypeRule.ChangedDateSubField;
 
             _CswEncryption = new CswEncryption( CswNbtResources.MD5Seed );
         }
-
+        private CswNbtFieldTypeRulePassword _FieldTypeRule;
         private CswNbtSubField _EncryptedPasswordSubField;
         private CswNbtSubField _ChangedDateSubField;
 
@@ -64,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( this.NodeId );
                     if( null != UserNode &&
-                        !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, null, null, UserNode, NodeTypeProp ) )
+                        !_CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), false, null, null, UserNode, NodeTypeProp ) )
                     {
                         throw new CswDniException( ErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + UserNode.NodeName + "'." );
                     }

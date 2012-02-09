@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.PropTypes
         //        public abstract CswNbtNodePropData Attributes { get; }
 
 
-        public CswNbtMetaDataFieldType FieldType { get { return ( _CswNbtNodeProp.FieldType ); } }
+        public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtNodeProp.getFieldType() ); }
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
 
         public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.NodeType, false, _Tab, null, _Node, NodeTypeProp );
+                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), false, _Tab, null, _Node, NodeTypeProp );
                 return Ret;
             }
         }
@@ -286,7 +286,7 @@ namespace ChemSW.Nbt.PropTypes
         public void SetDefaultValue()
         {
             bool DoCopy = false;
-            switch( this.FieldType.FieldType )
+            switch( this.getFieldType().FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                     CswNbtNodePropDateTime PropAsDate = this.AsDateTime;

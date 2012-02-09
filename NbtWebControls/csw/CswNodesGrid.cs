@@ -355,16 +355,16 @@ namespace ChemSW.NbtWebControls
                                 CswNbtMetaDataNodeType CurrentNT = _CswNbtResources.MetaData.getNodeType( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
                                 CswNbtMetaDataNodeTypeProp CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
                                 if( CurrentNTP != null )
-                                    ColFieldType = CurrentNTP.FieldType.FieldType;
+                                    ColFieldType = CurrentNTP.getFieldType().FieldType;
                             }
                             else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                             {
                                 CswNbtMetaDataObjectClass CurrentOC = _CswNbtResources.MetaData.getObjectClass( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
-                                foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.NodeTypes )
+                                foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.getNodeTypes() )
                                 {
                                     CswNbtMetaDataNodeTypeProp CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
                                     if( CurrentNTP != null )
-                                        ColFieldType = CurrentNTP.FieldType.FieldType;
+                                        ColFieldType = CurrentNTP.getFieldType().FieldType;
                                 }
                             }
                         }

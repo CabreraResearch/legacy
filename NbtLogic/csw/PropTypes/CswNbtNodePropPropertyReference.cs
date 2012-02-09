@@ -17,9 +17,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropPropertyReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _CachedValueSubField = ( (CswNbtFieldTypeRulePropertyReference) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CachedValueSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRulePropertyReference) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _CachedValueSubField = _FieldTypeRule.CachedValueSubField;
         }
-
+        private CswNbtFieldTypeRulePropertyReference _FieldTypeRule;
         private CswNbtSubField _CachedValueSubField;
 
         override public bool Empty
@@ -128,7 +129,7 @@ namespace ChemSW.Nbt.PropTypes
                 ReferenceView.Root.Selectable = false;
                 ReferenceView.ViewName = "CswNbtNodePropPropertyReference.RecalculateReferenceValue()";
 
-                CswNbtViewRelationship ThisNodeRelationship = ReferenceView.AddViewRelationship( _CswNbtMetaDataNodeTypeProp.NodeType, false );
+                CswNbtViewRelationship ThisNodeRelationship = ReferenceView.AddViewRelationship( _CswNbtMetaDataNodeTypeProp.getNodeType(), false );
                 ThisNodeRelationship.NodeIdsToFilterIn.Add( _CswNbtNodePropData.NodeId );
 
                 if( RelationshipType == CswNbtViewRelationship.PropIdType.NodeTypePropId )

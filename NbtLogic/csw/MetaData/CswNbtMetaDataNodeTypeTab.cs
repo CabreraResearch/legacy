@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
 
                     _NodeTypeTabRow["tabname"] = value;
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ) != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
+                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
 
                     _NodeTypeTabRow["taborder"] = CswConvert.ToDbVal( value );
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
@@ -155,13 +155,13 @@ namespace ChemSW.Nbt.MetaData
             private set { TabOrder = value; }
         }
 
-        public CswNbtMetaDataNodeType NodeType
-        {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( CswConvert.ToInt32( _NodeTypeTabRow["nodetypeid"].ToString() ) ); }
-        }
         public Int32 NodeTypeId
         {
-            get { return CswConvert.ToInt32( _NodeTypeTabRow["nodetypeid"].ToString() ); }
+            get { return CswConvert.ToInt32( _NodeTypeTabRow["nodetypeid"] ); }
+        }
+        public CswNbtMetaDataNodeType getNodeType()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( NodeTypeId );
         }
 
 

@@ -108,7 +108,7 @@ namespace ChemSW.Nbt
                         _CswNbtResources.logTimerResult( "completeNodeData about to call fillFromNodeTypeId() on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
                         fillFromNodeTypeId( CswNbtNode, CswNbtNode.NodeTypeId );
                         _CswNbtResources.logTimerResult( "completeNodeData called fillFromNodeTypeId(), finished on node (" + CswNbtNode.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
-                        if( CswNbtNode.NodeType != null )
+                        if( CswNbtNode.getNodeType() != null )
                             CswNbtNode.Properties.fillFromNodePk( CswNbtNode.NodeId, CswNbtNode.NodeTypeId, Date );
                         _CswNbtResources.logTimerResult( "Filled in node property data for node (" + CswNbtNode.NodeId.ToString() + "): " + CswNbtNode.NodeName, Timer.ElapsedDurationInSecondsAsString );
 
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt
             if( NodeType != null )
             {
                 //CswNbtNode.NameTemplate = NodeType.NameTemplateValue;
-                CswNbtNode.ObjectClassId = NodeType.ObjectClass.ObjectClassId;
+                //CswNbtNode.getObjectClassId() = NodeType.ObjectClassId;
                 CswNbtNode.IconFileName = NodeType.IconFileName;
             }
         }//fillFromNodeTypeId() 

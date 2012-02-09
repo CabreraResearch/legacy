@@ -44,13 +44,13 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtNode GeneratorNode;
             CswNbtObjClassGenerator NewGenerator;
 
-            foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
             {
-                OwnerNTP = NodeType.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+                OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
                 if( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
                 {
                     OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
-                    if( null != OwnerNT && OwnerNT == Node.NodeType )
+                    if( null != OwnerNT && OwnerNT == Node.getNodeType() )
                     {
                         GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                         if( null != GeneratorNode )

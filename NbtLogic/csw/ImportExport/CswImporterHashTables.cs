@@ -230,10 +230,10 @@ namespace ChemSW.Nbt.ImportExport
                     //if( IMode == ImportMode.CopyOverwrite )
                     //{
                     // Source Name and Source ObjectClass have to match in order to use an existing nodetype
-                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
                     {
                         if( NodeType.NodeTypeName.ToLower() == SourceNodeTypeName.ToLower() &&
-                            NodeType.ObjectClass.ObjectClassId == SourceObjectClassId )
+                            NodeType.ObjectClassId == SourceObjectClassId )
                         {
                             DestNodeType = NodeType;
                             break;
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.ImportExport
                             _StatusUpdate( "Processing NodeTypeTab " + t.ToString() + " of " + TabRows.Length );
 
                             CswNbtMetaDataNodeTypeTab ThisTab = null;
-                            foreach( CswNbtMetaDataNodeTypeTab ExistingTab in DestNodeType.NodeTypeTabs )
+                            foreach( CswNbtMetaDataNodeTypeTab ExistingTab in DestNodeType.getNodeTypeTabs() )
                             {
                                 if( NodeTypeTabRow[CswNbtMetaDataNodeTypeTab._Attribute_TabName].ToString() == ExistingTab.TabName )
                                 {
@@ -313,10 +313,10 @@ namespace ChemSW.Nbt.ImportExport
                                     _StatusUpdate( "Processing NodeTypeProp " + p.ToString() + " of " + PropRows.Length );
                                 // The nodetype might have object class props, so we have to handle that case
                                 CswNbtMetaDataNodeTypeProp ThisProp = null;
-                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in DestNodeType.NodeTypeProps )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in DestNodeType.getNodeTypeProps() )
                                 {
                                     if( MetaDataProp.PropName.ToLower() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString().ToLower() &&
-                                        MetaDataProp.FieldType.FieldType.ToString() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() )
+                                        MetaDataProp.getFieldType().FieldType.ToString() == NodeTypePropRow[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() )
                                     {
                                         ThisProp = MetaDataProp;
                                         break;
@@ -347,7 +347,7 @@ namespace ChemSW.Nbt.ImportExport
                     if( DestNodeType != null )
                     {
                         // We have to do this after we've restored the properties
-                        DestNodeType.NameTemplateText = NodeTypeRow[CswNbtMetaDataNodeType._Attribute_NameTemplate].ToString();
+                        DestNodeType.setNameTemplateText( NodeTypeRow[CswNbtMetaDataNodeType._Attribute_NameTemplate].ToString() );
 
                         // Record the matching nodetype in the table
                         NodeTypeMap.Add( SourceNodeTypeId, DestNodeType.NodeTypeId );          // for property value references
@@ -413,12 +413,12 @@ namespace ChemSW.Nbt.ImportExport
             _StatusUpdate( "Fixing Relationship References" );
 
             // Fix relationship references
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
-            {
-                foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
+            //foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
+            //{
+                foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
                 {
-                    if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
-                    {
+                    //if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    //{
                         if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                         {
                             if( NodeTypeMap.ContainsKey( Prop.FKValue ) )
@@ -426,9 +426,9 @@ namespace ChemSW.Nbt.ImportExport
                                 Prop.SetFK( Prop.FKType, NodeTypeMap[Prop.FKValue], Prop.ValuePropType, Prop.ValuePropId );
                             }
                         } // if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
-                    } // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    //} // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
-            } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+            //} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
 
             _StatusUpdate( "Done Fixing Relationship References" );
 
@@ -573,9 +573,9 @@ namespace ChemSW.Nbt.ImportExport
                             }
 
                             // Is this node redundant with another existing node?
-                            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in Node.NodeType.NodeTypeProps )
+                            foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( Node.NodeTypeId ) )
                             {
-                                if( MetaDataProp.IsUnique )
+                                if( MetaDataProp.IsUnique() )
                                 {
                                     CswNbtNode OtherNode = _CswNbtResources.Nodes.FindNodeByUniqueProperty( MetaDataProp, Node.Properties[MetaDataProp] );
                                     if( OtherNode != null && OtherNode.NodeId != Node.NodeId )
@@ -629,9 +629,9 @@ namespace ChemSW.Nbt.ImportExport
                 if( x % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + x.ToString() + " of " + NodesTable.Rows.Count.ToString() );
 
-                if( Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                 {
-                    if( Node.Properties[Node.NodeType.getNodeTypePropByObjectClassPropName( "Assembly" )].AsRelationship.RelatedNodeId != null )
+                    if( Node.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( Node.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                     {
                         Node.PendingUpdate = true;
                         Node.postChanges( false, false, true );

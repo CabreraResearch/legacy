@@ -16,9 +16,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropComposite( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _CachedValueSubField = ( (CswNbtFieldTypeRuleComposite) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CachedValueSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleComposite) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _CachedValueSubField = _FieldTypeRule.CachedValueSubField;
         }
-
+        private CswNbtFieldTypeRuleComposite _FieldTypeRule;
         private CswNbtSubField _CachedValueSubField;
 
         override public bool Empty
@@ -51,15 +52,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return _CswNbtMetaDataNodeTypeProp.CompositeTemplateValue; }
         }
-        public string TemplateText
+        public string TemplateText()
         {
-            get { return _CswNbtMetaDataNodeTypeProp.CompositeTemplateText; }
+            return _CswNbtMetaDataNodeTypeProp.getCompositeTemplateText();
         }
 
 
         public string RecalculateCompositeValue()
         {
-            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtMetaDataNodeTypeProp.NodeType.NodeTypeProps, TemplateValue, _CswNbtNodePropData );
+            string Value = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
             _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
             _CswNbtNodePropData.Gestalt = Value;
             _CswNbtNodePropData.PendingUpdate = false;

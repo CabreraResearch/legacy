@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Schema
                     if( Node == null )
                         throw new CswDniException( "Node not found (" + nodeid.ToString() + ")" );
                     // Don't update nodes of disabled nodetypes
-                    if( Node.NodeType != null )
+                    if( Node.getNodeType() != null )
                     {
                         CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = _CswNbtSchemaModTrnsctn.getCswNbtActUpdatePropertyValue();
                         CswNbtActUpdatePropertyValue.UpdateNode( Node, false );

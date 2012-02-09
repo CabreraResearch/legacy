@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             // case 22635 - prevent deleting chemsw admin user
             CswNbtNodePropWrapper UsernamePropWrapper = Node.Properties[UsernamePropertyName];
-            if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminUsername &&
+            if( UsernamePropWrapper.GetOriginalPropRowValue( UsernamePropWrapper.NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ) == ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminUsername + "' user." );

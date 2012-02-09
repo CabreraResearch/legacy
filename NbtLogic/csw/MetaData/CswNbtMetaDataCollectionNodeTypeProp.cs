@@ -57,6 +57,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            return _CollImpl.getWhere( "where fieldtypeid in (select fieldtypeid from field_types where fieldtype = '" + FieldType.ToString() + "')" ).Cast<CswNbtMetaDataNodeTypeProp>();
+        }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByTab( Int32 TabId )
         {
             return _CollImpl.getWhere( "where nodetypetabsetid = " + TabId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
@@ -81,9 +85,34 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + NodeTypePropName.ToLower() + "'" );
         }
-        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassPropName( Int32 NodeTypeId, string ObjectClassPropName )
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, Int32 ObjectClassPropId )
+        {
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid = " + ObjectClassPropId.ToString() );
+        }
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
+        }
+
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropFirstVersion( Int32 NodeTypePropId )
+        {
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypepropid = (select firstpropversionid from nodetype_props where nodetypepropid = " + NodeTypePropId.ToString() + ")" );
+        }
+
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropLatestVersion( Int32 NodeTypePropId )
+        {
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( @"where nodetypepropid = (select max(nodetypepropid) maxpropid
+                                                                                                     from nodetype_props 
+                                                                                                    where firstpropversionid = (select firstpropversionid 
+                                                                                                                                  from nodetype_props 
+                                                                                                                                 where nodetypepropid = " + NodeTypePropId.ToString() + "))" );
+        }
+
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropLatestVersion( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( @"where nodetypepropid = (select max(nodetypepropid) maxpropid
+                                                                                                     from nodetype_props 
+                                                                                                    where firstpropversionid = " + NodeTypeProp.FirstPropVersionId.ToString() + ")" );
         }
 
         //public void ClearKeys()

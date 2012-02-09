@@ -260,7 +260,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNode CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
 
             if( null == CustomerNode ||
-                CustomerNode.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass )
+                CustomerNode.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass )
             {
                 throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
             }

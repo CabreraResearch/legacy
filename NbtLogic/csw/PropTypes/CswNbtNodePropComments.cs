@@ -17,9 +17,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropComments( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _CommentSubField = ( (CswNbtFieldTypeRuleComments) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).CommentSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleComments) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _CommentSubField = _FieldTypeRule.CommentSubField;
         }
-
+        private CswNbtFieldTypeRuleComments _FieldTypeRule;
         private CswNbtSubField _CommentSubField;
 
 

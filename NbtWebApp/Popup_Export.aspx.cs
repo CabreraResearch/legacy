@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.WebPages
                         CswNbtNodePropWrapper Prop = Node.Properties[MetaDataProp];
                         CswNbtView GridView = Prop.AsGrid.View;
                         _NodesGrid.View = GridView;
-                        _NodesGrid.ParentNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, NodeId, Node.NodeSpecies, Node.NodeTypeId, Node.ObjectClassId, string.Empty, string.Empty );
+                        _NodesGrid.ParentNodeKey = new CswNbtNodeKey( Master.CswNbtResources, null, NodeId, Node.NodeSpecies, Node.NodeTypeId, Node.getObjectClassId(), string.Empty, string.Empty );
                     }
                     else if( Request.QueryString["sessionviewid"] != null )
                     {

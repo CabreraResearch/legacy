@@ -316,7 +316,7 @@ namespace ChemSW.Nbt
                 {
                     // Case 10530
                     sortAlias++;
-                    CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.FieldTypeRule.SubFields.Default.Column;
+                    CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.getFieldTypeRule().SubFields.Default.Column;
                     if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
                         SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
                         SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
@@ -434,15 +434,15 @@ namespace ChemSW.Nbt
                         Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                         Filter.Value != string.Empty )
                     {
-                        ICswNbtFieldTypeRule FilterFieldTypeRule = null;
-                        if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-                        {
-                            FilterFieldTypeRule = Prop.NodeTypeProp.FieldTypeRule;
-                        }
-                        else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-                        {
-                            FilterFieldTypeRule = Prop.ObjectClassProp.FieldTypeRule;
-                        }
+                        ICswNbtFieldTypeRule FilterFieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( Prop.FieldType );
+                        //if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                        //{
+                        //    FilterFieldTypeRule = Prop.NodeTypeProp.getFieldTypeRule();
+                        //}
+                        //else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+                        //{
+                        //    FilterFieldTypeRule = Prop.ObjectClassProp.getFieldTypeRule();
+                        //}
                         string FilterValue = string.Empty;
                         if( null != FilterFieldTypeRule )
                         {
@@ -559,12 +559,12 @@ namespace ChemSW.Nbt
             if( Type == CswNbtViewRelationship.PropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
-                ret = NodeTypeProp.FieldTypeRule.SubFields.Default;
+                ret = NodeTypeProp.getFieldTypeRule().SubFields.Default;
             }
             else if( Type == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
             {
                 CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
-                ret = ObjectClassProp.FieldTypeRule.SubFields.Default;
+                ret = ObjectClassProp.getFieldTypeRule().SubFields.Default;
             }
             return ret;
         }

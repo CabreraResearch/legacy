@@ -23,9 +23,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropUserSelect( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _SelectedUserIdsSubField = ( (CswNbtFieldTypeRuleUserSelect) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).SelectedUserIdsSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleUserSelect) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _SelectedUserIdsSubField = _FieldTypeRule.SelectedUserIdsSubField;
         }//ctor
 
+        private CswNbtFieldTypeRuleUserSelect _FieldTypeRule;
         private CswNbtSubField _SelectedUserIdsSubField;
 
         /// <summary>

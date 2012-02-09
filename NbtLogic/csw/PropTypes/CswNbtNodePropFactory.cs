@@ -38,7 +38,8 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtNodePropWrapper ReturnVal = null;
 
             CswNbtNodeProp InnerProperty = null;
-            switch( CswNbtMetaDataNodeTypeProp.FieldType.FieldType )
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataNodeTypeProp.getFieldType().FieldType;
+            switch( FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
                     InnerProperty = new CswNbtNodePropBarcode( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
@@ -152,7 +153,7 @@ namespace ChemSW.Nbt.PropTypes
                     InnerProperty = new CswNbtNodePropViewReference( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp );
                     break;
                 default:
-                    throw new CswDniException( ErrorType.Error, "Internal System Error", "There is no CswNbtNodeProp Object for Field Type: " + CswNbtMetaDataNodeTypeProp.FieldType.FieldType.ToString() );
+                    throw new CswDniException( ErrorType.Error, "Internal System Error", "There is no CswNbtNodeProp Object for Field Type: " + FieldType.ToString() );
             }
 
             ReturnVal = new CswNbtNodePropWrapper( CswNbtResources, Node, InnerProperty, CswNbtNodePropData, Tab, EditMode );

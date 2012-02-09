@@ -15,15 +15,16 @@ namespace ChemSW.Nbt.PropTypes
 	public class CswNbtNodePropNFPA : CswNbtNodeProp
 	{
 
-		public CswNbtNodePropNFPA( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
-			: base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
-		{
-			_RedSubField = ( (CswNbtFieldTypeRuleNFPA) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).RedSubField;
-			_YellowSubField = ( (CswNbtFieldTypeRuleNFPA) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).YellowSubField;
-			_BlueSubField = ( (CswNbtFieldTypeRuleNFPA) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).BlueSubField;
-			_WhiteSubField = ( (CswNbtFieldTypeRuleNFPA) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).WhiteSubField;
-		}
-
+        public CswNbtNodePropNFPA( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
+            : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
+        {
+            _FieldTypeRule = (CswNbtFieldTypeRuleNFPA) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _RedSubField = _FieldTypeRule.RedSubField;
+            _YellowSubField = _FieldTypeRule.YellowSubField;
+            _BlueSubField = _FieldTypeRule.BlueSubField;
+            _WhiteSubField = _FieldTypeRule.WhiteSubField;
+        }
+        private CswNbtFieldTypeRuleNFPA _FieldTypeRule; 
 		private CswNbtSubField _RedSubField;
 		private CswNbtSubField _YellowSubField;
 		private CswNbtSubField _BlueSubField;

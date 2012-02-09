@@ -81,11 +81,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             // Enforce only one Barcode property per nodetype
             CswTableSelect ProbeSelect = _CswNbtFieldResources.CswNbtResources.makeCswTableSelect( "barcode_check", "nodetype_props" );
-            Int32 ExistingBarcodeCount = ProbeSelect.getRecordCount( "where nodetypeid=" + NodeTypeProp.NodeType.NodeTypeId.ToString() +
+            Int32 ExistingBarcodeCount = ProbeSelect.getRecordCount( "where nodetypeid=" + NodeTypeProp.NodeTypeId.ToString() +
                                                                       " and nodetypepropid <> " + NodeTypeProp.PropId +
-                                                                      " and fieldtypeid=" + NodeTypeProp.FieldType.FieldTypeId.ToString() );
+                                                                      " and fieldtypeid=" + NodeTypeProp.FieldTypeId.ToString() );
             if( ExistingBarcodeCount > 0 )
-                throw ( new CswDniException( ErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeType.NodeTypeId.ToString() + ") already has a barcode" ) );
+                throw ( new CswDniException( ErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeTypeId.ToString() + ") already has a barcode" ) );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }

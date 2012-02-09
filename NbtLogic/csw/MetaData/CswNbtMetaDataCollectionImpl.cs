@@ -125,23 +125,28 @@ namespace ChemSW.Nbt.MetaData
         private Dictionary<Int32, ICswNbtMetaDataObject> _ByPk = null;
         public ICswNbtMetaDataObject getByPk( Int32 Pk )
         {
-            if( _ByPk == null )
+            ICswNbtMetaDataObject ret = null;
+            if( Pk != Int32.MinValue )
             {
-                _ByPk = new Dictionary<Int32, ICswNbtMetaDataObject>();
-            }
-            if( false == _ByPk.ContainsKey( Pk ) )
-            {
-                DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
-                if( Table.Rows.Count > 0 )
+                if( _ByPk == null )
                 {
-                    _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                    _ByPk = new Dictionary<Int32, ICswNbtMetaDataObject>();
                 }
-                else
+                if( false == _ByPk.ContainsKey( Pk ) )
                 {
-                    _ByPk[Pk] = null;
+                    DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
+                    if( Table.Rows.Count > 0 )
+                    {
+                        _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                    }
+                    else
+                    {
+                        _ByPk[Pk] = null;
+                    }
                 }
-            }
-            return _ByPk[Pk];
+                ret = _ByPk[Pk];
+            } // if( Pk != Int32.MinValue )
+            return ret;
         } // getByPk()
 
         private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;

@@ -9,6 +9,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -108,7 +109,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Warning, "The expected object was not defined", "NodeType for ObjectClass " + ObjectClass + " was null." );
             }
-            if( ObjectClass != NodeType.ObjectClass.ObjectClass )
+            if( ObjectClass != NodeType.getObjectClass().ObjectClass )
             {
                 throw new CswDniException( ErrorType.Warning, "Cannot use a " + NodeType.NodeTypeName + " as an " + ObjectClass, "Attempted to use a NodeType of an unexpected ObjectClass" );
             }
@@ -165,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtMetaDataNodeTypeTab ThisTab = NodeType.getNodeTypeTab( TabName );
                         if( null == ThisTab )
                         {
-                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.NodeTypeTabs.Count() );
+                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
                         }
                         RetDict.Add( TabName, ThisTab );
                     }
@@ -297,16 +298,16 @@ namespace ChemSW.Nbt.WebServices
             #region Set new InspectionTarget Props and Tabs
 
             //Inspection Target has Inspection Target Group Relationship
-            CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
             ItInspectionGroupNtp.SetFK( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
             ItInspectionGroupNtp.PropName = InspectionGroupName;
 
             //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
-            RetInspectionTargetNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.BarcodeProperty.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName );
+            CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
+            RetInspectionTargetNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName ) );
             ItDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ItInspectionGroupNtp );
 
-            CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.BarcodePropertyName );
+            CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.BarcodePropertyName );
             ItBarcodeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ItDescriptionNtp );
 
             //Inspection Target has a tab to host a grid view of Inspections
@@ -320,8 +321,8 @@ namespace ChemSW.Nbt.WebServices
             #region Set InspectionTargetGroup Props and Tabs
 
             //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp ItgNameNtp = InspectionTargetGroupNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTargetGroup.NamePropertyName );
-            InspectionTargetGroupNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName );
+            CswNbtMetaDataNodeTypeProp ItgNameNtp = InspectionTargetGroupNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTargetGroup.NamePropertyName );
+            InspectionTargetGroupNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName ) );
 
             //Description is useful.
             _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswNbtMetaDataFieldType.NbtFieldType.Text, "Description", InspectionTargetGroupNt.getFirstNodeTypeTab().TabId );
@@ -341,17 +342,17 @@ namespace ChemSW.Nbt.WebServices
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
-            CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.NamePropertyName );
+            CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
             IdNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             //NodeTypeName Template
             if( string.IsNullOrEmpty( InspectionDesignNt.NameTemplateValue ) )
             {
-                InspectionDesignNt.NameTemplateText = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
+                InspectionDesignNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName ) );
             }
 
             //Inspection Design Target is Inspection Target OC
             CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-            CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+            CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
             IdTargetNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             IdTargetNtp.IsRequired = true;
             if( IdTargetNtp.FKType != CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
@@ -364,7 +365,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
             _validateInspectionScheduleNt( GeneratorNt );
 
-            CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
+            CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
             if( IdGeneratorNtp.FKType != CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
                 IdGeneratorNtp.FKValue != GeneratorNt.NodeTypeId )
             {
@@ -372,7 +373,7 @@ namespace ChemSW.Nbt.WebServices
                 IdGeneratorNtp.PropName = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
             }
 
-            CswNbtMetaDataNodeTypeProp IdDueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
+            CswNbtMetaDataNodeTypeProp IdDueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
             IdDueDateNtp.IsRequired = true;
             IdDueDateNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
@@ -397,7 +398,7 @@ namespace ChemSW.Nbt.WebServices
         private void _validateInspectionScheduleNt( CswNbtMetaDataNodeType InspectionScheduleNt )
         {
             _validateNodeType( InspectionScheduleNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+            CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
             CswNbtMetaDataObjectClass GroupOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
             if( OwnerNtp.FKType != CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
@@ -475,9 +476,9 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
                     _validateNodeType( GeneratorNt, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-                    CswNbtMetaDataNodeTypeProp GnOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassGenerator.OwnerPropertyName );
+                    CswNbtMetaDataNodeTypeProp GnOwnerNtp = GeneratorNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
 
-                    CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+                    CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
                     CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
                     _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
@@ -502,7 +503,7 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtView _createInspectionGroupAssignmentView( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt )
         {
             _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-            CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+            CswNbtMetaDataNodeTypeProp ItTargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
             CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( ItTargetGroupNtp.FKValue );
             _validateNodeType( InspectionTargetGroupNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
@@ -534,7 +535,7 @@ namespace ChemSW.Nbt.WebServices
                     //Only show unrelated targets at the root level
                     CswNbtViewRelationship DanglingTargetRel = RetView.AddViewRelationship( InspectionTargetNt, false );
                     CswNbtViewProperty GroupVp = RetView.AddViewProperty( DanglingTargetRel, ItTargetGroupNtp );
-                    RetView.AddViewPropertyFilter( GroupVp, ItTargetGroupNtp.FieldTypeRule.SubFields[CswNbtSubField.SubFieldName.NodeID].Name, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
+                    RetView.AddViewPropertyFilter( GroupVp, ItTargetGroupNtp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID].Name, CswNbtPropFilterSql.PropertyFilterMode.Null, string.Empty, false );
                     RetView.save();
                 }
                 catch( Exception ex )
@@ -568,24 +569,25 @@ namespace ChemSW.Nbt.WebServices
                 RetView.ViewMode = ViewMode;
                 RetView.Category = Category;
 
-                CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( InspectionsGridProp.NodeType, true );
-                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, CswNbtViewRelationship.PropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.OwnerPropertyName ), true );
-                CswNbtMetaDataNodeTypeProp DueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.DatePropertyName );
+                CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( InspectionsGridProp.getNodeType(), true );
+                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, CswNbtViewRelationship.PropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.OwnerPropertyName ), true );
+                CswNbtMetaDataNodeTypeProp DueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
                 CswNbtViewProperty DueDateVp = RetView.AddViewProperty( InspectionVr, DueDateNtp );
-                CswNbtMetaDataNodeTypeProp StatusNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.StatusPropertyName );
+                CswNbtMetaDataNodeTypeProp StatusNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName );
                 CswNbtViewProperty StatusVp = RetView.AddViewProperty( InspectionVr, StatusNtp );
 
                 if( false == AllInspections )
                 {
-                    RetView.AddViewPropertyFilter( StatusVp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late ), false );
-                    RetView.AddViewPropertyFilter( StatusVp, StatusNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed ), false );
+                    ICswNbtFieldTypeRule FTRule = StatusNtp.getFieldTypeRule();
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled ), false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ), false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late ), false );
+                    RetView.AddViewPropertyFilter( StatusVp, FTRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed ), false );
                 }
 
                 if( DateTime.MinValue != DueDate )
                 {
-                    RetView.AddViewPropertyFilter( DueDateVp, DueDateNtp.FieldTypeRule.SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, DateTime.Today.ToString(), false );
+                    RetView.AddViewPropertyFilter( DueDateVp, DueDateNtp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, DateTime.Today.ToString(), false );
                 }
 
                 RetView.save();
@@ -620,7 +622,7 @@ namespace ChemSW.Nbt.WebServices
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
 
-                    CswNbtMetaDataNodeTypeProp ItTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionDesign.TargetPropertyName );
+                    CswNbtMetaDataNodeTypeProp ItTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
 
                     /* View:
                         [Target]
@@ -659,22 +661,22 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtViewRelationship InspectionGroupVr = RetView.AddViewRelationship( InspectionGroupNt, true );
 
-                CswNbtMetaDataNodeTypeProp InspectionGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
+                CswNbtMetaDataNodeTypeProp InspectionGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
                 CswNbtViewRelationship InspectionTargetVr = RetView.AddViewRelationship( InspectionGroupVr, CswNbtViewRelationship.PropOwnerType.Second, InspectionGroupNtp, true );
 
-                CswNbtMetaDataNodeTypeProp BarcodeNtp = InspectionTargetNt.BarcodeProperty;
+                CswNbtMetaDataNodeTypeProp BarcodeNtp = InspectionTargetNt.getBarcodeProperty();
                 RetView.AddViewProperty( InspectionTargetVr, BarcodeNtp ).Order = 0;
 
-                CswNbtMetaDataNodeTypeProp DescriptionNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
+                CswNbtMetaDataNodeTypeProp DescriptionNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.DescriptionPropertyName );
                 RetView.AddViewProperty( InspectionTargetVr, DescriptionNtp ).Order = 1;
 
-                CswNbtMetaDataNodeTypeProp LocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LocationPropertyName );
+                CswNbtMetaDataNodeTypeProp LocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
                 RetView.AddViewProperty( InspectionTargetVr, LocationNtp ).Order = 2;
 
-                CswNbtMetaDataNodeTypeProp DateNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName );
+                CswNbtMetaDataNodeTypeProp DateNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName );
                 RetView.AddViewProperty( InspectionTargetVr, DateNtp ).Order = 3;
 
-                CswNbtMetaDataNodeTypeProp StatusNtp = InspectionTargetNt.getNodeTypePropByObjectClassPropName( CswNbtObjClassInspectionTarget.StatusPropertyName );
+                CswNbtMetaDataNodeTypeProp StatusNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.StatusPropertyName );
                 RetView.AddViewProperty( InspectionTargetVr, StatusNtp ).Order = 4;
 
                 RetView.save();

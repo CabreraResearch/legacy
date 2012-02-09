@@ -395,8 +395,8 @@ namespace ChemSW.Nbt.WebServices
                             foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )
                             {
                                 // BZs 7085, 6651, 6644, 7092
-                                if( ThisProp.FieldTypeRule.SearchAllowed ||
-                                    ThisProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
+                                if( ThisProp.getFieldTypeRule().SearchAllowed ||
+                                    ThisProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
                                 {
                                     CswNbtViewProperty ViewProp = View.AddViewProperty( null, (CswNbtMetaDataNodeTypeProp) ThisProp );
                                     if( !CurrentRelationship.Properties.Contains( ViewProp ) )
@@ -404,8 +404,8 @@ namespace ChemSW.Nbt.WebServices
                                         ViewProp.Parent = CurrentRelationship;
 
                                         string PropName = ViewProp.Name;
-                                        if( !ThisProp.NodeType.IsLatestVersion )
-                                            PropName += "&nbsp;(v" + ThisProp.NodeType.VersionNo + ")";
+                                        if( false == ThisProp.getNodeType().IsLatestVersion() )
+                                            PropName += "&nbsp;(v" + ThisProp.getNodeType().VersionNo + ")";
 
                                         JProperty PropJProp = ViewProp.ToJson( PropName, true );
                                         ret.Add( PropJProp );
@@ -418,12 +418,12 @@ namespace ChemSW.Nbt.WebServices
                     else if( SelectedViewNode is CswNbtViewRoot )
                     {
                         // Set NextOptions to be all viewable nodetypes and objectclasses
-                        foreach( CswNbtMetaDataNodeType LatestNodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                        foreach( CswNbtMetaDataNodeType LatestNodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                         {
                             if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType ) )
                             {
                                 // This is purposefully not the typical way of creating CswNbtViewRelationships.
-                                CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, LatestNodeType.FirstVersionNodeType, false );
+                                CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, LatestNodeType.getFirstVersionNodeType(), false );
                                 R.Parent = SelectedViewNode;
 
                                 //if( isSelectable( R.SecondType, R.SecondId ) )
@@ -446,7 +446,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
 
-                        foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+                        foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
                         {
                             // This is purposefully not the typical way of creating CswNbtViewRelationships.
                             CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, ObjectClass, false );
@@ -493,8 +493,8 @@ namespace ChemSW.Nbt.WebServices
                             ( View.Visibility != NbtViewVisibility.Property || Level >= 2 );
 
             CswNbtMetaDataNodeType FirstVersionNodeType = _CswNbtResources.MetaData.getNodeType( FirstVersionId );
-            CswNbtMetaDataNodeType LatestVersionNodeType = _CswNbtResources.MetaData.getLatestVersion( FirstVersionNodeType );
-            CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.ObjectClass;
+            CswNbtMetaDataNodeType LatestVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( FirstVersionNodeType );
+            CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
             RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", new CswStaticParam( "getnodetypeid", FirstVersionNodeType.NodeTypeId ) );
@@ -746,10 +746,10 @@ namespace ChemSW.Nbt.WebServices
             SortedList PropsById = new SortedList();
 
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getLatestVersion( NodeType );
+            CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType );
             while( ThisVersionNodeType != null )
             {
-                foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.getNodeTypeProps() )
                 {
                     //string ThisKey = ThisProp.PropName.ToLower(); //+ "_" + ThisProp.FirstPropVersionId.ToString();
                     if( !PropsByName.ContainsKey( ThisProp.PropNameWithQuestionNo.ToLower() ) &&
@@ -759,7 +759,7 @@ namespace ChemSW.Nbt.WebServices
                         PropsById.Add( ThisProp.FirstPropVersionId, ThisProp );
                     }
                 }
-                ThisVersionNodeType = ThisVersionNodeType.PriorVersionNodeType;
+                ThisVersionNodeType = ThisVersionNodeType.getPriorVersionNodeType();
             }
             return PropsByName.Values;
         }
@@ -769,7 +769,7 @@ namespace ChemSW.Nbt.WebServices
             // Need to generate all properties on all nodetypes of this object class
             SortedList AllProps = new SortedList();
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
             {
                 ICollection NodeTypeProps = _getNodeTypePropsCollection( NodeType.NodeTypeId );
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeProps )

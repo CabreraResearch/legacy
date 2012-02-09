@@ -16,14 +16,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropLocation( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _NameSubField = ( (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).NameSubField;
-            _NodeIdSubField = ( (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).NodeIdSubField;
-            _RowSubField = ( (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).RowSubField;
-            _ColumnSubField = ( (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ColumnSubField;
-            _PathSubField = ( (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).PathSubField;
-            _BarcodeSubField = ( (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).BarcodeSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _NameSubField = _FieldTypeRule.NameSubField;
+            _NodeIdSubField = _FieldTypeRule.NodeIdSubField;
+            _RowSubField = _FieldTypeRule.RowSubField;
+            _ColumnSubField = _FieldTypeRule.ColumnSubField;
+            _PathSubField = _FieldTypeRule.PathSubField;
+            _BarcodeSubField = _FieldTypeRule.BarcodeSubField;
         }
 
+        private CswNbtFieldTypeRuleLocation _FieldTypeRule;
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIdSubField;
         private CswNbtSubField _RowSubField;

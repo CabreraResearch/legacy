@@ -181,10 +181,10 @@ namespace ChemSW.Nbt.WebServices
                 if( _MenuItems.Contains( "Copy" ) &&
                     null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) )
                 {
                     string BadPropertyName = string.Empty;
-                    if( false == Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
+                    if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
                     {
                         Ret["Copy"] = new JObject();
                         Ret["Copy"]["action"] = MenuActions.CopyNode.ToString();
@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.WebServices
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     Node.NodeSpecies == NodeSpecies.Plain &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.NodeType, false, null, null, Node, null ) )
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), false, null, null, Node, null ) )
                 {
                     Ret["Delete"] = new JObject();
                     Ret["Delete"]["action"] = MenuActions.DeleteNode.ToString();
@@ -223,9 +223,9 @@ namespace ChemSW.Nbt.WebServices
                 if( _MenuItems.Contains( "Print Label" ) &&
                     false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
-                    null != Node.NodeType )
+                    null != Node.getNodeType() )
                 {
-                    CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.BarcodeProperty;
+                    CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.getNodeType().getBarcodeProperty();
                     if( null != BarcodeProperty )
                     {
                         Ret["Print Label"] = new JObject();

@@ -78,7 +78,7 @@ namespace ChemSW.NbtWebControls
                 _TabStripDiv.Controls.Add( UL );
 
                 Int32 tabcnt = 0;
-                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                 {
                     HtmlGenericControl ThisLI = new HtmlGenericControl( "li" );
                     UL.Controls.Add( ThisLI );

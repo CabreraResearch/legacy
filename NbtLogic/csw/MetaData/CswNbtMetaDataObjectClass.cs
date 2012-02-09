@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 
@@ -122,22 +123,23 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToInt32( _ObjectClassRow["quota"] ); }
         }
 
-        public IEnumerable<CswNbtMetaDataNodeType> NodeTypes
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
         {
-            get { return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId ); }
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId );
         }
 
         public CswNbtMetaDataNodeType FirstNodeType
         {
             get
             {
-                CswNbtMetaDataNodeType ret = null;
-                foreach( CswNbtMetaDataNodeType NT in NodeTypes )
-                {
-                    ret = NT;
-                    break;
-                }
-                return ret;
+                //CswNbtMetaDataNodeType ret = null;
+                //foreach( CswNbtMetaDataNodeType NT in NodeTypes )
+                //{
+                //    ret = NT;
+                //    break;
+                //}
+                //return ret;
+                return getNodeTypes().First<CswNbtMetaDataNodeType>();
             }
         } // FirstNodeType
 

@@ -17,10 +17,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropDateTime( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _DateValueSubField = ( (CswNbtFieldTypeRuleDateTime) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).DateValueSubField;
-
+            _FieldTypeRule = (CswNbtFieldTypeRuleDateTime) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _DateValueSubField = _FieldTypeRule.DateValueSubField;
         }//generic
-
+        private CswNbtFieldTypeRuleDateTime _FieldTypeRule;
         private CswNbtSubField _DateValueSubField;
 
         override public bool Empty

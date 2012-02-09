@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.WebPages
                     if (Convert.ToInt32(_SelectedValue) > 0)
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp(Convert.ToInt32(_SelectedValue));
-                        _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
+                        _SelectedNodeType = _SelectedNodeTypeProp.getNodeType();
 						_SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
                     }
                     else
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.WebPages
                     if (Convert.ToInt32(_SelectedValue) > 0)
                     {
                         _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab(Convert.ToInt32(_SelectedValue));
-                        _SelectedNodeType = _SelectedNodeTypeTab.NodeType;
+                        _SelectedNodeType = _SelectedNodeTypeTab.getNodeType();
                     }
                     else
                     {

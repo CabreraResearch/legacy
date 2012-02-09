@@ -226,7 +226,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Tristate.True != this.IsFuture.Checked )
             {
                 String NodeStatus = String.Empty;
-                CswNbtMetaDataNodeType ThisInspectionNT = this.Node.NodeType.LatestVersionNodeType;
+                CswNbtMetaDataNodeType ThisInspectionNT = this.Node.getNodeTypeLatestVersion();
                 if( null != ThisInspectionNT )
                 {
                     //Limit collection to Inspections on the same Generator

@@ -20,7 +20,9 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeType( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
-            Reassign( Row );
+            //Reassign( Row );
+            _NodeTypeRow = Row;
+            _UniqueId = CswConvert.ToInt32( Row[UniqueIdFieldName] );
         }
 
         public DataRow _DataRow
@@ -38,16 +40,16 @@ namespace ChemSW.Nbt.MetaData
 
         public string UniqueIdFieldName { get { return "nodetypeid"; } }
 
-        public void Reassign( DataRow NewRow )
-        {
-            _NodeTypeRow = NewRow;
-            _UniqueId = CswConvert.ToInt32( NewRow[UniqueIdFieldName] );
+        //public void Reassign( DataRow NewRow )
+        //{
+        //    _NodeTypeRow = NewRow;
+        //    _UniqueId = CswConvert.ToInt32( NewRow[UniqueIdFieldName] );
 
-            // BZ 8370 - Remove cached data entities
-            _FirstVersionNodeType = null;
-            _PriorVersionNodeType = null;
-            _BarcodeProperty = null;
-        }
+        //    // BZ 8370 - Remove cached data entities
+        //    _FirstVersionNodeType = null;
+        //    _PriorVersionNodeType = null;
+        //    _BarcodeProperty = null;
+        //}
 
         public override string ToString()
         {
@@ -139,10 +141,13 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         }
-        public string NameTemplateText
+        public string getNameTemplateText()
         {
-            get { return CswNbtMetaData.TemplateValueToTemplateText( NodeTypeProps, NameTemplateValue ); }
-            set { NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( NodeTypeProps, value ); }
+            return CswNbtMetaData.TemplateValueToTemplateText( getNodeTypeProps(), NameTemplateValue );
+        }
+        public void setNameTemplateText( string value )
+        {
+            NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
         }
 
         public Int32 PriorVersionNodeTypeId
@@ -164,31 +169,22 @@ namespace ChemSW.Nbt.MetaData
             }
         }
         private CswNbtMetaDataNodeType _PriorVersionNodeType = null;
-        public CswNbtMetaDataNodeType PriorVersionNodeType
+        public CswNbtMetaDataNodeType getPriorVersionNodeType()
         {
-            get
-            {
-                if( _PriorVersionNodeType == null && PriorVersionNodeTypeId > 0 )
-                    _PriorVersionNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( PriorVersionNodeTypeId );
-                return _PriorVersionNodeType;
-            }
+            if( _PriorVersionNodeType == null && PriorVersionNodeTypeId > 0 )
+                _PriorVersionNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( PriorVersionNodeTypeId );
+            return _PriorVersionNodeType;
         }
         private CswNbtMetaDataNodeType _FirstVersionNodeType = null;
-        public CswNbtMetaDataNodeType FirstVersionNodeType
+        public CswNbtMetaDataNodeType getFirstVersionNodeType()
         {
-            get
-            {
-                if( _FirstVersionNodeType == null && FirstVersionNodeTypeId > 0 )
-                    _FirstVersionNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( FirstVersionNodeTypeId );
-                return _FirstVersionNodeType;
-            }
+            if( _FirstVersionNodeType == null && FirstVersionNodeTypeId > 0 )
+                _FirstVersionNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( FirstVersionNodeTypeId );
+            return _FirstVersionNodeType;
         }
-        public CswNbtMetaDataNodeType LatestVersionNodeType
+        public CswNbtMetaDataNodeType getNodeTypeLatestVersion()
         {
-            get
-            {
-                return _CswNbtMetaDataResources.CswNbtMetaData.getLatestVersion( this );
-            }
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeLatestVersion( this );
         }
 
         public Int32 VersionNo
@@ -210,37 +206,28 @@ namespace ChemSW.Nbt.MetaData
                 {
                     _NodeTypeRow["islocked"] = "1";
                 }
-                else if( IsLatestVersion )
+                else if( IsLatestVersion() )
                 {
                     _NodeTypeRow["islocked"] = CswConvert.ToDbVal( value );
                 }
             }
         }
 
-        public bool CanSave
+        public bool CanSave()
         {
-            get
-            {
-                return ( ( !IsLocked || IsLatestVersion ) &&
-                         ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
-            }
+            return ( ( !IsLocked || IsLatestVersion() ) &&
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
         }
-        public bool CanDelete
+        public bool CanDelete()
         {
-            get
-            {
-                return ( ( !IsLocked || IsLatestVersion ) &&
-                         ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
-            }
+            return ( ( !IsLocked || IsLatestVersion() ) &&
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
         }
 
 
-        public bool IsLatestVersion
+        public bool IsLatestVersion()
         {
-            get
-            {
-                return ( _CswNbtMetaDataResources.CswNbtMetaData.getLatestVersion( this ) == this );
-            }
+            return ( _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeLatestVersion( this ) == this );
         }
 
         /// <summary>
@@ -263,9 +250,9 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUniqueAndRequired( ref string ErrorPropName )
         {
             bool ret = false;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in this.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
             {
-                if( Prop.IsRequired && Prop.IsUnique )
+                if( Prop.IsRequired && Prop.IsUnique() )
                 {
                     ErrorPropName = Prop.PropName;
                     ret = true;
@@ -275,21 +262,52 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        public CswNbtMetaDataObjectClass ObjectClass
+        //public CswNbtMetaDataObjectClass ObjectClass
+        //{
+        //    get { return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) ); }
+        //}
+
+        public CswNbtMetaDataObjectClass getObjectClass()
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) ); }
+            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() ) );
+        }
+
+        public Int32 ObjectClassId
+        {
+            get
+            {
+                return CswConvert.ToInt32( _NodeTypeRow["objectclassid"].ToString() );
+            }
         }
 
 
-        public Collection<Int32> NodeTypeTabIds { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabIds( NodeTypeId ); } }
-        public IEnumerable<CswNbtMetaDataNodeTypeTab> NodeTypeTabs { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabs( NodeTypeId ); } }
-        public Collection<Int32> NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId ); } }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId ); } }
+        //public Collection<Int32> NodeTypeTabIds { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabIds( NodeTypeId ); } }
+        //public IEnumerable<CswNbtMetaDataNodeTypeTab> NodeTypeTabs { get { return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTabs( NodeTypeId ); } }
+        //public Collection<Int32> NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId ); } }
+        //public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId ); } }
+
+        public Collection<Int32> getNodeTypeTabIds()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabIds( NodeTypeId );
+        }
+        public IEnumerable<CswNbtMetaDataNodeTypeTab> getNodeTypeTabs()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId );
+        }
+        public Collection<Int32> getNodeTypePropIds()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypePropIds( NodeTypeId );
+        }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId );
+        }
+
 
         public CswNbtMetaDataNodeTypeTab getFirstNodeTypeTab()
         {
             CswNbtMetaDataNodeTypeTab FirstTab = null;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
             {
                 if( FirstTab == null )
                 {
@@ -303,7 +321,7 @@ namespace ChemSW.Nbt.MetaData
         {
             CswNbtMetaDataNodeTypeTab SecondTab = null;
             bool first = true;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
             {
                 if( first )
                     first = false;
@@ -335,7 +353,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeTypeTab getNodeTypeTabByFirstVersionId( Int32 FirstTabVersionId )
         {
             CswNbtMetaDataNodeTypeTab ret = null;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
             {
                 if( Tab.FirstTabVersionId == FirstTabVersionId )
                 {
@@ -349,7 +367,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByFirstVersionId( Int32 FirstPropVersionId )
         {
             CswNbtMetaDataNodeTypeProp ret = null;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in getNodeTypeProps() )
             {
                 if( Prop.FirstPropVersionId == FirstPropVersionId )
                 {
@@ -360,15 +378,15 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         } // getNodeTypePropByFirstVersionId()
 
-        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassPropName( string ObjectClassPropName )
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( string ObjectClassPropName )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassPropName( NodeTypeId, ObjectClassPropName );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassPropName );
         }
 
         public Int32 GetMaximumTabOrder()
         {
             Int32 MaximumTabOrder = 0;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in this.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
             {
                 if( Tab.TabOrder > MaximumTabOrder )
                     MaximumTabOrder = Tab.TabOrder;
@@ -402,6 +420,7 @@ namespace ChemSW.Nbt.MetaData
 
         public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
         {
+            CswNbtMetaDataNodeType LatestVersionNT = getNodeTypeLatestVersion();
             XmlDocument XmlDoc = new XmlDocument();
 
             XmlNode XmlNode = XmlDoc.CreateNode( XmlNodeType.Element, _Element_MetaDataNodeType, "" );
@@ -412,7 +431,7 @@ namespace ChemSW.Nbt.MetaData
             XmlNode.Attributes.Append( NodeTypeIdAttr );
 
             XmlAttribute ObjectClassIdAttr = XmlDoc.CreateAttribute( _Attribute_ObjectClassId );
-            ObjectClassIdAttr.Value = ObjectClass.ObjectClassId.ToString();
+            ObjectClassIdAttr.Value = ObjectClassId.ToString();
             XmlNode.Attributes.Append( ObjectClassIdAttr );
 
             XmlAttribute NodeTypeNameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeName );
@@ -432,7 +451,7 @@ namespace ChemSW.Nbt.MetaData
             XmlNode.Attributes.Append( VersionAttr );
 
             XmlAttribute IsLatestVersionAttr = XmlDoc.CreateAttribute( _Attribute_IsLatestVersion ); //bz # 8016
-            IsLatestVersionAttr.Value = LatestVersionNodeType.NodeTypeId == NodeTypeId ? "1" : "0";
+            IsLatestVersionAttr.Value = LatestVersionNT.NodeTypeId == NodeTypeId ? "1" : "0";
             XmlNode.Attributes.Append( IsLatestVersionAttr );
 
             XmlAttribute PriorVersionAttr = XmlDoc.CreateAttribute( _Attribute_PriorNodeTypeId );
@@ -444,14 +463,14 @@ namespace ChemSW.Nbt.MetaData
             XmlNode.Attributes.Append( FirstVersionAttr );
 
             XmlAttribute TableNameAttr = XmlDoc.CreateAttribute( _Attribute_TableName );
-            TableNameAttr.Value = LatestVersionNodeType.TableName;
+            TableNameAttr.Value = LatestVersionNT.TableName;
             XmlNode.Attributes.Append( TableNameAttr );
 
             XmlAttribute NameTemplateAttr = XmlDoc.CreateAttribute( _Attribute_NameTemplate );
-            NameTemplateAttr.Value = NameTemplateText;
+            NameTemplateAttr.Value = getNameTemplateText();
             XmlNode.Attributes.Append( NameTemplateAttr );
 
-            foreach( CswNbtMetaDataNodeTypeTab Tab in this.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
             {
                 XmlNode TabNode = Tab.ToXml( View, XmlDoc, ForMobile, PropsInViewOnly );
                 if( TabNode != null )
@@ -461,25 +480,22 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private CswNbtMetaDataNodeTypeProp _BarcodeProperty;
-        public CswNbtMetaDataNodeTypeProp BarcodeProperty
+        public CswNbtMetaDataNodeTypeProp getBarcodeProperty()
         {
-            get
+            if( _BarcodeProperty == null )
             {
-                if( _BarcodeProperty == null )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in this.NodeTypeProps )
+                    if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {
-                        if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
-                        {
-                            if( _BarcodeProperty != null )
-                                throw new CswDniException( ErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
-                            _BarcodeProperty = Prop;
-                        }
+                        if( _BarcodeProperty != null )
+                            throw new CswDniException( ErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
+                        _BarcodeProperty = Prop;
                     }
                 }
-                return _BarcodeProperty;
             }
-        }
+            return _BarcodeProperty;
+        } // getBarcodeProperty()
 
         public CswNbtView CreateDefaultView()
         {
@@ -575,21 +591,24 @@ namespace ChemSW.Nbt.MetaData
         public int CompareTo( CswNbtMetaDataNodeType OtherNodeType )
         {
             int ret = 0;
+            CswNbtMetaDataNodeType ThisFirstVersionNT = this.getFirstVersionNodeType();
+            CswNbtMetaDataNodeType OtherFirstVersionNT =  OtherNodeType.getFirstVersionNodeType();
+
             if( this.FirstVersionNodeTypeId == OtherNodeType.FirstVersionNodeTypeId )
             {
                 // This is inverted on purpose, so new (later) versions are first
                 //ret = this.VersionNo.CompareTo( OtherNodeType.VersionNo );
                 ret = OtherNodeType.VersionNo.CompareTo( this.VersionNo );
             }
-            else if( OtherNodeType.FirstVersionNodeType != null )
+            else if( OtherFirstVersionNT != null )
             {
                 // Group things by their first version's name, so that the above clause will apply
-                ret = this.FirstVersionNodeType.NodeTypeName.CompareTo( OtherNodeType.FirstVersionNodeType.NodeTypeName );
+                ret = ThisFirstVersionNT.NodeTypeName.CompareTo( OtherFirstVersionNT.NodeTypeName );
             }
             else // (since we build collections by id, the only time this happens is if OtherNodeType is a first version)
             {
                 // Group things by their first version's name, so that the above clause will apply
-                ret = this.FirstVersionNodeType.NodeTypeName.CompareTo( OtherNodeType.NodeTypeName );
+                ret = ThisFirstVersionNT.NodeTypeName.CompareTo( OtherNodeType.NodeTypeName );
             }
             return ret;
         } // CompareTo (CswNbtMetaDataNodeType)

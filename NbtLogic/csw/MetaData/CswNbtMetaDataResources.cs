@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void RecalculateQuestionNumbers( CswNbtMetaDataNodeType NodeType )
         {
-            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
             {
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first
@@ -398,7 +398,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if( Prop.hasFilter() )
                     {
-                        CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).LatestVersionNodeTypeProp;
+                        CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
                         if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
                         {
                             Prop.QuestionNo = ParentProp.QuestionNo;

@@ -111,7 +111,7 @@ namespace ChemSW.Nbt
         private void _readNode( CswNbtNode TargetNode, CswNbtNode ParentNode )
         {
 
-            string TargetTableName = TargetNode.NodeType.NodeTypeName;
+            string TargetTableName = TargetNode.getNodeType().NodeTypeName;
 
             DataTable NodeTable = null;
             if ( _NLevelDs.Tables.Contains( TargetTableName ) )
@@ -144,11 +144,11 @@ namespace ChemSW.Nbt
             CurrentRow[_NodeColumnDefs[NodeColumnIds.NodeId].Name] = TargetNode.NodeId.PrimaryKey;
             CurrentRow[_NodeColumnDefs[NodeColumnIds.CswPrimeKey].Name] = TargetNode.NodeId.ToString();
             CurrentRow[_NodeColumnDefs[NodeColumnIds.NodeName].Name] = TargetNode.NodeName;
-            CurrentRow[_NodeColumnDefs[NodeColumnIds.NodeTypeName].Name] = TargetNode.NodeType.NodeTypeName;
+            CurrentRow[_NodeColumnDefs[NodeColumnIds.NodeTypeName].Name] = TargetNode.getNodeType().NodeTypeName;
             CurrentRow[_NodeColumnDefs[NodeColumnIds.ModifiedByMobile].Name] = false;
             if ( null != ParentNode )
             {
-                string ParentTableName = ParentNode.NodeType.NodeTypeName;
+                string ParentTableName = ParentNode.getNodeType().NodeTypeName;
                 if ( false == _NLevelDs.Relations.Contains( _MakeTableRelationName( ParentTableName, TargetTableName ) ) )
                 {
                     _NLevelDs.Relations.Add( new DataRelation( _MakeTableRelationName( ParentTableName, TargetTableName ), _NLevelDs.Tables[ParentTableName].Columns["NodeId"], NodeTable.Columns["ParentNodeId"] ) );
@@ -173,18 +173,19 @@ namespace ChemSW.Nbt
         //see my note in WriteTreeDs() with respect to SetPropRowValue()
         private bool _isPropTypeSupported( CswNbtNodePropWrapper CswNbtNodePropWrapper )
         {
+            CswNbtMetaDataFieldType.NbtFieldType FT = CswNbtNodePropWrapper.getFieldType().FieldType;
             return
                 (
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Memo ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Number ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Password ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Static ||
-                CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text //||
-                //CswNbtNodePropWrapper.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Time
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Logical ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Memo ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Number ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Password ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Sequence ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Static ||
+                FT == CswNbtMetaDataFieldType.NbtFieldType.Text //||
+                //FT == CswNbtMetaDataFieldType.NbtFieldType.Time
                 );
         }//_isPropTypeSupported() 
 
@@ -257,7 +258,7 @@ namespace ChemSW.Nbt
                                         //instead will have to have a mechanism to interpret them as properties. In other words, 
                                         //enabling the handheld to deal with anything but the simple field types will be expensive
                                         //from an engineering point of view. 
-                                        CswNbtNodePropWrapper.SetPropRowValue( CswNbtMetaDataNodeTypeProp.FieldTypeRule.SubFields.Default.Column, CurrentRow[CurrentColumn] );
+                                        CswNbtNodePropWrapper.SetPropRowValue( CswNbtMetaDataNodeTypeProp.getFieldTypeRule().SubFields.Default.Column, CurrentRow[CurrentColumn] );
 
                                     }//if column value is not null
 

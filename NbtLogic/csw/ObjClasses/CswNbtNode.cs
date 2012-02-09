@@ -149,7 +149,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswNbtNodePropColl _CswNbtNodePropColl = null;
         //private ICswNbtObjClassFactory _CswNbtObjClassFactory = null;
-        private CswNbtObjClass _CswNbtObjClass = null;
+        private CswNbtObjClass __CswNbtObjClass = null;
+        private CswNbtObjClass _CswNbtObjClass
+        {
+            get
+            {
+                if( __CswNbtObjClass == null && _NodeTypeId != Int32.MinValue )
+                {
+                    __CswNbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, _CswNbtResources.MetaData.getObjectClassByNodeTypeId( _NodeTypeId ), this );
+                }
+                return __CswNbtObjClass;
+            }
+        }
+
         private CswNbtResources _CswNbtResources;
         public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId ) //, ICswNbtObjClassFactory ICswNbtObjClassFactory )
         {
@@ -160,9 +172,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null ); //, ICswNbtObjClassFactory);
             //_CswNbtObjClassFactory = ICswNbtObjClassFactory; // new CswNbtObjClassFactory(CswNbtResources, this);
             _NodeSpecies = NodeSpecies;
-
-            if( NodeType != null )
-                ObjectClassId = NodeType.ObjectClass.ObjectClassId;
+            
+            //if( NodeType != null )
+            //    ObjectClassId = NodeType.ObjectClassId;
 
         }//ctor()
 
@@ -327,30 +339,28 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         //private CswNbtMetaDataNodeType _NodeType = null;
-        public CswNbtMetaDataNodeType NodeType
+        public CswNbtMetaDataNodeType getNodeType()
         {
-            get { return _CswNbtResources.MetaData.getNodeType( NodeTypeId ); }
-        }//NodeType
+            return _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+        }
+
+        public CswNbtMetaDataNodeType getNodeTypeLatestVersion()
+        {
+            return _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeTypeId );
+        }
 
         //private string _NodeTypeName = "";
         //public string NodeTypeName { get { return ( _NodeTypeName ); } set { _NodeTypeName = value; } }
 
-        private Int32 _ObjectClassId = 0;
-        public Int32 ObjectClassId
+        public Int32 getObjectClassId()
         {
-            get { return ( _ObjectClassId ); }
-            set
-            {
-                _ObjectClassId = value;
-                if( _CswNbtObjClass == null || _CswNbtObjClass.ObjectClass.ObjectClassId != _ObjectClassId )
-                    _CswNbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, _ObjectClassId, this );
-            }
-        }//ObjectClassId
+            return getNodeType().ObjectClassId;
+        }
 
-        public CswNbtMetaDataObjectClass ObjectClass
+        public CswNbtMetaDataObjectClass getObjectClass()
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( ObjectClassId ); }
-        }//ObjectClass
+            return _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
+        }
 
         // For CswNbtNodeCaster
         public CswNbtObjClass ObjClass
@@ -528,10 +538,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw ( new CswDniException( "There is no delete handler" ) );
             }
-
-            if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, this.NodeType ) )
+            CswNbtMetaDataNodeType thisNT = this.getNodeType();
+            if( !_CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
             {
-                throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + this.NodeType.NodeTypeName, "User attempted to delete a " + this.NodeType.NodeTypeName + " without Delete permissions" ) );
+                throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + thisNT.NodeTypeName, "User attempted to delete a " + thisNT.NodeTypeName + " without Delete permissions" ) );
             }
 
             if( null != _CswNbtObjClass )
@@ -631,7 +641,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 foreach( CswNbtNodePropWrapper ThisProp in this.Properties )
                 {
-                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.FieldType == SourceProp.FieldType )
+                    if( ThisProp.PropName == SourceProp.PropName && ThisProp.getFieldType().FieldType == SourceProp.getFieldType().FieldType )
                     {
                         ThisProp.copy( SourceProp );
                     } // if( ThisProp.PropName == SourceProp.PropName && ThisProp.FieldType == SourceProp.FieldType )
@@ -653,9 +663,9 @@ namespace ChemSW.Nbt.ObjClasses
                 if( ViewRelationship.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
                 {
                     if( ( ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
-                          ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.ObjectClassId ) ) &&
+                          ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&
                         ( ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
-                          ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.ObjectClassId ) ) )
+                          ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
                     {
                         if( ViewRelationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
                             Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
@@ -664,12 +674,13 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( Prop != null )
                         {
-                            if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                            CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldType().FieldType;
+                            if( FT == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                             {
                                 Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
                                 Prop.AsRelationship.RefreshNodeName();
                             }
-                            if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                            if( FT == CswNbtMetaDataFieldType.NbtFieldType.Location )
                             {
                                 Prop.AsLocation.SelectedNodeId = ParentNode.NodeId;
                                 Prop.AsLocation.RefreshNodeName();
