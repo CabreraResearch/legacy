@@ -50,7 +50,7 @@
 
             makeStepId = function (suffix, stepNo) {
                 var step = stepNo || currentStepNo;
-                return Csw.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
+                return Csw.controls.dom.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
             },
 
         //Step 1. Select a Customer ID
@@ -84,7 +84,7 @@
                         customerIdSelect = customerIdTable.cell(1, 2);
                         customerIdSelect.$.CswDiv('init')
                             .CswSelect('init', {
-                                ID: Csw.makeSafeId('customerIdSelect'),
+                                ID: Csw.controls.dom.makeSafeId('customerIdSelect'),
                                 selected: '',
                                 values: [{ value: '', display: ''}],
                                 onChange: function () {
@@ -169,7 +169,7 @@
                 headerTable.add(1, 1, '<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
                 headerTable.cell(1, 2)
                            .$.CswButton('init', {
-                                ID: Csw.makeSafeId('clearAll'),
+                                ID: Csw.controls.dom.makeSafeId('clearAll'),
                                 enabledText: 'Clear All Reprobates',
                                 disabledText: 'Clearing...',
                                 onclick: function () {
@@ -208,7 +208,7 @@
 
         //#region Execution
         $wizard = $div.CswWizard('init', {
-            ID: Csw.makeId({ ID: o.ID, suffix: 'wizard' }),
+            ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'View Nbt Scheduler Rules by Schema',
             StepCount: Csw.enums.wizardSteps_ScheduleRulesGrid.stepcount,
             Steps: wizardSteps,

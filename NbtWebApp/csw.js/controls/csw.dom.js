@@ -269,6 +269,8 @@
         options.$ = $element;
         internal.id = Csw.string($element.prop('id'));
 
+        //#region Csw DOM classes
+
         options.getId = function () {
             /// <summary>Get the DOM Element ID of this object.</summary>
             /// <returns type="String">Element ID.</returns> 
@@ -295,6 +297,19 @@
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
             return Csw.controls.dom.propNonDom($element, name, value);
         };
+
+        options.table = function (tableOpts) {
+            /// <summary> Creates a Csw.table on this element</summary>
+            /// <param name="tableOpts" type="Object">Options to define the table.</param>
+            /// <returns type="Object">A Csw.table</returns> 
+            tableOpts.ID = tableOpts.ID || Csw.controls.dom.makeId(internal.id, 'subtbl');
+            tableOpts.$parent = $element;
+            return Csw.controls.table(tableOpts);
+        };
+
+        //#endregion Csw DOM classes
+
+        //#region Csw "jQuery" classes
 
         options.addClass = function (name) {
             /// <summary>Add a CSS class to an element.</summary>
@@ -373,6 +388,26 @@
                 return Csw.string($element.text());
             }
         };
+
+        options.show = function () {
+            /// <summary>Make the element visible.</summary>
+            /// <returns type="String">The jQuery element(s) (for chaining)</returns>
+            return $element.show();
+        };
+
+        options.hide = function () {
+            /// <summary>Make the element invisible.</summary>
+            /// <returns type="String">The jQuery element(s) (for chaining)</returns>
+            return $element.hide();
+        };
+
+        options.empty = function () {
+            /// <summary>Empty the element.</summary>
+            /// <returns type="String">The jQuery element(s) (for chaining)</returns>
+            return $element.empty();
+        };
+
+        //#endregion Csw "jQuery" classes
 
         return options;
     }

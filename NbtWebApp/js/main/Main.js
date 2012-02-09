@@ -303,8 +303,8 @@ window.initMain = window.initMain || function (undefined) {
             'onSearch':
                  {
                      'onViewSearch': function () {
-                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+                         var genericSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+                         var viewSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
                          refreshSearchPanel({
                              'genericSearchId': genericSearchId,
                              'viewSearchId': viewSearchId,
@@ -314,8 +314,8 @@ window.initMain = window.initMain || function (undefined) {
                          });
                      },
                      'onGenericSearch': function () {
-                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+                         var genericSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+                         var viewSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
                          refreshSearchPanel({
                              'genericSearchId': genericSearchId,
                              'viewSearchId': viewSearchId,

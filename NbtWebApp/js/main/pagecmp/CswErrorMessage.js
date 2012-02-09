@@ -1,11 +1,9 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
-    
+
     $.fn.CswErrorMessage = function (options) {
 
         var o = {
@@ -25,45 +23,36 @@
                         .appendTo($parentdiv)
                         .CswAttrDom('id', id)
                         .addClass('CswErrorMessage_Message');
-        if(o.type.toLowerCase() === "warning")
-        {
+        if (o.type.toLowerCase() === "warning") {
             $errordiv.addClass('CswErrorMessage_Warning');
         } else {
             $errordiv.addClass('CswErrorMessage_Error');
         }
 
-        var $tbl = $errordiv.CswTable('init', {
-                                                'id': Csw.makeId({ 
-                                                        'prefix': id, 
-                                                        'id': 'tbl' 
-                                                    }), 
-                                                'width': '100%' 
-                                            });
-        var $cell11 = $tbl.CswTable('cell', 1, 1)
-                            .CswAttrDom('width', '100%');
-        var $cell12 = $tbl.CswTable('cell', 1, 2);
-        var $cell21 = $tbl.CswTable('cell', 2, 1);
+        var table = Csw.controls.table({
+            $parent: $errordiv,
+            ID: Csw.controls.dom.makeId(id, 'tbl'),
+            width: '100%'
+        });
 
-        /* Image Link */
-        $('<a href="#">' + o.message + '</a>')
-                        .appendTo($cell11)
-                        .click(function () { 
-                            $cell21.toggle();
-                        });
-        $cell21.append(o.detail);
-        $cell21.hide();
+        var cell21 = table.add(2, 1, o.detail).hide();
+        table.add(1, 1, '<a href="#">' + o.message + '</a>')
+            .propDom('width', '100%')
+            .bind('click', cell21.$.toggle);
+        var cell12 = table.cell(1, 2);
+        
 
-        $cell12.CswImageButton({
-                ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-                AlternateText: 'Hide',
-                ID: Csw.makeId({ 'prefix': id, 'id': 'hidebtn' }),
-                onClick: function () {
-                    $errordiv.remove();
-                    if ($parentdiv.children().length === 0)
-                        $parentdiv.hide();
-                    return Csw.enums.imageButton_ButtonType.None;
-                }
-            });
+        cell12.$.CswImageButton({
+            ButtonType: Csw.enums.imageButton_ButtonType.Delete,
+            AlternateText: 'Hide',
+            ID: Csw.controls.dom.makeId({ 'prefix': id, 'id': 'hidebtn' }),
+            onClick: function () {
+                $errordiv.remove();
+                if ($parentdiv.children().length === 0)
+                    $parentdiv.hide();
+                return Csw.enums.imageButton_ButtonType.None;
+            }
+        });
         $('html, body').animate({ scrollTop: 0 }, 0);
         //case 23675
         var $dialog = $(this).parent();

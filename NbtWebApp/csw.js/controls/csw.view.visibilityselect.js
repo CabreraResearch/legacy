@@ -36,11 +36,11 @@
                 external.$visibilityselect.append('<option value="Global">Global</option>');
 
                 external.$visroleselect = parent.$.CswNodeSelect('init', {
-                    ID: parent.makeId(id, 'visrolesel'),
+                    ID: Csw.controls.dom.makeId(id, 'visrolesel'),
                     objectclass: 'RoleClass'
                 }).hide();
                 external.$visuserselect = parent.$.CswNodeSelect('init', {
-                    ID: parent.makeId(id, 'visusersel'),
+                    ID: Csw.controls.dom.makeId(id, 'visusersel'),
                     objectclass: 'UserClass'
                 });
 

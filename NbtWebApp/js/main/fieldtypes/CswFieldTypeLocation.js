@@ -23,15 +23,15 @@
                     $Div.append(path);
                     $Div.hover(function (event) { Csw.nodeHoverIn(event, nodeId); }, Csw.nodeHoverOut);
                 } else {
-                    var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+                    var table = Csw.controls.table({
+                        $parent: $Div,
+                        ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    });
 
-                    var $pathcell = $table.CswTable('cell', 1, 1);
-                    $pathcell.CswAttrDom('colspan', '2');
-                    $pathcell.append(path + "<br/>");
+                    table.add(1, 1, path + '<br/>').propDom('colspan', '2');
 
-                    var $selectcell = $table.CswTable('cell', 2, 1);
-                    var $selectdiv = $('<div class="locationselect" value="'+ nodeId +'"/>' )
-                                        .appendTo($selectcell);
+                    var $selectdiv = $('<div class="locationselect" value="'+ nodeId +'"/>' );
+                    table.add(2, 1, $selectdiv);
 
                     var $locationtree = $('<div />')
                                             .CswNodeTree('init', {  

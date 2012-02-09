@@ -59,7 +59,6 @@
             if (options) $.extend(o, options);
 
             var $div = $('<div></div>');
-            //var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
             var table = Csw.controls.table({
                 $parent: $div,
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
@@ -265,12 +264,16 @@
             };
 
             var $div = $('<div></div>');
-            var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });
-            var $cell11 = $table.CswTable('cell', 1, 1);
-            var $cell12 = $table.CswTable('cell', 1, 2);
+            var table = Csw.controls.table({
+                $parent: $div,
+                ID: 'EditLayoutDialog_table',
+                width: '100%'
+            });
 
-            $cell11.append("Configure:<br/>");
-            var $layoutSelect = $cell11.CswSelect('init', {
+            var cell11 = table.add(1, 1, 'Configure:<br/>');
+            var cell12 = table.cell(1, 2);
+
+            var $layoutSelect = cell11.$.CswSelect('init', {
                 ID: 'EditLayoutDialog_layoutselect',
                 selected: 'Edit',
                 values: [{ value: 'Add', display: 'Add' },
@@ -284,8 +287,8 @@
                 }
             });
 
-            $cell11.append("<br/><br/>Add:<br/>");
-            var $addSelect = $cell11.CswSelect('init', {
+            cell11.append('<br/><br/>Add:<br/>');
+            var $addSelect = cell11.$.CswSelect('init', {
                 ID: 'EditLayoutDialog_addselect',
                 selected: '',
                 values: [],
@@ -307,8 +310,8 @@
             }); // CswSelect
 
             function _resetLayout() {
-                $cell12.contents().remove();
-                $cell12.CswNodeTabs(cswNodeTabOptions);
+                cell12.empty();
+                cell12.$.CswNodeTabs(cswNodeTabOptions);
                 _configAddOptions();
             }
 
@@ -365,10 +368,12 @@
             var $div = $('<div></div>');
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
-            var $table = $div.CswTable();
+            var table = Csw.controls.table({
+                $parent: $div
+            });
             if (false === Csw.isNullOrEmpty(o.date) && false === o.Multi) {
                 myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
-                $table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
+                table.cell(1, 1).$.CswAuditHistoryGrid({
                     ID: o.nodeids[0] + '_history',
                     nodeid: o.nodeids[0],
                     cswnbtnodekey: o.nodekeys[0],
@@ -379,13 +384,13 @@
                     allowEditRow: false
                 });
             }
-            var $tabcell = $table.CswTable('cell', 1, 2);
+            var tabCell = table.cell(1, 2);
 
             setupTabs(o.date);
 
             function setupTabs(date) {
-                $tabcell.empty();
-                $tabcell.CswNodeTabs({
+                tabCell.empty();
+                tabCell.$.CswNodeTabs({
                     nodeids: o.nodeids,
                     nodekeys: o.nodekeys,
                     nodenames: o.nodenames,
@@ -548,23 +553,22 @@
                 data: {},
                 success: function (data) {
                     $div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
-                    var $table = $div.CswTable('init', { ID: 'abouttable' });
+                    var table = Csw.controls.table({
+                        $parent: $div,
+                        ID: 'abouttale'
+                    });
+
                     var row = 1;
 
                     var components = data.components;
                     for (var comp in components) {
                         if (Csw.contains(components, comp)) {
                             var thisComp = components[comp];
-                            var $namecell = $table.CswTable('cell', row, 1);
-                            var $versioncell = $table.CswTable('cell', row, 2);
-                            var $copyrightcell = $table.CswTable('cell', row, 3);
-                            $namecell.css('padding', '2px 5px 2px 5px');
-                            $versioncell.css('padding', '2px 5px 2px 5px');
-                            $copyrightcell.css('padding', '2px 5px 2px 5px');
-                            $namecell.append(thisComp.name);
-                            $versioncell.append(thisComp.version);
-                            $copyrightcell.append(thisComp.copyright);
-                            row++;
+                            
+                            table.add(row, 1, thisComp.name).css('padding', '2px 5px 2px 5px');
+                            table.add(row, 2, thisComp.version).css('padding', '2px 5px 2px 5px');
+                            table.add(row, 3, thisComp.copyright).css('padding', '2px 5px 2px 5px');
+                            row += 1;
                         }
                     }
                 }
@@ -823,12 +827,12 @@
 
             var $div = $('<div id="' + o.ID + '"><p>' + o.navigationText + '</p></div>'),
                 $select = $div.CswSelect('init', {
-                    ID: Csw.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
+                    ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
                     values: o.values
                 });
 
             $div.CswButton({
-                ID: Csw.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
+                ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
                 enabledText: 'OK',
                 onclick: function () {
                     if (Csw.isFunction(o.onOkClick)) {

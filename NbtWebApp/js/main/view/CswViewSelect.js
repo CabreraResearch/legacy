@@ -1,9 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="CswViewListTree.js" />
-
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -119,15 +115,18 @@
         if(optSelect) $.extend(x, optSelect);
 
         var $newTopContent = $('<div></div>');
-        var $table = $newTopContent.CswTable('init', { ID: x.ID + 'selectedtbl' });
-        var $cell1 = $table.CswTable('cell', 1, 1);
-        var $icondiv = $('<div />').appendTo($cell1);
+        var table = Csw.controls.table({
+                $parent: $newTopContent,
+                ID: x.ID + 'selectedtbl' 
+        });
+        var $icondiv = $('<div />');
+        table.add(1, 1, $icondiv);
+        
         $icondiv.css('background-image', x.iconurl);
         $icondiv.css('width', '16px');
         $icondiv.css('height' ,'16px');
 
-        var $cell2 = $table.CswTable('cell', 1, 2);
-        $cell2.append(x.viewname.substr(0,30));
+        table.add(1, 2, x.viewname.substr(0,30));
 
         x.$selectdiv.CswComboBox( 'TopContent', $newTopContent );
         x.$selectdiv.CswAttrNonDom('selectedType', x.type);

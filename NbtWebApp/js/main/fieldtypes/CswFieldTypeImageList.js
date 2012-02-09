@@ -74,7 +74,7 @@
                     nameCell.$.CswImageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
-                        ID: Csw.makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
+                        ID: Csw.controls.dom.makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
                         onClick: function () {
                             nameCell.$.fadeOut('fast');
                             imageCell.$.fadeOut('fast');

@@ -44,7 +44,7 @@
 
                 var cell1 = table.add(1, 1, o.TopContent);
                 cell1.propDom('width', '100%');
-                
+
                 var cell2 = table.cell(1, 2);
                 cell2.addClass("CswComboBox_ImageCell");
 
@@ -68,11 +68,11 @@
                 var $Div = $(this);
                 var $TopDiv = $Div.children('.CswComboBox_TopDiv');
                 var $table = $TopDiv.children('table');
-                /* Case 24440. We'll come back to this when we refactor this class. CswTable here. */
-                var $cell1 = $table.CswTable('cell', 1, 1);
-                $cell1.text('');
-                $cell1.contents().remove();
-                $cell1.append(content);
+                var table = Csw.controls.table($table);
+                var cell1 = table.cell(1, 1);
+                cell1.text('');
+                cell1.empty();
+                cell1.append(content);
             },
             toggle: function () {
                 var $Div = $(this);

@@ -5,7 +5,11 @@
     'use strict';
 
     function table(options) {
-        /// <summary>Create an HTML table and return a Csw.table object</summary>
+        /// <summary>
+        /// Create or extend an HTML table and return a Csw.table object
+        ///     &#10;1 - table(options)
+        ///     &#10;2 - table($jqueryElement)
+        ///</summary>
         /// <param name="options" type="Object">
         /// <para>A JSON Object</para>
         /// <para>options.$parent: An element to attach to.</para>
@@ -13,7 +17,7 @@
         /// <para>options.align: Align value</para>
         /// <para>options.width: Table width</para>
         /// </param>
-        /// <returns type="Object">A table object</returns>
+        /// <returns type="table">A table object</returns>
         var internal = {
             $parent: '',
             ID: '',
@@ -32,29 +36,18 @@
             border: 0
         };
         var external = {};
-         
+
         (function () {
             if (options) {
                 $.extend(internal, options);
             }
+            var $table = $('<table id="' + internal.ID + '"></table>');
+            var isjQuery = Csw.isJQuery(options);
 
-            Csw.controls.domExtend($('<table id="' + internal.ID + '"></table>'), external);
-
-            external.addClass(internal.TableCssClass);
-            external.propDom({
-                width: internal.width,
-                align: internal.align,
-                cellpadding: internal.cellpadding,
-                cellspacing: internal.cellspacing,
-                border: internal.border,
-                cellalign: internal.cellalign,
-                cellvalign: internal.cellvalign,
-                cellcssclass: internal.CellCssClass
-            });
-            external.propNonDom({
-                FirstCellRightAlign: internal.FirstCellRightAlign,
-                OddCellRightAlign: internal.OddCellRightAlign
-            });
+            if (isjQuery) {
+                $table = options;
+            }
+            Csw.controls.domExtend($table, external);
 
             external.bind('CswTable_onCreateCell', function (e, $cell, row, column) {
                 Csw.tryExec(internal.onCreateCell(e, Csw.controls.domExtend($cell, {}), row, column));
@@ -62,8 +55,25 @@
             });
             external.trigger('CswTable_onCreateCell', [external.find('td'), 1, 1]);
 
-            internal.$parent.append(external.$);
+            if (false === isjQuery) {
+                external.addClass(internal.TableCssClass);
+                external.propDom({
+                    width: internal.width,
+                    align: internal.align,
+                    cellpadding: internal.cellpadding,
+                    cellspacing: internal.cellspacing,
+                    border: internal.border,
+                    cellalign: internal.cellalign,
+                    cellvalign: internal.cellvalign,
+                    cellcssclass: internal.CellCssClass
+                });
+                external.propNonDom({
+                    FirstCellRightAlign: internal.FirstCellRightAlign,
+                    OddCellRightAlign: internal.OddCellRightAlign
+                });
 
+                internal.$parent.append(external.$);
+            }
         } ());
 
         external.cell = function (row, col) {

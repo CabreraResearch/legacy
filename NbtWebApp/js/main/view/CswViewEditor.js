@@ -1,7 +1,7 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     $.fn.CswViewEditor = function (options) {
         var o = {
@@ -54,11 +54,11 @@
         });
 
         // don't activate Save and Finish until step 2
-        if (o.startingStep === 1)
+        if (o.startingStep === 1) {
             $wizard.CswWizard('button', 'finish', 'disable');
-
+        }
         // Step 1 - Choose a View
-        var $div1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.viewselect.step);
+        var $div1 = $($wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.viewselect.step));
         var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  " +
             "Views are useful for defining a user's workflow or for creating elaborate search criteria. " +
                 "This wizard will take you step by step through the process of creating a new View or " +
@@ -75,18 +75,21 @@
 
         _getViewsGrid(o.viewid);
 
-        var $div1_btntbl = $div1.CswTable({ ID: o.ID + '_1_btntbl', width: '100%' });
-        var $div1_btntbl_cell11 = $div1_btntbl.CswTable('cell', 1, 1);
-        var $div1_btntbl_cell12 = $div1_btntbl.CswTable('cell', 1, 2);
-        $div1_btntbl_cell12.CswAttrDom('align', 'right');
-        var $allcheck_div = $('<div></div>').appendTo($div1_btntbl_cell12);
+        var div1BtnTable = Csw.controls.table({
+            $parent: $div1,
+            ID: o.ID + '_1_btntbl',
+            width: '100%'
+        });
+        var div1BtnTblCell11 = div1BtnTable.cell(1, 1);
+        var $allcheck_div = $('<div></div>');
+        div1BtnTable.add(1, 2, $allcheck_div).propDom('align', 'right');
 
         Csw.clientSession.isAdministrator({
-                'Yes': function () {
+            'Yes': function () {
                 /* Show Other */
                 $allcheck_div.CswInput('init', { ID: o.ID + '_all',
                     type: Csw.enums.inputTypes.checkbox,
-                        onChange: function () {
+                    onChange: function () {
                         _getViewsGrid();
                     }
                 });
@@ -94,7 +97,7 @@
             }
         });
 
-        var $copyviewbtn = $div1_btntbl_cell11.CswButton({
+        var $copyviewbtn = div1BtnTblCell11.$.CswButton({
             'ID': o.ID + '_copyview',
             'enabledText': 'Copy View',
             'disableOnClick': true,
@@ -120,27 +123,27 @@
         }); // copy button
         $copyviewbtn.CswButton('disable');
 
-        var $deleteviewbtn = $div1_btntbl_cell11.CswButton({
+        var $deleteviewbtn = div1BtnTblCell11.$.CswButton({
             ID: o.ID + '_deleteview',
             enabledText: 'Delete View',
             disableOnClick: true,
-                onclick: function() {
+            onclick: function () {
                 var viewid = _getSelectedViewId();
-                    if (false === Csw.isNullOrEmpty(viewid)) {
+                if (false === Csw.isNullOrEmpty(viewid)) {
                     /* remember: confirm is globally blocking call */
                     if (confirm("Are you sure you want to delete: " + _getSelectedViewName())) {
                         var dataJson = {
                             ViewId: viewid
                         };
 
-                            Csw.ajax.post({
-                                    url: o.DeleteViewUrl,
-                                    data: dataJson,
-                                    success: function() {
+                        Csw.ajax.post({
+                            url: o.DeleteViewUrl,
+                            data: dataJson,
+                            success: function () {
                                 _getViewsGrid();
                                 $copyviewbtn.CswButton('disable');
                             },
-                                    error: function() {
+                            error: function () {
                                 $deleteviewbtn.CswButton('enable');
                             }
                         });
@@ -150,16 +153,16 @@
         }); // delete button
         $deleteviewbtn.CswButton('disable');
 
-        var $newviewbtn = $div1_btntbl_cell11.CswButton({
+        var $newviewbtn = div1BtnTblCell11.$.CswButton({
             'ID': o.ID + '_newview',
             'enabledText': 'Create New View',
             'disableOnClick': false,
-                'onclick': function() {
+            'onclick': function () {
                 $.CswDialog('AddViewDialog', {
-                        onAddView: function(newviewid) {
+                    onAddView: function (newviewid) {
                         _getViewsGrid(newviewid);
                     },
-                        onClose: function() {
+                    onClose: function () {
                         $newviewbtn.CswButton('enable');
                     }
                 }); // CswDialog
@@ -196,8 +199,8 @@
         }
 
         table2.add(4, 1, 'For Mobile:');
-        var $formobilecheckcell = table2.cell(4, 2);
-        var $formobilecheckbox = $formobilecheckcell.CswInput('init', { ID: o.ID + '_formobile',
+        var forMobileCheckCell = table2.cell(4, 2);
+        var $formobilecheckbox = forMobileCheckCell.$.CswInput('init', { ID: o.ID + '_formobile',
             type: Csw.enums.inputTypes.checkbox
         });
 
@@ -233,7 +236,10 @@
         // Step 6 - Fine Tuning
         var $div6 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.tuning.step);
         $div6.append('Select what you want to edit from the tree:<br/><br/>');
-        var $table6 = $div6.CswTable({ 'ID': o.ID + '_6_tbl' });
+        var table6 = Csw.controls.table({
+            $parent: $div6,
+            'ID': o.ID + '_6_tbl'
+        });
 
         var currentViewJson;
 
@@ -242,7 +248,8 @@
             return (stepno !== Csw.enums.wizardSteps_ViewEditor.attributes.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?"));
         }
 
-        function _handleNext($nextWizard, newstepno) {
+        function _handleNext(table, newstepno) {
+            var $nextWizard = table.$;
             CurrentStep = newstepno;
             switch (newstepno) {
                 case Csw.enums.wizardSteps_ViewEditor.viewselect.step:
@@ -258,12 +265,12 @@
                     Csw.ajax.post({
                         url: o.ViewInfoUrl,
                         data: jsonData,
-                            success: function(data) {
+                        success: function (data) {
                             currentViewJson = data.TreeView;
 
                             $viewnametextbox.val(currentViewJson.viewname);
                             $categorytextbox.val(currentViewJson.category);
-                                var visibility = Csw.string(currentViewJson.visibility);
+                            var visibility = Csw.string(currentViewJson.visibility);
                             if (visibility !== 'Property') {
                                 if (visSelect.$visibilityselect !== undefined) {
                                     visSelect.$visibilityselect.val(visibility).trigger('change');
@@ -272,12 +279,12 @@
                                 }
                             }
 
-                                if (Csw.bool(currentViewJson.formobile)) {
+                            if (Csw.bool(currentViewJson.formobile)) {
                                 $formobilecheckbox.CswAttrDom('checked', 'checked');
                             }
                             var mode = currentViewJson.mode;
                             displayModeSpan.text(mode);
-                            gridWidthTextboxCell.CswNumberTextBox('setValue', o.ID + '_gridwidth', currentViewJson.width);
+                            gridWidthTextboxCell.$.CswNumberTextBox('setValue', o.ID + '_gridwidth', currentViewJson.width);
                             if (mode === "Grid") {
                                 gridWidthLabelCell.show();
                                 gridWidthTextboxCell.show();
@@ -306,7 +313,7 @@
                     _makeViewTree(Csw.enums.wizardSteps_ViewEditor.filters.step, $treediv5);
                     break;
                 case Csw.enums.wizardSteps_ViewEditor.tuning.step:
-                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.tuning.step, $table6.CswTable('cell', 1, 1));
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.tuning.step, table6.cell(1, 1).$);
                     break;
             } // switch(newstepno)
         } // _handleNext()
@@ -363,21 +370,21 @@
                     _makeViewTree(Csw.enums.wizardSteps_ViewEditor.filters.step, $treediv5);
                     break;
                 case Csw.enums.wizardSteps_ViewEditor.tuning.step:
-                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.tuning.step, $table6.CswTable('cell', 1, 1));
+                    _makeViewTree(Csw.enums.wizardSteps_ViewEditor.tuning.step, table6.cell(1, 1).$);
                     break;
             }
         }
 
         function gridHasOneProp() {
             var ret = false;
-            if(Csw.contains(currentViewJson, 'childrelationships')) {
+            if (Csw.contains(currentViewJson, 'childrelationships')) {
                 Csw.crawlObject(currentViewJson.childrelationships, function (childObj) {
                     if (ret) {
                         return false;
                     }
                     else if (Csw.contains(childObj, 'properties')) {
                         Csw.crawlObject(childObj.properties, function (propObj) {
-                            if(false === Csw.isNullOrUndefined(propObj)) {
+                            if (false === Csw.isNullOrUndefined(propObj)) {
                                 ret = true;
                                 return false;
                             }
@@ -412,7 +419,7 @@
                 Csw.ajax.post({
                     url: o.SaveViewUrl,
                     data: jsonData,
-                        success: function() {
+                    success: function () {
                         o.onFinish(viewid, _getSelectedViewMode());
                     } // success
                 });
@@ -466,7 +473,7 @@
                         };
                         $.extend(g.gridOpts, gridJson);
                         cswViewGrid = Csw.controls.grid(g, $viewgrid);
-                        cswViewGrid.$gridPager.css({width: '100%', height: '20px'});
+                        cswViewGrid.$gridPager.css({ width: '100%', height: '20px' });
 
                         cswViewGrid.hideColumn(o.ColumnFullViewId);
                         if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
@@ -510,37 +517,36 @@
         }
 
         function makeTuningStep($content) {
-            var $cell = $table6.CswTable('cell', 1, 2);
+            var cell = table6.cell(1, 2);
             var viewmode = _getSelectedViewMode();
 
             // Root
             $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name).click(function () {
-                $cell.empty();
+                cell.empty();
             });
 
             // Relationship
             $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name).click(function () {
                 var row = 1;
                 var $a = $(this);
-                $cell.empty();
-                //$cell.append('For ' + $a.text());
+                cell.empty();
 
                 var objHelper = Csw.object(currentViewJson);
                 var arbitraryId = $a.CswAttrDom('arbid');
                 var viewnodejson = objHelper.find('arbitraryid', arbitraryId);
 
-                var $table = $cell.CswTable({
-                    ID: makeId({ id: o.ID, suffix: "editrel" }),
+                var subTable = table6.cell(1, 2).table({
+                    ID: Csw.controls.dom.makeId(o.ID, 'editrel'),
                     FirstCellRightAlign: true
                 });
 
                 function _makeAllowCB(row, idsuffix, text, checked, onchange) {
-                    $table.CswTable('cell', row, 1).append('Allow ' + text);
-                    var $allowcell = $table.CswTable('cell', row, 2);
-                    var $allowcheck = $allowcell.CswInput('init', {
+                    subTable.add(row, 1, 'Allow ' + text);
+                    var allowCell = subTable.cell(row, 2);
+                    var $allowcheck = allowCell.$.CswInput('init', {
                         ID: o.ID + '_adcb',
                         type: Csw.enums.inputTypes.checkbox,
-                                                                  onChange: function() {
+                        onChange: function () {
                             var $this = $(this);
                             if (isFunction(onchange)) {
                                 onchange($this.is(':checked'));
@@ -560,27 +566,27 @@
                 _makeAllowCB(row, 'editrel_del', 'Delete', isTrue(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
                 row += 1;
 
-                $table.CswTable('cell', row, 1).append('Group By');
-                var $groupbyselect = $table.CswTable('cell', row, 2)
-                                            .CswSelect('init',
+                subTable.add(row, 1, 'Group By');
+                var $groupbyselect = subTable.cell(row, 2)
+                                            .$.CswSelect('init',
                                                 { ID: o.ID + '_gbs',
-                                                  onChange: function() {
+                                                    onChange: function () {
                                                         var $selected = $groupbyselect.find(':selected');
                                                         var selval = $selected.val();
                                                         var propData;
 
-                                                      if (false === Csw.isNullOrEmpty(selval)) {
+                                                        if (false === Csw.isNullOrEmpty(selval)) {
                                                             if (selval === 'none') {
                                                                 viewnodejson.groupbypropid = '';
                                                                 viewnodejson.groupbyproptype = '';
                                                                 viewnodejson.groupbypropname = '';
                                                             } else {
                                                                 propData = $selected.data('thisPropData');
-                                                              viewnodejson.groupbypropid = Csw.string(propData.propid);
-                                                              viewnodejson.groupbyproptype = Csw.string(propData.proptype);
-                                                              viewnodejson.groupbypropname = Csw.string(propData.propname);
+                                                                viewnodejson.groupbypropid = Csw.string(propData.propid);
+                                                                viewnodejson.groupbyproptype = Csw.string(propData.proptype);
+                                                                viewnodejson.groupbypropname = Csw.string(propData.propname);
                                                             }
-                                                      } // if (false === Csw.isNullOrEmpty(selval)) {
+                                                        } // if (false === Csw.isNullOrEmpty(selval)) {
                                                     } // onChange
                                                 }); // CswSelect
                 row += 1;
@@ -592,7 +598,7 @@
                 Csw.ajax.post({
                     url: o.PropNamesUrl,
                     data: jsonData,
-                        success: function(data) {
+                    success: function (data) {
                         $groupbyselect.empty();
                         var groupOpts = [{ value: 'none', display: '[None]'}];
                         var groupSel = 'none';
@@ -617,9 +623,9 @@
 
                 var $showtreecheck;
                 if (viewmode === "Tree") {
-                    $table.CswTable('cell', row, 1).append('Show In Tree');
-                    var $showtreecheckcell = $table.CswTable('cell', row, 2);
-                    $showtreecheck = $showtreecheckcell.CswInput('init',
+                    subTable.add(row, 1, 'Show In Tree');
+                    var showTreeCheckCell = subTable.cell(row, 2);
+                    $showtreecheck = showTreeCheckCell.$.CswInput('init',
                                                             { ID: o.ID + '_stcb',
                                                                 type: Csw.enums.inputTypes.checkbox,
                                                                 onChange: function () {
@@ -638,19 +644,21 @@
             // Property
             $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewproplink.name).click(function () {
                 var $a = $(this);
-                $cell.empty();
+                cell.empty();
 
                 if (viewmode === "Grid") {
                     var objHelper = Csw.object(currentViewJson);
                     var arbitraryId = $a.CswAttrDom('arbid');
                     var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
-                    //$cell.append('For ' + $a.text());
-                    var $table = $cell.CswTable({ 'ID': o.ID + '_editprop', 'FirstCellRightAlign': true });
+                    var gridTable = table6.cell(1, 2).table({
+                        ID: o.ID + '_editprop',
+                        FirstCellRightAlign: true
+                    });
 
-                    $table.CswTable('cell', 1, 1).append('Sort By');
-                    var $sortbycheckcell = $table.CswTable('cell', 1, 2);
-                    var $sortbycheck = $sortbycheckcell.CswInput('init',
+                    gridTable.add(1, 1, 'Sort By');
+                    var sortByCheckCell = gridTable.cell(1, 2);
+                    var $sortbycheck = sortByCheckCell.$.CswInput('init',
                                                             { ID: o.ID + '_sortcb',
                                                                 type: Csw.enums.inputTypes.checkbox,
                                                                 onChange: function () {
@@ -662,9 +670,9 @@
                         $sortbycheck.CswAttrDom('checked', 'true');
                     }
 
-                    $table.CswTable('cell', 2, 1).append('Grid Column Order');
-                    var $colordertextcell = $table.CswTable('cell', 2, 2);
-                    var $colordertextbox = $colordertextcell.CswInput('init',
+                    gridTable.add(2, 1, 'Grid Column Order');
+                    var colOrderTextCell = gridTable.cell(2, 2);
+                    var $colordertextbox = colOrderTextCell.$.CswInput('init',
                                                                 { ID: o.ID + '_gcotb',
                                                                     type: Csw.enums.inputTypes.text,
                                                                     onChange: function () {
@@ -674,9 +682,9 @@
                                                                 });
                     $colordertextbox.val(viewNodeData.order);
 
-                    $table.CswTable('cell', 3, 1).append('Grid Column Width (in characters)');
-                    var $colwidthtextcell = $table.CswTable('cell', 3, 2);
-                    var $colwidthtextbox = $colwidthtextcell.CswInput('init',
+                    gridTable.add(3, 1, 'Grid Column Width (in characters)');
+                    var colWidthTextCell = gridTable.cell(3, 2);
+                    var $colwidthtextbox = colWidthTextCell.$.CswInput('init',
                                                                 { ID: o.ID + '_gcwtb',
                                                                     type: Csw.enums.inputTypes.text,
                                                                     onChange: function () {
@@ -691,16 +699,19 @@
             // Filter
             $content.find('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name).click(function () {
                 var $a = $(this);
-                $cell.empty();
+                cell.empty();
                 //$cell.append('For ' + $a.text());
                 var objHelper = Csw.object(currentViewJson);
                 var arbitraryId = $a.CswAttrDom('arbid');
                 var viewNodeData = objHelper.find('arbitraryid', arbitraryId);
 
-                var $table = $cell.CswTable({ 'ID': o.ID + '_editfilt', 'FirstCellRightAlign': true });
-                $table.CswTable('cell', 1, 1).append('Case Sensitive');
-                var $casecheck = $table.CswTable('cell', 1, 2)
-                                       .CswInput('init',
+                var filterTable = table6.cell(1, 2).table({
+                    'ID': o.ID + '_editfilt',
+                    'FirstCellRightAlign': true
+                });
+                filterTable.add(1, 1, 'Case Sensitive');
+                var $casecheck = filterTable.cell(1, 2)
+                                       .$.CswInput('init',
                                             { ID: o.ID + '_casecb',
                                                 type: Csw.enums.inputTypes.checkbox,
                                                 onChange: function () {
@@ -823,7 +834,7 @@
             var arbid = 'root';
             var name = itemJson.viewname;
             var rel = 'root';
-            types.root = { icon: { image: Csw.string(itemJson.iconfilename) } };
+            types.root = { icon: { image: Csw.string(itemJson.iconfilename)} };
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, stepno, Csw.enums.viewChildPropNames.root, rel);
@@ -857,7 +868,7 @@
             var skipchildoptions = (stepno <= Csw.enums.wizardSteps_ViewEditor.relationships.step);
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
             var showDelete = (stepno === Csw.enums.wizardSteps_ViewEditor.relationships.step);
-            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename) } };
+            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename)} };
 
             var $ret = makeViewListItem(arbid, linkclass, name, showDelete, stepno, Csw.enums.viewChildPropNames.childrelationships, rel);
 
@@ -869,7 +880,7 @@
                         for (var prop in propJson) {
                             if (propJson.hasOwnProperty(prop)) {
                                 var thisProp = propJson[prop];
-                                if(false === Csw.isNullOrEmpty(thisProp)) {
+                                if (false === Csw.isNullOrEmpty(thisProp)) {
                                     var $propLi = makeViewPropertyHtml(thisProp, types, stepno);
                                     if (false === Csw.isNullOrEmpty($propLi)) {
                                         $propUl.append($propLi);
@@ -993,10 +1004,13 @@
 
         function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId) {
             var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + filtArbitraryId + '"></span>');
-            var $tbl = $span.CswTable({ 'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl' });
-            $tbl.css('display', 'inline-table');
+            var table = Csw.controls.table({
+                $parent: $span,
+                'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl'
+            });
+            table.css('display', 'inline-table');
 
-            $tbl.CswViewPropFilter('static', {
+            table.$.CswViewPropFilter('static', {
                 ID: o.ID + '_' + filtArbitraryId + '_propfilttbl',
                 propsData: filterJson,
                 proparbitraryid: propArbId,
@@ -1012,9 +1026,13 @@
 
         function makeViewPropFilterAddSpan(propArbId) {
             var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
-            var $tbl = $span.CswTable({ 'ID': o.ID + '_' + propArbId + '_propfilttbl' });
-            $tbl.css('display', 'inline-table');
-            $tbl.CswViewPropFilter('init', {
+            var table = Csw.controls.table({
+                $parent: $span,
+                'ID': o.ID + '_' + propArbId + '_propfilttbl'
+            });
+            table.css('display', 'inline-table');
+
+            table.$.CswViewPropFilter('init', {
                 viewJson: currentViewJson,
                 ID: o.ID + '_' + propArbId + '_propfilttbl',
                 propsData: null,
@@ -1025,7 +1043,7 @@
                 autoFocusInput: false
             });
 
-            $tbl.CswTable('cell', 1, 5).CswButton('init', {
+            table.cell(1, 5).$.CswButton('init', {
                 ID: propArbId + '_addfiltbtn',
                 enabledText: 'Add',
                 disabledText: 'Adding'
@@ -1102,13 +1120,13 @@
                             }
                         }
 
-                            $successSelect.change(function() {
+                        $successSelect.change(function () {
                             var $this = $(this);
                             var childJson = $this.find('option:selected').data('thisViewJson');
                             if (arbid === "root") {
                                 $.extend(currentViewJson.childrelationships, childJson);
                             } else {
-                                    var objUtil = Csw.object(currentViewJson);
+                                var objUtil = Csw.object(currentViewJson);
                                 var parentObj = objUtil.find('arbitraryid', arbid);
                                 var collection = '';
                                 switch (stepno) {
@@ -1120,7 +1138,7 @@
                                         break;
                                 }
                                 var objCollection = parentObj[collection];
-                                    if (Csw.isNullOrEmpty(objCollection)) {
+                                if (Csw.isNullOrEmpty(objCollection)) {
                                     objCollection = {};
                                     parentObj[collection] = objCollection;
                                 }

@@ -139,7 +139,7 @@
                         cellalign: 'center',
                         FirstCellRightAlign: true
                     });    
-                    console.log(weeklyTable.$);
+
                     weekdays = Csw.string(rateInterval[dayPropName]).split(',');
 
                     picker = weeklyTable.cell(1, 2);
@@ -222,8 +222,8 @@
 
             return function ($parent) {
                 var $MonthlyRateSelect, $MonthlyDateSelect, $MonthlyWeekSelect, $startOnMonth, $startOnYear,
-                    monthlyRadioId = Csw.makeId({prefix: o.ID, ID: 'monthly'}),
-                    monthlyDayPickerId = Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'day'});
+                    monthlyRadioId = Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly'}),
+                    monthlyDayPickerId = Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'day'});
 
                 function saveMonthInterval () {
                     Csw.each(rateInterval, function (prop, key) {
@@ -260,7 +260,7 @@
                     }
 
                     $byDate.CswInput('init', {
-                        ID: Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'by_date'}),
+                        ID: Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'by_date'}),
                         name: monthlyRadioId,
                         type: Csw.enums.inputTypes.radio,
                         onChange: function () {
@@ -277,7 +277,7 @@
                     $byDate.append('On Day of Month:&nbsp;');
 
                     $MonthlyDateSelect = $byDate.CswSelect('init', {
-                        ID: Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'date'}),
+                        ID: Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'date'}),
                         onChange: function () {
                             if (Csw.isFunction(o.onchange)) {
                                 o.onchange();
@@ -304,7 +304,7 @@
                     }
 
                     $MonthlyRateSelect = $every.CswSelect('init', {
-                        ID: Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'rate'}),
+                        ID: Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'rate'}),
                         onChange: function () {
                             if (Csw.isFunction(o.onchange)) {
                                 o.onchange();
@@ -321,8 +321,8 @@
 
                 function makeMonthlyByDayOfWeek () {
                     var $byDay = $('<div />'),
-                        monthlyWeekId = Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'week'}),
-                        monthlyByDayId = Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'by_day'}),
+                        monthlyWeekId = Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'week'}),
+                        monthlyByDayId = Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'by_day'}),
                         selected,
                         weeksInMonth = [
                             {value: 1, display: 'First:'},
@@ -392,7 +392,7 @@
                     }
 
                     $startOnMonth = $startOn.CswSelect('init', {
-                        ID: Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'startMonth'}),
+                        ID: Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'startMonth'}),
                         values: monthsInYear,
                         selected: selectedMonth,
                         onChange: function () {
@@ -406,7 +406,7 @@
                     $startOn.append('/');
 
                     $startOnYear = $startOn.CswSelect('init', {
-                        ID: Csw.makeId({prefix: o.ID, ID: 'monthly', suffix: 'startYear'}),
+                        ID: Csw.controls.dom.makeId({prefix: o.ID, ID: 'monthly', suffix: 'startYear'}),
                         values: yearsToAllow,
                         selected: selectedYear,
                         onChange: function () {
@@ -473,7 +473,7 @@
                     $ret.append('Every Year, Starting On:<br/>');
 
                     $yearlyDate = $ret.CswDateTimePicker('init', {
-                        ID: Csw.makeId({prefix: o.ID, ID: 'yearly', suffix: 'sd'}),
+                        ID: Csw.controls.dom.makeId({prefix: o.ID, ID: 'yearly', suffix: 'sd'}),
                         Date: yearlyStartDate,
                         DateFormat: dateFormat,
                         DisplayMode: 'Date',

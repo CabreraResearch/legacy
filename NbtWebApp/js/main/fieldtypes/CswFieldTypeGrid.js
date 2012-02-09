@@ -20,13 +20,13 @@
                 $Div.append('[Grid display disabled]');
             } else {
 
-                var menuDivId = Csw.makeId({prefix: o.ID, ID: 'grid_as_fieldtype_menu'});
+                var menuDivId = Csw.controls.dom.makeId({prefix: o.ID, ID: 'grid_as_fieldtype_menu'});
                 var $MenuDiv = $('<div id="' + menuDivId + '" name="' + menuDivId + '"></div>');
 
-                var searchDivId = Csw.makeId({prefix: o.ID, ID: 'grid_as_fieldtype_search'});
+                var searchDivId = Csw.controls.dom.makeId({prefix: o.ID, ID: 'grid_as_fieldtype_search'});
                 var $SearchDiv = $('<div id="' + searchDivId + '" name="' + searchDivId + '"></div>');
 
-                var gridDivId = Csw.makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
+                var gridDivId = Csw.controls.dom.makeId({prefix: o.ID, ID: 'grid_as_fieldtype'});
                 var $GridDiv = $('<div id="' + gridDivId + '" name="' + gridDivId + '"></div>');
 
                 var viewid = Csw.string(propVals.viewid).trim();

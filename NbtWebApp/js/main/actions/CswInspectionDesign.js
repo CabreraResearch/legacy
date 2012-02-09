@@ -84,7 +84,7 @@
 
             makeStepId = function (suffix, stepNo) {
                 var step = stepNo || currentStepNo;
-                return Csw.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
+                return Csw.controls.dom.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
             },
 
         //Step 1. Select an Inspection Target.
@@ -269,7 +269,7 @@
                         inspectionDesignSelect = inspectionTable.cell(1, 2);
                         inspectionDesignSelect.$.CswDiv('init')
                             .CswNodeTypeSelect('init', {
-                                ID: Csw.makeSafeId('nodeTypeSelect'),
+                                ID: Csw.controls.dom.makeSafeId('nodeTypeSelect'),
                                 objectClassName: 'InspectionDesignClass',
                                 addNewOption: true
                             })
@@ -733,7 +733,7 @@
                         });
 
                         $.CswDialog('NavigationSelectDialog', {
-                            ID: Csw.makeSafeId('FinishDialog'),
+                            ID: Csw.controls.dom.makeSafeId('FinishDialog'),
                             title: 'The Inspection Design Wizard Completed Successfully',
                             navigationText: 'Please select from the following views. Click OK to continue.',
                             values: values,
@@ -758,7 +758,7 @@
 
         //#region Execution
         $wizard = $div.CswWizard('init', {
-            ID: Csw.makeId({ ID: o.ID, suffix: 'wizard' }),
+            ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'Create New Inspection',
             StepCount: Csw.enums.wizardSteps_InspectionDesign.stepcount,
             Steps: wizardSteps,

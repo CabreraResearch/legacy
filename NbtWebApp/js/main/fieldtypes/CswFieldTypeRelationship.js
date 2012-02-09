@@ -34,11 +34,14 @@
                     $Div.append(selectedName);
                     $Div.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); }, Csw.nodeHoverOut);
                 } else {
-                    var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+                    var table = Csw.controls.table({
+                        $parent: $Div,
+                        ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    });
 
-                    var $selectcell = $table.CswTable('cell', 1, 1);
+                    var selectCell = table.cell(1, 1);
 
-                    var $SelectBox = $selectcell.CswSelect('init', {
+                    var $SelectBox = selectCell.$.CswSelect('init', {
                         ID: o.ID,
                         cssclass: 'selectinput',
                         onChange: o.onchange,
@@ -47,8 +50,9 @@
                     });
 
                     if (false === Csw.isNullOrEmpty(nodeTypeId) && allowAdd) {
-                        var $addcell = $table.CswTable('cell', 1, 2);
-                        var $AddButton = $('<div />').appendTo($addcell);
+                        var $AddButton = $('<div />');
+                        table.add(1, 2, $AddButton);
+                        
                         $AddButton.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Add,
                             AlternateText: "Add New",
                             onClick: function () {

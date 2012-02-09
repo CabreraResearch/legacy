@@ -92,7 +92,6 @@
     <Content Include="js\main\controls\CswNumberTextBox.js" />
     <Content Include="js\main\controls\CswSelect.js" />
     <Content Include="js\main\controls\CswSpan.js" />
-    <Content Include="js\main\controls\CswTable.js" />
     <Content Include="js\main\controls\CswTristateCheckBox.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeBarcode.js" />
