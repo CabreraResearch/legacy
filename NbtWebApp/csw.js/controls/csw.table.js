@@ -32,7 +32,7 @@
             border: 0
         };
         var external = {};
-
+         
         (function () {
             if (options) {
                 $.extend(internal, options);

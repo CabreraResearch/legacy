@@ -15,7 +15,10 @@
             var options = propVals.options;
             var width = Csw.string(propVals.width);
             var height = Csw.string(propVals.height);
-            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+            var table = Csw.controls.table({
+                $parent: $Div,
+                ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+            });
             var currCol = 1;
 
             
@@ -50,31 +53,31 @@
             }
 
             function addImage(name, href, doAnimation) {
-                var $imagecell = $table.CswTable('cell', 1, currCol)
+                var imageCell = table.add(1, currCol, '<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + name + '" width="' + width + '" height="' + height + '"/></a>')
                                     .css({ 'text-align': 'center',
                                             'padding-left': '10px' });
-                var $namecell = $table.CswTable('cell', 2, currCol)
+                var nameCell = table.cell(2, currCol)
                                     .css({ 'text-align': 'center',
                                             'padding-left': '10px' });
-                currCol++;
+                currCol += 1;
 
                 if (doAnimation) {
-                    $imagecell.hide();
-                    $namecell.hide();
+                    imageCell.hide();
+                    nameCell.hide();
                 }
 
-                $imagecell.append('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + name + '" width="' + width + '" height="' + height + '"/></a>');
+                
                 if (name !== href) {
-                    $namecell.append('<a href="'+ href +'" target="_blank">'+ name +'</a>');
+                    nameCell.append('<a href="'+ href +'" target="_blank">'+ name +'</a>');
                 }
                 if (false === o.ReadOnly) {
-                    $namecell.CswImageButton({
+                    nameCell.$.CswImageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
                         ID: Csw.makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
                         onClick: function () {
-                            $namecell.fadeOut('fast');
-                            $imagecell.fadeOut('fast');
+                            nameCell.$.fadeOut('fast');
+                            imageCell.$.fadeOut('fast');
 
                             removeValue(href);
                             $select.append('<option value="'+ href +'">'+ name +'</option>');
@@ -86,8 +89,8 @@
                 } // if(!o.ReadOnly)
 
                 if(doAnimation) {
-                    $imagecell.fadeIn('fast');
-                    $namecell.fadeIn('fast'); 
+                    imageCell.$.fadeIn('fast');
+                    nameCell.$.fadeIn('fast'); 
                 }
 
             } // addImage()
