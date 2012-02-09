@@ -68,8 +68,8 @@
 
             table.add(1, 1, 'Name:');
 
-            var $nametextcell = table.cell(1, 2);
-            var $nametextbox = $nametextcell.CswInput('init', { ID: o.ID + '_nametb',
+            var nameTextCell = table.cell(1, 2);
+            var $nametextbox = nameTextCell.$.CswInput('init', { ID: o.ID + '_nametb',
                 type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
@@ -80,7 +80,7 @@
                 $displaymodeselect.append('<option value="List" selected>List</option>');
                 $displaymodeselect.append('<option value="Table">Table</option>');
                 $displaymodeselect.append('<option value="Tree">Tree</option>');
-                $displaymodeselect.appendTo(table.cell(2, 2));
+                table.add(2, 2, $displaymodeselect);
             }
 
             var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');

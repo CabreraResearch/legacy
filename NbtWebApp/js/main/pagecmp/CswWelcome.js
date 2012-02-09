@@ -126,41 +126,41 @@
 
             /* Type Select Label */
             table.add(1, 1, '<span>Type:</span>');
-            var $typeselect = table.add(1, 2, '<select id="welcome_type" name="welcome_type"></select>');
-                                        
+            var $typeselect = $('<select id="welcome_type" name="welcome_type"></select>');
             $typeselect.append('<option value="Add" selected>Add</option>');
             $typeselect.append('<option value="Link">Link</option>');
             $typeselect.append('<option value="Search">Search</option>');
             $typeselect.append('<option value="Text">Text</option>');
-
-            var $viewselectLabel = table.add(2, 1, '<span>View:</span>')
-                                         .hide();
-            var $viewselectcell = table.cell(2, 2);
+            table.add(1, 2, $typeselect);
+            
+            var viewSelectLabel = table.add(2, 1, '<span>View:</span>');
+            viewSelectLabel.$.hide();
+            var viewSelectCell = table.cell(2, 2);
             var viewSelectTable = Csw.controls.table({
-                $parent: $viewselectcell,
+                $parent: viewSelectCell.$,
                 ID: 'viewselecttable'
             });
-                
-            var $viewselect = viewSelectTable.cell(1, 1).CswViewSelect({
+
+            var viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
                 ID: 'welcome_viewsel'
             }).hide();
 
-            var $searchviewselect = viewSelectTable.cell(2, 1).CswViewSelect({
+            var searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
                 ID: 'welcome_searchviewsel',
                 issearchable: true,
                 usesession: false
             }).hide();
 
-            var $ntselectLabel = table.add(3,1, '<span>Add New:</span>');
+            var ntSelectLabel = table.add(3, 1, '<span>Add New:</span>');
             var $ntselect = table.cell(3, 2)
-                                  .CswNodeTypeSelect({
+                                 .$.CswNodeTypeSelect({
                                       'ID': 'welcome_ntsel'
                                   });
 
             /* Welcome Text Label */
             table.add(4, 1, '<span>Text:</span>');
-            var $welcometextcell = table.cell(4, 2);
-            var $welcometext = $welcometextcell.CswInput('init', { ID: 'welcome_text',
+            var welcomeTextCell = table.cell(4, 2);
+            var $welcometext = welcomeTextCell.$.CswInput('init', { ID: 'welcome_text',
                 type: Csw.enums.inputTypes.text
             });
             var $buttonselLabel = table.add(5, 1, '<span>Use Button:</span>');
@@ -177,13 +177,13 @@
                     var viewtype = '';
                     var viewvalue = '';
                     var selectedView;
-                    if (!$viewselect.is(':hidden')) {
-                        selectedView = $viewselect.CswViewSelect('value');
+                    if (!viewSelect.is(':hidden')) {
+                        selectedView = viewSelect.CswViewSelect('value');
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
-                    else if (!$searchviewselect.is(':hidden')) {
-                        selectedView = $searchviewselect.CswViewSelect('value');
+                    else if (!searchViewSelect.is(':hidden')) {
+                        selectedView = searchViewSelect.CswViewSelect('value');
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
@@ -210,14 +210,14 @@
             $typeselect.change(function () {
                 _onTypeChange({
                     $typeselect: $typeselect,
-                    $viewselect_label: $viewselectLabel,
-                    $viewselect: $viewselect,
-                    $searchviewselect: $searchviewselect,
-                    $ntselect_label: $ntselectLabel,
+                    $viewselect_label: viewSelectLabel,
+                    $viewselect: viewSelect,
+                    $searchviewselect: searchViewSelect,
+                    $ntselect_label: ntSelectLabel.$,
                     $ntselect: $ntselect,
                     $buttonsel_label: $buttonselLabel,
                     $buttonsel: $buttonsel,
-                    $buttonimg: $buttonimg                    
+                    $buttonimg: $buttonimg
                 });
             });
 

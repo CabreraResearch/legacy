@@ -111,14 +111,14 @@
                     // Header
                     var tablerow = 1;
                     for(var d = 0; d < o.cols.length; d++) {
-                        var $dCell = table.cell(tablerow, d+2);
-                        $dCell.addClass('cbarraycell');
+                        var dCell = table.cell(tablerow, d+2);
+                        dCell.addClass('cbarraycell');
                         var colName = o.cols[d];
                         if (colName === o.valCol && false === Csw.isNullOrEmpty(o.valColName)) {
                             colName = o.valColName;
                         }
                         if ((colName !== o.keyCol && colName !== o.nameCol)) {
-                            $dCell.append(colName);
+                            dCell.append(colName);
                         }
                     }
                     tablerow += 1;
@@ -126,15 +126,15 @@
                     //[none] row
                     if(o.UseRadios && false === o.Required) {
                         // Row label
-                        var $labelcell = table.cell(tablerow, 1);
-                        $labelcell.addClass('cbarraycell');
-                        $labelcell.append('[none]');
+                        var labelCell = table.add(tablerow, 1, '[none]');
+                        labelCell.addClass('cbarraycell');
+
                         for(var e = 0; e < o.cols.length; e++) {
-                            var $eCell = table.cell(tablerow, e+2);
-                            $eCell.addClass('cbarraycell');
+                            var eCell = table.cell(tablerow, e+2);
+                            eCell.addClass('cbarraycell');
                             var eCheckid = o.ID + '_none';
                             var $eCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ eCheckid + '" name="' + o.ID + '" />')
-                                           .appendTo($eCell)
+                                           .appendTo(eCell.$)
                                            .click(function () {
                                                o.MultiIsUnchanged = false;
                                                o.onchange();
@@ -177,11 +177,11 @@
                         $sLabelcell.addClass('cbarraycell');
                         
                         for(var f = 0; f < o.cols.length; f++) {
-                            var $fCell = table.cell(tablerow + s, f+2);
-                            $fCell.addClass('cbarraycell');
+                            var fCell = table.cell(tablerow + s, f+2);
+                            fCell.addClass('cbarraycell');
                             var fCheckid = o.ID + '_' + s + '_' + f;
                             var $fCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ fCheckid + '" name="' + o.ID + '" />')
-                                           .appendTo($fCell)
+                                           .appendTo(fCell.$)
                                            .bind('click', o.onchange)
                                            .CswAttrNonDom({key: sRow.key, rowlabel: sRow.label, collabel: o.cols[f], row: s, col: f })
                                            .bind('change', function () { onChange(this); });

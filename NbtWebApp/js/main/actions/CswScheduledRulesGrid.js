@@ -61,7 +61,7 @@
                     var nextBtnEnabled = function () {
                         return (false === Csw.isNullOrEmpty(selectedCustomerId));
                     };
-                    var customerIdTable, $customerIdSelect;
+                    var customerIdTable, customerIdSelect;
 
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.cancel, true);
@@ -81,14 +81,14 @@
                         customerIdTable.add(1, 1, '<span>Select a Customer ID&nbsp</span>')
                                         .css({'padding': '1px', 'vertical-align': 'middle'});
 
-                        $customerIdSelect = customerIdTable.cell(1, 2)
-                            .CswDiv('init')
+                        customerIdSelect = customerIdTable.cell(1, 2);
+                        customerIdSelect.$.CswDiv('init')
                             .CswSelect('init', {
                                 ID: Csw.makeSafeId('customerIdSelect'),
                                 selected: '',
                                 values: [{ value: '', display: ''}],
                                 onChange: function () {
-                                    var $selected = $customerIdSelect.find(':selected');
+                                    var $selected = customerIdSelect.find(':selected');
                                     selectedCustomerId = $selected.val();
                                     toggleButton(buttons.next, (false === Csw.isNullOrEmpty(selectedCustomerId)));
                                 }
@@ -98,12 +98,12 @@
                             url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
                             success: function (data) {
                                 var values = data.customerids;
-                                $customerIdSelect.CswSelect('setoptions', values);
-                                selectedCustomerId = $customerIdSelect.find(':selected').val();
+                                customerIdSelect.$.CswSelect('setoptions', values);
+                                selectedCustomerId = customerIdSelect.find(':selected').val();
                             }
                         });
 
-                        selectedCustomerId = $customerIdSelect.find(':selected').val();
+                        selectedCustomerId = customerIdSelect.find(':selected').val();
                     }
                     stepOneComplete = true;
                 };
@@ -167,18 +167,19 @@
                     ID: makeStepId('headerTable')
                 });
                 headerTable.add(1, 1, '<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
-                headerTable.cell(1, 2).CswButton('init', {
-                    ID: Csw.makeSafeId('clearAll'),
-                    enabledText: 'Clear All Reprobates',
-                    disabledText: 'Clearing...',
-                    onclick: function () {
-                        Csw.ajax.post({
-                            url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
-                            data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },
-                            success: makeStepTwo
-                        });
-                    }
-                });
+                headerTable.cell(1, 2)
+                           .$.CswButton('init', {
+                                ID: Csw.makeSafeId('clearAll'),
+                                enabledText: 'Clear All Reprobates',
+                                disabledText: 'Clearing...',
+                                onclick: function () {
+                                    Csw.ajax.post({
+                                        url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
+                                        data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },
+                                        success: makeStepTwo
+                                    });
+                                }
+                            });
                 $divStep2.append('<br/>');
 
                 makeRulesGrid();
