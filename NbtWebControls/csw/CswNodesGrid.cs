@@ -169,14 +169,15 @@ namespace ChemSW.NbtWebControls
                     CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentKey, null, ResultsLimit, true, false, null, false );
                     //_MainFilterEditor.LoadView(Master.CswNbtView);
 
-                    if( ParentKey != null )
-                        CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
-                    else
-                        CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGrid;
+                    // BROKEN BY case 24709
+                    //if( ParentKey != null )
+                    //    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
+                    //else
+                    //    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGrid;
 
-                    string XmlStrForGrid = CswNbtTree.getTreeAsXml();
+                    //string XmlStrForGrid = CswNbtTree.getTreeAsXml();
                     DataSet UnsortedXmlDataSet = new DataSet();
-                    UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( XmlStrForGrid ), XmlReadMode.InferTypedSchema );
+                    //UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( XmlStrForGrid ), XmlReadMode.InferTypedSchema );
 
                     if( UnsortedXmlDataSet.Tables.Count > 0 && UnsortedXmlDataSet.Tables[0].Rows.Count > 0 )
                     {

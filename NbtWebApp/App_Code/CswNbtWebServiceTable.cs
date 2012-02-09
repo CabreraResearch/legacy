@@ -129,14 +129,14 @@ namespace ChemSW.Nbt.WebServices
 
             // Props in the View
             SortedList<Int32, JObject> PropObjs = new SortedList<Int32, JObject>();
-            foreach( XElement PropElm in Tree.getChildNodePropsOfNode() )
+            foreach( JObject PropElm in Tree.getChildNodePropsOfNode() )
             {
-                Int32 NodeTypePropId = CswConvert.ToInt32( PropElm.Attribute( "nodetypepropid" ).Value );
+                Int32 NodeTypePropId = CswConvert.ToInt32( PropElm["nodetypepropid"].ToString() );
                 CswPropIdAttr PropId = new CswPropIdAttr( NodeId, NodeTypePropId );
-                string FieldType = PropElm.Attribute( "fieldtype" ).Value;
-                string PropName = PropElm.Attribute( "name" ).Value;
-                string Gestalt = PropElm.Attribute( "gestalt" ).Value;
-                Int32 JctNodePropId = CswConvert.ToInt32( PropElm.Attribute( "jctnodepropid" ).Value );
+                string FieldType = PropElm["fieldtype"].ToString();
+                string PropName = PropElm["propname"].ToString();
+                string Gestalt = PropElm["gestalt"].ToString();
+                Int32 JctNodePropId = CswConvert.ToInt32( PropElm["jctnodepropid"].ToString() );
 
                 // Special case: Image becomes thumbnail
                 if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() )

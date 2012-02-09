@@ -460,8 +460,9 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     // Load tree
-                    string XmlStr = CswNbtTree.getTreeAsXml();
-                    _MainTreeView.LoadXml( XmlStr );
+                    // BROKEN BY case 24709
+                    //string XmlStr = CswNbtTree.getTreeAsXml();
+                    //_MainTreeView.LoadXml( XmlStr );
 
                     if( RestoreChecked )
                     {
