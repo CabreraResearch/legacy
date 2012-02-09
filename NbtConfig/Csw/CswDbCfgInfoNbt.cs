@@ -188,6 +188,16 @@ namespace ChemSW.Nbt.Config
 
         }//AccessIds
 
+
+        public StringCollection ActiveAccessIds
+        {
+            get
+            {
+                return ( _CswDbCfgInfo.ActiveAccessIds );
+            }
+
+        }//AccessIds
+
         public int TotalDbInstances
         {
             get
