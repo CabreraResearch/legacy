@@ -18,7 +18,6 @@
             var $Div = $(this);
             var table;
             var row;
-            var $cell1, $cell2, $cell3, $cell4;
             var quotaJson;
 
             function initTable() {
@@ -32,10 +31,10 @@
                 row = 1;
 
                 // Header row
-                $cell1 = table.add(row, 1, '<b>Object Class</b>');
-                $cell2 = table.add(row, 2, '<b>Node Types</b>');
-                $cell3 = table.add(row, 3, '<b>Current Usage</b>');
-                $cell4 = table.add(row, 4, '<b>Quota</b>');
+                table.add(row, 1, '<b>Object Class</b>');
+                table.add(row, 2, '<b>Node Types</b>');
+                table.add(row, 3, '<b>Current Usage</b>');
+                table.add(row, 4, '<b>Quota</b>');
                 row += 1;
 
                 // Quota table
@@ -75,15 +74,14 @@
 
             function makeQuotaRow(row, canedit, id, objectclass, nodetype, currentusage, quota) {
                 // one object class row                                
-                $cell1 = table.add(row, 1, objectclass);
-
-                $cell2 = table.add(row, 2, nodetype);
-
-                $cell3 = table.add(row, 3, currentusage);
-                                
-                $cell4 = table.cell(row, 4);
+                var cell4;
+                table.add(row, 1, objectclass);
+                table.add(row, 2, nodetype);
+                table.add(row, 3, currentusage);
+                
                 if(canedit) {
-                    $cell4.CswInput({	
+                    cell4 = table.cell(row, 4);
+                    cell4.$.CswInput({	
                         ID: o.ID + '_' + id + '_quota',
                         name: o.ID + '_' + id + '_quota',
                         type: Csw.enums.inputTypes.text,
@@ -91,7 +89,7 @@
                         width: '50px'
                     });
                 } else {
-                    $cell4.append(quota);
+                    table.add(row, 4, quota);
                 }
             } // makeQuotaRow()
 

@@ -177,14 +177,14 @@
         });
 
         table2.add(1, 1, 'View Name:');
-        var $viewnametextcell = table2.cell(1, 2);
-        var $viewnametextbox = $viewnametextcell.CswInput('init', { ID: o.ID + '_viewname',
+        var viewNameTextCell = table2.cell(1, 2);
+        var $viewnametextbox = viewNameTextCell.$.CswInput('init', { ID: o.ID + '_viewname',
             type: Csw.enums.inputTypes.text
         });
 
         table2.add(2, 1, 'Category:');
-        var $categorytextcell = table2.cell(2, 2);
-        var $categorytextbox = $categorytextcell.CswInput('init', { ID: o.ID + '_category',
+        var categoryTextCell = table2.cell(2, 2);
+        var $categorytextbox = categoryTextCell.$.CswInput('init', { ID: o.ID + '_category',
             type: Csw.enums.inputTypes.text
         });
 
@@ -202,11 +202,11 @@
         });
 
         table2.add(5, 1, 'Display Mode:');
-        var $displaymodespan = table2.add(5, 2, '<span id="' + o.ID + '_displaymode"></span>');
+        var displayModeSpan = table2.add(5, 2, '<span id="' + o.ID + '_displaymode"></span>');
 
-        var $gridwidthlabelcell = table2.add(6, 1, 'Grid Width (in characters):');
-        var $gridwidthtextboxcell = table2.cell(6, 2);
-        $gridwidthtextboxcell.CswNumberTextBox('init', {
+        var gridWidthLabelCell = table2.add(6, 1, 'Grid Width (in characters):');
+        var gridWidthTextboxCell = table2.cell(6, 2);
+        gridWidthTextboxCell.$.CswNumberTextBox('init', {
             'ID': o.ID + '_gridwidth',
             'Value': '',
             'MinValue': '1',
@@ -276,14 +276,14 @@
                                 $formobilecheckbox.CswAttrDom('checked', 'checked');
                             }
                             var mode = currentViewJson.mode;
-                            $displaymodespan.text(mode);
-                            $gridwidthtextboxcell.CswNumberTextBox('setValue', o.ID + '_gridwidth', currentViewJson.width);
+                            displayModeSpan.text(mode);
+                            gridWidthTextboxCell.CswNumberTextBox('setValue', o.ID + '_gridwidth', currentViewJson.width);
                             if (mode === "Grid") {
-                                $gridwidthlabelcell.show();
-                                $gridwidthtextboxcell.show();
+                                gridWidthLabelCell.show();
+                                gridWidthTextboxCell.show();
                             } else {
-                                $gridwidthlabelcell.hide();
-                                $gridwidthtextboxcell.hide();
+                                gridWidthLabelCell.hide();
+                                gridWidthTextboxCell.hide();
                             }
 
                             $nextWizard.CswWizard('button', 'next', 'enable');
@@ -340,7 +340,7 @@
             }
             var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
             currentViewJson.formobile = formobile;
-            currentViewJson.width = $gridwidthtextboxcell.CswNumberTextBox('value', o.ID + '_gridwidth');
+            currentViewJson.width = gridWidthTextboxCell.CswNumberTextBox('value', o.ID + '_gridwidth');
         }
 
         function _handlePrevious($wizard, newstepno) {
