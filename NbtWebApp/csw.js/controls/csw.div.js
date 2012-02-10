@@ -37,13 +37,14 @@
             if (options) {
                 $.extend(internal, options);
             }
-            
+
             html += '<div ';
             html += ' id="' + Csw.string(internal.ID) + '" ';
             html += ' id="' + Csw.string(internal.name, internal.ID) + '" ';
             html += ' class="' + Csw.string(internal.cssclass) + '" ';
 
             if (false === Csw.isNullOrEmpty(internal.align)) {
+                html += ' align="' + internal.align + '"';
                 style.add('align', internal.align);
             }
             html += style.get();
@@ -55,7 +56,7 @@
             Csw.controls.domExtend($div, external);
 
             internal.$parent.append(external.$);
-        }());
+        } ());
 
         return external;
     }
