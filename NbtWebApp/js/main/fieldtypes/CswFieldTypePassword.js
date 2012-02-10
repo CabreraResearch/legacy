@@ -26,8 +26,8 @@
                 table.add(1, 1, 'Set New');
                 var cell12 = table.cell(1, 2);
                 table.add(2, 1, 'Confirm');
-                var $cell22 = table.cell(2, 2);
-                var $cell31 = table.cell(3, 1);
+                var cell22 = table.cell(2, 2);
+                var cell31 = table.cell(3, 1);
                 table.add(3, 2, 'Expired');
 
                 var $TextBox1 = cell12.$.CswInput('init',{ID: o.ID + '_pwd1',
@@ -37,14 +37,14 @@
                                                          onChange: o.onchange
                                                  }); 
                 /* Text Box 2 */
-                $cell22.$.CswInput('init',{ID: o.ID + '_pwd2',
+                cell22.$.CswInput('init',{ID: o.ID + '_pwd2',
                                                          type: Csw.enums.inputTypes.password,
                                                          value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
                 if(isAdmin) {
-                    var $IsExpiredCheck = $cell31.$.CswInput({ 
+                    var $IsExpiredCheck = cell31.$.CswInput({ 
                             id: o.ID + '_exp',
                             name: o.ID + '_exp',
                             type: Csw.enums.inputTypes.checkbox
