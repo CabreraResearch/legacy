@@ -219,7 +219,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 case ScheduledRuleActions.Unknown:
                     throw new CswDniException( ErrorType.Error, "Method was invoked with an invalid action", "Cannot call this web method with action " + Action + "." );
-                    break;
                 case ScheduledRuleActions.ClearAllReprobates:
                     CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "ClearAllReprobates_on_accessid_" + _OtherResources.AccessId + "_id", "scheduledrules" );
                     DataTable RulesTable = RulesUpdate.getTable();
