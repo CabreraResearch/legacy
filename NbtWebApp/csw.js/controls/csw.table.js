@@ -28,7 +28,7 @@
             align: '',
             width: '',
             cellalign: 'top',
-            cellvalign: 'top',
+            cellvalign: 'center',
             onCreateCell: function () {
             },
             FirstCellRightAlign: false,
@@ -49,8 +49,8 @@
             }
             Csw.controls.domExtend($table, external);
 
-            external.bind('CswTable_onCreateCell', function (e, $cell, row, column) {
-                Csw.tryExec(internal.onCreateCell(e, Csw.controls.domExtend($cell, {}), row, column));
+            external.bind('CswTable_onCreateCell', function (e, cell, row, column) {
+                Csw.tryExec(internal.onCreateCell(e, cell, row, column));
                 e.stopPropagation(); // prevents events from triggering in nested tables
             });
             external.trigger('CswTable_onCreateCell', [external.find('td'), 1, 1]);
@@ -82,7 +82,7 @@
             /// <param name="col" type="Number">Column number</param>
             /// <returns type="Object">A Csw table cell object.</returns>
             var $cell = null,
-                $row, align, $newcell, retCell = {}, html = '';
+                thisRow, align, newCell, retCell = {}, html = '';
 
             if (external.length() > 0 &&
                 false === Csw.isNullOrEmpty(row) &&
@@ -96,14 +96,14 @@
                     col = 1;
                 }
 
-                while (row > external.children('tbody').children('tr').length) {
+                while (row > external.children('tbody').children('tr').length()) {
                     external.append('<tr></tr>');
                 }
-                $row = $(external.children('tbody').children('tr')[row - 1]);
-                while (col > $row.children('td').length) {
+                thisRow = external.children('tbody').find('tr:eq(' + Csw.number(row - 1) + ')');
+                while (col > thisRow.children('td').length()) {
                     align = external.propDom('cellalign');
-                    if (($row.children('td').length === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
-                        ($row.children('td').length % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
+                    if ((thisRow.children('td').length === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
+                        (thisRow.children('td').length % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
                         align = 'right';
                     }
                     html += '<td ';
@@ -114,13 +114,19 @@
                     html += ' align="' + align + '"';
                     html += ' valign="' + external.propDom('cellvalign') + '">';
                     html += '</td>';
-                    $newcell = $(html)
-                        .appendTo($row);
-                    external.trigger('CswTable_onCreateCell', [$newcell, row, $row.children('td').length]);
+                    newCell = thisRow.append(html);
+                    external.trigger('CswTable_onCreateCell', [newCell, row, thisRow.children('td').length]);
                 }
-                $cell = $($row.children('td')[col - 1]);
+                $cell = thisRow.find('td:eq(' + Csw.number(col - 1) + ')').$;
             }
-            return Csw.controls.domExtend($cell, retCell);
+            Csw.controls.domExtend($cell, retCell);
+            retCell.align = function (alignTo) {
+                retCell.css('text-align', alignTo);
+                retCell.propDom('align', alignTo);
+                return retCell;
+            };
+
+            return retCell;
         };
 
         external.add = function (row, col, content, id) {
