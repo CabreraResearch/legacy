@@ -38,6 +38,7 @@
     <Content Include="ConnectTest.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />
+    <Content Include="csw.js\controls\csw.link.js" />
     <Content Include="csw.js\controls\csw.button.js" />
     <Content Include="csw.js\controls\csw.input.js" />
     <Content Include="csw.js\controls\csw.form.js" />
