@@ -40,7 +40,7 @@
             if (options) {
                 $.extend(internal, options);
             }
-            internal.type = Csw.enums.inputTypes.button.name;
+            internal.type = Csw.enums.inputTypes.button;
             external = Csw.controls.input(internal);
 
             external.propNonDom({
