@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.MetaData
             //isfk, 
             isrequired,
             isunique,
+            iscompoundunique,
             length,
             //nodetypeid, 
             //nodetypepropid, 
@@ -379,6 +380,18 @@ namespace ChemSW.Nbt.MetaData
         {
             _setAttribute( "isunique", value, false );
         }
+
+        //case 24979
+        public bool IsCompoundUnique()
+        {
+            return ( CswConvert.ToBoolean( _NodeTypePropRow["iscompoundunique"] ) );
+        }
+
+        public void setIsCompoundUnique( bool value )
+        {
+            _setAttribute( "iscompoundunique", value, false );
+        }
+
 
         // BZ 9754
         public bool IsGlobalUnique()

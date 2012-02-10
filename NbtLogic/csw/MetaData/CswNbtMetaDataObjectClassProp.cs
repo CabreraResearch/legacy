@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
             isbatchentry,
             isrequired,
             isunique,
+            iscompoundunique,
             servermanaged,
             valuefieldid,
             numberprecision,
@@ -146,6 +147,13 @@ namespace ChemSW.Nbt.MetaData
         {
             return ( CswConvert.ToBoolean( _ObjectClassPropRow["isunique"] ) || IsGlobalUnique() );
         }
+
+        public bool IsCompoundUnique() //bz # 24979
+        {
+            return ( CswConvert.ToBoolean( _ObjectClassPropRow["iscompoundunique"] ) );
+        }
+
+
         public bool IsGlobalUnique() // BZ 9754
         {
             return CswConvert.ToBoolean( _ObjectClassPropRow["isglobalunique"] );
