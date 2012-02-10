@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 					}
 					else if( _UserArgs.ContainsKey( _ArgKey_All ) )
 					{
-						foreach( string AccessId in CswNbtResources.CswDbCfgInfo.AccessIds )
+						foreach( string AccessId in CswNbtResources.CswDbCfgInfo.ActiveAccessIds )
 						{
 							AccessIdsToUpdate.Add( AccessId );
 						}
