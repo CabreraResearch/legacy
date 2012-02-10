@@ -136,7 +136,7 @@
             /// <param name="content" type="String">Content to add.</param>
             /// <returns type="Object">The specified cell.</returns>
             var retCell = external.cell(row, col, id);
-            retCell.$.append(content);
+            retCell.append(content);
             return retCell;
         };
 

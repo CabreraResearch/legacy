@@ -32,11 +32,11 @@
                     });
                     loginTable = loginDiv.form().table();
                     loginMsg = loginTable.cell(1, 2, 'loginmsg').hide();
-                    loginTable.add(2, 1, 'Customer ID:').align('right');
+                    loginTable.add(2, 1, 'Customer ID: ').align('right');
                     inpAccessId = loginTable.cell(2, 2).input({ ID: 'login_accessid', width: '120px' });
-                    loginTable.add(3, 1, 'User Name:').align('right');
+                    loginTable.add(3, 1, 'User Name: ').align('right');
                     inpUserName =  loginTable.cell(3, 2).input({ ID: 'login_username', width: '120px' });
-                    loginTable.add(4, 1, 'Password:').align('right');
+                    loginTable.add(4, 1, 'Password: ').align('right');
                     inpPassword = loginTable.cell(4, 2).input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
                                         .align('center')
@@ -44,8 +44,8 @@
                                             ID: 'login_button',
                                             enabledText: 'Login',
                                             disabledText: 'Logging in...',
-                                            onclick: function () {
-                                                $('#loginmsg').hide().children().remove();
+                                            onClick: function () {
+                                                loginMsg.hide().empty();
 
                                                 _handleLogin({
                                                     AccessId: inpAccessId.val(),

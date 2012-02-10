@@ -471,7 +471,13 @@
             /// <summary>Attach an object to this element.</summary>
             /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
             /// <returns type="Object">The appended Csw object (for chaining)</returns> 
-            var _$element = $(object).appendTo($element);
+            var _$element = $(object);
+            if (false === Csw.isNullOrEmpty(object) && _$element.length === 0) {
+                /* This handles plain text */
+                $element.append(object);
+            } else {
+                $element.append(_$element); 
+            }
             var ret = domExtend(_$element, {});
             return ret;
         };
