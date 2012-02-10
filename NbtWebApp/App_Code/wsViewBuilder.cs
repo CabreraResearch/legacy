@@ -486,9 +486,17 @@ namespace ChemSW.Nbt.WebServices
         public readonly Int32 Width = Int32.MinValue;
         public readonly string PropName = string.Empty;
         public CswCommaDelimitedString AssociatedPropIds = new CswCommaDelimitedString();
+        private string _PropNameUnique = string.Empty;
         public string PropNameUnique
         {
-            get { return PropName.Trim().Replace( " ", "_" ).ToLower(); }
+            get
+            {
+                if( PropName != string.Empty && _PropNameUnique == string.Empty )
+                {
+                    _PropNameUnique = PropName.Trim().Replace( " ", "_" ).ToLower();
+                }
+                return _PropNameUnique;
+            }
         }
 
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
