@@ -393,14 +393,15 @@ namespace ChemSW.Nbt
                 if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
                 {
                     // Properties
+                    // We match on propname because that's how the view editor works.
                     Select += @" ,props.nodetypepropid, props.propname, props.fieldtypeid ";
 
                     From += @"  left outer join ( ";
                     if( NTPropsInClause.Count > 0 )
                     {
-                        From += @"  select p2.nodetypepropid, p2.propname, p2.fieldtypeid
+                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, p2.fieldtypeid
                                   from nodetype_props p1
-                                  join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid)
+                                  join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
                                  where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
                         if( OCPropsInClause.Count > 0 )
                         {
@@ -409,16 +410,17 @@ namespace ChemSW.Nbt
                     }
                     if( OCPropsInClause.Count > 0 )
                     {
-                        From += @" select ntp.nodetypepropid, ntp.propname, ntp.fieldtypeid
+                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, ntp.fieldtypeid
                                   from object_class_props op
-                                  join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid)
+                                  join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
                                  where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
                     }
-                    From += @"   ) props on (1=1)";  // intentional multiplexing
+                    From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
 
                     // Property Values
                     Select += @" ,propval.jctnodepropid, propval.gestalt ";
-                    From += @"  left outer join jct_nodes_props propval on (props.nodetypepropid = propval.nodetypepropid and propval.nodeid = n.nodeid) ";
+                    From += @"  left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid) ";  // better performance from indexes if we do this first
+                    From += @"  left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 
                 } // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
             } // if(Relationship.Properties.Count > 0)
@@ -491,13 +493,7 @@ namespace ChemSW.Nbt
                                 }
 
                                 Where += @"                                         and p.nodetypeid = s.nodetypeid) 
-                                                         left outer join (select j.jctnodepropid,
-                                                                     j.nodetypepropid, j.nodeid, j.nodeidtablename,
-                                                                     j.field1, j.field2, j.field3, j.field4, j.field5,
-                                                                     j.gestalt,
-                                                                     j.field1_fk, j.field1_numeric, j.field1_date,
-                                                                     j.field2_numeric, j.field2_date
-                                                                     from jct_nodes_props j) jnp
+                                                         left outer join jct_nodes_props jnp
                                                           ON (jnp.nodeid = s.nodeid and jnp.nodetypepropid = p.nodetypepropid)
                                              where " + FilterValue + @"))";
 
