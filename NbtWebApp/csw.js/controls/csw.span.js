@@ -28,29 +28,22 @@
         (function () {
             var html = '';
             var $span;
-            var isjQuery = Csw.isJQuery(options);
-            
+
             if (options) {
                 $.extend(internal, options);
             }
             
-            if (isjQuery) {
-                $span = options;
-            } else {
-                html += '<span ';
-                html += ' id="' + Csw.string(internal.ID) + '" ';
-                html += ' class="' + Csw.string(internal.cssclass) + '" ';
-                html += '>';
-                html += Csw.string(internal.text);
-                html += '</span>';
-                $span = $(html);
-            }
+            html += '<span ';
+            html += ' id="' + Csw.string(internal.ID) + '" ';
+            html += ' class="' + Csw.string(internal.cssclass) + '" ';
+            html += '>';
+            html += Csw.string(internal.text);
+            html += '</span>';
+            $span = $(html);
             Csw.controls.domExtend($span, external);
 
-            if (false === isjQuery) {
-                internal.$parent.append(external.$);
-            }
-        } ());
+            internal.$parent.append(external.$);
+        }());
 
         return external;
     }

@@ -35,43 +35,36 @@
         var external = {};
 
         (function () {
-            var $button;
             var buttonOpt;
-            var isjQuery = Csw.isJQuery(options);
 
-            if (isjQuery) {
-                $button = options;
-                Csw.controls.domExtend($button, external);
-            } else {
-                if (options) {
-                    $.extend(internal, options);
-                }
-                internal.type = Csw.enums.inputTypes.button.name;
-                external = Csw.controls.input(internal);
-
-                external.propNonDom({
-                    enabledText: internal.enabledText,
-                    disabledText: internal.disabledText
-                });
-
-                if (false === Csw.isNullOrEmpty(internal.cssclass)) {
-                    external.addClass(internal.cssclass);
-                }
-
-                buttonOpt = {
-                    text: (internal.hasText),
-                    label: internal.enabledText,
-                    disabled: (internal.ReadOnly),
-                    icons: {
-                        primary: internal.primaryicon,
-                        secondary: internal.secondaryicon
-                    }
-                };
-                if (buttonOpt.disabled) {
-                    buttonOpt.label = internal.disabledText;
-                }
-                external.$.button(buttonOpt);
+            if (options) {
+                $.extend(internal, options);
             }
+            internal.type = Csw.enums.inputTypes.button.name;
+            external = Csw.controls.input(internal);
+
+            external.propNonDom({
+                enabledText: internal.enabledText,
+                disabledText: internal.disabledText
+            });
+
+            if (false === Csw.isNullOrEmpty(internal.cssclass)) {
+                external.addClass(internal.cssclass);
+            }
+
+            buttonOpt = {
+                text: (internal.hasText),
+                label: internal.enabledText,
+                disabled: (internal.ReadOnly),
+                icons: {
+                    primary: internal.primaryicon,
+                    secondary: internal.secondaryicon
+                }
+            };
+            if (buttonOpt.disabled) {
+                buttonOpt.label = internal.disabledText;
+            }
+            external.$.button(buttonOpt);
         } ());
 
         external.enable = function () {

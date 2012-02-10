@@ -33,36 +33,29 @@
             var html = '',
                 style = Csw.controls.dom.style();
             var $div;
-            var isjQuery = Csw.isJQuery(options);
 
             if (options) {
                 $.extend(internal, options);
             }
+            
+            html += '<div ';
+            html += ' id="' + Csw.string(internal.ID) + '" ';
+            html += ' id="' + Csw.string(internal.name, internal.ID) + '" ';
+            html += ' class="' + Csw.string(internal.cssclass) + '" ';
 
-            if (isjQuery) {
-                $div = options;
-            } else {
-                html += '<div ';
-                html += ' id="' + Csw.string(internal.ID) + '" ';
-                html += ' id="' + Csw.string(internal.name, internal.ID) + '" ';
-                html += ' class="' + Csw.string(internal.cssclass) + '" ';
-
-                if (false === Csw.isNullOrEmpty(internal.align)) {
-                    style.add('align', internal.align);
-                }
-                html += style.get();
-                
-                html += '>';
-                html += Csw.string(internal.text);
-                html += '</div>';
-                $div = $(html);
+            if (false === Csw.isNullOrEmpty(internal.align)) {
+                style.add('align', internal.align);
             }
+            html += style.get();
+
+            html += '>';
+            html += Csw.string(internal.text);
+            html += '</div>';
+            $div = $(html);
             Csw.controls.domExtend($div, external);
 
-            if (false === isjQuery) {
-                internal.$parent.append(external.$);
-            }
-        } ());
+            internal.$parent.append(external.$);
+        }());
 
         return external;
     }

@@ -34,67 +34,61 @@
         var external = {};
 
         (function () {
-            var html = '', 
+            var html = '',
                 style = Csw.controls.dom.style();
             var $input;
-            var isjQuery = Csw.isJQuery(options);
 
             if (options) {
                 $.extend(internal, options);
             }
 
-            if (isjQuery) {
-                $input = options;
-            } else {
+            internal.name = Csw.string(internal.name, internal.ID);
+            internal.ID = Csw.string(internal.ID, internal.name);
 
-                internal.name = Csw.string(internal.name, internal.ID);
-                internal.ID = Csw.string(internal.ID, internal.name);
+            html += '<input ';
+            html += ' id="' + Csw.string(internal.ID) + '" ';
+            html += ' name="' + Csw.string(internal.name) + '" ';
+            html += ' class="' + Csw.string(internal.cssclass) + '" ';
 
-                html += '<input ';
-                html += ' id="' + Csw.string(internal.ID) + '" ';
-                html += ' name="' + Csw.string(internal.name) + '" ';
-                html += ' class="' + Csw.string(internal.cssclass) + '" ';
-
-                if (false === Csw.isNullOrEmpty(internal.type)) {
-                    html += ' type="' + Csw.string(internal.type.name) + '" ';
-                    if (Csw.bool(internal.type.placeholder) && false === Csw.isNullOrEmpty(internal.placeholder)) {
-                        html += ' placeholder="' + internal.placeholder + '" ';
-                    }
-                    if (internal.type.autocomplete === true && internal.autocomplete === 'on') {
-                        html += ' autocomplete="on" ';
-                    }
-
-                    internal.value = Csw.string(internal.value);
-                    if (Csw.bool(internal.type.value.required) || false === Csw.isNullOrEmpty(internal.value)) {
-                        html += ' value="' + Csw.string(internal.value) + '" ';
-                    }
+            if (false === Csw.isNullOrEmpty(internal.type)) {
+                html += ' type="' + Csw.string(internal.type.name) + '" ';
+                if (Csw.bool(internal.type.placeholder) && false === Csw.isNullOrEmpty(internal.placeholder)) {
+                    html += ' placeholder="' + internal.placeholder + '" ';
                 }
-                internal.width = Csw.string(internal.width, internal.type.defaultwidth);
+                if (internal.type.autocomplete === true && internal.autocomplete === 'on') {
+                    html += ' autocomplete="on" ';
+                }
 
-                if (false === Csw.isNullOrEmpty(internal.width)) {
-                    style.add('width', internal.width);
-                }
-                if (Csw.bool(internal.autofocus)) {
-                    html += ' autofocus="' + internal.autofocus + '" ';
-                }
-                if (false === Csw.isNullOrEmpty(internal.maxlength)) {
-                    html += ' maxlength="' + internal.maxlength + '" ';
-                }
-                
-                html += style.get();
-                
-                html += ' />';
-                $input = $(html);
-                if (Csw.isFunction(internal.onChange)) {
-                    $input.change(internal.onChange);
+                internal.value = Csw.string(internal.value);
+                if (Csw.bool(internal.type.value.required) || false === Csw.isNullOrEmpty(internal.value)) {
+                    html += ' value="' + Csw.string(internal.value) + '" ';
                 }
             }
+            internal.width = Csw.string(internal.width, internal.type.defaultwidth);
+
+            if (false === Csw.isNullOrEmpty(internal.width)) {
+                style.add('width', internal.width);
+            }
+            if (Csw.bool(internal.autofocus)) {
+                html += ' autofocus="' + internal.autofocus + '" ';
+            }
+            if (false === Csw.isNullOrEmpty(internal.maxlength)) {
+                html += ' maxlength="' + internal.maxlength + '" ';
+            }
+
+            html += style.get();
+
+            html += ' />';
+            $input = $(html);
+            if (Csw.isFunction(internal.onChange)) {
+                $input.change(internal.onChange);
+            }
+
             Csw.controls.domExtend($input, external);
 
-            if (false === isjQuery) {
-                internal.$parent.append(external.$);
-            }
-        } ());
+            internal.$parent.append(external.$);
+
+        }());
 
         external.change = function (func) {
             if (Csw.isFunction(func)) {

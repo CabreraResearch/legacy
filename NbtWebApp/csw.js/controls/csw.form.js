@@ -24,26 +24,21 @@
         (function () {
             var html = '';
             var $form;
-            var isjQuery = Csw.isJQuery(options);
             
             if (options) {
                 $.extend(internal, options);
             }
             
-            if (isjQuery) {
-                $form = options;
-            } else {
-                html += '<form ';
-                html += ' id="' + Csw.string(internal.ID) + '" ';
-                html += '>';
-                html += '</form>';
-                $form = $(html);
-            }
+            html += '<form ';
+            html += ' id="' + Csw.string(internal.ID) + '" ';
+            html += '>';
+            html += '</form>';
+            $form = $(html);
+            
             Csw.controls.domExtend($form, external);
 
-            if (false === isjQuery) {
-                internal.$parent.append(external.$);
-            }
+            internal.$parent.append(external.$);
+            
         } ());
 
         return external;
