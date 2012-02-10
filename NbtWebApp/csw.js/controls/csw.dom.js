@@ -219,7 +219,7 @@
             _external.get = function () {
                 var htmlStyle = '', ret = '';
 
-                function buildStyle (key, val) {
+                function buildStyle(key, val) {
                     htmlStyle += key + ': ' + val + ';';
                 }
 
@@ -328,66 +328,71 @@
             return Csw.controls.dom.propNonDom($element, name, value);
         };
 
-        options.table = function (tableOpts) {
+        options.table = function (opts) {
             /// <summary> Creates a Csw.table on this element</summary>
             /// <param name="tableOpts" type="Object">Options to define the table.</param>
             /// <returns type="Object">A Csw.table</returns> 
-            tableOpts.ID = tableOpts.ID || Csw.controls.dom.makeId(internal.id, 'subtbl');
-            tableOpts.$parent = $element;
-            return Csw.controls.table(tableOpts);
+            opts = opts || {};
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subtbl');
+            opts.$parent = $element;
+            return Csw.controls.table(opts);
         };
 
-        options.div = function (divOpts) {
+        options.div = function (opts) {
             /// <summary> Creates a Csw.div on this element</summary>
             /// <param name="divOpts" type="Object">Options to define the div.</param>
             /// <returns type="Object">A Csw.div</returns> 
-            divOpts.ID = divOpts.ID || Csw.controls.dom.makeId(internal.id, 'subdiv');
-            divOpts.$parent = $element;
-            return Csw.controls.div(divOpts);
+            opts = opts || {};
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subdiv');
+            opts.$parent = $element;
+            return Csw.controls.div(opts);
         };
 
-        options.br = function (brOpts) {
+        options.br = function (opts) {
             /// <summary> Creates a Csw.br on this element</summary>
             /// <param name="options" type="Object">Options to define the br.</param>
             /// <returns type="Object">A Csw.br</returns> 
-            brOpts.$parent = $element;
-            return Csw.controls.br(brOpts);
+            opts.$parent = $element;
+            return Csw.controls.br(opts);
         };
 
-        options.span = function (spanOpts) {
+        options.span = function (opts) {
             /// <summary> Creates a Csw.span on this element</summary>
             /// <param name="spanOpts" type="Object">Options to define the span.</param>
             /// <returns type="Object">A Csw.span</returns> 
-            spanOpts.ID = spanOpts.ID || Csw.controls.dom.makeId(internal.id, 'subspan');
-            spanOpts.$parent = $element;
-            return Csw.controls.span(spanOpts);
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subspan');
+            opts.$parent = $element;
+            return Csw.controls.span(opts);
         };
 
-        options.input = function (inputOpts) {
+        options.input = function (opts) {
             /// <summary> Creates a Csw.input on this element</summary>
             /// <param name="inputOpts" type="Object">Options to define the input.</param>
             /// <returns type="Object">A Csw.input</returns> 
-            inputOpts.ID = inputOpts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
-            inputOpts.$parent = $element;
-            return Csw.controls.input(inputOpts);
+            opts = opts || {};
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
+            opts.$parent = $element;
+            return Csw.controls.input(opts);
         };
 
-        options.button = function (buttonOpts) {
+        options.button = function (opts) {
             /// <summary> Creates a Csw.button on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the button.</param>
             /// <returns type="Object">A Csw.button</returns> 
-            buttonOpts.ID = buttonOpts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
-            buttonOpts.$parent = $element;
-            return Csw.controls.button(buttonOpts);
+            opts = opts || {};
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subbutton');
+            opts.$parent = $element;
+            return Csw.controls.button(opts);
         };
 
-        options.form = function (formOpts) {
+        options.form = function (opts) {
             /// <summary> Creates a Csw.form on this element</summary>
             /// <param name="formOpts" type="Object">Options to define the form.</param>
             /// <returns type="Object">A Csw.form</returns> 
-            formOpts.ID = formOpts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
-            formOpts.$parent = $element;
-            return Csw.controls.form(formOpts);
+            opts = opts || {};
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subform');
+            opts.$parent = $element;
+            return Csw.controls.form(opts);
         };
 
         //#endregion Csw DOM classes
