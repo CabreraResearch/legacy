@@ -204,6 +204,36 @@
             return $ret;
         };
 
+        external.style = function () {
+            /// <summary> Build an HTML element style string </summary>
+            /// <returns type="String">A br object</returns>
+            var _internal = {
+                styles: {}
+            };
+            var _external = {};
+
+            _external.add = function (key, value) {
+                _internal.styles[key] = value;
+            };
+
+            _external.get = function () {
+                var htmlStyle = '', ret = '';
+
+                function buildStyle (key, val) {
+                    htmlStyle += key + ': ' + val + ';';
+                }
+
+                Csw.each(_internal.styles, buildStyle);
+
+                if (htmlStyle.length > 0) {
+                    ret = ' style="' + htmlStyle + '"';
+                }
+                return ret;
+            };
+
+            return _external;
+        };
+
         external.addClass = function ($el, name) {
             /// <summary>Add a CSS class to an element.</summary>
             /// <param name="$el" type="jQuery">An element to add class to.</param>
@@ -305,6 +335,59 @@
             tableOpts.ID = tableOpts.ID || Csw.controls.dom.makeId(internal.id, 'subtbl');
             tableOpts.$parent = $element;
             return Csw.controls.table(tableOpts);
+        };
+
+        options.div = function (divOpts) {
+            /// <summary> Creates a Csw.div on this element</summary>
+            /// <param name="divOpts" type="Object">Options to define the div.</param>
+            /// <returns type="Object">A Csw.div</returns> 
+            divOpts.ID = divOpts.ID || Csw.controls.dom.makeId(internal.id, 'subdiv');
+            divOpts.$parent = $element;
+            return Csw.controls.div(divOpts);
+        };
+
+        options.br = function (brOpts) {
+            /// <summary> Creates a Csw.br on this element</summary>
+            /// <param name="options" type="Object">Options to define the br.</param>
+            /// <returns type="Object">A Csw.br</returns> 
+            brOpts.$parent = $element;
+            return Csw.controls.br(brOpts);
+        };
+
+        options.span = function (spanOpts) {
+            /// <summary> Creates a Csw.span on this element</summary>
+            /// <param name="spanOpts" type="Object">Options to define the span.</param>
+            /// <returns type="Object">A Csw.span</returns> 
+            spanOpts.ID = spanOpts.ID || Csw.controls.dom.makeId(internal.id, 'subspan');
+            spanOpts.$parent = $element;
+            return Csw.controls.span(spanOpts);
+        };
+
+        options.input = function (inputOpts) {
+            /// <summary> Creates a Csw.input on this element</summary>
+            /// <param name="inputOpts" type="Object">Options to define the input.</param>
+            /// <returns type="Object">A Csw.input</returns> 
+            inputOpts.ID = inputOpts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
+            inputOpts.$parent = $element;
+            return Csw.controls.input(inputOpts);
+        };
+
+        options.button = function (buttonOpts) {
+            /// <summary> Creates a Csw.button on this element</summary>
+            /// <param name="buttonOpts" type="Object">Options to define the button.</param>
+            /// <returns type="Object">A Csw.button</returns> 
+            buttonOpts.ID = buttonOpts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
+            buttonOpts.$parent = $element;
+            return Csw.controls.button(buttonOpts);
+        };
+
+        options.form = function (formOpts) {
+            /// <summary> Creates a Csw.form on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the form.</param>
+            /// <returns type="Object">A Csw.form</returns> 
+            formOpts.ID = formOpts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
+            formOpts.$parent = $element;
+            return Csw.controls.form(formOpts);
         };
 
         //#endregion Csw DOM classes

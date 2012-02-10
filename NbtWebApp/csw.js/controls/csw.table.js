@@ -76,13 +76,13 @@
             }
         } ());
 
-        external.cell = function (row, col) {
+        external.cell = function (row, col, id) {
             /// <summary>Get a cell from the table</summary>
             /// <param name="row" type="Number">Row number</param>
             /// <param name="col" type="Number">Column number</param>
             /// <returns type="Object">A Csw table cell object.</returns>
             var $cell = null,
-                $row, align, $newcell, retCell = {};
+                $row, align, $newcell, retCell = {}, html = '';
 
             if (external.length() > 0 &&
                 false === Csw.isNullOrEmpty(row) &&
@@ -106,7 +106,15 @@
                         ($row.children('td').length % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
                         align = 'right';
                     }
-                    $newcell = $('<td class="' + external.propDom('cellcssclass') + '" align="' + align + '" valign="' + external.propDom('cellvalign') + '"></td>')
+                    html += '<td ';
+                    if (false === Csw.isNullOrEmpty(id)) {
+                        html += ' id="' + id + '"';
+                    }
+                    html += ' class="' + external.propDom('cellcssclass') + '"';
+                    html += ' align="' + align + '"';
+                    html += ' valign="' + external.propDom('cellvalign') + '">';
+                    html += '</td>';
+                    $newcell = $(html)
                         .appendTo($row);
                     external.trigger('CswTable_onCreateCell', [$newcell, row, $row.children('td').length]);
                 }
@@ -115,13 +123,13 @@
             return Csw.controls.domExtend($cell, retCell);
         };
 
-        external.add = function (row, col, content) {
+        external.add = function (row, col, content, id) {
             /// <summary>Add content to a cell of this table.</summary>
             /// <param name="row" type="Number">Row number.</param>
             /// <param name="col" type="Number">Column number.</param>
             /// <param name="content" type="String">Content to add.</param>
             /// <returns type="Object">The specified cell.</returns>
-            var retCell = external.cell(row, col);
+            var retCell = external.cell(row, col, id);
             retCell.$.append(content);
             return retCell;
         };
