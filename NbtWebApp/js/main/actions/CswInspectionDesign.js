@@ -155,8 +155,8 @@
                     var makeTargetSelect = function () {
                         //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
                         //However, the variable assignment is sufficiently complex that this deviation is justified.
-                        if (false === Csw.isNullOrEmpty(inspectionTarget.$, true)) {
-                            inspectionTarget.$.remove();
+                        if (false === Csw.isNullOrEmpty(inspectionTarget, true)) {
+                            inspectionTarget.remove();
                         }
 
                         inspectionTarget = rowOneTable.cell(2, 1);

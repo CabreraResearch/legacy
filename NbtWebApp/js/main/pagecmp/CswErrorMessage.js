@@ -35,7 +35,8 @@
             width: '100%'
         });
 
-        var cell21 = table.add(2, 1, o.detail).hide();
+        var cell21 = table.add(2, 1, o.detail);
+        cell21.hide();
         table.add(1, 1, '<a href="#">' + o.message + '</a>')
             .propDom('width', '100%')
             .bind('click', cell21.$.toggle);

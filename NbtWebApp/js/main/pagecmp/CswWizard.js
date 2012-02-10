@@ -41,7 +41,7 @@
             var $parent = $(this);
             var table = Csw.controls.table({
                 $parent: $parent,
-                ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                ID: o.ID,
                 TableCssClass: 'CswWizard_WizardTable'
             });
             table.propNonDom({

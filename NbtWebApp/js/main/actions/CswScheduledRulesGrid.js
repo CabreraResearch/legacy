@@ -82,7 +82,7 @@
                                         .css({'padding': '1px', 'vertical-align': 'middle'});
 
                         customerIdSelect = customerIdTable.cell(1, 2);
-                        customerIdSelect.$.CswDiv('init')
+                        customerIdSelect.$
                             .CswSelect('init', {
                                 ID: Csw.controls.dom.makeSafeId('customerIdSelect'),
                                 selected: '',
@@ -98,7 +98,7 @@
                             url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
                             success: function (data) {
                                 var values = data.customerids;
-                                customerIdSelect.$.CswSelect('setoptions', values);
+                                customerIdSelect.find('select').CswSelect('setoptions', values);
                                 selectedCustomerId = customerIdSelect.find(':selected').val();
                             }
                         });
