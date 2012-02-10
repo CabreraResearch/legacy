@@ -64,7 +64,7 @@
                              selected: units
                          });
 
-                editTable.$.hide();
+                editTable.hide();
             }
         },
         save: function (o) { //$propdiv, $xml
