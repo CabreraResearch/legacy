@@ -386,6 +386,16 @@
             return Csw.controls.button(opts);
         };
 
+        options.link = function (opts) {
+            /// <summary> Creates a Csw.link on this element</summary>
+            /// <param name="buttonOpts" type="Object">Options to define the link.</param>
+            /// <returns type="Object">A Csw.link</returns> 
+            opts = opts || {};
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'sublink');
+            opts.$parent = $element;
+            return Csw.controls.link(opts);
+        };
+
         options.form = function (opts) {
             /// <summary> Creates a Csw.form on this element</summary>
             /// <param name="formOpts" type="Object">Options to define the form.</param>

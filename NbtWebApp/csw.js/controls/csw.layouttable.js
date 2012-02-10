@@ -130,10 +130,9 @@
                 cellsetcolumn: cellsetcolumn
             });
 
-            cell.$.click(function (ev, dd) {
+            cell.bind('click', function (ev, dd) {
                 internal.onClick(ev, dd, row, column, cellsetrows, cellsetcolumns);
-            })
-                .droppable({
+            }).$.droppable({
                     hoverClass: 'CswLayoutTable_hover',
                     drop: function (ev, dd) {
                         internal.onDrop(ev, dd, $(this), cellsetrows, cellsetcolumns);
