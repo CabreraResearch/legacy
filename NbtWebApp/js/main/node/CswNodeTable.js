@@ -123,7 +123,7 @@
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
                             }
-                            btnTable.cell(1, 1).$.CswButton({
+                            btnTable.cell(1, 1).button({
                                 ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
                                 enabledText: btntext,
                                 disableOnClick: false,
@@ -140,7 +140,7 @@
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                         if (nodeObj.allowdelete) {
-                            btnTable.cell(1, 2).$.CswButton({
+                            btnTable.cell(1, 2).button({
                                 ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
                                 enabledText: 'Delete',
                                 disableOnClick: false,
