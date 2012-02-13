@@ -138,7 +138,6 @@
     <Compile Include="csw\MetaData\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\ICswNbtMetaDataObjectCollection.cs" />
     <Compile Include="csw\MetaData\ICswNbtMetaDataProp.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtUniqueEnforcement.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassUnitType.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionTargetGroup.cs" />
     <Compile Include="csw\ObjClasses\CswNbtNode.cs" />

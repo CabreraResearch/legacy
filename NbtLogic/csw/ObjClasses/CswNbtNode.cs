@@ -492,7 +492,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( IsNew )
                         _CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
                     else
-                        _CswNbtObjClass.beforeWriteNode( OverrideUniqueValidation );
+                        _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation  );
                 }
 
                 OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
