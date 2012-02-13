@@ -60,6 +60,6 @@ Csw.log(data);
         return external;
     };
 
-    Csw.controls.register('newSearch', universalSearch);
-    Csw.controls.newSearch = Csw.controls.universalSearch || universalSearch;
+    Csw.controls.register('universalSearch', universalSearch);
+    Csw.controls.universalSearch = Csw.controls.universalSearch || universalSearch;
 })();
