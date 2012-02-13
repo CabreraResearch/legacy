@@ -48,6 +48,8 @@ window.initMain = window.initMain || function (undefined) {
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
+                Csw.controls.universalSearch({ $searchbox_parent: $('#SearchDiv') });
+
                 $('#header_quota').CswQuotaImage();
 
                 $('#header_menu').CswMenuHeader({

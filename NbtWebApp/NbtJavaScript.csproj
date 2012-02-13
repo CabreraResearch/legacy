@@ -143,6 +143,7 @@
     <Content Include="js\main\node\CswNodeTable.js" />
     <Content Include="js\main\node\CswNodeTabs.js" />
     <Content Include="js\main\node\CswNodeTree.js" />
+    <Content Include="csw.js\controls\csw.universalsearch.js" />
     <Content Include="js\main\pagecmp\CswDashboard.js" />
     <Content Include="js\main\pagecmp\CswDefaultContent.js" />
     <Content Include="js\main\pagecmp\CswDialog.js" />
