@@ -30,7 +30,7 @@
             disableOnClick: true,
             primaryicon: '',
             secondaryicon: '',
-            onclick: null
+            onClick: null
         };
         var external = {};
 
@@ -40,7 +40,7 @@
             if (options) {
                 $.extend(internal, options);
             }
-            internal.type = Csw.enums.inputTypes.button.name;
+            internal.type = Csw.enums.inputTypes.button;
             external = Csw.controls.input(internal);
 
             external.propNonDom({
@@ -65,6 +65,10 @@
                 buttonOpt.label = internal.disabledText;
             }
             external.$.button(buttonOpt);
+
+            if (Csw.isFunction(internal.onClick)) {
+                external.bind('click', internal.onClick);
+            }
         } ());
 
         external.enable = function () {
