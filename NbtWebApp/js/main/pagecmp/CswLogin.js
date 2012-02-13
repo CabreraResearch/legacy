@@ -153,5 +153,5 @@
         }); // ajax
     } // _handleLogin()
 
-})(jQuery);
+}(jQuery));
 

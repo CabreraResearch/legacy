@@ -49,7 +49,7 @@
             html += '<input ';
             attr.add('id', internal.ID);
             attr.add('name', internal.name);
-            attr.add('class', internal.class);
+            attr.add('class', internal.cssclass);
             attr.add('type', internal.type.name);
             attr.add('placeholder', internal.placeholder);
             attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));

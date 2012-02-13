@@ -48,8 +48,8 @@
             $.extend(o, options);
         }
 
-        var parent = $(this);
-        var parent = Csw.controls.factory(parent, {});
+        var $parent = $(this);
+        var parent = Csw.controls.factory($parent, {});
 
         var outerTabDiv = parent.tabDiv({ ID: o.ID + '_tabdiv' });
         var tabcnt = 0;
@@ -57,7 +57,7 @@
         getTabs(o);
 
         if (o.EditMode !== Csw.enums.editMode.PrintReport) {
-            var linkDiv = parent.div({ ID: o.ID + '_linkdiv', align: 'right' })
+            var linkDiv = parent.div({ID: o.ID + '_linkdiv', align: 'right'});
             if (o.ShowAsReport && false === o.Multi) {
                 linkDiv.link({
                     href: '#',
@@ -82,7 +82,7 @@
                 onsubmit: 'return false;'
             });
 
-            var handle = function (eventObj) {
+            var handle = function () {
                 tabParent.empty();
                 $.unsubscribe(Csw.enums.events.CswNodeDelete, handle);
                 return false;
@@ -107,9 +107,9 @@
             };
 
             // For performance, don't bother getting tabs if we're in Add or Preview
-            if (o.EditMode == Csw.enums.editMode.Add ||
-                o.EditMode == Csw.enums.editMode.Preview ||
-                o.EditMode == Csw.enums.editMode.Table) {
+            if (o.EditMode === Csw.enums.editMode.Add ||
+                o.EditMode === Csw.enums.editMode.Preview ||
+                o.EditMode === Csw.enums.editMode.Table) {
 
                 var tabid = o.EditMode + "_tab";
                 var tabContentDiv = makeTabContentDiv(parent, tabid, false);
@@ -348,7 +348,7 @@
                     }
 
                     /* case 8494 */
-                    if (!o.Config && !atLeastOne.Saveable && o.EditMode == Csw.enums.editMode.Add) {
+                    if (!o.Config && !atLeastOne.Saveable && o.EditMode === Csw.enums.editMode.Add) {
                         save(form, layoutTable, data, saveBtn, tabid);
                     }
                     else if (Csw.isFunction(o.onInitFinish)) {
@@ -730,5 +730,5 @@
         return this;
 
     }; // function (options) {
-})(jQuery);
+}(jQuery));
 
