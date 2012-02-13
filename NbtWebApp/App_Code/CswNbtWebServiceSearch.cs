@@ -18,7 +18,6 @@ namespace ChemSW.Nbt.WebServices
         private const string _NodeTypePrefix = "nt_";
         private const string _ObjectClassPrefix = "oc_";
         private wsViewBuilder _ViewBuilder;
-        private Int32 _ResultLimit = 1000;
 
         /// <summary>
         /// Searching against these field types is not yet supported
@@ -391,7 +390,7 @@ namespace ChemSW.Nbt.WebServices
             CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "doUniversalSearch_jct_select", "jct_nodes_props" );
             CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
             SelectCols.Add( "nodeid" );
-            DataTable JctTable = JctSelect.getTable( SelectCols, "", Int32.MinValue, "where nodeid is not null and lower(gestalt) like '%" + SearchTerm.ToLower() + "%'", false, null, 0, _ResultLimit );
+            DataTable JctTable = JctSelect.getTable( SelectCols, "", Int32.MinValue, "where nodeid is not null and lower(gestalt) like '%" + SearchTerm.ToLower() + "%'", false, null, 0, _CswNbtResources.TreeViewResultLimit );
             foreach( DataRow JctRow in JctTable.Rows )
             {
                 //JObject ThisNodeObj = wsTable.makeNodeObj( new CswPrimaryKey( "nodes", CswConvert.ToInt32( JctRow["nodeid"] ) ) );
