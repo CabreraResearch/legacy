@@ -285,6 +285,13 @@
             return $el.find(Csw.string(selector));
         };
 
+        external.first = function ($el) {
+            /// <summary>Find the first child element of this DOM element represented by this object</summary>
+            /// <param name="$el" type="jQuery">A jQuery element</param>
+            /// <returns type="Object">The jQuery element(s) (for chaining)</returns> 
+            return $el.first();
+        };
+
         return external;
     } ());
     Csw.controls.register('dom', dom);
@@ -477,6 +484,14 @@
             return ret;
         };
 
+        options.first = function () {
+            /// <summary>Find the first child element of this DOM element represented by this object</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.first();
+            var ret = options.jquery(_$element);
+            return ret;
+        };
+
         options.append = function (object) {
             /// <summary>Attach an object to this element.</summary>
             /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
@@ -486,7 +501,7 @@
                 /* This handles plain text */
                 $element.append(object);
             } else {
-                $element.append(_$element); 
+                $element.append(_$element);
             }
             var ret = domExtend(_$element, {});
             return ret;
