@@ -275,6 +275,7 @@ namespace ChemSW.Nbt.WebPages
         private CswFieldTypeWebControl _DefaultValueControl = null;
         private CheckBox _RequiredValue;
         private CheckBox _IsUnique;
+        private CheckBox _IsCompoundUnique;
         private CheckBox _SetValueOnAddValue;
 
         private Button HiddenDeleteButton;
@@ -888,6 +889,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.MinValue = Convert.ToDouble( getPropAttributeValue( "EditProp_MinValue" + OldSelectedNodeTypePropId.ToString(), typeof( Double ), EditPropPlaceHolder ) );
                     PropToSave.MaxValue = Convert.ToDouble( getPropAttributeValue( "EditProp_MaxValue" + OldSelectedNodeTypePropId.ToString(), typeof( Double ), EditPropPlaceHolder ) );
                     PropToSave.setIsUnique( Convert.ToBoolean( getPropAttributeValue( "EditProp_IsUnique" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) ) );
+                    PropToSave.setIsCompoundUnique( Convert.ToBoolean( getPropAttributeValue( "EditProp_IsCompoundUnique" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) ) );
                     PropToSave.StaticText = getPropAttributeValue( "EditProp_TextValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.ReadOnly = Convert.ToBoolean( getPropAttributeValue( "EditProp_ReadOnlyValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
                     PropToSave.UseNumbering = Convert.ToBoolean( getPropAttributeValue( "EditProp_UseNumbering" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
@@ -2530,8 +2532,18 @@ namespace ChemSW.Nbt.WebPages
                                     _IsUnique.Enabled = false;
                                 _IsUnique.ID = "EditProp_IsUnique" + SelectedNodeTypeProp.PropId.ToString();
                                 _IsUnique.Text = "Unique";
-                                _IsUnique.Checked = SelectedNodeTypeProp.IsUnique();
                                 IsUniqueRow.Cells[1].Controls.Add( _IsUnique );
+                                _IsUnique.Checked = SelectedNodeTypeProp.IsUnique();
+
+                                TableRow IsCompoundUniqueRow = makeEditPropTableRow( EditPropPlaceHolder );
+                                ( (Literal) IsCompoundUniqueRow.Cells[0].Controls[0] ).Text = "";
+                                _IsCompoundUnique = new CheckBox();
+                                if( DerivesFromObjectClassProp && ObjectClassProp.IsCompoundUnique() )
+                                    _IsCompoundUnique.Enabled = false;
+                                _IsCompoundUnique.ID = "EditProp_IsCompoundUnique" + SelectedNodeTypeProp.PropId.ToString();
+                                _IsCompoundUnique.Text = "Compound Unique";
+                                IsCompoundUniqueRow.Cells[1].Controls.Add( _IsCompoundUnique );
+                                _IsCompoundUnique.Checked = SelectedNodeTypeProp.IsCompoundUnique();
 
                                 TableRow WarningRow = makeEditPropTableRow( EditPropPlaceHolder );
                                 ( (Literal) WarningRow.Cells[0].Controls[0] ).Text = "";

@@ -20,7 +20,7 @@
             data: { ViewId: o.viewid },
             success: function (data) {
                 
-                var $addDiv = $this.CswDiv({ ID: Csw.makeId({ id: o.ID, suffix: 'adddiv' }), cssclass: 'adddiv' });
+                var $addDiv = $this.CswDiv({ ID: Csw.controls.dom.makeId({ id: o.ID, suffix: 'adddiv' }), cssclass: 'adddiv' });
                 $addDiv.append('Add New:');
 
                 function _makeAddLinksRecursive(addObj, $parent) {

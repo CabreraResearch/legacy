@@ -212,12 +212,17 @@
                         $form.append(o.title);
                     }
 
-                    var $formtbl = $form.CswTable('init', { ID: o.ID + '_formtbl', width: '100%' });
-                    var $formtblcell11 = $formtbl.CswTable('cell', 1, 1);
-                    var $formtblcell12 = $formtbl.CswTable('cell', 1, 2);
+                    var formTable = Csw.controls.table({
+                        $parent: $form,
+                        ID: o.ID + '_formtbl', 
+                        width: '100%' 
+                    });
+                    var formTblCell11 = formTable.cell(1, 1);
+                    var formTblCell12 = formTable.cell(1, 2);
 
                     var $savetab;
-                    var $layouttable = $formtblcell11.CswLayoutTable('init', {
+                    var layoutTable = Csw.controls.layoutTable({
+                        $parent: formTblCell11.$,
                         ID: o.ID + '_props',
                         OddCellRightAlign: true,
                         ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
@@ -241,15 +246,15 @@
                         onRemove: function (event, onRemoveData) {
                             onRemove(onRemoveData);
                         } // onRemove
-                    }); // CswLayoutTable()
+                    }); // Csw.controls.layoutTable()
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
                             if (Csw.bool(thisProp.hassubprops)) {
                                 var propId = key; //key
-                                var $subtable = $layouttable.find('#' + propId + '_subproptable');
+                                var $subtable = layoutTable.find('#' + propId + '_subproptable');
                                 var $parentcell = $subtable.parent().parent();
-                                var $cellset = $layouttable.CswLayoutTable('cellset', $parentcell.CswAttrNonDom('row'), $parentcell.CswAttrNonDom('column'));
+                                var $cellset = layoutTable.cellset($parentcell.attr('row'), $parentcell.attr('column'));
                                 var $propcell = _getPropertyCell($cellset);
 
                                 if ($subtable.length > 0) {
@@ -277,13 +282,13 @@
                     }
 
                     if (o.EditMode !== Csw.enums.editMode.PrintReport) {
-                        $savetab = $formtblcell11.CswButton({ ID: 'SaveTab',
+                        $savetab = formTblCell11.$.CswButton({ ID: 'SaveTab',
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
-                            onclick: function () { Save($form, $layouttable, data, $savetab, tabid); }
+                            onclick: function () { Save($form, layoutTable, data, $savetab, tabid); }
                         });
                     }
-                    var AtLeastOne = _handleProperties($layouttable, data, $tabcontentdiv, tabid, false, $savetab);
+                    var AtLeastOne = _handleProperties(layoutTable, data, $tabcontentdiv, tabid, false, $savetab);
 
                     // Validation
                     $form.validate({
@@ -304,7 +309,7 @@
                     }); // validate()
 
                     if (Csw.bool(o.Config)) {
-                        $layouttable.CswLayoutTable('ConfigOn');
+                        layoutTable.configOn();
                     }
                     else if (!o.Config &&
                         Csw.isNullOrEmpty(o.date) &&
@@ -325,7 +330,7 @@
                         };
 
                         /* Show the 'fake' config button to open the dialog */
-                        $formtblcell12.CswImageButton({
+                        formTblCell12.$.CswImageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                             AlternateText: 'Configure',
                             ID: o.ID + 'configbtn',
@@ -339,7 +344,7 @@
 
                     /* case 8494 */
                     if (!o.Config && !AtLeastOne.Saveable && o.EditMode == Csw.enums.editMode.Add) {
-                        Save($form, $layouttable, data, $savetab, tabid);
+                        Save($form, layoutTable, data, $savetab, tabid);
                     }
                     else if (Csw.isFunction(o.onInitFinish)) {
                         o.onInitFinish(AtLeastOne.Property);
@@ -397,10 +402,10 @@
             return $cellset[1][2].children('div');
         }
 
-        function handleProp($layouttable, thisProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne) {
+        function handleProp(layoutTable, thisProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne) {
             var propid = thisProp.id,
                 fieldtype = thisProp.fieldtype,
-                $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol),
+                $cellset = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol),
                 helpText = Csw.string(thisProp.helptext),
                 propName = Csw.string(thisProp.name);
 
@@ -455,11 +460,11 @@
             _makeProp($propcell, thisProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
         }
 
-        function _handleProperties($layouttable, data, $tabcontentdiv, tabid, configMode, $savebtn) {
+        function _handleProperties(layoutTable, data, $tabcontentdiv, tabid, configMode, $savebtn) {
             var AtLeastOne = { Property: false, Saveable: false };
             var handleSuccess = function (propObj) {
                 AtLeastOne.Property = true;
-                handleProp($layouttable, propObj, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
+                handleProp(layoutTable, propObj, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
                 return false;
             };
             Csw.crawlObject(data, handleSuccess, false);
@@ -517,7 +522,8 @@
                     // recurse on sub-props
                     var subProps = propData.subprops;
 
-                    var $subtable = $propcell.CswLayoutTable('init', {
+                    var subLayoutTable = Csw.controls.layoutTable({
+                        $parent: $propcell,
                         ID: fieldOpt.propid + '_subproptable',
                         OddCellRightAlign: true,
                         ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
@@ -537,11 +543,11 @@
                     var subOnSuccess = function (subProp, key) {
                         subProp.propId = key;
                         if (Csw.bool(subProp.display) || configMode) {
-                            handleProp($subtable, subProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
+                            handleProp(subLayoutTable, subProp, $tabcontentdiv, tabid, configMode, $savebtn, AtLeastOne);
                             if (configMode) {
-                                $subtable.CswLayoutTable('ConfigOn');
+                                subLayoutTable.configOn();
                             } else {
-                                $subtable.CswLayoutTable('ConfigOff');
+                                subLayoutTable.configOff();
                             }
                         }
                         return false;
@@ -598,9 +604,9 @@
             }, 150);
         } // _updateSubProps()
 
-        function Save($form, $layouttable, propsData, $savebtn, tabid) {
+        function Save($form, layoutTable, propsData, $savebtn, tabid) {
             if ($form.valid()) {
-                var propIds = _updatePropJsonFromForm($layouttable, propsData);
+                var propIds = _updatePropJsonFromForm(layoutTable, propsData);
                 var data = {
                     EditMode: o.EditMode,
                     NodeIds: Csw.tryParseObjByIdx(o.nodeids, 0), // o.nodeids.join(','),
@@ -675,7 +681,7 @@
             }
         } // Save()
 
-        function _updatePropJsonFromForm($layouttable, propData) {
+        function _updatePropJsonFromForm(layoutTable, propData) {
             var propIds = [];
             var updSuccess = function (thisProp) {
                 var propOpt = {
@@ -688,7 +694,7 @@
                     cswnbtnodekey: o.cswnbtnodekey
                 };
 
-                var $cellset = $layouttable.CswLayoutTable('cellset', thisProp.displayrow, thisProp.displaycol);
+                var $cellset = layoutTable.cellset(thisProp.displayrow, thisProp.displaycol);
                 propOpt.$propcell = _getPropertyCell($cellset);
                 propOpt.$propdiv = propOpt.$propcell.children('div').first();
 

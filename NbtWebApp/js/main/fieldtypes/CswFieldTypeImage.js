@@ -28,30 +28,31 @@
                 
                 var fileName = Csw.string(propVals.name).trim();
 
-                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
-                var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
-                var $cell21 = $table.CswTable('cell', 2, 1).CswAttrDom('width', width);
-                var $cell22 = $table.CswTable('cell', 2, 2).CswAttrDom('align', 'right');
-                var $cell23 = $table.CswTable('cell', 2, 3).CswAttrDom('align', 'right');
+                var table = Csw.controls.table({
+                    $parent: $Div,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                });
+                var cell11 = table.cell(1, 1).propDom('colspan', '3');
+                var cell21 = table.cell(2, 1).propDom('width', width);
+                var cell22 = table.add(2, 2, '<div />').propDom('align', 'right');
+                var cell23 = table.add(2, 3, '<div />').propDom('align', 'right');
 
                 if ( false === Csw.isNullOrEmpty(fileName) ) {
                     //Case 24389: IE interprets height and width absolutely, better not to use them at all.
-                    $('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + fileName + '"/></a>')
-                        .appendTo($cell11);
-                    $cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');                
+                    cell11.append('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + fileName + '"/></a>');
+                    cell21.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');                
                 } else {
-                    $cell21.append('(no image selected)');
+                    cell21.append('(no image selected)');
                 }            
 
 
-                if (!o.ReadOnly && o.EditMode != Csw.enums.editMode.Add) {
+                if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     //Edit button
-                    $('<div/>')
-                        .appendTo($cell22)
+                    cell22.children('div')
                         .CswImageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
-                                ID: o.ID + '_edit',
+                                ID: Csw.controls.dom.makeId(o.ID, 'edit'),
                                 onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
                                         url: '/NbtWebApp/wsNBT.asmx/fileForProp',
@@ -67,12 +68,11 @@
                             });
                     if( false === Csw.isNullOrEmpty(fileName) ) {
                         //Clear button
-                        $('<div/>')
-                            .appendTo($cell23)
+                        cell23.children('div')
                             .CswImageButton({
                                     ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                                     AlternateText: 'Clear',
-                                    ID: o.ID + '_clr',
+                                    ID: Csw.controls.dom.makeId(o.ID, 'clr'),
                                     onClick: function () {
                                         /* remember: confirm is globally blocking call */
                                         if (confirm("Are you sure you want to clear this image?")) {

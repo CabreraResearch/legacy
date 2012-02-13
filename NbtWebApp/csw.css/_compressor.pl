@@ -1,20 +1,12 @@
 use strict;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\js\\CswAll.min.css";
+my $destfile = "$dir\\js\\ChemSW.min.css";
 
 unlink($destfile);
 
 my $param = "";
-$param .= extract("$dir\\js");
-$param .= extract("$dir\\js\\main");
-$param .= extract("$dir\\js\\main\\actions");
-$param .= extract("$dir\\js\\main\\controls");
-$param .= extract("$dir\\js\\main\\fieldtypes");
-$param .= extract("$dir\\js\\main\\node");
-$param .= extract("$dir\\js\\main\\pagecmp");
-$param .= extract("$dir\\js\\main\\tools");
-$param .= extract("$dir\\js\\main\\view");
+$param .= extract("$dir\\csw.css");
 
 sub extract
 {

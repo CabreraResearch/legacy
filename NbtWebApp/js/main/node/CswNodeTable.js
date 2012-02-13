@@ -28,13 +28,14 @@
 
             var $parent = $(this);
 
-            var $scrollingdiv = $parent.CswDiv({ ID: Csw.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
+            var $scrollingdiv = $parent.CswDiv({ ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
                                     .css({
                                         height: o.maxheight + 'px',
                                         overflow: 'auto'
                                     });
 
-            var $table = $scrollingdiv.CswLayoutTable('init', {
+            var layoutTable = Csw.controls.layoutTable({
+                $parent: $scrollingdiv,
                 ID: o.ID + '_tbl',
                 cellset: { rows: 2, columns: 1 },
                 cellalign: 'center',
@@ -61,7 +62,7 @@
                             c = 1;
                             r += 1;
                         }
-                        var cellset = $table.CswLayoutTable('cellset', r, c);
+                        var cellset = layoutTable.cellset(r, c);
                         var width = (1 / o.columns * 100) + '%';
                         var $thumbnailcell = cellset[1][1]
                                                 .css({
@@ -100,7 +101,7 @@
                                     fieldtype: propObj.fieldtype,
                                     $propdiv: $propdiv,
                                     propData: propObj.propData,
-                                    ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
+                                    ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: propObj.id }),
                                     EditMode: Csw.enums.EditMode.Table
                                 });
 
@@ -112,14 +113,18 @@
                         });
 
                         // Buttons
-                        var $btntable = $textcell.CswTable({ ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btntbl' }) });
+                        var btnTable = Csw.controls.table({
+                            $parent: $textcell,
+                            ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl' )
+                        });
+
                         if (nodeObj.allowview || nodeObj.allowedit) {
                             var btntext = "View";
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
                             }
-                            $btntable.CswTable('cell', 1, 1).CswButton({
-                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
+                            btnTable.cell(1, 1).$.CswButton({
+                                ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
                                 enabledText: btntext,
                                 disableOnClick: false,
                                 onclick: function () {
@@ -135,8 +140,8 @@
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                         if (nodeObj.allowdelete) {
-                            $btntable.CswTable('cell', 1, 2).CswButton({
-                                ID: Csw.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
+                            btnTable.cell(1, 2).$.CswButton({
+                                ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
                                 enabledText: 'Delete',
                                 disableOnClick: false,
                                 onclick: function () {

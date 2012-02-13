@@ -20,17 +20,18 @@
                 var href = Csw.string(propVals.href).trim();
                 var fileName = Csw.string(propVals.name).trim();
 
-                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
-                var $cell11 = $table.CswTable('cell', 1, 1);
-                var $cell12 = $table.CswTable('cell', 1, 2);
-                var $cell13 = $table.CswTable('cell', 1, 3);
-
-                $cell11.append('<a href="' + href + '" target="_blank">' + fileName + '</a>');
+                var table = Csw.controls.table({
+                    $parent: $Div,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                });
+                var cell11 = table.add(1, 1, '<a href="' + href + '" target="_blank">' + fileName + '</a>');
+                var cell12 = table.add(1, 2, '<div />');
+                var cell13 = table.add(1, 3, '<div />');
 
                 if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     //Edit button
-                    $('<div/>')
-                        .appendTo($cell12)
+                    cell12.children('div')
+                        .appendTo(cell12)
                         .CswImageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
@@ -49,8 +50,7 @@
                                 }
                             });
                     //Clear button
-                    $('<div/>')
-                        .appendTo($cell13)
+                    cell13.children('div')
                         .CswImageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                                 AlternateText: 'Clear',

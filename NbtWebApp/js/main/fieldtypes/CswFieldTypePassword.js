@@ -17,49 +17,49 @@
             if(o.ReadOnly) {
                 // show nothing
             } else {
-                var $table = $Div.CswTable('init', { 
-                    ID: o.ID + '_tbl', 
-                    'OddCellRightAlign': true 
+                var table = Csw.controls.table({
+                    $parent: $Div,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                    OddCellRightAlign: true 
                 });
-                var $cell11 = $table.CswTable('cell', 1, 1);
-                var $cell12 = $table.CswTable('cell', 1, 2);
-                var $cell21 = $table.CswTable('cell', 2, 1);
-                var $cell22 = $table.CswTable('cell', 2, 2);
-                var $cell31 = $table.CswTable('cell', 3, 1);
-                var $cell32 = $table.CswTable('cell', 3, 2);
+                    
+                table.add(1, 1, 'Set New');
+                var cell12 = table.cell(1, 2);
+                table.add(2, 1, 'Confirm');
+                var cell22 = table.cell(2, 2);
+                var cell31 = table.cell(3, 1);
+                table.add(3, 2, 'Expired');
 
-                $cell11.append('Set New');
-                var $TextBox1 = $cell12.CswInput('init',{ID: o.ID + '_pwd1',
+                var $TextBox1 = cell12.$.CswInput('init',{ID: o.ID + '_pwd1',
                                                          type: Csw.enums.inputTypes.password,
                                                          cssclass: 'textinput',
                                                          value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
                                                          onChange: o.onchange
                                                  }); 
-                $cell21.append('Confirm');
                 /* Text Box 2 */
-                $cell22.CswInput('init',{ID: o.ID + '_pwd2',
+                cell22.$.CswInput('init',{ID: o.ID + '_pwd2',
                                                          type: Csw.enums.inputTypes.password,
                                                          value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
                                                          cssclass: 'textinput password2',
                                                          onChange: o.onchange
                                                  }); 
                 if(isAdmin) {
-                    var $IsExpiredCheck = $cell31.CswInput({ 
-                            'id': o.ID + '_exp',
-                            'name': o.ID + '_exp',
-                            'type': Csw.enums.inputTypes.checkbox
+                    var $IsExpiredCheck = cell31.$.CswInput({ 
+                            id: o.ID + '_exp',
+                            name: o.ID + '_exp',
+                            type: Csw.enums.inputTypes.checkbox
                         });
                     if(isExpired) {
                         $IsExpiredCheck.CswAttrDom('checked', 'true');
                     }
-                    $cell32.append('Expired');
+
                 }
                 
                 if (o.Required && Csw.isNullOrEmpty(propVals.password)) {
                     $TextBox1.addClass("required");
                 }
 
-                jQuery.validator.addMethod( "password2", function () { 
+                $.validator.addMethod( "password2", function () { 
                             var pwd1 = $('#' + o.ID + '_pwd1').val();
                             var pwd2 = $('#' + o.ID + '_pwd2').val();
                             return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);

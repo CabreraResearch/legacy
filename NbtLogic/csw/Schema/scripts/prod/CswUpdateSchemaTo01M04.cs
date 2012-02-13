@@ -17,20 +17,25 @@ namespace ChemSW.Nbt.Schema
         public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 04 ); } }
         public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
+
+
         public override void update()
         {
-            #region case 24992
-            
-            // Fix firsttabversionid on nodetype_tabset
-            CswTableUpdate TabUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01M04_tab_update", "nodetype_tabset" );
-            DataTable TabTable = TabUpdate.getTable( "where firsttabversionid is null" );
-            foreach( DataRow TabRow in TabTable.Rows )
-            {
-                TabRow["firsttabversionid"] = TabRow["nodetypetabsetid"];
-            }
-            TabUpdate.update( TabTable );
-            
-            #endregion case 24992
+
+
+            #region //case 24979
+
+            _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class_props",
+                "iscompoundunique",
+                "all compound unique columns on an instance are validated for uniqueness", false, false );
+
+            _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props",
+                "iscompoundunique",
+                "all compound unique columns on an instance are validated for uniqueness", false, false );
+
+
+            #endregion
+
 
         }//Update()
 

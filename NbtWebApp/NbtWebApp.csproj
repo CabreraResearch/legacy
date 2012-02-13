@@ -14,7 +14,7 @@
     <AssemblyName>NbtWebApp</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <UseIISExpress>false</UseIISExpress>
-    <JSLintSkip>\fp_client\fpspread\4_0_3505_2008\HTC\fpspreadmac.js|\fp_client\fpspread\4_0_3505_2008\HTC\fpspread.js|\fp_client\fpspread\4_0_3505_2008\HTC\multicolumncombobox.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq-vsdoc.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq-vsdoc.js|\js\thirdparty\js\modernizr-2.0.3.min.js|\js\thirdparty\js\modernizr-2.0.3.js|\js\thirdparty\js\gserializer.js|\js\thirdparty\js\jblas-profiler\profiler.js|\js\thirdparty\js\jblas-profiler\profiler-dump.js|\js\thirdparty\jquery\core\jquery.cookie.js|\js\thirdparty\jquery\core\jquery-1.6.2.min.js|\js\thirdparty\jquery\core\jquery-1.6.2.js|\js\thirdparty\jquery\core\jquery-1.6.2-vsdoc.js|\js\thirdparty\jquery\core\jquery-1.6.1.min.js|\js\thirdparty\jquery\core\jquery-1.6.1.js|\js\thirdparty\jquery\core\jquery.cookie.min.js|\js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.css|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css|\js\thirdparty\jquery\core\jquery-ui-1.8.12\jquery-1.5.1.js|\js\thirdparty\jquery\plugins\fileuploader.js|\js\thirdparty\jquery\plugins\fileuploader.css|\js\thirdparty\jquery\plugins\jquery.xml.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.min.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery-1.4.4.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate-vsdoc.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-HK.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-CN.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-vi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-uk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tj.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-th.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ta.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr-SR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sq.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ru.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ro.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-rm.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt-BR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-no.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-nl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ms.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ml.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-kz.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ko.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ja.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-it.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-is.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-id.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hy.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-he.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-gl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr-CH.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fa.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-et.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-es.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-NZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-GB.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-AU.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-el.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-de.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-da.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-cs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ca.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bg.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-az.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar-DZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-af.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-TW.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery-ui-i18n.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\jquery-ui.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\jquery-ui.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-HK.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-CN.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-vi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-uk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tj.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-th.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ta.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr-SR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sq.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ru.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ro.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-rm.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt-BR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-no.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-nl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ms.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ml.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-kz.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ko.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ja.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-it.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-is.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-id.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hy.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-he.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-gl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr-CH.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fa.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-et.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-es.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-NZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-GB.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-AU.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-el.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-de.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-da.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-cs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ca.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bg.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-az.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar-DZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-af.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-TW.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery-ui-i18n.min.js|\iphone.html|\jmol\Jmol.js|\js\CswAll.min.js|\Scripts\modernizr-2.0.6-development-only.js|\Scripts\json2.min.js|\Scripts\json2.js|\Scripts\jquery.validate.min.js|\Scripts\jquery.validate.js|\Scripts\jquery.validate-vsdoc.js|\Scripts\jquery.mobile-1.0rc1.min.js|\Scripts\jquery.mobile-1.0rc1.js|\Scripts\jquery.jqGrid.src.js|\Scripts\jquery.jqGrid.min.js|\Scripts\jquery.cookie.min.js|\Scripts\jquery.cookie.js|\Scripts\jquery-ui-1.8.16.min.js|\Scripts\jquery-ui-1.8.16.js|\Scripts\jquery-1.7.1.min.js|\Scripts\jquery-1.7.1.js|\Scripts\jquery-1.7.1-vsdoc.js|\Scripts\jquery-1.6.4.min.js|\Scripts\jquery-1.6.4.js|\Scripts\modernizr.2.0.6.min.js|\Scripts\jquery-1.6.4-vsdoc.js|\Scripts\i18n\grid.locale-tr.js|\Scripts\i18n\grid.locale-th.js|\Scripts\i18n\grid.locale-sv.js|\Scripts\i18n\grid.locale-sr.js|\Scripts\i18n\grid.locale-sk.js|\Scripts\i18n\grid.locale-ru.js|\Scripts\i18n\grid.locale-ro.js|\Scripts\i18n\grid.locale-pt.js|\Scripts\i18n\grid.locale-pt-br.js|\Scripts\i18n\grid.locale-pl.js|\Scripts\i18n\grid.locale-no.js|\Scripts\i18n\grid.locale-nl.js|\Scripts\i18n\grid.locale-mne.js|\Scripts\i18n\grid.locale-lt.js|\Scripts\i18n\grid.locale-ja.js|\Scripts\i18n\grid.locale-it.js|\Scripts\i18n\grid.locale-is.js|\Scripts\i18n\grid.locale-hu.js|\Scripts\i18n\grid.locale-he.js|\Scripts\i18n\grid.locale-gl.js|\Scripts\i18n\grid.locale-fr.js|\Scripts\i18n\grid.locale-fi.js|\Scripts\i18n\grid.locale-fa.js|\Scripts\i18n\grid.locale-es.js|\Scripts\i18n\grid.locale-en.js|\Scripts\i18n\grid.locale-el.js|\Scripts\i18n\grid.locale-de.js|\Scripts\i18n\grid.locale-da.js|\Scripts\i18n\grid.locale-cs.js|\Scripts\i18n\grid.locale-cn.js|\Scripts\i18n\grid.locale-cat.js|\Scripts\i18n\grid.locale-bg1251.js|\Scripts\i18n\grid.locale-bg.js|\Scripts\i18n\grid.locale-ua.js|\Scripts\i18n\grid.locale-ar.js|\Content\|\js\thirdparty\|\crystal\|\ie6style.css|\js\|\Scripts\|\csw.js\ChemSW-vsdoc.js|\Main.js</JSLintSkip>
+    <JSLintSkip>\fp_client\fpspread\4_0_3505_2008\HTC\fpspreadmac.js|\fp_client\fpspread\4_0_3505_2008\HTC\fpspread.js|\fp_client\fpspread\4_0_3505_2008\HTC\multicolumncombobox.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq-vsdoc.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq.js|\js\thirdparty\js\linq.js_ver2.2.0.2\linq.min.js|\js\thirdparty\js\linq.js_ver2.2.0.2\jquery.linq-vsdoc.js|\js\thirdparty\js\modernizr-2.0.3.min.js|\js\thirdparty\js\modernizr-2.0.3.js|\js\thirdparty\js\gserializer.js|\js\thirdparty\js\jblas-profiler\profiler.js|\js\thirdparty\js\jblas-profiler\profiler-dump.js|\js\thirdparty\jquery\core\jquery.cookie.js|\js\thirdparty\jquery\core\jquery-1.6.2.min.js|\js\thirdparty\jquery\core\jquery-1.6.2.js|\js\thirdparty\jquery\core\jquery-1.6.2-vsdoc.js|\js\thirdparty\jquery\core\jquery-1.6.1.min.js|\js\thirdparty\jquery\core\jquery-1.6.1.js|\js\thirdparty\jquery\core\jquery.cookie.min.js|\js\thirdparty\jquery\core\jquery-1.6.1-vsdoc.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.css|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.min.js|\js\thirdparty\jquery\core\jquery.mobile\jquery.mobile-1.0b1.css|\js\thirdparty\jquery\core\jquery-ui-1.8.12\jquery-1.5.1.js|\js\thirdparty\jquery\plugins\fileuploader.js|\js\thirdparty\jquery\plugins\fileuploader.css|\js\thirdparty\jquery\plugins\jquery.xml.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js|\js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery.hyjack.select.min.js|\js\thirdparty\jquery\plugins\jquery.hyjack.select-1.1.2\jquery-1.4.4.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop.min.js|\js\thirdparty\jquery\plugins\jquery.event.drop\jquery.event.drop-2.0.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag.min.js|\js\thirdparty\jquery\plugins\jquery.event.drag\jquery.event.drag-2.0.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\additional-methods.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate.min.js|\js\thirdparty\jquery\plugins\jquery-validate-1.8\jquery.validate-vsdoc.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-HK.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-CN.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-vi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-uk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-tj.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-th.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ta.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sr-SR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sq.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-sk.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ru.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ro.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-rm.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pt-BR.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-pl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-no.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-nl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ms.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ml.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lv.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-lt.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-kz.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ko.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ja.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-it.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-is.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-id.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hy.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-hr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-he.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-gl.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fr-CH.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fi.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-fa.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eu.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-et.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-es.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-eo.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-NZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-GB.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-en-AU.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-el.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-de.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-da.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-cs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ca.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bs.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-bg.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-az.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-ar-DZ.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-af.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery.ui.datepicker-zh-TW.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\i18n\jquery-ui-i18n.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\jquery-ui.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\jquery-ui.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-HK.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-CN.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-vi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-uk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-tj.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-th.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ta.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sr-SR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sq.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-sk.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ru.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ro.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-rm.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pt-BR.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-pl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-no.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-nl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ms.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ml.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lv.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-lt.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-kz.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ko.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ja.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-it.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-is.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-id.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hy.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-hr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-he.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-gl.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fr-CH.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fi.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-fa.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eu.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-et.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-es.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-eo.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-NZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-GB.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-en-AU.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-el.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-de.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-da.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-cs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ca.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bs.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-bg.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-az.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-ar-DZ.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-af.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery.ui.datepicker-zh-TW.min.js|\js\thirdparty\jquery\core\jquery-ui-1.8.12\ui\minified\i18n\jquery-ui-i18n.min.js|\iphone.html|\jmol\Jmol.js|\js\CswAll.min.js|\Scripts\modernizr-2.0.6-development-only.js|\Scripts\json2.min.js|\Scripts\json2.js|\Scripts\jquery.validate.min.js|\Scripts\jquery.validate.js|\Scripts\jquery.validate-vsdoc.js|\Scripts\jquery.mobile-1.0rc1.min.js|\Scripts\jquery.mobile-1.0rc1.js|\Scripts\jquery.jqGrid.src.js|\Scripts\jquery.jqGrid.min.js|\Scripts\jquery.cookie.min.js|\Scripts\jquery.cookie.js|\Scripts\jquery-ui-1.8.16.min.js|\Scripts\jquery-ui-1.8.16.js|\Scripts\jquery-1.7.1.min.js|\Scripts\jquery-1.7.1.js|\Scripts\jquery-1.7.1-vsdoc.js|\Scripts\jquery-1.6.4.min.js|\Scripts\jquery-1.6.4.js|\Scripts\modernizr.2.0.6.min.js|\Scripts\jquery-1.6.4-vsdoc.js|\Scripts\i18n\grid.locale-tr.js|\Scripts\i18n\grid.locale-th.js|\Scripts\i18n\grid.locale-sv.js|\Scripts\i18n\grid.locale-sr.js|\Scripts\i18n\grid.locale-sk.js|\Scripts\i18n\grid.locale-ru.js|\Scripts\i18n\grid.locale-ro.js|\Scripts\i18n\grid.locale-pt.js|\Scripts\i18n\grid.locale-pt-br.js|\Scripts\i18n\grid.locale-pl.js|\Scripts\i18n\grid.locale-no.js|\Scripts\i18n\grid.locale-nl.js|\Scripts\i18n\grid.locale-mne.js|\Scripts\i18n\grid.locale-lt.js|\Scripts\i18n\grid.locale-ja.js|\Scripts\i18n\grid.locale-it.js|\Scripts\i18n\grid.locale-is.js|\Scripts\i18n\grid.locale-hu.js|\Scripts\i18n\grid.locale-he.js|\Scripts\i18n\grid.locale-gl.js|\Scripts\i18n\grid.locale-fr.js|\Scripts\i18n\grid.locale-fi.js|\Scripts\i18n\grid.locale-fa.js|\Scripts\i18n\grid.locale-es.js|\Scripts\i18n\grid.locale-en.js|\Scripts\i18n\grid.locale-el.js|\Scripts\i18n\grid.locale-de.js|\Scripts\i18n\grid.locale-da.js|\Scripts\i18n\grid.locale-cs.js|\Scripts\i18n\grid.locale-cn.js|\Scripts\i18n\grid.locale-cat.js|\Scripts\i18n\grid.locale-bg1251.js|\Scripts\i18n\grid.locale-bg.js|\Scripts\i18n\grid.locale-ua.js|\Scripts\i18n\grid.locale-ar.js|\js\thirdparty\|\ie6style.css|\SkinPrint\|\Skin\|\Reports\|\Images\|\etc\|\temp\|\fp_client\|\Scripts\|\Main.js|\crystal\|\Content\|\js\</JSLintSkip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -703,49 +703,7 @@
     <Content Include="crystal\prompting\js\promptengine_strings_zh_TW.js" />
     <Content Include="crystal\urlreporting\activexviewer.js" />
     <Content Include="crystal\urlreporting\appletviewer.js" />
-    <Content Include="csw.js\ChemSW.js" />
-    <Content Include="csw.js\ChemSW-vsdoc.js" />
-    <Content Include="csw.js\controls\csw.dom.js" />
-    <Content Include="csw.js\core\csw.enums.js" />
-    <Content Include="js\ChemSW.min.js" />
-    <Content Include="csw.js\core\csw.tbd.js" />
-    <Content Include="csw.js\core\csw.menu.js" />
-    <Content Include="csw.js\core\csw.clientchanges.js" />
-    <Content Include="csw.js\core\csw.number.js" />
-    <Content Include="csw.js\core\csw.function.js" />
-    <Content Include="csw.js\core\csw.boolean.js" />
-    <Content Include="csw.js\core\csw.date.js" />
-    <Content Include="csw.js\core\csw.clientstate.js" />
-    <Content Include="csw.js\core\csw.clientsession.js" />
-    <Content Include="csw.js\core\csw.debug.js" />
-    <Content Include="csw.js\core\csw.events.js" />
-    <Content Include="csw.js\core\csw.object.js" />
-    <Content Include="csw.js\core\csw.string.js" />
-    <Content Include="csw.js\core\csw.error.js" />
-    <Content Include="csw.js\core\csw.array.js" />
-    <Content Include="csw.js\core\csw.tools.js" />
-    <Content Include="csw.js\core\csw.window.js" />
-    <Content Include="csw.js\core\csw.ajax.js" />
-    <Content Include="csw.js\nodes\csw.preview.js" />
-    <Content Include="csw.js\props\csw.props.js" />
-    <Content Include="csw.js\nodes\csw.interaction.js" />
-    <Content Include="csw.js\tools\csw.cookie.js" />
     <Content Include="ExternalLogin.aspx" />
-    <Content Include="js\CswAll.min.css" />
-    <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
-    <Content Include="js\main\actions\CswSessions.js" />
-    <Content Include="js\main\actions\CswQuotaImage.js" />
-    <Content Include="js\main\actions\CswQuotas.js" />
-    <Content Include="js\main\controls\CswMultiSelect.js" />
-    <Content Include="csw.js\controls\csw.timeinterval.js" />
-    <Content Include="js\main\controls\CswList.js" />
-    <Content Include="js\main\controls\CswTable.js" />
-    <Content Include="js\main\Main.js" />
-    <Content Include="js\main\pagecmp\CswDefaultContent.js" />
-    <Content Include="js\main\tools\CswPubSub.js" />
-    <Content Include="csw.js\tools\csw.print.js" />
-    <Content Include="js\main\view\CswViewContentTree.js" />
-    <Content Include="js\style.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.js" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.min.js" />
@@ -772,7 +730,6 @@
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\test\test.js" />
     <Content Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\vendor\jquery.ui.widget.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
-    <Content Include="MainIncludes.html" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
     <Content Include="Scripts\es5-shim.js" />
@@ -833,11 +790,6 @@
     <Content Include="Scripts\modernizr-2.0.6-development-only.js" />
     <Content Include="wsTests1.html" />
     <Content Include="ConnectTest.html" />
-    <Content Include="js\main\actions\CswInspectionDesign.js" />
-    <Content Include="csw.js\controls\csw.grid.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeMol.js" />
-    <Content Include="js\main\node\CswNodeTable.js" />
     <Content Include="js\thirdparty\js\jmol\CHANGES.txt" />
     <Content Include="js\thirdparty\js\jmol\COPYRIGHT.txt" />
     <Content Include="js\thirdparty\js\jmol\Jmol.jar" />
@@ -938,15 +890,6 @@
     <Content Include="js\thirdparty\js\jmol\LEAME.txt" />
     <Content Include="js\thirdparty\js\jmol\LICENSE.txt" />
     <Content Include="js\thirdparty\js\jmol\README.txt" />
-    <Content Include="MainFooter.html" />
-    <Content Include="js\main\controls\CswDateTimePicker.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeNFPA.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeImageList.js" />
-    <Content Include="js\main\node\CswNodePreview.js" />
-    <Content Include="csw.js\tools\csw.clientdb.js" />
-    <Content Include="js\main\tools\CswProfileMethod.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeMultiList.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeScientific.js" />
     <Content Include="Images\favicon.ico" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\jquery.jstree.min.js" />
@@ -971,7 +914,6 @@
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="js\thirdparty\jquery\plugins\jsTree.v.1.0rc2\_lib\jquery.js" />
-    <Content Include="NewMain.html" />
     <Content Include="Design.aspx" />
     <Content Include="Design_Layout.aspx" />
     <Content Include="DisplayLog.aspx" />
@@ -1320,83 +1262,6 @@
     <Content Include="Images\vld\bad.gif" />
     <Content Include="Images\vld\good.gif" />
     <Content Include="iphone.html" />
-    <Content Include="js\CswAll.min.js" />
-    <Content Include="js\main\actions\CswAuditHistoryGrid.js" />
-    <Content Include="js\main\actions\CswInspectionStatus.js" />
-    <Content Include="js\main\tools\CswAttr.js" />
-    <Content Include="js\main\controls\CswButton.js" />
-    <Content Include="js\main\controls\CswCheckBoxArray.js" />
-    <Content Include="js\main\controls\CswComboBox.css" />
-    <Content Include="js\main\controls\CswComboBox.js" />
-    <Content Include="js\main\pagecmp\CswDashboard.js" />
-    <Content Include="js\main\pagecmp\CswDialog.js" />
-    <Content Include="js\main\controls\CswDiv.js" />
-    <Content Include="js\main\pagecmp\CswErrorMessage.css" />
-    <Content Include="js\main\pagecmp\CswErrorMessage.js" />
-    <Content Include="js\main\controls\CswImageButton.js" />
-    <Content Include="js\main\controls\CswInput.js" />
-    <Content Include="js\main\controls\CswLayoutTable.css" />
-    <Content Include="js\main\controls\CswLayoutTable.js" />
-    <Content Include="js\main\controls\CswLink.js" />
-    <Content Include="js\main\pagecmp\CswLogin.js" />
-    <Content Include="js\main\pagecmp\CswMenu.css" />
-    <Content Include="js\main\pagecmp\CswMenu.js" />
-    <Content Include="js\main\pagecmp\CswMenuHeader.js" />
-    <Content Include="js\main\pagecmp\CswMenuMain.js" />
-    <Content Include="js\main\node\CswNodeGrid.js" />
-    <Content Include="js\main\node\CswNodeSelect.js" />
-    <Content Include="js\main\node\CswNodeTabs.js" />
-    <Content Include="js\main\node\CswNodeTree.js" />
-    <Content Include="js\main\controls\CswNodeTypeSelect.js" />
-    <Content Include="js\main\controls\CswNumberTextBox.js" />
-    <Content Include="js\main\tools\CswQueryString.js" />
-    <Content Include="js\main\pagecmp\CswQuickLaunch.js" />
-    <Content Include="js\main\pagecmp\CswSearch.css" />
-    <Content Include="js\main\pagecmp\CswSearch.js" />
-    <Content Include="js\main\controls\CswSelect.js" />
-    <Content Include="js\main\controls\CswSpan.js" />
-    <Content Include="csw.js\controls\csw.table.js" />
-    <Content Include="js\main\tools\CswTools.js" />
-    <Content Include="js\main\controls\CswTristateCheckBox.js" />
-    <Content Include="js\main\view\CswViewEditor.css" />
-    <Content Include="js\main\view\CswViewEditor.js" />
-    <Content Include="js\main\view\CswViewPropFilter.js" />
-    <Content Include="js\main\view\CswViewSelect.js" />
-    <Content Include="js\main\view\CswViewListTree.js" />
-    <Content Include="js\main\pagecmp\CswWelcome.js" />
-    <Content Include="js\main\pagecmp\CswWizard.css" />
-    <Content Include="js\main\pagecmp\CswWizard.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeBarcode.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeComposite.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeDateTime.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeFile.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeGrid.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeImage.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeLink.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeList.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeLocation.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeLocationContents.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeLogical.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeLogicalSet.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeMemo.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeMTBF.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeNodeTypeSelect.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeNumber.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypePassword.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypePropertyReference.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeQuantity.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeQuestion.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeRelationship.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeSequence.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeStatic.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeText.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeTimeInterval.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeUserSelect.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeViewPickList.js" />
-    <Content Include="js\main\fieldtypes\CswFieldTypeViewReference.js" />
-    <Content Include="js\main\fieldtypes\_CswFieldTypeFactory.js" />
-    <Content Include="js\main\fieldtypes\_CswFieldTypes.css" />
     <Content Include="Scripts\jquery.cookie.min.js" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\bg_fallback.png" />
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\images\icon_sprite.png" />
@@ -1408,11 +1273,6 @@
     <Content Include="License.aspx" />
     <Content Include="Main.aspx" />
     <Content Include="Main.js" />
-    <Content Include="Mobile.html" />
-    <Content Include="_DevMobileIncludes.html" />
-    <Content Include="MainHeader.html" />
-    <Content Include="Main.html" />
-    <Content Include="NodeReport.html" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
     <Content Include="Popup_Export.aspx" />
@@ -1589,7 +1449,6 @@
     </Content>
     <Content Include="wsNBT.asmx" />
     <Content Include="_Assembly.txt" />
-    <Content Include="_DevIncludes.html" />
     <Content Include="_Version.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -1826,15 +1685,12 @@
   <ItemGroup>
     <None Include="crystal\crsmarttag.jsp" />
     <None Include="crystal\preview.jsp" />
-    <None Include="csw.js\make_vsdoc.bat" />
-    <None Include="csw.js\_compile.pl" />
     <None Include="etc\CswNbtData.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Images\biggerbuttons\BiggerButtons.pspimage" />
     <None Include="Images\buttons\Buttons.pspimage" />
     <None Include="Images\buttons\Buttons18.pspimage" />
-    <None Include="js\_compressor.pl" />
     <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\app.yaml" />
     <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\app\main.go" />
     <None Include="js\thirdparty\jquery\plugins\jQueryFileUpload_2011.12.15\gae-go\resize\resize.go" />
@@ -1851,7 +1707,6 @@
     <None Include="js\thirdparty\js\jmol\jmol.sh" />
     <None Include="js\thirdparty\jquery\themes\theme-aristo\icons.psd" />
     <None Include="js\thirdparty\jquery\themes\theme-aristo\README.rdoc" />
-    <None Include="js\_compile.pl" />
     <Content Include="packages.config" />
     <None Include="SkinPrint\Calendar\Thumbs.db" />
     <None Include="SkinPrint\ComboBox\Thumbs.db" />
@@ -1919,12 +1774,8 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>call $(ProjectDir)csw.js\_compile.pl $(ProjectDir)
-call $(ProjectDir)js\_compile.pl $(ProjectDir)
-call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)
-call $(ProjectDir)js\_compressor.pl $(ProjectDir)
-CD $(ProjectDir)csw.js
-CALL make_vsdoc.bat</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

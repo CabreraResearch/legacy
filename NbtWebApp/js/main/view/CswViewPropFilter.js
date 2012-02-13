@@ -1,10 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../controls/CswSelect.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = "CswViewPropFilter";
 
@@ -20,25 +17,25 @@
         if (options) $.extend(o, options);
 
         if (!Csw.isNullOrEmpty(o.filtarbitraryid)) {
-            filterId = Csw.makeId({ ID: id + delimiter + 'filtarbitraryid',
+            filterId = Csw.controls.dom.makeId({ ID: id + delimiter + 'filtarbitraryid',
                 prefix: o.ID,
                 suffix: o.filtarbitraryid
             });
         }
         else if (!Csw.isNullOrEmpty(o.viewbuilderpropid)) {
-            filterId = Csw.makeId({ ID: id + delimiter + 'viewbuilderpropid',
+            filterId = Csw.controls.dom.makeId({ ID: id + delimiter + 'viewbuilderpropid',
                 prefix: o.ID,
                 suffix: o.viewbuilderpropid
             });
         }
         else if (!Csw.isNullOrEmpty(o.proparbitraryid)) {
-            filterId = Csw.makeId({ ID: id + delimiter + 'proparbitraryid',
+            filterId = Csw.controls.dom.makeId({ ID: id + delimiter + 'proparbitraryid',
                 prefix: o.ID,
                 suffix: o.proparbitraryid
             });
         }
         else if (!Csw.isNullOrEmpty(o.ID)) {
-            filterId = Csw.makeId({ ID: id,
+            filterId = Csw.controls.dom.makeId({ ID: id,
                 prefix: o.ID
             });
         } else {
@@ -69,7 +66,8 @@
 
             if (options) $.extend(o, options);
 
-            var $propFilterTable = $(this); //must call on a table
+            var $table = $(this); //must call on a table
+            var propFilterTable = Csw.controls.table($table);
 
             if (Csw.isNullOrEmpty(o.propsData) && false === Csw.isNullOrEmpty(o.proparbitraryid)) {
                 var jsonData = {
@@ -78,14 +76,14 @@
                 };
 
                 Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
-                        async: false,
-                        data: jsonData,
-                        success: function (data) {
-                            o.propsData = data;
-                            renderPropFiltRow(o);
-                        } //success
-                    }); //ajax
+                    url: '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
+                    async: false,
+                    data: jsonData,
+                    success: function (data) {
+                        o.propsData = data;
+                        renderPropFiltRow(o);
+                    } //success
+                }); //ajax
             }
             else {
                 renderPropFiltRow(o);
@@ -104,35 +102,32 @@
                     subFieldVals = [],
                     filterModeVals = [],
                     subfields = (Csw.contains(propsData, 'subfields')) ? propsData.subfields : [],
-                    filtValOpt = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.options : { },
+                    filtValOpt = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.options : {},
                     filtValAry = [],
-                    filtSelected = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : { },
+                    filtSelected = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {},
                     placeholder = '',
-                    $propSelectCell, propCellId, $subfieldCell, $filterModesCell, $propFilterValueCell, $defaultSubField,
+                    subfieldCell, filterModesCell, propFilterValueCell, $defaultSubField,
                     field, thisField, filtermodes, mode, thisMode, $subfieldsList, $filterModesList, filt, $filtInput;
 
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
-                    $propSelectCell = $propFilterTable.CswTable('cell', filtOpt.propRow, filtOpt.firstColumn) //3
-                        .empty();
-                    propCellId = makePropFilterId(propertyName, filtOpt);
-                    $propSelectCell.CswSpan('init', { ID: propCellId, value: propertyName });
+                    propFilterTable.add(filtOpt.propRow, filtOpt.firstColumn, '<span id="' + makePropFilterId(propertyName, filtOpt) + '">' + propertyName + '</span>') //3
                 }
 
                 //Row propRow, Column 4: Subfield Cell
-                $subfieldCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
+                subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
                     .empty();
 
                 //Row propRow, Column 5: Filters cell
-                $filterModesCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
+                filterModesCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
                     .empty();
 
                 //Row propRow, Column 6: Input cell
-                $propFilterValueCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
+                propFilterValueCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
                     .empty();
 
                 //Subfield default value (hidden)
-                $defaultSubField = $subfieldCell.CswSpan('init', {
+                $defaultSubField = subfieldCell.CswSpan('init', {
                     ID: defaultSubFieldId,
                     value: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
@@ -160,7 +155,7 @@
                 }
 
                 //Subfield picklist
-                $subfieldsList = $subfieldCell.CswSelect('init', { ID: subfieldOptionsId,
+                $subfieldsList = subfieldCell.CswSelect('init', { ID: subfieldOptionsId,
                     values: subFieldVals,
                     selected: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.subfield_select.name,
@@ -180,7 +175,7 @@
                 }
 
                 //Filter picklist
-                $filterModesList = $filterModesCell.CswSelect('init', { ID: filterModesId,
+                $filterModesList = filterModesCell.CswSelect('init', { ID: filterModesId,
                     values: filterModeVals,
                     selected: defaultFilterModeVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name,
@@ -212,7 +207,7 @@
                                 filtValAry.push({ value: Csw.string(filt).trim(), display: Csw.string(filtValOpt[filt]).trim() });
                             }
                         }
-                        $filtInput = $propFilterValueCell.CswSelect('init', { ID: filtValInputId,
+                        $filtInput = propFilterValueCell.CswSelect('init', { ID: filtValInputId,
                             values: filtValAry,
                             selected: filtSelected,
                             cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name
@@ -220,7 +215,7 @@
                     }
                 }
                 else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
-                    $filtInput = $propFilterValueCell.CswTristateCheckBox('init', { ID: filtValInputId,
+                    $filtInput = propFilterValueCell.CswTristateCheckBox('init', { ID: filtValInputId,
                         Checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
@@ -231,7 +226,7 @@
                             placeholder += "'s " + $subfieldsList.find(':selected').text();
                         }
                     }
-                    $filtInput = $propFilterValueCell.CswInput('init', {
+                    $filtInput = propFilterValueCell.CswInput('init', {
                         ID: filtValInputId,
                         type: Csw.enums.inputTypes.text,
                         cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name,
@@ -246,7 +241,7 @@
                     $filtInput.data('propsData', propsData);
                 }
             }
-            return $propFilterTable;
+            return propFilterTable.$;
         }, // 'init': function (options) {
         'static': function (options) {
             var o = {
@@ -263,7 +258,8 @@
 
             if (options) $.extend(o, options);
 
-            var $propFilterTable = $(this); //must call on a table
+            var $table = $(this); //must call on a table
+            var propFilterTable = Csw.controls.table($table);
 
             if (false === Csw.isNullOrEmpty(o.propsData)) {
                 renderPropFiltRow(o);
@@ -275,12 +271,12 @@
 
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
-                    var $propSelectCell = $propFilterTable.CswTable('cell', filtOpt.propRow, filtOpt.firstColumn) //3
+                    var propSelectCell = propFilterTable.cell(filtOpt.propRow, filtOpt.firstColumn) //3
                         .empty()
                         .css('padding', '2px');
 
                     var propCellId = makePropFilterId(propertyName, filtOpt);
-                    $propSelectCell.CswSpan('init', { ID: propCellId, value: propertyName });
+                    propSelectCell.CswSpan('init', { ID: propCellId, value: propertyName });
                 }
 
                 var selectedSubfield = Csw.string(propsData.subfieldname, propsData.subfield);
@@ -288,39 +284,39 @@
                 var filterValue = Csw.string(propsData.value);
 
                 //Row propRow, Column 4: Subfield Cell
-                var $subfieldCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
+                var subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
                     .empty()
                     .css('padding', '2px');
                 var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
 
                 //Row propRow, Column 5: Filters cell
-                var $filtersCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
+                var filtersCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
                     .empty()
                     .css('padding', '2px');
                 var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
 
                 //Row propRow, Column 6: Input cell
-                var $propFilterValueCell = $propFilterTable.CswTable('cell', filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
+                var propFilterValueCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
                     .empty()
                     .css('padding', '2px');
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
 
                 //Subfield
-                $subfieldCell.CswSpan('init', {
+                subfieldCell.CswSpan('init', {
                     ID: defaultSubFieldId,
                     value: selectedSubfield,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 //Selected Filter
-                $filtersCell.CswSpan('init', {
+                filtersCell.CswSpan('init', {
                     ID: filtersOptionsId,
                     value: selectedFilterMode,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name
                 })
                     .css({ 'text-align': "center" });
                 //Filter Input
-                $propFilterValueCell.CswSpan('init', {
+                propFilterValueCell.CswSpan('init', {
                     ID: filtValInputId,
                     value: filterValue,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
@@ -328,18 +324,18 @@
                     .css({ 'text-align': "center" })
                     .data('propsData', filtOpt.propsData);
             }
-            return $propFilterTable;
+            return propFilterTable;
         }, // 'add': function (options) {
         getFilterJson: function (options) {
             var o = {
-                filtJson: { },
+                filtJson: {},
                 ID: '',
                 allowNullFilterValue: false
             };
             if (options) $.extend(o, options);
 
             var $thisProp = $(this),
-                retJson = { },
+                retJson = {},
                 $filtInput = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_value.name),
                 fieldtype = Csw.string(o.filtJson.fieldtype, o.fieldtype),
                 filterValue, $subField, subFieldText, $filter, filterText, nodetypeorobjectclassid;
@@ -396,14 +392,14 @@
             };
 
             Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
-                    data: jsonData,
-                    success: function (data) {
-                        if (Csw.isFunction(o.onSuccess)) {
-                            o.onSuccess(data);
-                        }
+                url: '/NbtWebApp/wsNBT.asmx/makeViewPropFilter',
+                data: jsonData,
+                success: function (data) {
+                    if (Csw.isFunction(o.onSuccess)) {
+                        o.onSuccess(data);
                     }
-                });
+                }
+            });
         }, // 'makefilter': function (options)
         bindToButton: function () {
             var $button = $(this);

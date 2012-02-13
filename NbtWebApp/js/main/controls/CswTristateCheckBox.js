@@ -23,7 +23,7 @@
             if(options) $.extend(o, options);
 
             var $parent = $(this).empty(),
-                elementId = Csw.makeId({ prefix: o.prefix, ID: o.ID }),
+                elementId = Csw.controls.dom.makeId({ prefix: o.prefix, ID: o.ID }),
                 tristateVal = Csw.string(o.Checked, 'null').toLowerCase(), //Case 21769
                 ret = $parent;
             

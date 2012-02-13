@@ -50,7 +50,7 @@
 
             makeStepId = function (suffix, stepNo) {
                 var step = stepNo || currentStepNo;
-                return Csw.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
+                return Csw.controls.dom.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
             },
 
         //Step 1. Select a Customer ID
@@ -61,7 +61,7 @@
                     var nextBtnEnabled = function () {
                         return (false === Csw.isNullOrEmpty(selectedCustomerId));
                     };
-                    var customerIdTable, $customerIdSelect;
+                    var customerIdTable, customerIdSelect;
 
                     toggleButton(buttons.prev, false);
                     toggleButton(buttons.cancel, true);
@@ -81,14 +81,14 @@
                         customerIdTable.add(1, 1, '<span>Select a Customer ID&nbsp</span>')
                                         .css({'padding': '1px', 'vertical-align': 'middle'});
 
-                        $customerIdSelect = customerIdTable.cell(1, 2)
-                            .CswDiv('init')
+                        customerIdSelect = customerIdTable.cell(1, 2);
+                        customerIdSelect.$
                             .CswSelect('init', {
-                                ID: Csw.makeSafeId('customerIdSelect'),
+                                ID: Csw.controls.dom.makeSafeId('customerIdSelect'),
                                 selected: '',
                                 values: [{ value: '', display: ''}],
                                 onChange: function () {
-                                    var $selected = $customerIdSelect.find(':selected');
+                                    var $selected = customerIdSelect.find(':selected');
                                     selectedCustomerId = $selected.val();
                                     toggleButton(buttons.next, (false === Csw.isNullOrEmpty(selectedCustomerId)));
                                 }
@@ -98,12 +98,12 @@
                             url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
                             success: function (data) {
                                 var values = data.customerids;
-                                $customerIdSelect.CswSelect('setoptions', values);
-                                selectedCustomerId = $customerIdSelect.find(':selected').val();
+                                customerIdSelect.find('select').CswSelect('setoptions', values);
+                                selectedCustomerId = customerIdSelect.find(':selected').val();
                             }
                         });
 
-                        selectedCustomerId = $customerIdSelect.find(':selected').val();
+                        selectedCustomerId = customerIdSelect.find(':selected').val();
                     }
                     stepOneComplete = true;
                 };
@@ -166,19 +166,20 @@
                     $parent: $divStep2,
                     ID: makeStepId('headerTable')
                 });
-                headerTable.CswTable('cell', 1, 1).append('<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
-                headerTable.CswTable('cell', 1, 2).CswButton('init', {
-                    ID: Csw.makeSafeId('clearAll'),
-                    enabledText: 'Clear All Reprobates',
-                    disabledText: 'Clearing...',
-                    onclick: function () {
-                        Csw.ajax.post({
-                            url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
-                            data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },
-                            success: makeStepTwo
-                        });
-                    }
-                });
+                headerTable.add(1, 1, '<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
+                headerTable.cell(1, 2)
+                           .$.CswButton('init', {
+                                ID: Csw.controls.dom.makeSafeId('clearAll'),
+                                enabledText: 'Clear All Reprobates',
+                                disabledText: 'Clearing...',
+                                onclick: function () {
+                                    Csw.ajax.post({
+                                        url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
+                                        data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },
+                                        success: makeStepTwo
+                                    });
+                                }
+                            });
                 $divStep2.append('<br/>');
 
                 makeRulesGrid();
@@ -207,7 +208,7 @@
 
         //#region Execution
         $wizard = $div.CswWizard('init', {
-            ID: Csw.makeId({ ID: o.ID, suffix: 'wizard' }),
+            ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'View Nbt Scheduler Rules by Schema',
             StepCount: Csw.enums.wizardSteps_ScheduleRulesGrid.stepcount,
             Steps: wizardSteps,

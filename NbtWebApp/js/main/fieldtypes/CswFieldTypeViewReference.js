@@ -14,15 +14,18 @@
             var viewId = Csw.string(propVals.viewid).trim();
             var viewMode = Csw.string(propVals.viewmode).trim().toLowerCase();
             /* var viewName = Csw.string(propVals.name).trim(); */
-            var $table = $Div.CswTable('init', {'ID': o.ID + '_tbl'});
+            var table = Csw.controls.table({
+                    $parent: $Div,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                });
 
             if (o.EditMode !== Csw.enums.editMode.Add && false === o.Multi) {
-                $table.CswTable('cell', 1, 1).CswViewContentTree({
+                table.cell(1, 1).$.CswViewContentTree({
                     viewid: viewId
                 });
 
 
-                $table.CswTable('cell', 1, 2).CswImageButton({
+                table.cell(1, 2).$.CswImageButton({
                     ID: o.ID + '_view',
                     ButtonType: Csw.enums.imageButton_ButtonType.View,
                     AlternateText: 'View',
@@ -38,7 +41,7 @@
                     }
                 });
                 if (false === o.ReadOnly) {
-                    $table.CswTable('cell', 1, 3).CswImageButton({
+                    table.cell(1, 3).$.CswImageButton({
                         ID: o.ID + '_edit',
                         ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',

@@ -225,8 +225,8 @@
                     break;
             }
 
-            internal.gridPagerId = Csw.makeId({ID: 'cswGridPager', prefix: o.ID});
-            internal.gridTableId = Csw.makeId({ID: 'cswGridTable', prefix: o.ID});
+            internal.gridPagerId = Csw.controls.dom.makeId({ID: 'cswGridPager', prefix: o.ID});
+            internal.gridTableId = Csw.controls.dom.makeId({ID: 'cswGridTable', prefix: o.ID});
 
             internal.makeGrid(o);
         }());
@@ -369,7 +369,7 @@
             Csw.print(function ($printElement) {
                 var printOpts = {},
                     currentOpts = external.$gridTable.data(internal.gridTableId + '_data'),
-                    printTableId = Csw.makeId({prefix: internal.gridTableId, ID: 'printTable'}),
+                    printTableId = Csw.controls.dom.makeId({prefix: internal.gridTableId, ID: 'printTable'}),
                     newGrid, data, i;
 
                 var addRowsToGrid = function (rowData) {

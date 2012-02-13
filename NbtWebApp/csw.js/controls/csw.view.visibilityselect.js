@@ -26,20 +26,20 @@
             'Yes': function () {
 
                 table.add(rownum, 1, label);
-                var $parent = table.cell(rownum, 2);
+                var parent = table.cell(rownum, 2);
                 var id = table.id;
 
                 external.$visibilityselect = $('<select id="' + id + '_vissel" />')
-                    .appendTo($parent);
+                    .appendTo(parent.$);
                 external.$visibilityselect.append('<option value="User">User:</option>');
                 external.$visibilityselect.append('<option value="Role">Role:</option>');
                 external.$visibilityselect.append('<option value="Global">Global</option>');
 
-                external.$visroleselect = $parent.CswNodeSelect('init', {
+                external.$visroleselect = parent.$.CswNodeSelect('init', {
                     ID: Csw.controls.dom.makeId(id, 'visrolesel'),
                     objectclass: 'RoleClass'
                 }).hide();
-                external.$visuserselect = $parent.CswNodeSelect('init', {
+                external.$visuserselect = parent.$.CswNodeSelect('init', {
                     ID: Csw.controls.dom.makeId(id, 'visusersel'),
                     objectclass: 'UserClass'
                 });
