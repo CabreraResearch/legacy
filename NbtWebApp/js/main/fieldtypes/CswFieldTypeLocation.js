@@ -40,7 +40,7 @@
                                                 nodeid: nodeId,
                                                 cswnbtnodekey: nodeKey,
                                                 onSelectNode: function (optSelect) {
-                                                    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange);
+                                                    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
                                                 },
                                                 onInitialSelectNode: function (optSelect) {
                                                     onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () {}); 

@@ -22,7 +22,7 @@
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    onchange: o.onchange,
+                    onChange: o.onChange,
                     width: '65px'
                 });
                 $Div.append('E');
@@ -33,7 +33,7 @@
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    onchange: o.onchange,
+                    onChange: o.onChange,
                     width: '40px'
                 });
 

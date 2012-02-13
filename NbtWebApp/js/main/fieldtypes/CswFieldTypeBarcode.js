@@ -26,7 +26,7 @@
                 var $TextBox = cell1.$.CswInput('init', { ID: o.ID,
                     type: Csw.enums.inputTypes.text,
                     cssclass: 'textinput',
-                    onChange: o.onchange,
+                    onChange: o.onChange,
                     value: value
                 });
                 if (false === o.Multi) {

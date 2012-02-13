@@ -34,14 +34,14 @@
                                                          type: Csw.enums.inputTypes.password,
                                                          cssclass: 'textinput',
                                                          value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
-                                                         onChange: o.onchange
+                                                         onChange: o.onChange
                                                  }); 
                 /* Text Box 2 */
                 cell22.$.CswInput('init',{ID: o.ID + '_pwd2',
                                                          type: Csw.enums.inputTypes.password,
                                                          value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
                                                          cssclass: 'textinput password2',
-                                                         onChange: o.onchange
+                                                         onChange: o.onChange
                                                  }); 
                 if(isAdmin) {
                     var $IsExpiredCheck = cell31.$.CswInput({ 

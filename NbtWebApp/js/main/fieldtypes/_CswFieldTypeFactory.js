@@ -46,7 +46,7 @@ $.CswFieldTypeFactory = function (method) {
         $propdiv: '',
         $savebtn: '',
         propData: '',
-        onchange: function () { },
+        onChange: function () { },
         onReload: function () { },    // if a control needs to reload the tab
         cswnbtnodekey: '',
         ID: '',

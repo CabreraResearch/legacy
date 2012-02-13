@@ -39,7 +39,7 @@
                                     Required: o.Required,
                                     ReadOnly: o.ReadOnly,
                                     Multi: o.Multi,
-                                    onchange: o.onchange,
+                                    onChange: o.onChange,
                                     dataAry: optData,
                                     nameCol: nameCol,
                                     keyCol: keyCol,

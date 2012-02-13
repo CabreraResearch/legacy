@@ -53,7 +53,7 @@
                     var $TimeBox = $Div.CswInput('init',{ ID: o.ID + "_time",
                                                           type: Csw.enums.inputTypes.text,
                                                           cssclass: 'textinput', 
-                                                          onChange: o.onchange,
+                                                          onChange: o.onChange,
                                                           value: o.Time,
                                                           width: '80px'
                                                      }); 

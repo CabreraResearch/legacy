@@ -31,7 +31,7 @@
                     ReadOnly: false,
                     Multi: false,
                     MultiIsUnchanged: true,
-                    onchange: null, //function () { }
+                    onChange: null, //function () { }
                     dataAry: [],
                     nameCol: '',
                     keyCol: '',
@@ -137,7 +137,7 @@
                                            .appendTo(eCell.$)
                                            .click(function () {
                                                o.MultiIsUnchanged = false;
-                                               o.onchange();
+                                               o.onChange();
                                            })
                                            .CswAttrNonDom({'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e })
                                            .bind('change', function () { onChange(this); });
@@ -182,7 +182,7 @@
                             var fCheckid = o.ID + '_' + s + '_' + f;
                             var $fCheck = $('<input type="'+ checkType +'" class="CBACheckBox_'+ o.ID +'" id="'+ fCheckid + '" name="' + o.ID + '" />')
                                            .appendTo(fCell.$)
-                                           .bind('click', o.onchange)
+                                           .bind('click', o.onChange)
                                            .CswAttrNonDom({key: sRow.key, rowlabel: sRow.label, collabel: o.cols[f], row: s, col: f })
                                            .bind('change', function () { onChange(this); });
                             $.data($fCheck, 'thisRow', sRow);

@@ -23,7 +23,7 @@
                 }
                 var $SelectBox = $Div.CswSelect('init', { ID: o.ID, 
                                                           cssclass: 'selectinput', 
-                                                          onChange: o.onchange,
+                                                          onChange: o.onChange,
                                                           values: values,
                                                           selected: value
                                       });
