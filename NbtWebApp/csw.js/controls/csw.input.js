@@ -50,7 +50,7 @@
             attr.add('id', internal.ID);
             attr.add('name', internal.name);
             attr.add('class', internal.class);
-            attr.add('type', internal.type);
+            attr.add('type', internal.type.name);
             attr.add('placeholder', internal.placeholder);
             attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));
             attr.add('autofocus', internal.autofocus);
