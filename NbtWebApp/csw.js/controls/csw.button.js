@@ -88,7 +88,7 @@
             }
 
             if (Csw.isFunction(internal.onClick)) {
-                external.click(internal.onClick);
+                external.bind('click', internal.onClick);
             }
 
             buttonOpt = {
