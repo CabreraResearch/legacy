@@ -212,14 +212,14 @@
             };
             var _external = {};
 
-            _external.add = function (value, key) {
+            _external.add = function (key, value) {
                 _internal.styles[key] = value;
             };
 
             _external.get = function () {
                 var htmlStyle = '', ret = '';
 
-                function buildStyle(key, val) {
+                function buildStyle(val, key) {
                     htmlStyle += key + ': ' + val + ';';
                 }
 
@@ -242,18 +242,18 @@
             };
             var _external = {};
 
-            _external.add = function (value, key) {
-                _internal.attributes[key] = value;
+            _external.add = function (key, value) {
+                if (false === Csw.isNullOrEmpty(key) &&
+                        false === Csw.isNullOrEmpty(value)) {
+                    _internal.attributes[Csw.string(key)] = Csw.string(value);
+                }
             };
 
             _external.get = function () {
-                var htmlAttr = '', ret = '';
+                var ret = '';
 
-                function buildStyle(key, val) {
-                    if (false === Csw.isNullOrEmpty(key) &&
-                        false === Csw.isNullOrEmpty(val)) {
-                        htmlAttr += ' ' + Csw.string(key) + '="' + Csw.string(val) + '" ';
-                    }
+                function buildStyle(val, key) {
+                    ret += ' ' + key + '="' + val + '" ';
                 }
 
                 Csw.each(_internal.attributes, buildStyle);

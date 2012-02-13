@@ -57,31 +57,63 @@
             /// <summary> Creates a Csw.table on this element</summary>
             /// <param name="tableOpts" type="Object">Options to define the table.</param>
             /// <returns type="Object">A Csw.table</returns> 
-            internal.prepControl(opts, 'table');
+            opts = internal.prepControl(opts, 'table');
             return Csw.controls.table(opts);
+        };
+
+        options.layoutTable = function (opts) {
+            /// <summary> Creates a Csw.layoutTable on this element</summary>
+            /// <param name="tableOpts" type="Object">Options to define the table.</param>
+            /// <returns type="Object">A Csw.layoutTable</returns> 
+            opts = internal.prepControl(opts, 'layoutTable');
+            return Csw.controls.layoutTable(opts);
         };
 
         options.div = function (opts) {
             /// <summary> Creates a Csw.div on this element</summary>
-            /// <param name="divOpts" type="Object">Options to define the div.</param>
+            /// <param name="opts" type="Object">Options to define the div.</param>
             /// <returns type="Object">A Csw.div</returns> 
-            internal.prepControl(opts, 'div');
+            opts = internal.prepControl(opts, 'div');
             return Csw.controls.div(opts);
+        };
+
+        options.tabDiv = function (opts) {
+            /// <summary> Creates a Csw.tabDiv on this element</summary>
+            /// <param name="opts" type="Object">Options to define the div.</param>
+            /// <returns type="Object">A Csw.tabDiv</returns> 
+            opts = internal.prepControl(opts, 'tabdiv');
+            return Csw.controls.tabDiv(opts);
         };
 
         options.br = function (opts) {
             /// <summary> Creates a Csw.br on this element</summary>
-            /// <param name="options" type="Object">Options to define the br.</param>
+            /// <param name="opts" type="Object">Options to define the br.</param>
             /// <returns type="Object">A Csw.br</returns> 
-            internal.prepControl(opts, 'br');
+            opts = internal.prepControl(opts, 'br');
             return Csw.controls.br(opts);
+        };
+
+        options.ul = function (opts) {
+            /// <summary> Creates a Csw.ul on this element</summary>
+            /// <param name="options" type="Object">Options to define the ul.</param>
+            /// <returns type="Object">A Csw.ul</returns> 
+            opts = internal.prepControl(opts, 'ul');
+            return Csw.controls.ul(opts);
+        };
+
+        options.li = function (opts) {
+            /// <summary> Creates a Csw.li on this element</summary>
+            /// <param name="options" type="Object">Options to define the li.</param>
+            /// <returns type="Object">A Csw.li</returns> 
+            opts = internal.prepControl(opts, 'li');
+            return Csw.controls.li(opts);
         };
 
         options.span = function (opts) {
             /// <summary> Creates a Csw.span on this element</summary>
             /// <param name="spanOpts" type="Object">Options to define the span.</param>
             /// <returns type="Object">A Csw.span</returns> 
-            internal.prepControl(opts, 'span');
+            opts = internal.prepControl(opts, 'span');
             return Csw.controls.span(opts);
         };
 
@@ -89,7 +121,7 @@
             /// <summary> Creates a Csw.input on this element</summary>
             /// <param name="inputOpts" type="Object">Options to define the input.</param>
             /// <returns type="Object">A Csw.input</returns> 
-            internal.prepControl(opts, 'input');
+            opts = internal.prepControl(opts, 'input');
             return Csw.controls.input(opts);
         };
 
@@ -97,7 +129,7 @@
             /// <summary> Creates a Csw.button on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the button.</param>
             /// <returns type="Object">A Csw.button</returns> 
-            internal.prepControl(opts, 'button');
+            opts = internal.prepControl(opts, 'button');
             return Csw.controls.button(opts);
         };
 
@@ -105,7 +137,7 @@
             /// <summary> Creates a Csw.link on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the link.</param>
             /// <returns type="Object">A Csw.link</returns> 
-            internal.prepControl(opts, 'link');
+            opts = internal.prepControl(opts, 'link');
             return Csw.controls.link(opts);
         };
 
@@ -113,7 +145,7 @@
             /// <summary> Creates a Csw.form on this element</summary>
             /// <param name="formOpts" type="Object">Options to define the form.</param>
             /// <returns type="Object">A Csw.form</returns> 
-            internal.prepControl(opts, 'form');
+            opts = internal.prepControl(opts, 'form');
             return Csw.controls.form(opts);
         };
 
@@ -121,15 +153,15 @@
             /// <summary> Creates a Csw.form on this element</summary>
             /// <param name="formOpts" type="Object">Options to define the form.</param>
             /// <returns type="Object">A Csw.form</returns> 
-            internal.prepControl(opts, 'img');
+            opts = internal.prepControl(opts, 'img');
             return Csw.controls.form(opts);
         };
 
-        options.jquery = function ($jqElement) {
+        options.jquery = function ($jqElement, opts) {
             /// <summary> Extend a jQuery object with Csw methods.</summary>
             /// <param name="$element" type="jQuery">Element to extend.</param>
             /// <returns type="jquery">A Csw.jquery object</returns>
-            var opts = internal.prepControl({}, 'jquery');
+            opts = internal.prepControl(opts, 'jquery');
             return factory($jqElement, opts);
         };
 

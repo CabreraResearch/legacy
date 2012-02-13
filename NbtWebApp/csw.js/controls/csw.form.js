@@ -23,7 +23,7 @@
 
         (function () {
             var html = '',
-                attr = Csw.controls.dom.attr();
+                attr = Csw.controls.dom.attributes();
             var $form;
             
             if (options) {

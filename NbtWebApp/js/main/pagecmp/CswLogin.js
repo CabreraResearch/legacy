@@ -44,6 +44,7 @@
                                             ID: 'login_button',
                                             enabledText: 'Login',
                                             disabledText: 'Logging in...',
+                                            width: '100px',
                                             onClick: function () {
                                                 loginMsg.hide().empty();
 

@@ -31,26 +31,30 @@
 
         (function () {
             var html = '',
-                attr = Csw.controls.dom.attr(),
-                style = Csw.controls.dom.style();
+                attr = Csw.controls.dom.attributes(),
+                style = Csw.controls.dom.style(),
+                divText = '';
             var $div;
 
             if (options) {
                 $.extend(internal, options);
+                divText = Csw.string(internal.text);
+                attr.add('id', internal.ID);
+                attr.add('name', Csw.string(internal.name, internal.ID));
+                attr.add('class', internal.cssclass);
+                attr.add('align', internal.align);
+                style.add('align', internal.align);
+            } else {
+                divText = Csw.string(options);
             }
 
             html += '<div ';
-            attr.add('id', internal.ID);
-            attr.add('name', Csw.string(internal.name, internal.ID));
-            attr.add('class', internal.cssclass);
-            attr.add('align', internal.align);
-            style.add('align', internal.align);
             
             html += attr.get();
             html += style.get();
 
             html += '>';
-            html += Csw.string(internal.text);
+            html += divText;
             html += '</div>';
             $div = $(html);
             Csw.controls.factory($div, external);

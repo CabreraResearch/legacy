@@ -35,7 +35,7 @@
 
         (function () {
             var html = '',
-                attr = Csw.controls.dom.attr(),
+                attr = Csw.controls.dom.attributes(),
                 style = Csw.controls.dom.style();
             var $input;
 
