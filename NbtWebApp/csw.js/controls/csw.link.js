@@ -69,7 +69,7 @@
 
             html += '>';
 
-            html += Csw.string(internal.text);
+            html += Csw.string(internal.text, internal.value);
 
             html += '</a>';
             $link = $(html);

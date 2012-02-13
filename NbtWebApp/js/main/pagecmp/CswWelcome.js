@@ -92,7 +92,7 @@
                                 };
 
                                 if (Csw.string(thisItem.linktype).toLowerCase() === 'text') {
-                                    textCell.span({ text: thisItem.text });
+                                    textCell.span(thisItem.text);
                                 } else {
                                     var onClick = Csw.makeDelegate(_clickItem, clickopts);
                                     textCell.link({
