@@ -814,6 +814,11 @@ namespace ChemSW.Nbt
             return _CswNbtTreeNodes.getCurrentNodeChildrenTruncated();
         }
 
+        public void removeCurrentNode()
+        {
+            _CswNbtTreeNodes.removeCurrentNode();
+        }
+
         #endregion //Modification******************************
 
 
