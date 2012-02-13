@@ -88,12 +88,15 @@
 
             internal.$parent.append(external.$);
 
-        }());
+        } ());
 
         external.change = function (func) {
             if (Csw.isFunction(func)) {
                 external.bind('change', func);
             }
+        };
+        external.getValue = function () {
+            return external.$.val();
         };
 
         return external;
