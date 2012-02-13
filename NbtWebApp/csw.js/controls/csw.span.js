@@ -45,7 +45,7 @@
             html += spanText;
             html += '</span>';
             $span = $(html);
-            Csw.controls.domExtend($span, external);
+            Csw.controls.factory($span, external);
 
             internal.$parent.append(external.$);
         } ());

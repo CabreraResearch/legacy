@@ -72,7 +72,7 @@
                 $input.change(internal.onChange);
             }
 
-            Csw.controls.domExtend($input, external);
+            Csw.controls.factory($input, external);
 
             internal.$parent.append(external.$);
 

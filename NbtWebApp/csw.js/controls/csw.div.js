@@ -53,7 +53,7 @@
             html += Csw.string(internal.text);
             html += '</div>';
             $div = $(html);
-            Csw.controls.domExtend($div, external);
+            Csw.controls.factory($div, external);
 
             internal.$parent.append(external.$);
         } ());

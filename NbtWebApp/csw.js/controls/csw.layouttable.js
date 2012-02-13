@@ -191,7 +191,7 @@
             var $dragdiv, dragCell, dragCells, dropCells, r, c, $thisdragcell, $thisdropcell, $thisdragdiv, $thisdropdiv;
             if (external.isConfig(external.table)) {
                 $dragdiv = dd.draggable;
-                dragCell = Csw.controls.domExtend($dragdiv.parent(), {});
+                dragCell = Csw.controls.factory($dragdiv.parent(), {});
 
                 dragCells = external.table.findCell('[row="' + dragCell.propNonDom('row') + '"][column="' + dragCell.propNonDom('column') + '"]');
                 dropCells = external.table.findCell('[row="' + dropCell.propNonDom('row') + '"][column="' + dropCell.propNonDom('column') + '"]');

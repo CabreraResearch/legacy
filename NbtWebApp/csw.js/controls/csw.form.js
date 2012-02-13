@@ -37,7 +37,7 @@
             html += '</form>';
             $form = $(html);
             
-            Csw.controls.domExtend($form, external);
+            Csw.controls.factory($form, external);
 
             internal.$parent.append(external.$);
             

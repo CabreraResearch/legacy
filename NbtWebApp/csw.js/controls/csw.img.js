@@ -1,12 +1,12 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function _cswLink() {
+(function _cswImg() {
     'use strict';
 
-    function link(options) {
-        /// <summary> Create or extend an HTML <a /> and return a Csw.link object
-        ///     &#10;1 - link(options)
+    function img(options) {
+        /// <summary> Create or extend an HTML <a /> and return a Csw.img object
+        ///     &#10;1 - img(options)
         ///</summary>
         /// <param name="options" type="Object">
         /// <para>A JSON Object</para>
@@ -15,27 +15,25 @@
         /// <para>options.cssclass: CSS class to asign</para>
         /// <para>options.text: Text to display</para>
         /// </param>
-        /// <returns type="link">A link object</returns>
+        /// <returns type="img">A img object</returns>
         var internal = {
             $parent: '',
             ID: '',
             cssclass: '',
-            text: '',
-            href: '',
-            type: '',
-            title: '',
-            rel: '',
-            media: '',
-            target: '',
+            src: '',
+            alt: '',
+            height: '',
+            ismap: '',
+            usemap: '',
+            width: '',
             onClick: null //function () {}
         };
         var external = {};
 
         (function () {
             var html = '',
-                style = Csw.controls.dom.style(),
                 attr = Csw.controls.dom.attributes();
-            var $link;
+            var $img;
 
             if (options) {
                 $.extend(internal, options);
@@ -43,27 +41,22 @@
 
             internal.ID = Csw.string(internal.ID, internal.name);
 
-            html += '<a ';
+            html += '<img ';
             attr.add('id', internal.ID);
             attr.add('class', internal.cssclass);
-            attr.add('href', internal.href);
-            attr.add('type', internal.type);
-            attr.add('title', internal.title);
-            attr.add('rel', internal.rel);
-            attr.add('media', internal.media);
-            attr.add('target', internal.target);
+            attr.add('src', internal.src);
+            attr.add('alt', internal.alt);
+            attr.add('height', internal.height);
+            attr.add('ismap', internal.ismap);
+            attr.add('usemap', internal.usemap);
+            attr.add('width', internal.width);
 
             html += attr.get();
-            html += style.get();
 
-            html += '>';
+            html += ' />';
+            $img = $(html);
 
-            html += Csw.string(internal.text, internal.value);
-
-            html += '</a>';
-            $link = $(html);
-
-            Csw.controls.factory($link, external);
+            Csw.controls.factory($img, external);
             if (Csw.isFunction(internal.onClick)) {
                 external.bind('click', internal.onClick);
             }
@@ -80,8 +73,8 @@
 
         return external;
     }
-    Csw.controls.register('link', link);
-    Csw.controls.link = Csw.controls.link || link;
+    Csw.controls.register('img', img);
+    Csw.controls.img = Csw.controls.img || img;
 
 } ());
 

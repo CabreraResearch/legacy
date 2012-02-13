@@ -47,7 +47,7 @@
             if (isjQuery) {
                 $table = options;
             }
-            Csw.controls.domExtend($table, external);
+            Csw.controls.factory($table, external);
 
             external.bind('CswTable_onCreateCell', function (e, cell, row, column) {
                 Csw.tryExec(internal.onCreateCell(e, cell, row, column));
@@ -119,7 +119,7 @@
                 }
                 $cell = thisRow.find('td:eq(' + Csw.number(col - 1) + ')').$;
             }
-            Csw.controls.domExtend($cell, retCell);
+            Csw.controls.factory($cell, retCell);
             retCell.align = function (alignTo) {
                 retCell.css('text-align', alignTo);
                 retCell.propDom('align', alignTo);
@@ -210,7 +210,7 @@
                     $retCell = $cells.filter(criteria);
                 }
             }
-            return Csw.controls.domExtend($retCell, retCell);
+            return Csw.controls.factory($retCell, retCell);
         };
         external.rowFindCell = function ($row, criteria) {
             /// <summary>Given a row, find a cell by jQuery search criteria</summary>
@@ -222,7 +222,7 @@
             if (false === Csw.isNullOrEmpty(criteria)) {
                 $cells = $cells.filter(criteria);
             }
-            return Csw.controls.domExtend($cells, retCell);
+            return Csw.controls.factory($cells, retCell);
         };
 
         return external;
