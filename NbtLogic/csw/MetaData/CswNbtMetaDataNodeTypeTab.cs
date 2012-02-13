@@ -116,13 +116,26 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                    _checkVersioningTab();
 
                     _NodeTypeTabRow["tabname"] = value;
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
                 }
             }
         }
+
+        private void _checkVersioningTab()
+        {
+            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+            if( NewNodeType.NodeTypeId != NodeTypeId )
+            {
+                // Get the new tab and reassign myself
+                CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabVersion( NewNodeType.NodeTypeId, this.TabId );
+                this._NodeTypeTabRow = NewTab._DataRow;
+            }
+        }
+
+
         public Int32 TabOrder
         {
             get { return CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ); }
@@ -130,7 +143,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ) != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                    _checkVersioningTab();
 
                     _NodeTypeTabRow["taborder"] = CswConvert.ToDbVal( value );
                     _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();

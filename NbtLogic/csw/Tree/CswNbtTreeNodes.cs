@@ -104,18 +104,18 @@ namespace ChemSW.Nbt
 
         // NbtNode element
         public static string _ElemName_Node = "NbtNode";
-        private static string _AttrName_TableName = "tablename";
+        //private static string _AttrName_TableName = "tablename";
         private static string _AttrName_NodeId = "nodeid";
         private static string _AttrName_Key = "key";
         private static string _AttrName_IconFileName = "iconfilename";
         private static string _AttrName_NodeName = "nodename";
         private static string _AttrName_NodeTypeId = "nodetypeid";
-        private static string _AttrName_NodeTypeName = "nodetypename";
-        private static string _AttrName_ObjectClass = "objectclassname";
+        //private static string _AttrName_NodeTypeName = "nodetypename";
+        //private static string _AttrName_ObjectClass = "objectclassname";
         private static string _AttrName_ObjectClassId = "objectclassid";
         private static string _AttrName_Selectable = "selectable";
         private static string _AttrName_ShowInTree = "showintree";
-        private static string _AttrName_AddChildren = "addchildren";
+        //private static string _AttrName_AddChildren = "addchildren";
         private static string _AttrName_ExpandMode = "expandmode";
         private static string _AttrName_Truncated = "truncated";
         private static string _AttrName_Locked = "locked";
@@ -130,8 +130,8 @@ namespace ChemSW.Nbt
 
         // NbtNodeGroup element
         public static string _ElemName_NodeGroup = "NbtNodeGroup";
-        private static string _AttrName_GroupName = "nodename";
-        private static string _AttrName_GroupIcon = "iconfilename";
+        //private static string _AttrName_GroupName = "nodename";
+        //private static string _AttrName_GroupIcon = "iconfilename";
 
         //private XmlNode _TreeNode = null;
 

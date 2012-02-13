@@ -60,16 +60,20 @@ namespace ChemSW.Nbt.MetaData
 
         public NodeTypeLayout getLayout(LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop)
         {
+            return getLayout( LayoutType, Prop.PropId );      
+        }
+        public NodeTypeLayout getLayout( LayoutType LayoutType, Int32 PropId )
+        {
             CswTimer GetLayoutTimer = new CswTimer();
 
             NodeTypeLayout Layout = null;
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
-            DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + Prop.PropId.ToString() );
+            DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
             if(LayoutTable.Rows.Count > 0)
             {
                 Layout = new NodeTypeLayout();
                 Layout.LayoutType = LayoutType;
-                Layout.PropId = Prop.PropId;
+                Layout.PropId = PropId;
                 //Layout.Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( CswConvert.ToInt32( LayoutTable.Rows[0]["nodetypetabsetid"] ) );
                 Layout.TabId = CswConvert.ToInt32( LayoutTable.Rows[0]["nodetypetabsetid"] );
                 Layout.DisplayRow = CswConvert.ToInt32( LayoutTable.Rows[0]["display_row"] );
@@ -147,7 +151,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         } // updatePropLayout()
-    
+
         public void removePropFromLayout( LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop )
         {
             if( LayoutType != LayoutType.Unknown && Prop != null )

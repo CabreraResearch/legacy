@@ -862,8 +862,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.ListOptions = ListOptionsCDS.ToString();
 
                     PropToSave.PropName = getPropAttributeValue( "EditProp_NameValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
-
-                    CswNbtMetaDataNodeTypeTab Tab = SelectedNodeType.getNodeTypeTab( EditPropTabSelect.SelectedValue.ToString() );   // BZ 8014 - need to use tabname, not tabid, for versioning
+                    CswNbtMetaDataNodeTypeTab Tab = Master.CswNbtResources.MetaData.getNodeTypeTabVersion( PropToSave.NodeTypeId, CswConvert.ToInt32( EditPropTabSelect.SelectedValue ) );
                     Int32 DisplayRow = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     Int32 DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     Int32 DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
@@ -1462,7 +1461,7 @@ namespace ChemSW.Nbt.WebPages
                     EditPropTabSelect.Items.Clear();
                     foreach( CswNbtMetaDataNodeTypeTab Tab in SelectedNodeType.getNodeTypeTabs() )
                     {
-                        EditPropTabSelect.Items.Add( new ListItem( Tab.TabName, Tab.TabName ) );
+                        EditPropTabSelect.Items.Add( new ListItem( Tab.TabName, Tab.TabId.ToString() ) );
                     }
 
                     if( CswConvert.ToInt32( _SelectedValue ) > 0 )
@@ -1470,7 +1469,7 @@ namespace ChemSW.Nbt.WebPages
                         // Edit Property Select box
                         if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.TabId != Int32.MinValue )
                         {
-                            EditPropTabSelect.SelectedValue = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId ).TabName;
+                            EditPropTabSelect.SelectedValue = SelectedNodeTypeProp.EditLayout.TabId.ToString();
                         }
                     }
                     _SaveButton.Visible = true;

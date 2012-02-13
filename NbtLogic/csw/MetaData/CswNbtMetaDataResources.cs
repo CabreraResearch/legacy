@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.MetaData
         //}
 
         
-        public void refreshAll( bool ExcludeDisabledModules )
+        public void refreshAll()// bool ExcludeDisabledModules )
         {
             ObjectClassesCollection.clearCache();
             ObjectClassPropsCollection.clearCache();
