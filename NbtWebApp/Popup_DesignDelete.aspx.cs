@@ -340,10 +340,10 @@ namespace ChemSW.Nbt.WebPages
                 ViewsOfDeletedNodeType.Visible = false;
                 ViewsOfDeletedTypeLabel.Visible = false;
                 EditSelectedViewsButton.Visible = false;
-                if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
-                {
-                    DeleteNodeTypeGenericLabel.Visible = false;
-                }
+                //if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
+                //{
+                //    DeleteNodeTypeGenericLabel.Visible = false;
+                //}
 
                 if (ViewsOfNodeType.Rows.Count > 0)
                 {
