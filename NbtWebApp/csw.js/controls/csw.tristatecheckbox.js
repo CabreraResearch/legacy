@@ -18,7 +18,7 @@
                 Required: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
-                onchange: function () { }
+                onChange: function () { }
             };
             if(options) $.extend(o, options);
 
@@ -42,7 +42,7 @@
                                         AlternateText: tristateVal,
                                         cssclass: o.cssclass,
                                         onClick: function ($ImageDiv) {
-                                            o.onchange($ImageDiv); 
+                                            o.onChange($ImageDiv); 
                                             return onClick($ImageDiv, o.Required);
                                         }
                                     });

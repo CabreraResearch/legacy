@@ -48,7 +48,7 @@
                     DisplayMode: 'Date',
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    OnChange: o.onchange
+                    OnChange: o.onChange
                 });
 
                 editTable.add(3, 1, 'Units');
@@ -59,7 +59,7 @@
                 editTable.cell(3, 2)
                          .$.CswSelect('init', {
                              ID: o.ID + '_units',
-                             onChange: o.onchange,
+                             onChange: o.onChange,
                              values: unitVals,
                              selected: units
                          });

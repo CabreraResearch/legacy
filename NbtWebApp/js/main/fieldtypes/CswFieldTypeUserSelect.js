@@ -24,7 +24,7 @@
                         Required: o.Required,
                         Multi: o.Multi,
                         ReadOnly: o.ReadOnly,
-                        onchange: o.onchange,
+                        onChange: o.onChange,
                         dataAry: options,
                         nameCol: nameCol,
                         keyCol: keyCol,

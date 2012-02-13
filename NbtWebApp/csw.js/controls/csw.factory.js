@@ -43,14 +43,22 @@
             /// <param name="name" type="String">The name of the attribute</param>
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-            return Csw.controls.dom.propDom($element, name, value);
+            var ret = Csw.controls.dom.propDom($element, name, value);
+            if (arguments.length === 2) {
+                ret = external;
+            }
+            return ret;
         };
         external.propNonDom = function (name, value) {
             /// <summary> Gets or sets an Non-Dom attribute</summary>
             /// <param name="name" type="String">The name of the attribute</param>
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-            return Csw.controls.dom.propNonDom($element, name, value);
+            var ret = Csw.controls.dom.propNonDom($element, name, value);
+            if (arguments.length === 2) {
+                ret = external;
+            }
+            return ret;
         };
 
         external.table = function (opts) {

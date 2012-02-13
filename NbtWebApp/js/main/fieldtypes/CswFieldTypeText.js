@@ -22,7 +22,7 @@
                                                         value: value,
                                                         cssclass: 'textinput',
                                                         width: length * 7,
-                                                        onChange: o.onchange
+                                                        onChange: o.onChange
                                                       });
 
                 if(o.Required) {

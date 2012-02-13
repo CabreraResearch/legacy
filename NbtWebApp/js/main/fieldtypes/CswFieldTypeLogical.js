@@ -15,7 +15,7 @@
                     Required: Csw.bool(o.Required),
                     ReadOnly: Csw.bool(o.ReadOnly),
                     Multi: o.Multi,
-                    onchange: o.onchange
+                    onChange: o.onChange
             };
 
             $Div.CswTristateCheckBox('init',checkOpt);

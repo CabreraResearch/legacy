@@ -36,7 +36,7 @@
                     addImage($selected.text(), $selected.CswAttrDom('value'), true);
                     addValue($selected.CswAttrDom('value'));
                     $selected.remove();
-                    o.onchange();
+                    o.onChange();
                 });
                 
                 Csw.crawlObject(options, 
@@ -82,7 +82,7 @@
                             removeValue(href);
                             $select.append('<option value="'+ href +'">'+ name +'</option>');
 
-                            o.onchange();
+                            o.onChange();
                             return Csw.enums.imageButton_ButtonType.None; 
                         } // onClick
                     }); // CswImageButton

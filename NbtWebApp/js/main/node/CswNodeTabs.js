@@ -271,7 +271,7 @@
                                         propid: propId,
                                         propDiv: propCell.children('div'),
                                         propData: thisProp,
-                                        onchange: function () { },
+                                        onChange: function () { },
                                         onReload: function () { getProps(tabContentDiv, tabid); },
                                         EditMode: o.EditMode,
                                         Multi: o.Multi,
@@ -502,7 +502,7 @@
                     propDiv: propCell.div(),
                     $savebtn: saveBtn,
                     propData: propData,
-                    onchange: function () { },
+                    onChange: function () { },
                     onReload: function () { getProps(tabContentDiv, tabid); },
                     cswnbtnodekey: Csw.tryParseObjByIdx(o.nodekeys, 0),
                     EditMode: o.EditMode,
@@ -514,9 +514,9 @@
                 fieldOpt.propDiv.propNonDom('propid', fieldOpt.propid);
                 fieldOpt.propDiv.propNonDom('cswnbtnodekey', fieldOpt.cswnbtnodekey);
 
-                fieldOpt.onchange = function () { if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
+                fieldOpt.onChange = function () { if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
                 if (Csw.bool(propData.hassubprops)) {
-                    fieldOpt.onchange = function () {
+                    fieldOpt.onChange = function () {
                         _updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, saveBtn);
                         if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
                     };
