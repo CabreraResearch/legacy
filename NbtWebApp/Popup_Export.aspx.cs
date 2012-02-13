@@ -132,9 +132,10 @@ namespace ChemSW.Nbt.WebPages
                 string ExportXmlString = string.Empty;
                 if( Format == CswMainMenu.ExportOutputFormat.ReportXML )
                 {
-                    ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( CswNbtView, true, false, false, true );
-                    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
-                    ExportXmlString = CswNbtTree.getTreeAsXml();
+                    // BROKEN BY case 24709
+                    //ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( CswNbtView, true, false, false, true );
+                    //CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
+                    //ExportXmlString = CswNbtTree.getTreeAsXml();
                 }
                 else if( Format == CswMainMenu.ExportOutputFormat.MobileXML )
                 {

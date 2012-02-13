@@ -10,7 +10,7 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01M-03
+    /// Updates the schema to version 01M-04
     /// </summary>
     public class CswUpdateSchemaTo01M04 : CswUpdateSchemaTo
     {

@@ -36,6 +36,11 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId );
         }
 
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropVersion( Int32 NodeTypeId, Int32 NodeTypePropId )
+        {
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and firstpropversionid = (select firstpropversionid from nodetype_props where nodetypepropid = " + NodeTypePropId.ToString() + ")" );
+        }
+
         public Collection<Int32> getNodeTypePropIds()
         {
             return _CollImpl.getPks();

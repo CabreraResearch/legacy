@@ -176,9 +176,10 @@ namespace ChemSW.Nbt.WebPages
 
                         CswNbtView NodesView = CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes( SelectedGeneratorNodes );
                         ICswNbtTree NodesTree = Master.CswNbtResources.Trees.getTreeFromView( NodesView, true, true, false, false );
-                        string Xml = NodesTree.getTreeAsXml();
-                        _NodesTreeOfFutureNodes.LoadXml( Xml );
-                        _NodesTreeOfFutureNodes.ExpandAllNodes();
+                        // BROKEN BY case 24709
+                        //string Xml = NodesTree.getTreeAsXml();
+                        //_NodesTreeOfFutureNodes.LoadXml( Xml );
+                        //_NodesTreeOfFutureNodes.ExpandAllNodes();
 
                         //bz # 6141. See notes in bz # 6521 
                         //string ViewXml = NodesView.ToString();
@@ -245,9 +246,10 @@ namespace ChemSW.Nbt.WebPages
                 string temp = GeneratorView.ToString();
                 GeneratorView.ViewName = "Generators";
                 ICswNbtTree GeneratorTree = Master.CswNbtResources.Trees.getTreeFromView( GeneratorView, true, true, false, false );
-                string Xml = GeneratorTree.getTreeAsXml();
-                _NodesTreeOfGeneratorNodes.LoadXml( Xml );
-                _NodesTreeOfGeneratorNodes.ExpandAllNodes();
+                // BROKEN BY case 24709
+                //string Xml = GeneratorTree.getTreeAsXml();
+                //_NodesTreeOfGeneratorNodes.LoadXml( Xml );
+                //_NodesTreeOfGeneratorNodes.ExpandAllNodes();
                 _setCheckBoxes();
             }
         }//_initGeneratorNodeTree()

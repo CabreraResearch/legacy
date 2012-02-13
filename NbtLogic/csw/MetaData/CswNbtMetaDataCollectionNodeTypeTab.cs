@@ -43,6 +43,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(tabname) = '" + NodeTypeTabName.ToLower() + "'" );
         }
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTabVersion( Int32 NodeTypeId, Int32 NodeTypeTabId )
+        {
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and firsttabversionid = (select firsttabversionid from nodetype_tabset where nodetypetabsetid = " + NodeTypeTabId.ToString() + ")" );
+        }
         public Collection<Int32> getNodeTypeTabIds( Int32 NodeTypeId )
         {
             return _CollImpl.getPks( "where nodetypeid = " + NodeTypeId.ToString());

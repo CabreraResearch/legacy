@@ -97,11 +97,12 @@ namespace ChemSW.Nbt.WebPages
                 //Tree.goToNthChild( 0 );
                 if( Tree.getChildNodeCount() > 0 )
                 {
-                    Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
-                    string TransformedXml = Tree.getTreeAsXml();
-                    StringReader XmlReader = new StringReader( TransformedXml );
+                    // BROKEN BY case 24709
+                    //Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
+                    //string TransformedXml = Tree.getTreeAsXml();
+                    //StringReader XmlReader = new StringReader( TransformedXml );
                     DataSet ReportData = new DataSet();
-                    ReportData.ReadXml( XmlReader );
+                    //ReportData.ReadXml( XmlReader );
 
                     // Get the Report Layout File
                     Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;

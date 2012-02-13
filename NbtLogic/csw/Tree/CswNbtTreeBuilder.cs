@@ -198,15 +198,15 @@ namespace ChemSW.Nbt
 
         }//getTreeFromView()
 
-        /// <summary>
-        /// Instance a Tree from Raw XML
-        /// </summary>
-        public ICswNbtTree getTreeFromXml( CswNbtView View, XmlDocument XmlDoc )
-        {
-            ICswNbtTree ReturnVal = _makeTree( View, true );
-            ReturnVal.setRawTreeXml( XmlDoc );
-            return ( ReturnVal );
-        }
+        ///// <summary>
+        ///// Instance a Tree from Raw XML
+        ///// </summary>
+        //public ICswNbtTree getTreeFromXml( CswNbtView View, XmlDocument XmlDoc )
+        //{
+        //    ICswNbtTree ReturnVal = _makeTree( View, true );
+        //    ReturnVal.setRawTreeXml( XmlDoc );
+        //    return ( ReturnVal );
+        //}
 
     }//CswNbtTreeBuilder
 

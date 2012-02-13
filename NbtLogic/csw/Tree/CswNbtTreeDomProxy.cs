@@ -9,6 +9,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -160,13 +161,13 @@ namespace ChemSW.Nbt
             _CswNbtTreeNodes.makeRootNode( ViewRoot.ViewName, ViewRoot );
         }
 
-        /// <summary>
-        /// Creates a placeholder "More..." node on the tree.  Mostly used by TreeLoaders.
-        /// </summary>
-        public void makeMoreNodeFromRow( CswNbtNodeKey ParentNodeKey, DataRow Row, Int32 NodeCount, CswNbtViewNode ViewNode )
-        {
-            _CswNbtTreeNodes.makeMoreNodeFromRow( ParentNodeKey, Row, NodeCount, ViewNode );
-        }
+        ///// <summary>
+        ///// Creates a placeholder "More..." node on the tree.  Mostly used by TreeLoaders.
+        ///// </summary>
+        //public void makeMoreNodeFromRow( CswNbtNodeKey ParentNodeKey, DataRow Row, Int32 NodeCount, CswNbtViewNode ViewNode )
+        //{
+        //    _CswNbtTreeNodes.makeMoreNodeFromRow( ParentNodeKey, Row, NodeCount, ViewNode );
+        //}
 
         /// <summary>
         /// Creates a root node on the tree.  Mostly used by TreeLoaders.
@@ -227,23 +228,23 @@ namespace ChemSW.Nbt
         }
 
 
-        private XmlTreeDestinationFormat _NLevelDsXmlMode = XmlTreeDestinationFormat.TelerikRadTreeView;
-        /// <summary>
-        /// When converting the tree to XML, use this format
-        /// </summary>
-        public XmlTreeDestinationFormat XmlTreeDestinationFormat
-        {
-            set
-            {
-                _NLevelDsXmlMode = value;
-                _TreeAsTransformedXml = string.Empty;   // if we change the format, clear the cached tree
-            }//
+        //private XmlTreeDestinationFormat _NLevelDsXmlMode = XmlTreeDestinationFormat.TelerikRadTreeView;
+        ///// <summary>
+        ///// When converting the tree to XML, use this format
+        ///// </summary>
+        //public XmlTreeDestinationFormat XmlTreeDestinationFormat
+        //{
+        //    set
+        //    {
+        //        _NLevelDsXmlMode = value;
+        //        _TreeAsTransformedXml = string.Empty;   // if we change the format, clear the cached tree
+        //    }//
 
-            get
-            {
-                return ( _NLevelDsXmlMode );
-            }//
-        }//
+        //    get
+        //    {
+        //        return ( _NLevelDsXmlMode );
+        //    }//
+        //}//
 
         //private Stack _NodeKeyStack = new Stack();
         //public void pushCurrentKey()
@@ -256,47 +257,47 @@ namespace ChemSW.Nbt
         //    makeNodeCurrent( _NodeKeyStack.Pop() as CswNbtNodeKey );
         //}//
 
-        private CswXmlTransformer _CswXmlTransformer = new CswXmlTransformer();
+        //private CswXmlTransformer _CswXmlTransformer = new CswXmlTransformer();
 
-        private string _TreeAsTransformedXml = "";
-        /// <summary>
-        /// Converts the tree to an XML string
-        /// </summary>
+        //private string _TreeAsTransformedXml = "";
+        ///// <summary>
+        ///// Converts the tree to an XML string
+        ///// </summary>
 
-        public string getTreeAsXml()
-        {
-            if( string.Empty == _TreeAsTransformedXml )
-            {
-                if( XmlTreeDestinationFormat.None == XmlTreeDestinationFormat )
-                    throw ( new System.Exception( "There is no XmlTreeDestinationFormat" ) );
+        //public string getTreeAsXml()
+        //{
+        //    if( string.Empty == _TreeAsTransformedXml )
+        //    {
+        //        if( XmlTreeDestinationFormat.None == XmlTreeDestinationFormat )
+        //            throw ( new System.Exception( "There is no XmlTreeDestinationFormat" ) );
 
-                string XslFileName = XmlTreeDestinationFormat.ToString() + ".xsl";
-                string XslFileNameFqn = _XslFilePath + "\\" + XslFileName;
+        //        string XslFileName = XmlTreeDestinationFormat.ToString() + ".xsl";
+        //        string XslFileNameFqn = _XslFilePath + "\\" + XslFileName;
 
-                _CswXmlTransformer.XslDocPath = XslFileNameFqn;
-                _CswXmlTransformer.SourceDoc = getRawTreeXml().InnerXml;
-                _TreeAsTransformedXml = _CswXmlTransformer.OutputDoc;
-            }
+        //        _CswXmlTransformer.XslDocPath = XslFileNameFqn;
+        //        _CswXmlTransformer.SourceDoc = getRawTreeXml().InnerXml;
+        //        _TreeAsTransformedXml = _CswXmlTransformer.OutputDoc;
+        //    }
 
-            return ( _TreeAsTransformedXml );
+        //    return ( _TreeAsTransformedXml );
 
-        }//getTreeAsXml()
+        //}//getTreeAsXml()
 
         /// <summary>
         /// Gets the Tree XML as it is stored internally
         /// </summary>
-        public XmlDocument getRawTreeXml()
+        public JObject getRawTreeJSON()
         {
-            return _CswNbtTreeNodes.getRawXml();
-        }//getRawTreeXml()
+            return _CswNbtTreeNodes.getRawJSON();
+        }//getRawTreeJSON()
 
-        /// <summary>
-        /// Sets the Tree XML, for copying trees
-        /// </summary>
-        public void setRawTreeXml( XmlDocument XmlDoc )
-        {
-            _CswNbtTreeNodes.setRawXml( XmlDoc );
-        }//setRawTreeXml()
+        ///// <summary>
+        ///// Sets the Tree XML, for copying trees
+        ///// </summary>
+        //public void setRawTreeXml( XmlDocument XmlDoc )
+        //{
+        //    _CswNbtTreeNodes.setRawXml( XmlDoc );
+        //}//setRawTreeXml()
 
 
         /// <summary>
@@ -341,17 +342,18 @@ namespace ChemSW.Nbt
 
         public CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
         {
-            CswNbtNodeKey ReturnVal = null;
-            Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
-            foreach( CswNbtNodeKey Key in KeyList )
-            {
-                if( Key.ViewNodeUniqueId == ViewNode.UniqueId )
-                {
-                    ReturnVal = Key;
-                    break;
-                }
-            }
-            return ReturnVal;
+            //CswNbtNodeKey ReturnVal = null;
+            //Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
+            //foreach( CswNbtNodeKey Key in KeyList )
+            //{
+            //    if( Key.ViewNodeUniqueId == ViewNode.UniqueId )
+            //    {
+            //        ReturnVal = Key;
+            //        break;
+            //    }
+            //}
+            //return ReturnVal;
+            return _CswNbtTreeNodes.getNodeKeyByNodeIdAndViewNode( NodeId, ViewNode );
         } // getNodeKeyByNodeIdAndViewNode()
 
 
@@ -426,40 +428,40 @@ namespace ChemSW.Nbt
 
         }//isCurrentNodeRoot()
 
-        /// <summary>
-        /// Sets the current index to the currently indexed node's parent's next child
-        /// </summary>
-        public void goToNextSibling()
-        {
-            _CswNbtTreeNodes.goToNextSibling();
-        }//goToNextSibling()
+        ///// <summary>
+        ///// Sets the current index to the currently indexed node's parent's next child
+        ///// </summary>
+        //public void goToNextSibling()
+        //{
+        //    _CswNbtTreeNodes.goToNextSibling();
+        //}//goToNextSibling()
 
-        /// <summary>
-        /// True if the currently indexed node's parent has a next child
-        /// </summary>
-        public bool nextSiblingExists()
-        {
-            return ( _CswNbtTreeNodes.nextSiblingExists() );
+        ///// <summary>
+        ///// True if the currently indexed node's parent has a next child
+        ///// </summary>
+        //public bool nextSiblingExists()
+        //{
+        //    return ( _CswNbtTreeNodes.nextSiblingExists() );
 
-        }//nextSiblingExists()
+        //}//nextSiblingExists()
 
-        /// <summary>
-        /// Sets the current index to the currently indexed node's parent's previous child
-        /// </summary>
-        public void goToPreviousSibling()
-        {
-            _CswNbtTreeNodes.goToPreviousSibling();
-        }//goToPreviousSibling()
+        ///// <summary>
+        ///// Sets the current index to the currently indexed node's parent's previous child
+        ///// </summary>
+        //public void goToPreviousSibling()
+        //{
+        //    _CswNbtTreeNodes.goToPreviousSibling();
+        //}//goToPreviousSibling()
 
-        /// <summary>
-        /// True if the currently indexed node's parent has a previous child
-        /// </summary>
-        public bool previousSiblingExists()
-        {
+        ///// <summary>
+        ///// True if the currently indexed node's parent has a previous child
+        ///// </summary>
+        //public bool previousSiblingExists()
+        //{
 
-            return ( _CswNbtTreeNodes.previousSiblingExists() );
+        //    return ( _CswNbtTreeNodes.previousSiblingExists() );
 
-        }//PreviousSiblingExists()
+        //}//PreviousSiblingExists()
 
         /// <summary>
         /// Sets the current index to the currently indexed node's parent
@@ -531,7 +533,7 @@ namespace ChemSW.Nbt
         }//
 
         [DebuggerStepThrough]
-        public IEnumerable<XElement> getChildNodePropsOfNode()
+        public JArray getChildNodePropsOfNode()
         {
             return _CswNbtTreeNodes.getChildPropNodesOfCurrentNode();
         }
@@ -571,13 +573,13 @@ namespace ChemSW.Nbt
             return ( _CswNbtTreeNodes.getNodeCountForCurrentLevel() );
         }//getNodeCountForCurrentLevel()
 
-        /// <summary>
-        /// Returns all siblings and cousins on a tree level
-        /// </summary>
-        public Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level )
-        {
-            return _CswNbtTreeNodes.getKeysForLevel( Level );
-        }
+        ///// <summary>
+        ///// Returns all siblings and cousins on a tree level
+        ///// </summary>
+        //public Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level )
+        //{
+        //    return _CswNbtTreeNodes.getKeysForLevel( Level );
+        //}
 
         /// <summary>
         /// Returns the total number of children of the currently indexed node
@@ -742,7 +744,7 @@ namespace ChemSW.Nbt
         {
             Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Relationship, RowCount );
             //ReturnVal.TreeKey = Key;
-            _TreeAsTransformedXml = "";
+            //_TreeAsTransformedXml = "";
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 
@@ -766,7 +768,7 @@ namespace ChemSW.Nbt
         {
             Collection<CswNbtNodeKey> ReturnVal = _CswNbtTreeNodes.loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, Selectable, ShowInTree, AddChildren, RowCount );
             //ReturnVal.TreeKey = Key;
-            _TreeAsTransformedXml = "";
+            //_TreeAsTransformedXml = "";
             return ( ReturnVal );
         }//loadNodeAsChildFromRow() 
 
