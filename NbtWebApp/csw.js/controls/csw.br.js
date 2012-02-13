@@ -23,7 +23,7 @@
                 html += '<br />';
             }
             $br = $(html);
-            Csw.controls.domExtend($br, external);
+            Csw.controls.factory($br, external);
 
             internal.$parent.append(external.$);
         } ());

@@ -206,7 +206,7 @@
 
         external.style = function () {
             /// <summary> Build an HTML element style string </summary>
-            /// <returns type="String">A br object</returns>
+            /// <returns type="String">A string of style key/value pairs</returns>
             var _internal = {
                 styles: {}
             };
@@ -219,7 +219,7 @@
             _external.get = function () {
                 var htmlStyle = '', ret = '';
 
-                function buildStyle(key, val) {
+                function buildStyle(val, key) {
                     htmlStyle += key + ': ' + val + ';';
                 }
 
@@ -228,6 +228,36 @@
                 if (htmlStyle.length > 0) {
                     ret = ' style="' + htmlStyle + '"';
                 }
+                return ret;
+            };
+
+            return _external;
+        };
+
+        external.attributes = function () {
+            /// <summary> Build an HTML element attribute string </summary>
+            /// <returns type="String">A string of attribute key/value pairs</returns>
+            var _internal = {
+                attributes: {}
+            };
+            var _external = {};
+
+            _external.add = function (key, value) {
+                if (false === Csw.isNullOrEmpty(key) &&
+                        false === Csw.isNullOrEmpty(value)) {
+                    _internal.attributes[Csw.string(key)] = Csw.string(value);
+                }
+            };
+
+            _external.get = function () {
+                var ret = '';
+
+                function buildStyle(val, key) {
+                    ret += ' ' + key + '="' + val + '" ';
+                }
+
+                Csw.each(_internal.attributes, buildStyle);
+
                 return ret;
             };
 
@@ -285,222 +315,17 @@
             return $el.find(Csw.string(selector));
         };
 
+        external.first = function ($el) {
+            /// <summary>Find the first child element of this DOM element represented by this object</summary>
+            /// <param name="$el" type="jQuery">A jQuery element</param>
+            /// <returns type="Object">The jQuery element(s) (for chaining)</returns> 
+            return $el.first();
+        };
+
         return external;
     } ());
     Csw.controls.register('dom', dom);
     Csw.controls.dom = Csw.controls.dom || dom;
-
-    function domExtend($element, options) {
-        /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
-        /// <param name="$element" type="jQuery">An element to bind to.</param>
-        /// <param name="options" type="Object">An options collection to extend.</param>
-        /// <returns type="Object">The options object with DOM methods attached.</returns> 
-        var internal = {};
-        options.$ = $element;
-        internal.id = Csw.string($element.prop('id'));
-
-        //#region Csw DOM classes
-
-        options.getId = function () {
-            /// <summary>Get the DOM Element ID of this object.</summary>
-            /// <returns type="String">Element ID.</returns> 
-            return internal.id;
-        };
-
-        options.length = function () {
-            /// <summary>Get the length of this element.</summary>
-            /// <returns type="Number">Number of elements at the current level of the tree.</returns> 
-            return Csw.number($element.length);
-        };
-
-        options.propDom = function (name, value) {
-            /// <summary>Gets or sets a DOM property</summary>
-            /// <param name="name" type="String">The name of the attribute</param>
-            /// <param name="value" type="String">The value of the attribute</param>
-            /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-            return Csw.controls.dom.propDom($element, name, value);
-        };
-        options.propNonDom = function (name, value) {
-            /// <summary> Gets or sets an Non-Dom attribute</summary>
-            /// <param name="name" type="String">The name of the attribute</param>
-            /// <param name="value" type="String">The value of the attribute</param>
-            /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-            return Csw.controls.dom.propNonDom($element, name, value);
-        };
-
-        options.table = function (opts) {
-            /// <summary> Creates a Csw.table on this element</summary>
-            /// <param name="tableOpts" type="Object">Options to define the table.</param>
-            /// <returns type="Object">A Csw.table</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subtbl');
-            opts.$parent = $element;
-            return Csw.controls.table(opts);
-        };
-
-        options.div = function (opts) {
-            /// <summary> Creates a Csw.div on this element</summary>
-            /// <param name="divOpts" type="Object">Options to define the div.</param>
-            /// <returns type="Object">A Csw.div</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subdiv');
-            opts.$parent = $element;
-            return Csw.controls.div(opts);
-        };
-
-        options.br = function (opts) {
-            /// <summary> Creates a Csw.br on this element</summary>
-            /// <param name="options" type="Object">Options to define the br.</param>
-            /// <returns type="Object">A Csw.br</returns> 
-            opts.$parent = $element;
-            return Csw.controls.br(opts);
-        };
-
-        options.span = function (opts) {
-            /// <summary> Creates a Csw.span on this element</summary>
-            /// <param name="spanOpts" type="Object">Options to define the span.</param>
-            /// <returns type="Object">A Csw.span</returns> 
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subspan');
-            opts.$parent = $element;
-            return Csw.controls.span(opts);
-        };
-
-        options.input = function (opts) {
-            /// <summary> Creates a Csw.input on this element</summary>
-            /// <param name="inputOpts" type="Object">Options to define the input.</param>
-            /// <returns type="Object">A Csw.input</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
-            opts.$parent = $element;
-            return Csw.controls.input(opts);
-        };
-
-        options.button = function (opts) {
-            /// <summary> Creates a Csw.button on this element</summary>
-            /// <param name="buttonOpts" type="Object">Options to define the button.</param>
-            /// <returns type="Object">A Csw.button</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subbutton');
-            opts.$parent = $element;
-            return Csw.controls.button(opts);
-        };
-
-        options.form = function (opts) {
-            /// <summary> Creates a Csw.form on this element</summary>
-            /// <param name="formOpts" type="Object">Options to define the form.</param>
-            /// <returns type="Object">A Csw.form</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subform');
-            opts.$parent = $element;
-            return Csw.controls.form(opts);
-        };
-
-        //#endregion Csw DOM classes
-
-        //#region Csw "jQuery" classes
-
-        options.addClass = function (name) {
-            /// <summary>Add a CSS class to an element.</summary>
-            /// <param name="value" type="String">The value of the attribute</param>
-            /// <returns type="Object">The jQuery element (for chaining)</returns> 
-            return Csw.controls.dom.addClass($element, name);
-        };
-
-        options.removeClass = function (name) {
-            /// <summary>Remove a CSS class to an element.</summary>
-            /// <param name="value" type="String">The value of the attribute</param>
-            /// <returns type="Object">The jQuery element (for chaining)</returns> 
-            return Csw.controls.dom.removeClass($element, name);
-        };
-
-        options.css = function (values) {
-            /// <summary>Add css styles to an element.</summary>
-            /// <param name="values" type="Object">Styles to apply</param>
-            /// <returns type="Object">The jQuery element (for chaining)</returns> 
-            return $element.css(values);
-        };
-
-        options.bind = function (eventName, event) {
-            /// <summary>Bind an action to a jQuery element's event.</summary>
-            /// <param name="eventName" type="String">The name of the event</param>
-            /// <param name="event" type="Function">A function to execute when the event fires</param>
-            /// <returns type="Object">The jQuery element (for chaining)</returns> 
-            return Csw.controls.dom.bind($element, eventName, event);
-        };
-        options.trigger = function (eventName, eventOpts) {
-            /// <summary>Trigger an event bound to a jQuery element.</summary>
-            /// <param name="eventName" type="String">The name of the event</param>
-            /// <param name="eventOpts" type="Object">Options collection to pass to the event handler.</param>
-            /// <returns type="Object">The jQuery element (for chaining)</returns> 
-            return Csw.controls.dom.trigger($element, eventName, eventOpts);
-        };
-
-        options.children = function (searchTerm, selector) {
-            /// <summary>Find the child elements of this DOM element represented by this object</summary>
-            /// <param name="searchTerm" type="String">(Optional) Some search term to limit child results</param>
-            /// <param name="selector" type="String">(Optional) A selector</param>
-            /// <returns type="Object">The jQuery element(s) (for chaining)</returns> 
-            return $element.children(Csw.string(searchTerm), Csw.string(selector));
-        };
-
-        options.find = function (selector) {
-            /// <summary>Find the child elements of this DOM element represented by this object</summary>
-            /// <param name="selector" type="String">A selector, id or jQuery object to find.</param>
-            /// <returns type="Object">The jQuery element(s) (for chaining)</returns> 
-            return $element.find(Csw.string(selector));
-        };
-
-        options.append = function (object) {
-            /// <summary>Attach an object to this element.</summary>
-            /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
-            /// <returns type="jQuery">The jQuery element(s) (for chaining)</returns> 
-            return $element.append(object);
-        };
-
-        options.val = function (value) {
-            /// <summary>Get the value of the element.</summary>
-            /// <returns type="String">A value.</returns> 
-            if (arguments.length === 1 && false === Csw.isNullOrUndefined(value)) {
-                return $element.val(value);
-            } else {
-                return Csw.string($element.val());
-            }
-        };
-
-        options.text = function (text) {
-            /// <summary>Get the value of the element.</summary>
-            /// <returns type="String">A value.</returns> 
-            if (arguments.length === 1 && false === Csw.isNullOrUndefined(text)) {
-                return $element.text(text);
-            } else {
-                return Csw.string($element.text());
-            }
-        };
-
-        options.show = function () {
-            /// <summary>Make the element visible.</summary>
-            /// <returns type="String">The jQuery element(s) (for chaining)</returns>
-            return $element.show();
-        };
-
-        options.hide = function () {
-            /// <summary>Make the element invisible.</summary>
-            /// <returns type="String">The jQuery element(s) (for chaining)</returns>
-            return $element.hide();
-        };
-
-        options.empty = function () {
-            /// <summary>Empty the element.</summary>
-            /// <returns type="String">The jQuery element(s) (for chaining)</returns>
-            return $element.empty();
-        };
-
-        //#endregion Csw "jQuery" classes
-
-        return options;
-    }
-    Csw.controls.register('domExtend', domExtend);
-    Csw.controls.domExtend = Csw.controls.domExtend || domExtend;
 
 } ());
 

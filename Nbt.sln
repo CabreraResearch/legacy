@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogTester", "TestApps\LogTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebApp", "NbtWebApp\NbtWebApp.csproj", "{DB33D180-B7CC-407B-8611-52DEB49363A8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtJavaScript", "NbtWebApp\NbtJavaScript.csproj", "{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebJavaScript", "NbtWebApp\NbtWebJavaScript.csproj", "{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

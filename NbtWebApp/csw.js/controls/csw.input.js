@@ -35,6 +35,7 @@
 
         (function () {
             var html = '',
+                attr = Csw.controls.dom.attributes(),
                 style = Csw.controls.dom.style();
             var $input;
 
@@ -46,36 +47,23 @@
             internal.ID = Csw.string(internal.ID, internal.name);
 
             html += '<input ';
-            html += ' id="' + Csw.string(internal.ID) + '" ';
-            html += ' name="' + Csw.string(internal.name) + '" ';
-            html += ' class="' + Csw.string(internal.cssclass) + '" ';
+            attr.add('id', internal.ID);
+            attr.add('name', internal.name);
+            attr.add('class', internal.cssclass);
+            attr.add('type', internal.type.name);
+            attr.add('placeholder', internal.placeholder);
+            attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));
+            attr.add('autofocus', internal.autofocus);
+            attr.add('maxlength', internal.maxlength);
 
-            if (false === Csw.isNullOrEmpty(internal.type)) {
-                html += ' type="' + Csw.string(internal.type.name) + '" ';
-                if (Csw.bool(internal.type.placeholder) && false === Csw.isNullOrEmpty(internal.placeholder)) {
-                    html += ' placeholder="' + internal.placeholder + '" ';
-                }
-                if (internal.type.autocomplete === true && internal.autocomplete === 'on') {
-                    html += ' autocomplete="on" ';
-                }
-
-                internal.value = Csw.string(internal.value);
-                if (Csw.bool(internal.type.value.required) || false === Csw.isNullOrEmpty(internal.value)) {
-                    html += ' value="' + Csw.string(internal.value) + '" ';
-                }
+            if (internal.type.autocomplete === true && internal.autocomplete === 'on') {
+                attr.add('autocomplete', 'on');
             }
-            internal.width = Csw.string(internal.width, internal.type.defaultwidth);
-
-            if (false === Csw.isNullOrEmpty(internal.width)) {
-                style.add('width', internal.width);
-            }
-            if (Csw.bool(internal.autofocus)) {
-                html += ' autofocus="' + internal.autofocus + '" ';
-            }
-            if (false === Csw.isNullOrEmpty(internal.maxlength)) {
-                html += ' maxlength="' + internal.maxlength + '" ';
+            if (Csw.bool(internal.type.value.required)) {
+                attr.add('value', internal.value);
             }
 
+            html += attr.get();
             html += style.get();
 
             html += ' />';
@@ -84,7 +72,7 @@
                 $input.change(internal.onChange);
             }
 
-            Csw.controls.domExtend($input, external);
+            Csw.controls.factory($input, external);
 
             internal.$parent.append(external.$);
 

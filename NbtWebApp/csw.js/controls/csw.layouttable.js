@@ -130,10 +130,9 @@
                 cellsetcolumn: cellsetcolumn
             });
 
-            cell.$.click(function (ev, dd) {
+            cell.bind('click', function (ev, dd) {
                 internal.onClick(ev, dd, row, column, cellsetrows, cellsetcolumns);
-            })
-                .droppable({
+            }).$.droppable({
                     hoverClass: 'CswLayoutTable_hover',
                     drop: function (ev, dd) {
                         internal.onDrop(ev, dd, $(this), cellsetrows, cellsetcolumns);
@@ -192,7 +191,7 @@
             var $dragdiv, dragCell, dragCells, dropCells, r, c, $thisdragcell, $thisdropcell, $thisdragdiv, $thisdropdiv;
             if (external.isConfig(external.table)) {
                 $dragdiv = dd.draggable;
-                dragCell = Csw.controls.domExtend($dragdiv.parent(), {});
+                dragCell = Csw.controls.factory($dragdiv.parent(), {});
 
                 dragCells = external.table.findCell('[row="' + dragCell.propNonDom('row') + '"][column="' + dragCell.propNonDom('column') + '"]');
                 dropCells = external.table.findCell('[row="' + dropCell.propNonDom('row') + '"][column="' + dropCell.propNonDom('column') + '"]');

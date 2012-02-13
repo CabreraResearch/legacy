@@ -7,7 +7,7 @@
     function span(options) {
         /// <summary> Create or extend an HTML <span /> and return a Csw.span object
         ///     &#10;1 - span(options)
-        ///     &#10;2 - span($jqueryElement)
+        ///     &#10;2 - span('Text')
         ///</summary>
         /// <param name="options" type="Object">
         /// <para>A JSON Object</para>
@@ -26,24 +26,29 @@
         var external = {};
 
         (function () {
-            var html = '';
+            var html = '',
+                attr = Csw.controls.dom.attributes();
             var $span;
+            var spanText;
 
+            html += '<span ';
             if (options) {
                 $.extend(internal, options);
+                attr.add('id', internal.ID);
+                attr.add('class', internal.cssclass);
+                spanText = Csw.string(internal.text);
+            } else {
+                spanText = Csw.string(options);
             }
-            
-            html += '<span ';
-            html += ' id="' + Csw.string(internal.ID) + '" ';
-            html += ' class="' + Csw.string(internal.cssclass) + '" ';
+            html += attr.get();
             html += '>';
-            html += Csw.string(internal.text);
+            html += spanText;
             html += '</span>';
             $span = $(html);
-            Csw.controls.domExtend($span, external);
+            Csw.controls.factory($span, external);
 
             internal.$parent.append(external.$);
-        }());
+        } ());
 
         return external;
     }

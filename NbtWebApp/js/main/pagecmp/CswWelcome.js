@@ -74,12 +74,14 @@
                         if (Csw.contains(data, welcomeId)) {
                             var thisItem = data[welcomeId];
                             if (false === Csw.isNullOrEmpty(thisItem)) {
-                                var $cellset = layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
-                                var $imagecell = $cellset[1][1].children('div');
-                                var $textcell = $cellset[2][1].children('div');
+                                var cellSet = layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
+                                var imageCell = cellSet[1][1].children('div');
+                                var textCell = cellSet[2][1].children('div');
 
                                 if (false === Csw.isNullOrEmpty(thisItem.buttonicon))
-                                    $imagecell.append($('<a href="javascript:void(0);"><img border="0" src="' + thisItem.buttonicon + '"/></a>'));
+                                    imageCell.link({
+                                        href: 'javascript:void(0);'
+                                    }).append('<img border="0" src="' + thisItem.buttonicon + '"/>');
 
                                 var clickopts = {
                                     itemData: thisItem,
@@ -90,18 +92,23 @@
                                 };
 
                                 if (Csw.string(thisItem.linktype).toLowerCase() === 'text') {
-                                    $textcell.append('<span>' + thisItem.text + '</span>');
+                                    textCell.span(thisItem.text);
                                 } else {
                                     var onClick = Csw.makeDelegate(_clickItem, clickopts);
-                                    $textcell.append($('<a href="javascript:void(0);">' + thisItem.text + '</a>'));
-                                    $textcell.find('a').click(onClick);
-                                    $imagecell.find('a').click(onClick);
+                                    textCell.link({
+                                        href: 'javascript:void(0);',
+                                        value: thisItem.text,
+                                        onClick: onClick
+                                    });
+                                    
+                                    imageCell.find('a').bind('click', onClick);
                                 }
 
-                                var $welcomehidden = $textcell.CswInput('init', { ID: welcomeId,
+                                var welcomeHidden = textCell.input({
+                                    ID: welcomeId,
                                     type: Csw.enums.inputTypes.hidden
                                 });
-                                $welcomehidden.CswAttrNonDom('welcomeid', welcomeId);
+                                welcomeHidden.propNonDom('welcomeid', welcomeId);
                             }
                         }
                     }
@@ -132,7 +139,7 @@
             $typeselect.append('<option value="Search">Search</option>');
             $typeselect.append('<option value="Text">Text</option>');
             table.add(1, 2, $typeselect);
-            
+
             var viewSelectLabel = table.add(2, 1, '<span>View:</span>');
             viewSelectLabel.$.hide();
             var viewSelectCell = table.cell(2, 2);
@@ -154,8 +161,8 @@
             var ntSelectLabel = table.add(3, 1, '<span>Add New:</span>');
             var $ntselect = table.cell(3, 2)
                                  .$.CswNodeTypeSelect({
-                                      'ID': 'welcome_ntsel'
-                                  });
+                                     'ID': 'welcome_ntsel'
+                                 });
 
             /* Welcome Text Label */
             table.add(4, 1, '<span>Text:</span>');

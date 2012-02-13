@@ -17,7 +17,7 @@
         /// <para>options.enabledText: Text to display when enabled</para>
         /// <para>options.disabledText: Text to display when disabled</para>
         /// <para>options.disableOnClick: Disable the button when it's clicked</para>
-        /// <para>options.onclick: Event to execute when the button is clicked</para>
+        /// <para>options.onClick: Event to execute when the button is clicked</para>
         /// </param>
         /// <returns type="button">A button object</returns>
         var internal = {
@@ -33,43 +33,6 @@
             onClick: null
         };
         var external = {};
-
-        (function () {
-            var buttonOpt;
-
-            if (options) {
-                $.extend(internal, options);
-            }
-            internal.type = Csw.enums.inputTypes.button;
-            external = Csw.controls.input(internal);
-
-            external.propNonDom({
-                enabledText: internal.enabledText,
-                disabledText: internal.disabledText
-            });
-
-            if (false === Csw.isNullOrEmpty(internal.cssclass)) {
-                external.addClass(internal.cssclass);
-            }
-
-            buttonOpt = {
-                text: (internal.hasText),
-                label: internal.enabledText,
-                disabled: (internal.ReadOnly),
-                icons: {
-                    primary: internal.primaryicon,
-                    secondary: internal.secondaryicon
-                }
-            };
-            if (buttonOpt.disabled) {
-                buttonOpt.label = internal.disabledText;
-            }
-            external.$.button(buttonOpt);
-
-            if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
-            }
-        } ());
 
         external.enable = function () {
             /// <summary>Enable the button.</summary>
@@ -94,12 +57,58 @@
             return external;
         };
 
-        external.click = function () {
-            /// <summary>Trigger a button click.</summary>
+        external.click = function (func) {
+            /// <summary>Trigger or assign a button click event.</summary>
+            /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
             /// <returns type="button">The button object.</returns>
-            external.trigger('click');
+            if (Csw.isFunction(func)) {
+                external.bind('click', func);
+            } else {
+                external.trigger('click');
+            }
             return external;
         };
+
+        (function () {
+            var buttonOpt;
+
+            if (options) {
+                $.extend(internal, options);
+            }
+            internal.type = Csw.enums.inputTypes.button;
+            $.extend(external, Csw.controls.input(internal));
+
+            external.propNonDom({
+                enabledText: internal.enabledText,
+                disabledText: internal.disabledText
+            });
+
+            if (false === Csw.isNullOrEmpty(internal.cssclass)) {
+                external.addClass(internal.cssclass);
+            }
+
+            if (Csw.isFunction(internal.onClick)) {
+                external.bind('click', internal.onClick);
+            }
+
+            buttonOpt = {
+                text: (internal.hasText),
+                label: internal.enabledText,
+                disabled: (internal.ReadOnly),
+                icons: {
+                    primary: internal.primaryicon,
+                    secondary: internal.secondaryicon
+                }
+            };
+            if (buttonOpt.disabled) {
+                buttonOpt.label = internal.disabledText;
+            }
+            external.$.button(buttonOpt);
+
+            if (Csw.isFunction(internal.onClick)) {
+                external.bind('click', internal.onClick);
+            }
+        } ());
 
         return external;
     }

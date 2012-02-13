@@ -4,11 +4,12 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>ConsoleApplication</AssemblyName>
+    <AssemblyName>NbtJavaScript</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js</JSLintSkip>
   </PropertyGroup>
@@ -34,10 +35,19 @@
   <PropertyGroup>
     <RootNamespace>NbtJavaScript</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />
+    <Content Include="csw.js\controls\csw.tabdiv.js" />
+    <Content Include="csw.js\controls\csw.li.js" />
+    <Content Include="csw.js\controls\csw.ul.js" />
+    <Content Include="csw.js\controls\csw.factory.js" />
+    <Content Include="csw.js\controls\csw.img.js" />
+    <Content Include="csw.js\controls\csw.link.js" />
     <Content Include="csw.js\controls\csw.button.js" />
     <Content Include="csw.js\controls\csw.input.js" />
     <Content Include="csw.js\controls\csw.form.js" />
@@ -49,6 +59,13 @@
     <Content Include="csw.js\controls\csw.grid.js" />
     <Content Include="csw.js\controls\csw.table.js" />
     <Content Include="csw.js\controls\csw.timeinterval.js" />
+    <Content Include="csw.js\controls\csw.checkboxarray.js" />
+    <Content Include="csw.js\controls\csw.combobox.js" />
+    <Content Include="csw.js\controls\csw.datetimepicker.js" />
+    <Content Include="csw.js\controls\csw.imagebutton.js" />
+    <Content Include="csw.js\controls\csw.multiselect.js" />
+    <Content Include="csw.js\controls\csw.nodetypeselect.js" />
+    <Content Include="csw.js\controls\csw.numbertextbox.js" />
     <Content Include="csw.js\core\csw.core.ajax.js" />
     <Content Include="csw.js\core\csw.type.array.js" />
     <Content Include="csw.js\core\csw.type.boolean.js" />
@@ -81,24 +98,26 @@
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\main\actions\CswSessions.js" />
-    <Content Include="js\main\controls\CswButton.js" />
     <Content Include="js\main\controls\CswCheckBoxArray.js" />
-    <Content Include="csw.css\CswComboBox.css" />
     <Content Include="js\main\controls\CswComboBox.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
-    <Content Include="js\main\controls\CswDiv.js" />
     <Content Include="js\main\controls\CswImageButton.js" />
+    <Content Include="js\main\controls\CswMultiselect.js" />
+    <Content Include="js\main\controls\CswNodeTypeSelect.js" />
+    <Content Include="js\main\controls\CswNumberTextBox.js" />
+    <Content Include="js\main\controls\CswTimeInterval.js" />
+    <Content Include="js\main\controls\CswTristateCheckBox.js" />
+    <Content Include="js\main\controls\CswButton.js" />
+    <Content Include="csw.css\CswComboBox.css" />
+    <Content Include="js\main\controls\CswDiv.js" />
     <Content Include="js\main\controls\CswInput.js" />
     <Content Include="csw.css\csw.table.layout.css" />
     <Content Include="csw.js\controls\csw.layouttable.js" />
     <Content Include="js\main\controls\CswLink.js" />
     <Content Include="js\main\controls\CswList.js" />
-    <Content Include="js\main\controls\CswMultiSelect.js" />
-    <Content Include="js\main\controls\CswNodeTypeSelect.js" />
-    <Content Include="js\main\controls\CswNumberTextBox.js" />
-    <Content Include="js\main\controls\CswSelect.js" />
+    <Content Include="csw.js\controls\csw.select.js" />
     <Content Include="js\main\controls\CswSpan.js" />
-    <Content Include="js\main\controls\CswTristateCheckBox.js" />
+    <Content Include="csw.js\controls\csw.tristatecheckbox.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeButton.js" />
@@ -143,7 +162,6 @@
     <Content Include="js\main\node\CswNodeTable.js" />
     <Content Include="js\main\node\CswNodeTabs.js" />
     <Content Include="js\main\node\CswNodeTree.js" />
-    <Content Include="csw.js\controls\csw.universalsearch.js" />
     <Content Include="js\main\pagecmp\CswDashboard.js" />
     <Content Include="js\main\pagecmp\CswDefaultContent.js" />
     <Content Include="js\main\pagecmp\CswDialog.js" />
@@ -223,10 +241,10 @@
     <Content Include="_DevMobileIncludes.html" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NbtJavaScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="csw.css\_compressor.pl" />
     <None Include="csw.js\make_vsdoc.bat" />
     <None Include="csw.js\_compile.pl" />
