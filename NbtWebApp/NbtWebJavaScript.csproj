@@ -98,6 +98,14 @@
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\main\actions\CswSessions.js" />
+    <Content Include="js\main\controls\CswCheckBoxArray.js" />
+    <Content Include="js\main\controls\CswComboBox.js" />
+    <Content Include="js\main\controls\CswDatetimePicker.js" />
+    <Content Include="js\main\controls\CswImagebutton.js" />
+    <Content Include="js\main\controls\CswMultiselect.js" />
+    <Content Include="js\main\controls\CswNodetypeselect.js" />
+    <Content Include="js\main\controls\CswNumbertextbox.js" />
+    <Content Include="js\main\controls\CswTimeinterval.js" />
     <Content Include="js\main\controls\CswTristateCheckBox.js" />
     <Content Include="js\main\controls\CswButton.js" />
     <Content Include="csw.css\CswComboBox.css" />
