@@ -31,6 +31,7 @@
 
         (function () {
             var html = '',
+                attr = Csw.controls.dom.attr(),
                 style = Csw.controls.dom.style();
             var $div;
 
@@ -39,14 +40,13 @@
             }
 
             html += '<div ';
-            html += ' id="' + Csw.string(internal.ID) + '" ';
-            html += ' id="' + Csw.string(internal.name, internal.ID) + '" ';
-            html += ' class="' + Csw.string(internal.cssclass) + '" ';
-
-            if (false === Csw.isNullOrEmpty(internal.align)) {
-                html += ' align="' + internal.align + '"';
-                style.add('align', internal.align);
-            }
+            attr.add('id', internal.ID);
+            attr.add('name', Csw.string(internal.name, internal.ID));
+            attr.add('class', internal.cssclass);
+            attr.add('align', internal.align);
+            style.add('align', internal.align);
+            
+            html += attr.get();
             html += style.get();
 
             html += '>';

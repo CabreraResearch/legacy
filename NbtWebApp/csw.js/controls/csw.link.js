@@ -33,7 +33,8 @@
 
         (function () {
             var html = '',
-                style = Csw.controls.dom.style();
+                style = Csw.controls.dom.style(),
+                attr = Csw.controls.dom.attributes();
             var $link;
 
             if (options) {
@@ -43,28 +44,16 @@
             internal.ID = Csw.string(internal.ID, internal.name);
 
             html += '<a ';
-            html += ' id="' + Csw.string(internal.ID) + '" ';
-            html += ' class="' + Csw.string(internal.cssclass) + '" ';
+            attr.add('id', internal.ID);
+            attr.add('class', internal.cssclass);
+            attr.add('href', internal.href);
+            attr.add('type', internal.type);
+            attr.add('title', internal.title);
+            attr.add('rel', internal.rel);
+            attr.add('media', internal.media);
+            attr.add('target', internal.target);
 
-            if (false === Csw.isNullOrEmpty(internal.href)) {
-                html += ' href="' + internal.href + '" ';
-            }
-            if (false === Csw.isNullOrEmpty(internal.type)) {
-                html += ' type="' + internal.type + '" ';
-            }
-            if (false === Csw.isNullOrEmpty(internal.title)) {
-                html += ' title="' + internal.title + '" ';
-            }
-            if (false === Csw.isNullOrEmpty(internal.rel)) {
-                html += ' rel="' + internal.rel + '" ';
-            }
-            if (false === Csw.isNullOrEmpty(internal.media)) {
-                html += ' media="' + internal.media + '" ';
-            }
-            if (false === Csw.isNullOrEmpty(internal.target)) {
-                html += ' target="' + internal.target + '" ';
-            }
-
+            html += attr.get();
             html += style.get();
 
             html += '>';
@@ -91,7 +80,7 @@
 
         return external;
     }
-    Csw.controls.register('input', link);
+    Csw.controls.register('link', link);
     Csw.controls.link = Csw.controls.link || link;
 
 } ());

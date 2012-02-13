@@ -206,7 +206,7 @@
 
         external.style = function () {
             /// <summary> Build an HTML element style string </summary>
-            /// <returns type="String">A br object</returns>
+            /// <returns type="String">A string of style key/value pairs</returns>
             var _internal = {
                 styles: {}
             };
@@ -228,6 +228,36 @@
                 if (htmlStyle.length > 0) {
                     ret = ' style="' + htmlStyle + '"';
                 }
+                return ret;
+            };
+
+            return _external;
+        };
+
+        external.attributes = function () {
+            /// <summary> Build an HTML element attribute string </summary>
+            /// <returns type="String">A string of attribute key/value pairs</returns>
+            var _internal = {
+                attributes: {}
+            };
+            var _external = {};
+
+            _external.add = function (value, key) {
+                _internal.attributes[key] = value;
+            };
+
+            _external.get = function () {
+                var htmlAttr = '', ret = '';
+
+                function buildStyle(key, val) {
+                    if (false === Csw.isNullOrEmpty(key) &&
+                        false === Csw.isNullOrEmpty(val)) {
+                        htmlAttr += ' ' + Csw.string(key) + '="' + Csw.string(val) + '" ';
+                    }
+                }
+
+                Csw.each(_internal.attributes, buildStyle);
+
                 return ret;
             };
 
@@ -307,6 +337,16 @@
         options.$ = $element;
         internal.id = Csw.string($element.prop('id'));
 
+        internal.prepControl = function (opts, controlName) {
+            opts = opts || {};
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'sub', controlName);
+            opts.$parent = $element;
+            opts.parent = function () {
+                return options;
+            };
+            return opts;
+        };
+
         //#region Csw DOM classes
 
         options.getId = function () {
@@ -340,9 +380,7 @@
             /// <summary> Creates a Csw.table on this element</summary>
             /// <param name="tableOpts" type="Object">Options to define the table.</param>
             /// <returns type="Object">A Csw.table</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subtbl');
-            opts.$parent = $element;
+            internal.prepControl(opts, 'table');
             return Csw.controls.table(opts);
         };
 
@@ -350,9 +388,7 @@
             /// <summary> Creates a Csw.div on this element</summary>
             /// <param name="divOpts" type="Object">Options to define the div.</param>
             /// <returns type="Object">A Csw.div</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subdiv');
-            opts.$parent = $element;
+            internal.prepControl(opts, 'div');
             return Csw.controls.div(opts);
         };
 
@@ -360,7 +396,7 @@
             /// <summary> Creates a Csw.br on this element</summary>
             /// <param name="options" type="Object">Options to define the br.</param>
             /// <returns type="Object">A Csw.br</returns> 
-            opts.$parent = $element;
+            internal.prepControl(opts, 'br');
             return Csw.controls.br(opts);
         };
 
@@ -368,8 +404,7 @@
             /// <summary> Creates a Csw.span on this element</summary>
             /// <param name="spanOpts" type="Object">Options to define the span.</param>
             /// <returns type="Object">A Csw.span</returns> 
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subspan');
-            opts.$parent = $element;
+            internal.prepControl(opts, 'span');
             return Csw.controls.span(opts);
         };
 
@@ -377,9 +412,7 @@
             /// <summary> Creates a Csw.input on this element</summary>
             /// <param name="inputOpts" type="Object">Options to define the input.</param>
             /// <returns type="Object">A Csw.input</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subinput');
-            opts.$parent = $element;
+            internal.prepControl(opts, 'input');
             return Csw.controls.input(opts);
         };
 
@@ -387,9 +420,7 @@
             /// <summary> Creates a Csw.button on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the button.</param>
             /// <returns type="Object">A Csw.button</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subbutton');
-            opts.$parent = $element;
+            internal.prepControl(opts, 'button');
             return Csw.controls.button(opts);
         };
 
@@ -397,9 +428,7 @@
             /// <summary> Creates a Csw.link on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the link.</param>
             /// <returns type="Object">A Csw.link</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'sublink');
-            opts.$parent = $element;
+            internal.prepControl(opts, 'link');
             return Csw.controls.link(opts);
         };
 
@@ -407,9 +436,15 @@
             /// <summary> Creates a Csw.form on this element</summary>
             /// <param name="formOpts" type="Object">Options to define the form.</param>
             /// <returns type="Object">A Csw.form</returns> 
-            opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'subform');
-            opts.$parent = $element;
+            internal.prepControl(opts, 'form');
+            return Csw.controls.form(opts);
+        };
+
+        options.img = function (opts) {
+            /// <summary> Creates a Csw.form on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the form.</param>
+            /// <returns type="Object">A Csw.form</returns> 
+            internal.prepControl(opts, 'img');
             return Csw.controls.form(opts);
         };
 
@@ -417,12 +452,21 @@
             /// <summary> Extend a jQuery object with Csw methods.</summary>
             /// <param name="$element" type="jQuery">Element to extend.</param>
             /// <returns type="jquery">A Csw.jquery object</returns>
-            return domExtend($jqElement, {});
+            var opts = internal.prepControl({}, 'jquery');
+            return domExtend($jqElement, opts);
         };
 
         //#endregion Csw DOM classes
 
         //#region Csw "jQuery" classes
+
+        options.parent = options.parent || function () {
+            /// <summary>Get the parent of this control</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.parent();
+            var ret = options.jquery(_$element);
+            return ret;
+        };
 
         options.addClass = function (name) {
             /// <summary>Add a CSS class to an element.</summary>
@@ -471,7 +515,10 @@
             /// <param name="selector" type="String">(Optional) A selector</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
             var _$element = $element.children(Csw.string(searchTerm), Csw.string(selector));
-            var ret = options.jquery(_$element);
+            var _options = {
+                parent: function () { return options; }
+            };
+            var ret = options.jquery(_$element, _options);
             return ret;
         };
 
@@ -488,7 +535,10 @@
             /// <summary>Find the first child element of this DOM element represented by this object</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
             var _$element = $element.first();
-            var ret = options.jquery(_$element);
+            var _options = {
+                parent: function () { return options; }
+            };
+            var ret = options.jquery(_$element, _options);
             return ret;
         };
 
@@ -503,7 +553,10 @@
             } else {
                 $element.append(_$element);
             }
-            var ret = domExtend(_$element, {});
+            var _options = {
+                parent: function () { return options; }
+            };
+            var ret = domExtend(_$element, _options);
             return ret;
         };
 

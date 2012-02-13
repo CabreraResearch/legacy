@@ -26,19 +26,21 @@
         var external = {};
 
         (function () {
-            var html = '';
+            var html = '',
+                attr = Csw.controls.dom.attr();
             var $span;
             var spanText;
 
             html += '<span ';
             if (options) {
                 $.extend(internal, options);
-                html += ' id="' + Csw.string(internal.ID) + '" ';
-                html += ' class="' + Csw.string(internal.cssclass) + '" ';
+                attr.add('id', internal.ID);
+                attr.add('class', internal.cssclass);
                 spanText = Csw.string(internal.text);
             } else {
                 spanText = Csw.string(options);
             }
+            html += attr.get();
             html += '>';
             html += spanText;
             html += '</span>';

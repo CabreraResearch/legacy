@@ -22,7 +22,8 @@
         var external = {};
 
         (function () {
-            var html = '';
+            var html = '',
+                attr = Csw.controls.dom.attr();
             var $form;
             
             if (options) {
@@ -30,7 +31,8 @@
             }
             
             html += '<form ';
-            html += ' id="' + Csw.string(internal.ID) + '" ';
+            attr.add('id', internal.ID);
+            html += attr.get();
             html += '>';
             html += '</form>';
             $form = $(html);
