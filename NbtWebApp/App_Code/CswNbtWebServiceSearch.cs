@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.DB;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -16,6 +18,8 @@ namespace ChemSW.Nbt.WebServices
         private const string _NodeTypePrefix = "nt_";
         private const string _ObjectClassPrefix = "oc_";
         private wsViewBuilder _ViewBuilder;
+        private Int32 _ResultLimit = 1000;
+
         /// <summary>
         /// Searching against these field types is not yet supported
         /// </summary>
@@ -374,6 +378,30 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
+
+        #region Universal Search
+
+        public JObject doUniversalSearch( string SearchTerm )
+        {
+            JObject ret = new JObject();
+            JArray NodesArray = new JArray();
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources );
+
+            // Find all nodes with reference to the search term
+            CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "doUniversalSearch_jct_select", "jct_nodes_props" );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeid" );
+            DataTable JctTable = JctSelect.getTable( SelectCols, "", Int32.MinValue, "where nodeid is not null and lower(gestalt) like '%" + SearchTerm.ToLower() + "%'", false, null, 0, _ResultLimit );
+            foreach( DataRow JctRow in JctTable.Rows )
+            {
+                //JObject ThisNodeObj = wsTable.makeNodeObj( new CswPrimaryKey( "nodes", CswConvert.ToInt32( JctRow["nodeid"] ) ) );
+                //NodesArray.Add( ThisNodeObj );
+            } // foreach( DataRow JctRow in JctTable.Rows )
+            ret["nodes"] = NodesArray;
+            return ret;
+        } // doUniversalSearch()
+        
+        #endregion Universal Search
 
     } // class CswNbtWebServiceSearch
 
