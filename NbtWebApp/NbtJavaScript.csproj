@@ -4,11 +4,12 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>ConsoleApplication</AssemblyName>
+    <AssemblyName>NbtJavaScript</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js</JSLintSkip>
   </PropertyGroup>
@@ -34,10 +35,18 @@
   <PropertyGroup>
     <RootNamespace>NbtJavaScript</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />
+    <Content Include="csw.js\controls\csw.tabdiv.js" />
+    <Content Include="csw.js\controls\csw.li.js" />
+    <Content Include="csw.js\controls\csw.ul.js" />
+    <Content Include="csw.js\controls\csw.factory.js" />
+    <Content Include="csw.js\controls\csw.img.js" />
     <Content Include="csw.js\controls\csw.link.js" />
     <Content Include="csw.js\controls\csw.button.js" />
     <Content Include="csw.js\controls\csw.input.js" />
@@ -223,10 +232,10 @@
     <Content Include="_DevMobileIncludes.html" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NbtJavaScript.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="csw.css\_compressor.pl" />
     <None Include="csw.js\make_vsdoc.bat" />
     <None Include="csw.js\_compile.pl" />
