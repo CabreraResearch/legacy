@@ -12,13 +12,15 @@ namespace ChemSW.Nbt
         }//ctor
 
         //public abstract void load(Int32 NodeCountLowerBoundExclusive, Int32 NodeCountUpperBoundInclusive);
-        public abstract void load(ref CswNbtNodeKey ParentNodeKey, 
-                                  CswNbtViewRelationship ChildRelationshipToStartWith, 
-                                  Int32 PageSize, 
-                                  bool FetchAllPrior,
-                                  bool SingleLevelOnly, 
-                                  CswNbtNodeKey IncludedKey,
-					  			  bool RequireViewPermissions );
+        //public abstract void load(ref CswNbtNodeKey ParentNodeKey, 
+        //                          CswNbtViewRelationship ChildRelationshipToStartWith, 
+        //                          Int32 PageSize, 
+        //                          bool FetchAllPrior,
+        //                          bool SingleLevelOnly, 
+        //                          CswNbtNodeKey IncludedKey,
+        //                          bool RequireViewPermissions );
+        public abstract void load();
+
     }//CswNbtTreeLoader
 
 }//namespace ChemSW.Nbt

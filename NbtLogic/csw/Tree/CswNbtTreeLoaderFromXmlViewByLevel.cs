@@ -32,20 +32,20 @@ namespace ChemSW.Nbt
                 ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }
 
-        /// <summary>
-        /// Deprecated, non-functional, old interface
-        /// </summary>
-        public override void load( ref CswNbtNodeKey ParentNodeKey,
-                                   CswNbtViewRelationship ChildRelationshipToStartWith,
-                                   Int32 PageSize,
-                                   bool FetchAllPrior,
-                                   bool SingleLevelOnly,
-                                   CswNbtNodeKey IncludedKey,
-                                   bool RequireViewPermissions )
-        {
-        }
+        ///// <summary>
+        ///// Deprecated, non-functional, old interface
+        ///// </summary>
+        //public override void load( ref CswNbtNodeKey ParentNodeKey,
+        //                           CswNbtViewRelationship ChildRelationshipToStartWith,
+        //                           Int32 PageSize,
+        //                           bool FetchAllPrior,
+        //                           bool SingleLevelOnly,
+        //                           CswNbtNodeKey IncludedKey,
+        //                           bool RequireViewPermissions )
+        //{
+        //}
 
-        public void load()
+        public override void load()
         {
             _CswNbtTree.makeRootNode( _View.Root );
 
