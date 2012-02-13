@@ -13,7 +13,7 @@
             width: '100px',
             align: 'right',
             onSearch: null,
-            searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
+            searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch'
         };
         if (params) $.extend(internal, params);
 
