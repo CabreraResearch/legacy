@@ -38,12 +38,11 @@
 
         var cell21 = table.add(2, 1, o.detail);
         cell21.hide();
-        var link = Csw.controls.link({
+        table.cell(1,1).link({
             ID: Csw.controls.dom.makeId({ ID: id, suffix: 'cell' }),
             text: o.message,
             href: '#',
-            onClick: function () { cell21.$.toggle(); },
-            $parent: table.cell(1, 1)
+            onClick: function () { cell21.$.toggle(); }
         });
         var cell12 = table.cell(1, 2);
 

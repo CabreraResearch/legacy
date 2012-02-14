@@ -91,10 +91,6 @@
                 external.bind('change', func);
             }
         };
-        external.getValue = function () {
-            return external.$.val();
-        };
-
         return external;
     }
     Csw.controls.register('input', input);

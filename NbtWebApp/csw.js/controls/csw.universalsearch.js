@@ -47,7 +47,7 @@
 
         // Handle search submission
         internal.handleSearch = function() {
-            var searchterm = internal.searchinput.getValue();
+            var searchterm = internal.searchinput.val();
             
             Csw.tryExec(internal.onBeforeSearch);
             
