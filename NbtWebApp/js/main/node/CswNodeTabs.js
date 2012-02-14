@@ -151,7 +151,7 @@
 
                         Csw.each(tabdivs, function (thisTabDiv) {
                             //var $tabdiv = tabdivs[t];
-                            thisTabDiv.tabs({
+                            thisTabDiv.$.tabs({
                                 selected: selectedtabno,
                                 select: function (event, ui) {
                                     var selectTabContentDiv = thisTabDiv.find('div:eq(' + Csw.number(ui.index) + ')');
