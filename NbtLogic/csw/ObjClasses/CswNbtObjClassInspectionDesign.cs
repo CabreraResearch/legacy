@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
             _Finished = ( Tristate.True == this.Finished.Checked );
@@ -355,7 +355,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtNode.ReadOnly = true;
             }
 
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         /// <summary>

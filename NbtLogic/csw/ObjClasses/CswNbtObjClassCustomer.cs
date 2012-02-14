@@ -80,10 +80,10 @@ namespace ChemSW.Nbt.ObjClasses
         } // afterCreateNode()
 
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _checkForConfigFileUpdate();
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }
 
         public override void afterWriteNode()
