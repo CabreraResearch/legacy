@@ -54,7 +54,9 @@
             attr.add('type', internal.type.name);
             attr.add('placeholder', internal.placeholder);
             attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));
-            attr.add('autofocus', internal.autofocus);
+            if (Csw.bool(internal.autofocus)) {
+                attr.add('autofocus', internal.autofocus);
+            }
             attr.add('maxlength', internal.maxlength);
 
             if (internal.type.autocomplete === true && internal.autocomplete === 'on') {
