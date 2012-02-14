@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // If TargetType changes or Event is set to Create or Delete, 
             // clear value for Property and Value
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( TargetType.WasModified || Property.WasModified || Event.WasModified )
                 _setDefaultMessage();
 
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
