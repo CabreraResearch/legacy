@@ -378,29 +378,29 @@ namespace ChemSW.Nbt.WebServices
         #endregion
 
 
-        #region Universal Search
+        //#region Universal Search
 
-        public JObject doUniversalSearch( string SearchTerm )
-        {
-            JObject ret = new JObject();
-            JArray NodesArray = new JArray();
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources );
+        //public JObject doUniversalSearch( string SearchTerm )
+        //{
+        //    JObject ret = new JObject();
+        //    JArray NodesArray = new JArray();
+        //    CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, SearchTerm );
 
-            // Find all nodes with reference to the search term
-            CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "doUniversalSearch_jct_select", "jct_nodes_props" );
-            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
-            SelectCols.Add( "nodeid" );
-            DataTable JctTable = JctSelect.getTable( SelectCols, "", Int32.MinValue, "where nodeid is not null and lower(gestalt) like '%" + SearchTerm.ToLower() + "%'", false, null, 0, _CswNbtResources.TreeViewResultLimit );
-            foreach( DataRow JctRow in JctTable.Rows )
-            {
-                //JObject ThisNodeObj = wsTable.makeNodeObj( new CswPrimaryKey( "nodes", CswConvert.ToInt32( JctRow["nodeid"] ) ) );
-                //NodesArray.Add( ThisNodeObj );
-            } // foreach( DataRow JctRow in JctTable.Rows )
-            ret["nodes"] = NodesArray;
-            return ret;
-        } // doUniversalSearch()
+        //    // Find all nodes with reference to the search term
+        //    CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "doUniversalSearch_jct_select", "jct_nodes_props" );
+        //    CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+        //    SelectCols.Add( "nodeid" );
+        //    DataTable JctTable = JctSelect.getTable( SelectCols, "", Int32.MinValue, "where nodeid is not null and lower(gestalt) like '%" + SearchTerm.ToLower() + "%'", false, null, 0, _CswNbtResources.TreeViewResultLimit );
+        //    foreach( DataRow JctRow in JctTable.Rows )
+        //    {
+        //        //JObject ThisNodeObj = wsTable.makeNodeObj( new CswPrimaryKey( "nodes", CswConvert.ToInt32( JctRow["nodeid"] ) ) );
+        //        //NodesArray.Add( ThisNodeObj );
+        //    } // foreach( DataRow JctRow in JctTable.Rows )
+        //    ret["nodes"] = NodesArray;
+        //    return ret;
+        //} // doUniversalSearch()
         
-        #endregion Universal Search
+        //#endregion Universal Search
 
     } // class CswNbtWebServiceSearch
 

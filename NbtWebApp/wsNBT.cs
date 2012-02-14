@@ -807,7 +807,39 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getTable( string ViewId, string NodeId, string NodeKey )
+        public string getTableSearch( string SearchTerm )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            UseCompression();
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, SearchTerm );
+                    ReturnVal = wsTable.getTable( null );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getTable()
+
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getTableView( string ViewId, string NodeId, string NodeKey )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -823,8 +855,8 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-                        CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources );
-                        ReturnVal = wsTable.getTable( View, Node );
+                        CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, View );
+                        ReturnVal = wsTable.getTable( Node );
                         View.SaveToCache( true );
                     }
                 }
@@ -2492,33 +2524,33 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string doUniversalSearch( string SearchTerm )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm );
-                }
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+        //            ReturnVal = ws.doUniversalSearch( SearchTerm );
+        //        }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
-        } // doUniversalSearch()
+        //    return ReturnVal.ToString();
+        //} // doUniversalSearch()
 
         #endregion Search
 

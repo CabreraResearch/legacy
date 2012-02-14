@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -14,50 +15,71 @@ namespace ChemSW.Nbt.WebServices
         Int32 MaxLength = 35;
 
         private readonly CswNbtResources _CswNbtResources;
-        public CswNbtWebServiceTable( CswNbtResources CswNbtResources )
+        private readonly CswNbtView _View;
+        private readonly string _SearchTerm;
+
+        public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtView View )
         {
             _CswNbtResources = CswNbtResources;
-        } //ctor
+            _View = View;
+            _SearchTerm = string.Empty;
+        }
+        
+        public CswNbtWebServiceTable( CswNbtResources CswNbtResources, string SearchTerm )
+        {
+            _CswNbtResources = CswNbtResources;
+            _View = null;
+            _SearchTerm = SearchTerm;
+        }
 
-        public JObject getTable( CswNbtView View, CswNbtNode SelectedNode )
+        public JObject getTable( CswNbtNode SelectedNode )
         {
             JObject ret = new JObject();
 
             // Add 'default' Table layout elements for the nodetype to the view for efficiency
-            Int32 Order = -1000;
-            foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
+            ICswNbtTree Tree;
+            if( _View != null )
             {
-                if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                Int32 Order = -1000;
+                foreach( CswNbtViewRelationship ViewRel in _View.Root.ChildRelationships )
                 {
-                    foreach( CswNbtMetaDataNodeTypeProp NTProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
+                    if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                     {
-                        bool AlreadyExists = false;
-                        foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
+                        Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+                        foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )
                         {
-                            if( ViewProp.NodeTypePropId == NTProp.PropId )
+                            bool AlreadyExists = false;
+                            foreach( CswNbtViewProperty ViewProp in ViewRel.Properties )
                             {
-                                AlreadyExists = true;
+                                if( ViewProp.NodeTypePropId == NTProp.PropId )
+                                {
+                                    AlreadyExists = true;
+                                }
                             }
-                        }
 
-                        if( false == AlreadyExists )
-                        {
-                            CswNbtViewProperty NewViewProp = View.AddViewProperty( ViewRel, NTProp );
-                            NewViewProp.Order = Order;
-                            Order++;
-                        }
-                    } // foreach( CswNbtMetaDataNodeTypeProp NTProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
-                } // if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
-            } // foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
+                            if( false == AlreadyExists )
+                            {
+                                CswNbtViewProperty NewViewProp = _View.AddViewProperty( ViewRel, NTProp );
+                                NewViewProp.Order = Order;
+                                Order++;
+                            }
+                        } // foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )
+                    } // if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                } // foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            }
+            else
+            {
+                Tree = _CswNbtResources.Trees.getTreeFromSearch( _SearchTerm, false );
+            }
 
             ret["results"] = Tree.getChildNodeCount().ToString();
             JArray NodesArray = new JArray();
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 Tree.goToNthChild( c );
-                NodesArray.Add( _makeNodeObj( View, Tree ) );
+                NodesArray.Add( _makeNodeObj( Tree ) );
                 Tree.goToParentNode();
             }
 
@@ -81,16 +103,22 @@ namespace ChemSW.Nbt.WebServices
             return OutStr;
         } // _Truncate()
 
-        private JObject _makeNodeObj( CswNbtView View, ICswNbtTree Tree )
+        private JObject _makeNodeObj( ICswNbtTree Tree )
         {
             CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
+            CswNbtViewRelationship ViewRel = null;
+            if(_View != null)
+            {
+                ViewRel = (CswNbtViewRelationship) _View.FindViewNodeByUniqueId( NodeKey.ViewNodeUniqueId );
+            }
+
             return makeNodeObj( Tree.getNodeIdForCurrentPosition(),
                                 NodeKey,
                                 Tree.getNodeNameForCurrentPosition(),
                                 Tree.getNodeLockedForCurrentPosition(),
                                 _CswNbtResources.MetaData.getNodeType( NodeKey.NodeTypeId ),
                                 Tree.getChildNodePropsOfNode(),
-                                (CswNbtViewRelationship) View.FindViewNodeByUniqueId( NodeKey.ViewNodeUniqueId ) );
+                                ViewRel );
         }
 
         public JObject makeNodeObj( CswPrimaryKey NodeId,

@@ -47,14 +47,15 @@
         // Handle search submission
         internal.handleSearch = function() {
             var searchterm = internal.searchinput.getValue();
-            Csw.ajax.post({
-                url: internal.searchurl,
-                data: { SearchTerm: searchterm },
-                success: function(data) {
-Csw.log(data);
+            $searchresults_parent.CswNodeTable({
+                searchterm: searchterm,
+                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_srchresults' }),
+                onEditNode: null,
+                onDeleteNode: null,
+                onSuccess: null,
+                onNoResults: null  // function({viewid, viewmode})
+            });
 
-                } // success
-            }); // ajax
         } // handleSearch()
 
         return external;
