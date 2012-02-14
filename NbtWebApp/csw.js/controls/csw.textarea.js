@@ -24,8 +24,15 @@
             cssclass: '',
             value: '',
             text: '',
-            width: '',
+            maxlength: '',
             autofocus: false,
+            required: false,
+            rows: 1,
+            cols: 1,
+            disabled: false,
+            readonly: false,
+            form: '',
+            wrap: '',
             onChange: null //function () {}
         };
         var external = {};
@@ -47,18 +54,30 @@
             html += '<textarea ';
             attr.add('id', internal.ID);
             attr.add('name', internal.name);
-            attr.add('class', internal.cssclass);
             attr.add('placeholder', internal.placeholder);
-            attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));
+            attr.add('maxlength', internal.maxlength);
+            if (Csw.bool(internal.disabled)) {
+                attr.add('disabled', 'disabled');
+            }
+            if (Csw.bool(internal.required)) {
+                attr.add('required', 'required');
+                internal.cssclass += ' required ';
+            }
+            if (Csw.bool(internal.readonly)) {
+                attr.add('readonly', 'readonly');
+            }
             if (Csw.bool(internal.autofocus)) {
                 attr.add('autofocus', internal.autofocus);
             }
-
-            if (internal.type === Csw.enums.inputTypes.checkbox || internal.type === Csw.enums.inputTypes.radio) {
-                if (Csw.bool(internal.checked) || internal.checked === 'checked') {
-                    attr.add('checked', true);
-                }
+            attr.add('class', internal.cssclass);
+            attr.add('maxlength', internal.maxlength);
+            attr.add('form', internal.form);
+            if (internal.wrap === 'hard' || internal.wrap === 'soft') {
+                attr.add('wrap', internal.wrap);
             }
+            attr.add('rows', internal.rows);
+            attr.add('cols', internal.cols);
+
             html += attr.get();
             html += style.get();
             html += '>';
