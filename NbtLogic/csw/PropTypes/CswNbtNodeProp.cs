@@ -17,8 +17,6 @@ namespace ChemSW.Nbt.PropTypes
     abstract public class CswNbtNodeProp
     {
 
-        private CswNbtUniqueEnforcement _CswNbtUniqueEnforcement = null;
-
         /// <summary>
         /// Database interaction layer
         /// </summary>
@@ -50,7 +48,6 @@ namespace ChemSW.Nbt.PropTypes
             //_CswNbtNode = CswNbtNodePropData.Node;
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = MetaDataNodeTypeProp;
-            _CswNbtUniqueEnforcement = new CswNbtUniqueEnforcement( _CswNbtResources ); 
         }//generic
 
 
@@ -228,7 +225,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, NodeTypeProp );
 
                 // BZ 10099
-                this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtNodePropData );
+                this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp] );
 
                 ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
 
