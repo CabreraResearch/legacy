@@ -68,34 +68,41 @@ namespace ChemSW.Nbt
             foreach( DataRow NodesRow in NodesTable.Rows )
             {
                 Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
-
-                // Handle property multiplexing
-                // This assumes that property rows for the same nodeid are next to one another
-                if( ThisNodeId != PriorNodeId )
+                Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
+                
+                // Verify permissions
+                // this could be a performance problem
+                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
+                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                 {
-                    PriorNodeId = ThisNodeId;
-                    NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
-                    RowCount++;
-                } // if( ThisNodeId != PriorNodeId )
 
-                if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
-                {
-                    Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
-                    if( ThisNTPId != Int32.MinValue )
+                    // Handle property multiplexing
+                    // This assumes that property rows for the same nodeid are next to one another
+                    if( ThisNodeId != PriorNodeId )
                     {
-                        foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                        {
-                            _CswNbtTree.makeNodeCurrent( NewNodeKey );
-                            _CswNbtTree.addProperty( ThisNTPId,
-                                                     CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                     NodesRow["propname"].ToString(),
-                                                     NodesRow["gestalt"].ToString(),
-                                                     _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
-                        } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                    } // if( ThisNTPId != Int32.MinValue )
-                    _CswNbtTree.goToRoot();
-                } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                        PriorNodeId = ThisNodeId;
+                        NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
+                        RowCount++;
+                    } // if( ThisNodeId != PriorNodeId )
 
+                    if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
+                    {
+                        Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
+                        if( ThisNTPId != Int32.MinValue )
+                        {
+                            foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                            {
+                                _CswNbtTree.makeNodeCurrent( NewNodeKey );
+                                _CswNbtTree.addProperty( ThisNTPId,
+                                                         CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                         NodesRow["propname"].ToString(),
+                                                         NodesRow["gestalt"].ToString(),
+                                                         _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
+                            } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                        } // if( ThisNTPId != Int32.MinValue )
+                        _CswNbtTree.goToRoot();
+                    } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
             } // foreach(DataRow NodesRow in NodesTable.Rows)
 
             // case 24678 - Mark truncated results
