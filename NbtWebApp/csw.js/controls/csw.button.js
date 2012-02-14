@@ -87,10 +87,6 @@
                 external.addClass(internal.cssclass);
             }
 
-            if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
-            }
-
             buttonOpt = {
                 text: (internal.hasText),
                 label: internal.enabledText,
