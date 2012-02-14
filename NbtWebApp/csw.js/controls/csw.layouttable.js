@@ -148,8 +148,8 @@
         };
 
         internal.enableDrag = function () {
-            external.table.$.find('.CswLayoutTable_celldiv')
-                .draggable({
+            external.table.find('.CswLayoutTable_celldiv')
+                .$.draggable({
                     revert: "invalid",
                     drag: function (ev, dd) {
                         internal.onDrag(ev, dd, $(this));
@@ -158,8 +158,8 @@
         };
 
         internal.disableDrag = function () {
-            external.table.$.find('.CswLayoutTable_celldiv')
-                .draggable('destroy');
+            external.table.find('.CswLayoutTable_celldiv')
+                .$.draggable('destroy');
         };
 
         internal.onHoverIn = function (ev, dd, $cell) {
