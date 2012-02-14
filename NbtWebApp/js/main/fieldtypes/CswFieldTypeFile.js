@@ -32,7 +32,7 @@
                     //Edit button
                     cell12.children('div')
                         .appendTo(cell12)
-                        .CswImageButton({
+                        .$.CswImageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
                                 ID: o.ID + '_edit',
@@ -51,7 +51,7 @@
                             });
                     //Clear button
                     cell13.children('div')
-                        .CswImageButton({
+                        .$.CswImageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                                 AlternateText: 'Clear',
                                 ID: o.ID + '_clr',

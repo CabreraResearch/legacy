@@ -29,7 +29,7 @@
                 var cell12 = table.add(1, 2, '<div />');
 
                 cell12.children('div')
-                    .CswImageButton({
+                    .$.CswImageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',

@@ -49,7 +49,7 @@
                 if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     //Edit button
                     cell22.children('div')
-                        .CswImageButton({
+                        .$.CswImageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                                 AlternateText: 'Edit',
                                 ID: Csw.controls.dom.makeId(o.ID, 'edit'),
@@ -69,7 +69,7 @@
                     if( false === Csw.isNullOrEmpty(fileName) ) {
                         //Clear button
                         cell23.children('div')
-                            .CswImageButton({
+                            .$.CswImageButton({
                                     ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                                     AlternateText: 'Clear',
                                     ID: Csw.controls.dom.makeId(o.ID, 'clr'),
