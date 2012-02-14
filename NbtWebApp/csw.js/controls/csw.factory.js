@@ -133,6 +133,14 @@
             return Csw.controls.input(opts);
         };
 
+        external.textArea = function (opts) {
+            /// <summary> Creates a Csw.textArea on this element</summary>
+            /// <param name="inputOpts" type="Object">Options to define the textArea.</param>
+            /// <returns type="Object">A Csw.textArea</returns>
+            opts = internal.prepControl(opts, 'textArea');
+            return Csw.controls.textArea(opts);
+        };
+
         external.button = function (opts) {
             /// <summary> Creates a Csw.button on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the button.</param>
