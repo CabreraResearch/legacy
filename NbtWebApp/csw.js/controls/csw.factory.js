@@ -188,7 +188,7 @@
             opts = internal.prepControl(opts, 'select');
             return Csw.controls.select(opts);
         };
-        
+
         external.option = function (opts) {
             /// <summary> Creates a Csw.option on this element</summary>
             /// <param name="formOpts" type="Object">Options to define the option.</param>
@@ -364,15 +364,25 @@
         };
 
         external.data = function (prop, val) {
+            /// <summary>Store property data on the control.</summary>
+            /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
+            var ret = '',
+                _internal = Csw.clientDb.getItem('control_data_' + internal.id) || {};
             switch (arguments.length) {
                 case 0:
-                    return $.extend({}, internal.data);
+                    ret = _internal;
+                    break;
                 case 1:
-                    return internal.data[prop];
+                    ret = _internal[prop];
+                    break;
                 case 2:
-                    internal.data[prop] = val;
-                    return external;
+                    _internal[prop] = val;
+                    Csw.clientDb.setItem('control_data_' + internal.id, _internal);
+                    ret = external;
+                    break;
             }
+            return ret;
+
         };
 
         //#endregion Csw "jQuery" classes

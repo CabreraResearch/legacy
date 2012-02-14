@@ -319,7 +319,7 @@
                     else if (!o.Config &&
                         Csw.isNullOrEmpty(o.date) &&
                         o.filterToPropId === '' &&
-                        Csw.bool(tabContentDiv.$.data('canEditLayout'))) {
+                        Csw.bool(tabContentDiv.data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {
                             ID: o.ID,
