@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }
 
         // This is used by CswNbtNodeProp for unique value enforcement
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             CswNbtPropFilterSql.PropertyFilterMode FilterMode;
             string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubFields.Default.Column );
