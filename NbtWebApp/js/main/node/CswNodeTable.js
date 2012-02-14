@@ -138,7 +138,7 @@
                                 ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
                                 enabledText: btntext,
                                 disableOnClick: false,
-                                onclick: function () {
+                                onClick: function () {
                                     $.CswDialog('EditNodeDialog', {
                                         nodeids: [nodeid],
                                         nodekeys: [nodeObj.nodekey],
@@ -146,7 +146,7 @@
                                         ReadOnly: (false === nodeObj.allowedit),
                                         onEditNode: o.onEditNode
                                     }); // CswDialog
-                                } // onclick
+                                } // onClick
                             }); // CswButton
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
@@ -155,14 +155,14 @@
                                 ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
                                 enabledText: 'Delete',
                                 disableOnClick: false,
-                                onclick: function () {
+                                onClick: function () {
                                     $.CswDialog('DeleteNodeDialog', {
                                         nodenames: [nodeObj.nodename],
                                         nodeids: [nodeid],
                                         cswnbtnodekeys: [nodeObj.nodekey],
                                         onDeleteNode: o.onDeleteNode
                                     }); // CswDialog
-                                } // onclick
+                                } // onClick
                             }); // CswButton
                         } // if (nodeObj.allowdelete)
 

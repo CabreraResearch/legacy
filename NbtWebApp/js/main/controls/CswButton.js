@@ -19,7 +19,7 @@
                 primaryicon: '',
                 secondaryicon: '',
                 ReadOnly: false,
-                onclick: null 
+                onClick: null 
             };
             if (options) $.extend(o, options);
 
@@ -50,11 +50,11 @@
             }
             $button.button(buttonOpt);
             
-            if (Csw.isFunction(o.onclick)) {
+            if (Csw.isFunction(o.onClick)) {
                 $button.bind('click', function () {
                     if (false === Csw.ajax.ajaxInProgress()) {
                         if (o.disableOnClick) disable($button);
-                        o.onclick();
+                        o.onClick();
                     } 
                     return false;
                 });

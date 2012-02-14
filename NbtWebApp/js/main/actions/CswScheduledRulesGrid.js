@@ -172,7 +172,7 @@
                                 ID: Csw.controls.dom.makeSafeId('clearAll'),
                                 enabledText: 'Clear All Reprobates',
                                 disabledText: 'Clearing...',
-                                onclick: function () {
+                                onClick: function () {
                                     Csw.ajax.post({
                                         url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
                                         data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },

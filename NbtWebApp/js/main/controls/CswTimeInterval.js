@@ -15,7 +15,7 @@
             Multi: false,
             ReadOnly: false,
             Required: false,
-            onchange: null
+            onChange: null
         };
         if (options) {
             $.extend(true, o, options);
@@ -86,7 +86,7 @@
                 dayPropName = 'monthlyday';
             }
 
-            return function ($parent, onchange, useRadio, elemId) {
+            return function ($parent, onChange, useRadio, elemId) {
                 var id = elemId || o.ID + '_weeklyday',
                     picker, pickerTable, i, type, pickerCell, weeklyStartDate, weeklyTable;
 
@@ -112,8 +112,8 @@
                 }
 
                 function dayChange() {
-                    if (Csw.isFunction(o.onchange)) {
-                        o.onchange();
+                    if (Csw.isFunction(o.onChange)) {
+                        o.onChange();
                     }
                     var $this = $(this),
                         day = internal.weekDayDef[$this.val() - 1];
@@ -192,9 +192,9 @@
                             DisplayMode: 'Date',
                             ReadOnly: o.ReadOnly,
                             Required: o.Required,
-                            OnChange: function () {
-                                if (Csw.isFunction(o.onchange)) {
-                                    o.onchange();
+                            onChange: function () {
+                                if (Csw.isFunction(o.onChange)) {
+                                    o.onChange();
                                 }
                                 saveWeekInterval();
                             }
@@ -263,8 +263,8 @@
                         name: monthlyRadioId,
                         type: Csw.enums.inputTypes.radio,
                         onChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             rateType = $ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                             saveMonthInterval();
@@ -278,8 +278,8 @@
                     $MonthlyDateSelect = $byDate.CswSelect('init', {
                         ID: Csw.controls.dom.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'date' }),
                         onChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             saveMonthInterval();
                         },
@@ -305,8 +305,8 @@
                     $MonthlyRateSelect = $every.CswSelect('init', {
                         ID: Csw.controls.dom.makeId({ prefix: o.ID, ID: 'monthly', suffix: 'rate' }),
                         onChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             saveMonthInterval();
                         },
@@ -335,8 +335,8 @@
                         name: monthlyRadioId,
                         type: Csw.enums.inputTypes.radio,
                         onChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             rateType = $ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                             saveMonthInterval();
@@ -359,15 +359,15 @@
                         values: weeksInMonth,
                         selected: selected,
                         onChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             saveMonthInterval();
                         }
                     });
                     $byDay.append('<br/>');
 
-                    internal.monthlyWeekPicker($byDay, o.onchange, true, monthlyDayPickerId);
+                    internal.monthlyWeekPicker($byDay, o.onChange, true, monthlyDayPickerId);
                     return $byDay;
                 }
 
@@ -395,8 +395,8 @@
                         values: monthsInYear,
                         selected: selectedMonth,
                         onChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             saveMonthInterval();
                         }
@@ -409,8 +409,8 @@
                         values: yearsToAllow,
                         selected: selectedYear,
                         onChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             saveMonthInterval();
                         }
@@ -478,9 +478,9 @@
                         DisplayMode: 'Date',
                         ReadOnly: o.ReadOnly,
                         Required: o.Required,
-                        OnChange: function () {
-                            if (Csw.isFunction(o.onchange)) {
-                                o.onchange();
+                        onChange: function () {
+                            if (Csw.isFunction(o.onChange)) {
+                                o.onChange();
                             }
                             saveYearInterval();
                         }
@@ -520,8 +520,8 @@
                 }).propDom('checked', (rateType === Csw.enums.rateIntervalTypes.YearlyByDate));
 
             function onChange() {
-                if (Csw.isFunction(o.onchange)) {
-                    o.onchange();
+                if (Csw.isFunction(o.onChange)) {
+                    o.onChange();
                 }
                 internal.toggleIntervalDiv(rateType, inpWeeklyRadio, inpMonthlyRadio, inpYearlyRadio);
                 internal.saveRateInterval();
@@ -532,7 +532,7 @@
             inpWeeklyRadio.bind('click', function () {
                 rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
                 rateInterval.ratetype = rateType;
-                $WeeklyDiv = $WeeklyDiv || internal.weeklyWeekPicker(pickerCell.$, o.onchange, false);
+                $WeeklyDiv = $WeeklyDiv || internal.weeklyWeekPicker(pickerCell.$, o.onChange, false);
                 onChange();
             });
 
@@ -658,7 +658,7 @@
             // Set selected values
             switch (rateType) {
                 case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                    $WeeklyDiv = internal.weeklyWeekPicker(pickerCell, o.onchange, false);
+                    $WeeklyDiv = internal.weeklyWeekPicker(pickerCell, o.onChange, false);
                     break;
                 case Csw.enums.rateIntervalTypes.MonthlyByDate:
                     $MonthlyDiv = internal.makeMonthlyPicker(pickerCell);

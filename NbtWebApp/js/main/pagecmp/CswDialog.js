@@ -23,7 +23,7 @@
             $div.CswButton({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
-                onclick: function () { $div.dialog('close'); o.onYes(); }
+                onClick: function () { $div.dialog('close'); o.onYes(); }
             });
 
             openDialog($div, 300, 250, null, 'Expire Warning');
@@ -87,7 +87,7 @@
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
                 disabledText: 'Creating View',
-                onclick: function () {
+                onClick: function () {
 
                     var createData = {};
                     createData.ViewName = $nametextbox.val();
@@ -125,7 +125,7 @@
                 ID: o.ID + '_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -183,7 +183,7 @@
             $div.CswButton({
                 ID: o.objectClassId + '_add',
                 enabledText: 'Add',
-                onclick: function () {
+                onClick: function () {
                     if (Csw.isFunction(o.onSuccess)) {
                         o.onSuccess($newNode.val());
                     }
@@ -223,7 +223,7 @@
             $addBtn = $div.CswButton({
                 ID: o.objectClassId + '_add',
                 enabledText: 'Add',
-                onclick: function () {
+                onClick: function () {
                     var newNodeTypeName = $nodeType.val();
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
@@ -451,7 +451,7 @@
             var $copybtn = $div.CswButton({ ID: 'copynode_submit',
                 enabledText: 'Copy',
                 disabledText: 'Copying',
-                onclick: function () {
+                onClick: function () {
                     Csw.copyNode({
                         'nodeid': o.nodeid,
                         'nodekey': o.nodekey,
@@ -469,7 +469,7 @@
             $div.CswButton({ ID: 'copynode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -517,7 +517,7 @@
             var $deletebtn = $div.CswButton({ ID: 'deletenode_submit',
                 enabledText: 'Delete',
                 disabledText: 'Deleting',
-                onclick: function () {
+                onClick: function () {
                     Csw.deleteNodes({
                         nodeids: o.nodeids,
                         nodekeys: o.cswnbtnodekeys,
@@ -540,7 +540,7 @@
             $div.CswButton({ ID: 'deletenode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -603,7 +603,7 @@
             $div.CswButton({ ID: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -644,7 +644,7 @@
                 ID: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -656,7 +656,7 @@
             $txtsave = $div.CswButton({ ID: 'txt_save',
                 enabledText: 'Save MOL Text',
                 disabledText: 'Saving MOL...',
-                onclick: function () {
+                onClick: function () {
                     Csw.ajax.post({
                         url: o.TextUrl,
                         data: {
@@ -671,7 +671,7 @@
                             $txtsave.CswButton('enable');
                         }
                     }); // ajax
-                } // onclick
+                } // onClick
             }); // CswButton
 
 
@@ -702,7 +702,7 @@
                 ID: 'license_accept',
                 enabledText: 'I Accept',
                 disabledText: 'Accepting...',
-                onclick: function () {
+                onClick: function () {
                     Csw.ajax.post({
                         url: o.AcceptLicenseUrl,
                         success: function () {
@@ -713,13 +713,13 @@
                             $acceptbtn.CswButton('enable');
                         }
                     }); // ajax
-                } // onclick
+                } // onClick
             }); // CswButton
 
             $div.CswButton({ ID: 'license_decline',
                 enabledText: 'I Decline',
                 disabledText: 'Declining...',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                     o.onDecline();
                 }
@@ -770,7 +770,7 @@
                 enabledText: 'Print',
                 //disabledText: 'Printing...', 
                 disableOnClick: false,
-                onclick: function () {
+                onClick: function () {
                     var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
                     Csw.ajax.post({
                         url: o.GetEPLTextUrl,
@@ -781,14 +781,14 @@
                             labelx.Print();
                         } // success
                     }); // ajax
-                } // onclick
+                } // onClick
             }); // CswButton
             $printbtn.CswButton('disable');
 
             $div.CswButton({ ID: 'print_label_close',
                 enabledText: 'Close',
                 disabledText: 'Closing...',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -834,7 +834,7 @@
             $div.CswButton({
                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
                 enabledText: 'OK',
-                onclick: function () {
+                onClick: function () {
                     if (Csw.isFunction(o.onOkClick)) {
                         o.onOkClick($select.find(':selected'));
                     }

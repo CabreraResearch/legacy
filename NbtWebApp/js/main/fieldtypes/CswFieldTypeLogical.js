@@ -6,7 +6,7 @@
     var pluginName = 'CswFieldTypeLogical';
 
     var methods = {
-        init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+        init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onChange = o.onChange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
 
             var $Div = $(this);
             var propVals = o.propData.values;

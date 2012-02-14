@@ -16,7 +16,7 @@
                 Precision: '',
                 ReadOnly: false,
                 Required: false,
-                onchange: function () { },
+                onChange: function () { },
                 width: '',
                 ceilingVal: 999999999.999999
             };
@@ -50,7 +50,7 @@
                                                         type: Csw.enums.inputTypes.text,
                                                         value: o.Value,
                                                         cssclass: 'textinput number',
-                                                        onChange: o.onchange,
+                                                        onChange: o.onChange,
                                                         width: width
                                                      });
 
