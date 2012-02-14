@@ -178,7 +178,7 @@
             /// <param name="formOpts" type="Object">Options to define the img.</param>
             /// <returns type="Object">A Csw.img</returns>
             opts = internal.prepControl(opts, 'img');
-            return Csw.controls.form(opts);
+            return Csw.controls.img(opts);
         };
 
         external.select = function (opts) {
@@ -280,6 +280,15 @@
             /// <param name="selector" type="String">A selector, id or jQuery object to find.</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
             var _$element = $element.find(Csw.string(selector));
+            var ret = external.jquery(_$element);
+            return ret;
+        };
+
+        external.filter = function (selector) {
+            /// <summary>Filter the child elements of this DOM element according to this selector</summary>
+            /// <param name="selector" type="String">A filter string.</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.filter(selector);
             var ret = external.jquery(_$element);
             return ret;
         };
