@@ -170,7 +170,7 @@
                                 ID: id + '_' + i,
                                 name: id,
                                 type: type,
-                                onChange: dayChange(),
+                                onChange: dayChange,
                                 value: i,
                                 checked: isChecked(i)
                             });
