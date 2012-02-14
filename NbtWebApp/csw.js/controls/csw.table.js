@@ -28,7 +28,7 @@
             align: '',
             width: '',
             cellalign: 'top',
-            cellvalign: 'center',
+            cellvalign: 'top',
             onCreateCell: function () {
             },
             FirstCellRightAlign: false,

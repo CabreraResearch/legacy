@@ -70,25 +70,25 @@
                     attr.add('checked', true);
                 }
             }
-
             html += attr.get();
             html += style.get();
-
             html += ' />';
+            
             $input = $(html);
-            if (Csw.isFunction(internal.onChange)) {
-                $input.change(internal.onChange);
-            }
-
             Csw.controls.factory($input, external);
-
             internal.$parent.append(external.$);
+
+            if (Csw.isFunction(internal.onChange)) {
+                external.bind('change', internal.onChange);
+            }
 
         } ());
 
         external.change = function (func) {
             if (Csw.isFunction(func)) {
                 external.bind('change', func);
+            } else {
+                external.trigger('change');
             }
         };
 
