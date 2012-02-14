@@ -1190,7 +1190,12 @@ namespace ChemSW.Nbt
         }
         public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )
         {
-            return NodesById[NodeId];
+            Collection<CswNbtNodeKey> ret = null;
+            if( NodesById.ContainsKey( NodeId ) )
+            {
+                ret = NodesById[NodeId];
+            }
+            return ret;
         }
 
         //public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )

@@ -337,7 +337,7 @@ namespace ChemSW.Nbt
         {
             CswNbtNodeKey ReturnVal = null;
             Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
-            if( KeyList.Count > 0 )
+            if( KeyList != null && KeyList.Count > 0 )
             {
                 ReturnVal = (CswNbtNodeKey) KeyList[0];
                 //ReturnVal.TreeKey = Key;
