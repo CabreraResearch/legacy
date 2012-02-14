@@ -22,7 +22,7 @@
             } else {
                 var $TextArea = $('<textarea id="'+ o.ID +'" name="' + o.ID + '" rows="'+rows+'" cols="'+columns+'">'+ value +'</textarea>' )
                                     .appendTo($Div)
-                                    .change(o.onchange); 
+                                    .change(o.onChange); 
                 if(o.Required)
                 {
                     $TextArea.addClass("required");

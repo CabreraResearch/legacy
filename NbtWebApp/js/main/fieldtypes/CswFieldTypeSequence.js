@@ -19,7 +19,7 @@
                 var $TextBox = $Div.CswInput('init',{ID: o.ID,
                                                       type: Csw.enums.inputTypes.text,
                                                       cssclass: 'textinput',
-                                                      onChange: o.onchange,
+                                                      onChange: o.onChange,
                                                       value: value
                                                  }); 
 

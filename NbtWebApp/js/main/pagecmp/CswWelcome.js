@@ -39,13 +39,13 @@
                     var layoutTable = Csw.controls.layoutTable({
                         $parent: $WelcomeDiv,
                         ID: 'welcometable',
-                        cellset: { rows: 2, columns: 1 },
+                        cellSet: { rows: 2, columns: 1 },
                         TableCssClass: 'WelcomeTable',
                         cellpadding: 10,
                         align: 'center',
                         onSwap: function (ev, onSwapData) {
                             _onSwap({
-                                cellset: onSwapData.cellset,
+                                cellSet: onSwapData.cellSet,
                                 row: onSwapData.row,
                                 column: onSwapData.column,
                                 swapcellset: onSwapData.swapcellset,
@@ -62,7 +62,7 @@
                         onAddClick: function () { $.CswDialog('AddWelcomeItemDialog', { onAdd: o.onAddComponent }); },
                         onRemove: function (ev, onRemoveData) {
                             _removeItem({
-                                cellset: onRemoveData.cellset,
+                                cellSet: onRemoveData.cellSet,
                                 row: onRemoveData.row,
                                 column: onRemoveData.column,
                                 RemoveWelcomeItemUrl: o.RemoveWelcomeItemUrl
@@ -302,7 +302,7 @@
 
     function _removeItem(removedata) {
         var r = {
-            cellset: '',
+            cellSet: '',
             row: '',
             column: '',
             RemoveWelcomeItemUrl: '',
@@ -311,7 +311,7 @@
         if (removedata) {
             $.extend(r, removedata);
         }
-        var $textcell = $(r.cellset[2][1]),
+        var $textcell = $(r.cellSet[2][1]),
             welcomeid, dataJson;
 
         if ($textcell.length > 0) {
@@ -372,7 +372,7 @@
 
     function _onSwap(onSwapData) {
         var s = {
-            cellset: '',
+            cellSet: '',
             row: '',
             column: '',
             swapcellset: '',
@@ -384,12 +384,12 @@
             $.extend(s, onSwapData);
         }
 
-        _moveItem(s.MoveWelcomeItemUrl, s.cellset, s.swaprow, s.swapcolumn);
+        _moveItem(s.MoveWelcomeItemUrl, s.cellSet, s.swaprow, s.swapcolumn);
         _moveItem(s.MoveWelcomeItemUrl, s.swapcellset, s.row, s.column);
     } // onSwap()
 
-    function _moveItem(MoveWelcomeItemUrl, cellset, newrow, newcolumn) {
-        var $textcell = $(cellset[2][1]);
+    function _moveItem(MoveWelcomeItemUrl, cellSet, newrow, newcolumn) {
+        var $textcell = $(cellSet[2][1]);
         if ($textcell.length > 0) {
             var welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
             if (false === Csw.isNullOrEmpty(welcomeid)) {

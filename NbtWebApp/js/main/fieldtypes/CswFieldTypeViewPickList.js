@@ -22,7 +22,7 @@
                                 Required: o.Required,
                                 ReadOnly: o.ReadOnly,
                                 Multi: o.Multi,
-                                onchange: o.onchange,
+                                onChange: o.onChange,
                                 dataAry: optionData,
                                 nameCol: nameCol,
                                 keyCol: keyCol,

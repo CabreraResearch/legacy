@@ -51,7 +51,7 @@
                 var $edittext = editTextCell.$.CswInput('init', { ID: o.ID + '_text',
                     type: Csw.enums.inputTypes.text,
                     value: text,
-                    onChange: o.onchange
+                    onChange: o.onChange
                 });
 
                 editTable.add(2, 1, '<span>URL</span>');
@@ -60,7 +60,7 @@
                 var $edithref = editHrefCell.$.CswInput('init', { ID: o.ID + '_href',
                     type: Csw.enums.inputTypes.text,
                     value: href,
-                    onChange: o.onchange
+                    onChange: o.onChange
                 });
 
                 if (o.Required && href === '') {

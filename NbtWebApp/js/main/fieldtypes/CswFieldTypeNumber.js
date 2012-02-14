@@ -22,7 +22,7 @@
                 Precision: precision,
                 ReadOnly: Csw.bool(o.ReadOnly),
                 Required: Csw.bool(o.Required),
-                onchange: o.onchange
+                onChange: o.onChange
             });
 
             if(!Csw.isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {

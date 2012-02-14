@@ -215,7 +215,7 @@
             'MinValue': '1',
             'MaxValue': '',
             'Precision': '0',
-            'onchange': function () { }
+            "onChange": function () { }
         });
 
         // Step 3 - Add Relationships

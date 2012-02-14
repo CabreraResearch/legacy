@@ -44,7 +44,7 @@
                     var $SelectBox = selectCell.$.CswSelect('init', {
                         ID: o.ID,
                         cssclass: 'selectinput',
-                        onChange: o.onchange,
+                        onChange: o.onChange,
                         values: relationships,
                         selected: selectedNodeId
                     });

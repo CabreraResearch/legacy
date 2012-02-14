@@ -25,7 +25,7 @@
                     DisplayMode: propVals.displaymode,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    OnChange: o.onchange
+                    OnChange: o.onChange
                 });
 
                 $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);

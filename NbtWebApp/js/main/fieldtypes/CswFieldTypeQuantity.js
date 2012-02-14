@@ -23,7 +23,7 @@
                 Precision: precision,
                 ReadOnly: Csw.bool(o.ReadOnly),
                 Required: Csw.bool(o.Required),
-                onchange: o.onchange
+                onChange: o.onChange
             });
             
             if(!Csw.isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
@@ -40,7 +40,7 @@
             
             $Div.CswSelect('init', {
                     ID: o.ID,
-                    onChange: o.onchange,
+                    onChange: o.onChange,
                     values: units,
                     selected: selectedUnit
                 }); 

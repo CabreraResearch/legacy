@@ -52,7 +52,7 @@
                                            ID: o.ID + '_ans',
                                            onChange: function () {
                                                checkCompliance(compliantAnswers, $AnswerSel, correctiveActionLabel, $CorrectiveActionTextBox);
-                                               o.onchange();
+                                               o.onChange();
                                            },
                                            values: splitAnswers,
                                            selected: answer
@@ -63,13 +63,13 @@
                                     .text(correctiveAction)
                                     .change(function () {
                                         checkCompliance(compliantAnswers, $AnswerSel, correctiveActionLabel, $CorrectiveActionTextBox);
-                                        o.onchange();
+                                        o.onChange();
                                     });
                 table.add(2, 2, $CorrectiveActionTextBox);
                 table.add(3, 1, 'Comments');
                 var $comments = $('<textarea id="' + o.ID + '_com" />')
                                     .text(comments)
-                                    .change(o.onchange);
+                                    .change(o.onChange);
                 table.add(3, 2, $comments);
                 checkCompliance(compliantAnswers, $AnswerSel, correctiveActionLabel, $CorrectiveActionTextBox);
             }

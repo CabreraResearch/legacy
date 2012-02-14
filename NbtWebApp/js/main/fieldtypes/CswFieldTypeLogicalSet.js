@@ -17,7 +17,7 @@
             var $cbaDiv = $('<div />')
                     .CswCheckBoxArray('init', {
                         ID: o.ID + '_cba',
-                        onchange: o.onchange,
+                        onChange: o.onChange,
                         ReadOnly: o.ReadOnly,
                         dataAry: logicalSetJson.data,
                         cols: logicalSetJson.columns,
