@@ -7,7 +7,6 @@
     function input(options) {
         /// <summary> Create or extend an HTML <input /> and return a Csw.input object
         ///     &#10;1 - input(options)
-        ///     &#10;2 - input($jqueryElement)
         ///</summary>
         /// <param name="options" type="Object">
         /// <para>A JSON Object</para>
@@ -16,7 +15,7 @@
         /// <para>options.cssclass: CSS class to asign</para>
         /// <para>options.text: Text to display</para>
         /// </param>
-        /// <returns type="input">A input object</returns>
+        /// <returns type="input">An input object</returns>
         var internal = {
             $parent: '',
             ID: '',
