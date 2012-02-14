@@ -148,7 +148,7 @@
         };
 
         internal.enableDrag = function () {
-            external.table.find('.CswLayoutTable_celldiv')
+            external.table.$.find('.CswLayoutTable_celldiv')
                 .draggable({
                     revert: "invalid",
                     drag: function (ev, dd) {
@@ -158,7 +158,7 @@
         };
 
         internal.disableDrag = function () {
-            external.table.find('.CswLayoutTable_celldiv')
+            external.table.$.find('.CswLayoutTable_celldiv')
                 .draggable('destroy');
         };
 
