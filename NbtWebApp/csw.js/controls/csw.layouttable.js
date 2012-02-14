@@ -8,7 +8,7 @@
         var internal = {
             $parent: '',
             ID: '',
-            cellset: { rows: 1, columns: 1 },
+            cellSet: { rows: 1, columns: 1 },
             onSwap: null,
             onAddClick: null,
             onConfigOn: null,
@@ -38,7 +38,7 @@
                 if ($removecells.length > 0) {
                     external.table.trigger(internal.tableId + 'CswLayoutTable_onRemove', {
                         table: external.table,
-                        cellset: external.cellSet(external.table, row, column),
+                        cellSet: external.cellSet(external.table, row, column),
                         row: $removecells.CswAttrNonDom('row'),
                         column: $removecells.CswAttrNonDom('column')
                     });
@@ -163,18 +163,18 @@
         };
 
         internal.onHoverIn = function (ev, dd, $cell) {
-            var $cellset;
+            var $cellSet;
             if (internal.isRemoveMode()) {
-                $cellset = external.table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
-                $cellset.addClass('CswLayoutTable_remove');
+                $cellSet = external.table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
+                $cellSet.addClass('CswLayoutTable_remove');
             }
         }; // internal.onHoverIn()
 
         internal.onHoverOut = function (ev, dd, $cell) {
-            var $cellset;
+            var $cellSet;
             if (internal.isRemoveMode()) {
-                $cellset = external.table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
-                $cellset.removeClass('CswLayoutTable_remove');
+                $cellSet = external.table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
+                $cellSet.removeClass('CswLayoutTable_remove');
             }
         }; // internal.onHoverOut()
 
@@ -201,7 +201,7 @@
                 // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
                 external.table.trigger(internal.tableId + 'CswLayoutTable_onSwap', {
                     table: external.table,
-                    cellset: external.cellSet(external.table, dragCell.propNonDom('row'), dragCell.propNonDom('column')),
+                    cellSet: external.cellSet(external.table, dragCell.propNonDom('row'), dragCell.propNonDom('column')),
                     swapcellset: external.cellSet(external.table, dropCells.$.first().attr('row'), dropCells.$.first().attr('column')),
                     row: dragCell.propNonDom('row'),
                     column: dragCell.propNonDom('column'),
@@ -251,17 +251,17 @@
             /// <returns type="Array">An array of the content.</returns>
             var cellsetrows = Csw.number(external.table.propNonDom('cellset_rows')),
                 cellsetcolumns = Csw.number(external.table.propNonDom('cellset_columns')),
-                cellset = Csw.array(),
+                cellSet = Csw.array(),
                 r, c;
             for (r = 1; r <= cellsetrows; r += 1) {
                 for (c = 1; c <= cellsetcolumns; c += 1) {
-                    if (cellset[r] === undefined) {
-                        cellset[r] = Csw.array();
+                    if (cellSet[r] === undefined) {
+                        cellSet[r] = Csw.array();
                     }
-                    cellset[r][c] = internal.getCell(row, column, r, c, cellsetrows, cellsetcolumns);
+                    cellSet[r][c] = internal.getCell(row, column, r, c, cellsetrows, cellsetcolumns);
                 }
             }
-            return cellset;
+            return cellSet;
         };
 
         external.toggleConfig = function () {
@@ -346,12 +346,12 @@
                 width: internal.width,
                 align: internal.align,
                 onCreateCell: function (ev, $newcell, realrow, realcolumn) {
-                    internal.onCreateCell($newcell, realrow, realcolumn, internal.cellset.rows, internal.cellset.columns);
+                    internal.onCreateCell($newcell, realrow, realcolumn, internal.cellSet.rows, internal.cellSet.columns);
                 }
             });
             external.table.propNonDom({
-                'cellset_rows': internal.cellset.rows,
-                'cellset_columns': internal.cellset.columns
+                'cellset_rows': internal.cellSet.rows,
+                'cellset_columns': internal.cellSet.columns
             });
 
             internal.setConfigMode(external.table, 'false');

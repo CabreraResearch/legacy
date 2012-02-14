@@ -231,7 +231,7 @@
                         ID: o.ID + '_props',
                         OddCellRightAlign: true,
                         ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
-                        cellset: {
+                        cellSet: {
                             rows: 1,
                             columns: 2
                         },
@@ -259,7 +259,7 @@
                                 var propId = key; //key
                                 var subTable = layoutTable.find('#' + propId + '_subproptable');
                                 var parentCell = subTable.parent().parent();
-                                var cellSet = layoutTable.cellset(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
                                 var propCell = _getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -359,7 +359,7 @@
         } // getPropsImpl()
 
         function onRemove(onRemoveData) {
-            var propDiv = _getPropertyCell(onRemoveData.cellset).children('div').first();
+            var propDiv = _getPropertyCell(onRemoveData.cellSet).children('div').first();
             var propid = propDiv.propNonDom('propid');
 
             Csw.ajax.post({
@@ -374,7 +374,7 @@
         } // onRemove()
 
         function onSwap(onSwapData) {
-            _moveProp(_getPropertyCell(onSwapData.cellset).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
+            _moveProp(_getPropertyCell(onSwapData.cellSet).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
             _moveProp(_getPropertyCell(onSwapData.swapcellset).children('div').first(), onSwapData.row, onSwapData.column);
         } // onSwap()
 
@@ -532,7 +532,7 @@
                         ID: fieldOpt.propid + '_subproptable',
                         OddCellRightAlign: true,
                         ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
-                        cellset: {
+                        cellSet: {
                             rows: 1,
                             columns: 2
                         },
