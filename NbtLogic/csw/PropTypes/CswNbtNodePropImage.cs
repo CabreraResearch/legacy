@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.PropTypes
             string PropIdStr = CswConvert.ToString( NodeTypePropId );
             string JctNpId = CswConvert.ToString( JctNodePropId );
 
-            return "getBlob?mode=image&jctnodepropid=" + JctNpId + "&nodeid=" + NodeIdStr + "&propid=" + PropIdStr;
+            return "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNpId + "&nodeid=" + NodeIdStr + "&propid=" + PropIdStr;
         }
 
 
