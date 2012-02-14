@@ -86,8 +86,8 @@
                                                     width: width
                                                 });
 
-                        thumbnailCell.bind('hover', function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
-                        textCell.bind('hover', function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
 
                         // Name
                         var name = '<b>' + nodeObj.nodename + '</b>';
