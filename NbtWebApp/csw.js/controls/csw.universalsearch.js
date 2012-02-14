@@ -47,7 +47,7 @@
         // Handle search submission
         internal.handleSearch = function() {
             var searchterm = internal.searchinput.getValue();
-            $searchresults_parent.CswNodeTable({
+            internal.$searchresults_parent.CswNodeTable({
                 searchterm: searchterm,
                 ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_srchresults' }),
                 onEditNode: null,

@@ -106,17 +106,21 @@ namespace ChemSW.Nbt
 
                 // This assumes that property rows for the same nodeid are next to one another
                 // It also assumes that loadNodeAsChildFromRow() made the node current
-                if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
                 {
-                    foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                    Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
+                    if( ThisNTPId != Int32.MinValue )
                     {
-                        _CswNbtTree.makeNodeCurrent( NewNodeKey );
-                        _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
-                                                 CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                 NodesRow["propname"].ToString(),
-                                                 NodesRow["gestalt"].ToString(),
-                                                 _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
-                    } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                        foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                        {
+                            _CswNbtTree.makeNodeCurrent( NewNodeKey );
+                            _CswNbtTree.addProperty( ThisNTPId,
+                                                     CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                     NodesRow["propname"].ToString(),
+                                                     NodesRow["gestalt"].ToString(),
+                                                     _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
+                        } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                    } // if( ThisNTPId != Int32.MinValue )
                     _CswNbtTree.goToRoot();
                 } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
 
