@@ -8,28 +8,30 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
 
             var propVals = o.propData.values;
             var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
             var href = (false === o.Multi) ? Csw.string(propVals.href).trim() : Csw.enums.multiEditDefaultValue;
 
-            var link = '<a href="' + href + '" target="_blank">' + text + '</a>&nbsp;&nbsp;';
-
             if (o.ReadOnly) {
-                $Div.append(link);
+                propDiv.link({
+                    href: href,
+                    text: text
+                });
             } else {
-                var table = Csw.controls.table({
-                    $parent: $Div,
+                var table = propDiv.table({
                     ID: Csw.controls.dom.makeId(o.ID, 'tbl')
                 });
 
-                table.add(1, 1, link);
-                var cell12 = table.add(1, 2, '<div />');
+                table.cell(1, 1).link({
+                    href: href,
+                    text: text
+                });
+                var cell12 = table.cell(1, 2).div();
 
-                cell12.children('div')
-                    .CswImageButton({
+                cell12.$.CswImageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
@@ -40,36 +42,37 @@
                         }
                     });
 
-                var editTable = Csw.controls.table({
-                    $parent: $Div,
+                var editTable = propDiv.table({
                     ID: Csw.controls.dom.makeId(o.ID, 'edittbl')
-                }).$.hide();
+                }).hide();
 
-                editTable.add(1, 1, '<span>Text</span>');
+                editTable.cell(1, 1).span({text: 'Text'});
 
                 var editTextCell = editTable.cell(1, 2);
-                var $edittext = editTextCell.$.CswInput('init', { ID: o.ID + '_text',
+                var editText = editTextCell.input({ 
+                    ID: o.ID + '_text',
                     type: Csw.enums.inputTypes.text,
                     value: text,
                     onChange: o.onChange
                 });
 
-                editTable.add(2, 1, '<span>URL</span>');
+                editTable.cell(2, 1).span({text: 'URL'});
 
                 var editHrefCell = editTable.cell(2, 2);
-                var $edithref = editHrefCell.$.CswInput('init', { ID: o.ID + '_href',
+                var editHref = editHrefCell.input({ 
+                    ID: o.ID + '_href',
                     type: Csw.enums.inputTypes.text,
                     value: href,
                     onChange: o.onChange
                 });
 
                 if (o.Required && href === '') {
-                    editTable.$.show();
-                    $edittext.addClass("required");
-                    $edithref.addClass("required");
+                    editTable.show();
+                    editText.addClass("required");
+                    editHref.addClass("required");
                 }
-                $edittext.clickOnEnter(o.$savebtn);
-                $edithref.clickOnEnter(o.$savebtn);
+                editText.clickOnEnter(o.saveBtn);
+                editHref.clickOnEnter(o.saveBtn);
             }
         },
         save: function (o) {
@@ -77,13 +80,13 @@
                 text: null,
                 href: null
             };
-            var $edittext = o.$propdiv.find('#' + o.ID + '_text');
-            if (false === Csw.isNullOrEmpty($edittext)) {
-                attributes.text = $edittext.val();
+            var editText = o.propDiv.find('#' + o.ID + '_text');
+            if (false === Csw.isNullOrEmpty(editText)) {
+                attributes.text = editText.val();
             }
-            var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-            if (false === Csw.isNullOrEmpty($edithref)) {
-                attributes.href = $edithref.val();
+            var editHref = o.propDiv.find('#' + o.ID + '_href');
+            if (false === Csw.isNullOrEmpty(editHref)) {
+                attributes.href = editHref.val();
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

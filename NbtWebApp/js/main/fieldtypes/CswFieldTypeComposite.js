@@ -6,16 +6,16 @@
     var pluginName = 'CswFieldTypeComposite';
 
     var methods = {
-        init: function (o) { 
+        init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
-            $Div.append(value);
+            propDiv.append(value);
 
         },
-        save: function (o) { //$propdiv, $xml
+        save: function (o) {
             Csw.preparePropJsonForSave(o.propData);
         }
     };
