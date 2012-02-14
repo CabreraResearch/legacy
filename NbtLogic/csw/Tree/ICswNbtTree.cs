@@ -413,6 +413,8 @@ namespace ChemSW.Nbt
 
         //CswNbtNodeKey loadNodeAsChildFromDb( System.Int32 NodeId, string GroupName );
 
+        void removeCurrentNode();
+
         #endregion //Modification******************************
 
     }//ICswNbtTree

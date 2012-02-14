@@ -98,8 +98,6 @@
                 external.addClass(internal.cssclass);
             }
 
-            external.bind('click', onClick);
-
             buttonOpt = {
                 text: (internal.hasText),
                 label: internal.enabledText,
@@ -113,6 +111,10 @@
                 buttonOpt.label = internal.disabledText;
             }
             external.$.button(buttonOpt);
+
+            if (Csw.isFunction(internal.onClick)) {
+                external.bind('click', internal.onClick);
+            }
         } ());
 
         return external;

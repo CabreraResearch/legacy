@@ -6,4 +6,6 @@ echo exit | sqlplus nbt_master/nbt_master@orcl @nbt_finalize_ora.sql
 
 C:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Debug\NbtUpdt.exe -accessid master -mode prod
 
+echo exit | sqlplus nbt_master/nbt_master@orcl @nbt_finalize_ora.sql
+echo exit | sqlplus nbt_master/nbt_master@orcl @indexes.sql
 pause

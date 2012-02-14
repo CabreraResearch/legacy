@@ -34,14 +34,18 @@
             ID: Csw.controls.dom.makeId(id, 'tbl'),
             width: '100%'
         });
+        table.propDom('width', '100%');
 
         var cell21 = table.add(2, 1, o.detail);
         cell21.hide();
-        table.add(1, 1, '<a href="#">' + o.message + '</a>')
-            .propDom('width', '100%')
-            .bind('click', cell21.$.toggle);
+        table.cell(1,1).link({
+            ID: Csw.controls.dom.makeId({ ID: id, suffix: 'cell' }),
+            text: o.message,
+            href: '#',
+            onClick: function () { cell21.$.toggle(); }
+        });
         var cell12 = table.cell(1, 2);
-        
+
 
         cell12.$.CswImageButton({
             ButtonType: Csw.enums.imageButton_ButtonType.Delete,

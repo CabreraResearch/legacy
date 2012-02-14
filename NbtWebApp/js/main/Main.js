@@ -41,12 +41,17 @@ window.initMain = window.initMain || function (undefined) {
 
     function initAll() {
         //if (debugOn()) Csw.log('Main.initAll()');
-
         $('#CenterBottomDiv').CswLogin('init', {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
+
+                Csw.controls.universalSearch({ 
+                    $searchbox_parent: $('#SearchDiv'),
+                    $searchresults_parent: $('#CenterBottomDiv'),
+                    onBeforeSearch: function() { clear({ all: true }); }
+                });
 
                 $('#header_quota').CswQuotaImage();
 

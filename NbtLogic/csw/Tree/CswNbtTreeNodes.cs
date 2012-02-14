@@ -1272,6 +1272,12 @@ namespace ChemSW.Nbt
         }//addProperty()
 
 
+        public void removeCurrentNode()
+        {
+            _getChildNodes( _getParentNode() ).Remove( _CurrentNode );
+            _CurrentNode = _RootNode;
+        }
+
         #endregion //Modification******************************
 
         //public class CswNbtTreeNodesAttributes //: NodeAttributes

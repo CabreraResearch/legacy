@@ -10,8 +10,10 @@
         'init': function (options) {
 
             var o = {
-                TableUrl: '/NbtWebApp/wsNBT.asmx/getTable',
+                TableSearchUrl: '/NbtWebApp/wsNBT.asmx/getTableSearch',
+                TableViewUrl: '/NbtWebApp/wsNBT.asmx/getTableView',
                 viewid: '',
+                searchterm: '',
                 ID: '',
                 nodeid: '',
                 cswnbtnodekey: '',
@@ -43,13 +45,22 @@
                 cellspacing: '5px'
             });
 
-            Csw.ajax.post({
-                url: o.TableUrl,
-                data: {
+            var url, ajaxdata;
+            if (false == Csw.isNullOrEmpty(o.viewid)) {
+                url = o.TableViewUrl;
+                ajaxdata = {
                     ViewId: o.viewid,
                     NodeId: o.nodeid,
                     NodeKey: o.cswnbtnodekey
-                },
+                };
+            } else {
+                url = o.TableSearchUrl;
+                ajaxdata = { SearchTerm: o.searchterm };
+            }
+
+            Csw.ajax.post({
+                url: url,
+                data: ajaxdata,
                 success: function (data) {
                     var r = 1;
                     var c = 1;
@@ -75,8 +86,8 @@
                                                     width: width
                                                 });
 
-                        thumbnailCell.bind('hover', function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
-                        textCell.bind('hover', function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
 
                         // Name
                         var name = '<b>' + nodeObj.nodename + '</b>';
@@ -115,7 +126,7 @@
                         // Buttons
                         var btnTable = Csw.controls.table({
                             $parent: textCell,
-                            ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl' )
+                            ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl')
                         });
 
                         if (nodeObj.allowview || nodeObj.allowedit) {

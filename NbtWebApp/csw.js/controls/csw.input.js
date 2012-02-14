@@ -89,7 +89,6 @@
                 external.trigger('change');
             }
         };
-
         return external;
     }
     Csw.controls.register('input', input);

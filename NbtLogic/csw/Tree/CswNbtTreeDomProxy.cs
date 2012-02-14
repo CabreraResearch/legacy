@@ -77,7 +77,12 @@ namespace ChemSW.Nbt
             get
             {
                 //return _CswNbtResources.ViewSelect.getSessionView( _Key.SessionViewId ).ViewName;
-                return View.ViewName;
+                string ret = string.Empty;
+                if( View != null )
+                {
+                    ret = View.ViewName;
+                }
+                return ret;
             }
         }
 
@@ -148,7 +153,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtView View
         {
-            get { return ( _View ); }
+            get { return _View; }
             set { _View = value; }
         }
 
@@ -812,6 +817,11 @@ namespace ChemSW.Nbt
         public bool getCurrentNodeChildrenTruncated()
         {
             return _CswNbtTreeNodes.getCurrentNodeChildrenTruncated();
+        }
+
+        public void removeCurrentNode()
+        {
+            _CswNbtTreeNodes.removeCurrentNode();
         }
 
         #endregion //Modification******************************

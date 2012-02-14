@@ -29,8 +29,7 @@
             width: '',
             cellalign: 'top',
             cellvalign: 'top',
-            onCreateCell: function () {
-            },
+            onCreateCell: function () {},
             FirstCellRightAlign: false,
             OddCellRightAlign: false,
             border: 0
@@ -89,18 +88,18 @@
                 false === Csw.isNullOrEmpty(row) &&
                 false === Csw.isNullOrEmpty(col)) {
                 if (row <= 0) {
-                    Csw.log("error: row must be greater than 1, got: " + row);
+                    Csw.log("table.cell() error: row must be greater than 1, got: " + row);
                     row = 1;
                 }
                 if (col <= 0) {
-                    Csw.log("error: col must be greater than 1, got: " + col);
+                    Csw.log("table.cell() error: col must be greater than 1, got: " + col);
                     col = 1;
                 }
 
                 while (row > external.children('tbody').children('tr').length()) {
                     external.append('<tr></tr>');
                 }
-                thisRow = external.children('tbody').find('tr:eq(' + Csw.number(row - 1) + ')');
+                thisRow = external.children('tbody').children('tr:eq(' + Csw.number(row - 1) + ')');
                 while (col > thisRow.children('td').length()) {
                     align = external.propNonDom('cellalign');
                     if ((thisRow.children('td').length() === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
@@ -120,7 +119,7 @@
                     newCell = thisRow.append(html);
                     external.trigger('CswTable_onCreateCell', [newCell, row, thisRow.children('td').length()]);
                 }
-                $cell = thisRow.find('td:eq(' + Csw.number(col - 1) + ')').$;
+                $cell = thisRow.children('td:eq(' + Csw.number(col - 1) + ')').$;
             }
             Csw.controls.factory($cell, retCell);
             retCell.align = function (alignTo) {

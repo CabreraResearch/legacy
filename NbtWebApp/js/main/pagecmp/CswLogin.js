@@ -23,7 +23,7 @@
                 var loginDiv, loginTable, loginBtn, inpAccessId, inpUserName, inpPassword, loginMsg;
 
                 if (false === Csw.isNullOrEmpty(thisSessionId)) {
-                    o.onAuthenticate(Csw.cookie.get(Csw.cookie.cookieNames.Username));
+                    Csw.tryExec(o.onAuthenticate, Csw.cookie.get(Csw.cookie.cookieNames.Username));
                 }
                 else {
                     loginDiv = parent.div({
