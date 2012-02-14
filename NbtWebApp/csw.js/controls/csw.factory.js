@@ -141,6 +141,14 @@
             return Csw.controls.textArea(opts);
         };
 
+        external.timeInterval = function (opts) {
+            /// <summary> Creates a Csw.timeInterval on this element</summary>
+            /// <param name="inputOpts" type="Object">Options to define the timeInterval.</param>
+            /// <returns type="Object">A Csw.timeInterval</returns>
+            opts = internal.prepControl(opts, 'timeInterval');
+            return Csw.controls.timeInterval(opts);
+        };
+
         external.button = function (opts) {
             /// <summary> Creates a Csw.button on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the button.</param>
