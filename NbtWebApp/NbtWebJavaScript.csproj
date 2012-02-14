@@ -244,7 +244,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="csw.css\_compressor.pl" />
     <None Include="csw.js\make_vsdoc.bat" />
     <None Include="csw.js\_compile.pl" />
