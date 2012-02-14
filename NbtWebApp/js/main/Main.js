@@ -49,7 +49,8 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.controls.universalSearch({ 
                     $searchbox_parent: $('#SearchDiv'),
-                    $searchresults_parent: $('#CenterBottomDiv') 
+                    $searchresults_parent: $('#CenterBottomDiv'),
+                    onBeforeSearch: function() { clear({ all: true }); }
                 });
 
                 $('#header_quota').CswQuotaImage();
