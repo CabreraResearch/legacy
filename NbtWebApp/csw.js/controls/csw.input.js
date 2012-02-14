@@ -29,6 +29,7 @@
             maxlength: '',
             autofocus: false,
             autocomplete: 'on',
+            checked: false,
             onChange: null //function () {}
         };
         var external = {};
@@ -61,6 +62,11 @@
             }
             if (Csw.bool(internal.type.value.required)) {
                 attr.add('value', internal.value);
+            }
+            if (internal.type === Csw.enums.inputTypes.checkbox || internal.type === Csw.enums.inputTypes.radio) {
+                if (Csw.bool(internal.checked) || internal.checked === 'checked') {
+                    attr.add('checked', true);
+                }
             }
 
             html += attr.get();

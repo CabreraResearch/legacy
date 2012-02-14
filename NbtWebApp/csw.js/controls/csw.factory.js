@@ -158,11 +158,27 @@
         };
 
         external.img = function (opts) {
-            /// <summary> Creates a Csw.form on this element</summary>
-            /// <param name="formOpts" type="Object">Options to define the form.</param>
-            /// <returns type="Object">A Csw.form</returns> 
+            /// <summary> Creates a Csw.img on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the img.</param>
+            /// <returns type="Object">A Csw.img</returns>
             opts = internal.prepControl(opts, 'img');
             return Csw.controls.form(opts);
+        };
+
+        external.select = function (opts) {
+            /// <summary> Creates a Csw.select on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the select.</param>
+            /// <returns type="Object">A Csw.select</returns>
+            opts = internal.prepControl(opts, 'select');
+            return Csw.controls.select(opts);
+        };
+        
+        external.option = function (opts) {
+            /// <summary> Creates a Csw.option on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the option.</param>
+            /// <returns type="Object">A Csw.option</returns>
+            opts = internal.prepControl(opts, 'option');
+            return Csw.controls.option(opts);
         };
 
         external.jquery = function ($jqElement, opts) {
