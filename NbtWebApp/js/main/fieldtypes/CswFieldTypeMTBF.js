@@ -48,7 +48,7 @@
                     DisplayMode: 'Date',
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    OnChange: o.onChange
+                    onChange: o.onChange
                 });
 
                 editTable.add(3, 1, 'Units');

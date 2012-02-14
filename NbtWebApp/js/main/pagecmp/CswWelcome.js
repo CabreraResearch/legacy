@@ -180,7 +180,7 @@
             var $addbutton = table.cell(7, 2).CswButton({ ID: 'welcome_add',
                 enabledText: 'Add',
                 disabledText: 'Adding',
-                onclick: function () {
+                onClick: function () {
                     var viewtype = '';
                     var viewvalue = '';
                     var selectedView;

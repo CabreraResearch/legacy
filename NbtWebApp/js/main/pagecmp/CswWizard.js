@@ -88,7 +88,7 @@
             bCell11.$.CswButton('init', { 'ID': o.ID + '_prev',
                 'enabledText': '< Previous',
                 'disableOnClick': false,
-                'onclick': function () {
+                'onClick': function () {
                     var currentStepNo = _getCurrentStepNo(table);
                     if (o.onBeforePrevious(table, currentStepNo)) {
                         _selectStep(table, currentStepNo - 1);
@@ -100,7 +100,7 @@
             bCell11.$.CswButton('init', { 'ID': o.ID + '_next',
                 'enabledText': 'Next >',
                 'disableOnClick': false,
-                'onclick': function () {
+                'onClick': function () {
                     var currentStepNo = _getCurrentStepNo(table);
                     if (o.onBeforeNext(currentStepNo)) {
                         _selectStep(table, currentStepNo + 1);
@@ -111,12 +111,12 @@
             /* Finish Button */
             bCell11.$.CswButton('init', { 'ID': o.ID + '_finish',
                 'enabledText': o.FinishText,
-                'onclick': function () { Csw.tryExec(o.onFinish, table); }
+                'onClick': function () { Csw.tryExec(o.onFinish, table); }
             });
             /* Cancel Button */
             bCell12.$.CswButton('init', { 'ID': o.ID + '_cancel',
                 'enabledText': 'Cancel',
-                'onclick': function () { Csw.tryExec(o.onCancel, table); }
+                'onClick': function () { Csw.tryExec(o.onCancel, table); }
             });
 
             _selectStep(table, o.SelectedStep);

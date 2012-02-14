@@ -65,7 +65,7 @@
                                 ID: o.ID + '_save',
                                 enabledText: 'Save',
                                 disabledText: 'Saving',
-                                onclick: handleSave
+                                onClick: handleSave
                             });
                         }
                     } // success

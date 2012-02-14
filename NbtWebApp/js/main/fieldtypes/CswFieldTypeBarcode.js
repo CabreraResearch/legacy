@@ -6,7 +6,7 @@
     var pluginName = 'CswFieldTypeBarcode';
 
     var methods = {
-        init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly  == nodeid,propxml,onchange
+        init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onChange = o.onChange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly  == nodeid,propxml,onChange
 
             var $Div = $(this);
             $Div.contents().remove();

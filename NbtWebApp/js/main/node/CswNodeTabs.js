@@ -290,7 +290,7 @@
                         saveBtn = formTblCell11.button({ ID: 'SaveTab',
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
-                            onclick: function () { save(form, layoutTable, data, saveBtn, tabid); }
+                            onClick: function () { save(form, layoutTable, data, saveBtn, tabid); }
                         });
                     }
                     var atLeastOne = _handleProperties(layoutTable, data, tabContentDiv, tabid, false, saveBtn);
@@ -433,7 +433,7 @@
                         href: '#',
                         cssclass: 'cswprop_helplink',
                         title: helpText,
-                        onclick: function () {
+                        onClick: function () {
                             return false;
                         },
                         value: propName

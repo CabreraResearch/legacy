@@ -8,7 +8,7 @@
         var pluginName = 'CswFieldTypeLocation';
 
         var methods = {
-            init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+            init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onChange = o.onChange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
             
                 var $Div = $(this);
                 $Div.contents().remove();
@@ -83,14 +83,14 @@
         };
     
     
-        function onTreeSelect($selectdiv, itemid, text, iconurl, onchange)
+        function onTreeSelect($selectdiv, itemid, text, iconurl, onChange)
         {
             if(itemid === 'root') itemid = '';   // case 21046
             $selectdiv.CswComboBox( 'TopContent', text );
             if($selectdiv.val() !== itemid)
             {
                 $selectdiv.val(itemid);
-                onchange();
+                onChange();
             }
             setTimeout(function () { $selectdiv.CswComboBox( 'close'); }, 300);
         }

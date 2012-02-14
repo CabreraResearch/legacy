@@ -6,7 +6,7 @@
     var pluginName = 'CswFieldTypeLocationContents';
 
     var methods = {
-        init: function (o) { // nodepk, $xml, onchange
+        init: function (o) { // nodepk, $xml, onChange
 
                 var $Div = $(this);
                 $Div.contents().remove();
