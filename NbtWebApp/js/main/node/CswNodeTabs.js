@@ -61,7 +61,7 @@
             if (o.ShowAsReport && false === o.Multi) {
                 linkDiv.link({
                     href: '#',
-                    text: 'As Repoprt',
+                    text: 'As Report',
                     onClick: function () {
                         Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(o.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(o.nodekeys, 0), 600, 800);
                     }
