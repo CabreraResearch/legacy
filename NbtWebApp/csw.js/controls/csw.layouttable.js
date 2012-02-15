@@ -344,8 +344,10 @@
                 OddCellRightAlign: internal.OddCellRightAlign,
                 width: internal.width,
                 align: internal.align,
-                onCreateCell: function (ev, $newcell, realrow, realcolumn) {
-                    internal.onCreateCell($newcell, realrow, realcolumn, internal.cellSet.rows, internal.cellSet.columns);
+                onCreateCell: function (ev, newCell, realrow, realcolumn) {
+                    if (Csw.contains(newCell, '$')) {
+                        internal.onCreateCell(newCell, realrow, realcolumn, internal.cellSet.rows, internal.cellSet.columns);
+                    }
                 }
             });
             external.table.propNonDom({

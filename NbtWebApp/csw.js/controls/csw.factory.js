@@ -30,6 +30,30 @@
             return opts;
         };
 
+        internal.makeControlForChain = function (_$element, method) {
+            var ret,
+                _options = {
+                    parent: function () { return external; },
+                    root: external.root,
+                    length: function () {
+                        return 0; 
+                    }
+                };
+            _options.children = function () {
+                return _options;
+            };
+            if (false === Csw.isNullOrEmpty(_$element, true)) {
+                if (Csw.isFunction(method)) {
+                    ret = method(_$element, _options);
+                } else {
+                    ret = external.jquery(_$element, _options);
+                }
+            } else {
+                ret = _options;
+            }
+            return ret;
+        };
+
         //#region Csw DOM classes
         delete external.ID;
         delete external.$parent;
@@ -257,19 +281,30 @@
         external.parent = external.parent || function () {
             /// <summary>Get the parent of this control</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.parent();
-            var ret = external.jquery(_$element);
+            var _$element = $element.parent(),
+                ret;
+
+            if (false === Csw.isNullOrEmpty(_$element, true)) {
+                ret = external.jquery(_$element);
+            } else {
+                ret = {};
+            }
             return ret;
         };
 
         external.root = external.root || function () {
             /// <summary>Get the root (great, great, great grandparent) of this control</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.parent();
+            var _$element = $element.parent(),
+                ret;
             while (false === Csw.isNullOrEmpty(_$element.parent(), true)) {
                 _$element = _$element.parent();
             }
-            var ret = external.jquery(_$element);
+            if (false === Csw.isNullOrEmpty(_$element, true)) {
+                ret = external.jquery(_$element);
+            } else {
+                ret = {};
+            }
             return ret;
         };
 
@@ -328,11 +363,8 @@
             /// <param name="searchTerm" type="String">(Optional) Some search term to limit child results</param>
             /// <param name="selector" type="String">(Optional) A selector</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.children(Csw.string(searchTerm), Csw.string(selector));
-            var _options = {
-                parent: function () { return external; }
-            };
-            var ret = external.jquery(_$element, _options);
+            var _$element = $element.children(Csw.string(searchTerm), Csw.string(selector)),
+                ret = internal.makeControlForChain(_$element);
             return ret;
         };
 
@@ -340,8 +372,8 @@
             /// <summary>Find the child elements of this DOM element represented by this object</summary>
             /// <param name="selector" type="String">A selector, id or jQuery object to find.</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.find(Csw.string(selector));
-            var ret = external.jquery(_$element);
+            var _$element = $element.find(Csw.string(selector)),
+                ret = internal.makeControlForChain(_$element);
             return ret;
         };
 
@@ -349,19 +381,16 @@
             /// <summary>Filter the child elements of this DOM element according to this selector</summary>
             /// <param name="selector" type="String">A filter string.</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.filter(selector);
-            var ret = external.jquery(_$element);
+            var _$element = $element.filter(selector),
+                ret = internal.makeControlForChain(_$element);
             return ret;
         };
 
         external.first = function () {
             /// <summary>Find the first child element of this DOM element represented by this object</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.first();
-            var _options = {
-                parent: function () { return external; }
-            };
-            var ret = external.jquery(_$element, _options);
+            var _$element = $element.first(),
+                ret = internal.makeControlForChain(_$element);
             return ret;
         };
 
@@ -369,7 +398,7 @@
             /// <summary>Attach an object to this element.</summary>
             /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
             /// <returns type="Object">The appended Csw object (for chaining)</returns> 
-            var _$element;
+            var _$element, ret;
             try {
                 _$element = $(object);
             } catch (e) {
@@ -377,14 +406,11 @@
             }
             if (false === Csw.isNullOrEmpty(object) && _$element.length === 0) {
                 /* This handles plain text */
-                $element.append(object);
+                $element.append(Csw.string(object));
             } else {
                 $element.append(_$element);
             }
-            var _options = {
-                parent: function () { return external; }
-            };
-            var ret = factory(_$element, _options);
+            ret = internal.makeControlForChain(_$element, factory);
             return ret;
         };
 
@@ -428,6 +454,14 @@
             /// <summary>Empty the element.</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
             $element.empty();
+            return external;
+        };
+
+        external.remove = function () {
+            /// <summary>Remove the element and delete the object.</summary>
+            /// <returns type="null"></returns> 
+            $element.remove();
+            external = null;
             return external;
         };
 

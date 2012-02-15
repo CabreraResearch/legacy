@@ -213,7 +213,10 @@
             var _external = {};
 
             _external.add = function (key, value) {
-                _internal.styles[key] = value;
+                if (false === Csw.isNullOrEmpty(key) &&
+                        false === Csw.isNullOrEmpty(value)) {
+                    _internal.styles[key] = value;
+                }
             };
 
             _external.get = function () {
