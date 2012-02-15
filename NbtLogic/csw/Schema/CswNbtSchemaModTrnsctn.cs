@@ -55,6 +55,11 @@ namespace ChemSW.Nbt.Schema
         //    get { return ( _CswDdl.ManageConstraints ); }
         //}//ManageConstraints
 
+        public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
+        {
+            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources ) );
+        }
+
         #region TransactionManagement
         public void beginTransaction()
         {
