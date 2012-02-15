@@ -42,6 +42,7 @@
     <Content Include="ConnectTest.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />
+    <Content Include="csw.js\controls\csw.textarea.js" />
     <Content Include="csw.js\controls\csw.tabdiv.js" />
     <Content Include="csw.js\controls\csw.li.js" />
     <Content Include="csw.js\controls\csw.ul.js" />
@@ -54,6 +55,7 @@
     <Content Include="csw.js\controls\csw.div.js" />
     <Content Include="csw.js\controls\csw.span.js" />
     <Content Include="csw.js\controls\csw.br.js" />
+    <Content Include="csw.js\controls\csw.universalsearch.js" />
     <Content Include="csw.js\controls\csw.view.visibilityselect.js" />
     <Content Include="csw.js\controls\csw.dom.js" />
     <Content Include="csw.js\controls\csw.grid.js" />
@@ -244,7 +246,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="csw.css\_compressor.pl" />
     <None Include="csw.js\make_vsdoc.bat" />
     <None Include="csw.js\_compile.pl" />

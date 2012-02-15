@@ -8,8 +8,8 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var answer = (false === o.Multi) ? Csw.string(propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
             var allowedAnswers = Csw.string(propVals.allowedanswers).trim();
@@ -22,20 +22,20 @@
             var dateCorrected = (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
 
             if (o.ReadOnly) {
-                $Div.append('Answer: ' + answer);
+                propDiv.append('Answer: ' + answer);
                 if (dateAnswered !== '') {
-                    $Div.append(' (' + dateAnswered + ')');
+                    propDiv.append(' (' + dateAnswered + ')');
                 }
-                $Div.append('<br/>');
-                $Div.append('Corrective Action: ' + correctiveAction);
+                propDiv.br();
+                propDiv.append('Corrective Action: ' + correctiveAction);
                 if (dateCorrected !== '') {
-                    $Div.append(' (' + dateCorrected + ')');
+                    propDiv.append(' (' + dateCorrected + ')');
                 }
-                $Div.append('<br/>');
-                $Div.append('Comments: ' + comments + '<br/>');
+                propDiv.br();
+                propDiv.append('Comments: ' + comments);
+                propDiv.br();
             } else {
-                var table = Csw.controls.table({
-                    $parent: $Div,
+                var table = propDiv.table({
                     ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
                     FirstCellRightAlign: true
                 });
@@ -47,31 +47,36 @@
                 } else {
                     splitAnswers.push('');
                 }
-                var $AnswerSel = table.cell(1, 2)
-                                       .$.CswSelect('init', {
-                                           ID: o.ID + '_ans',
-                                           onChange: function () {
-                                               checkCompliance(compliantAnswers, $AnswerSel, correctiveActionLabel, $CorrectiveActionTextBox);
-                                               o.onchange();
-                                           },
-                                           values: splitAnswers,
-                                           selected: answer
-                                       });
+                var answerSel = table.cell(1, 2)
+                                      .select({
+                                          ID: o.ID + '_ans',
+                                          onChange: function () {
+                                              checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                                              o.onChange();
+                                          },
+                                          values: splitAnswers,
+                                          selected: answer
+                                      });
 
                 var correctiveActionLabel = table.add(2, 1, 'Corrective Action');
-                var $CorrectiveActionTextBox = $('<textarea id="' + o.ID + '_cor" />')
-                                    .text(correctiveAction)
-                                    .change(function () {
-                                        checkCompliance(compliantAnswers, $AnswerSel, correctiveActionLabel, $CorrectiveActionTextBox);
-                                        o.onchange();
-                                    });
-                table.add(2, 2, $CorrectiveActionTextBox);
+                var correctiveActionTextBox = table.cell(2, 2).textArea({
+                    ID: o.ID + '_cor',
+                    text: correctiveAction,
+                    onChange: function () {
+                        checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                        o.onChange();
+                    }
+                });
+
                 table.add(3, 1, 'Comments');
-                var $comments = $('<textarea id="' + o.ID + '_com" />')
-                                    .text(comments)
-                                    .change(o.onchange);
-                table.add(3, 2, $comments);
-                checkCompliance(compliantAnswers, $AnswerSel, correctiveActionLabel, $CorrectiveActionTextBox);
+                var commentsTextBox = table.cell(3, 2).textArea({
+                    ID: o.ID + '_com',
+                    text: comments,
+                    onChange: o.onChange
+                });
+
+                table.add(3, 2, commentsTextBox);
+                checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
             }
         },
         save: function (o) {
@@ -80,45 +85,45 @@
                 correctiveaction: null,
                 comments: null
             };
-            var $answer = o.$propdiv.find('#' + o.ID + '_ans');
-            if (false === Csw.isNullOrEmpty($answer, true)) {
-                attributes.answer = $answer.val();
+            var answer = o.propDiv.find('#' + o.ID + '_ans');
+            if (false === Csw.isNullOrEmpty(answer, true)) {
+                attributes.answer = answer.val();
             }
-            var $correct = o.$propdiv.find('#' + o.ID + '_cor');
-            if (false === Csw.isNullOrEmpty($correct, true)) {
-                attributes.correctiveaction = $correct.val();
+            var correct = o.propDiv.find('#' + o.ID + '_cor');
+            if (false === Csw.isNullOrEmpty(correct, true)) {
+                attributes.correctiveaction = correct.val();
             }
-            var $comments = o.$propdiv.find('#' + o.ID + '_com');
-            if (false === Csw.isNullOrEmpty($comments, true)) {
-                attributes.comments = $comments.val();
+            var comments = o.propDiv.find('#' + o.ID + '_com');
+            if (false === Csw.isNullOrEmpty(comments, true)) {
+                attributes.comments = comments.val();
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
 
-    function checkCompliance(compliantAnswers, $AnswerSel, correctiveActionLabel, $CorrectiveActionTextBox) {
+    function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox) {
         if (false === multi) {
             var splitCompliantAnswers = compliantAnswers.split(',');
             var isCompliant = true;
-            var selectedAnswer = $AnswerSel.val();
-            var correctiveAction = $CorrectiveActionTextBox.val();
+            var selectedAnswer = answerSel.val();
+            var correctiveAction = correctiveActionTextBox.val();
 
             if (selectedAnswer !== '' && correctiveAction === '') {
                 isCompliant = false;
-                for (var i = 0; i < splitCompliantAnswers.length; i++) {
+                for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
                     isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
                 }
             }
             if (isCompliant) {
-                $AnswerSel.removeClass('CswFieldTypeQuestion_OOC');
+                answerSel.removeClass('CswFieldTypeQuestion_OOC');
                 if (correctiveAction === '') {
                     correctiveActionLabel.hide();
-                    $CorrectiveActionTextBox.hide();
+                    correctiveActionTextBox.hide();
                 }
             } else {
-                $AnswerSel.addClass('CswFieldTypeQuestion_OOC');
+                answerSel.addClass('CswFieldTypeQuestion_OOC');
                 correctiveActionLabel.show();
-                $CorrectiveActionTextBox.show();
+                correctiveActionTextBox.show();
             }
         }
     } // checkCompliance()

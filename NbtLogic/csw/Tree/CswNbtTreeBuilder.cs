@@ -142,6 +142,11 @@ namespace ChemSW.Nbt
             return ( _CswNbtTreeFactory.makeTree( _TreeMode, View, IsFullyPopulated ) ); //, CswNbtTreeKey ) );
 
         }//_makeTree()
+        private ICswNbtTree _makeTree( bool IsFullyPopulated ) //CswNbtTreeKey CswNbtTreeKey )
+        {
+            return ( _CswNbtTreeFactory.makeTree( _TreeMode, null, IsFullyPopulated ) ); //, CswNbtTreeKey ) );
+
+        }//_makeTree()
 
 
         /// <summary>
@@ -197,6 +202,29 @@ namespace ChemSW.Nbt
             return ( ReturnVal );
 
         }//getTreeFromView()
+
+
+        /// <summary>
+        /// Instance a Tree from a Universal Search
+        /// </summary>
+        public ICswNbtTree getTreeFromSearch( string SearchTerm, bool IncludeSystemNodes )
+        {
+            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, IncludeSystemNodes );
+        }
+
+        /// <summary>
+        /// Instance a Tree from a Universal Search
+        /// </summary>
+        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, bool IncludeSystemNodes )
+        {
+            ICswNbtTree ReturnVal = _makeTree( true );
+
+            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, IncludeSystemNodes );
+            TreeLoader.load();
+
+            return ( ReturnVal );
+
+        }//getTreeFromSearch()
 
         ///// <summary>
         ///// Instance a Tree from Raw XML

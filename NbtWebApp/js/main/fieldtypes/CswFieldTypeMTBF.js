@@ -8,8 +8,8 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var startDate = (false === o.Multi) ? Csw.string(propVals.startdatetime.date) : Csw.enums.multiEditDefaultValue;
             var dateFormat = Csw.serverDateFormatToJQuery(propVals.startdatetime.dateformat);
@@ -17,18 +17,17 @@
             var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             var units = (false === o.Multi) ? Csw.string(propVals.units).trim() : Csw.enums.multiEditDefaultValue;
 
-            var table = Csw.controls.table({
-                $parent: $Div,
+            var table = propDiv.table({
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl')
             });
 
             var mtbfStatic = (units !== Csw.enums.multiEditDefaultValue) ? value + '&nbsp;' + units : value;
             table.add(1, 1, mtbfStatic);
 
-            var $cell12 = table.cell(1, 2);
+            var cell12 = table.cell(1, 2);
 
             if (false === o.ReadOnly) {
-                $cell12.$.CswImageButton({
+                cell12.$.CswImageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                     AlternateText: 'Edit',
                     'ID': o.ID,
@@ -48,7 +47,7 @@
                     DisplayMode: 'Date',
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    OnChange: o.onchange
+                    onChange: o.onChange
                 });
 
                 editTable.add(3, 1, 'Units');
@@ -56,10 +55,9 @@
                 if (o.Multi) {
                     unitVals.push(Csw.enums.multiEditDefaultValue);
                 }
-                editTable.cell(3, 2)
-                         .$.CswSelect('init', {
+                editTable.cell(3, 2).select({
                              ID: o.ID + '_units',
-                             onChange: o.onchange,
+                             onChange: o.onChange,
                              values: unitVals,
                              selected: units
                          });
@@ -77,18 +75,18 @@
                 units: null
             };
 
-            var $StartDate = o.$propdiv.find('#' + o.ID + '_sd'),
+            var startDate = o.propDiv.find('#' + o.ID + '_sd'),
                 dateVal;
 
-            if (false === Csw.isNullOrEmpty($StartDate)) {
-                dateVal = $StartDate.CswDateTimePicker('value', o.propData.readonly);
+            if (false === Csw.isNullOrEmpty(startDate)) {
+                dateVal = startDate.$.CswDateTimePicker('value', o.propData.readonly);
                 attributes.startdatetime.date = dateVal.date;
                 attributes.startdatetime.time = dateVal.time;
             }
 
-            var $Units = o.$propdiv.find('#' + o.ID + '_units');
-            if (false === Csw.isNullOrEmpty($Units)) {
-                attributes.units = $Units.val();
+            var units = o.propDiv.find('#' + o.ID + '_units');
+            if (false === Csw.isNullOrEmpty(units)) {
+                attributes.units = units.val();
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

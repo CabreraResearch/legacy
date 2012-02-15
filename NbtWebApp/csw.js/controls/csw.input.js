@@ -7,7 +7,6 @@
     function input(options) {
         /// <summary> Create or extend an HTML <input /> and return a Csw.input object
         ///     &#10;1 - input(options)
-        ///     &#10;2 - input($jqueryElement)
         ///</summary>
         /// <param name="options" type="Object">
         /// <para>A JSON Object</para>
@@ -16,7 +15,7 @@
         /// <para>options.cssclass: CSS class to asign</para>
         /// <para>options.text: Text to display</para>
         /// </param>
-        /// <returns type="input">A input object</returns>
+        /// <returns type="input">An input object</returns>
         var internal = {
             $parent: '',
             ID: '',
@@ -29,6 +28,7 @@
             maxlength: '',
             autofocus: false,
             autocomplete: 'on',
+            checked: false,
             onChange: null //function () {}
         };
         var external = {};
@@ -53,37 +53,42 @@
             attr.add('type', internal.type.name);
             attr.add('placeholder', internal.placeholder);
             attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));
-            attr.add('autofocus', internal.autofocus);
             attr.add('maxlength', internal.maxlength);
-
+            attr.add('value', internal.value);
+            
+            if (Csw.bool(internal.autofocus)) {
+                attr.add('autofocus', internal.autofocus);
+            }
             if (internal.type.autocomplete === true && internal.autocomplete === 'on') {
                 attr.add('autocomplete', 'on');
             }
-            if (Csw.bool(internal.type.value.required)) {
-                attr.add('value', internal.value);
+            if (internal.type === Csw.enums.inputTypes.checkbox || internal.type === Csw.enums.inputTypes.radio) {
+                if (Csw.bool(internal.checked) || internal.checked === 'checked') {
+                    attr.add('checked', true);
+                }
             }
-
+            
             html += attr.get();
             html += style.get();
-
             html += ' />';
+            
             $input = $(html);
-            if (Csw.isFunction(internal.onChange)) {
-                $input.change(internal.onChange);
-            }
-
             Csw.controls.factory($input, external);
-
             internal.$parent.append(external.$);
+
+            if (Csw.isFunction(internal.onChange)) {
+                external.bind('change', internal.onChange);
+            }
 
         } ());
 
         external.change = function (func) {
             if (Csw.isFunction(func)) {
                 external.bind('change', func);
+            } else {
+                external.trigger('change');
             }
         };
-
         return external;
     }
     Csw.controls.register('input', input);

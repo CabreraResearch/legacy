@@ -101,7 +101,7 @@
             'ID': o.ID + '_copyview',
             'enabledText': 'Copy View',
             'disableOnClick': true,
-            'onclick': function () {
+            'onClick': function () {
                 var viewid = _getSelectedViewId();
                 if (false === Csw.isNullOrEmpty(viewid)) {
                     var dataJson = {
@@ -119,7 +119,7 @@
                         }
                     });
                 } // if(viewid !== '' && viewid !== undefined)
-            } // onclick
+            } // onClick
         }); // copy button
         $copyviewbtn.CswButton('disable');
 
@@ -127,7 +127,7 @@
             ID: o.ID + '_deleteview',
             enabledText: 'Delete View',
             disableOnClick: true,
-            onclick: function () {
+            onClick: function () {
                 var viewid = _getSelectedViewId();
                 if (false === Csw.isNullOrEmpty(viewid)) {
                     /* remember: confirm is globally blocking call */
@@ -149,7 +149,7 @@
                         });
                     }
                 }
-            } // onclick
+            } // onClick
         }); // delete button
         $deleteviewbtn.CswButton('disable');
 
@@ -157,7 +157,7 @@
             'ID': o.ID + '_newview',
             'enabledText': 'Create New View',
             'disableOnClick': false,
-            'onclick': function () {
+            'onClick': function () {
                 $.CswDialog('AddViewDialog', {
                     onAddView: function (newviewid) {
                         _getViewsGrid(newviewid);
@@ -166,7 +166,7 @@
                         $newviewbtn.CswButton('enable');
                     }
                 }); // CswDialog
-            } // onclick
+            } // onClick
         });
 
         //$wizard.CswWizard('button', 'next', 'disable');
@@ -215,7 +215,7 @@
             'MinValue': '1',
             'MaxValue': '',
             'Precision': '0',
-            'onchange': function () { }
+            "onChange": function () { }
         });
 
         // Step 3 - Add Relationships
@@ -540,7 +540,7 @@
                     FirstCellRightAlign: true
                 });
 
-                function _makeAllowCB(row, idsuffix, text, checked, onchange) {
+                function _makeAllowCB(row, idsuffix, text, checked, onChange) {
                     subTable.add(row, 1, 'Allow ' + text);
                     var allowCell = subTable.cell(row, 2);
                     var $allowcheck = allowCell.$.CswInput('init', {
@@ -548,8 +548,8 @@
                         type: Csw.enums.inputTypes.checkbox,
                         onChange: function () {
                             var $this = $(this);
-                            if (isFunction(onchange)) {
-                                onchange($this.is(':checked'));
+                            if (isFunction(onChange)) {
+                                onChange($this.is(':checked'));
                             }
                         }
                     });

@@ -70,11 +70,22 @@
         };
 
         (function () {
-            var buttonOpt;
-
             if (options) {
                 $.extend(internal, options);
             }
+
+            var buttonOpt;
+
+            function onClick() {
+                if (false === Csw.ajax.ajaxInProgress()) {
+                    if (internal.disableOnClick) {
+                        external.disable();
+                    }
+                }
+                return Csw.tryExec(internal.onClick);
+            }
+
+
             internal.type = Csw.enums.inputTypes.button;
             $.extend(external, Csw.controls.input(internal));
 
@@ -85,10 +96,6 @@
 
             if (false === Csw.isNullOrEmpty(internal.cssclass)) {
                 external.addClass(internal.cssclass);
-            }
-
-            if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
             }
 
             buttonOpt = {
@@ -104,6 +111,10 @@
                 buttonOpt.label = internal.disabledText;
             }
             external.$.button(buttonOpt);
+
+            if (Csw.isFunction(internal.onClick)) {
+                external.bind('click', internal.onClick);
+            }
         } ());
 
         return external;

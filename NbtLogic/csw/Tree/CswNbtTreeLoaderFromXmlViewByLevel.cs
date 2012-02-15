@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
     {
-        public Int32 ResultLimit = 1001;  // BZ 8460
+        //public Int32 ResultLimit = 1001;  // BZ 8460
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
@@ -27,25 +27,25 @@ namespace ChemSW.Nbt
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
 
-            string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
-            if( CswTools.IsInteger( ResultLimitString ) )
-                ResultLimit = CswConvert.ToInt32( ResultLimitString );
+            //string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
+            //if( CswTools.IsInteger( ResultLimitString ) )
+            //    ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }
 
-        /// <summary>
-        /// Deprecated, non-functional, old interface
-        /// </summary>
-        public override void load( ref CswNbtNodeKey ParentNodeKey,
-                                   CswNbtViewRelationship ChildRelationshipToStartWith,
-                                   Int32 PageSize,
-                                   bool FetchAllPrior,
-                                   bool SingleLevelOnly,
-                                   CswNbtNodeKey IncludedKey,
-                                   bool RequireViewPermissions )
-        {
-        }
+        ///// <summary>
+        ///// Deprecated, non-functional, old interface
+        ///// </summary>
+        //public override void load( ref CswNbtNodeKey ParentNodeKey,
+        //                           CswNbtViewRelationship ChildRelationshipToStartWith,
+        //                           Int32 PageSize,
+        //                           bool FetchAllPrior,
+        //                           bool SingleLevelOnly,
+        //                           CswNbtNodeKey IncludedKey,
+        //                           bool RequireViewPermissions )
+        //{
+        //}
 
-        public void load()
+        public override void load()
         {
             _CswNbtTree.makeRootNode( _View.Root );
 
@@ -66,10 +66,10 @@ namespace ChemSW.Nbt
             DataTable NodesTable = new DataTable();
             string Sql = _makeNodeSql( Relationship );
 
-            Int32 thisResultLimit = ResultLimit;
+            Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit;
             if( Relationship.Properties.Count > 0 )
             {
-                thisResultLimit = ResultLimit * Relationship.Properties.Count;
+                thisResultLimit = thisResultLimit * Relationship.Properties.Count;
             }
 
             CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );

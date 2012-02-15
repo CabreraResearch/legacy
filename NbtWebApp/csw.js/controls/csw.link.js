@@ -26,7 +26,7 @@
             title: '',
             rel: '',
             media: '',
-            target: '',
+            target: '_blank',
             onClick: null //function () {}
         };
         var external = {};

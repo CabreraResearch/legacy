@@ -8,14 +8,13 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var viewId = Csw.string(propVals.viewid).trim();
             var viewMode = Csw.string(propVals.viewmode).trim().toLowerCase();
             /* var viewName = Csw.string(propVals.name).trim(); */
-            var table = Csw.controls.table({
-                    $parent: $Div,
+            var table = propDiv.table({
                     ID: Csw.controls.dom.makeId(o.ID, 'tbl')
                 });
 
@@ -23,7 +22,6 @@
                 table.cell(1, 1).$.CswViewContentTree({
                     viewid: viewId
                 });
-
 
                 table.cell(1, 2).$.CswImageButton({
                     ID: o.ID + '_view',

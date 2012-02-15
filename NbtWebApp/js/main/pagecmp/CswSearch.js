@@ -305,7 +305,7 @@
                 enabledText: 'Reset', //case 22756: this is more accurate name-to-behavior.
                 disabledText: 'Reset',
                 disableOnClick: false,
-                onclick: function () {
+                onClick: function () {
                     o.onClearSubmit(o.parentviewid, o.viewmode);
                 }
             });
@@ -330,7 +330,7 @@
                 ID: Csw.controls.dom.makeId(o.ID, 'search_button'),
                 enabledText: 'Search',
                 disabledText: 'Searching',
-                onclick: function () { doSearch(); }
+                onClick: function () { doSearch(); }
             });
             $searchButton.CswViewPropFilter('bindToButton');
         } // renderSearchButtons()

@@ -10,8 +10,10 @@
         'init': function (options) {
 
             var o = {
-                TableUrl: '/NbtWebApp/wsNBT.asmx/getTable',
+                TableSearchUrl: '/NbtWebApp/wsNBT.asmx/getTableSearch',
+                TableViewUrl: '/NbtWebApp/wsNBT.asmx/getTableView',
                 viewid: '',
+                searchterm: '',
                 ID: '',
                 nodeid: '',
                 cswnbtnodekey: '',
@@ -37,19 +39,28 @@
             var layoutTable = Csw.controls.layoutTable({
                 $parent: $scrollingdiv,
                 ID: o.ID + '_tbl',
-                cellset: { rows: 2, columns: 1 },
+                cellSet: { rows: 2, columns: 1 },
                 cellalign: 'center',
                 width: '100%',
                 cellspacing: '5px'
             });
 
-            Csw.ajax.post({
-                url: o.TableUrl,
-                data: {
+            var url, ajaxdata;
+            if (false == Csw.isNullOrEmpty(o.viewid)) {
+                url = o.TableViewUrl;
+                ajaxdata = {
                     ViewId: o.viewid,
                     NodeId: o.nodeid,
                     NodeKey: o.cswnbtnodekey
-                },
+                };
+            } else {
+                url = o.TableSearchUrl;
+                ajaxdata = { SearchTerm: o.searchterm };
+            }
+
+            Csw.ajax.post({
+                url: url,
+                data: ajaxdata,
                 success: function (data) {
                     var r = 1;
                     var c = 1;
@@ -62,60 +73,60 @@
                             c = 1;
                             r += 1;
                         }
-                        var cellset = layoutTable.cellset(r, c);
+                        var cellSet = layoutTable.cellSet(r, c);
                         var width = (1 / o.columns * 100) + '%';
-                        var $thumbnailcell = cellset[1][1]
+                        var thumbnailCell = cellSet[1][1]
                                                 .css({
                                                     paddingTop: o.rowpadding + 'px',
                                                     width: width,
                                                     verticalAlign: 'bottom'
                                                 });
-                        var $textcell = cellset[2][1]
+                        var textCell = cellSet[2][1]
                                                 .css({
                                                     width: width
                                                 });
 
-                        $thumbnailcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
-                        $textcell.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
+                        textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
 
                         // Name
                         var name = '<b>' + nodeObj.nodename + '</b>';
 
                         if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                            $thumbnailcell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
+                            thumbnailCell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
                         }
-                        $thumbnailcell.append('<br/>');
+                        thumbnailCell.append('<br/>');
 
                         if (Csw.bool(nodeObj.locked)) {
                             name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
                         }
-                        $textcell.append(name + '<br/>');
+                        textCell.append(name + '<br/>');
 
                         // Props
                         Csw.crawlObject(nodeObj.props, function (propObj) {
                             if (propObj.fieldtype == "Button") {
 
-                                var $propdiv = $textcell.CswDiv({});
+                                var $propdiv = textCell.CswDiv({});
                                 $.CswFieldTypeFactory('make', {
                                     nodeid: nodeid,
                                     fieldtype: propObj.fieldtype,
-                                    $propdiv: $propdiv,
+                                    propDiv: $propdiv,
                                     propData: propObj.propData,
                                     ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: propObj.id }),
                                     EditMode: Csw.enums.EditMode.Table
                                 });
 
                             } else {
-                                $textcell.append('' + propObj.propname + ': ');
-                                $textcell.append(propObj.gestalt);
+                                textCell.append('' + propObj.propname + ': ');
+                                textCell.append(propObj.gestalt);
                             }
-                            $textcell.append('<br/>');
+                            textCell.append('<br/>');
                         });
 
                         // Buttons
                         var btnTable = Csw.controls.table({
-                            $parent: $textcell,
-                            ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl' )
+                            $parent: textCell,
+                            ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl')
                         });
 
                         if (nodeObj.allowview || nodeObj.allowedit) {
@@ -127,7 +138,7 @@
                                 ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
                                 enabledText: btntext,
                                 disableOnClick: false,
-                                onclick: function () {
+                                onClick: function () {
                                     $.CswDialog('EditNodeDialog', {
                                         nodeids: [nodeid],
                                         nodekeys: [nodeObj.nodekey],
@@ -135,7 +146,7 @@
                                         ReadOnly: (false === nodeObj.allowedit),
                                         onEditNode: o.onEditNode
                                     }); // CswDialog
-                                } // onclick
+                                } // onClick
                             }); // CswButton
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
@@ -144,14 +155,14 @@
                                 ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
                                 enabledText: 'Delete',
                                 disableOnClick: false,
-                                onclick: function () {
+                                onClick: function () {
                                     $.CswDialog('DeleteNodeDialog', {
                                         nodenames: [nodeObj.nodename],
                                         nodeids: [nodeid],
                                         cswnbtnodekeys: [nodeObj.nodekey],
                                         onDeleteNode: o.onDeleteNode
                                     }); // CswDialog
-                                } // onclick
+                                } // onClick
                             }); // CswButton
                         } // if (nodeObj.allowdelete)
 

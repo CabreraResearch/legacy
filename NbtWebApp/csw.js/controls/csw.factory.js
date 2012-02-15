@@ -43,14 +43,22 @@
             /// <param name="name" type="String">The name of the attribute</param>
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-            return Csw.controls.dom.propDom($element, name, value);
+            var ret = Csw.controls.dom.propDom($element, name, value);
+            if (arguments.length === 2) {
+                ret = external;
+            }
+            return ret;
         };
         external.propNonDom = function (name, value) {
             /// <summary> Gets or sets an Non-Dom attribute</summary>
             /// <param name="name" type="String">The name of the attribute</param>
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-            return Csw.controls.dom.propNonDom($element, name, value);
+            var ret = Csw.controls.dom.propNonDom($element, name, value);
+            if (arguments.length === 2) {
+                ret = external;
+            }
+            return ret;
         };
 
         external.table = function (opts) {
@@ -125,6 +133,22 @@
             return Csw.controls.input(opts);
         };
 
+        external.textArea = function (opts) {
+            /// <summary> Creates a Csw.textArea on this element</summary>
+            /// <param name="inputOpts" type="Object">Options to define the textArea.</param>
+            /// <returns type="Object">A Csw.textArea</returns>
+            opts = internal.prepControl(opts, 'textArea');
+            return Csw.controls.textArea(opts);
+        };
+
+        external.timeInterval = function (opts) {
+            /// <summary> Creates a Csw.timeInterval on this element</summary>
+            /// <param name="inputOpts" type="Object">Options to define the timeInterval.</param>
+            /// <returns type="Object">A Csw.timeInterval</returns>
+            opts = internal.prepControl(opts, 'timeInterval');
+            return Csw.controls.timeInterval(opts);
+        };
+
         external.button = function (opts) {
             /// <summary> Creates a Csw.button on this element</summary>
             /// <param name="buttonOpts" type="Object">Options to define the button.</param>
@@ -150,11 +174,27 @@
         };
 
         external.img = function (opts) {
-            /// <summary> Creates a Csw.form on this element</summary>
-            /// <param name="formOpts" type="Object">Options to define the form.</param>
-            /// <returns type="Object">A Csw.form</returns> 
+            /// <summary> Creates a Csw.img on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the img.</param>
+            /// <returns type="Object">A Csw.img</returns>
             opts = internal.prepControl(opts, 'img');
-            return Csw.controls.form(opts);
+            return Csw.controls.img(opts);
+        };
+
+        external.select = function (opts) {
+            /// <summary> Creates a Csw.select on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the select.</param>
+            /// <returns type="Object">A Csw.select</returns>
+            opts = internal.prepControl(opts, 'select');
+            return Csw.controls.select(opts);
+        };
+
+        external.option = function (opts) {
+            /// <summary> Creates a Csw.option on this element</summary>
+            /// <param name="formOpts" type="Object">Options to define the option.</param>
+            /// <returns type="Object">A Csw.option</returns>
+            opts = internal.prepControl(opts, 'option');
+            return Csw.controls.option(opts);
         };
 
         external.jquery = function ($jqElement, opts) {
@@ -244,6 +284,15 @@
             return ret;
         };
 
+        external.filter = function (selector) {
+            /// <summary>Filter the child elements of this DOM element according to this selector</summary>
+            /// <param name="selector" type="String">A filter string.</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.filter(selector);
+            var ret = external.jquery(_$element);
+            return ret;
+        };
+
         external.first = function () {
             /// <summary>Find the first child element of this DOM element represented by this object</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
@@ -324,15 +373,25 @@
         };
 
         external.data = function (prop, val) {
+            /// <summary>Store property data on the control.</summary>
+            /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
+            var ret = '',
+                _internal = Csw.clientDb.getItem('control_data_' + internal.id) || {};
             switch (arguments.length) {
                 case 0:
-                    return $.extend({}, internal.data);
+                    ret = _internal;
+                    break;
                 case 1:
-                    return internal.data[prop];
+                    ret = _internal[prop];
+                    break;
                 case 2:
-                    internal.data[prop] = val;
-                    return external;
+                    _internal[prop] = val;
+                    Csw.clientDb.setItem('control_data_' + internal.id, _internal);
+                    ret = external;
+                    break;
             }
+            return ret;
+
         };
 
         //#endregion Csw "jQuery" classes

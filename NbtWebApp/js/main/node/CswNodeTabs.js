@@ -151,7 +151,7 @@
 
                         Csw.each(tabdivs, function (thisTabDiv) {
                             //var $tabdiv = tabdivs[t];
-                            thisTabDiv.tabs({
+                            thisTabDiv.$.tabs({
                                 selected: selectedtabno,
                                 select: function (event, ui) {
                                     var selectTabContentDiv = thisTabDiv.find('div:eq(' + Csw.number(ui.index) + ')');
@@ -231,7 +231,7 @@
                         ID: o.ID + '_props',
                         OddCellRightAlign: true,
                         ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
-                        cellset: {
+                        cellSet: {
                             rows: 1,
                             columns: 2
                         },
@@ -259,7 +259,7 @@
                                 var propId = key; //key
                                 var subTable = layoutTable.find('#' + propId + '_subproptable');
                                 var parentCell = subTable.parent().parent();
-                                var cellSet = layoutTable.cellset(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
                                 var propCell = _getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -271,7 +271,7 @@
                                         propid: propId,
                                         propDiv: propCell.children('div'),
                                         propData: thisProp,
-                                        onchange: function () { },
+                                        onChange: function () { },
                                         onReload: function () { getProps(tabContentDiv, tabid); },
                                         EditMode: o.EditMode,
                                         Multi: o.Multi,
@@ -290,7 +290,7 @@
                         saveBtn = formTblCell11.button({ ID: 'SaveTab',
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
-                            onclick: function () { save(form, layoutTable, data, saveBtn, tabid); }
+                            onClick: function () { save(form, layoutTable, data, saveBtn, tabid); }
                         });
                     }
                     var atLeastOne = _handleProperties(layoutTable, data, tabContentDiv, tabid, false, saveBtn);
@@ -319,7 +319,7 @@
                     else if (!o.Config &&
                         Csw.isNullOrEmpty(o.date) &&
                         o.filterToPropId === '' &&
-                        Csw.bool(tabContentDiv.$.data('canEditLayout'))) {
+                        Csw.bool(tabContentDiv.data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {
                             ID: o.ID,
@@ -359,7 +359,7 @@
         } // getPropsImpl()
 
         function onRemove(onRemoveData) {
-            var propDiv = _getPropertyCell(onRemoveData.cellset).children('div').first();
+            var propDiv = _getPropertyCell(onRemoveData.cellSet).children('div').first();
             var propid = propDiv.propNonDom('propid');
 
             Csw.ajax.post({
@@ -374,7 +374,7 @@
         } // onRemove()
 
         function onSwap(onSwapData) {
-            _moveProp(_getPropertyCell(onSwapData.cellset).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
+            _moveProp(_getPropertyCell(onSwapData.cellSet).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
             _moveProp(_getPropertyCell(onSwapData.swapcellset).children('div').first(), onSwapData.row, onSwapData.column);
         } // onSwap()
 
@@ -433,7 +433,7 @@
                         href: '#',
                         cssclass: 'cswprop_helplink',
                         title: helpText,
-                        onclick: function () {
+                        onClick: function () {
                             return false;
                         },
                         value: propName
@@ -500,9 +500,9 @@
                     relatednodetypeid: o.relatednodetypeid,
                     propid: propId,
                     propDiv: propCell.div(),
-                    $savebtn: saveBtn,
+                    saveBtn: saveBtn,
                     propData: propData,
-                    onchange: function () { },
+                    onChange: function () { },
                     onReload: function () { getProps(tabContentDiv, tabid); },
                     cswnbtnodekey: Csw.tryParseObjByIdx(o.nodekeys, 0),
                     EditMode: o.EditMode,
@@ -510,18 +510,19 @@
                     onEditView: o.onEditView,
                     ReadOnly: Csw.bool(propData.readonly)
                 };
-                fieldOpt.propDiv.propNonDom('nodeid', fieldOpt.nodeid);
-                fieldOpt.propDiv.propNonDom('propid', fieldOpt.propid);
-                fieldOpt.propDiv.propNonDom('cswnbtnodekey', fieldOpt.cswnbtnodekey);
+                fieldOpt.propDiv.propNonDom({
+                    'nodeid': fieldOpt.nodeid,
+                    'propid': fieldOpt.propid,
+                    'cswnbtnodekey': fieldOpt.cswnbtnodekey
+                });
 
-                fieldOpt.onchange = function () { if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
+                fieldOpt.onChange = function () { if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
                 if (Csw.bool(propData.hassubprops)) {
-                    fieldOpt.onchange = function () {
+                    fieldOpt.onChange = function () {
                         _updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, saveBtn);
                         if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
                     };
                 } // if (Csw.bool(propData.hassubprops)) {
-                fieldOpt.$propdiv = fieldOpt.propDiv.$;
                 $.CswFieldTypeFactory('make', fieldOpt);
 
                 if (Csw.contains(propData, 'subprops')) {
@@ -532,7 +533,7 @@
                         ID: fieldOpt.propid + '_subproptable',
                         OddCellRightAlign: true,
                         ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
-                        cellset: {
+                        cellSet: {
                             rows: 1,
                             columns: 2
                         },
@@ -676,15 +677,15 @@
                         if (doSave) {
                             Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
                         }
-                        saveBtn.button('enable');
+                        saveBtn.enable();
                     }, // success
                     error: function () {
-                        saveBtn.button('enable');
+                        saveBtn.enable();
                     }
                 }); // ajax
             } // if($form.valid())
             else {
-                saveBtn.button('enable');
+                saveBtn.enable();
             }
         } // Save()
 

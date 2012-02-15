@@ -8,47 +8,48 @@
     var methods = {
         init: function (o) { 
 
-            var $Div = $(this);
+            var propDiv  = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             if (Csw.bool(o.ReadOnly)) {
-                $Div.append(propVals.gestalt);
+                propDiv.append(propVals.gestalt);
             } 
             else 
             {
-                var $ValueNTB = $Div.CswNumberTextBox({
+                var $ValueNTB = propDiv.$.CswNumberTextBox({
                     ID: o.ID + '_val',
                     Value: (false === o.Multi) ? Csw.string(propVals.base).trim() : Csw.enums.multiEditDefaultValue,
                     MaxValue: 999999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    onchange: o.onchange,
+                    onChange: o.onChange,
                     width: '65px'
                 });
-                $Div.append('E');
-                var $ExponentNTB = $Div.CswNumberTextBox({
+                propDiv.append('E');
+                var $ExponentNTB = propDiv.$.CswNumberTextBox({
                     ID:  o.ID + '_exp',
                     Value: (false === o.Multi) ? Csw.string(propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
                     MaxValue: 999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    onchange: o.onchange,
+                    onChange: o.onChange,
                     width: '40px'
                 });
 
-                if (!Csw.isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
-                    $ValueNTB.clickOnEnter(o.$savebtn);
+                if (false === Csw.isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
+                    $ValueNTB.clickOnEnter(o.saveBtn);
                 }
-                if (!Csw.isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
-                    $ExponentNTB.clickOnEnter(o.$savebtn);
+                if (false === Csw.isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
+                    $ExponentNTB.clickOnEnter(o.saveBtn);
                 }
             }
         },
         save: function (o) { //$propdiv, $xml
             var attributes = {
-                base: o.$propdiv.CswNumberTextBox('value', o.ID + '_val'),
-                exponent: o.$propdiv.CswNumberTextBox('value', o.ID + '_exp')
+                base: o.propDiv.$.CswNumberTextBox('value', o.ID + '_val'),
+                exponent: o.propDiv.$.CswNumberTextBox('value', o.ID + '_exp')
             };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

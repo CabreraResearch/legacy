@@ -1,7 +1,7 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     $.fn.CswFieldTypeRelationship = function (method) {
 
@@ -10,8 +10,9 @@
         var methods = {
             init: function (o) {
 
-                var $Div = $(this),
-                    propVals = o.propData.values,
+                var propDiv = o.propDiv;
+                propDiv.empty();
+                var propVals = o.propData.values,
                     selectedNodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : Csw.enums.multiEditDefaultValue,
                     selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue,
                     nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
@@ -31,54 +32,54 @@
                 }, false);
 
                 if (o.ReadOnly) {
-                    $Div.append(selectedName);
-                    $Div.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); }, Csw.nodeHoverOut);
+                    propDiv.append(selectedName);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); }, Csw.nodeHoverOut);
                 } else {
-                    var table = Csw.controls.table({
-                        $parent: $Div,
+                    var table = propDiv.table({
                         ID: Csw.controls.dom.makeId(o.ID, 'tbl')
                     });
 
-                    var selectCell = table.cell(1, 1);
-
-                    var $SelectBox = selectCell.$.CswSelect('init', {
+                    var selectBox = table.cell(1, 1).select({
                         ID: o.ID,
                         cssclass: 'selectinput',
-                        onChange: o.onchange,
+                        onChange: o.onChange,
                         values: relationships,
                         selected: selectedNodeId
                     });
 
                     if (false === Csw.isNullOrEmpty(nodeTypeId) && allowAdd) {
-                        var $AddButton = $('<div />');
-                        table.add(1, 2, $AddButton);
-                        
-                        $AddButton.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Add,
-                            AlternateText: "Add New",
-                            onClick: function () {
-                                $.CswDialog('AddNodeDialog', {
-                                    'nodetypeid': nodeTypeId,
-                                    'onAddNode': function () { o.onReload(); }
-                                });
-                                return Csw.enums.imageButton_ButtonType.None;
-                            }
-                        });
+
+                        table.cell(1, 2)
+                            .div()
+                            .$.CswImageButton({
+                                ButtonType: Csw.enums.imageButton_ButtonType.Add,
+                                AlternateText: "Add New",
+                                onClick: function () {
+                                    $.CswDialog('AddNodeDialog', {
+                                        'nodetypeid': nodeTypeId,
+                                        'onAddNode': function () {
+                                            o.onReload();
+                                        }
+                                    });
+                                    return Csw.enums.imageButton_ButtonType.None;
+                                }
+                            });
                     }
 
                     if (o.Required) {
-                        $SelectBox.addClass("required");
+                        selectBox.addClass("required");
                     }
 
-                    $Div.hover(function (event) { Csw.nodeHoverIn(event, $SelectBox.val()); }, Csw.nodeHoverOut);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
                 }
             },
             save: function (o) {
                 var attributes = {
                     nodeid: null
                 };
-                var $nodeid = o.$propdiv.find('select');
-                if (false === Csw.isNullOrEmpty($nodeid)) {
-                    attributes.nodeid = $nodeid.val();
+                var nodeId = o.propDiv.find('select');
+                if (false === Csw.isNullOrEmpty(nodeId)) {
+                    attributes.nodeid = nodeId.val();
                 }
                 Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }

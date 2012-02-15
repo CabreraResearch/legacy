@@ -10,14 +10,15 @@
     var methods = {
         init: function (o) { 
 
-            var $Div = $(this),
-                propVals = o.propData.values,
+            var propDiv =  o.propDiv;
+            propDiv.empty();
+            var propVals = o.propData.values,
                 logicalSetJson = propVals.logicalsetjson;
 
-            var $cbaDiv = $('<div />')
-                    .CswCheckBoxArray('init', {
+            propDiv.div()
+                    .$.CswCheckBoxArray('init', {
                         ID: o.ID + '_cba',
-                        onchange: o.onchange,
+                        onChange: o.onChange,
                         ReadOnly: o.ReadOnly,
                         dataAry: logicalSetJson.data,
                         cols: logicalSetJson.columns,
@@ -25,15 +26,13 @@
                         keyCol: keyCol,
                         Multi: o.Multi
                     });
-            
-            $Div.contents().remove();
-            $Div.append($cbaDiv);
-            return $Div;
+
+            return propDiv;
         },
         save: function (o) { //$propdiv, $xml
-            var $CBADiv = o.$propdiv.children('div').first();
+            var propDiv = o.propDiv.children('div').first();
             var attributes = { logicalsetjson: null };
-            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            var formdata = propDiv.$.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.logicalsetjson = formdata;

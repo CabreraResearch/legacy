@@ -23,19 +23,19 @@
                 var loginDiv, loginTable, loginBtn, inpAccessId, inpUserName, inpPassword, loginMsg;
 
                 if (false === Csw.isNullOrEmpty(thisSessionId)) {
-                    o.onAuthenticate(Csw.cookie.get(Csw.cookie.cookieNames.Username));
+                    Csw.tryExec(o.onAuthenticate, Csw.cookie.get(Csw.cookie.cookieNames.Username));
                 }
                 else {
                     loginDiv = parent.div({
                         ID: 'logindiv',
                         align: 'center'
                     });
-                    loginTable = loginDiv.form().table();
+                    loginTable = loginDiv.form().table({cellalign: 'center', cellvalign: 'center'});
                     loginMsg = loginTable.cell(1, 2, 'loginmsg').hide();
                     loginTable.add(2, 1, 'Customer ID: ').align('right');
                     inpAccessId = loginTable.cell(2, 2).input({ ID: 'login_accessid', width: '120px' });
                     loginTable.add(3, 1, 'User Name: ').align('right');
-                    inpUserName =  loginTable.cell(3, 2).input({ ID: 'login_username', width: '120px' });
+                    inpUserName = loginTable.cell(3, 2).input({ ID: 'login_username', width: '120px' });
                     loginTable.add(4, 1, 'Password: ').align('right');
                     inpPassword = loginTable.cell(4, 2).input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
@@ -64,7 +64,7 @@
                                                         Csw.tryExec(o.onFail, txt);
                                                     }
                                                 });
-                                            } // onclick
+                                            } // onClick
                                         });
                     loginTable.cell(6, 2);
                     parent.br({ number: 3 });
@@ -153,5 +153,5 @@
         }); // ajax
     } // _handleLogin()
 
-}(jQuery));
+} (jQuery));
 

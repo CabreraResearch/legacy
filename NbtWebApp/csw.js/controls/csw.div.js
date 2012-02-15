@@ -7,7 +7,6 @@
     function div(options) {
         /// <summary> Create or extend an HTML <div /> and return a Csw.divobject
         ///     &#10;1 - div(options)
-        ///     &#10;2 - div($jqueryElement)
         ///</summary>
         /// <param name="options" type="Object">
         /// <para>A JSON Object</para>
@@ -24,32 +23,31 @@
             name: '',
             cssclass: '',
             text: '',
+            value: '',
             title: '',
             align: ''
         };
         var external = {};
 
         (function () {
+            if (options) {
+                $.extend(internal, options);
+            }
             var html = '',
                 attr = Csw.controls.dom.attributes(),
                 style = Csw.controls.dom.style(),
-                divText = '';
+                divText = Csw.string(internal.text);
             var $div;
 
-            if (options) {
-                $.extend(internal, options);
-                divText = Csw.string(internal.text);
-                attr.add('id', internal.ID);
-                attr.add('name', Csw.string(internal.name, internal.ID));
-                attr.add('class', internal.cssclass);
-                attr.add('align', internal.align);
-                style.add('align', internal.align);
-            } else {
-                divText = Csw.string(options);
-            }
+            attr.add('id', internal.ID);
+            attr.add('name', Csw.string(internal.name, internal.ID));
+            attr.add('class', internal.cssclass);
+            attr.add('value', internal.value);
+            attr.add('align', internal.align);
+            style.add('align', internal.align);
 
             html += '<div ';
-            
+
             html += attr.get();
             html += style.get();
 

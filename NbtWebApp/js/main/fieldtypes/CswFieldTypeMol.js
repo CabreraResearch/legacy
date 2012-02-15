@@ -8,14 +8,13 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var width = 100; //Csw.string(propVals.width);
             var mol = Csw.string(propVals.mol).trim();
 
-            var table = Csw.controls.table({
-                $parent: $Div,
+            var table = propDiv.table({
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl')
             });
             var cell11 = table.cell(1, 1).propDom('colspan', '3');
@@ -30,13 +29,12 @@
                 cell11.append(myApplet);
                 var myCheck = window.jmolCheckbox("spin on", "spin off", "Rotate");
                 cell21.append(myCheck);
-                //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
             }
 
             if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
                 /* Edit Button */
-                var $editBtn = $('<div/>')
-                    .CswImageButton({
+                cell22.div()
+                    .$.CswImageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
@@ -53,11 +51,10 @@
                             return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
-                cell22.append($editBtn);
 
                 /* Clear Button */
-                var $clearBtn = $('<div/>')
-                    .CswImageButton({
+                cell23.div()
+                    .$.CswImageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                         AlternateText: 'Clear',
                         ID: o.ID + '_clr',
@@ -78,9 +75,7 @@
                             return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
-                cell23.append($clearBtn);
             }
-
         },
         save: function (o) { //$propdiv, o.propData
             Csw.preparePropJsonForSave(o.propData);

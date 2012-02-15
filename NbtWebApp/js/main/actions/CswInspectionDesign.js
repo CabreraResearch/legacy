@@ -125,7 +125,7 @@
                                         ID: makeStepId('addNewInspectionTarget'),
                                         enabledText: 'Add New',
                                         disableOnClick: false,
-                                        onclick: function () {
+                                        onClick: function () {
                                             $.CswDialog('AddNodeTypeDialog', {
                                                 objectclassid: inspectionTarget.find(':selected').data('objectClassId'),
                                                 nodetypename: '',

@@ -2,38 +2,41 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
-    "use strict";        
+    "use strict";
     var pluginName = 'CswFieldTypePropertyReference';
 
     var methods = {
-        init: function (o) { 
-                
-            var $Div = $(this);
-            $Div.contents().remove();
-                
+        init: function (o) {
+
+            var propDiv = o.propDiv;
+            propDiv.empty();
+
             var propVals = o.propData.values;
             var text = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             text += '&nbsp;';
 
             /* Static Div */
-            $('<div id="'+ o.ID +'" class="staticvalue">' + text + '</div>' )
-                            .appendTo($Div); 
+            propDiv.div({
+                ID: o.ID,
+                cssclass: 'staticvalue',
+                value: text
+            });
         },
         save: function (o) { //$propdiv, $xml
             Csw.preparePropJsonForSave(o.propData);
         }
     };
-    
+
     // Method calling logic
     $.fn.CswFieldTypePropertyReference = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

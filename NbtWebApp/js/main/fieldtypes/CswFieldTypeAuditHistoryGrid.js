@@ -1,25 +1,25 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswFieldTypeAuditHistoryGrid';
 
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
+            var propDiv = o.propDiv;
             var ret = '';
             if (false === o.Multi) {
-                ret = $Div.CswAuditHistoryGrid({
+                ret = propDiv.$.CswAuditHistoryGrid({
                     ID: o.ID,
                     nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey,
+                    cswnbtnodekey: o.cswnbtnodekey,
                     EditMode: o.EditMode,
                     onEditRow: function (date) {
                         $.CswDialog('EditNodeDialog', {
                             nodeids: [o.nodeid],
-                                nodekeys: [ o.cswnbtnodekey ],
+                            nodekeys: [o.cswnbtnodekey],
                             onEditNode: o.onEditNode,
                             date: date
                         });

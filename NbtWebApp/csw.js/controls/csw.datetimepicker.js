@@ -16,7 +16,7 @@
                 DisplayMode: 'Date',    // Date, Time, DateTime
                 ReadOnly: false,
                 Required: false,
-                OnChange: null
+                onChange: null
             };
             if(options) $.extend(o, options);
 
@@ -41,7 +41,7 @@
                     var $DateBox = $Div.CswInput('init',{ ID: o.ID + "_date",
                                                           type: Csw.enums.inputTypes.text,
                                                           value: o.Date,
-                                                          onChange: o.OnChange,
+                                                          onChange: o.onChange,
                                                           width: '80px',
                                                           cssclass: 'textinput' 
                                                   }); 
@@ -53,13 +53,13 @@
                     var $TimeBox = $Div.CswInput('init',{ ID: o.ID + "_time",
                                                           type: Csw.enums.inputTypes.text,
                                                           cssclass: 'textinput', 
-                                                          onChange: o.onchange,
+                                                          onChange: o.onChange,
                                                           value: o.Time,
                                                           width: '80px'
                                                      }); 
                     $Div.CswButton('init',{ 'ID': o.ID +'_now',
                                                             'disableOnClick': false,
-                                                            'onclick': function () { $TimeBox.val( Csw.getTimeString(new Date(), o.TimeFormat) ); },
+                                                            'onClick': function () { $TimeBox.val( Csw.getTimeString(new Date(), o.TimeFormat) ); },
                                                             'enabledText': 'Now'
                                                      }); 
                 
