@@ -31,127 +31,129 @@
 
 
         (function () {
-
-
             if (options) {
-                $.extend(o, options);
+                $.extend(internal, options);
             }
 
-            var storeDataId = Csw.controls.dom.makeId({ ID: o.ID, suffix: internal.storedDataSuffix });
-            internal.cbaPrevSelected = Csw.controls.dom.makeId({ ID: storeDataId, suffix: internal.cbaPrevSelectedSuffix });
+            var storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix);
+            internal.cbaPrevSelected = Csw.controls.dom.makeId(storeDataId, internal.cbaPrevSelectedSuffix);
 
             Csw.clientDb.removeItem(storeDataId);
             Csw.clientDb.removeItem(internal.cbaPrevSelected);
 
-            var $Div = $(this);
+            Csw.controls.factory(internal.$parent, external);
             var cbaData = transmogrify({
                 storeDataId: storeDataId,
-                dataAry: o.dataAry,
-                nameCol: o.nameCol,
-                keyCol: o.keyCol,
-                valCol: o.valCol,
-                cols: o.cols
+                dataAry: internal.dataAry,
+                nameCol: internal.nameCol,
+                keyCol: internal.keyCol,
+                valCol: internal.valCol,
+                cols: internal.cols
             });
             if (false === Csw.isNullOrEmpty(cbaData)) {
-                $.extend(o, cbaData);
+                $.extend(internal, cbaData);
             }
-            o.MultiIsUnchanged = o.Multi;
+            internal.MultiIsUnchanged = internal.Multi;
 
             var checkType = Csw.enums.inputTypes.checkbox.name;
-            if (o.UseRadios) {
+            if (internal.UseRadios) {
                 checkType = Csw.enums.inputTypes.radio.name;
             }
 
-            var $OuterDiv = $('<div id="' + storeDataId + '"/>');
+            var outerDiv = external.div({ ID: storeDataId });
 
-            Csw.clientDb.setItem(storeDataId, { columns: o.cols, data: o.data });
+            Csw.clientDb.setItem(storeDataId, { columns: internal.cols, data: internal.data });
 
-            if (o.ReadOnly) {
-                for (var r = 0; r < o.data.length; r++) {
-                    var rRow = o.data[r];
+            if (internal.ReadOnly) {
+                for (var r = 0; r < internal.data.length; r += 1) {
+                    var rRow = internal.data[r];
                     var rowlabeled = false;
                     var first = true;
-                    for (var c = 0; c < o.cols.length; c++) {
+                    for (var c = 0; c < internal.cols.length; c += 1) {
                         if (Csw.bool(rRow.values[c])) {
-                            if (false === o.Multi) {
+                            if (false === internal.Multi) {
                                 if (false === rowlabeled) {
-                                    $OuterDiv.append(rRow.label + ": ");
+                                    outerDiv.append(rRow.label + ": ");
                                     rowlabeled = true;
                                 }
                                 if (false === first) {
-                                    $OuterDiv.append(", ");
+                                    outerDiv.append(", ");
                                 }
-                                if (false === o.UseRadios) {
-                                    $OuterDiv.append(o.cols[c]);
+                                if (false === internal.UseRadios) {
+                                    outerDiv.append(internal.cols[c]);
                                 }
                                 first = false;
                             }
                         }
                     }
                     if (rowlabeled) {
-                        $OuterDiv.append('<br/>');
+                        outerDiv.br();
                     }
                 }
             } else {
-                var table = Csw.controls.table({
-                    $parent: $OuterDiv,
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                var table = outerDiv.table({
+                    ID: Csw.controls.dom.makeId(internal.ID, 'tbl')
                 });
 
-                $OuterDiv.css('height', (25 * o.HeightInRows) + 'px');
-                $OuterDiv.addClass('cbarraydiv');
+                outerDiv.css('height', (25 * internal.HeightInRows) + 'px');
+                outerDiv.addClass('cbarraydiv');
                 table.addClass(table.$, 'cbarraytable');
 
                 // Header
                 var tablerow = 1;
-                for (var d = 0; d < o.cols.length; d++) {
+                for (var d = 0; d < internal.cols.length; d++) {
                     var dCell = table.cell(tablerow, d + 2);
                     dCell.addClass('cbarraycell');
-                    var colName = o.cols[d];
-                    if (colName === o.valCol && false === Csw.isNullOrEmpty(o.valColName)) {
-                        colName = o.valColName;
+                    var colName = internal.cols[d];
+                    if (colName === internal.valCol && false === Csw.isNullOrEmpty(internal.valColName)) {
+                        colName = internal.valColName;
                     }
-                    if ((colName !== o.keyCol && colName !== o.nameCol)) {
+                    if ((colName !== internal.keyCol && colName !== internal.nameCol)) {
                         dCell.append(colName);
                     }
                 }
                 tablerow += 1;
 
                 //[none] row
-                if (o.UseRadios && false === o.Required) {
+                if (internal.UseRadios && false === internal.Required) {
                     // Row label
                     var labelCell = table.add(tablerow, 1, '[none]');
                     labelCell.addClass('cbarraycell');
 
-                    for (var e = 0; e < o.cols.length; e++) {
+                    for (var e = 0; e < internal.cols.length; e++) {
                         var eCell = table.cell(tablerow, e + 2);
                         eCell.addClass('cbarraycell');
-                        var eCheckid = o.ID + '_none';
-                        var $eCheck = $('<input type="' + checkType + '" class="CBACheckBox_' + o.ID + '" id="' + eCheckid + '" name="' + o.ID + '" />')
-                                           .appendTo(eCell.$)
-                                           .click(function () {
-                                               o.MultiIsUnchanged = false;
-                                               o.onChange();
-                                           })
-                                           .CswAttrNonDom({ 'key': '', rowlabel: '[none]', collabel: o.cols[e], row: -1, col: e })
-                                           .bind('change', function () { onChange(this); });
-                        if (false === o.Multi) {
-                            $eCheck.CswAttrDom('checked', 'true'); // the browser will override this if another one is checked
+                        var eCheckid = internal.ID + '_none';
+                        var eCheck = eCell.input({
+                            type: checkType,
+                            cssclass: 'CBACheckBox_' + internal.ID,
+                            id: eCheckid,
+                            name: internal.ID
+                        }).propNonDom({ 'key': '', rowlabel: '[none]', collabel: internal.cols[e], row: -1, col: e });
+                        var delClick = Csw.makeDelegate(internal.onChange, eCheck);
+                        eCheck.click(function () {
+                            internal.MultiIsUnchanged = false;
+                            delClick();
+                        });
+                        eCheck.change(delClick);
+
+                        if (false === internal.Multi) {
+                            eCheck.propDom('checked', true); // the browser will override this if another one is checked
                         }
-                    } // for(var c = 0; c < o.cols.length; c++)
-                } // if(o.UseRadios && ! o.Required)
-                tablerow++;
+                    } // for(var c = 0; c < internal.cols.length; c++)
+                } // if(internal.UseRadios && ! internal.Required)
+                tablerow += 1;
 
                 var onChange = function (cB) {
                     //var cB = this;
-                    var col = cB.attributes['col'].value;
-                    var row = cB.attributes['row'].value;
+                    var col = cB.propNonDom['col'];
+                    var row = cB.propNonDom['row'];
                     var cache = Csw.clientDb.getItem(storeDataId);
                     cache.MultiIsUnchanged = false;
                     if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row], 'values')) {
                         cache.data[row].values[col] = cB.checked;
                     }
-                    if (o.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
+                    if (internal.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
                         var data = Csw.clientDb.getItem(internal.cbaPrevSelected);
                         if (Csw.contains(data, 'row') && Csw.contains(data, 'col')) {
                             if (Csw.contains(cache.data, data.row) && Csw.contains(cache.data[data.row], 'values')) {
@@ -164,68 +166,73 @@
                 };
 
                 // Data
-                for (var s = 0; s < o.data.length; s++) {
-                    var sRow = o.data[s];
+                for (var s = 0; s < internal.data.length; s++) {
+                    var sRow = internal.data[s];
                     // Row label
-                    var $sLabelcell = table.add(tablerow + s, 1, sRow.label);
-                    $sLabelcell.addClass('cbarraycell');
+                    var sLabelcell = table.add(tablerow + s, 1, sRow.label);
+                    sLabelcell.addClass('cbarraycell');
 
-                    for (var f = 0; f < o.cols.length; f++) {
+                    for (var f = 0; f < internal.cols.length; f++) {
                         var fCell = table.cell(tablerow + s, f + 2);
                         fCell.addClass('cbarraycell');
-                        var fCheckid = o.ID + '_' + s + '_' + f;
-                        var $fCheck = $('<input type="' + checkType + '" class="CBACheckBox_' + o.ID + '" id="' + fCheckid + '" name="' + o.ID + '" />')
-                                           .appendTo(fCell.$)
-                                           .bind('click', o.onChange)
-                                           .CswAttrNonDom({ key: sRow.key, rowlabel: sRow.label, collabel: o.cols[f], row: s, col: f })
-                                           .bind('change', function () { onChange(this); });
-                        $.data($fCheck, 'thisRow', sRow);
+                        var fCheckid = internal.ID + '_' + s + '_' + f;
+                        var fCheck = fCell.input({
+                            type: checkType,
+                            cssclass: 'CBACheckBox_' + internal.ID,
+                            ID: fCheckid,
+                            name: internal.ID,
+                            onClick: internal.onChange
+                        }).propNonDom({ key: sRow.key, rowlabel: sRow.label, collabel: internal.cols[f], row: s, col: f });
+                        var delChange = Csw.makeDelegate(onChange, fCheck);
+                        fCheck.change(delChange);
+                        fCheck.data('thisRow', sRow);
 
                         if (sRow.values[f]) {
-                            if (o.UseRadios) {
+                            if (internal.UseRadios) {
                                 Csw.clientDb.setItem(internal.cbaPrevSelected, { col: f, row: s });
                             }
-                            $fCheck.CswAttrDom('checked', 'true');
+                            fCheck.propDom('checked', 'true');
                         }
-                    } // for(var c = 0; c < o.cols.length; c++)
-                } // for(var r = 0; r < o.data.length; r++)
+                    } // for(var c = 0; c < internal.cols.length; c++)
+                } // for(var r = 0; r < internal.data.length; r++)
 
-                if (false === o.UseRadios) {
+                if (false === internal.UseRadios) {
                     var checkAllLinkText = "Check All";
-                    if ($('.CBACheckBox_' + o.ID).not(':checked').length === 0)
+                    if ($('.CBACheckBox_' + internal.ID).not(':checked').length === 0) {
                         checkAllLinkText = "Uncheck All";
+                    }
 
-                    var $checkalldiv = $('<div style="text-align: right"><a href="#">' + checkAllLinkText + '</a></div>')
-                                             .appendTo($Div);
-                    var $checkalllink = $checkalldiv.children('a');
-                    $checkalllink.click(function () { toggleCheckAll($checkalllink, o.ID); return false; });
+                    internal.checkAllLink = external.div({
+                        align: 'right'
+                    })
+                        .link({
+                            href: '#',
+                            text: checkAllLinkText,
+                            onClick: function () {
+                                external.toggleCheckAll(checkAllLink, internal.ID);
+                                return false;
+                            }
+                        });
                 }
 
-            } // if-else(o.ReadOnly)
-
-            $Div.contents().remove();
-            $Div.append($OuterDiv);
-            return $Div;
+            } // if-else(internal.ReadOnly)
 
         } ());
-
-
-        external.getdata = function (options) {
-
-            var o = {
+        
+        external.getdata = function (opts) {
+            var _internal = {
                 ID: ''
             };
 
-            if (options) {
-                $.extend(o, options);
+            if (opts) {
+                $.extend(_internal, opts);
             }
-            var storeDataId = Csw.controls.dom.makeId({ ID: o.ID, suffix: internal.storedDataSuffix });
+            var storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix);
             var data = Csw.clientDb.getItem(storeDataId);
             return data;
         };
-
-
-        internal.transmogrify = function (options) {
+        
+        internal.transmogrify = function (opts) {
             var dataStore = {
                 cols: [],
                 data: []
@@ -238,36 +245,36 @@
                 valCol: '',
                 cols: []
             };
-            if (options) {
-                $.extend(o, options);
+            if (opts) {
+                $.extend(o, opts);
             }
 
-            if (false === Csw.isNullOrEmpty(o.dataAry) && o.dataAry.length > 0) {
+            if (false === Csw.isNullOrEmpty(internal.dataAry) && internal.dataAry.length > 0) {
                 // get columns
-                var cols = o.cols;
+                var cols = internal.cols;
                 if (Csw.hasLength(cols) && cols.length === 0) {
-                    var firstProp = o.dataAry[0];
+                    var firstProp = internal.dataAry[0];
                     for (var column in firstProp) {
 
                         if (Csw.contains(firstProp, column)) {
                             var fieldname = column;
-                            if (fieldname !== o.nameCol && fieldname !== o.keyCol) {
+                            if (fieldname !== internal.nameCol && fieldname !== internal.keyCol) {
                                 cols.push(fieldname);
                             }
                         }
                     }
                 }
-                if (false === Csw.isNullOrEmpty(o.valCol) && false === Csw.contains(cols, o.valCol)) {
-                    cols.push(o.valCol);
+                if (false === Csw.isNullOrEmpty(internal.valCol) && false === Csw.contains(cols, internal.valCol)) {
+                    cols.push(internal.valCol);
                 }
 
                 // get data
                 var data = [];
 
-                for (var i = 0; i < o.dataAry.length; i++) {
-                    var thisSet = o.dataAry[i];
+                for (var i = 0; i < internal.dataAry.length; i++) {
+                    var thisSet = internal.dataAry[i];
 
-                    if (Csw.contains(thisSet, o.keyCol) && Csw.contains(thisSet, o.nameCol)) {
+                    if (Csw.contains(thisSet, internal.keyCol) && Csw.contains(thisSet, internal.nameCol)) {
                         var values = [];
                         for (var v = 0; v < cols.length; v++) {
                             if (Csw.contains(thisSet, cols[v])) {
@@ -275,8 +282,8 @@
                             }
                         }
                         var dataOpts = {
-                            'label': thisSet[o.nameCol],
-                            'key': thisSet[o.keyCol],
+                            'label': thisSet[internal.nameCol],
+                            'key': thisSet[internal.keyCol],
                             'values': values
                         };
                         data.push(dataOpts);
@@ -285,29 +292,30 @@
 
                 dataStore.cols = cols;
                 dataStore.data = data;
-                Csw.clientDb.setItem(o.storeDataId, dataStore);
+                Csw.clientDb.setItem(internal.storeDataId, dataStore);
             }
             return dataStore;
         };
 
-        external.toggleCheckAll = function ($checkalllink, id) {
+        external.toggleCheckAll = function () {
             // Are there any unchecked checkboxes?
             if ($('.CBACheckBox_' + id).not(':checked').length > 0) {
-                checkAll($checkalllink, id);
+                checkAll();
             } else {
-                uncheckAll($checkalllink, id);
+                uncheckAll();
             }
         }; // ToggleCheckAll()
 
-        external.checkAll = function ($checkalllink, id) {
-            $('.CBACheckBox_' + id).CswAttrDom('checked', 'checked').click();
-            $checkalllink.text('Uncheck all');
+        external.checkAll = function () {
+            $('.CBACheckBox_' + id).prop('checked', 'checked').click();
+            internal.checkAllLink.text('Uncheck all');
         };
 
-        external.uncheckAll = function ($checkalllink, id) {
+        external.uncheckAll = function () {
             $('.CBACheckBox_' + id).removeAttr('checked').click();
-            $checkalllink.text('Check all');
+            internal.checkAllLink.text('Check all');
         };
+        return external;
     }
 
     Csw.controls.register('checkBoxArray', checkBoxArray);

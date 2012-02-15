@@ -142,6 +142,14 @@
             return Csw.controls.input(opts);
         };
 
+        external.checkBoxArray = function (opts) {
+            /// <summary> Creates a Csw.checkBoxArray on this element</summary>
+            /// <param name="opts" type="Object">Options to define the checkBoxArray.</param>
+            /// <returns type="Object">A Csw.checkBoxArray</returns>
+            opts = internal.prepControl(opts, 'checkBoxArray');
+            return Csw.controls.checkBoxArray(opts);
+        };
+
         external.textArea = function (opts) {
             /// <summary> Creates a Csw.textArea on this element</summary>
             /// <param name="opts" type="Object">Options to define the textArea.</param>
