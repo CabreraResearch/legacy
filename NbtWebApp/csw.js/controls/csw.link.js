@@ -21,7 +21,7 @@
             ID: '',
             cssclass: '',
             text: '',
-            href: '',
+            href: '#',
             type: '',
             title: '',
             rel: '',
@@ -46,11 +46,7 @@
             html += '<a ';
             attr.add('id', internal.ID);
             attr.add('class', internal.cssclass);
-            if (false == Csw.isNullOrEmpty(internal.href)) {
-                attr.add('href', internal.href);
-            } else {
-                attr.add('href', '#');
-            }
+            attr.add('href', internal.href);
             attr.add('type', internal.type);
             attr.add('title', internal.title);
             attr.add('rel', internal.rel);
@@ -69,7 +65,14 @@
 
             Csw.controls.factory($link, external);
             if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
+                external.bind('click', function (event, ui) {
+                    var retval = Csw.tryExec(internal.onClick, event, ui);
+                    if (internal.href === '#') {
+                        return false;
+                    } else {
+                        return retval;
+                    }
+                });
             }
 
             internal.$parent.append(external.$);
