@@ -11,8 +11,13 @@
         /// <returns type="Object">The options object with DOM methods attached.</returns> 
         var internal = {};
         external = external || {};
-        external.$ = $element;
-        internal.id = Csw.string($element.prop('id'));
+        if (Csw.isJQuery($element)) {
+            external.$ = $element;
+            internal.id = Csw.string($element.prop('id'));
+        } else {
+            internal.id = '';
+            external.$ = {};
+        }
         internal.data = {};
         internal.prepControl = function (opts, controlName) {
             opts = opts || {};
@@ -292,7 +297,7 @@
             Csw.controls.dom.bind($element, eventName, event);
             return external;
         };
-        
+
         external.unbind = function (eventName) {
             /// <summary>Unbind an action from a jQuery element's event.</summary>
             /// <param name="eventName" type="String">The name of the event</param>
@@ -356,7 +361,12 @@
             /// <summary>Attach an object to this element.</summary>
             /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
             /// <returns type="Object">The appended Csw object (for chaining)</returns> 
-            var _$element = $(object);
+            var _$element;
+            try {
+                _$element = $(object);
+            } catch (e) {
+                _$element = '';
+            }
             if (false === Csw.isNullOrEmpty(object) && _$element.length === 0) {
                 /* This handles plain text */
                 $element.append(object);
