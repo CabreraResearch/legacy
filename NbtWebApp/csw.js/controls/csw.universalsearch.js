@@ -57,10 +57,10 @@
 
             Csw.ajax.post({
                 url: internal.searchurl,
-                data: { 
-                        SearchTerm: internal.searchterm,
-                        Filters: JSON.stringify(internal.filters)
-                      },
+                data: {
+                    SearchTerm: internal.searchterm,
+                    Filters: JSON.stringify(internal.filters)
+                },
                 success: function (data) {
                     var fdiv, filtersdivid;
 
@@ -77,7 +77,7 @@
                         maxheight: internal.maxheight
                     });
 
-                    // Filters
+                    // Filter panel
                     filtersdivid = Csw.controls.dom.makeId(internal.ID, '', 'filtersdiv');
                     fdiv = Csw.controls.div({
                         ID: filtersdivid,
@@ -87,10 +87,35 @@
                         overflow: 'auto'
                     });
 
+                    fdiv.span({ text: 'Searched For: ' + internal.searchterm }).br();
+
+                    // Filters in use
+                    function showFilter(thisFilter) {
+                        fdiv.span({
+                            //ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
+                            text: thisFilter.filtername + ': ' + thisFilter.filtervalue
+                        });
+                        fdiv.$.CswImageButton({
+                            ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
+                            ButtonType: Csw.enums.imageButton_ButtonType.Delete,
+                            AlternateText: 'Remove Filter',
+                            onClick: function () {
+                                internal.removeFilter(thisFilter);
+                                return Csw.enums.imageButton_ButtonType.None;
+                            }
+                        });
+                        fdiv.br();
+                    }
+                    Csw.each(internal.filters, showFilter);
+
+                    fdiv.br();
+                    fdiv.br();
+
+                    // Filters to add
                     function makeFilterLink(thisFilter) {
                         fdiv.link({
-                            ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.id),
-                            text: thisFilter.name + ' (' + thisFilter.count + ')',
+                            ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
+                            text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                             onClick: function () {
                                 internal.addFilter(thisFilter);
                                 return false;
@@ -113,9 +138,19 @@
 
 
         internal.addFilter = function (thisFilter) {
-            internal.filters[thisFilter.id] = thisFilter;
-            internal.search()
+            internal.filters[thisFilter.filterid] = thisFilter;
+            internal.search();
         } // addFilter()
+
+        internal.removeFilter = function (thisFilter) {
+            if (thisFilter.filtertype === "nodetype") {
+                //remove all filters
+                internal.filters = {};
+            } else {
+                delete internal.filters[thisFilter.filterid];
+            }
+            internal.search();
+        } // removeFilter()
 
         return external;
     };

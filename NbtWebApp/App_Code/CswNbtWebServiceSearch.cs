@@ -391,8 +391,8 @@ namespace ChemSW.Nbt.WebServices
             foreach( JProperty FilterProp in Filters.Properties() )
             {
                 JObject Filter = (JObject) FilterProp.Value;
-                
-                if( Filter["type"].ToString() == "nodetype" )
+
+                if( Filter["filtertype"].ToString() == "nodetype" )
                 {
                     // NodeType filter
                     Int32 NodeTypeFirstVersionId = CswConvert.ToInt32( Filter["firstversionid"] );
@@ -402,12 +402,13 @@ namespace ChemSW.Nbt.WebServices
                         SingleNodeType = true;
                     }
                 }
-                else if( Filter["type"].ToString() == "propval" )
+                else if( Filter["filtertype"].ToString() == "propval" )
                 {
                     // Property Filter
-                    Int32 NodeTypePropId = CswConvert.ToInt32( Filter["nodetypepropid"] );
-                    string Value = Filter["value"].ToString();
-                    if( NodeTypePropId != Int32.MinValue )
+                    // Someday we may need to do this in a view instead
+                    Int32 NodeTypePropFirstVersionId = CswConvert.ToInt32( Filter["firstpropversionid"] );
+                    string Value = Filter["filtervalue"].ToString();
+                    if( NodeTypePropFirstVersionId != Int32.MinValue )
                     {
                         WhereClause += @" and n.nodeid in (select nodeid 
                                                              from jct_nodes_props 
@@ -415,7 +416,7 @@ namespace ChemSW.Nbt.WebServices
                                                                                        from nodetype_props 
                                                                                       where firstpropversionid = (select firstpropversionid 
                                                                                                                     from nodetype_props 
-                                                                                                                   where nodetypepropid = " + NodeTypePropId + @" ))
+                                                                                                                   where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
                                                               and gestalt like '" + Value + "%') ";
                         SingleNodeType = true;
                     }
@@ -457,20 +458,9 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    FiltersObj["Filter To"] = new JObject();
                     foreach( Int32 NodeTypeId in NodeTypeIds.Keys )
                     {
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        string ThisNTName = NodeType.NodeTypeName.ToLower();
-                        JObject ThisFilterObj = new JObject();
-                        ThisFilterObj["type"] = "nodetype";
-                        ThisFilterObj["id"] = NodeType.NodeTypeId.ToString();
-                        ThisFilterObj["firstversionid"] = NodeType.FirstVersionNodeTypeId.ToString();
-                        ThisFilterObj["name"] = NodeType.NodeTypeName.ToString();
-                        ThisFilterObj["count"] = NodeTypeIds[NodeTypeId].ToString();
-                        ThisFilterObj["icon"] = NodeType.IconFileName.ToString();
-
-                        FiltersObj["Filter To"][ThisNTName] = ThisFilterObj;
+                        _addNodeTypeFilter( FiltersObj, NodeTypeId, NodeTypeIds[NodeTypeId] );
                     }
                 }
             } // if( false == SingleNodeType )
@@ -508,27 +498,9 @@ namespace ChemSW.Nbt.WebServices
 
                 foreach( Int32 NodeTypePropId in PropCounts.Keys )
                 {
-                    CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
-                    FiltersObj[NodeTypeProp.PropName] = new JObject();
                     foreach( string Value in PropCounts[NodeTypePropId].Keys )
                     {
-                        JObject ThisFilterObj = new JObject();
-                        ThisFilterObj["type"] = "propval";
-                        ThisFilterObj["id"] = NodeTypePropId.ToString() + "_" + Value;
-                        ThisFilterObj["nodetypepropid"] = NodeTypePropId;
-                        ThisFilterObj["value"] = Value;
-                        if( Value != string.Empty )
-                        {
-                            ThisFilterObj["name"] = Value;
-                        }
-                        else
-                        {
-                            ThisFilterObj["name"] = "[blank]";
-                        }
-                        ThisFilterObj["count"] = PropCounts[NodeTypePropId][Value].ToString();
-                        //ThisFilterObj["icon"] = NodeType.IconFileName.ToString();
-
-                        FiltersObj[NodeTypeProp.PropName][Value] = ThisFilterObj;
+                        _addPropFilter( FiltersObj, NodeTypePropId, Value, PropCounts[NodeTypePropId][Value] );
                     }
                 }
             } // if( SingleNodeType )
@@ -536,6 +508,55 @@ namespace ChemSW.Nbt.WebServices
             ret["filters"] = FiltersObj;
             return ret;
         } // doUniversalSearch()
+
+        private void _addNodeTypeFilter( JObject FiltersObj, Int32 NodeTypeId, Int32 Count )
+        {
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+            string FilterName = "Filter To";
+
+            JObject ThisFilterObj = _makeFilter( FilterName, "nodetype", "NT_" + NodeType.NodeTypeId.ToString(), NodeType.NodeTypeName, Count, NodeType.IconFileName );
+            ThisFilterObj["firstversionid"] = NodeType.FirstVersionNodeTypeId.ToString();
+
+            if( FiltersObj[FilterName] == null )
+            {
+                FiltersObj[FilterName] = new JObject();
+            }
+            FiltersObj[FilterName][NodeType.NodeTypeName.ToLower()] = ThisFilterObj;
+        } // _addNodeTypeFilter()
+
+        private void _addPropFilter( JObject FiltersObj, Int32 NodeTypePropId, string Value, Int32 Count )
+        {
+            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
+            string FilterName = NodeTypeProp.PropName;
+
+            JObject ThisFilterObj = _makeFilter( FilterName, "propval", NodeTypePropId.ToString() + "_" + Value, Value, Count, string.Empty );
+            ThisFilterObj["firstpropversionid"] = NodeTypeProp.FirstPropVersionId.ToString();
+            
+            if( FiltersObj[FilterName] == null )
+            {
+                FiltersObj[FilterName] = new JObject();
+            }
+            FiltersObj[FilterName][NodeTypeProp.PropName] = ThisFilterObj;
+        } // _addPropFilter()
+
+        private JObject _makeFilter( string FilterName, string Type, string FilterId, string FilterValue, Int32 Count, string Icon )
+        {
+            JObject ThisFilterObj = new JObject();
+            ThisFilterObj["filtertype"] = Type;
+            ThisFilterObj["filterid"] = FilterId;
+            ThisFilterObj["filtername"] = FilterName;
+            if( FilterValue != string.Empty )
+            {
+                ThisFilterObj["filtervalue"] = FilterValue;
+            }
+            else
+            {
+                ThisFilterObj["filtervalue"] = "[blank]";
+            }
+            ThisFilterObj["count"] = Count.ToString();
+            ThisFilterObj["icon"] = Icon;
+            return ThisFilterObj;
+        }
 
         #endregion Universal Search
 
