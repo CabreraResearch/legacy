@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         CswNbtSubFieldColl SubFields { get; }
         bool SearchAllowed { get; }
         string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode );
-        void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck );
+        void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck );
         void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp );
         void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
     }//ICswNbtFieldTypeRule
