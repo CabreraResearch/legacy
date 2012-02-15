@@ -73,7 +73,9 @@
             if (options) {
                 $.extend(internal, options);
             }
-
+            internal.type = Csw.enums.inputTypes.button;
+            $.extend(external, Csw.controls.input(internal));
+            
             var buttonOpt;
 
             function onClick() {
@@ -82,13 +84,9 @@
                         external.disable();
                     }
                 }
-                return Csw.tryExec(internal.onClick);
             }
-
-
-            internal.type = Csw.enums.inputTypes.button;
-            $.extend(external, Csw.controls.input(internal));
-
+            external.bind('click', onClick);            
+            
             external.propNonDom({
                 enabledText: internal.enabledText,
                 disabledText: internal.disabledText
@@ -111,10 +109,7 @@
                 buttonOpt.label = internal.disabledText;
             }
             external.$.button(buttonOpt);
-
-            if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
-            }
+            
         } ());
 
         return external;
