@@ -18,17 +18,6 @@
         };
         var external = {};
 
-        external.val = function (readOnly) {
-            var ret = {};
-            if (internal.dateBox.length() > 0) {
-                ret.date = (false === Csw.bool(readOnly)) ? internal.dateBox.val() : internal.dateBox.text();
-            }
-            if (internal.timeBox.length() > 0) {
-                ret.time = (false === Csw.bool(readOnly)) ? internal.timeBox.val() : internal.timeBox.text();
-            }
-            return ret;
-        };
-
         (function () {
             if (options) {
                 $.extend(internal, options);
@@ -88,6 +77,18 @@
                 }
             } // if-else(o.ReadOnly)
         } ());
+        
+        external.val = function (readOnly) {
+            var ret = {};
+            if (internal.dateBox && internal.dateBox.length() > 0) {
+                ret.date = (false === Csw.bool(readOnly)) ? internal.dateBox.val() : internal.dateBox.text();
+            }
+            if (internal.timeBox && internal.timeBox.length() > 0) {
+                ret.time = (false === Csw.bool(readOnly)) ? internal.timeBox.val() : internal.timeBox.text();
+            }
+            return ret;
+        };
+
         return external;
     }
 

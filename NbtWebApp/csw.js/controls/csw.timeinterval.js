@@ -12,20 +12,26 @@
             Multi: false,
             ReadOnly: false,
             Required: false,
-            onChange: null
+            onChange: null,
+            rateType: {},
+            divWeekly: '',
+            divMonthly: '',
+            divYearly: '',
+            dateFormat: ''
         };
-        var external = {};
+        var external = {
+            rateInterval: {}
+        };
 
         if (options) {
             $.extend(true, internal, options);
         }
 
-        var now = new Date(),
-            nowString = (now.getMonth() + 1) + '/' + now.getDate() + '/' + now.getFullYear(),
-            rateType, divWeekly, divMonthly, divYearly, dateFormat, rateInterval = {}, pickerCell;
+        internal.now = new Date();
+        internal.nowString = (internal.now.getMonth() + 1) + '/' + internal.now.getDate() + '/' + internal.now.getFullYear();
 
         internal.saveRateInterval = function () {
-            Csw.clientDb.setItem(internal.ID + '_rateIntervalSave', rateInterval);
+            Csw.clientDb.setItem(internal.ID + '_rateIntervalSave', external.rateInterval);
         };
 
         internal.toggleIntervalDiv = function (interval, inpWeeklyRadio, inpMonthlyRadio, inpYearlyRadio) {
@@ -35,36 +41,36 @@
                 inpMonthlyRadio.propDom('checked', false);
                 inpYearlyRadio.propDom('checked', false);
             }
-            if (false === Csw.isNullOrEmpty(divWeekly, true)) {
-                divWeekly.hide();
+            if (false === Csw.isNullOrEmpty(internal.divWeekly, true)) {
+                internal.divWeekly.hide();
             }
-            if (false === Csw.isNullOrEmpty(divMonthly, true)) {
-                divMonthly.hide();
+            if (false === Csw.isNullOrEmpty(internal.divMonthly, true)) {
+                internal.divMonthly.hide();
             }
-            if (false === Csw.isNullOrEmpty(divYearly, true)) {
-                divYearly.hide();
+            if (false === Csw.isNullOrEmpty(internal.divYearly, true)) {
+                internal.divYearly.hide();
             }
             switch (interval) {
                 case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                    divWeekly.show();
+                    internal.divWeekly.show();
                     if (window.abandonHope) {
                         inpWeeklyRadio.propDom('checked', true);
                     }
                     break;
                 case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                    divMonthly.show();
+                    internal.divMonthly.show();
                     if (window.abandonHope) {
                         inpMonthlyRadio.propDom('checked', true);
                     }
                     break;
                 case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                    divMonthly.show();
+                    internal.divMonthly.show();
                     if (window.abandonHope) {
                         inpMonthlyRadio.propDom('checked', true);
                     }
                     break;
                 case Csw.enums.rateIntervalTypes.YearlyByDate:
-                    divYearly.show();
+                    internal.divYearly.show();
                     if (window.abandonHope) {
                         inpYearlyRadio.propDom('checked', true);
                     }
@@ -85,9 +91,9 @@
                 dayPropName = 'monthlyday';
             }
 
-            return function (parent, onChange, useRadio, elemId) {
+            return function (onChange, useRadio, elemId, parent) {
                 var id = elemId || internal.ID + '_weeklyday',
-                    pickerTable, i, type, weeklyStartDate = {}, weeklyTable;
+                    pickerTable, i, type, weeklyStartDate = {}, weeklyTable, weeklyTableCell;
 
                 function isChecked(day) {
                     var thisDay = internal.weekDayDef[day - 1];
@@ -96,21 +102,21 @@
 
                 function saveWeekInterval() {
                     if (isWeekly) {
-                        Csw.each(rateInterval, function (prop, key) {
+                        Csw.each(external.rateInterval, function (prop, key) {
                             if (key !== 'dateformat' && key !== 'ratetype' && key !== 'startingdate' && key !== 'weeklyday') {
-                                delete rateInterval[key];
+                                delete external.rateInterval[key];
                             }
                         });
                         if (startingDate) {
-                            rateInterval.startingdate = startingDate.$.CswDateTimePicker('value');
+                            external.rateInterval.startingdate = startingDate.val();
                         } else {
-                            rateInterval.startingdate = {};
+                            external.rateInterval.startingdate = {};
                         }
-                        rateInterval.startingdate.dateformat = dateFormat;
+                        external.rateInterval.startingdate.dateformat = internal.dateFormat;
                     }
-                    rateInterval.ratetype = thisRateType;
-                    rateInterval.dateformat = dateFormat;
-                    rateInterval[dayPropName] = weekdays.join(',');
+                    external.rateInterval.ratetype = thisRateType;
+                    external.rateInterval.dateformat = internal.dateFormat;
+                    external.rateInterval[dayPropName] = weekdays.join(',');
                     internal.saveRateInterval();
                 }
 
@@ -133,7 +139,7 @@
                 }
 
                 if (false === weeklyDayPickerComplete) {
-                    ret = parent.div();
+                    ret = parent || internal.pickerCell.div();
 
                     weeklyTable = ret.table({
                         ID: Csw.controls.dom.makeId(id, 'weeklytbl'),
@@ -141,12 +147,14 @@
                         FirstCellRightAlign: true
                     });
 
-                    weekdays = Csw.string(rateInterval[dayPropName]).split(',');
+                    weekdays = Csw.string(external.rateInterval[dayPropName]).split(',');
 
                     weeklyTable.add(1, 1, 'Every:');
-                    weeklyTable.add(2, 1, 'Starting On:');
-                    startingDate = weeklyTable.cell(2, 2);
+                    if (thisRateType === Csw.enums.rateIntervalTypes.WeeklyByDay) {
+                        weeklyTable.add(2, 1, 'Starting On:');
+                    }
 
+                    weeklyTableCell = weeklyTable.cell(2, 2);
                     pickerTable = weeklyTable.cell(1, 2).table({
                         ID: Csw.controls.dom.makeId(id, 'weeklytblpicker'),
                         cellalign: 'center'
@@ -178,18 +186,19 @@
 
                     //Starting Date
                     if (isWeekly) {
-                        if (false === internal.Multi && Csw.contains(rateInterval, 'startingdate')) {
-                            weeklyStartDate = Csw.string(rateInterval.startingdate.date);
+                        if (false === internal.Multi && Csw.contains(external.rateInterval, 'startingdate')) {
+                            weeklyStartDate = Csw.string(external.rateInterval.startingdate.date);
                         }
                         if (Csw.isNullOrEmpty(weeklyStartDate)) {
-                            rateInterval.startingdate = { date: nowString, dateformat: dateFormat };
+                            weeklyStartDate = internal.nowString;
+                            external.rateInterval.startingdate = { date: internal.nowString, dateformat: internal.dateFormat };
                             internal.saveRateInterval();
                         }
 
-                        startingDate.$.CswDateTimePicker('init', {
+                        startingDate = weeklyTableCell.dateTimePicker({
                             ID: Csw.controls.dom.makeId(internal.ID, 'weekly', 'sd'),
                             Date: weeklyStartDate,
-                            DateFormat: dateFormat,
+                            DateFormat: internal.dateFormat,
                             DisplayMode: 'Date',
                             ReadOnly: internal.ReadOnly,
                             Required: internal.Required,
@@ -218,13 +227,13 @@
             var monthlyPickerComplete = false,
                 ret;
 
-            return function (parent) {
+            return function () {
                 var monthlyRateSelect, monthlyDateSelect, monthlyWeekSelect, startOnMonth, startOnYear,
                     monthlyRadioId = Csw.controls.dom.makeId(internal.ID, 'monthly'),
                     monthlyDayPickerId = Csw.controls.dom.makeId(internal.ID, 'monthly', 'day');
 
                 function saveMonthInterval() {
-                    Csw.each(rateInterval, function (prop, key) {
+                    Csw.each(external.rateInterval, function (prop, key) {
                         if (key !== 'dateformat' &&
                             key !== 'ratetype' &&
                             key !== 'monthlyday' &&
@@ -232,35 +241,35 @@
                             key !== 'monthlyfrequency' &&
                             key !== 'startingmonth' &&
                             key !== 'startingyear') {
-                            delete rateInterval[key];
+                            delete external.rateInterval[key];
                         }
                     });
-                    if (rateType === Csw.enums.rateIntervalTypes.MonthlyByDate) {
-                        delete rateInterval.monthlyday;
-                        delete rateInterval.monthlyweek;
-                        rateInterval.monthlydate = monthlyDateSelect.find(':selected').val();
+                    if (internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate) {
+                        delete external.rateInterval.monthlyday;
+                        delete external.rateInterval.monthlyweek;
+                        external.rateInterval.monthlydate = monthlyDateSelect.find(':selected').val();
                     } else {
-                        delete rateInterval.monthlydate;
-                        rateInterval.monthlyweek = monthlyWeekSelect.find(':selected').val();
+                        delete external.rateInterval.monthlydate;
+                        external.rateInterval.monthlyweek = monthlyWeekSelect.find(':selected').val();
                     }
 
-                    rateInterval.ratetype = rateType;
-                    rateInterval.dateformat = dateFormat;
-                    rateInterval.monthlyfrequency = monthlyRateSelect.find(':selected').val();
-                    rateInterval.startingmonth = startOnMonth.find(':selected').val();
-                    rateInterval.startingyear = startOnYear.find(':selected').val();
+                    external.rateInterval.ratetype = internal.rateType;
+                    external.rateInterval.dateformat = internal.dateFormat;
+                    external.rateInterval.monthlyfrequency = monthlyRateSelect.find(':selected').val();
+                    external.rateInterval.startingmonth = startOnMonth.find(':selected').val();
+                    external.rateInterval.startingyear = startOnYear.find(':selected').val();
                     internal.saveRateInterval();
                 }
 
-                function makeMonthlyByDateSelect(parent) {
-                    var byDate = parent.div(),
+                function makeMonthlyByDateSelect(monParent) {
+                    var byDate = monParent.div(),
                         daysInMonth = ChemSW.makeSequentialArray(1, 31), selectedDay = '';
 
                     if (Csw.bool(internal.Multi)) {
                         selectedDay = Csw.enums.multiEditDefaultValue;
                         daysInMonth.unshift(Csw.enums.multiEditDefaultValue);
-                    } else if (Csw.contains(rateInterval, 'monthlydate')) {
-                        selectedDay = Csw.number(rateInterval.monthlydate, 1);
+                    } else if (Csw.contains(external.rateInterval, 'monthlydate')) {
+                        selectedDay = Csw.number(external.rateInterval.monthlydate, internal.now.getDay());
                     }
 
                     byDate.input({
@@ -269,11 +278,11 @@
                         type: Csw.enums.inputTypes.radio,
                         onChange: function () {
                             Csw.tryExec(internal.onChange);
-                            rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
+                            internal.rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                             saveMonthInterval();
                         },
                         value: Csw.enums.rateIntervalTypes.MonthlyByDate,
-                        checked: rateType === Csw.enums.rateIntervalTypes.MonthlyByDate
+                        checked: internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate
                     });
                     byDate.append('On Day of Month:&nbsp;');
 
@@ -290,8 +299,8 @@
                     return byDate;
                 }
 
-                function makeEveryMonthSelect(parent) {
-                    var divEvery = parent.div({ text: 'Every' }),
+                function makeEveryMonthSelect(monParent) {
+                    var divEvery = monParent.div({ text: 'Every' }),
                         frequency = ChemSW.makeSequentialArray(1, 12),
                         selected;
 
@@ -299,7 +308,7 @@
                         frequency.unshift(Csw.enums.multiEditDefaultValue);
                         selected = Csw.enums.multiEditDefaultValue;
                     } else {
-                        selected = Csw.number(rateInterval.monthlyfrequency, 1);
+                        selected = Csw.number(external.rateInterval.monthlyfrequency, 1);
                     }
 
                     monthlyRateSelect = divEvery.select({
@@ -316,8 +325,8 @@
                     return divEvery;
                 }
 
-                function makeMonthlyByDayOfWeek(parent) {
-                    var divByDay = parent.div(),
+                function makeMonthlyByDayOfWeek(monParent) {
+                    var divByDay = monParent.div(),
                         monthlyWeekId = Csw.controls.dom.makeId(internal.ID, 'monthly', 'week'),
                         monthlyByDayId = Csw.controls.dom.makeId(internal.ID, 'monthly', 'by_day'),
                         selected,
@@ -334,11 +343,11 @@
                         type: Csw.enums.inputTypes.radio,
                         onChange: function () {
                             Csw.tryExec(internal.onChange);
-                            rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
+                            internal.rateType = ret.find('[name="' + monthlyRadioId + '"]:checked').val();
                             saveMonthInterval();
                         },
                         value: Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay,
-                        checked: rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
+                        checked: internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
                     });
 
                     divByDay.append('Every&nbsp;');
@@ -347,7 +356,7 @@
                         weeksInMonth.unshift({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                         selected = Csw.enums.multiEditDefaultValue;
                     } else {
-                        selected = Csw.number(rateInterval.monthlyweek, 1);
+                        selected = Csw.number(external.rateInterval.monthlyweek, 1);
                     }
 
                     monthlyWeekSelect = divByDay.select({
@@ -361,14 +370,14 @@
                     });
                     divByDay.br();
 
-                    internal.monthlyWeekPicker(divByDay, internal.onChange, true, monthlyDayPickerId);
+                    internal.monthlyWeekPicker(internal.onChange, true, monthlyDayPickerId, divByDay);
                     return divByDay;
                 }
 
-                function makeStartOnSelects(parent) {
-                    var divStartOn = parent.div(),
+                function makeStartOnSelects(monParent) {
+                    var divStartOn = monParent.div(),
                         monthsInYear = ChemSW.makeSequentialArray(1, 12),
-                        year = now.getFullYear(),
+                        year = internal.now.getFullYear(),
                         yearsToAllow = ChemSW.makeSequentialArray(year - 10, year + 10),
                         selectedMonth, selectedYear;
 
@@ -381,8 +390,8 @@
                         selectedMonth = Csw.enums.multiEditDefaultValue;
                         selectedYear = Csw.enums.multiEditDefaultValue;
                     } else {
-                        selectedMonth = Csw.number(rateInterval.startingmonth, (now.getMonth() + 1));
-                        selectedYear = Csw.number(rateInterval.startingyear, year);
+                        selectedMonth = Csw.number(external.rateInterval.startingmonth, (internal.now.getMonth() + 1));
+                        selectedYear = Csw.number(external.rateInterval.startingyear, year);
                     }
 
                     startOnMonth = divStartOn.select({
@@ -410,7 +419,7 @@
                 }
 
                 if (false === monthlyPickerComplete) {
-                    ret = parent.div();
+                    ret = internal.pickerCell.div();
                     makeEveryMonthSelect(ret);
                     makeMonthlyByDateSelect(ret);
                     ret.br();
@@ -430,49 +439,50 @@
         internal.makeYearlyDatePicker = (function () {
             var yearlyDatePickerComplete = false,
                 retDiv, yearlyDate;
-            return function (parent) {
+            return function () {
 
                 function saveYearInterval() {
-                    Csw.each(rateInterval, function (prop, key) {
+                    Csw.each(external.rateInterval, function (prop, key) {
                         if (key !== 'dateformat' &&
                             key !== 'ratetype' &&
                             key !== 'yearlydate') {
-                            delete rateInterval[key];
+                            delete external.rateInterval[key];
                         }
                     });
 
-                    rateInterval.ratetype = rateType;
-                    rateInterval.dateformat = dateFormat;
+                    external.rateInterval.ratetype = internal.rateType;
+                    external.rateInterval.dateformat = internal.dateFormat;
                     if (yearlyDate) {
-                        rateInterval.yearlydate = yearlyDate.$.CswDateTimePicker('value');
+                        external.rateInterval.yearlydate = yearlyDate.val();
                     } else {
-                        rateInterval.yearlydate = {};
+                        external.rateInterval.yearlydate = {};
                     }
-                    rateInterval.yearlydate.dateformat = dateFormat;
+                    external.rateInterval.yearlydate.dateformat = internal.dateFormat;
                     internal.saveRateInterval();
                 }
 
                 if (false === yearlyDatePickerComplete) {
-                    retDiv = parent.div();
+                    retDiv = internal.pickerCell.div();
 
                     var yearlyStartDate = '';
 
                     if (Csw.bool(internal.Multi)) {
                         yearlyStartDate = Csw.enums.multiEditDefaultValue;
-                    } else if (Csw.contains(rateInterval, 'yearlydate')) {
-                        yearlyStartDate = Csw.string(rateInterval.yearlydate.date);
+                    }
+                    else if (Csw.contains(external.rateInterval, 'yearlydate')) {
+                        yearlyStartDate = Csw.string(external.rateInterval.yearlydate.date, internal.now.toLocaleDateString());
                     }
                     if (Csw.isNullOrEmpty(yearlyStartDate)) {
-                        rateInterval.yearlydate = { date: nowString, dateformat: dateFormat };
+                        yearlyStartDate = internal.nowString;
+                        external.rateInterval.yearlydate = { date: internal.nowString, dateformat: internal.dateFormat };
                     }
 
                     retDiv.append('Every Year, Starting On: ').br();
 
-                    yearlyDate = retDiv.div();
-                    yearlyDate.$.CswDateTimePicker('init', {
+                    yearlyDate = retDiv.div().dateTimePicker({
                         ID: Csw.controls.dom.makeId(internal.ID, 'yearly', 'sd'),
                         Date: yearlyStartDate,
-                        DateFormat: dateFormat,
+                        DateFormat: internal.dateFormat,
                         DisplayMode: 'Date',
                         ReadOnly: internal.ReadOnly,
                         Required: internal.Required,
@@ -498,7 +508,7 @@
                 name: Csw.controls.dom.makeId(internal.ID, 'type'),
                 type: Csw.enums.inputTypes.radio,
                 value: 'weekly',
-                checked: rateType === Csw.enums.rateIntervalTypes.WeeklyByDay
+                checked: internal.rateType === Csw.enums.rateIntervalTypes.WeeklyByDay
             });
 
             var inpMonthlyRadio = subTable.cell(2, 1).input({
@@ -506,7 +516,7 @@
                 name: Csw.controls.dom.makeId(internal.ID, 'type'),
                 type: Csw.enums.inputTypes.radio,
                 value: 'monthly',
-                checked: rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
+                checked: internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
             });
 
             var inpYearlyRadio = subTable.cell(3, 1).input({
@@ -514,103 +524,101 @@
                 name: Csw.controls.dom.makeId(internal.ID, 'type'),
                 type: Csw.enums.inputTypes.radio,
                 value: 'yearly',
-                checked: rateType === Csw.enums.rateIntervalTypes.YearlyByDate
+                checked: internal.rateType === Csw.enums.rateIntervalTypes.YearlyByDate
             });
 
             function onChange() {
-                if (Csw.isFunction(internal.onChange)) {
-                    internal.onChange();
-                }
-                internal.toggleIntervalDiv(rateType, inpWeeklyRadio, inpMonthlyRadio, inpYearlyRadio);
+                Csw.tryExec(internal.onChange);
+                internal.toggleIntervalDiv(internal.rateType, inpWeeklyRadio, inpMonthlyRadio, inpYearlyRadio);
                 internal.saveRateInterval();
             }
 
             //Weekly
             subTable.cell(1, 2).span({ text: '&nbsp;Weekly' });
             inpWeeklyRadio.bind('click', function () {
-                rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
-                rateInterval.ratetype = rateType;
-                divWeekly = divWeekly || internal.weeklyWeekPicker(pickerCell, internal.onChange, false);
+                internal.rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
+                external.rateInterval.ratetype = internal.rateType;
+                internal.divWeekly = internal.divWeekly || internal.weeklyWeekPicker(internal.onChange, false);
                 onChange();
             });
 
             //Monthly
             subTable.add(2, 2).span({ text: '&nbsp;Monthly' });
             inpMonthlyRadio.bind('click', function () {
-                rateType = Csw.enums.rateIntervalTypes.MonthlyByDate;
-                rateInterval.ratetype = rateType;
-                divMonthly = divMonthly || internal.makeMonthlyPicker(pickerCell);
+                internal.rateType = Csw.enums.rateIntervalTypes.MonthlyByDate;
+                external.rateInterval.ratetype = internal.rateType;
+                internal.divMonthly = internal.divMonthly || internal.makeMonthlyPicker();
                 onChange();
             });
 
             //Yearly
             subTable.add(3, 2).span({ text: '&nbsp;Yearly' });
             inpYearlyRadio.bind('click', function () {
-                rateType = Csw.enums.rateIntervalTypes.YearlyByDate;
-                rateInterval.ratetype = rateType;
-                divYearly = divYearly || internal.makeYearlyDatePicker(pickerCell);
+                internal.rateType = Csw.enums.rateIntervalTypes.YearlyByDate;
+                external.rateInterval.ratetype = internal.rateType;
+                internal.divYearly = internal.divYearly || internal.makeYearlyDatePicker();
                 onChange();
             });
         };
 
         external.validateRateInterval = function () {
             var retVal = false, errorString = '';
-            switch (rateType) {
+            switch (internal.rateType) {
                 case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                    if (false === Csw.contains(rateInterval, 'startingdate') ||
-                        false === Csw.contains(rateInterval.startingdate, 'date') ||
-                            Csw.isNullOrEmpty(rateInterval.startingdate.date)) {
+                    if (false === Csw.contains(external.rateInterval, 'startingdate') ||
+                        false === Csw.contains(external.rateInterval.startingdate, 'date') ||
+                            Csw.isNullOrEmpty(external.rateInterval.startingdate.date)) {
                         errorString += 'Cannot add a Weekly time interval without a starting date. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'weeklyday') ||
-                        Csw.isNullOrEmpty(rateInterval.weeklyday)) {
+                    if (false === Csw.contains(external.rateInterval, 'weeklyday') ||
+                        Csw.isNullOrEmpty(external.rateInterval.weeklyday)) {
                         errorString += 'Cannot add a Weekly time interval without at least one weekday selected. ';
                     }
                     break;
                 case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                    if (false === Csw.contains(rateInterval, 'monthlydate') ||
-                        Csw.isNullOrEmpty(rateInterval.monthlydate)) {
+                    if (false === Csw.contains(external.rateInterval, 'monthlydate') ||
+                        Csw.isNullOrEmpty(external.rateInterval.monthlydate)) {
                         errorString += 'Cannot add a Monthly time interval without an \'On Day of Month\' selected. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'monthlyfrequency') ||
-                        Csw.isNullOrEmpty(rateInterval.monthlyfrequency)) {
+                    if (false === Csw.contains(external.rateInterval, 'monthlyfrequency') ||
+                        Csw.isNullOrEmpty(external.rateInterval.monthlyfrequency)) {
                         errorString += 'Cannot add a Monthly time interval without a frequency selected. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'startingmonth') ||
-                        Csw.isNullOrEmpty(rateInterval.startingmonth)) {
+                    if (false === Csw.contains(external.rateInterval, 'startingmonth') ||
+                        Csw.isNullOrEmpty(external.rateInterval.startingmonth)) {
                         errorString += 'Cannot add a Monthly time interval without a Starting Month selected. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'startingyear') ||
-                        Csw.isNullOrEmpty(rateInterval.startingyear)) {
+                    if (false === Csw.contains(external.rateInterval, 'startingyear') ||
+                        Csw.isNullOrEmpty(external.rateInterval.startingyear)) {
                         errorString += 'Cannot add a Monthly time interval without a Starting Year selected. ';
                     }
                     break;
                 case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                    if (false === Csw.contains(rateInterval, 'monthlyfrequency') ||
-                        Csw.isNullOrEmpty(rateInterval.monthlyfrequency)) {
+                    if (false === Csw.contains(external.rateInterval, 'monthlyfrequency') ||
+                        Csw.isNullOrEmpty(external.rateInterval.monthlyfrequency)) {
                         errorString += 'Cannot add a Monthly time interval without a frequency selected. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'monthlyday') ||
-                        Csw.isNullOrEmpty(rateInterval.monthlyday)) {
+                    if (false === Csw.contains(external.rateInterval, 'monthlyday') ||
+                        Csw.isNullOrEmpty(external.rateInterval.monthlyday)) {
                         errorString += 'Cannot add a Monthly time interval without a Weekday selected. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'monthlyweek') ||
-                        Csw.isNullOrEmpty(rateInterval.monthlyweek)) {
+                    if (false === Csw.contains(external.rateInterval, 'monthlyweek') ||
+                        Csw.isNullOrEmpty(external.rateInterval.monthlyweek)) {
                         errorString += 'Cannot add a Monthly time interval without a Weekly frequency selected. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'startingmonth') ||
-                        Csw.isNullOrEmpty(rateInterval.startingmonth)) {
+                    if (false === Csw.contains(external.rateInterval, 'startingmonth') ||
+                        Csw.isNullOrEmpty(external.rateInterval.startingmonth)) {
                         errorString += 'Cannot add a Monthly time interval without a starting month selected. ';
                     }
-                    if (false === Csw.contains(rateInterval, 'startingyear') ||
-                        Csw.isNullOrEmpty(rateInterval.startingyear)) {
+                    if (false === Csw.contains(external.rateInterval, 'startingyear') ||
+                        Csw.isNullOrEmpty(external.rateInterval.startingyear)) {
                         errorString += 'Cannot add a Monthly time interval without a starting year selected. ';
                     }
                     break;
                 case Csw.enums.rateIntervalTypes.YearlyByDate:
-                    if (false === Csw.contains(rateInterval, 'yearlydate') ||
-                        false === Csw.contains(rateInterval.yearlydate, 'date') ||
-                            Csw.isNullOrEmpty(rateInterval.yearlydate.date)) {
+                    if (false === Csw.contains(external.rateInterval, 'yearlydate') ||
+                        false === Csw.contains(external.rateInterval.yearlydate, 'date') ||
+                            Csw.isNullOrEmpty(external.rateInterval.yearlydate.date)) {
                         errorString += 'Cannot addd a Yearly time interval without a starting date. ';
                     }
                     break;
@@ -622,22 +630,22 @@
         };
 
         (function () {
-            var parent = Csw.controls.factory(internal.$parent),
-                propVals = internal.propVals,
+            Csw.controls.factory(internal.$parent, external);
+            var propVals = internal.propVals,
                 textValue,
                 table;
 
             if (internal.Multi) {
-                //rateInterval = Csw.enums.multiEditDefaultValue;
+                //external.rateInterval = Csw.enums.multiEditDefaultValue;
                 textValue = Csw.enums.multiEditDefaultValue;
-                rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
+                internal.rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
             } else {
-                $.extend(true, rateInterval, propVals.Interval.rateintervalvalue);
+                $.extend(true, external.rateInterval, propVals.Interval.rateintervalvalue);
                 textValue = Csw.string(propVals.Interval.text).trim();
-                rateType = rateInterval.ratetype;
+                internal.rateType = external.rateInterval.ratetype;
             }
-            dateFormat = Csw.string(rateInterval.dateformat, 'M/d/yyyy');
-            external.interval = parent.div({
+            internal.dateFormat = Csw.string(external.rateInterval.dateformat, 'M/d/yyyy');
+            external.interval = external.div({
                 ID: Csw.controls.dom.makeId(internal.ID, 'cswTimeInterval')
             });
 
@@ -646,39 +654,39 @@
                 ID: Csw.controls.dom.makeId(internal.ID, 'textvalue'),
                 text: textValue
             });
-            table = parent.table({
+            table = external.table({
                 ID: Csw.controls.dom.makeId(internal.ID, 'tbl'),
                 cellspacing: 5
             });
 
             internal.makeRateType(table);
 
-            pickerCell = table.cell(1, 3).propDom('rowspan', '3');
+            internal.pickerCell = table.cell(1, 3).propDom('rowspan', '3');
 
             // Set selected values
-            switch (rateType) {
+            switch (internal.rateType) {
                 case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                    divWeekly = internal.weeklyWeekPicker(pickerCell, internal.onChange, false);
+                    internal.divWeekly = internal.weeklyWeekPicker(internal.onChange, false);
                     break;
                 case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                    divMonthly = internal.makeMonthlyPicker(pickerCell);
+                    internal.divMonthly = internal.makeMonthlyPicker();
                     break;
                 case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                    divMonthly = internal.makeMonthlyPicker(pickerCell);
+                    internal.divMonthly = internal.makeMonthlyPicker();
                     break;
                 case Csw.enums.rateIntervalTypes.YearlyByDate:
-                    divYearly = internal.makeYearlyDatePicker(pickerCell);
+                    internal.divYearly = internal.makeYearlyDatePicker();
                     break;
             } // switch(RateType)
 
-            return external.interval;
+
         } ());
 
         external.rateType = function () {
-            return rateType;
+            return internal.rateType;
         };
-        external.rateInterval = function () {
-            return rateInterval;
+        external.val = function () {
+            return external.rateInterval;
         };
 
         return external;
