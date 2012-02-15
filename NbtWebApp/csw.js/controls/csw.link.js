@@ -46,7 +46,11 @@
             html += '<a ';
             attr.add('id', internal.ID);
             attr.add('class', internal.cssclass);
-            attr.add('href', internal.href);
+            if (false == Csw.isNullOrEmpty(internal.href)) {
+                attr.add('href', internal.href);
+            } else {
+                attr.add('href', '#');
+            }
             attr.add('type', internal.type);
             attr.add('title', internal.title);
             attr.add('rel', internal.rel);

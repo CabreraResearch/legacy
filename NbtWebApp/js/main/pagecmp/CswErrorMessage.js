@@ -41,7 +41,6 @@
         table.cell(1,1).link({
             ID: Csw.controls.dom.makeId({ ID: id, suffix: 'cell' }),
             text: o.message,
-            href: '#',
             onClick: function () { cell21.$.toggle(); }
         });
         var cell12 = table.cell(1, 2);

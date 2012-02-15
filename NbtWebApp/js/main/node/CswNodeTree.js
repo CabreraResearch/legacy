@@ -69,7 +69,6 @@
                 $togglelink = $this.CswLink({
                     ID: o.ID + '_toggle',
                     value: 'Expand All',
-                    href: '#',
                     onClick: function () { expandAll(); return false; }
                 });
                 $togglelink.hide();
