@@ -12,10 +12,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtTreeLoaderFromSearchByLevel : CswNbtTreeLoader
     {
-        //public Int32 ResultLimit = 1001;  // BZ 8460
-
         private CswNbtResources _CswNbtResources = null;
-        //private CswNbtView _View;
         private string _SearchTerm;
         private ICswNbtUser _RunAsUser;
         private bool _IncludeSystemNodes = false;
@@ -25,27 +22,9 @@ namespace ChemSW.Nbt
         {
             _CswNbtResources = CswNbtResources;
             _RunAsUser = RunAsUser;
-            //_View = View;
             _SearchTerm = SearchTerm;
             _IncludeSystemNodes = IncludeSystemNodes;
-
-            //string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
-            //if( CswTools.IsInteger( ResultLimitString ) )
-            //    ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }
-
-        ///// <summary>
-        ///// Deprecated, non-functional, old interface
-        ///// </summary>
-        //public override void load( ref CswNbtNodeKey ParentNodeKey,
-        //                           CswNbtViewRelationship ChildRelationshipToStartWith,
-        //                           Int32 PageSize,
-        //                           bool FetchAllPrior,
-        //                           bool SingleLevelOnly,
-        //                           CswNbtNodeKey IncludedKey,
-        //                           bool RequireViewPermissions )
-        //{
-        //}
 
         /// <summary>
         /// Returns the maximum number of properties in any Table Layout, for result limits
@@ -65,11 +44,7 @@ namespace ChemSW.Nbt
             DataTable NodesTable = new DataTable();
             string Sql = _makeNodeSql();
 
-            Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit;
-            //if( Relationship.Properties.Count > 0 )
-            //{
-                thisResultLimit = thisResultLimit * _getMaxPropertyCount();
-            //}
+            Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit * _getMaxPropertyCount();
 
             CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
             CswTimer SqlTimer = new CswTimer();
@@ -89,41 +64,45 @@ namespace ChemSW.Nbt
 
             Int32 PriorNodeId = Int32.MinValue;
             Collection<CswNbtNodeKey> NewNodeKeys = null;
-            //CswNbtNodeKey ParentNodeKey = null;
             Int32 RowCount = 1;
             foreach( DataRow NodesRow in NodesTable.Rows )
             {
                 Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
-
-                // Handle property multiplexing
-                // This assumes that property rows for the same nodeid are next to one another
-                if( ThisNodeId != PriorNodeId )
+                Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
+                
+                // Verify permissions
+                // this could be a performance problem
+                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
+                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                 {
-                    PriorNodeId = ThisNodeId;
-                    NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
-                    RowCount++;
-                } // if( ThisNodeId != PriorNodeId )
 
-                // This assumes that property rows for the same nodeid are next to one another
-                // It also assumes that loadNodeAsChildFromRow() made the node current
-                if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
-                {
-                    Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
-                    if( ThisNTPId != Int32.MinValue )
+                    // Handle property multiplexing
+                    // This assumes that property rows for the same nodeid are next to one another
+                    if( ThisNodeId != PriorNodeId )
                     {
-                        foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                        {
-                            _CswNbtTree.makeNodeCurrent( NewNodeKey );
-                            _CswNbtTree.addProperty( ThisNTPId,
-                                                     CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                     NodesRow["propname"].ToString(),
-                                                     NodesRow["gestalt"].ToString(),
-                                                     _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
-                        } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                    } // if( ThisNTPId != Int32.MinValue )
-                    _CswNbtTree.goToRoot();
-                } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                        PriorNodeId = ThisNodeId;
+                        NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
+                        RowCount++;
+                    } // if( ThisNodeId != PriorNodeId )
 
+                    if( NewNodeKeys != null && NodesTable.Columns.Contains( "nodetypepropid" ) )
+                    {
+                        Int32 ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
+                        if( ThisNTPId != Int32.MinValue )
+                        {
+                            foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                            {
+                                _CswNbtTree.makeNodeCurrent( NewNodeKey );
+                                _CswNbtTree.addProperty( ThisNTPId,
+                                                         CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                         NodesRow["propname"].ToString(),
+                                                         NodesRow["gestalt"].ToString(),
+                                                         _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
+                            } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                        } // if( ThisNTPId != Int32.MinValue )
+                        _CswNbtTree.goToRoot();
+                    } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
             } // foreach(DataRow NodesRow in NodesTable.Rows)
 
             // case 24678 - Mark truncated results
@@ -334,25 +313,27 @@ namespace ChemSW.Nbt
                 //if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
                 //{
                     // Properties
-                    // We match on propname because that's how the view editor works.
-                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtypeid ";
+                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtypeid, propval.jctnodepropid, propval.gestalt  ";
 
-                    From += @" left outer join ( 
-                                    select p.nodetypeid, p.nodetypepropid, p.propname, p.fieldtypeid, nl.layouttype
-                                      from nodetype_props p
-                                      join nodetype_layout nl on (p.nodetypepropid = nl.nodetypepropid)
-                                     where nl.layouttype = 'Table' ) props on (props.nodetypeid = t.nodetypeid) "; // intentional multiplexing
+                    From += @" left outer join (select p.nodetypeid, p.nodetypepropid, p.propname, p.fieldtypeid, nl.nodetypelayoutid, nl.display_row
+                                                  from nodetype_props p
+                                                  join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                  left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
+                                                 where nl.nodetypelayoutid is not null 
+                                                    or f.fieldtype in ('Image', 'MOL')
+                                                    or p.nodetypepropid in (select nodetypepropid from jct_nodes_props j where (lower(j.gestalt) like '%" + _SearchTerm.ToLower() + @"%'))
+                                               ) props on (props.nodetypeid = t.nodetypeid)
+                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
+                               left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 
-                    // Property Values
-                    Select += @" ,propval.jctnodepropid, propval.gestalt ";
-                    From += @"  left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid) ";  // better performance from indexes if we do this first
-                    From += @"  left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
+                    Where += @" and n.nodeid in (select nodeid from jct_nodes_props jnp where lower(jnp.gestalt) like '%" + _SearchTerm.ToLower() + "%') ";
+                    
+                    OrderBy += ", props.display_row ";
 
                 //} // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
             //} // if(Relationship.Properties.Count > 0)
 
 
-                    Where += " and n.nodeid in (select nodeid from jct_nodes_props where lower(gestalt) like '%" + _SearchTerm.ToLower() + "%')";
 
 //            // Property Filters
 

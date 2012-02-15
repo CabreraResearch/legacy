@@ -43,6 +43,8 @@
                     internal.handleSearch();
                 }
             });
+
+            internal.searchinput.clickOnEnter(internal.searchbutton);
         })();
 
         // Handle search submission

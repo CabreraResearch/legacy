@@ -1192,6 +1192,7 @@ namespace ChemSW.Nbt
             NodesById.TryGetValue( NodeId, out Ret );
 
             return Ret;
+           
         }
 
         //public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )

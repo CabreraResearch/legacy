@@ -159,7 +159,7 @@
 
         internal.disableDrag = function () {
             external.table.find('.CswLayoutTable_celldiv')
-                .draggable('destroy');
+                .$.draggable('destroy');
         };
 
         internal.onHoverIn = function (ev, dd, cell) {
