@@ -77,8 +77,7 @@
             else {
                 button = propDiv.link({
                     ID: o.ID,
-                    value: value,
-                    href: '#'
+                    value: value
                 });
             }
             button.click(function () {

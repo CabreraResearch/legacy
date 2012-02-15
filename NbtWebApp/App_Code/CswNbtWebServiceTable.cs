@@ -16,28 +16,19 @@ namespace ChemSW.Nbt.WebServices
 
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtView _View;
-        private readonly string _SearchTerm;
 
         public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtView View )
         {
             _CswNbtResources = CswNbtResources;
             _View = View;
-            _SearchTerm = string.Empty;
-        }
-        
-        public CswNbtWebServiceTable( CswNbtResources CswNbtResources, string SearchTerm )
-        {
-            _CswNbtResources = CswNbtResources;
-            _View = null;
-            _SearchTerm = SearchTerm;
         }
 
-        public JObject getTable( CswNbtNode SelectedNode )
+        public JObject getTable()
         {
             JObject ret = new JObject();
 
             // Add 'default' Table layout elements for the nodetype to the view for efficiency
-            ICswNbtTree Tree;
+            ICswNbtTree Tree = null;
             if( _View != null )
             {
                 Int32 Order = -1000;
@@ -68,30 +59,34 @@ namespace ChemSW.Nbt.WebServices
                 } // foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
 
                 Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
-            }
-            else
-            {
-                Tree = _CswNbtResources.Trees.getTreeFromSearch( _SearchTerm, false );
-            }
+                ret = makeTableFromTree( Tree );
+            } // if( _View != null )
+            return ret;
+        } // getTable()
 
-            ret["results"] = Tree.getChildNodeCount().ToString();
-            JArray NodesArray = new JArray();
-            for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+        public JObject makeTableFromTree( ICswNbtTree Tree )
+        {
+            JObject ret = new JObject();
+            if( Tree != null )
             {
-                Tree.goToNthChild( c );
-                NodesArray.Add( _makeNodeObj( Tree ) );
-                Tree.goToParentNode();
-            }
+                ret["results"] = Tree.getChildNodeCount().ToString();
+                JArray NodesArray = new JArray();
+                for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+                {
+                    Tree.goToNthChild( c );
+                    NodesArray.Add( _makeNodeObj( Tree ) );
+                    Tree.goToParentNode();
+                }
 
-            if( Tree.getCurrentNodeChildrenTruncated() )
-            {
-                NodesArray.Add( new JObject( new JProperty( "nodename", "Results Truncated" ) ) );
+                if( Tree.getCurrentNodeChildrenTruncated() )
+                {
+                    NodesArray.Add( new JObject( new JProperty( "nodename", "Results Truncated" ) ) );
+                }
+                ret["nodes"] = NodesArray;
             }
-            ret["nodes"] = NodesArray;
-
             return ret;
 
-        } // getTable()
+        } // makeTableFromTree()
 
         private string _Truncate( string InStr )
         {
@@ -107,7 +102,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
             CswNbtViewRelationship ViewRel = null;
-            if(_View != null)
+            if( _View != null )
             {
                 ViewRel = (CswNbtViewRelationship) _View.FindViewNodeByUniqueId( NodeKey.ViewNodeUniqueId );
             }
@@ -200,7 +195,7 @@ namespace ChemSW.Nbt.WebServices
 
                 // Special case: Image becomes thumbnail
                 if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() ) //||
-                    // FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
+                // FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
                 {
                     ret["thumbnailurl"] = CswNbtNodePropImage.makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
                 }

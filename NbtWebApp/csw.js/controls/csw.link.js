@@ -21,7 +21,7 @@
             ID: '',
             cssclass: '',
             text: '',
-            href: '',
+            href: '#',
             type: '',
             title: '',
             rel: '',
@@ -65,7 +65,14 @@
 
             Csw.controls.factory($link, external);
             if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
+                external.bind('click', function (event, ui) {
+                    var retval = Csw.tryExec(internal.onClick, event, ui);
+                    if (internal.href === '#') {
+                        return false;
+                    } else {
+                        return retval;
+                    }
+                });
             }
 
             internal.$parent.append(external.$);

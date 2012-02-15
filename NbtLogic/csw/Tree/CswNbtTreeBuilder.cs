@@ -207,19 +207,19 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( string SearchTerm, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromSearch( string SearchTerm, string WhereClause, bool IncludeSystemNodes )
         {
-            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, IncludeSystemNodes );
+            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, WhereClause, IncludeSystemNodes );
         }
 
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, string WhereClause, bool IncludeSystemNodes )
         {
             ICswNbtTree ReturnVal = _makeTree( true );
 
-            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, IncludeSystemNodes );
+            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, WhereClause, IncludeSystemNodes );
             TreeLoader.load();
 
             return ( ReturnVal );

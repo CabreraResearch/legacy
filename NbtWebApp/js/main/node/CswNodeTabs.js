@@ -60,7 +60,6 @@
             var linkDiv = parent.div({ ID: o.ID + '_linkdiv', align: 'right' });
             if (o.ShowAsReport && false === o.Multi) {
                 linkDiv.link({
-                    href: '#',
                     text: 'As Report',
                     onClick: function () {
                         Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(o.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(o.nodekeys, 0), 600, 800);
@@ -432,7 +431,6 @@
 
                 if (false === Csw.isNullOrEmpty(helpText)) {
                     labelCell.link({
-                        href: '#',
                         cssclass: 'cswprop_helplink',
                         title: helpText,
                         onClick: function () {

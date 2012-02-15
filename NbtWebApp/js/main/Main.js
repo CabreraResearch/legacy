@@ -49,7 +49,8 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.controls.universalSearch({ 
                     $searchbox_parent: $('#SearchDiv'),
-                    $searchresults_parent: $('#CenterBottomDiv'),
+                    $searchresults_parent: $('#RightDiv'),
+                    $searchfilters_parent: $('#LeftDiv'),
                     onBeforeSearch: function() { clear({ all: true }); }
                 });
 
