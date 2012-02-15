@@ -59,7 +59,9 @@
                 onEditNode: null,
                 onDeleteNode: null,
                 onSuccess: internal.onAfterSearch,
-                onNoResults: null  // function({viewid, viewmode})
+                onNoResults: function() {
+                    internal.$searchresults_parent.append('No Results Found'); 
+                }
             });
 
         } // handleSearch()

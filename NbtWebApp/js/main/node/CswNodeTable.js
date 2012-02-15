@@ -29,22 +29,7 @@
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-
-            var $scrollingdiv = $parent.CswDiv({ ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
-                                    .css({
-                                        height: o.maxheight + 'px',
-                                        overflow: 'auto'
-                                    });
-
-            var layoutTable = Csw.controls.layoutTable({
-                $parent: $scrollingdiv,
-                ID: o.ID + '_tbl',
-                cellSet: { rows: 2, columns: 1 },
-                cellalign: 'center',
-                width: '100%',
-                cellspacing: '5px'
-            });
-
+            var $scrollingdiv, layoutTable;
             var url, ajaxdata;
             if (false == Csw.isNullOrEmpty(o.viewid)) {
                 url = o.TableViewUrl;
@@ -173,6 +158,22 @@
                     if (results === 0) {
                         Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
                     } else {
+
+                        $scrollingdiv = $parent.CswDiv({ ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
+                                                .css({
+                                                    height: o.maxheight + 'px',
+                                                    overflow: 'auto'
+                                                });
+
+                        layoutTable = Csw.controls.layoutTable({
+                            $parent: $scrollingdiv,
+                            ID: o.ID + '_tbl',
+                            cellSet: { rows: 2, columns: 1 },
+                            cellalign: 'center',
+                            width: '100%',
+                            cellspacing: '5px'
+                        });
+
                         Csw.crawlObject(data.nodes, _makeNodeCell);
                     }
 
