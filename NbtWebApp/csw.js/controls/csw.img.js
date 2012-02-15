@@ -25,6 +25,7 @@
             height: '',
             ismap: '',
             usemap: '',
+            border: '',
             width: '',
             onClick: null //function () {}
         };
@@ -32,7 +33,9 @@
 
         (function () {
             var html = '',
-                attr = Csw.controls.dom.attributes();
+                attr = Csw.controls.dom.attributes(),
+                style = Csw.controls.dom.style();
+
             var $img;
 
             if (options) {
@@ -50,9 +53,11 @@
             attr.add('ismap', internal.ismap);
             attr.add('usemap', internal.usemap);
             attr.add('width', internal.width);
+            style.add('border', internal.border);
 
             html += attr.get();
-
+            html += style.get();
+            
             html += ' />';
             $img = $(html);
 

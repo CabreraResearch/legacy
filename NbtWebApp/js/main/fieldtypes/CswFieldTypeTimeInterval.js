@@ -7,20 +7,22 @@
 
     var methods = {
         init: function (o) {
-            var $Div = $(this);
+            var propDiv = o.propDiv;
+            propDiv.empty();
             o.propVals = o.propData.values;
-            o.$parent = $Div;
+
             if (false === Csw.bool(o.ReadOnly)) {
-                Csw.controls.timeInterval(o);
+                propDiv.timeInterval(o);
             } else {
-                $Div.append(o.propData.gestalt);
+                propDiv.append(o.propData.gestalt);
             }
         },
         save: function (o) {
             //Case 20939: if your prop isn't saving, check for duplicate IDs
             var intervalData = Csw.clientDb.getItem(o.ID + '_rateIntervalSave');
-            var $this = $(this);
-            
+            var $parent = $(this);
+            var parent = Csw.controls.factory($parent);
+
             try {
                 var attributes = {
                     Interval: {
@@ -43,59 +45,59 @@
                         }
                     }
                 };
-                
+
                 var newInterval = attributes.Interval.rateintervalvalue;
-                if (false === o.Multi || $this.find('#' + o.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
+                if (false === o.Multi || parent.find('#' + o.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
                     $.extend(true, newInterval, intervalData);
                 }
                 var oldInterval = o.propData.values.Interval.rateintervalvalue;
                 switch (attributes.Interval.rateintervalvalue.ratetype) {
                     case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                        if(false === Csw.contains(oldInterval, 'startingdate')) {
+                        if (false === Csw.contains(oldInterval, 'startingdate')) {
                             oldInterval.startingdate = { date: '', dateformat: '' };
                         }
-                        if(false === Csw.contains(oldInterval, 'weeklyday')) {
+                        if (false === Csw.contains(oldInterval, 'weeklyday')) {
                             oldInterval.weeklyday = '';
                         }
                         break;
                     case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                        if(false === Csw.contains(oldInterval, 'monthlydate')) {
+                        if (false === Csw.contains(oldInterval, 'monthlydate')) {
                             oldInterval.monthlydate = { date: '', dateformat: '' };
                         }
-                        if(false === Csw.contains(oldInterval, 'monthlyfrequency')) {
+                        if (false === Csw.contains(oldInterval, 'monthlyfrequency')) {
                             oldInterval.monthlyfrequency = '';
                         }
-                        if(false === Csw.contains(oldInterval,  'startingmonth')) {
+                        if (false === Csw.contains(oldInterval, 'startingmonth')) {
                             oldInterval.startingmonth = '';
                         }
-                        if(false === Csw.contains(oldInterval, 'startingyear')) {
+                        if (false === Csw.contains(oldInterval, 'startingyear')) {
                             oldInterval.startingyear = '';
                         }
                         break;
                     case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                        if(false === Csw.contains(oldInterval, 'monthlyweek')) {
+                        if (false === Csw.contains(oldInterval, 'monthlyweek')) {
                             oldInterval.monthlyweek = '';
                         }
-                        if(false === Csw.contains(oldInterval, 'monthlyday')) {
+                        if (false === Csw.contains(oldInterval, 'monthlyday')) {
                             oldInterval.monthlyday = '';
                         }
-                        if(false === Csw.contains(oldInterval, 'monthlyfrequency')) {
+                        if (false === Csw.contains(oldInterval, 'monthlyfrequency')) {
                             oldInterval.monthlyfrequency = '';
                         }
-                        if(false === Csw.contains(oldInterval,  'startingmonth')) {
+                        if (false === Csw.contains(oldInterval, 'startingmonth')) {
                             oldInterval.startingmonth = '';
                         }
-                        if(false === Csw.contains(oldInterval, 'startingyear')) {
+                        if (false === Csw.contains(oldInterval, 'startingyear')) {
                             oldInterval.startingyear = '';
                         }
                         break;
                     case Csw.enums.rateIntervalTypes.YearlyByDate:
-                        if(false === Csw.contains(oldInterval, 'yearlydate')) {
-                            oldInterval.yearlydate = { date: '', dateformat: ''};
+                        if (false === Csw.contains(oldInterval, 'yearlydate')) {
+                            oldInterval.yearlydate = { date: '', dateformat: '' };
                         }
                         break;
                 }
-                
+
                 Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             } catch (e) {
                 if (Csw.debugOn()) {

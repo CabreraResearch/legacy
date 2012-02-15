@@ -28,7 +28,7 @@
             align: '',
             width: '',
             cellalign: 'top',
-            cellvalign: 'center',
+            cellvalign: 'top',
             onCreateCell: function () {},
             FirstCellRightAlign: false,
             OddCellRightAlign: false,
@@ -167,7 +167,7 @@
         external.finish = function (onEmptyCell) {
             /// <summary>Finish</summary>
             /// <returns type="undefined"></returns>
-            var maxrows = internal.getMaxRows(),
+            var maxrows = external.maxrows(),
                 maxcolumns = external.maxcolumns(),
                 r, c, cell;
 

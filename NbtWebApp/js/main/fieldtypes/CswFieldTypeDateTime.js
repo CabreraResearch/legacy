@@ -8,15 +8,16 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
+            var propDiv  = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var date = (false === o.Multi) ? Csw.string(propVals.value.date).trim() : Csw.enums.multiEditDefaultValue;
             var time = (false === o.Multi) ? Csw.string(propVals.value.time).trim() : Csw.enums.multiEditDefaultValue;
             
             if(o.ReadOnly) {
-                $Div.append(o.propData.gestalt);    
+                propDiv.append(o.propData.gestalt);    
             } else {
-                var $DTPickerDiv = $Div.CswDateTimePicker('init', {
+                var $dTPickerDiv = propDiv.$.CswDateTimePicker('init', {
                     ID: o.ID,
                     Date: date,
                     Time: time,
@@ -28,7 +29,7 @@
                     onChange: o.onChange
                 });
 
-                $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);
+                $dTPickerDiv.find('input').clickOnEnter(o.saveBtn);
             }
         },
         save: function (o) { //$propdiv, $xml
@@ -39,9 +40,9 @@
                     time: null
                 } 
             };
-            $DTPickerDiv = o.$propdiv.find('#' + o.ID);
+            $DTPickerDiv = o.propDiv.find('#' + o.ID);
             if (false === Csw.isNullOrEmpty($DTPickerDiv)) {
-                dateVal = $DTPickerDiv.CswDateTimePicker('value', o.propData.readonly);
+                dateVal = $DTPickerDiv.$.CswDateTimePicker('value', o.propData.readonly);
                 attributes.value.date = dateVal.date;
                 attributes.value.time = dateVal.time;
             }

@@ -12,6 +12,7 @@
 
         function finishLogout() {
             var logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
+            Csw.clientDb.clear();
             Csw.cookie.clearAll();
             if (false === Csw.isNullOrEmpty(logoutpath)) {
                 window.location = logoutpath;
@@ -23,7 +24,7 @@
         function logout(options) {
             var o = {
                 DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-                onDeauthenticate: function() {
+                onDeauthenticate: function () {
                 }
             };
 
@@ -34,7 +35,7 @@
             Csw.ajax.post({
                 url: o.DeauthenticateUrl,
                 data: {},
-                success: function() {
+                success: function () {
                     finishLogout();
                     o.onDeauthenticate();
                 }
@@ -54,10 +55,10 @@
             if (Date.parse(_expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
                 window.clearInterval(_expiretimeInterval);
                 $.CswDialog('ExpireDialog', {
-                    'onYes': function() {
+                    'onYes': function () {
                         Csw.ajax.post({
                             'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
-                            'success': function() {
+                            'success': function () {
                             }
                         });
                     }
@@ -68,10 +69,10 @@
         function _setExpireTimeInterval() {
             window.clearInterval(_expiretimeInterval);
             window.clearInterval(_expiredInterval);
-            _expiretimeInterval = window.setInterval(function() {
+            _expiretimeInterval = window.setInterval(function () {
                 _checkExpireTime();
             }, 60000);
-            _expiredInterval = window.setInterval(function() {
+            _expiredInterval = window.setInterval(function () {
                 _checkExpired();
             }, 60000);
         }
@@ -88,9 +89,9 @@
         function handleAuthenticationStatus(options) {
             var o = {
                 status: '',
-                success: function() {
+                success: function () {
                 },
-                failure: function() {
+                failure: function () {
                 },
                 usernodeid: '',
                 usernodekey: '',
@@ -146,7 +147,7 @@
                             nodekeys: [o.usernodekey],
                             filterToPropId: o.passwordpropid,
                             title: 'Your password has expired.  Please change it now:',
-                            onEditNode: function() {
+                            onEditNode: function () {
                                 o.success();
                             }
                         });
@@ -156,10 +157,10 @@
                     goodEnoughForMobile = true;
                     if (!o.ForMobile) {
                         $.CswDialog('ShowLicenseDialog', {
-                            'onAccept': function() {
+                            'onAccept': function () {
                                 o.success();
                             },
-                            'onDecline': function() {
+                            'onDecline': function () {
                                 o.failure('You must accept the license agreement to use this application');
                             }
                         });
@@ -177,9 +178,9 @@
 
         function isAdministrator(options) {
             var o = {
-                'Yes': function() {
+                'Yes': function () {
                 },
-                'No': function() {
+                'No': function () {
                 }
             };
             if (options) {
@@ -188,7 +189,7 @@
 
             Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
-                success: function(data) {
+                success: function (data) {
                     if (data.Administrator === 'true') {
                         o.Yes();
                     } else {
@@ -207,8 +208,8 @@
             setExpireTime: setExpireTime
         };
 
-    }());
+    } ());
     Csw.register('clientSession', clientSession);
     Csw.clientSession = Csw.clientSession || clientSession;
 
-}());
+} ());

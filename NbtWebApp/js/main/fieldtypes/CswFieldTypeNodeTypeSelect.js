@@ -8,32 +8,33 @@
         keyCol = 'key',
         valueCol = 'value',
         methods = {
-            init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onChange = o.onChange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+            init: function (o) { 
 
-                var $Div = $(this);
+                var propDiv = o.propDiv;
+                propDiv.empty();
 
                 var propVals = o.propData.values;
                 var optData = propVals.options;
                 var selectMode = propVals.selectmode; // Single, Multiple, Blank
-                var editMode = Csw.enums.tryParse(Csw.enums.editMode, o.EditMode);
 
                 /*
+                var editMode = Csw.enums.tryParse(Csw.enums.editMode, o.EditMode);
                 Case 24606: Once we can validate the control
                 if(editMode === Csw.enums.editMode.Add) {
-                    Csw.each(propVals.options, function (option) {
-                        if (Csw.contains(option, 'key')) {
+                Csw.each(propVals.options, function (option) {
+                if (Csw.contains(option, 'key')) {
                             
-                              var relatedNodeTypeId = Csw.string(o.relatednodetypeid);
-                              if (Csw.string(option.key) === relatedNodeTypeId) 
-                              one day we can try to set the defaults using the context of the view. Not today.
+                var relatedNodeTypeId = Csw.string(o.relatednodetypeid);
+                if (Csw.string(option.key) === relatedNodeTypeId) 
+                one day we can try to set the defaults using the context of the view. Not today.
                             
-                                option.value = 'False';
-                        }
-                    });
+                option.value = 'False';
+                }
+                });
                 }
                 */
-                var $cbaDiv = $('<div />')
-                                .CswCheckBoxArray('init', {
+                var $cbaDiv = propDiv.div()
+                                .$.CswCheckBoxArray('init', {
                                     ID: o.ID + '_cba',
                                     UseRadios: (selectMode === 'Single'),
                                     Required: o.Required,
@@ -46,26 +47,24 @@
                                     valCol: valueCol,
                                     valColName: 'Include'
                                 });
-                
-                if(o.Required) {
+
+                if (o.Required) {
                     $cbaDiv.addClass("required");
                 }
-                
-                $Div.contents().remove();
-                $Div.append($cbaDiv);            
-                return $Div;
+
+                return propDiv;
             },
             save: function (o) { //$propdiv, $xml
                 var attributes = { options: null };
-                var $cbaDiv = o.$propdiv.children('div').first();
-                var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-                if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+                var cbaDiv = o.propDiv.children('div').first();
+                var formdata = cbaDiv.$.CswCheckBoxArray('getdata', { 'ID': o.ID + '_cba' });
+                if (false === o.Multi || false === formdata.MultiIsUnchanged) {
                     attributes.options = formdata.data;
-                } 
+                }
                 Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
                 return $(this);
             } // save()
-    };
+        };
 
     // Method calling logic
     $.fn.CswFieldTypeNodeTypeSelect = function (method) {

@@ -8,34 +8,33 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv  = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var gestalt = Csw.string(o.propData.gestalt).trim();
             var options = propVals.options;
             
             if (o.ReadOnly) {
-                $Div.append(gestalt);
+                propDiv.append(gestalt);
             } else {
                 /* Select Box */
-                $Div.CswMultiSelect('init', {
+                propDiv.$.CswMultiSelect('init', {
                     ID: o.ID,
                     cssclass: 'selectinput',
                     values: options,
                     isMultiEdit: o.Multi
                 });
             }
-
         },
         save: function (o) { //$propdiv, $xml
             
             var attributes = { value: null },
-                $multi = o.$propdiv.find('#' + o.ID),
+                multi = o.propDiv.find('#' + o.ID),
                 cachedVals,
                 distinctVals = [];
             
-            if (false === Csw.isNullOrEmpty($multi)) {
-                attributes.value = $multi.CswMultiSelect('val');
+            if (false === Csw.isNullOrEmpty(multi)) {
+                attributes.value = multi.$.CswMultiSelect('val');
             }
             
             //CswMultiSelect sorts the val for us, sort o.propData.values.value to make comparision work

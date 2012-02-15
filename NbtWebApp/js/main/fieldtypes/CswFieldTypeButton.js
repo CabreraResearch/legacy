@@ -5,14 +5,14 @@
     "use strict";
     var pluginName = 'CswFieldTypeButton';
 
-    var onButtonClick = function (propid, $button, o) {
+    var onButtonClick = function (propid, button, o) {
         var propAttr = Csw.string(propid),
             params;
 
-        $button.CswButton('disable');
+        button.disable();
         if (Csw.isNullOrEmpty(propAttr)) {
             Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
-            $button.CswButton('enable');
+            button.enable();
         } else {
             params = {
                 NodeTypePropAttr: propAttr
@@ -22,7 +22,7 @@
                 url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                 data: params,
                 success: function (data) {
-                    $button.CswButton('enable');
+                    button.CswButton('enable');
                     if (Csw.bool(data.success)) {
                         switch (data.action) {
                             case Csw.enums.onObjectClassClick.reauthenticate:
@@ -49,7 +49,7 @@
                     }
                 },
                 error: function () {
-                    $button.CswButton('enable');
+                    button.enable();
                 }
             });
         }
@@ -58,16 +58,16 @@
     var methods = {
         init: function (o) { 
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
 
             var propVals = o.propData.values,
                 value = Csw.string(propVals.text, o.propData.name),
                 mode = Csw.string(propVals.mode, 'button'),
-                $button;
+                button;
 
             if (mode === 'button') {
-                $button = $Div.CswButton('init', {
+                button = propDiv.button({
                     ID: o.ID,
                     enabledText: value,
                     disabledText: value,
@@ -75,18 +75,18 @@
                 });
             }
             else {
-                $button = $Div.CswLink('init', {
+                button = propDiv.link({
                     ID: o.ID,
                     value: value,
                     href: '#'
                 });
             }
-            $button.click(function () {
-                onButtonClick(o.propid, $button, o);
+            button.click(function () {
+                onButtonClick(o.propid, button, o);
             });
 
             if (o.Required) {
-                $button.addClass('required');
+                button.addClass('required');
             }
         },
         save: function (o) {

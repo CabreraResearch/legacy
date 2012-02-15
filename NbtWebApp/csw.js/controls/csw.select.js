@@ -8,12 +8,25 @@
         var internal = {
             ID: '',
             selected: '',
-            values: [{ value: '', display: '', data: {}}],
+            values: [],
             cssclass: '',
             multiple: false,
             onChange: null //function () {}
         };
         var external = {};
+
+
+        external.change = function (func) {
+            /// <summary>Trigger or assign a button click event.</summary>
+            /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
+            /// <returns type="button">The button object.</returns>
+            if (Csw.isFunction(func)) {
+                external.bind('change', func);
+            } else {
+                external.trigger('change');
+            }
+            return external;
+        };
 
         external.makeOption = function (opt) {
             var ret, display, value;
@@ -45,7 +58,7 @@
         external.addOption = function (thisOpt, isSelected) {
             var value = Csw.string(thisOpt.value),
                 display = Csw.string(thisOpt.display),
-                opt = external.option({value: value, display: display, isSelected: isSelected});
+                opt = external.option({ value: value, display: display, isSelected: isSelected });
 
             if (false === Csw.isNullOrEmpty(value.data)) {
                 opt.data(value.dataName, value.data);
@@ -85,7 +98,7 @@
 
             html += attr.get();
 
-            html += '>'
+            html += '>';
             html += '</select>';
             $select = $(html);
 
@@ -93,7 +106,7 @@
             internal.$parent.append(external.$);
 
             if (Csw.isFunction(internal.onChange)) {
-                external.bind('change', internal.onChange);
+                external.change(internal.onChange);
             }
 
             var values = external.makeOptions(internal.values);
@@ -109,8 +122,6 @@
             }
 
         } ());
-
-
 
         return external;
     }
@@ -130,19 +141,19 @@
 
         (function () {
             $.extend(internal, options);
-            
+
             var html = '<option ',
                 $option,
                 attr = Csw.controls.dom.attributes();
 
-            attr.add('value', internal.value)
+            attr.add('value', internal.value);
             if (internal.isSelected) {
                 attr.add('selected', 'selected');
             }
             html += attr.get();
             html += '>';
             html += internal.display;
-            html += '</option>'
+            html += '</option>';
             $option = $(html);
 
             Csw.controls.factory($option, external);

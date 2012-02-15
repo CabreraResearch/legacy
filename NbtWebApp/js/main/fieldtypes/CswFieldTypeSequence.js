@@ -8,34 +8,36 @@
     var methods = {
         init: function (o) { 
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var value = (false === o.Multi) ? Csw.string(propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
 
             if (o.ReadOnly || o.Multi) {
-                $Div.append(value);
+                propDiv.append(value);
             } else {
-                var $TextBox = $Div.CswInput('init',{ID: o.ID,
-                                                      type: Csw.enums.inputTypes.text,
-                                                      cssclass: 'textinput',
-                                                      onChange: o.onChange,
-                                                      value: value
-                                                 }); 
+                var textBox = propDiv.input({
+                    ID: o.ID,
+                    type: Csw.enums.inputTypes.text,
+                    cssclass: 'textinput',
+                    onChange: o.onChange,
+                    value: value,
+                    required: o.Required
+                }); 
 
                 if(o.Required) {
-                    $TextBox.addClass("required");
+                    textBox.addClass('required');
                 }
-                $TextBox.clickOnEnter(o.$savebtn);
+                textBox.clickOnEnter(o.saveBtn);
             }
         },
         save: function (o) {
             var attributes = {
                 sequence: null
             };
-            var $sequence = o.$propdiv.find('input');
-            if (false === Csw.isNullOrEmpty($sequence)) {
-                attributes.sequence = $sequence.val();
+            var sequence = o.propDiv.find('input');
+            if (false === Csw.isNullOrEmpty(sequence)) {
+                attributes.sequence = sequence.val();
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

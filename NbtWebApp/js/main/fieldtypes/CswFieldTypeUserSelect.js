@@ -12,13 +12,14 @@
     var methods = {
         'init': function (o) { 
 
-            var $Div = $(this);
+            var propDiv = o.propDiv;
+            propDiv.empty();
             
             var propVals = o.propData.values;
             var options = propVals.options;
                 
-            var $cbaDiv = $('<div />')
-                    .CswCheckBoxArray('init', {
+            propDiv.div()
+                    .$.CswCheckBoxArray('init', {
                         ID: o.ID + '_cba',
                         UseRadios: false,
                         Required: o.Required,
@@ -31,15 +32,13 @@
                         valCol: valueCol,
                         valColName: 'Include'
                     });
-            
-            $Div.contents().remove();
-            $Div.append($cbaDiv);
-            return $Div;
+
+            return propDiv;
         },
         'save': function (o) {
             var attributes = { options: null };
-            var $CBADiv = o.$propdiv.children('div').first();
-            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            var cbaDiv = o.propDiv.children('div').first();
+            var formdata = cbaDiv.$.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.options = formdata.data;
             } 

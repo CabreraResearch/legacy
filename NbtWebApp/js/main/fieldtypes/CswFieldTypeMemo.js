@@ -2,14 +2,14 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
-    "use strict";    
+    "use strict";
     var pluginName = 'CswFieldTypeMemo';
 
     var methods = {
         init: function (o) {
-        
-            var $Div = $(this);
-            $Div.contents().remove();
+
+            var propDiv = o.propDiv;
+            propDiv.empty();
 
             //var Value = extractCDataValue($xml.children('text'));
             var propVals = o.propData.values;
@@ -17,38 +17,37 @@
             var rows = Csw.string(propVals.rows);
             var columns = Csw.string(propVals.columns);
 
-            if(o.ReadOnly) {
-                $Div.append(value);
-            } else {
-                var $TextArea = $('<textarea id="'+ o.ID +'" name="' + o.ID + '" rows="'+rows+'" cols="'+columns+'">'+ value +'</textarea>' )
-                                    .appendTo($Div)
-                                    .change(o.onChange); 
-                if(o.Required)
-                {
-                    $TextArea.addClass("required");
-                }
-            }
+            propDiv.textArea({
+                onChange: o.onChange,
+                ID: o.ID,
+                rows: rows,
+                cols: columns,
+                value: value,
+                disabled: o.ReadOnly,
+                required: o.Required,
+                readonly: o.ReadOnly
+            });
         },
         save: function (o) { //$propdiv, $xml
             var attributes = { text: null };
-            var $TextArea = o.$propdiv.find('textarea');
-            if (false === Csw.isNullOrEmpty($TextArea)) {
-                attributes.text = $TextArea.val();
+            var textArea = o.propDiv.find('textarea');
+            if (false === Csw.isNullOrEmpty(textArea)) {
+                attributes.text = textArea.val();
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
-    
+
     // Method calling logic
     $.fn.CswFieldTypeMemo = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);
