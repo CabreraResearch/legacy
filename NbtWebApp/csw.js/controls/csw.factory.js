@@ -14,6 +14,7 @@
         if (Csw.isJQuery($element)) {
             external.$ = $element;
             internal.id = Csw.string($element.prop('id'));
+            external.isValid = true;
         } else {
             internal.id = '';
             external.$ = {};
@@ -36,8 +37,9 @@
                     parent: function () { return external; },
                     root: external.root,
                     length: function () {
-                        return 0; 
-                    }
+                        return 0;
+                    },
+                    isValid: false
                 };
             _options.children = function () {
                 return _options;

@@ -230,7 +230,7 @@
                     //var cB = this;
                     var col = cB.propNonDom('col');
                     var row = cB.propNonDom('row');
-                    var isChecked = Csw.bool(cB.prop('checked'));
+                    var isChecked = Csw.bool(cB.propDom('checked'));
                     if (false === isChecked) {
                         if (internal.checked > 0) {
                             internal.checked -= 1;

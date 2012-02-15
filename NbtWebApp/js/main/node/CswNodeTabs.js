@@ -154,7 +154,7 @@
                             thisTabDiv.tabs({
                                 selected: selectedtabno,
                                 select: function (event, ui) {
-                                    var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.string(ui.index) + ')');
+                                    var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                     var selectTabid = selectTabContentDiv.getId();
                                     if (Csw.isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(selectTabid)) {
                                         getProps(selectTabContentDiv, selectTabid);
@@ -164,10 +164,12 @@
                                     }
                                 }
                             });
-                            var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.string(thisTabDiv.tabs('option', 'selected')) + ')');
-                            var selectedtabid = eachTabContentDiv.getId();
-                            getProps(eachTabContentDiv, selectedtabid);
-                            Csw.tryExec(o.onTabSelect, selectedtabid);
+                            var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
+                            if (eachTabContentDiv.isValid) {
+                                var selectedtabid = eachTabContentDiv.getId();
+                                getProps(eachTabContentDiv, selectedtabid);
+                                Csw.tryExec(o.onTabSelect, selectedtabid);
+                            }
                         }); // for(var t in tabdivs)
                     } // success
                 }); // ajax
