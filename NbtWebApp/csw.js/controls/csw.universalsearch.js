@@ -14,7 +14,7 @@
             align: 'right',
             onBeforeSearch: null,
             onAfterSearch: null,
-            
+            maxheight: '600',
             searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
             searchterm: '',
             filters: {}
@@ -73,7 +73,8 @@
                         onNoResults: function () {
                             internal.$searchresults_parent.text('No Results Found');
                         },
-                        tabledata: data.table
+                        tabledata: data.table,
+                        maxheight: internal.maxheight
                     });
 
                     // Filters
@@ -81,6 +82,9 @@
                     fdiv = Csw.controls.div({
                         ID: filtersdivid,
                         $parent: internal.$searchfilters_parent
+                    }).css({
+                        height: internal.maxheight + 'px',
+                        overflow: 'auto'
                     });
 
                     function makeFilterLink(thisFilter) {
