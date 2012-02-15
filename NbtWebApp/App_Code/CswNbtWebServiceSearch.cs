@@ -388,6 +388,7 @@ namespace ChemSW.Nbt.WebServices
             // Filters to apply
             string WhereClause = string.Empty;
             bool SingleNodeType = false;
+            Collection<Int32> FilteredPropIds = new Collection<Int32>();
             foreach( JProperty FilterProp in Filters.Properties() )
             {
                 JObject Filter = (JObject) FilterProp.Value;
@@ -407,7 +408,15 @@ namespace ChemSW.Nbt.WebServices
                     // Property Filter
                     // Someday we may need to do this in a view instead
                     Int32 NodeTypePropFirstVersionId = CswConvert.ToInt32( Filter["firstpropversionid"] );
-                    string Value = Filter["filtervalue"].ToString();
+                    string FilterStr = Filter["filtervalue"].ToString();
+                    if( FilterStr == "[blank]" )
+                    {
+                        FilterStr = "gestalt is null";
+                    }
+                    else
+                    {
+                        FilterStr = "gestalt like '" + FilterStr + "%'";
+                    }
                     if( NodeTypePropFirstVersionId != Int32.MinValue )
                     {
                         WhereClause += @" and n.nodeid in (select nodeid 
@@ -417,7 +426,8 @@ namespace ChemSW.Nbt.WebServices
                                                                                       where firstpropversionid = (select firstpropversionid 
                                                                                                                     from nodetype_props 
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
-                                                              and gestalt like '" + Value + "%') ";
+                                                              and " + FilterStr + @") ";
+                        FilteredPropIds.Add( NodeTypePropFirstVersionId );
                         SingleNodeType = true;
                     }
                 }
@@ -477,21 +487,24 @@ namespace ChemSW.Nbt.WebServices
                     foreach( JObject Prop in Props )
                     {
                         Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
-                        string Gestalt = Prop["gestalt"].ToString();
-                        if( Gestalt.Length > 50 )
+                        if( false == FilteredPropIds.Contains( NodeTypePropId ) )
                         {
-                            Gestalt = Gestalt.Substring( 0, 50 );
-                        }
+                            string Gestalt = Prop["gestalt"].ToString();
+                            if( Gestalt.Length > 50 )
+                            {
+                                Gestalt = Gestalt.Substring( 0, 50 );
+                            }
 
-                        if( false == PropCounts.ContainsKey( NodeTypePropId ) )
-                        {
-                            PropCounts[NodeTypePropId] = new SortedList<string, Int32>();
+                            if( false == PropCounts.ContainsKey( NodeTypePropId ) )
+                            {
+                                PropCounts[NodeTypePropId] = new SortedList<string, Int32>();
+                            }
+                            if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
+                            {
+                                PropCounts[NodeTypePropId][Gestalt] = 0;
+                            }
+                            PropCounts[NodeTypePropId][Gestalt] += 1;
                         }
-                        if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
-                        {
-                            PropCounts[NodeTypePropId][Gestalt] = 0;
-                        }
-                        PropCounts[NodeTypePropId][Gestalt] += 1;
                     }
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
@@ -531,12 +544,12 @@ namespace ChemSW.Nbt.WebServices
 
             JObject ThisFilterObj = _makeFilter( FilterName, "propval", NodeTypePropId.ToString() + "_" + Value, Value, Count, string.Empty );
             ThisFilterObj["firstpropversionid"] = NodeTypeProp.FirstPropVersionId.ToString();
-            
+
             if( FiltersObj[FilterName] == null )
             {
                 FiltersObj[FilterName] = new JObject();
             }
-            FiltersObj[FilterName][NodeTypeProp.PropName] = ThisFilterObj;
+            FiltersObj[FilterName][Value] = ThisFilterObj;
         } // _addPropFilter()
 
         private JObject _makeFilter( string FilterName, string Type, string FilterId, string FilterValue, Int32 Count, string Icon )
