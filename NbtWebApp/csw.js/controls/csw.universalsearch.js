@@ -43,6 +43,7 @@
                 disabledText: 'Searching...',
                 onClick: function () {
                     internal.searchterm = internal.searchinput.val();
+                    internal.filters = {};
                     internal.search();
                 }
             });
@@ -93,7 +94,7 @@
                         }).br();
                     }
                     function makeFilterSet(thisFilterSet, Name) {
-                        fdiv.append('<span>' + Name + ':</span>');
+                        fdiv.append('<b>' + Name + ':</b>');
                         fdiv.br();
                         Csw.each(thisFilterSet, makeFilterLink);
                         fdiv.br();
