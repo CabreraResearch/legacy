@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -337,9 +334,9 @@ namespace ChemSW.Nbt
         {
             CswNbtNodeKey ReturnVal = null;
             Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
-            if( KeyList.Count > 0 )
+            if( null != KeyList && KeyList.Count > 0 )
             {
-                ReturnVal = (CswNbtNodeKey) KeyList[0];
+                ReturnVal = KeyList[0];
                 //ReturnVal.TreeKey = Key;
             }
             return ( ReturnVal );

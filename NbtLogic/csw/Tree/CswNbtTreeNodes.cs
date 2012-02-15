@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -1190,7 +1188,10 @@ namespace ChemSW.Nbt
         }
         public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )
         {
-            return NodesById[NodeId];
+            Collection<CswNbtNodeKey> Ret;
+            NodesById.TryGetValue( NodeId, out Ret );
+
+            return Ret;
         }
 
         //public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )
