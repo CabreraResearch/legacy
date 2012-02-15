@@ -18,6 +18,7 @@
             opts = opts || {};
             opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'sub', controlName);
             opts.$parent = $element;
+            opts.root = external.root;
             opts.parent = function () {
                 return external;
             };
@@ -25,6 +26,9 @@
         };
 
         //#region Csw DOM classes
+        delete external.ID;
+        delete external.$parent;
+        delete external.prepControl;
 
         external.getId = function () {
             /// <summary>Get the DOM Element ID of this object.</summary>
@@ -63,7 +67,7 @@
 
         external.table = function (opts) {
             /// <summary> Creates a Csw.table on this element</summary>
-            /// <param name="tableOpts" type="Object">Options to define the table.</param>
+            /// <param name="opts" type="Object">Options to define the table.</param>
             /// <returns type="Object">A Csw.table</returns> 
             opts = internal.prepControl(opts, 'table');
             return Csw.controls.table(opts);
@@ -71,7 +75,7 @@
 
         external.layoutTable = function (opts) {
             /// <summary> Creates a Csw.layoutTable on this element</summary>
-            /// <param name="tableOpts" type="Object">Options to define the table.</param>
+            /// <param name="opts" type="Object">Options to define the table.</param>
             /// <returns type="Object">A Csw.layoutTable</returns> 
             opts = internal.prepControl(opts, 'layoutTable');
             return Csw.controls.layoutTable(opts);
@@ -103,7 +107,7 @@
 
         external.ul = function (opts) {
             /// <summary> Creates a Csw.ul on this element</summary>
-            /// <param name="options" type="Object">Options to define the ul.</param>
+            /// <param name="opts" type="Object">Options to define the ul.</param>
             /// <returns type="Object">A Csw.ul</returns> 
             opts = internal.prepControl(opts, 'ul');
             return Csw.controls.ul(opts);
@@ -111,7 +115,7 @@
 
         external.li = function (opts) {
             /// <summary> Creates a Csw.li on this element</summary>
-            /// <param name="options" type="Object">Options to define the li.</param>
+            /// <param name="opts" type="Object">Options to define the li.</param>
             /// <returns type="Object">A Csw.li</returns> 
             opts = internal.prepControl(opts, 'li');
             return Csw.controls.li(opts);
@@ -119,7 +123,7 @@
 
         external.span = function (opts) {
             /// <summary> Creates a Csw.span on this element</summary>
-            /// <param name="spanOpts" type="Object">Options to define the span.</param>
+            /// <param name="opts" type="Object">Options to define the span.</param>
             /// <returns type="Object">A Csw.span</returns> 
             opts = internal.prepControl(opts, 'span');
             return Csw.controls.span(opts);
@@ -127,7 +131,7 @@
 
         external.input = function (opts) {
             /// <summary> Creates a Csw.input on this element</summary>
-            /// <param name="inputOpts" type="Object">Options to define the input.</param>
+            /// <param name="opts" type="Object">Options to define the input.</param>
             /// <returns type="Object">A Csw.input</returns> 
             opts = internal.prepControl(opts, 'input');
             return Csw.controls.input(opts);
@@ -135,7 +139,7 @@
 
         external.textArea = function (opts) {
             /// <summary> Creates a Csw.textArea on this element</summary>
-            /// <param name="inputOpts" type="Object">Options to define the textArea.</param>
+            /// <param name="opts" type="Object">Options to define the textArea.</param>
             /// <returns type="Object">A Csw.textArea</returns>
             opts = internal.prepControl(opts, 'textArea');
             return Csw.controls.textArea(opts);
@@ -143,7 +147,7 @@
 
         external.timeInterval = function (opts) {
             /// <summary> Creates a Csw.timeInterval on this element</summary>
-            /// <param name="inputOpts" type="Object">Options to define the timeInterval.</param>
+            /// <param name="opts" type="Object">Options to define the timeInterval.</param>
             /// <returns type="Object">A Csw.timeInterval</returns>
             opts = internal.prepControl(opts, 'timeInterval');
             return Csw.controls.timeInterval(opts);
@@ -151,7 +155,7 @@
 
         external.button = function (opts) {
             /// <summary> Creates a Csw.button on this element</summary>
-            /// <param name="buttonOpts" type="Object">Options to define the button.</param>
+            /// <param name="opts" type="Object">Options to define the button.</param>
             /// <returns type="Object">A Csw.button</returns> 
             opts = internal.prepControl(opts, 'button');
             return Csw.controls.button(opts);
@@ -159,7 +163,7 @@
 
         external.link = function (opts) {
             /// <summary> Creates a Csw.link on this element</summary>
-            /// <param name="buttonOpts" type="Object">Options to define the link.</param>
+            /// <param name="opts" type="Object">Options to define the link.</param>
             /// <returns type="Object">A Csw.link</returns> 
             opts = internal.prepControl(opts, 'link');
             return Csw.controls.link(opts);
@@ -167,23 +171,39 @@
 
         external.form = function (opts) {
             /// <summary> Creates a Csw.form on this element</summary>
-            /// <param name="formOpts" type="Object">Options to define the form.</param>
+            /// <param name="opts" type="Object">Options to define the form.</param>
             /// <returns type="Object">A Csw.form</returns> 
             opts = internal.prepControl(opts, 'form');
             return Csw.controls.form(opts);
         };
 
+        external.comboBox = function (opts) {
+            /// <summary> Creates a Csw.comboBox on this element</summary>
+            /// <param name="opts" type="Object">Options to define the comboBox.</param>
+            /// <returns type="Object">A Csw.comboBox</returns>
+            opts = internal.prepControl(opts, 'comboBox');
+            return Csw.controls.comboBox(opts);
+        };
+
         external.img = function (opts) {
             /// <summary> Creates a Csw.img on this element</summary>
-            /// <param name="formOpts" type="Object">Options to define the img.</param>
+            /// <param name="opts" type="Object">Options to define the img.</param>
             /// <returns type="Object">A Csw.img</returns>
             opts = internal.prepControl(opts, 'img');
             return Csw.controls.img(opts);
         };
 
+        external.imageButton = function (opts) {
+            /// <summary> Creates a Csw.imageButton on this element</summary>
+            /// <param name="opts" type="Object">Options to define the imageButton.</param>
+            /// <returns type="Object">A Csw.imageButton</returns>
+            opts = internal.prepControl(opts, 'imageButton');
+            return Csw.controls.imageButton(opts);
+        };
+
         external.select = function (opts) {
             /// <summary> Creates a Csw.select on this element</summary>
-            /// <param name="formOpts" type="Object">Options to define the select.</param>
+            /// <param name="opts" type="Object">Options to define the select.</param>
             /// <returns type="Object">A Csw.select</returns>
             opts = internal.prepControl(opts, 'select');
             return Csw.controls.select(opts);
@@ -191,10 +211,18 @@
 
         external.option = function (opts) {
             /// <summary> Creates a Csw.option on this element</summary>
-            /// <param name="formOpts" type="Object">Options to define the option.</param>
+            /// <param name="opts" type="Object">Options to define the option.</param>
             /// <returns type="Object">A Csw.option</returns>
             opts = internal.prepControl(opts, 'option');
             return Csw.controls.option(opts);
+        };
+
+        external.dateTimePicker = function (opts) {
+            /// <summary> Creates a Csw.dateTimePicker on this element</summary>
+            /// <param name="opts" type="Object">Options to define the dateTimePicker.</param>
+            /// <returns type="Object">A Csw.dateTimePicker</returns>
+            opts = internal.prepControl(opts, 'dateTimePicker');
+            return Csw.controls.dateTimePicker(opts);
         };
 
         external.jquery = function ($jqElement, opts) {
@@ -217,6 +245,17 @@
             /// <summary>Get the parent of this control</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
             var _$element = $element.parent();
+            var ret = external.jquery(_$element);
+            return ret;
+        };
+
+        external.root = external.root || function () {
+            /// <summary>Get the root (great, great, great grandparent) of this control</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.parent();
+            while (false === Csw.isNullOrEmpty(_$element.parent(), true)) {
+                _$element = _$element.parent();
+            }
             var ret = external.jquery(_$element);
             return ret;
         };
@@ -253,6 +292,15 @@
             Csw.controls.dom.bind($element, eventName, event);
             return external;
         };
+        
+        external.unbind = function (eventName) {
+            /// <summary>Unbind an action from a jQuery element's event.</summary>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            Csw.controls.dom.unbind($element, eventName);
+            return external;
+        };
+
         external.trigger = function (eventName, eventOpts) {
             /// <summary>Trigger an event bound to a jQuery element.</summary>
             /// <param name="eventName" type="String">The name of the event</param>
@@ -322,7 +370,7 @@
             return ret;
         };
 
-        external.val = function (value) {
+        external.val = external.val || function (value) {
             /// <summary>Get the value of the element.</summary>
             /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
             if (arguments.length === 1 && false === Csw.isNullOrUndefined(value)) {
