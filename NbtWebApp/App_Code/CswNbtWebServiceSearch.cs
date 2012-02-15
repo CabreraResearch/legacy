@@ -478,7 +478,7 @@ namespace ChemSW.Nbt.WebServices
             if( SingleNodeType )
             {
                 // Filter on property values in the results
-                Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
+                Dictionary<Int32, SortedList<string, Int32>> PropCounts = new Dictionary<Int32, SortedList<string, Int32>>();
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
@@ -495,7 +495,7 @@ namespace ChemSW.Nbt.WebServices
 
                         if( false == PropCounts.ContainsKey( NodeTypePropId ) )
                         {
-                            PropCounts[NodeTypePropId] = new Dictionary<string, Int32>();
+                            PropCounts[NodeTypePropId] = new SortedList<string, Int32>();
                         }
                         if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
                         {
