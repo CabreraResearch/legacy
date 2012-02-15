@@ -151,7 +151,7 @@
 
                         Csw.each(tabdivs, function (thisTabDiv) {
                             //var $tabdiv = tabdivs[t];
-                            thisTabDiv.tabs({
+                            thisTabDiv.$.tabs({
                                 selected: selectedtabno,
                                 select: function (event, ui) {
                                     var selectTabContentDiv = thisTabDiv.find('div:eq(' + Csw.number(ui.index) + ')');
@@ -319,7 +319,7 @@
                     else if (!o.Config &&
                         Csw.isNullOrEmpty(o.date) &&
                         o.filterToPropId === '' &&
-                        Csw.bool(tabContentDiv.$.data('canEditLayout'))) {
+                        Csw.bool(tabContentDiv.data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {
                             ID: o.ID,
@@ -500,7 +500,7 @@
                     relatednodetypeid: o.relatednodetypeid,
                     propid: propId,
                     propDiv: propCell.div(),
-                    $savebtn: saveBtn,
+                    saveBtn: saveBtn,
                     propData: propData,
                     onChange: function () { },
                     onReload: function () { getProps(tabContentDiv, tabid); },
@@ -510,9 +510,11 @@
                     onEditView: o.onEditView,
                     ReadOnly: Csw.bool(propData.readonly)
                 };
-                fieldOpt.propDiv.propNonDom('nodeid', fieldOpt.nodeid);
-                fieldOpt.propDiv.propNonDom('propid', fieldOpt.propid);
-                fieldOpt.propDiv.propNonDom('cswnbtnodekey', fieldOpt.cswnbtnodekey);
+                fieldOpt.propDiv.propNonDom({
+                    'nodeid': fieldOpt.nodeid,
+                    'propid': fieldOpt.propid,
+                    'cswnbtnodekey': fieldOpt.cswnbtnodekey
+                });
 
                 fieldOpt.onChange = function () { if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
                 if (Csw.bool(propData.hassubprops)) {
@@ -521,7 +523,6 @@
                         if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
                     };
                 } // if (Csw.bool(propData.hassubprops)) {
-                fieldOpt.$propdiv = fieldOpt.propDiv.$;
                 $.CswFieldTypeFactory('make', fieldOpt);
 
                 if (Csw.contains(propData, 'subprops')) {
@@ -676,15 +677,15 @@
                         if (doSave) {
                             Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
                         }
-                        saveBtn.button('enable');
+                        saveBtn.enable();
                     }, // success
                     error: function () {
-                        saveBtn.button('enable');
+                        saveBtn.enable();
                     }
                 }); // ajax
             } // if($form.valid())
             else {
-                saveBtn.button('enable');
+                saveBtn.enable();
             }
         } // Save()
 

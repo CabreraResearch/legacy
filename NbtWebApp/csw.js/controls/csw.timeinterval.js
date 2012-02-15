@@ -5,10 +5,7 @@
     'use strict';
 
     var timeInterval = function (options) {
-        var internal = {};
-        var external = {};
-
-        var o = {
+        var internal = {
             ID: '',
             $parent: '',
             values: {},
@@ -17,6 +14,8 @@
             Required: false,
             onChange: null
         };
+        var external = {};
+
         if (options) {
             $.extend(true, internal, options);
         }
@@ -86,9 +85,9 @@
                 dayPropName = 'monthlyday';
             }
 
-            return function (parent, onchange, useRadio, elemId) {
+            return function (parent, onChange, useRadio, elemId) {
                 var id = elemId || internal.ID + '_weeklyday',
-                    pickerTable, i, type, pickerCheck, weeklyStartDate = {}, weeklyTable;
+                    pickerTable, i, type, weeklyStartDate = {}, weeklyTable;
 
                 function isChecked(day) {
                     var thisDay = internal.weekDayDef[day - 1];
@@ -171,7 +170,7 @@
                                 ID: id + '_' + i,
                                 name: id,
                                 type: type,
-                                onChange: dayChange(),
+                                onChange: dayChange,
                                 value: i,
                                 checked: isChecked(i)
                             });
@@ -194,7 +193,7 @@
                             DisplayMode: 'Date',
                             ReadOnly: internal.ReadOnly,
                             Required: internal.Required,
-                            OnChange: function () {
+                            onChange: function () {
                                 Csw.tryExec(internal.onChange);
                                 saveWeekInterval();
                             }
@@ -255,7 +254,6 @@
 
                 function makeMonthlyByDateSelect(parent) {
                     var byDate = parent.div(),
-                        inpCheck,
                         daysInMonth = ChemSW.makeSequentialArray(1, 31), selectedDay = '';
 
                     if (Csw.bool(internal.Multi)) {
@@ -320,7 +318,6 @@
 
                 function makeMonthlyByDayOfWeek(parent) {
                     var divByDay = parent.div(),
-                        inpCheck,
                         monthlyWeekId = Csw.controls.dom.makeId(internal.ID, 'monthly', 'week'),
                         monthlyByDayId = Csw.controls.dom.makeId(internal.ID, 'monthly', 'by_day'),
                         selected,
@@ -343,7 +340,7 @@
                         value: Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay,
                         checked: rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
                     });
-                    
+
                     divByDay.append('Every&nbsp;');
 
                     if (internal.Multi) {
@@ -469,7 +466,7 @@
                         rateInterval.yearlydate = { date: nowString, dateformat: dateFormat };
                     }
 
-                    retDiv.append('Every Year, Starting On:<br/>');
+                    retDiv.append('Every Year, Starting On: ').br();
 
                     yearlyDate = retDiv.div();
                     yearlyDate.$.CswDateTimePicker('init', {
@@ -479,7 +476,7 @@
                         DisplayMode: 'Date',
                         ReadOnly: internal.ReadOnly,
                         Required: internal.Required,
-                        OnChange: function () {
+                        onChange: function () {
                             Csw.tryExec(internal.onChange);
                             saveYearInterval();
                         }
@@ -495,7 +492,8 @@
 
         internal.makeRateType = function (table) {
 
-            var inpWeeklyRadio = table.cell(1, 1).input({
+            var subTable = table.cell(2, 1).table();
+            var inpWeeklyRadio = subTable.cell(1, 1).input({
                 ID: Csw.controls.dom.makeId(internal.ID, 'type', 'weekly'),
                 name: Csw.controls.dom.makeId(internal.ID, 'type'),
                 type: Csw.enums.inputTypes.radio,
@@ -503,7 +501,7 @@
                 checked: rateType === Csw.enums.rateIntervalTypes.WeeklyByDay
             });
 
-            var inpMonthlyRadio = table.cell(2, 1).input({
+            var inpMonthlyRadio = subTable.cell(2, 1).input({
                 ID: Csw.controls.dom.makeId(internal.ID, 'type', 'monthly'),
                 name: Csw.controls.dom.makeId(internal.ID, 'type'),
                 type: Csw.enums.inputTypes.radio,
@@ -511,7 +509,7 @@
                 checked: rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
             });
 
-            var inpYearlyRadio = table.cell(3, 1).input({
+            var inpYearlyRadio = subTable.cell(3, 1).input({
                 ID: Csw.controls.dom.makeId(internal.ID, 'type', 'yearly'),
                 name: Csw.controls.dom.makeId(internal.ID, 'type'),
                 type: Csw.enums.inputTypes.radio,
@@ -528,7 +526,7 @@
             }
 
             //Weekly
-            table.cell(1, 2).span({ text: '&nbsp;Weekly' });
+            subTable.cell(1, 2).span({ text: '&nbsp;Weekly' });
             inpWeeklyRadio.bind('click', function () {
                 rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
                 rateInterval.ratetype = rateType;
@@ -537,7 +535,7 @@
             });
 
             //Monthly
-            table.add(2, 2).span({ text: '&nbsp;Monthly' });
+            subTable.add(2, 2).span({ text: '&nbsp;Monthly' });
             inpMonthlyRadio.bind('click', function () {
                 rateType = Csw.enums.rateIntervalTypes.MonthlyByDate;
                 rateInterval.ratetype = rateType;
@@ -546,7 +544,7 @@
             });
 
             //Yearly
-            table.add(3, 2).span({ text: '&nbsp;Yearly' });
+            subTable.add(3, 2).span({ text: '&nbsp;Yearly' });
             inpYearlyRadio.bind('click', function () {
                 rateType = Csw.enums.rateIntervalTypes.YearlyByDate;
                 rateInterval.ratetype = rateType;

@@ -70,11 +70,22 @@
         };
 
         (function () {
-            var buttonOpt;
-
             if (options) {
                 $.extend(internal, options);
             }
+
+            var buttonOpt;
+
+            function onClick() {
+                if (false === Csw.ajax.ajaxInProgress()) {
+                    if (internal.disableOnClick) {
+                        external.disable();
+                    }
+                }
+                return Csw.tryExec(internal.onClick);
+            }
+
+
             internal.type = Csw.enums.inputTypes.button;
             $.extend(external, Csw.controls.input(internal));
 

@@ -6,24 +6,23 @@
     var pluginName = 'CswFieldTypeBarcode';
 
     var methods = {
-        init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onChange = o.onChange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly  == nodeid,propxml,onChange
+        init: function (o) { 
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var value = (false === o.Multi) ? Csw.string(propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
             if (o.ReadOnly) {
-                $Div.append(value);
+                propDiv.append(value);
             }
             else {
-                var table = Csw.controls.table({
-                    $parent: $Div,
+                var table = propDiv.table({
                     ID: Csw.controls.dom.makeId(o.ID, 'tbl')
                 });
 
                 var cell1 = table.cell(1, 1);
-                var $TextBox = cell1.$.CswInput('init', { ID: o.ID,
+                var textBox = cell1.input({ ID: o.ID,
                     type: Csw.enums.inputTypes.text,
                     cssclass: 'textinput',
                     onChange: o.onChange,
@@ -33,26 +32,26 @@
                     var cell2 = table.add(1, 2, '<div />');
                     cell2.children('div')
                          .$.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Print,
-                            AlternateText: '',
-                            ID: Csw.controls.dom.makeId(o.ID, 'print'),
-                            onClick: function () {
-                                $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
-                                return Csw.enums.imageButton_ButtonType.None;
-                            }
-                        });
+                             AlternateText: '',
+                             ID: Csw.controls.dom.makeId(o.ID, 'print'),
+                             onClick: function () {
+                                 $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
+                                 return Csw.enums.imageButton_ButtonType.None;
+                             }
+                         });
                 }
                 if (o.Required) {
-                    $TextBox.addClass("required");
+                    textBox.addClass('required');
                 }
 
-                $TextBox.clickOnEnter(o.$savebtn);
+                textBox.clickOnEnter(o.saveBtn);
             }
         },
         save: function (o) {
             var attributes = { barcode: null };
-            var $TextBox = o.$propdiv.find('input');
-            if (false === Csw.isNullOrEmpty($TextBox)) {
-                attributes.barcode = $TextBox.val();
+            var textBox = o.propDiv.find('input');
+            if (false === Csw.isNullOrEmpty(textBox)) {
+                attributes.barcode = textBox.val();
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

@@ -8,68 +8,64 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
+            var propDiv = $(this);
             var propVals = o.propData.values;
             var red = (false === o.Multi) ? propVals.flammability : Csw.enums.multiEditDefaultValue;
             var yellow = (false === o.Multi) ? propVals.reactivity : Csw.enums.multiEditDefaultValue;
             var blue = (false === o.Multi) ? propVals.health : Csw.enums.multiEditDefaultValue;
             var white = (false === o.Multi) ? propVals.special : Csw.enums.multiEditDefaultValue;
 
-            var outerTable = Csw.controls.table({
-                $parent: $Div,
+            var outerTable = propDiv.table({
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl')
             });
 
             var table = outerTable.cell(1, 1).table(Csw.controls.dom.makeId(o.ID, 'tbl1'))
                                    .addClass('CswFieldTypeNFPA_table');
 
-            var $reddiv = $('<div class="CswFieldTypeNFPA_text"></div>');
-            table.add(1, 1, $reddiv)
-                 .addClass('CswFieldTypeNFPA_red CswFieldTypeNFPA_cell');
-            
-            var $yellowdiv = $('<div class="CswFieldTypeNFPA_text"></div>');
-            table.add(1, 2, $yellowdiv)
-                 .addClass('CswFieldTypeNFPA_yellow CswFieldTypeNFPA_cell');
+            var redDiv = table.cell(1, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_red' });
 
-            var $bluediv = $('<div class="CswFieldTypeNFPA_text"></div>');
-            table.add(2, 1, $bluediv)
-                 .addClass('CswFieldTypeNFPA_blue CswFieldTypeNFPA_cell');
-            
-            var $whitediv = $('<div class="CswFieldTypeNFPA_text"></div>')
-            table.add(2, 2, $whitediv)
-                 .addClass('CswFieldTypeNFPA_white CswFieldTypeNFPA_cell');
+            var yellowDiv = table.cell(1, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_yellow' });
 
-            function setValue($div, value) {
-                $div.text(value);
+            var blueDiv = table.cell(2, 1)
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_blue' });
 
-                if (value === "W")
-                    $div.addClass("strikethrough");
-                else
-                    $div.removeClass("strikethrough");
+            var whiteDiv = table.cell(2, 2)
+                               .div({ cssclass: 'CswFieldTypeNFPA_text CswFieldTypeNFPA_cell CswFieldTypeNFPA_white' });
+
+            function setValue(div, value) {
+                div.text(value);
+
+                if (value === 'W') {
+                    div.addClass("strikethrough");
+                } else {
+                    div.removeClass("strikethrough");
+                }
             }
 
-            function makeSelect(cell, id, selected, $div) {
-                var $sel = cell.$.CswSelect({
-                    'ID': Csw.controls.dom.makeId(o.ID, id),
-                    'selected': selected,
-                    'values': selVals,
-                    'cssclass': '',
-                    'onChange': function () {
-                        setValue($div, $sel.val());
+            function makeSelect(cell, id, selected, div) {
+                var select = cell.select({
+                    ID: Csw.controls.dom.makeId(o.ID, id),
+                    selected: selected,
+                    values: selVals,
+                    cssclass: '',
+                    onChange: function () {
+                        setValue(div, select.val());
                     }
                 });
             } // makeSelect()
 
-            setValue($reddiv, red);
-            setValue($yellowdiv, yellow);
-            setValue($bluediv, blue);
-            setValue($whitediv, white);
+            setValue(redDiv, red);
+            setValue(yellowDiv, yellow);
+            setValue(blueDiv, blue);
+            setValue(whiteDiv, white);
 
             if (false === o.ReadOnly) {
-                var editTable = outerTable.cell(1, 2).table({ 
-                                                    ID: Csw.controls.dom.makeId(o.ID, 'edittbl'),
-                                                    FirstCellRightAlign: true
-                                                });
+                var editTable = outerTable.cell(1, 2).table({
+                    ID: Csw.controls.dom.makeId(o.ID, 'edittbl'),
+                    FirstCellRightAlign: true
+                });
                 var selVals = [
                     { value: '0', display: '0' },
                     { value: '1', display: '1' },
@@ -86,9 +82,9 @@
                 editTable.add(3, 1, 'Reactivity');
                 editTable.add(4, 1, 'Special');
 
-                makeSelect(editTable.cell(1, 2), 'red', red, $reddiv);
-                makeSelect(editTable.cell(2, 2), 'yellow', yellow, $yellowdiv);
-                makeSelect(editTable.cell(3, 2), 'blue', blue, $bluediv);
+                makeSelect(editTable.cell(1, 2), 'red', red, redDiv);
+                makeSelect(editTable.cell(2, 2), 'yellow', yellow, yellowDiv);
+                makeSelect(editTable.cell(3, 2), 'blue', blue, blueDiv);
 
                 var whiteVals = [
                     { value: 'ACID', display: 'ACID' },
@@ -104,14 +100,14 @@
                 if (o.Multi) {
                     whiteVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
-                var $whitesel = editTable.cell(4, 2)
-                                          .$.CswSelect({
-                                              'ID': Csw.controls.dom.makeId({ ID: o.ID, suffix: 'white' }),
-                                              'selected': white,
-                                              'values': whiteVals,
-                                              'cssclass': '',
-                                              'onChange': function () {
-                                                  setValue($whitediv, $whitesel.val());
+                var whiteSelect = editTable.cell(4, 2)
+                                          .select({
+                                              ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'white' }),
+                                              selected: white,
+                                              values: whiteVals,
+                                              cssclass: '',
+                                              onChange: function () {
+                                                  setValue(whiteDiv, whiteSelect.val());
                                               }
                                           });
 
@@ -124,21 +120,21 @@
                 health: null,
                 special: null
             };
-            var $red = o.$propdiv.find('#' + o.ID + '_red');
-            if (false === Csw.isNullOrEmpty($red)) {
-                attributes.flammability = $red.val();
+            var redDiv = o.propDiv.find('#' + o.ID + '_red');
+            if (false === Csw.isNullOrEmpty(redDiv)) {
+                attributes.flammability = redDiv.val();
             }
-            var $yellow = o.$propdiv.find('#' + o.ID + '_yellow');
-            if (false === Csw.isNullOrEmpty($yellow)) {
-                attributes.reactivity = $yellow.val();
+            var yellowDiv = o.propDiv.find('#' + o.ID + '_yellow');
+            if (false === Csw.isNullOrEmpty(yellowDiv)) {
+                attributes.reactivity = yellowDiv.val();
             }
-            var $blue = o.$propdiv.find('#' + o.ID + '_blue');
-            if (false === Csw.isNullOrEmpty($blue)) {
-                attributes.health = $blue.val();
+            var blueDiv = o.propDiv.find('#' + o.ID + '_blue');
+            if (false === Csw.isNullOrEmpty(blueDiv)) {
+                attributes.health = blueDiv.val();
             }
-            var $white = o.$propdiv.find('#' + o.ID + '_white');
-            if (false === Csw.isNullOrEmpty($white)) {
-                attributes.special = $white.val();
+            var whiteDiv = o.propDiv.find('#' + o.ID + '_white');
+            if (false === Csw.isNullOrEmpty(whiteDiv)) {
+                attributes.special = whiteDiv.val();
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

@@ -8,12 +8,13 @@
     var methods = {
         init: function (o) {
 
-            var $Div = $(this),
-                propVals = o.propData.values,
+            var propDiv = o.propDiv;
+            propDiv.empty();
+            var propVals = o.propData.values,
                 precision = Csw.number(propVals.precision, 6),
                 ceilingVal = '999999999' + Csw.getMaxValueForPrecision(precision);
             
-            var $NumberTextBox = $Div.CswNumberTextBox({
+            var $NumberTextBox = propDiv.$.CswNumberTextBox({
                 ID: o.ID,
                 Value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                 MinValue: Csw.number(propVals.minvalue),
@@ -25,12 +26,12 @@
                 onChange: o.onChange
             });
 
-            if(!Csw.isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
-                $NumberTextBox.clickOnEnter(o.$savebtn);
+            if(false === Csw.isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
+                $NumberTextBox.clickOnEnter(o.saveBtn);
             }
         },
         save: function (o) { //$propdiv, $xml
-            var attributes = { value: o.$propdiv.CswNumberTextBox('value', o.ID) };
+            var attributes = { value: o.propDiv.$.CswNumberTextBox('value', o.ID) };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };

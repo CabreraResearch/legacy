@@ -32,20 +32,20 @@
         var external = {};
 
         internal.onClick = function (ev, dd, row, column) {
-            var $removecells;
+            var removeCells;
             if (internal.isRemoveMode(external.table)) {
-                $removecells = external.table.find('.CswLayoutTable_remove');
-                if ($removecells.length > 0) {
+                removeCells = external.table.find('.CswLayoutTable_remove');
+                if (removeCells.length() > 0) {
                     external.table.trigger(internal.tableId + 'CswLayoutTable_onRemove', {
                         table: external.table,
                         cellSet: external.cellSet(external.table, row, column),
-                        row: $removecells.CswAttrNonDom('row'),
-                        column: $removecells.CswAttrNonDom('column')
+                        row: removeCells.propNonDom('row'),
+                        column: removeCells.propNonDom('column')
                     });
                 }
-                $removecells.children().hide();
+                removeCells.children().hide();
 
-                $removecells.removeClass('CswLayoutTable_remove');
+                removeCells.removeClass('CswLayoutTable_remove');
             } // if(internal.isRemoveMode($external.table))
         }; // internal.onClick()
 
@@ -57,18 +57,18 @@
             external.table.propNonDom('configmode', mode);
         };
 
-        internal.toggleRemove = function ($rembtn) {
+        internal.toggleRemove = function () {
             if (internal.isRemoveMode(external.table)) {
-                internal.removeOff(external.table, $rembtn);
+                internal.removeOff(external.table);
             } else {
                 external.table.propNonDom('removemode', 'true');
-                $rembtn.addClass('CswLayoutTable_removeEnabled');
+                internal.$removeBtn.addClass('CswLayoutTable_removeEnabled');
             }
         };
 
-        internal.removeOff = function ($rembtn) {
+        internal.removeOff = function () {
             external.table.propNonDom('removemode', 'false');
-            $rembtn.removeClass('CswLayoutTable_removeEnabled');
+            internal.$removeBtn.removeClass('CswLayoutTable_removeEnabled');
         };
 
         internal.addRow = function () {
@@ -133,24 +133,24 @@
             cell.bind('click', function (ev, dd) {
                 internal.onClick(ev, dd, row, column, cellsetrows, cellsetcolumns);
             }).$.droppable({
-                    hoverClass: 'CswLayoutTable_hover',
-                    drop: function (ev, dd) {
-                        internal.onDrop(ev, dd, $(this), cellsetrows, cellsetcolumns);
-                    }
-                })
+                hoverClass: 'CswLayoutTable_hover',
+                drop: function (ev, dd) {
+                    internal.onDrop(ev, dd, $(this), cellsetrows, cellsetcolumns);
+                }
+            })
                 .hover(function (ev, dd) {
                     internal.onHoverIn(ev, dd, $(this));
                 }, function (ev, dd) {
                     internal.onHoverOut(ev, dd, $(this));
                 });
 
-            cell.append('<div class="CswLayoutTable_celldiv"></div>');
+            cell.div({ cssclass: 'CswLayoutTable_celldiv' });
         };
 
         internal.enableDrag = function () {
             external.table.find('.CswLayoutTable_celldiv')
                 .$.draggable({
-                    revert: "invalid",
+                    revert: 'invalid',
                     drag: function (ev, dd) {
                         internal.onDrag(ev, dd, $(this));
                     }
@@ -162,36 +162,36 @@
                 .$.draggable('destroy');
         };
 
-        internal.onHoverIn = function (ev, dd, $cell) {
-            var $cellSet;
+        internal.onHoverIn = function (ev, dd, cell) {
+            var cellSet;
             if (internal.isRemoveMode()) {
-                $cellSet = external.table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
-                $cellSet.addClass('CswLayoutTable_remove');
+                cellSet = external.table.findCell('[row="' + cell.propNonDom('row') + '"][column="' + cell.propNonDom('column') + '"]');
+                cellSet.addClass('CswLayoutTable_remove');
             }
         }; // internal.onHoverIn()
 
-        internal.onHoverOut = function (ev, dd, $cell) {
-            var $cellSet;
+        internal.onHoverOut = function (ev, dd, cell) {
+            var cellSet;
             if (internal.isRemoveMode()) {
-                $cellSet = external.table.findCell('[row="' + $cell.CswAttrNonDom('row') + '"][column="' + $cell.CswAttrNonDom('column') + '"]');
-                $cellSet.removeClass('CswLayoutTable_remove');
+                cellSet = external.table.findCell('[row="' + cell.propNonDom('row') + '"][column="' + cell.propNonDom('column') + '"]');
+                cellSet.removeClass('CswLayoutTable_remove');
             }
         }; // internal.onHoverOut()
 
-        internal.onDrag = function (ev, dd, $dragdiv) {
-            var $dragcell, $cells;
+        internal.onDrag = function (ev, dd, dragDiv) {
+            var dragCell, cells;
             if (external.isConfig(external.table)) {
-                $dragcell = $dragdiv.parent();
-                $cells = external.table.findCell('[row="' + $dragcell.CswAttrNonDom('row') + '"][column="' + $dragcell.CswAttrNonDom('column') + '"]');
-                $cells.addClass('CswLayoutTable_dragcell');
+                dragCell = dragDiv.parent();
+                cells = external.table.findCell('[row="' + dragCell.propNonDom('row') + '"][column="' + dragCell.propNonDom('column') + '"]');
+                cells.addClass('CswLayoutTable_dragcell');
             }
         }; // internal.onDrag
 
         internal.onDrop = function (ev, dd, dropCell, cellsetrows, cellsetcolumns) {
-            var $dragdiv, dragCell, dragCells, dropCells, r, c, $thisdragcell, $thisdropcell, $thisdragdiv, $thisdropdiv;
+            var dragDiv, dragCell, dragCells, dropCells, r, c, thisDragCell, thisDropCell, thisDragDiv, thisDropDiv;
             if (external.isConfig(external.table)) {
-                $dragdiv = dd.draggable;
-                dragCell = Csw.controls.factory($dragdiv.parent(), {});
+                dragDiv = dd.draggable;
+                dragCell = Csw.controls.factory(dragDiv.parent(), {});
 
                 dragCells = external.table.findCell('[row="' + dragCell.propNonDom('row') + '"][column="' + dragCell.propNonDom('column') + '"]');
                 dropCells = external.table.findCell('[row="' + dropCell.propNonDom('row') + '"][column="' + dropCell.propNonDom('column') + '"]');
@@ -202,34 +202,34 @@
                 external.table.trigger(internal.tableId + 'CswLayoutTable_onSwap', {
                     table: external.table,
                     cellSet: external.cellSet(external.table, dragCell.propNonDom('row'), dragCell.propNonDom('column')),
-                    swapcellset: external.cellSet(external.table, dropCells.$.first().attr('row'), dropCells.$.first().attr('column')),
+                    swapcellset: external.cellSet(external.table, dropCells.first().propNonDom('row'), dropCells.first().propNonDom('column')),
                     row: dragCell.propNonDom('row'),
                     column: dragCell.propNonDom('column'),
-                    swaprow: dropCells.$.first().attr('row'),
-                    swapcolumn: dropCells.$.first().attr('column')
+                    swaprow: dropCells.first().propNonDom('row'),
+                    swapcolumn: dropCells.first().propNonDom('column')
                 });
 
                 for (r = 1; r <= cellsetrows; r += 1) {
                     for (c = 1; c <= cellsetcolumns; c += 1) {
-                        $thisdragcell = dragCells.filter('[cellsetrow="' + r + '"][cellsetcolumn="' + c + '"]');
-                        $thisdropcell = dropCells.filter('[cellsetrow="' + r + '"][cellsetcolumn="' + c + '"]');
-                        $thisdragdiv = $thisdragcell.children('div');
-                        $thisdropdiv = $thisdropcell.children('div');
+                        thisDragCell = dragCells.filter('[cellsetrow="' + r + '"][cellsetcolumn="' + c + '"]');
+                        thisDropCell = dropCells.filter('[cellsetrow="' + r + '"][cellsetcolumn="' + c + '"]');
+                        thisDragDiv = thisDragCell.children('div');
+                        thisDropDiv = thisDropCell.children('div');
 
-                        $thisdragcell.append($thisdropdiv);
-                        $thisdropcell.append($thisdragdiv);
+                        thisDragCell.append(thisDropDiv);
+                        thisDropCell.append(thisDragDiv);
 
-                        $thisdragdiv.position({
-                            my: "left top",
-                            at: "left top",
-                            of: $thisdropcell,
+                        thisDragDiv.$.position({
+                            my: 'left top',
+                            at: 'left top',
+                            of: thisDropCell,
                             offset: external.table.propNonDom('cellpadding')
                         });
 
-                        $thisdropdiv.position({
+                        thisDropDiv.$.position({
                             my: "left top",
                             at: "left top",
-                            of: $thisdragcell,
+                            of: thisDragCell,
                             offset: external.table.propNonDom('cellpadding')
                         });
 
@@ -280,13 +280,11 @@
         external.configOff = function () {
             /// <summary>Turn config mode off on the layout table.</summary>
             /// <returns type="Undefined"></returns>
-            var $rembtn;
 
-            external.buttonTable.find('#' + internal.tableId + 'addbtn').hide();
-            $rembtn = external.buttonTable.find('#' + internal.tableId + 'rembtn');
-            $rembtn.hide();
-            external.buttonTable.find('#' + internal.tableId + 'addcolumnbtn').hide();
-            external.buttonTable.find('#' + internal.tableId + 'addrowbtn').hide();
+            internal.$addBtn.hide();
+            internal.$removeBtn.hide();
+            internal.$expandColBtn.hide();
+            internal.$expandRowBtn.hide();
 
             external.table.findCell('.CswLayoutTable_cell')
                 .removeClass('CswLayoutTable_configcell');
@@ -295,17 +293,16 @@
 
             internal.setConfigMode('false');
             external.table.trigger(internal.tableId + 'CswLayoutTable_onConfigOff');
-            internal.removeOff($rembtn);
+            internal.removeOff();
         };
 
         external.configOn = function () {
             /// <summary>Turn config mode on, on the layout table. </summary>
             /// <returns type="Undefined"></returns>
-            external.buttonTable.find('#' + internal.tableId + 'addbtn').show();
-            external.buttonTable.find('#' + internal.tableId + 'rembtn').show();
-            external.buttonTable.find('#' + internal.tableId + 'addcolumnbtn').show();
-            external.buttonTable.find('#' + internal.tableId + 'addrowbtn').show();
-
+            internal.$addBtn.show();
+            internal.$removeBtn.show();
+            internal.$expandColBtn.show();
+            internal.$expandRowBtn.show();
             external.table.finish(null);
 
             external.table.findCell('.CswLayoutTable_cell')
@@ -323,20 +320,22 @@
                 $.extend(internal, options);
             }
 
-            var $buttondiv = $('<div />')
-                .appendTo(internal.$parent)
-                .css({ 'float': 'right' });
+            var buttonDiv = Csw.controls.div({
+                $parent: internal.$parent,
+                ID: Csw.controls.dom.makeId(internal.ID, 'btnDiv')
+            });
+            buttonDiv.css({ 'float': 'right' });
 
             if (internal.ReadOnly) {
-                $buttondiv.hide();
+                buttonDiv.hide();
             }
 
-            internal.tableId = internal.ID;
+            internal.tableId = Csw.controls.dom.makeId(internal.ID, 'tbl');
             internal.buttonTableId = Csw.controls.dom.makeId(internal.ID, 'buttontbl');
 
             external.table = Csw.controls.table({
                 $parent: internal.$parent,
-                ID: internal.ID,
+                ID: internal.tableId,
                 TableCssClass: internal.TableCssClass + ' CswLayoutTable_table',
                 CellCssClass: internal.CellCssClass + ' CswLayoutTable_cell',
                 cellpadding: internal.cellpadding,
@@ -360,12 +359,11 @@
             external.table.bind(internal.ID + 'CswLayoutTable_onConfigOn', internal.onConfigOn);
             external.table.bind(internal.ID + 'CswLayoutTable_onConfigOff', internal.onConfigOff);
 
-            external.buttonTable = Csw.controls.table({
-                $parent: $buttondiv,
+            external.buttonTable = buttonDiv.table({
                 ID: Csw.controls.dom.makeId(internal.ID, 'buttontbl')
             });
             if (internal.showAddButton) {
-                external.buttonTable.cell(1, 1).$.CswImageButton({
+                internal.$addBtn = external.buttonTable.cell(1, 1).$.CswImageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Add,
                     AlternateText: 'Add',
                     ID: internal.ID + 'addbtn',
@@ -373,10 +371,11 @@
                         Csw.tryExec(internal.onAddClick);
                         return Csw.enums.imageButton_ButtonType.None;
                     }
-                }).hide();
+                });
+                internal.$addBtn.hide();
             }
             if (internal.showRemoveButton) {
-                external.buttonTable.cell(1, 2).$.CswImageButton({
+                internal.$removeBtn = external.buttonTable.cell(1, 2).$.CswImageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                     AlternateText: 'Remove',
                     ID: internal.ID + 'rembtn',
@@ -384,10 +383,11 @@
                         internal.toggleRemove($ImageDiv);
                         return Csw.enums.imageButton_ButtonType.None;
                     }
-                }).hide();
+                });
+                internal.$removeBtn.hide();
             }
             if (internal.showExpandColButton) {
-                external.buttonTable.cell(1, 3).$.CswImageButton({
+                internal.$expandColBtn = external.buttonTable.cell(1, 3).$.CswImageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.ArrowEast,
                     AlternateText: 'Add Column',
                     ID: internal.ID + 'addcolumnbtn',
@@ -395,10 +395,11 @@
                         internal.addColumn();
                         return Csw.enums.imageButton_ButtonType.None;
                     }
-                }).hide();
+                });
+                internal.$expandColBtn.hide();
             }
             if (internal.showExpandRowButton) {
-                external.buttonTable.cell(1, 4).$.CswImageButton({
+                internal.$expandRowBtn = external.buttonTable.cell(1, 4).$.CswImageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.ArrowSouth,
                     AlternateText: 'Add Row',
                     ID: internal.ID + 'addrowbtn',
@@ -406,10 +407,11 @@
                         internal.addRow();
                         return Csw.enums.imageButton_ButtonType.None;
                     }
-                }).hide();
+                });
+                internal.$expandRowBtn.hide();
             }
             if (internal.showConfigButton) {
-                external.buttonTable.cell(1, 5).$.CswImageButton({
+                internal.$configBtn = external.buttonTable.cell(1, 5).$.CswImageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                     AlternateText: 'Configure',
                     ID: internal.ID + 'configbtn',
