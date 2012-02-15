@@ -25,19 +25,12 @@
     Csw.register('tryExec', tryExec);
     Csw.tryExec = Csw.tryExec || tryExec;
 
-    function tryJqExec($element, method) {
+    function tryJqExec(cswObj, method) {
         /// <summary> If the supplied argument is a function, execute it. </summary>
         /// <param name="func" type="Function"> Function to evaluate </param>
         /// <returns type="undefined" />
         var args = arguments[2];
-        switch (args.length) {
-            case 0:
-                return $element[method]();
-            case 1:
-                return $element[method](args[1]);
-            case 2:
-                return $element[method](args[1], arguments[2]);
-        }
+        return cswObj.$[method].apply(cswObj.$, args);
     }
     Csw.register('tryJqExec', tryJqExec);
     Csw.tryJqExec = Csw.tryJqExec || tryJqExec;

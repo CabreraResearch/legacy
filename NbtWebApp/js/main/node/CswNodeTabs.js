@@ -74,7 +74,7 @@
         }
 
         function makeTabContentDiv(tabParent, tabid, canEditLayout) {
-            var tabContentDiv = tabParent.div({
+            var tabContentDiv = tabParent.tabDiv({
                 ID: tabid
             });
             tabContentDiv.form({
@@ -151,7 +151,7 @@
                         tabcnt = tabno;
 
                         Csw.each(tabdivs, function (thisTabDiv) {
-                            thisTabDiv.$.tabs({
+                            thisTabDiv.tabs({
                                 selected: selectedtabno,
                                 select: function (event, ui) {
                                     var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.string(ui.index) + ')');
@@ -164,7 +164,7 @@
                                     }
                                 }
                             });
-                            var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.string(thisTabDiv.$.tabs('option', 'selected')) + ')');
+                            var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.string(thisTabDiv.tabs('option', 'selected')) + ')');
                             var selectedtabid = eachTabContentDiv.getId();
                             getProps(eachTabContentDiv, selectedtabid);
                             Csw.tryExec(o.onTabSelect, selectedtabid);
