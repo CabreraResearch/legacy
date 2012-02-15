@@ -16,7 +16,7 @@
                 logicalSetJson = propVals.logicalsetjson;
 
             propDiv.div()
-                    .$.CswCheckBoxArray('init', {
+                   .checkBoxArray({
                         ID: o.ID + '_cba',
                         onChange: o.onChange,
                         ReadOnly: o.ReadOnly,
@@ -30,9 +30,8 @@
             return propDiv;
         },
         save: function (o) { //$propdiv, $xml
-            var propDiv = o.propDiv.children('div').first();
             var attributes = { logicalsetjson: null };
-            var formdata = propDiv.$.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
             
             if(false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.logicalsetjson = formdata;

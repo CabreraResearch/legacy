@@ -25,7 +25,8 @@
             text: '',
             value: '',
             title: '',
-            align: ''
+            align: '',
+            height: ''
         };
         var external = {};
 
@@ -45,7 +46,8 @@
             attr.add('value', internal.value);
             attr.add('align', internal.align);
             style.add('align', internal.align);
-
+            style.add('height', internal.height);
+            
             html += '<div ';
 
             html += attr.get();
