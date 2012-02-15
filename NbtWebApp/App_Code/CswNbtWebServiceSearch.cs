@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -378,29 +379,71 @@ namespace ChemSW.Nbt.WebServices
         #endregion
 
 
-        //#region Universal Search
+        #region Universal Search
 
-        //public JObject doUniversalSearch( string SearchTerm )
-        //{
-        //    JObject ret = new JObject();
-        //    JArray NodesArray = new JArray();
-        //    CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, SearchTerm );
+        public JObject doUniversalSearch( string SearchTerm, JObject Filters )
+        {
+            JObject ret = new JObject();
+            // Filters Applied
+            string WhereClause = string.Empty;
+            foreach( JProperty FilterProp in Filters.Properties() )
+            {
+                JObject Filter = (JObject) FilterProp.Value;
+                if( Filter["type"].ToString() == "nodetype" )
+                {
+                    Int32 NodeTypeId = CswConvert.ToInt32( Filter["id"] );
+                    if( NodeTypeId != Int32.MinValue )
+                    {
+                        WhereClause += " and t.nodetypeid = " + NodeTypeId.ToString();
+                    }
+                }
+                else
+                {
+                }
+            } // foreach(JObject Filter in Filters.Properties)
 
-        //    // Find all nodes with reference to the search term
-        //    CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "doUniversalSearch_jct_select", "jct_nodes_props" );
-        //    CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
-        //    SelectCols.Add( "nodeid" );
-        //    DataTable JctTable = JctSelect.getTable( SelectCols, "", Int32.MinValue, "where nodeid is not null and lower(gestalt) like '%" + SearchTerm.ToLower() + "%'", false, null, 0, _CswNbtResources.TreeViewResultLimit );
-        //    foreach( DataRow JctRow in JctTable.Rows )
-        //    {
-        //        //JObject ThisNodeObj = wsTable.makeNodeObj( new CswPrimaryKey( "nodes", CswConvert.ToInt32( JctRow["nodeid"] ) ) );
-        //        //NodesArray.Add( ThisNodeObj );
-        //    } // foreach( DataRow JctRow in JctTable.Rows )
-        //    ret["nodes"] = NodesArray;
-        //    return ret;
-        //} // doUniversalSearch()
-        
-        //#endregion Universal Search
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, false );
+
+            // Results Table
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null );
+            ret["table"] = wsTable.makeTableFromTree( Tree );
+
+            // New Filters
+            Tree.goToRoot();
+            Dictionary<Int32, Int32> NodeTypeIds = new Dictionary<Int32, Int32>();
+            Int32 ChildCnt = Tree.getChildNodeCount();
+            for( Int32 n = 0; n < ChildCnt; n++ )
+            {
+                Tree.goToNthChild( n );
+                CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
+                if( NodeKey != null )
+                {
+                    if( false == NodeTypeIds.ContainsKey( NodeKey.NodeTypeId ) )
+                    {
+                        NodeTypeIds[NodeKey.NodeTypeId] = 0;
+                    }
+                    NodeTypeIds[NodeKey.NodeTypeId] += 1;
+                }
+                Tree.goToParentNode();
+            }
+
+            JObject FiltersObj = new JObject();
+            foreach( Int32 NodeTypeId in NodeTypeIds.Keys )
+            {
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                string ThisNTName = NodeType.NodeTypeName.ToLower();
+                FiltersObj[ThisNTName] = new JObject();
+                FiltersObj[ThisNTName]["type"] = "nodetype";
+                FiltersObj[ThisNTName]["id"] = NodeType.NodeTypeId.ToString();
+                FiltersObj[ThisNTName]["name"] = NodeType.NodeTypeName.ToString();
+                FiltersObj[ThisNTName]["count"] = NodeTypeIds[NodeTypeId].ToString();
+                FiltersObj[ThisNTName]["icon"] = NodeType.IconFileName.ToString();
+            }
+            ret["filters"] = FiltersObj;
+            return ret;
+        } // doUniversalSearch()
+
+        #endregion Universal Search
 
     } // class CswNbtWebServiceSearch
 

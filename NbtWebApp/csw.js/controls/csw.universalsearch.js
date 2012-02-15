@@ -14,7 +14,10 @@
             align: 'right',
             onBeforeSearch: null,
             onAfterSearch: null,
-            searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch'
+            
+            searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
+            searchterm: '',
+            filters: {}
         };
         if (params) $.extend(internal, params);
 
@@ -24,23 +27,23 @@
         // Adds a searchbox to the form
         (function () {
             var cswtable = Csw.controls.table({
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_div' }),
+                ID: Csw.controls.dom.makeId(internal.ID, '', '_div'),
                 $parent: internal.$searchbox_parent
             });
 
             internal.searchinput = cswtable.cell(1, 1).input({
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_input' }),
+                ID: Csw.controls.dom.makeId(internal.ID, '', '_input'),
                 type: Csw.enums.inputTypes.text,
                 width: internal.width
             });
 
             internal.searchbutton = cswtable.cell(1, 2).button({
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_srchbtn' }),
+                ID: Csw.controls.dom.makeId(internal.ID, '', '_srchbtn'),
                 enabledText: 'Search',
                 disabledText: 'Searching...',
                 onClick: function () {
-                    Csw.tryExec(internal.onSearch);
-                    internal.handleSearch();
+                    internal.searchterm = internal.searchinput.val();
+                    internal.search();
                 }
             });
 
@@ -48,23 +51,59 @@
         })();
 
         // Handle search submission
-        internal.handleSearch = function() {
-            var searchterm = internal.searchinput.val();
-            
+        internal.search = function () {
             Csw.tryExec(internal.onBeforeSearch);
-            
-            internal.$searchresults_parent.CswNodeTable({
-                searchterm: searchterm,
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_srchresults' }),
-                onEditNode: null,
-                onDeleteNode: null,
-                onSuccess: internal.onAfterSearch,
-                onNoResults: function() {
-                    internal.$searchresults_parent.append('No Results Found'); 
-                }
-            });
 
-        } // handleSearch()
+            Csw.ajax.post({
+                url: internal.searchurl,
+                data: { 
+                        SearchTerm: internal.searchterm,
+                        Filters: JSON.stringify(internal.filters)
+                      },
+                success: function (data) {
+                    var fdiv, filtersdivid;
+
+                    internal.$searchresults_parent.CswNodeTable({
+                        ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
+                        onEditNode: null,
+                        onDeleteNode: null,
+                        onSuccess: internal.onAfterSearch,
+                        onNoResults: function () {
+                            internal.$searchresults_parent.append('No Results Found');
+                        },
+                        tabledata: data.table
+                    });
+
+                    filtersdivid = Csw.controls.dom.makeId(internal.ID, '', 'filtersdiv');
+                    fdiv = Csw.controls.div({
+                        ID: filtersdivid,
+                        $parent: internal.$searchfilters_parent
+                    });
+
+                    fdiv.append('Filter to:');
+                    fdiv.br();
+                    function makeFilter(thisFilter) {
+                        fdiv.link({
+                            ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.id),
+                            text: thisFilter.name + ' (' + thisFilter.count + ')',
+                            onClick: function () {
+                                internal.addFilter(thisFilter);
+                                return false;
+                            }
+                        }).br();
+                    }
+                    Csw.each(data.filters, makeFilter);
+
+                    Csw.tryExec(internal.onAfterSearch);
+                } // success
+            }); // ajax
+        } // search()
+
+
+        internal.addFilter = function (thisFilter) {
+            internal.filters[thisFilter.id] = thisFilter;
+            internal.search()
+        } // addFilter()
 
         return external;
     };
