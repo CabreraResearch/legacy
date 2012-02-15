@@ -79,12 +79,13 @@
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                         thumbnailCell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
                     }
-                    thumbnailCell.append('<br/>');
+                    thumbnailCell.br();
 
                     if (Csw.bool(nodeObj.locked)) {
                         name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
                     }
-                    textCell.append(name + '<br/>');
+                    textCell.append(name);
+                    textCell.br();
 
                     // Props
                     Csw.crawlObject(nodeObj.props, function (propObj) {
@@ -101,10 +102,9 @@
                             });
 
                         } else {
-                            textCell.append('' + propObj.propname + ': ');
-                            textCell.append(propObj.gestalt);
+                            textCell.append('<span>' + propObj.propname + ': ' + propObj.gestalt + '</span>');
                         }
-                        textCell.append('<br/>');
+                        textCell.br();
                     });
 
                     // Buttons

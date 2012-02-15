@@ -384,21 +384,41 @@ namespace ChemSW.Nbt.WebServices
         public JObject doUniversalSearch( string SearchTerm, JObject Filters )
         {
             JObject ret = new JObject();
-            // Filters Applied
+
+            // Filters to apply
             string WhereClause = string.Empty;
+            bool SingleNodeType = false;
             foreach( JProperty FilterProp in Filters.Properties() )
             {
                 JObject Filter = (JObject) FilterProp.Value;
+                
                 if( Filter["type"].ToString() == "nodetype" )
                 {
-                    Int32 NodeTypeId = CswConvert.ToInt32( Filter["id"] );
-                    if( NodeTypeId != Int32.MinValue )
+                    // NodeType filter
+                    Int32 NodeTypeFirstVersionId = CswConvert.ToInt32( Filter["firstversionid"] );
+                    if( NodeTypeFirstVersionId != Int32.MinValue )
                     {
-                        WhereClause += " and t.nodetypeid = " + NodeTypeId.ToString();
+                        WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where firstversionid = " + NodeTypeFirstVersionId.ToString() + @") ";
+                        SingleNodeType = true;
                     }
                 }
-                else
+                else if( Filter["type"].ToString() == "propval" )
                 {
+                    // Property Filter
+                    Int32 NodeTypePropId = CswConvert.ToInt32( Filter["nodetypepropid"] );
+                    string Value = Filter["value"].ToString();
+                    if( NodeTypePropId != Int32.MinValue )
+                    {
+                        WhereClause += @" and n.nodeid in (select nodeid 
+                                                             from jct_nodes_props 
+                                                            where nodetypepropid in (select nodetypepropid 
+                                                                                       from nodetype_props 
+                                                                                      where firstpropversionid = (select firstpropversionid 
+                                                                                                                    from nodetype_props 
+                                                                                                                   where nodetypepropid = " + NodeTypePropId + @" ))
+                                                              and gestalt like '" + Value + "%') ";
+                        SingleNodeType = true;
+                    }
                 }
             } // foreach(JObject Filter in Filters.Properties)
 
@@ -408,37 +428,111 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null );
             ret["table"] = wsTable.makeTableFromTree( Tree );
 
-            // New Filters
-            Tree.goToRoot();
-            Dictionary<Int32, Int32> NodeTypeIds = new Dictionary<Int32, Int32>();
-            Int32 ChildCnt = Tree.getChildNodeCount();
-            for( Int32 n = 0; n < ChildCnt; n++ )
-            {
-                Tree.goToNthChild( n );
-                CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
-                if( NodeKey != null )
-                {
-                    if( false == NodeTypeIds.ContainsKey( NodeKey.NodeTypeId ) )
-                    {
-                        NodeTypeIds[NodeKey.NodeTypeId] = 0;
-                    }
-                    NodeTypeIds[NodeKey.NodeTypeId] += 1;
-                }
-                Tree.goToParentNode();
-            }
-
+            // New Filters to offer
             JObject FiltersObj = new JObject();
-            foreach( Int32 NodeTypeId in NodeTypeIds.Keys )
+            Tree.goToRoot();
+            if( false == SingleNodeType )
             {
-                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                string ThisNTName = NodeType.NodeTypeName.ToLower();
-                FiltersObj[ThisNTName] = new JObject();
-                FiltersObj[ThisNTName]["type"] = "nodetype";
-                FiltersObj[ThisNTName]["id"] = NodeType.NodeTypeId.ToString();
-                FiltersObj[ThisNTName]["name"] = NodeType.NodeTypeName.ToString();
-                FiltersObj[ThisNTName]["count"] = NodeTypeIds[NodeTypeId].ToString();
-                FiltersObj[ThisNTName]["icon"] = NodeType.IconFileName.ToString();
-            }
+                // Filter on NodeTypes only
+                Dictionary<Int32, Int32> NodeTypeIds = new Dictionary<Int32, Int32>();
+                Int32 ChildCnt = Tree.getChildNodeCount();
+                for( Int32 n = 0; n < ChildCnt; n++ )
+                {
+                    Tree.goToNthChild( n );
+                    CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
+                    if( NodeKey != null )
+                    {
+                        if( false == NodeTypeIds.ContainsKey( NodeKey.NodeTypeId ) )
+                        {
+                            NodeTypeIds[NodeKey.NodeTypeId] = 0;
+                        }
+                        NodeTypeIds[NodeKey.NodeTypeId] += 1;
+                    }
+                    Tree.goToParentNode();
+                } // for( Int32 n = 0; n < ChildCnt; n++ )
+
+                if( NodeTypeIds.Keys.Count == 1 )
+                {
+                    SingleNodeType = true;
+                }
+                else
+                {
+                    FiltersObj["Filter To"] = new JObject();
+                    foreach( Int32 NodeTypeId in NodeTypeIds.Keys )
+                    {
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                        string ThisNTName = NodeType.NodeTypeName.ToLower();
+                        JObject ThisFilterObj = new JObject();
+                        ThisFilterObj["type"] = "nodetype";
+                        ThisFilterObj["id"] = NodeType.NodeTypeId.ToString();
+                        ThisFilterObj["firstversionid"] = NodeType.FirstVersionNodeTypeId.ToString();
+                        ThisFilterObj["name"] = NodeType.NodeTypeName.ToString();
+                        ThisFilterObj["count"] = NodeTypeIds[NodeTypeId].ToString();
+                        ThisFilterObj["icon"] = NodeType.IconFileName.ToString();
+
+                        FiltersObj["Filter To"][ThisNTName] = ThisFilterObj;
+                    }
+                }
+            } // if( false == SingleNodeType )
+
+            if( SingleNodeType )
+            {
+                // Filter on property values in the results
+                Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
+                Int32 ChildCnt = Tree.getChildNodeCount();
+                for( Int32 n = 0; n < ChildCnt; n++ )
+                {
+                    Tree.goToNthChild( n );
+                    JArray Props = Tree.getChildNodePropsOfNode();
+                    foreach( JObject Prop in Props )
+                    {
+                        Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
+                        string Gestalt = Prop["gestalt"].ToString();
+                        if( Gestalt.Length > 50 )
+                        {
+                            Gestalt = Gestalt.Substring( 0, 50 );
+                        }
+
+                        if( false == PropCounts.ContainsKey( NodeTypePropId ) )
+                        {
+                            PropCounts[NodeTypePropId] = new Dictionary<string, Int32>();
+                        }
+                        if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
+                        {
+                            PropCounts[NodeTypePropId][Gestalt] = 0;
+                        }
+                        PropCounts[NodeTypePropId][Gestalt] += 1;
+                    }
+                    Tree.goToParentNode();
+                } // for( Int32 n = 0; n < ChildCnt; n++ )
+
+                foreach( Int32 NodeTypePropId in PropCounts.Keys )
+                {
+                    CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
+                    FiltersObj[NodeTypeProp.PropName] = new JObject();
+                    foreach( string Value in PropCounts[NodeTypePropId].Keys )
+                    {
+                        JObject ThisFilterObj = new JObject();
+                        ThisFilterObj["type"] = "propval";
+                        ThisFilterObj["id"] = NodeTypePropId.ToString() + "_" + Value;
+                        ThisFilterObj["nodetypepropid"] = NodeTypePropId;
+                        ThisFilterObj["value"] = Value;
+                        if( Value != string.Empty )
+                        {
+                            ThisFilterObj["name"] = Value;
+                        }
+                        else
+                        {
+                            ThisFilterObj["name"] = "[blank]";
+                        }
+                        ThisFilterObj["count"] = PropCounts[NodeTypePropId][Value].ToString();
+                        //ThisFilterObj["icon"] = NodeType.IconFileName.ToString();
+
+                        FiltersObj[NodeTypeProp.PropName][Value] = ThisFilterObj;
+                    }
+                }
+            } // if( SingleNodeType )
+
             ret["filters"] = FiltersObj;
             return ret;
         } // doUniversalSearch()

@@ -63,26 +63,26 @@
                 success: function (data) {
                     var fdiv, filtersdivid;
 
+                    // Search results
                     internal.$searchresults_parent.CswNodeTable({
                         ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
                         onEditNode: null,
                         onDeleteNode: null,
                         onSuccess: internal.onAfterSearch,
                         onNoResults: function () {
-                            internal.$searchresults_parent.append('No Results Found');
+                            internal.$searchresults_parent.text('No Results Found');
                         },
                         tabledata: data.table
                     });
 
+                    // Filters
                     filtersdivid = Csw.controls.dom.makeId(internal.ID, '', 'filtersdiv');
                     fdiv = Csw.controls.div({
                         ID: filtersdivid,
                         $parent: internal.$searchfilters_parent
                     });
 
-                    fdiv.append('Filter to:');
-                    fdiv.br();
-                    function makeFilter(thisFilter) {
+                    function makeFilterLink(thisFilter) {
                         fdiv.link({
                             ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.id),
                             text: thisFilter.name + ' (' + thisFilter.count + ')',
@@ -92,7 +92,14 @@
                             }
                         }).br();
                     }
-                    Csw.each(data.filters, makeFilter);
+                    function makeFilterSet(thisFilterSet, Name) {
+                        fdiv.append('<span>' + Name + ':</span>');
+                        fdiv.br();
+                        Csw.each(thisFilterSet, makeFilterLink);
+                        fdiv.br();
+                        fdiv.br();
+                    }
+                    Csw.each(data.filters, makeFilterSet);
 
                     Csw.tryExec(internal.onAfterSearch);
                 } // success
