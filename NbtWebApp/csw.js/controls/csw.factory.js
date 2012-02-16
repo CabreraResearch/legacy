@@ -309,120 +309,12 @@
 
         //#region Csw "jQuery" classes
 
-        external.parent = external.parent || function () {
-            /// <summary>Get the parent of this control</summary>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.parent(),
-                ret;
-
-            if (false === Csw.isNullOrEmpty(_$element, true)) {
-                ret = external.jquery(_$element);
-            } else {
-                ret = {};
-            }
-            return ret;
-        };
-
-        external.root = external.root || function () {
-            /// <summary>Get the root (great, great, great grandparent) of this control</summary>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.parent(),
-                ret;
-            while (false === Csw.isNullOrEmpty(_$element.parent(), true)) {
-                _$element = _$element.parent();
-            }
-            if (false === Csw.isNullOrEmpty(_$element, true)) {
-                ret = external.jquery(_$element);
-            } else {
-                ret = {};
-            }
-            return ret;
-        };
-
         external.addClass = function (name) {
             /// <summary>Add a CSS class to an element.</summary>
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
             Csw.controls.dom.addClass($element, name);
             return external;
-        };
-
-        external.removeClass = function (name) {
-            /// <summary>Remove a CSS class to an element.</summary>
-            /// <param name="value" type="String">The value of the attribute</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            Csw.controls.dom.removeClass($element, name);
-            return external;
-        };
-
-        external.css = function (values) {
-            /// <summary>Add css styles to an element.</summary>
-            /// <param name="values" type="Object">Styles to apply</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            $element.css(values);
-            return external;
-        };
-
-        external.bind = function (eventName, event) {
-            /// <summary>Bind an action to a jQuery element's event.</summary>
-            /// <param name="eventName" type="String">The name of the event</param>
-            /// <param name="event" type="Function">A function to execute when the event fires</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            Csw.controls.dom.bind($element, eventName, event);
-            return external;
-        };
-
-        external.unbind = function (eventName) {
-            /// <summary>Unbind an action from a jQuery element's event.</summary>
-            /// <param name="eventName" type="String">The name of the event</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            Csw.controls.dom.unbind($element, eventName);
-            return external;
-        };
-
-        external.trigger = function (eventName, eventOpts) {
-            /// <summary>Trigger an event bound to a jQuery element.</summary>
-            /// <param name="eventName" type="String">The name of the event</param>
-            /// <param name="eventOpts" type="Object">Options collection to pass to the event handler.</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            Csw.controls.dom.trigger($element, eventName, eventOpts);
-            return external;
-        };
-
-        external.children = function (searchTerm, selector) {
-            /// <summary>Find the child elements of this DOM element represented by this object</summary>
-            /// <param name="searchTerm" type="String">(Optional) Some search term to limit child results</param>
-            /// <param name="selector" type="String">(Optional) A selector</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.children(Csw.string(searchTerm), Csw.string(selector)),
-                ret = internal.makeControlForChain(_$element);
-            return ret;
-        };
-
-        external.find = function (selector) {
-            /// <summary>Find the child elements of this DOM element represented by this object</summary>
-            /// <param name="selector" type="String">A selector, id or jQuery object to find.</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.find(Csw.string(selector)),
-                ret = internal.makeControlForChain(_$element);
-            return ret;
-        };
-
-        external.filter = function (selector) {
-            /// <summary>Filter the child elements of this DOM element according to this selector</summary>
-            /// <param name="selector" type="String">A filter string.</param>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.filter(selector),
-                ret = internal.makeControlForChain(_$element);
-            return ret;
-        };
-
-        external.first = function () {
-            /// <summary>Find the first child element of this DOM element represented by this object</summary>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            var _$element = $element.first(),
-                ret = internal.makeControlForChain(_$element);
-            return ret;
         };
 
         external.append = function (object) {
@@ -456,61 +348,37 @@
             return ret;
         };
 
-        external.val = external.val || function (value) {
-            /// <summary>Get the value of the element.</summary>
-            /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
-            if (arguments.length === 1 && false === Csw.isNullOrUndefined(value)) {
-                $element.val(value);
-                return external;
-            } else {
-                return Csw.string($element.val());
-            }
-        };
-
-        external.text = function (text) {
-            /// <summary>Get the value of the element.</summary>
-            /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
-            if (arguments.length === 1 && false === Csw.isNullOrUndefined(text)) {
-                $element.text(text);
-                return external;
-            } else {
-                return Csw.string($element.text());
-            }
-        };
-
-        external.show = function () {
-            /// <summary>Make the element visible.</summary>
+        external.bind = function (eventName, event) {
+            /// <summary>Bind an action to a jQuery element's event.</summary>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <param name="event" type="Function">A function to execute when the event fires</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            $element.show();
+            Csw.controls.dom.bind($element, eventName, event);
             return external;
         };
 
-        external.hide = function () {
-            /// <summary>Make the element invisible.</summary>
+        external.children = function (searchTerm, selector) {
+            /// <summary>Find the child elements of this DOM element represented by this object</summary>
+            /// <param name="searchTerm" type="String">(Optional) Some search term to limit child results</param>
+            /// <param name="selector" type="String">(Optional) A selector</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            $element.hide();
-            return external;
-        };
-
-        external.empty = function () {
-            /// <summary>Empty the element.</summary>
-            /// <returns type="Object">The Csw object (for chaining)</returns> 
-            $element.empty();
-            return external;
-        };
-
-        external.remove = function () {
-            /// <summary>Remove the element and delete the object.</summary>
-            /// <returns type="null"></returns> 
-            $element.remove();
-            external = null;
-            return external;
+            var _$element = $element.children(Csw.string(searchTerm), Csw.string(selector)),
+                ret = internal.makeControlForChain(_$element);
+            return ret;
         };
 
         external.clickOnEnter = function (cswControl) {
             /// <summary>Bind an event to the enter key, when pressed in this control.</summary>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
             $element.clickOnEnter(cswControl.$);
+            return external;
+        };
+
+        external.css = function (values) {
+            /// <summary>Add css styles to an element.</summary>
+            /// <param name="values" type="Object">Styles to apply</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            $element.css(values);
             return external;
         };
 
@@ -534,6 +402,138 @@
             }
             return ret;
 
+        };
+
+        external.empty = function () {
+            /// <summary>Empty the element.</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            $element.empty();
+            return external;
+        };
+
+        external.filter = function (selector) {
+            /// <summary>Filter the child elements of this DOM element according to this selector</summary>
+            /// <param name="selector" type="String">A filter string.</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.filter(selector),
+                ret = internal.makeControlForChain(_$element);
+            return ret;
+        };
+
+        external.find = function (selector) {
+            /// <summary>Find the child elements of this DOM element represented by this object</summary>
+            /// <param name="selector" type="String">A selector, id or jQuery object to find.</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.find(Csw.string(selector)),
+                ret = internal.makeControlForChain(_$element);
+            return ret;
+        };
+
+        external.first = function () {
+            /// <summary>Find the first child element of this DOM element represented by this object</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.first(),
+                ret = internal.makeControlForChain(_$element);
+            return ret;
+        };
+
+        external.hide = function () {
+            /// <summary>Make the element invisible.</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            $element.hide();
+            return external;
+        };
+
+        external.parent = external.parent || function () {
+            /// <summary>Get the parent of this control</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.parent(),
+                ret;
+
+            if (false === Csw.isNullOrEmpty(_$element, true)) {
+                ret = external.jquery(_$element);
+            } else {
+                ret = {};
+            }
+            return ret;
+        };
+
+        external.remove = function () {
+            /// <summary>Remove the element and delete the object.</summary>
+            /// <returns type="null"></returns> 
+            $element.remove();
+            external = null;
+            return external;
+        };
+
+        external.removeClass = function (name) {
+            /// <summary>Remove a CSS class to an element.</summary>
+            /// <param name="value" type="String">The value of the attribute</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            Csw.controls.dom.removeClass($element, name);
+            return external;
+        };
+
+        external.root = external.root || function () {
+            /// <summary>Get the root (great, great, great grandparent) of this control</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            var _$element = $element.parent(),
+                ret;
+            while (false === Csw.isNullOrEmpty(_$element.parent(), true)) {
+                _$element = _$element.parent();
+            }
+            if (false === Csw.isNullOrEmpty(_$element, true)) {
+                ret = external.jquery(_$element);
+            } else {
+                ret = {};
+            }
+            return ret;
+        };
+
+        external.show = function () {
+            /// <summary>Make the element visible.</summary>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            $element.show();
+            return external;
+        };
+
+        external.text = function (text) {
+            /// <summary>Get the value of the element.</summary>
+            /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
+            if (arguments.length === 1 && false === Csw.isNullOrUndefined(text)) {
+                $element.text(text);
+                return external;
+            } else {
+                return Csw.string($element.text());
+            }
+        };
+
+        external.trigger = function (eventName, eventOpts) {
+            /// <summary>Trigger an event bound to a jQuery element.</summary>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <param name="eventOpts" type="Object">Options collection to pass to the event handler.</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            Csw.controls.dom.trigger($element, eventName, eventOpts);
+            return external;
+        };
+
+        external.unbind = function (eventName) {
+            /// <summary>Unbind an action from a jQuery element's event.</summary>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <returns type="Object">The Csw object (for chaining)</returns> 
+            Csw.controls.dom.unbind($element, eventName);
+            return external;
+        };
+
+        external.val = external.val || function (value) {
+            /// <summary>Get the value of the element.</summary>
+            /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
+            if (arguments.length === 1 && false === Csw.isNullOrUndefined(value)) {
+                $element.val(value);
+                return external;
+            } else {
+                return Csw.string($element.val());
+            }
         };
 
         //#endregion Csw "jQuery" classes
