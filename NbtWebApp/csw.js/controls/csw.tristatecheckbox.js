@@ -1,119 +1,100 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="CswImageButton.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { 
-    "use strict";
-    var pluginName = 'CswTristateCheckBox';
+(function () {
 
-    var methods = {
-        init: function (options) {
-            var o = {
-                ID: '',
-                prefix: '',
-                Checked: '',
-                ReadOnly: false,
-                Required: false,
-                Multi: false,
-                cssclass: 'CswTristateCheckBox',
-                onChange: function () { }
-            };
-            if(options) $.extend(o, options);
+    function triStateCheckBox(options) {
 
-            var $parent = $(this).empty(),
-                elementId = Csw.controls.dom.makeId({ prefix: o.prefix, ID: o.ID }),
-                tristateVal = Csw.string(o.Checked, 'null').toLowerCase(), //Case 21769
-                ret = $parent;
-            
-            if(o.ReadOnly) {
-                if(o.Multi) {
-                    $parent.append(Csw.enums.multiEditDefaultValue);
-                } else {
-                    switch (tristateVal) {
-                        case 'true': $parent.append('Yes'); break;
-                        case 'false': $parent.append('No'); break;
-                    }
-                }
-            } else {
-                ret = $parent.CswImageButton({ ID: elementId,  
-                                        ButtonType: getButtonType(tristateVal), 
-                                        AlternateText: tristateVal,
-                                        cssclass: o.cssclass,
-                                        onClick: function ($ImageDiv) {
-                                            o.onChange($ImageDiv); 
-                                            return onClick($ImageDiv, o.Required);
-                                        }
-                                    });
+        var internal = {
+            ID: '',
+            prefix: '',
+            Checked: '',
+            ReadOnly: false,
+            Required: false,
+            Multi: false,
+            cssclass: 'CswTristateCheckBox',
+            onChange: function () { },
+            value: 'null',
+            btnValue: Csw.enums.imageButton_ButtonType.CheckboxNull
+        };
+
+        var external = {};
+
+        internal.val = function () {
+            return internal.buttonVal;
+        };
+
+        external.getButtonType = function () {
+            var ret;
+            switch (internal.value) {
+                case 'true':
+                    ret = Csw.enums.imageButton_ButtonType.CheckboxTrue;
+                    break;
+                case 'false':
+                    ret = Csw.enums.imageButton_ButtonType.CheckboxFalse;
+                    break;
+                default:
+                    ret = Csw.enums.imageButton_ButtonType.CheckboxNull;
+                    break;
             }
             return ret;
-        },
-        value: function () {
-            var $CheckboxImage = $(this);
-            var checked = $CheckboxImage.CswAttrDom('alt');
-            return checked;
-        },
-        reBindClick: function (id, required, onClickEvent) {
-            var $this = $(this),
-                buttonType;   
-            if (Csw.isNullOrEmpty($this, true)) {
-                $this = $('#' + id); 
+        };
+
+        internal.onClick = function () {
+            if (internal.value === 'null') {
+                internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
+                internal.value = 'true';
+            } else if (internal.buttonVal === 'false') {
+                if (Csw.bool(internal.Required)) {
+                    internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
+                    internal.value = 'true';
+                } else {
+                    internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
+                    internal.value = 'null';
+                }
+            } else if (internal.buttonVal === 'true') {
+                internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxFalse;
+                internal.value = 'false';
             }
-            if (false === Csw.isNullOrEmpty($this, true)) {
-                $this.bind('click', function () {
-                    buttonType = onClick($this, required);
-                    $this.CswImageButton('doClick', buttonType);
-                    if (Csw.isFunction(onClickEvent)) {
-                        onClickEvent();
+            return internal.btnValue;
+        }; // onClick()
+
+
+        (function () {
+            if (options) {
+                $.extend(internal, options);
+            }
+
+            var elementId = Csw.controls.dom.makeId(internal.ID, 'tst'),
+                tristateVal = Csw.string(internal.Checked, 'null').toLowerCase(); //Case 21769
+
+            if (internal.ReadOnly) {
+                if (internal.Multi) {
+                    internal.value = Csw.enums.multiEditDefaultValue;
+                } else {
+                    switch (tristateVal) {
+                        case 'true':
+                            internal.value = 'Yes';
+                            break;
+                        case 'false':
+                            internal.value = 'No';
+                            break;
                     }
-                    return false;
-                });
-            }
-        }
-    };
-
-    function getButtonType(val) {
-        var ret = Csw.enums.imageButton_ButtonType.CheckboxNull;
-        switch(val) {
-            case 'true': ret = Csw.enums.imageButton_ButtonType.CheckboxTrue; break;
-            case 'false': ret = Csw.enums.imageButton_ButtonType.CheckboxFalse; break;
-        }
-        return ret;
-    }
-    
-    function onClick($ImageDiv, required) {
-        var currentValue = $ImageDiv.CswAttrDom('alt');
-        var newValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
-        var newAltText = "null";
-        if (currentValue === "null") {
-            newValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
-            newAltText = "true";
-        } else if ( currentValue === "false") {
-            if ( Csw.bool(required) ) {
-                newValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
-                newAltText = "true";
+                }
+                $.extend(external, Csw.controls.div(internal));
             } else {
-                newValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
-                newAltText = "null";
+                internal.ID = elementId;
+                internal.ButtonType = getButtonType(tristateVal);
+                internal.AlternateText = tristateVal;
+                internal.onClick = function () {
+                    internal.onChange();
+                    return internal.onClick();
+                };
+                $.extend(external, Csw.controls.imageButton(internal));
             }
-        } else if (currentValue === "true") {
-            newValue = Csw.enums.imageButton_ButtonType.CheckboxFalse;
-            newAltText = "false";
-        }
-        $ImageDiv.CswAttrDom('alt', newAltText);
-        return newValue;
-    } // onClick()
 
-    // Method calling logic
-    $.fn.CswTristateCheckBox = function (method)  {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } 
-        else if (typeof method === 'object' || false === method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName);
-        }
-    };
-})(jQuery);
+        } ());
+
+        return external;
+    }
+} ());
