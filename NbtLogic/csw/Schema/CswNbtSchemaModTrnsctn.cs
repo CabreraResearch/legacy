@@ -41,7 +41,6 @@ namespace ChemSW.Nbt.Schema
         public CswNbtSchemaModTrnsctn( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CswNbtResources.CswResources.PooledConnectionState = PooledConnectionState.Closed;
             _CswNbtResources.TransactionMode = TransactionMode.Atomistic;
             _CswDdl = new CswDDL( _CswNbtResources );
             //            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
