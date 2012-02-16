@@ -333,8 +333,8 @@
             if (options) {
                 $.extend(internal, options);
             }
-            var parent = Csw.controls.div(internal);
-            var buttonDiv = parent.div({
+            $.extend(external, Csw.controls.div(internal));
+            var buttonDiv = external.div({
                 ID: Csw.controls.dom.makeId(internal.ID, 'btnDiv')
             });
             buttonDiv.css({ 'float': 'right' });
@@ -346,7 +346,7 @@
             internal.tableId = Csw.controls.dom.makeId(internal.ID, 'tbl');
             internal.buttonTableId = Csw.controls.dom.makeId(internal.ID, 'buttontbl');
 
-            external.table = parent.table({
+            external.table = external.table({
                 ID: internal.tableId,
                 TableCssClass: internal.TableCssClass + ' CswLayoutTable_table',
                 CellCssClass: internal.CellCssClass + ' CswLayoutTable_cell',
