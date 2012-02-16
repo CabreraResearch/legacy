@@ -77,9 +77,9 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
             _checkView();

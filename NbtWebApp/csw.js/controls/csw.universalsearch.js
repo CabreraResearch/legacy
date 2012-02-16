@@ -65,6 +65,10 @@
                     var fdiv, filtersdivid;
 
                     // Search results
+                    internal.$searchresults_parent
+                        .css({ paddingTop: '15px' })
+                        .append('<b>Search Results:</b>');
+
                     internal.$searchresults_parent.CswNodeTable({
                         ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
                         onEditNode: null,
@@ -83,6 +87,7 @@
                         ID: filtersdivid,
                         $parent: internal.$searchfilters_parent
                     }).css({
+                        paddingTop: '15px',
                         height: internal.maxheight + 'px',
                         overflow: 'auto'
                     });

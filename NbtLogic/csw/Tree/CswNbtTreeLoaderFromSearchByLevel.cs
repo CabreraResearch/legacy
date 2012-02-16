@@ -321,14 +321,23 @@ namespace ChemSW.Nbt
                                                   from nodetype_props p
                                                   join field_types f on p.fieldtypeid = f.fieldtypeid
                                                   left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
-                                                 where nl.nodetypelayoutid is not null 
-                                                    or f.fieldtype in ('Image', 'MOL')
-                                                    or p.nodetypepropid in (select nodetypepropid from jct_nodes_props j where (lower(j.gestalt) like '%" + _SearchTerm.ToLower() + @"%'))
+                                                 where f.searchable = '1' 
+                                                   and (nl.nodetypelayoutid is not null 
+                                                        or f.fieldtype in ('Image', 'MOL')
+                                                        or p.nodetypepropid in (select nodetypepropid 
+                                                                                  from jct_nodes_props j 
+                                                                                 where (lower(j.gestalt) like '%" + _SearchTerm.ToLower() + @"%')))
                                                ) props on (props.nodetypeid = t.nodetypeid)
-                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
+                               left outer join jct_nodes_props propvaljoin on (    props.nodetypepropid = propvaljoin.nodetypepropid 
+                                                                               and propvaljoin.nodeid = n.nodeid)
                                left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 
-                    Where += @" and n.nodeid in (select nodeid from jct_nodes_props jnp where lower(jnp.gestalt) like '%" + _SearchTerm.ToLower() + "%') ";
+                    Where += @" and n.nodeid in (select nodeid 
+                                                   from jct_nodes_props jnp 
+                                                   join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
+                                                   join field_types f on (p.fieldtypeid = f.fieldtypeid) 
+                                                  where f.searchable = '1' 
+                                                    and lower(jnp.gestalt) like '%" + _SearchTerm.ToLower() + "%' ) ";
                     
                     OrderBy += ", props.display_row ";
 

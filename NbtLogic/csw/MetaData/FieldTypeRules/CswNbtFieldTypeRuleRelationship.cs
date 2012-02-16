@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
-        private ICswNbtMetaDataProp _MetaDataProp = null;
 
         public CswNbtFieldTypeRuleRelationship( CswNbtFieldResources CswNbtFieldResources )
         {
@@ -89,14 +88,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        private CswNbtView _setDefaultView( CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
+        private CswNbtView _setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
         {
-            CswNbtMetaDataNodeTypeProp ThisNtProp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( _MetaDataProp.PropId );
+            CswNbtMetaDataNodeTypeProp ThisNtProp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.PropId );
             CswNbtView RetView = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( ThisNtProp.ViewId );
             if( RelatedIdType != CswNbtViewRelationship.RelatedIdType.Unknown &&
                 ( null == RetView ||
@@ -132,13 +131,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 RetView.ViewId = ThisNtProp.ViewId;
                 RetView.Visibility = NbtViewVisibility.Property;
                 RetView.ViewMode = NbtViewRenderingMode.List;
-                RetView.ViewName = _MetaDataProp.PropName;
+                RetView.ViewName = MetaDataProp.PropName;
                 RetView.save();
             }
             return RetView;
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             string OutFkType = inFKType;
             Int32 OutFkValue = inFKValue;
@@ -151,7 +150,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             //Current PropIdTypes
             CswNbtViewRelationship.RelatedIdType CurrentFkPropIdType;
-            Enum.TryParse( _MetaDataProp.FKType, true, out CurrentFkPropIdType );
+            Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
 
             //We have valid values that are different that what is currently set
             if( ( false == string.IsNullOrEmpty( inFKType ) &&
@@ -160,11 +159,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 ) &&
                 (
                   NewFkPropIdType != CurrentFkPropIdType ||
-                  inFKValue != _MetaDataProp.FKValue
+                  inFKValue != MetaDataProp.FKValue
                 ) //something has changed 
               )
             {
-                _setDefaultView( NewFkPropIdType, inFKValue, false );
+                _setDefaultView( MetaDataProp, NewFkPropIdType, inFKValue, false );
                 OutFkType = NewFkPropIdType.ToString();
                 OutFkValue = inFKValue;
                 OutValuePropType = string.Empty;
@@ -174,7 +173,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             else
             {
                 //Make sure a default view is set
-                _setDefaultView( CurrentFkPropIdType, _MetaDataProp.FKValue, true );
+                _setDefaultView( MetaDataProp, CurrentFkPropIdType, MetaDataProp.FKValue, true );
             }
         }
 

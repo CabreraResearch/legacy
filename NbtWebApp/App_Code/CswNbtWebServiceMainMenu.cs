@@ -124,22 +124,22 @@ namespace ChemSW.Nbt.WebServices
                         SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
                         HasChildren = true;
                     }
-                    if( View.Visibility != NbtViewVisibility.Property )
-                    {
-                        SearchObj["Generic Search"] = new JObject();
-                        SearchObj["Generic Search"]["nodeid"] = NodeId;
-                        SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
-                        SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                        HasChildren = true;
-                    }
+                    //if( View.Visibility != NbtViewVisibility.Property )
+                    //{
+                    //    SearchObj["Generic Search"] = new JObject();
+                    //    SearchObj["Generic Search"]["nodeid"] = NodeId;
+                    //    SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
+                    //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                    //    HasChildren = true;
+                    //}
                     /* Case 24744: No Generic Search on Grid Props */
                 }
-                else
-                {
-                    SearchObj["Generic Search"] = new JObject();
-                    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                    HasChildren = true;
-                }
+                //else
+                //{
+                //    SearchObj["Generic Search"] = new JObject();
+                //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                //    HasChildren = true;
+                //}
 
                 if( HasChildren )
                 {

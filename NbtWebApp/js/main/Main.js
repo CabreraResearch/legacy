@@ -51,7 +51,8 @@ window.initMain = window.initMain || function (undefined) {
                     $searchbox_parent: $('#SearchDiv'),
                     $searchresults_parent: $('#RightDiv'),
                     $searchfilters_parent: $('#LeftDiv'),
-                    onBeforeSearch: function() { clear({ all: true }); }
+                    onBeforeSearch: function() { clear({ all: true }); },
+                    onAfterSearch: function() { refreshMainMenu(); }
                 });
 
                 $('#header_quota').CswQuotaImage();
