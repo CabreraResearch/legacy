@@ -97,6 +97,7 @@
                     fdiv.span({ text: 'Searched For: ' + internal.searchterm }).br();
 
                     // Filters in use
+                    var hasFilters = false;
                     function showFilter(thisFilter) {
                         fdiv.span({
                             //ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
@@ -112,17 +113,19 @@
                             }
                         });
                         fdiv.br();
+                        hasFilters = true;
                     }
                     Csw.each(internal.filters, showFilter);
 
-                    fdiv.br();
-                    fdiv.button({
-                        ID: Csw.controls.dom.makeId(filtersdivid, '', "saveview"),
-                        enabledText: 'Save as View',
-                        disableOnClick: false,
-                        onClick: internal.saveAsView
-                    });
-
+                    if (hasFilters) {
+                        fdiv.br();
+                        fdiv.button({
+                            ID: Csw.controls.dom.makeId(filtersdivid, '', "saveview"),
+                            enabledText: 'Save as View',
+                            disableOnClick: false,
+                            onClick: internal.saveAsView
+                        });
+                    }
                     fdiv.br();
                     fdiv.br();
 
