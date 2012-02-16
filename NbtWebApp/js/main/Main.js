@@ -49,8 +49,10 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.controls.universalSearch({ 
                     $searchbox_parent: $('#SearchDiv'),
-                    $searchresults_parent: $('#CenterBottomDiv'),
-                    onBeforeSearch: function() { clear({ all: true }); }
+                    $searchresults_parent: $('#RightDiv'),
+                    $searchfilters_parent: $('#LeftDiv'),
+                    onBeforeSearch: function() { clear({ all: true }); },
+                    onAfterSearch: function() { refreshMainMenu(); }
                 });
 
                 $('#header_quota').CswQuotaImage();

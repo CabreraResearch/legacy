@@ -17,7 +17,7 @@
             var optionData = propVals.options;
             var selectMode = propVals.selectmode;
             propDiv.div()
-                .$.CswCheckBoxArray('init', {
+                .checkBoxArray({
                     ID: o.ID + '_cba',
                     UseRadios: (selectMode === 'Single'),
                     Required: o.Required,
@@ -34,8 +34,7 @@
         },
         'save': function (o) {
             var attributes = { options: null };
-            var cbaDiv = o.propDiv.children('div').first();
-            var formdata = cbaDiv.$.CswCheckBoxArray('getdata', { 'ID': o.ID + '_cba' });
+            var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
             if (false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.options = formdata.data;
             }

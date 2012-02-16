@@ -17,7 +17,7 @@
             if(o.ReadOnly) {
                 propDiv.append(o.propData.gestalt);    
             } else {
-                var $dTPickerDiv = propDiv.$.CswDateTimePicker('init', {
+                var dtPickerDiv = propDiv.dateTimePicker({
                     ID: o.ID,
                     Date: date,
                     Time: time,
@@ -29,20 +29,20 @@
                     onChange: o.onChange
                 });
 
-                $dTPickerDiv.find('input').clickOnEnter(o.saveBtn);
+                dtPickerDiv.find('input').clickOnEnter(o.saveBtn);
             }
         },
         save: function (o) { //$propdiv, $xml
-            var attributes, $DTPickerDiv, dateVal;
+            var attributes, dtPickerDiv, dateVal;
             attributes = { 
                 value: {
                     date: null,
                     time: null
                 } 
             };
-            $DTPickerDiv = o.propDiv.find('#' + o.ID);
-            if (false === Csw.isNullOrEmpty($DTPickerDiv)) {
-                dateVal = $DTPickerDiv.$.CswDateTimePicker('value', o.propData.readonly);
+            dtPickerDiv = o.propDiv.find('#' + o.ID);
+            if (false === Csw.isNullOrEmpty(dtPickerDiv)) {
+                dateVal = dtPickerDiv.val(o.propData.readonly);
                 attributes.value.date = dateVal.date;
                 attributes.value.time = dateVal.time;
             }

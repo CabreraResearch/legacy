@@ -17,7 +17,7 @@
 
                 var propVals = o.propData.values,
                     width,
-                    href = '/NbtWebApp/wsNBT.asmx/' + Csw.string(propVals.href);
+                    href = '/NbtWebApp/' + Csw.string(propVals.href);
 
                 if (false === Csw.isNullOrEmpty(propVals.width) &&
                    Csw.isNumeric(propVals.width)) {

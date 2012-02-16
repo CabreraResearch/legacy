@@ -4,7 +4,7 @@
 (function _cswObject() {
     'use strict';
 
-     function isPlainObject(obj) {
+    function isPlainObject(obj) {
         /// <summary>
         ///    Returns true if the object is a JavaScript object.
         ///     &#10; isPlainObject(Csw.enums.inputTypes) === true
@@ -53,7 +53,7 @@
         /// <param name="obj" type="Object"> Object to test</param>
         /// <returns type="Boolean" />
         var ret = false;
-        if (false === Csw.isFunction(obj)) {
+        if (obj && false === Csw.isFunction(obj)) {
             ret = obj === null || obj === undefined || ($.isPlainObject(obj) && $.isEmptyObject(obj));
         }
         return ret;
@@ -65,11 +65,14 @@
         /// <summary> Returns true if the input is null, undefined, or ''</summary>
         /// <param name="obj" type="Object"> Object to test</param>
         /// <returns type="Boolean" />
-        var ret = isNullOrUndefined(obj);
-        if (false === ret && isGeneric(obj)) {
-            ret = ((Csw.isString(obj) && obj.trim() === '') || (Csw.isDate(obj) && obj === Csw.dateTimeMinValue) || (Csw.isNumber(obj) && obj === Csw.int32MinVal));
-        } else if (checkLength && hasLength(obj)) {
-            ret = (obj.length === 0);
+        var ret = true;
+        if (obj) {
+            ret = isNullOrUndefined(obj);
+            if (false === ret && isGeneric(obj)) {
+                ret = ((Csw.isString(obj) && obj.trim() === '') || (Csw.isDate(obj) && obj === Csw.dateTimeMinValue) || (Csw.isNumber(obj) && obj === Csw.int32MinVal));
+            } else if (checkLength && hasLength(obj)) {
+                ret = (obj.length === 0);
+            }
         }
         return ret;
     }
@@ -163,7 +166,7 @@
             childKey, obj, childObj;
         if (Csw.isFunction(onSuccess)) {
             if (Csw.isArray(thisObj) || (Csw.isPlainObject(thisObj) && false === contains(thisObj, 'length'))) {
-                $.each(thisObj, function(key, value) {
+                $.each(thisObj, function (key, value) {
                     obj = thisObj[key];
                     ret = onSuccess(obj, key, thisObj, value);
                     return !ret; //false signals break
@@ -193,7 +196,7 @@
         /// <returns type="Object">Returns the return of onSuccess</returns>
         //borrowed from http://code.google.com/p/shadejs
         var stopCrawling = false;
-        var onEach = function(childObj, childKey, parentObj, value) {
+        var onEach = function (childObj, childKey, parentObj, value) {
             if (false === stopCrawling) {
                 stopCrawling = Csw.bool(onSuccess(childObj, childKey, parentObj, value));
             }
@@ -231,7 +234,7 @@
                 currentKey = key;
             }
             if (false === ret) {
-                var onSuccess = function(childObj, childKey, parObj) {
+                var onSuccess = function (childObj, childKey, parObj) {
                     var found = false;
                     if (foundMatch(childObj, key, value)) {
                         ret = childObj;
@@ -248,7 +251,7 @@
         }
 
         function remove(key, value) {
-            var onSuccess = function(childObj, childKey, parObj) {
+            var onSuccess = function (childObj, childKey, parObj) {
                 var deleted = false;
                 if (foundMatch(childObj, key, value)) {
                     deleted = true;
@@ -275,4 +278,4 @@
     Csw.object = Csw.object || object;
 
 
-}());
+} ());

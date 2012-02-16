@@ -38,17 +38,17 @@
 
                 var editTable = table.cell(2, 2).table({ ID: Csw.controls.dom.makeId(o.ID, 'edittbl') });
                 editTable.add(1, 1, 'Start Date');
-                var startDateBoxCell = editTable.cell(1, 2);
 
-                startDateBoxCell.$.CswDateTimePicker('init', {
-                    ID: o.ID + '_sd',
-                    Date: startDate,
-                    DateFormat: dateFormat,
-                    DisplayMode: 'Date',
-                    ReadOnly: o.ReadOnly,
-                    Required: o.Required,
-                    onChange: o.onChange
-                });
+                editTable.cell(1, 2)
+                    .dateTimePicker({
+                        ID: o.ID + '_sd',
+                        Date: startDate,
+                        DateFormat: dateFormat,
+                        DisplayMode: 'Date',
+                        ReadOnly: o.ReadOnly,
+                        Required: o.Required,
+                        onChange: o.onChange
+                    });
 
                 editTable.add(3, 1, 'Units');
                 var unitVals = ['hours', 'days'];
@@ -56,11 +56,11 @@
                     unitVals.push(Csw.enums.multiEditDefaultValue);
                 }
                 editTable.cell(3, 2).select({
-                             ID: o.ID + '_units',
-                             onChange: o.onChange,
-                             values: unitVals,
-                             selected: units
-                         });
+                    ID: o.ID + '_units',
+                    onChange: o.onChange,
+                    values: unitVals,
+                    selected: units
+                });
 
                 editTable.hide();
             }
@@ -79,7 +79,7 @@
                 dateVal;
 
             if (false === Csw.isNullOrEmpty(startDate)) {
-                dateVal = startDate.$.CswDateTimePicker('value', o.propData.readonly);
+                dateVal = startDate.dateTimePicker().val(o.propData.readonly);
                 attributes.startdatetime.date = dateVal.date;
                 attributes.startdatetime.time = dateVal.time;
             }

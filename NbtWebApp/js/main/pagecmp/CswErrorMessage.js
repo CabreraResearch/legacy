@@ -36,12 +36,13 @@
         });
         table.propDom('width', '100%');
 
-        var cell21 = table.add(2, 1, o.detail);
+        var cell21 = table.cell(2, 1);
+        cell21.text(o.detail);         // using append() on error messages can send the browser into an infinite loop!
         cell21.hide();
+
         table.cell(1,1).link({
             ID: Csw.controls.dom.makeId({ ID: id, suffix: 'cell' }),
             text: o.message,
-            href: '#',
             onClick: function () { cell21.$.toggle(); }
         });
         var cell12 = table.cell(1, 2);

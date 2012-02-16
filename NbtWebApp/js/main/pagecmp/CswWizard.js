@@ -159,7 +159,7 @@
 
 
     function _getCurrentStepNo(table) {
-        return Csw.number(table.find('.CswWizard_StepLinkDivSelected').attr('stepno'));
+        return Csw.number(table.find('.CswWizard_StepLinkDivSelected').propNonDom('stepno'));
     }
 
     function _selectStep(table, stepno) {

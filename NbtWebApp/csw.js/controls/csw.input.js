@@ -29,7 +29,8 @@
             autofocus: false,
             autocomplete: 'on',
             checked: false,
-            onChange: null //function () {}
+            onChange: null,
+            onClick: null
         };
         var external = {};
 
@@ -79,7 +80,9 @@
             if (Csw.isFunction(internal.onChange)) {
                 external.bind('change', internal.onChange);
             }
-
+            if (Csw.isFunction(internal.onClick)) {
+                external.bind('click', internal.onClick);
+            }
         } ());
 
         external.change = function (func) {
@@ -87,6 +90,14 @@
                 external.bind('change', func);
             } else {
                 external.trigger('change');
+            }
+        };
+        
+        external.click = function (func) {
+            if (Csw.isFunction(func)) {
+                external.bind('click', func);
+            } else {
+                external.trigger('click');
             }
         };
         return external;

@@ -14,7 +14,10 @@
             align: 'right',
             onBeforeSearch: null,
             onAfterSearch: null,
-            searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch'
+            maxheight: '600',
+            searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
+            searchterm: '',
+            filters: {}
         };
         if (params) $.extend(internal, params);
 
@@ -24,43 +27,135 @@
         // Adds a searchbox to the form
         (function () {
             var cswtable = Csw.controls.table({
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_div' }),
+                ID: Csw.controls.dom.makeId(internal.ID, '', '_div'),
                 $parent: internal.$searchbox_parent
             });
 
             internal.searchinput = cswtable.cell(1, 1).input({
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_input' }),
+                ID: Csw.controls.dom.makeId(internal.ID, '', '_input'),
                 type: Csw.enums.inputTypes.text,
                 width: internal.width
             });
 
             internal.searchbutton = cswtable.cell(1, 2).button({
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_srchbtn' }),
+                ID: Csw.controls.dom.makeId(internal.ID, '', '_srchbtn'),
                 enabledText: 'Search',
                 disabledText: 'Searching...',
                 onClick: function () {
-                    Csw.tryExec(internal.onSearch);
-                    internal.handleSearch();
+                    internal.searchterm = internal.searchinput.val();
+                    internal.filters = {};
+                    internal.search();
                 }
             });
+
+            internal.searchinput.clickOnEnter(internal.searchbutton);
         })();
 
         // Handle search submission
-        internal.handleSearch = function() {
-            var searchterm = internal.searchinput.val();
-            
+        internal.search = function () {
             Csw.tryExec(internal.onBeforeSearch);
-            
-            internal.$searchresults_parent.CswNodeTable({
-                searchterm: searchterm,
-                ID: Csw.controls.dom.makeId({ ID: internal.ID, suffix: '_srchresults' }),
-                onEditNode: null,
-                onDeleteNode: null,
-                onSuccess: internal.onAfterSearch,
-                onNoResults: null  // function({viewid, viewmode})
-            });
 
-        } // handleSearch()
+            Csw.ajax.post({
+                url: internal.searchurl,
+                data: {
+                    SearchTerm: internal.searchterm,
+                    Filters: JSON.stringify(internal.filters)
+                },
+                success: function (data) {
+                    var fdiv, filtersdivid;
+
+                    // Search results
+                    internal.$searchresults_parent
+                        .css({ paddingTop: '15px' })
+                        .append('<b>Search Results:</b>');
+
+                    internal.$searchresults_parent.CswNodeTable({
+                        ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
+                        onEditNode: null,
+                        onDeleteNode: null,
+                        onSuccess: internal.onAfterSearch,
+                        onNoResults: function () {
+                            internal.$searchresults_parent.text('No Results Found');
+                        },
+                        tabledata: data.table,
+                        maxheight: internal.maxheight
+                    });
+
+                    // Filter panel
+                    filtersdivid = Csw.controls.dom.makeId(internal.ID, '', 'filtersdiv');
+                    fdiv = Csw.controls.div({
+                        ID: filtersdivid,
+                        $parent: internal.$searchfilters_parent
+                    }).css({
+                        paddingTop: '15px',
+                        height: internal.maxheight + 'px',
+                        overflow: 'auto'
+                    });
+
+                    fdiv.span({ text: 'Searched For: ' + internal.searchterm }).br();
+
+                    // Filters in use
+                    function showFilter(thisFilter) {
+                        fdiv.span({
+                            //ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
+                            text: thisFilter.filtername + ': ' + thisFilter.filtervalue
+                        });
+                        fdiv.$.CswImageButton({
+                            ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
+                            ButtonType: Csw.enums.imageButton_ButtonType.Delete,
+                            AlternateText: 'Remove Filter',
+                            onClick: function () {
+                                internal.removeFilter(thisFilter);
+                                return Csw.enums.imageButton_ButtonType.None;
+                            }
+                        });
+                        fdiv.br();
+                    }
+                    Csw.each(internal.filters, showFilter);
+
+                    fdiv.br();
+                    fdiv.br();
+
+                    // Filters to add
+                    function makeFilterLink(thisFilter) {
+                        fdiv.link({
+                            ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
+                            text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
+                            onClick: function () {
+                                internal.addFilter(thisFilter);
+                                return false;
+                            }
+                        }).br();
+                    }
+                    function makeFilterSet(thisFilterSet, Name) {
+                        fdiv.append('<b>' + Name + ':</b>');
+                        fdiv.br();
+                        Csw.each(thisFilterSet, makeFilterLink);
+                        fdiv.br();
+                        fdiv.br();
+                    }
+                    Csw.each(data.filters, makeFilterSet);
+
+                    Csw.tryExec(internal.onAfterSearch);
+                } // success
+            }); // ajax
+        } // search()
+
+
+        internal.addFilter = function (thisFilter) {
+            internal.filters[thisFilter.filterid] = thisFilter;
+            internal.search();
+        } // addFilter()
+
+        internal.removeFilter = function (thisFilter) {
+            if (thisFilter.filtertype === "nodetype") {
+                //remove all filters
+                internal.filters = {};
+            } else {
+                delete internal.filters[thisFilter.filterid];
+            }
+            internal.search();
+        } // removeFilter()
 
         return external;
     };

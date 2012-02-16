@@ -168,7 +168,7 @@
                 });
                 headerTable.add(1, 1, '<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
                 headerTable.cell(1, 2)
-                           .$.CswButton('init', {
+                           .button({
                                 ID: Csw.controls.dom.makeSafeId('clearAll'),
                                 enabledText: 'Clear All Reprobates',
                                 disabledText: 'Clearing...',

@@ -213,7 +213,10 @@
             var _external = {};
 
             _external.add = function (key, value) {
-                _internal.styles[key] = value;
+                if (false === Csw.isNullOrEmpty(key) &&
+                        false === Csw.isNullOrEmpty(value)) {
+                    _internal.styles[key] = value;
+                }
             };
 
             _external.get = function () {
@@ -287,6 +290,14 @@
             /// <param name="event" type="Function">A function to execute when the event fires</param>
             /// <returns type="Object">The jQuery element (for chaining)</returns> 
             return $el.bind(eventName, event);
+        };
+
+        external.unbind = function ($el, eventName) {
+            /// <summary>Unbind an action from a jQuery element's event.</summary>
+            /// <param name="$el" type="jQuery">A jQuery element</param>
+            /// <param name="eventName" type="String">The name of the event</param>
+            /// <returns type="Object">The jQuery element (for chaining)</returns> 
+            return $el.unbind(eventName, event);
         };
 
         external.trigger = function ($el, eventName, eventOpts) {

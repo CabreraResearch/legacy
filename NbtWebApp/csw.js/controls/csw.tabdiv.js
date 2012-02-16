@@ -35,8 +35,14 @@
         } ());
 
         external.tabs = function () {
-            var $tabs = Csw.tryJqExec(external.$, 'tabs', arguments);
-            return external.jquery($tabs);
+            var ret,
+                tryRet = Csw.tryJqExec(external, 'tabs', arguments);
+            if (Csw.isJQuery(tryRet)) {
+                ret = external.jquery(tryRet);
+            } else {
+                ret = tryRet;
+            }
+            return ret;
         };
 
         return external;

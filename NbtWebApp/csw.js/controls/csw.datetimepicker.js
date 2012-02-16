@@ -1,99 +1,98 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-; (function ($) {
-    "use strict";    
-    var pluginName = 'CswDateTimePicker';
+(function () {
+    'use strict';
 
-    var methods = {
-        init: function (options) {
-            var o = {
-                ID: '',
-                Date: '',
-                Time: '',
-                DateFormat: '',
-                TimeFormat: '',
-                DisplayMode: 'Date',    // Date, Time, DateTime
-                ReadOnly: false,
-                Required: false,
-                onChange: null
-            };
-            if(options) $.extend(o, options);
+    function dateTimePicker(options) {
+        var internal = {
+            ID: '',
+            Date: '',
+            Time: '',
+            DateFormat: '',
+            TimeFormat: '',
+            DisplayMode: 'Date',    // Date, Time, DateTime
+            ReadOnly: false,
+            Required: false,
+            onChange: null
+        };
+        var external = {};
 
-            var $ParentDiv = $(this);
-            var $Div = $('<div id="'+ o.ID +'"></div>')
-                        .appendTo($ParentDiv);
+        (function () {
+            if (options) {
+                $.extend(internal, options);
+            }
 
-            if(o.ReadOnly) {
-                switch(o.DisplayMode) {
-                    case "Date":     
-                        $Div.CswDiv({ ID: o.ID + "_date", value: o.Date });
+            $.extend(external, Csw.controls.div(internal));
+
+            if (internal.ReadOnly) {
+                switch (internal.DisplayMode) {
+                    case 'Date':
+                        external.div({ ID: internal.ID + '_date', value: internal.Date });
                         break;
-                    case "Time":
-                        $Div.CswDiv({ ID: o.ID + "_time", value: o.Time });
+                    case 'Time':
+                        external.div({ ID: internal.ID + '_time', value: internal.Time });
                         break;
-                    case "DateTime":
-                        $Div.CswDiv({ ID: o.ID + "_time", value: o.Date + " " + o.Time });
+                    case 'DateTime':
+                        external.div({ ID: internal.ID + '_time', value: internal.Date + ' ' + internal.Time });
                         break;
                 }
             } else {
-                if( o.DisplayMode === "Date" || o.DisplayMode === "DateTime" ) {
-                    var $DateBox = $Div.CswInput('init',{ ID: o.ID + "_date",
-                                                          type: Csw.enums.inputTypes.text,
-                                                          value: o.Date,
-                                                          onChange: o.onChange,
-                                                          width: '80px',
-                                                          cssclass: 'textinput' 
-                                                  }); 
-                    $DateBox.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(o.DateFormat) });
-                    if(o.Required) $DateBox.addClass("required");
+                if (internal.DisplayMode === 'Date' || internal.DisplayMode === 'DateTime') {
+                    internal.dateBox = external.input({
+                        ID: internal.ID + '_date',
+                        type: Csw.enums.inputTypes.text,
+                        value: internal.Date,
+                        onChange: internal.onChange,
+                        width: '80px',
+                        cssclass: 'textinput'
+                    });
+                    internal.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(internal.DateFormat) });
+                    if (internal.Required) {
+                        internal.dateBox.addClass('required');
+                    }
                 }
 
-                if( o.DisplayMode === "Time" || o.DisplayMode === "DateTime" ) {
-                    var $TimeBox = $Div.CswInput('init',{ ID: o.ID + "_time",
-                                                          type: Csw.enums.inputTypes.text,
-                                                          cssclass: 'textinput', 
-                                                          onChange: o.onChange,
-                                                          value: o.Time,
-                                                          width: '80px'
-                                                     }); 
-                    $Div.CswButton('init',{ 'ID': o.ID +'_now',
-                                                            'disableOnClick': false,
-                                                            'onClick': function () { $TimeBox.val( Csw.getTimeString(new Date(), o.TimeFormat) ); },
-                                                            'enabledText': 'Now'
-                                                     }); 
-                
-                    if(o.Required) $TimeBox.addClass("required");
+                if (internal.DisplayMode === 'Time' || internal.DisplayMode === 'DateTime') {
+                    internal.timeBox = external.input({
+                        ID: internal.ID + '_time',
+                        type: Csw.enums.inputTypes.text,
+                        cssclass: 'textinput',
+                        onChange: internal.onChange,
+                        value: internal.Time,
+                        width: '80px'
+                    });
+                    external.button({
+                        ID: internal.ID + '_now',
+                        disableOnClick: false,
+                        onClick: function () {
+                            internal.timeBox.val(Csw.getTimeString(new Date(), internal.TimeFormat));
+                        },
+                        enabledText: 'Now'
+                    });
+
+                    if (internal.Required) {
+                        internal.timeBox.addClass('required');
+                    }
                 }
             } // if-else(o.ReadOnly)
-            return $Div;
-        },
-        value: function (readOnly) {
-            var $Div = $(this),
-                id = this.prop('id'),
-                $DateBox = $Div.find( '#' + id + '_date'),
-                $TimeBox = $Div.find( '#' + id + '_time'),
-                ret = {};
-            if ($DateBox.length > 0) {
-                ret.date = (false === Csw.bool(readOnly)) ? $DateBox.val() : $DateBox.text(); 
-            } 
-            if ($TimeBox.length > 0) {
-                ret.time = (false === Csw.bool(readOnly)) ? $TimeBox.val() : $TimeBox.text();
+        } ());
+        
+        external.val = function (readOnly) {
+            var ret = {};
+            if (internal.dateBox && internal.dateBox.length() > 0) {
+                ret.date = (false === Csw.bool(readOnly)) ? internal.dateBox.val() : internal.dateBox.text();
+            }
+            if (internal.timeBox && internal.timeBox.length() > 0) {
+                ret.time = (false === Csw.bool(readOnly)) ? internal.timeBox.val() : internal.timeBox.text();
             }
             return ret;
-        }
-    };
-    
-    // Method calling logic
-    $.fn.CswDateTimePicker = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
-        } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
-    };
-})(jQuery);
+        };
+
+        return external;
+    }
+
+    Csw.controls.register('dateTimePicker', dateTimePicker);
+    Csw.controls.dateTimePicker = Csw.controls.dateTimePicker || dateTimePicker;
+
+} ());

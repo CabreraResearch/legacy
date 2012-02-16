@@ -8,7 +8,7 @@
         keyCol = 'key',
         valueCol = 'value',
         methods = {
-            init: function (o) { 
+            init: function (o) {
 
                 var propDiv = o.propDiv;
                 propDiv.empty();
@@ -33,31 +33,30 @@
                 });
                 }
                 */
-                var $cbaDiv = propDiv.div()
-                                .$.CswCheckBoxArray('init', {
-                                    ID: o.ID + '_cba',
-                                    UseRadios: (selectMode === 'Single'),
-                                    Required: o.Required,
-                                    ReadOnly: o.ReadOnly,
-                                    Multi: o.Multi,
-                                    onChange: o.onChange,
-                                    dataAry: optData,
-                                    nameCol: nameCol,
-                                    keyCol: keyCol,
-                                    valCol: valueCol,
-                                    valColName: 'Include'
-                                });
+                var cbaDiv = propDiv.div()
+                    .cswCheckBoxArray({
+                        ID: o.ID + '_cba',
+                        UseRadios: (selectMode === 'Single'),
+                        Required: o.Required,
+                        ReadOnly: o.ReadOnly,
+                        Multi: o.Multi,
+                        onChange: o.onChange,
+                        dataAry: optData,
+                        nameCol: nameCol,
+                        keyCol: keyCol,
+                        valCol: valueCol,
+                        valColName: 'Include'
+                    });
 
                 if (o.Required) {
-                    $cbaDiv.addClass("required");
+                    cbaDiv.addClass("required");
                 }
 
                 return propDiv;
             },
             save: function (o) { //$propdiv, $xml
                 var attributes = { options: null };
-                var cbaDiv = o.propDiv.children('div').first();
-                var formdata = cbaDiv.$.CswCheckBoxArray('getdata', { 'ID': o.ID + '_cba' });
+                var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
                 if (false === o.Multi || false === formdata.MultiIsUnchanged) {
                     attributes.options = formdata.data;
                 }

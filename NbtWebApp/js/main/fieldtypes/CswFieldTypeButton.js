@@ -22,7 +22,7 @@
                 url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                 data: params,
                 success: function (data) {
-                    button.CswButton('enable');
+                    button.enable();
                     if (Csw.bool(data.success)) {
                         switch (data.action) {
                             case Csw.enums.onObjectClassClick.reauthenticate:
@@ -77,8 +77,7 @@
             else {
                 button = propDiv.link({
                     ID: o.ID,
-                    value: value,
-                    href: '#'
+                    value: value
                 });
             }
             button.click(function () {

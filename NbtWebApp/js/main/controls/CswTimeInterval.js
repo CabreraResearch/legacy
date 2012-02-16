@@ -438,8 +438,8 @@
 
         internal.makeYearlyDatePicker = (function () {
             var yearlyDatePickerComplete = false,
-                $ret, $yearlyDate;
-            return function ($parent) {
+                ret, yearlyDate;
+            return function (parent) {
 
                 function saveYearInterval() {
                     Csw.each(rateInterval, function (prop, key) {
@@ -450,13 +450,13 @@
 
                     rateInterval.ratetype = rateType;
                     rateInterval.dateformat = dateFormat;
-                    rateInterval.yearlydate = $yearlyDate.CswDateTimePicker('value');
+                    rateInterval.yearlydate = yearlyDate.val();
                     rateInterval.yearlydate.dateformat = dateFormat;
                     internal.saveRateInterval();
                 }
 
                 if (false === yearlyDatePickerComplete) {
-                    $ret = $('<div />').appendTo($parent);
+                    ret = parent.div();
 
                     var yearlyStartDate = '';
 
@@ -469,30 +469,28 @@
                         rateInterval.yearlydate = { date: nowString, dateformat: dateFormat };
                     }
 
-                    $ret.append('Every Year, Starting On:<br/>');
+                    ret.append('Every Year, Starting On').br();
 
-                    $yearlyDate = $ret.CswDateTimePicker('init', {
-                        ID: Csw.controls.dom.makeId({ prefix: o.ID, ID: 'yearly', suffix: 'sd' }),
+                    yearlyDate = ret.dateTimePicker({
+                        ID: Csw.controls.dom.makeId(o.ID, 'yearly', 'sd'),
                         Date: yearlyStartDate,
                         DateFormat: dateFormat,
                         DisplayMode: 'Date',
                         ReadOnly: o.ReadOnly,
                         Required: o.Required,
                         onChange: function () {
-                            if (Csw.isFunction(o.onChange)) {
-                                o.onChange();
-                            }
+                            Csw.tryExec(o.onChange);
                             saveYearInterval();
                         }
                     });
 
-                    $ret.appendTo($parent);
+                    ret.appendTo(parent);
 
                     saveYearInterval();
 
                     yearlyDatePickerComplete = true;
                 } // if (false === yearlyDatePickerComplete)
-                return $ret.addClass('CswFieldTypeTimeInterval_Div');
+                return ret.addClass('CswFieldTypeTimeInterval_Div');
             };
         } ());
 
@@ -511,13 +509,13 @@
                 type: Csw.enums.inputTypes.radio,
                 value: 'monthly'
             }).propDom('checked', (rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay));
-            
+
             var inpYearlyRadio = table.cell(3, 1).input({
-                    ID: o.ID + '_type_yearly',
-                    name: o.ID + '_type',
-                    type: Csw.enums.inputTypes.radio,
-                    value: 'yearly'
-                }).propDom('checked', (rateType === Csw.enums.rateIntervalTypes.YearlyByDate));
+                ID: o.ID + '_type_yearly',
+                name: o.ID + '_type',
+                type: Csw.enums.inputTypes.radio,
+                value: 'yearly'
+            }).propDom('checked', (rateType === Csw.enums.rateIntervalTypes.YearlyByDate));
 
             function onChange() {
                 if (Csw.isFunction(o.onChange)) {
@@ -532,7 +530,7 @@
             inpWeeklyRadio.bind('click', function () {
                 rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
                 rateInterval.ratetype = rateType;
-                $WeeklyDiv = $WeeklyDiv || internal.weeklyWeekPicker(pickerCell.$, o.onChange, false);
+                $WeeklyDiv = $WeeklyDiv || internal.weeklyWeekPicker(pickerCell, o.onChange, false);
                 onChange();
             });
 
@@ -541,7 +539,7 @@
             inpMonthlyRadio.bind('click', function () {
                 rateType = Csw.enums.rateIntervalTypes.MonthlyByDate;
                 rateInterval.ratetype = rateType;
-                $MonthlyDiv = $MonthlyDiv || internal.makeMonthlyPicker(pickerCell.$);
+                $MonthlyDiv = $MonthlyDiv || internal.makeMonthlyPicker(pickerCell);
                 onChange();
             });
 
@@ -550,7 +548,7 @@
             inpYearlyRadio.bind('click', function () {
                 rateType = Csw.enums.rateIntervalTypes.YearlyByDate;
                 rateInterval.ratetype = rateType;
-                $YearlyDiv = $YearlyDiv || internal.makeYearlyDatePicker(pickerCell.$);
+                $YearlyDiv = $YearlyDiv || internal.makeYearlyDatePicker(pickerCell);
                 onChange();
             });
         };

@@ -54,14 +54,13 @@
         var outerTabDiv = parent.tabDiv({ ID: o.ID + '_tabdiv' });
         var tabcnt = 0;
 
-        getTabs(o);
+        getTabs(outerTabDiv);
 
         if (o.EditMode !== Csw.enums.editMode.PrintReport) {
-            var linkDiv = parent.div({ID: o.ID + '_linkdiv', align: 'right'});
+            var linkDiv = parent.div({ ID: o.ID + '_linkdiv', align: 'right' });
             if (o.ShowAsReport && false === o.Multi) {
                 linkDiv.link({
-                    href: '#',
-                    text: 'As Repoprt',
+                    text: 'As Report',
                     onClick: function () {
                         Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(o.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(o.nodekeys, 0), 600, 800);
                     }
@@ -74,7 +73,7 @@
         }
 
         function makeTabContentDiv(tabParent, tabid, canEditLayout) {
-            var tabContentDiv = tabParent.div({
+            var tabContentDiv = tabParent.tabDiv({
                 ID: tabid
             });
             tabContentDiv.form({
@@ -95,7 +94,7 @@
             return tabContentDiv;
         }
 
-        function getTabs() {
+        function getTabs(tabContentDiv) {
             var jsonData = {
                 EditMode: o.EditMode,
                 NodeId: Csw.tryParseObjByIdx(o.nodeids, 0),
@@ -112,7 +111,7 @@
                 o.EditMode === Csw.enums.editMode.Table) {
 
                 var tabid = o.EditMode + "_tab";
-                var tabContentDiv = makeTabContentDiv(parent, tabid, false);
+                tabContentDiv = makeTabContentDiv(parent, tabid, false);
                 getProps(tabContentDiv, tabid);
 
             } else {
@@ -126,18 +125,19 @@
                         var tabdivs = [];
                         var selectedtabno = 0;
                         var tabno = 0;
-
+                        var tabDiv, tabUl;
                         var tabFunc = function (thisTab) {
-                            var thisTabId = thisTab.id,
-                                tabDiv;
+                            var thisTabId = thisTab.id;
+
                             if (o.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
                                 // For PrintReports, we're going to make a separate tabstrip for each tab
                                 tabDiv = outerTabDiv.tabDiv();
-                                tabDiv.ul();
+                                tabUl = tabDiv.ul();
                                 tabdivs[tabdivs.length] = tabDiv;
                             }
-                            tabDiv = tabdivs[tabdivs.length - 1];
-                            tabDiv.children('ul').li().link({ href: '#' + thisTabId, text: thisTab.name });
+                            tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
+                            tabUl = tabUl || tabDiv.ul();
+                            tabUl.li().link({ href: '#' + thisTabId, text: thisTab.name });
                             makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
                             if (thisTabId === o.tabid) {
                                 selectedtabno = tabno;
@@ -150,11 +150,10 @@
                         tabcnt = tabno;
 
                         Csw.each(tabdivs, function (thisTabDiv) {
-                            //var $tabdiv = tabdivs[t];
-                            thisTabDiv.$.tabs({
+                            thisTabDiv.tabs({
                                 selected: selectedtabno,
                                 select: function (event, ui) {
-                                    var selectTabContentDiv = thisTabDiv.find('div:eq(' + Csw.number(ui.index) + ')');
+                                    var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                     var selectTabid = selectTabContentDiv.getId();
                                     if (Csw.isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(selectTabid)) {
                                         getProps(selectTabContentDiv, selectTabid);
@@ -164,10 +163,12 @@
                                     }
                                 }
                             });
-                            var eachTabContentDiv = thisTabDiv.find('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
-                            var selectedtabid = eachTabContentDiv.getId();
-                            getProps(eachTabContentDiv, selectedtabid);
-                            Csw.tryExec(o.onTabSelect, selectedtabid);
+                            var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
+                            if (eachTabContentDiv.isValid) {
+                                var selectedtabid = eachTabContentDiv.getId();
+                                getProps(eachTabContentDiv, selectedtabid);
+                                Csw.tryExec(o.onTabSelect, selectedtabid);
+                            }
                         }); // for(var t in tabdivs)
                     } // success
                 }); // ajax
@@ -330,7 +331,7 @@
                             Refresh: function () {
                                 Csw.tryExec(o.Refresh);
                                 o.Config = false;
-                                getTabs();
+                                getTabs(tabContentDiv);
                             }
                         };
 
@@ -430,7 +431,6 @@
 
                 if (false === Csw.isNullOrEmpty(helpText)) {
                     labelCell.link({
-                        href: '#',
                         cssclass: 'cswprop_helplink',
                         title: helpText,
                         onClick: function () {
@@ -731,5 +731,5 @@
         return this;
 
     }; // function (options) {
-}(jQuery));
+} (jQuery));
 

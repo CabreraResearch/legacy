@@ -2,7 +2,7 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function () {
-    "use strict";
+    'use strict';
     function select(options) {
 
         var internal = {
