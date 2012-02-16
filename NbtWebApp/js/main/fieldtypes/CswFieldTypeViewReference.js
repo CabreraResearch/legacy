@@ -23,7 +23,7 @@
                     viewid: viewId
                 });
 
-                table.cell(1, 2).$.CswImageButton({
+                table.cell(1, 2).imageButton({
                     ID: o.ID + '_view',
                     ButtonType: Csw.enums.imageButton_ButtonType.View,
                     AlternateText: 'View',
@@ -39,7 +39,7 @@
                     }
                 });
                 if (false === o.ReadOnly) {
-                    table.cell(1, 3).$.CswImageButton({
+                    table.cell(1, 3).imageButton({
                         ID: o.ID + '_edit',
                         ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',

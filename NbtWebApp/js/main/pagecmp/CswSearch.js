@@ -365,7 +365,7 @@
                     o.searchTable.cell(1, 10)
                                    .propDom({ align: 'right' })
                                    .css({ 'text-align': 'right' })
-                                   .$.CswImageButton({
+                                   .imageButton({
                                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                                        AlternateText: 'Close',
                                        ID: Csw.controls.dom.makeId({ 'prefix': o.ID, 'id': 'closebtn' }),

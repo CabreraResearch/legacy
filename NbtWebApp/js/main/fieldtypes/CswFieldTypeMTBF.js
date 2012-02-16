@@ -27,7 +27,7 @@
             var cell12 = table.cell(1, 2);
 
             if (false === o.ReadOnly) {
-                cell12.$.CswImageButton({
+                cell12.imageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                     AlternateText: 'Edit',
                     'ID': o.ID,

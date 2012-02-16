@@ -31,7 +31,7 @@
                 if (false === o.Multi) {
                     var cell2 = table.add(1, 2, '<div />');
                     cell2.children('div')
-                         .$.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Print,
+                         .imageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Print,
                              AlternateText: '',
                              ID: Csw.controls.dom.makeId(o.ID, 'print'),
                              onClick: function () {

@@ -95,7 +95,7 @@
                             //ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
                             text: thisFilter.filtername + ': ' + thisFilter.filtervalue
                         });
-                        fdiv.$.CswImageButton({
+                        fdiv.imageButton({
                             ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
                             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                             AlternateText: 'Remove Filter',
