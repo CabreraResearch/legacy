@@ -22,7 +22,7 @@
             });
 
             var mtbfStatic = (units !== Csw.enums.multiEditDefaultValue) ? value + '&nbsp;' + units : value;
-            table.add(1, 1, mtbfStatic);
+            table.cell(1, 1).text(mtbfStatic);
 
             var cell12 = table.cell(1, 2);
 
@@ -37,7 +37,7 @@
                 });
 
                 var editTable = table.cell(2, 2).table({ ID: Csw.controls.dom.makeId(o.ID, 'edittbl') });
-                editTable.add(1, 1, 'Start Date');
+                editTable.cell(1, 1).text('Start Date');
 
                 editTable.cell(1, 2)
                     .dateTimePicker({
@@ -50,7 +50,7 @@
                         onChange: o.onChange
                     });
 
-                editTable.add(3, 1, 'Units');
+                editTable.cell(3, 1).text('Units');
                 var unitVals = ['hours', 'days'];
                 if (o.Multi) {
                     unitVals.push(Csw.enums.multiEditDefaultValue);

@@ -40,7 +40,7 @@
                 width: '100%'
             });
 
-            internal.topTable.add(1, 1, internal.topContent)
+            internal.topTable.cell(1, 1).text(internal.topContent)
                 .propDom('width', '100%')
                 .bind('click', handleClick);
 

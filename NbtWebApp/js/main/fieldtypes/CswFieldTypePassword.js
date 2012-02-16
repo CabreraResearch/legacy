@@ -22,12 +22,12 @@
                     OddCellRightAlign: true
                 });
 
-                table.add(1, 1, 'Set New');
+                table.cell(1, 1).text('Set New');
                 var cell12 = table.cell(1, 2);
-                table.add(2, 1, 'Confirm');
+                table.cell(2, 1).text('Confirm');
                 var cell22 = table.cell(2, 2);
                 var cell31 = table.cell(3, 1);
-                table.add(3, 2, 'Expired');
+                table.cell(3, 2).text('Expired');
 
                 var textBox1 = cell12.input({
                     ID: o.ID + '_pwd1',

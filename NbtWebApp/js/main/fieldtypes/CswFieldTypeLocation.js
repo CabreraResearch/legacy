@@ -28,9 +28,9 @@
                         ID: Csw.controls.dom.makeId(o.ID, 'tbl')
                     });
 
-                    table.add(1, 1, path).propDom('colspan', '2').br();
+                    table.cell(1, 1).text(path).propDom('colspan', '2').br();
 
-                    var selectDiv = table.add(2, 1).div({
+                    var selectDiv = table.cell(2, 1).div({
                         cssclass: 'locationselect',
                         value: nodeId
                     });

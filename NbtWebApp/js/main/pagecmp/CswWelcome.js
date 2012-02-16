@@ -147,7 +147,7 @@
             typeSelect.option({ value: 'Text', display: 'Text' });
 
 
-            var viewSelectLabel = table.add(2, 1).span({ text: 'View:' }).hide();
+            var viewSelectLabel = table.cell(2, 1).span({ text: 'View:' }).hide();
 
             var viewSelectTable = table.cell(2, 2).table({
                 ID: 'viewselecttable'
@@ -211,7 +211,6 @@
                     });
                 }
             });
-            table.add(7, 2, addButton);
 
             buttonSel.bind('change', function () {
                 buttonImg.propDom('src', 'Images/biggerbuttons/' + buttonSel.val());

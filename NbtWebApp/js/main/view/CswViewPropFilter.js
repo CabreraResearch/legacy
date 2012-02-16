@@ -111,7 +111,8 @@
 
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
-                    propFilterTable.add(filtOpt.propRow, filtOpt.firstColumn, '<span id="' + makePropFilterId(propertyName, filtOpt) + '">' + propertyName + '</span>') //3
+                    propFilterTable.cell(filtOpt.propRow, filtOpt.firstColumn)
+                        .span({ text: propertyName, ID: makePropFilterId(propertyName, filtOpt) }) //3
                 }
 
                 //Row propRow, Column 4: Subfield Cell

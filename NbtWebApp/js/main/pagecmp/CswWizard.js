@@ -50,7 +50,7 @@
             });
 
             /* Title Cell */
-            table.add(1, 1, o.Title)
+            table.cell(1, 1).text(o.Title)
                 .propDom('colspan', 2)
                 .addClass('CswWizard_TitleCell');
 

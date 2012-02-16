@@ -82,7 +82,9 @@
         });
         var div1BtnTblCell11 = div1BtnTable.cell(1, 1);
         var $allcheck_div = $('<div></div>');
-        div1BtnTable.add(1, 2, $allcheck_div).propDom('align', 'right');
+        div1BtnTable.cell(1, 2)
+            .append($allcheck_div)
+            .propDom('align', 'right');
 
         Csw.clientSession.isAdministrator({
             'Yes': function () {
@@ -179,13 +181,13 @@
             FirstCellRightAlign: true
         });
 
-        table2.add(1, 1, 'View Name:');
+        table2.cell(1, 1).text('View Name:');
         var viewNameTextCell = table2.cell(1, 2);
         var $viewnametextbox = viewNameTextCell.$.CswInput('init', { ID: o.ID + '_viewname',
             type: Csw.enums.inputTypes.text
         });
 
-        table2.add(2, 1, 'Category:');
+        table2.cell(2, 1).text('Category:');
         var categoryTextCell = table2.cell(2, 2);
         var $categorytextbox = categoryTextCell.$.CswInput('init', { ID: o.ID + '_category',
             type: Csw.enums.inputTypes.text
@@ -198,16 +200,17 @@
             visSelect = Csw.makeViewVisibilitySelect(table2, 3, 'View Visibility:');
         }
 
-        table2.add(4, 1, 'For Mobile:');
+        table2.cell(4, 1).text('For Mobile:');
         var forMobileCheckCell = table2.cell(4, 2);
         var $formobilecheckbox = forMobileCheckCell.$.CswInput('init', { ID: o.ID + '_formobile',
             type: Csw.enums.inputTypes.checkbox
         });
 
-        table2.add(5, 1, 'Display Mode:');
-        var displayModeSpan = table2.add(5, 2, '<span id="' + o.ID + '_displaymode"></span>');
+        table2.cell(5, 1).text('Display Mode:');
+        var displayModeSpan = table2.cell(5, 2)
+                                    .span({ ID: o.ID + '_displaymode' })
 
-        var gridWidthLabelCell = table2.add(6, 1, 'Grid Width (in characters):');
+        var gridWidthLabelCell = table2.cell(6, 1).text('Grid Width (in characters):');
         var gridWidthTextBox = table2.cell(6, 2)
             .numberTextBox({
                 ID: o.ID + '_gridwidth',
@@ -540,7 +543,7 @@
                 });
 
                 function _makeAllowCB(row, idsuffix, text, checked, onChange) {
-                    subTable.add(row, 1, 'Allow ' + text);
+                    subTable.cell(row, 1).text('Allow ' + text);
                     var allowCell = subTable.cell(row, 2);
                     var $allowcheck = allowCell.$.CswInput('init', {
                         ID: o.ID + '_adcb',
@@ -565,7 +568,7 @@
                 _makeAllowCB(row, 'editrel_del', 'Delete', Csw.bool(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
                 row += 1;
 
-                subTable.add(row, 1, 'Group By');
+                subTable.cell(row, 1).text('Group By');
                 var $groupbyselect = subTable.cell(row, 2)
                                             .$.CswSelect('init',
                                                 { ID: o.ID + '_gbs',
@@ -622,7 +625,7 @@
 
                 var $showtreecheck;
                 if (viewmode === "Tree") {
-                    subTable.add(row, 1, 'Show In Tree');
+                    subTable.cell(row, 1).text('Show In Tree');
                     var showTreeCheckCell = subTable.cell(row, 2);
                     $showtreecheck = showTreeCheckCell.$.CswInput('init',
                                                             { ID: o.ID + '_stcb',
@@ -655,7 +658,7 @@
                         FirstCellRightAlign: true
                     });
 
-                    gridTable.add(1, 1, 'Sort By');
+                    gridTable.cell(1, 1).text('Sort By');
                     var sortByCheckCell = gridTable.cell(1, 2);
                     var $sortbycheck = sortByCheckCell.$.CswInput('init',
                                                             { ID: o.ID + '_sortcb',
@@ -669,7 +672,7 @@
                         $sortbycheck.CswAttrDom('checked', 'true');
                     }
 
-                    gridTable.add(2, 1, 'Grid Column Order');
+                    gridTable.cell(2, 1).text('Grid Column Order');
                     var colOrderTextCell = gridTable.cell(2, 2);
                     var $colordertextbox = colOrderTextCell.$.CswInput('init',
                                                                 { ID: o.ID + '_gcotb',
@@ -681,7 +684,7 @@
                                                                 });
                     $colordertextbox.val(viewNodeData.order);
 
-                    gridTable.add(3, 1, 'Grid Column Width (in characters)');
+                    gridTable.cell(3, 1).text('Grid Column Width (in characters)');
                     var colWidthTextCell = gridTable.cell(3, 2);
                     var $colwidthtextbox = colWidthTextCell.$.CswInput('init',
                                                                 { ID: o.ID + '_gcwtb',
@@ -708,7 +711,7 @@
                     'ID': o.ID + '_editfilt',
                     'FirstCellRightAlign': true
                 });
-                filterTable.add(1, 1, 'Case Sensitive');
+                filterTable.cell(1, 1).text('Case Sensitive');
                 var $casecheck = filterTable.cell(1, 2)
                                        .$.CswInput('init',
                                             { ID: o.ID + '_casecb',

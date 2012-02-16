@@ -149,9 +149,9 @@
 
                     weekdays = Csw.string(external.rateInterval[dayPropName]).split(',');
 
-                    weeklyTable.add(1, 1, 'Every:');
+                    weeklyTable.cell(1, 1).text('Every:');
                     if (thisRateType === Csw.enums.rateIntervalTypes.WeeklyByDay) {
-                        weeklyTable.add(2, 1, 'Starting On:');
+                        weeklyTable.cell(2, 1).text('Starting On:');
                     }
 
                     weeklyTableCell = weeklyTable.cell(2, 2);
@@ -160,13 +160,13 @@
                         cellalign: 'center'
                     });
 
-                    pickerTable.add(1, 1, 'Su');
-                    pickerTable.add(1, 2, 'M');
-                    pickerTable.add(1, 3, 'Tu');
-                    pickerTable.add(1, 4, 'W');
-                    pickerTable.add(1, 5, 'Th');
-                    pickerTable.add(1, 6, 'F');
-                    pickerTable.add(1, 7, 'Sa');
+                    pickerTable.cell(1, 1).text('Su');
+                    pickerTable.cell(1, 2).text('M');
+                    pickerTable.cell(1, 3).text('Tu');
+                    pickerTable.cell(1, 4).text('W');
+                    pickerTable.cell(1, 5).text('Th');
+                    pickerTable.cell(1, 6).text('F');
+                    pickerTable.cell(1, 7).text('Sa');
 
                     for (i = 1; i <= 7; i += 1) {
                         type = Csw.enums.inputTypes.checkbox;
@@ -543,7 +543,7 @@
             });
 
             //Monthly
-            subTable.add(2, 2).span({ text: '&nbsp;Monthly' });
+            subTable.cell(2, 2).span({ text: '&nbsp;Monthly' });
             inpMonthlyRadio.bind('click', function () {
                 internal.rateType = Csw.enums.rateIntervalTypes.MonthlyByDate;
                 external.rateInterval.ratetype = internal.rateType;
@@ -552,7 +552,7 @@
             });
 
             //Yearly
-            subTable.add(3, 2).span({ text: '&nbsp;Yearly' });
+            subTable.cell(3, 2).span({ text: '&nbsp;Yearly' });
             inpYearlyRadio.bind('click', function () {
                 internal.rateType = Csw.enums.rateIntervalTypes.YearlyByDate;
                 external.rateInterval.ratetype = internal.rateType;
