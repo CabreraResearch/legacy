@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtSubFieldColl SubFields { get { return ( _SubFields ); } }
         public bool SearchAllowed { get { return ( true ); } }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
         }

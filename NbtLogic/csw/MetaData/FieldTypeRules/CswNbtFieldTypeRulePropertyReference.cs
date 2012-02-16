@@ -9,9 +9,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     {
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
-
         private CswNbtFieldResources _CswNbtFieldResources = null;
-        private ICswNbtMetaDataProp _MetaDataProp = null;
 
         public CswNbtFieldTypeRulePropertyReference( CswNbtFieldResources CswNbtFieldResources )
         {
@@ -115,7 +113,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetClearPropVal;
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             string OutFkType = inFKType;
             Int32 OutFkValue = inFKValue;
@@ -131,16 +129,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             //Current PropIdTypes
             CswNbtViewRelationship.PropIdType CurrentFkPropIdType;
-            Enum.TryParse( _MetaDataProp.FKType, true, out CurrentFkPropIdType );
+            Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
 
             CswNbtViewRelationship.PropIdType CurrentPropTypePropIdType;
-            Enum.TryParse( _MetaDataProp.ValuePropType, true, out CurrentPropTypePropIdType );
+            Enum.TryParse( MetaDataProp.ValuePropType, true, out CurrentPropTypePropIdType );
 
             //We're changing the relationship
             if( NewFkPropIdType != CurrentFkPropIdType ||
                 NewPropTypePropIdType != CurrentPropTypePropIdType ||
-                inFKValue != _MetaDataProp.FKValue ||
-                inValuePropId != _MetaDataProp.ValuePropId
+                inFKValue != MetaDataProp.FKValue ||
+                inValuePropId != MetaDataProp.ValuePropId
                 )
             {
                 bool ClearValueProp = _validateFkTarget( NewFkPropIdType, inFKValue, inValuePropId );
