@@ -14,9 +14,9 @@
                 precision = Csw.number(propVals.precision, 6),
                 ceilingVal = '999999999' + Csw.getMaxValueForPrecision(precision);
             
-            var $NumberTextBox = propDiv.$.CswNumberTextBox({
+            var $NumberTextBox = propDiv.numberTextBox({
                 ID: o.ID,
-                Value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                 MinValue: Csw.number(propVals.minvalue),
                 MaxValue: Csw.number(propVals.maxvalue),
                 ceilingVal: ceilingVal,
@@ -31,7 +31,7 @@
             }
         },
         save: function (o) { //$propdiv, $xml
-            var attributes = { value: o.propDiv.$.CswNumberTextBox('value', o.ID) };
+            var attributes = { value: o.propDiv.val() };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };

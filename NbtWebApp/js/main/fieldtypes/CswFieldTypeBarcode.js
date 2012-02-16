@@ -14,7 +14,7 @@
             var value = (false === o.Multi) ? Csw.string(propVals.barcode).trim() : Csw.enums.multiEditDefaultValue;
 
             if (o.ReadOnly) {
-                propDiv.append(value);
+                propDiv.text(value);
             }
             else {
                 var table = propDiv.table({
@@ -29,9 +29,8 @@
                     value: value
                 });
                 if (false === o.Multi) {
-                    var cell2 = table.add(1, 2, '<div />');
-                    cell2.children('div')
-                         .$.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Print,
+                    table.cell(1, 2).div()
+                         .imageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Print,
                              AlternateText: '',
                              ID: Csw.controls.dom.makeId(o.ID, 'print'),
                              onClick: function () {

@@ -25,7 +25,7 @@
         Csw.clientSession.isAdministrator({
             'Yes': function () {
 
-                table.add(rownum, 1, label);
+                table.cell(rownum, 1).text(label);
                 var parent = table.cell(rownum, 2);
                 var id = table.id;
 

@@ -408,7 +408,10 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
 
-            if( null != JObject["logicalsetjson"] )
+            if( null != JObject["logicalsetjson"] &&
+                JObject["logicalsetjson"].HasValues &&
+                null != JObject["logicalsetjson"]["data"] &&
+                null != JObject["logicalsetjson"]["columns"] )
             {
                 JArray Data = (JArray) JObject["logicalsetjson"]["data"];
                 JArray ColumnsAry = (JArray) JObject["logicalsetjson"]["columns"];

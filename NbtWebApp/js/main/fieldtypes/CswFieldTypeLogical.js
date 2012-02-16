@@ -19,11 +19,11 @@
                 onChange: o.onChange
             };
 
-            propDiv.$.CswTristateCheckBox('init', checkOpt);
+            propDiv.triStateCheckBox(checkOpt);
         },
         save: function (o) {
             var propDiv = o.propDiv.find('div');
-            var attributes = { checked: propDiv.$.CswTristateCheckBox('value') };
+            var attributes = { checked: propDiv.val() };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };

@@ -78,8 +78,8 @@
                             FirstCellRightAlign: true
                         });
 
-                        customerIdTable.add(1, 1, '<span>Select a Customer ID&nbsp</span>')
-                                        .css({'padding': '1px', 'vertical-align': 'middle'});
+                        customerIdTable.cell(1, 1).span({ text: 'Select a Customer ID&nbsp' })
+                                        .css({ 'padding': '1px', 'vertical-align': 'middle' });
 
                         customerIdSelect = customerIdTable.cell(1, 2);
                         customerIdSelect.$
@@ -166,20 +166,22 @@
                     $parent: $divStep2,
                     ID: makeStepId('headerTable')
                 });
-                headerTable.add(1, 1, '<span>Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.</span>');
+                headerTable.cell(1, 1)
+                    .span({text: 'Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.'});
+
                 headerTable.cell(1, 2)
                            .button({
-                                ID: Csw.controls.dom.makeSafeId('clearAll'),
-                                enabledText: 'Clear All Reprobates',
-                                disabledText: 'Clearing...',
-                                onClick: function () {
-                                    Csw.ajax.post({
-                                        url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
-                                        data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },
-                                        success: makeStepTwo
-                                    });
-                                }
-                            });
+                               ID: Csw.controls.dom.makeSafeId('clearAll'),
+                               enabledText: 'Clear All Reprobates',
+                               disabledText: 'Clearing...',
+                               onClick: function () {
+                                   Csw.ajax.post({
+                                       url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
+                                       data: { AccessId: selectedCustomerId, Action: 'ClearAllReprobates' },
+                                       success: makeStepTwo
+                                   });
+                               }
+                           });
                 $divStep2.append('<br/>');
 
                 makeRulesGrid();

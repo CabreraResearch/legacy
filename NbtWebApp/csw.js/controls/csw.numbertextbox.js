@@ -1,130 +1,113 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     'use strict';
-    var pluginName = 'CswNumberTextBox';
 
-    var methods = {
-        init: function (options)
-        {
-            var o = {
-                ID: '',
-                Value: '',
-                MinValue: '',
-                MaxValue: '',
-                Precision: '',
-                ReadOnly: false,
-                Required: false,
-                onChange: function () { },
-                width: '',
-                ceilingVal: 999999999.999999
-            };
-            if(options) $.extend(o, options);
+    function numberTextBox(options) {
 
-            var $Div = $(this),
-                ceilingVal = Csw.number(o.ceilingVal),
-                width, maxLength, $TextBox,
-                minValue = +o.MinValue,
-                maxValue = Csw.number(o.MaxValue, ceilingVal),
-                precision = +o.Precision;
-            
-            //$Div.contents().remove();
-            
-            if (o.ReadOnly) {
-                $Div.append(o.Value);
+        var internal = {
+            $parent: '',
+            ID: '',
+            value: '',
+            cssclass: '',
+            type: Csw.enums.inputTypes.text,
+            MinValue: '',
+            MaxValue: '',
+            Precision: '',
+            ReadOnly: false,
+            Required: false,
+            onChange: function () { },
+            width: '',
+            ceilingVal: 999999999.999999
+        };
+
+//        external.val = function (newValue) {
+//            var $Div = $(this);
+//            var $TextBox = $Div.find('input[id="' + id + '"]');
+//            if (newValue !== undefined) {
+//                $TextBox.val(newValue);
+//            }
+//            return $TextBox.val();
+//        };
+
+        (function () {
+            if (options) {
+                $.extend(internal, options);
+            }
+
+            var ceilingVal = Csw.number(internal.ceilingVal),
+                minValue = Csw.number(internal.MinValue),
+                maxValue = Csw.number(internal.MaxValue, ceilingVal),
+                maxLength = Math.abs(maxValue).toString().length,
+                precision = Csw.number(internal.Precision);
+
+            if (internal.ReadOnly) {
+                $.extend(external, Csw.controls.div(internal));
+                external.append(internal.Value);
             } else {
                 /* Case 24499: Client-side logic to validate numbers. */
-                maxLength = Math.abs(maxValue).toString().length;
-                if(maxLength <= 0 || 
-                   maxValue === 0 || 
-                   maxLength > 9) {
+                if (maxLength <= 0 ||
+                    maxValue === 0 ||
+                    maxLength > 9) {
+                    
                     maxLength = 9;
                 }
-                if(precision > 0) {
+                if (precision > 0) {
                     maxLength += (precision + 1); /*Decimal occupies a character.*/
                 }
-                width = o.width || (maxLength * 8) + 'px';
+                internal.width = internal.width || (maxLength * 8) + 'px';
+                internal.cssclass += ' textinput number ';
+                internal.maxlength = maxLength;
 
-                $TextBox = $Div.CswInput('init',{ID: o.ID,
-                                                        type: Csw.enums.inputTypes.text,
-                                                        value: o.Value,
-                                                        cssclass: 'textinput number',
-                                                        onChange: o.onChange,
-                                                        width: width
-                                                     });
+                $.extend(external, Csw.controls.input(internal));
 
-                //Limit the character length max
-                $TextBox.CswAttrDom('maxlength', maxLength);
-                
+                external.bind('change', function () {
+                    internal.value = external.val();
+                });
+
                 if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
-                    jQuery.validator.addMethod(o.ID + '_validateFloatMinValue', function (value, element) {
+                    $.validator.addMethod(internal.ID + '_validateFloatMinValue', function (value, element) {
                         return (this.optional(element) || Csw.validateFloatMinValue($(element).val(), minValue));
                     }, 'Number must be greater than or equal to ' + minValue);
-                    $TextBox.addClass(o.ID + '_validateFloatMinValue');
+                    external.addClass(internal.ID + '_validateFloatMinValue');
                 }
-                if (Csw.isNumber(maxValue) && 
+                if (Csw.isNumber(maxValue) &&
                     Csw.isNumeric(maxValue) &&
-                    maxValue > minValue
-                    ) {
-                    jQuery.validator.addMethod(o.ID + '_validateFloatMaxValue', function (value, element) {
+                        maxValue > minValue) {
+                    $.validator.addMethod(internal.ID + '_validateFloatMaxValue', function (value, element) {
                         return (this.optional(element) || Csw.validateFloatMaxValue($(element).val(), maxValue));
                     }, 'Number must be less than or equal to ' + maxValue);
-                    $TextBox.addClass(o.ID + '_validateFloatMaxValue');
+                    external.addClass(internal.ID + '_validateFloatMaxValue');
                 }
-                if (o.Precision === undefined || o.Precision <= 0) {
-                    jQuery.validator.addMethod(o.ID + '_validateInteger', function (value, element) {
+                if (internal.Precision === undefined || internal.Precision <= 0) {
+                    $.validator.addMethod(internal.ID + '_validateInteger', function (value, element) {
                         return (this.optional(element) || Csw.validateInteger($(element).val()));
                     }, 'Value must be an integer');
-                    $TextBox.addClass(o.ID + '_validateInteger');
+                    external.addClass(internal.ID + '_validateInteger');
                 } else {
-                    jQuery.validator.addMethod(o.ID + '_validateFloatPrecision', function (value, element) {
-                        return (this.optional(element) || Csw.validateFloatPrecision($(element).val(), o.Precision));
+                    $.validator.addMethod(internal.ID + '_validateFloatPrecision', function (value, element) {
+                        return (this.optional(element) || Csw.validateFloatPrecision($(element).val(), internal.Precision));
                     }, 'Value must be numeric');
-                    $TextBox.addClass(o.ID + '_validateFloatPrecision');
+                    external.addClass(internal.ID + '_validateFloatPrecision');
                 }
 
-                if(0 < ceilingVal) {
+                if (0 < ceilingVal) {
                     //Independant of any other validation, no number can be greater than this.
-                    $TextBox.CswAttrDom('max', ceilingVal);
-                    jQuery.validator.addMethod(o.ID + '_validateDb_15_6_FieldLength', function (value, element) {
+                    external.propDom('max', ceilingVal);
+                    $.validator.addMethod(internal.ID + '_validateDb_15_6_FieldLength', function (value, element) {
                         return Csw.validateFloatMaxValue($(element).val(), ceilingVal);
                     }, 'Value cannot be greater than ' + ceilingVal + '.');
-                    $TextBox.addClass(o.ID + '_validateDb_15_6_FieldLength');
+                    external.addClass(internal.ID + '_validateDb_15_6_FieldLength');
                 }
-                if (o.Required) {
-                    $TextBox.addClass('required');
+                if (internal.Required) {
+                    external.addClass('required');
                 }
-                return $TextBox;
-            }
-        },
-        value: function (id)
-        {
-            var $Div = $(this);
-            var $TextBox = $Div.find('input[id="'+id+'"]');
-            return $TextBox.val();
-        },
-        setValue: function (id, newvalue)
-        {
-            var $Div = $(this);
-            var $TextBox = $Div.find('input[id="'+id+'"]');
-            if( newvalue !== undefined )
-            {
-                $TextBox.val( newvalue );
-            }
-        }
-    };
+            } /* else */
+        } ());
+        return external;
+    }
+    Csw.controls.register('numberTextBox', numberTextBox);
+    Csw.controls.numberTextBox = Csw.controls.numberTextBox || numberTextBox;
 
-    // Method calling logic
-    $.fn.CswNumberTextBox = function (method) {
-        if (methods[method]) {
-            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
-        } 
-        else if (typeof method === 'object' || !method) {
-            return methods.init.apply(this, arguments);
-        } else {
-            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
-        }
-
-    };
 })(jQuery);

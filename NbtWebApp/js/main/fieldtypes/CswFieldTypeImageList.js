@@ -85,7 +85,7 @@
                     nameCell.link({ href: href, target: '_blank', text: name });
                 }
                 if (false === o.ReadOnly) {
-                    nameCell.$.CswImageButton({
+                    nameCell.imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
                         ID: Csw.controls.dom.makeId('image', currCol, 'rembtn'),

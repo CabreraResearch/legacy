@@ -65,7 +65,7 @@
                 FirstCellRightAlign: true
             });
 
-            table.add(1, 1, 'Name:');
+            table.cell(1, 1).text('Name:');
 
             var nameTextCell = table.cell(1, 2);
             var $nametextbox = nameTextCell.$.CswInput('init', { ID: o.ID + '_nametb',
@@ -74,12 +74,12 @@
             });
             var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
             if (Csw.isNullOrEmpty(o.viewmode)) {
-                table.add(2, 1, 'Display Mode:');
+                table.cell(2, 1).text('Display Mode:');
                 $displaymodeselect.append('<option value="Grid">Grid</option>');
                 $displaymodeselect.append('<option value="List" selected>List</option>');
                 $displaymodeselect.append('<option value="Table">Table</option>');
                 $displaymodeselect.append('<option value="Tree">Tree</option>');
-                table.add(2, 2, $displaymodeselect);
+                table.cell(2, 2).text($displaymodeselect);
             }
 
             var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
@@ -270,7 +270,7 @@
                 width: '100%'
             });
 
-            var cell11 = table.add(1, 1, 'Configure:<br/>');
+            var cell11 = table.cell(1, 1).text('Configure:<br/>');
             var cell12 = table.cell(1, 2);
 
             var $layoutSelect = cell11.$.CswSelect('init', {
@@ -565,9 +565,9 @@
                         if (Csw.contains(components, comp)) {
                             var thisComp = components[comp];
                             
-                            table.add(row, 1, thisComp.name).css('padding', '2px 5px 2px 5px');
-                            table.add(row, 2, thisComp.version).css('padding', '2px 5px 2px 5px');
-                            table.add(row, 3, thisComp.copyright).css('padding', '2px 5px 2px 5px');
+                            table.cell(row, 1).text(thisComp.name).css('padding', '2px 5px 2px 5px');
+                            table.cell(row, 2).text(thisComp.version).css('padding', '2px 5px 2px 5px');
+                            table.cell(row, 3).text(thisComp.copyright).css('padding', '2px 5px 2px 5px');
                             row += 1;
                         }
                     }

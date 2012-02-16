@@ -29,7 +29,7 @@
 
                 if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     //Edit button
-                    cell12.$.CswImageButton({
+                    cell12.imageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                             AlternateText: 'Edit',
                             ID: o.ID + '_edit',
@@ -47,7 +47,7 @@
                             }
                         });
                     //Clear button
-                    cell13.$.CswImageButton({
+                    cell13.imageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                             AlternateText: 'Clear',
                             ID: o.ID + '_clr',

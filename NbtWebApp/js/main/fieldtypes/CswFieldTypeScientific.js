@@ -16,9 +16,9 @@
             } 
             else 
             {
-                var $ValueNTB = propDiv.$.CswNumberTextBox({
+                var valueNtb = propDiv.numberTextBox({
                     ID: o.ID + '_val',
-                    Value: (false === o.Multi) ? Csw.string(propVals.base).trim() : Csw.enums.multiEditDefaultValue,
+                    value: (false === o.Multi) ? Csw.string(propVals.base).trim() : Csw.enums.multiEditDefaultValue,
                     MaxValue: 999999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
@@ -27,9 +27,9 @@
                     width: '65px'
                 });
                 propDiv.append('E');
-                var $ExponentNTB = propDiv.$.CswNumberTextBox({
+                var exponentNtb = propDiv.numberTextBox({
                     ID:  o.ID + '_exp',
-                    Value: (false === o.Multi) ? Csw.string(propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
+                    value: (false === o.Multi) ? Csw.string(propVals.exponent).trim() : Csw.enums.multiEditDefaultValue,
                     MaxValue: 999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
@@ -38,18 +38,18 @@
                     width: '40px'
                 });
 
-                if (false === Csw.isNullOrEmpty($ValueNTB) && $ValueNTB.length > 0) {
-                    $ValueNTB.clickOnEnter(o.saveBtn);
+                if (valueNtb && valueNtb.length() > 0) {
+                    valueNtb.clickOnEnter(o.saveBtn);
                 }
-                if (false === Csw.isNullOrEmpty($ExponentNTB) && $ExponentNTB.length > 0) {
-                    $ExponentNTB.clickOnEnter(o.saveBtn);
+                if (exponentNtb && exponentNtb.length() > 0) {
+                    exponentNtb.clickOnEnter(o.saveBtn);
                 }
             }
         },
         save: function (o) { //$propdiv, $xml
             var attributes = {
-                base: o.propDiv.$.CswNumberTextBox('value', o.ID + '_val'),
-                exponent: o.propDiv.$.CswNumberTextBox('value', o.ID + '_exp')
+                base: o.propDiv.val(),
+                exponent: o.propDiv.val()
             };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

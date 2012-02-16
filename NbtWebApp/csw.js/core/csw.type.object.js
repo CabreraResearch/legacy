@@ -54,7 +54,10 @@
         /// <returns type="Boolean" />
         var ret = false;
         if (obj && false === Csw.isFunction(obj)) {
-            ret = obj === null || obj === undefined || ($.isPlainObject(obj) && $.isEmptyObject(obj));
+            ret = (obj === null || 
+                  obj === undefined || 
+                  ($.isPlainObject(obj) && $.isEmptyObject(obj)) || 
+                  ($.isPlainObject(obj) && false === obj.isValid));
         }
         return ret;
     }
@@ -159,7 +162,10 @@
     function each(thisObj, onSuccess) {
         /// <summary>Iterates an Object or an Array and handles length property</summary>
         /// <param name="thisObj" type="Object"> An object to crawl </param>
-        /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to stop.</param>
+        /// <param name="onSuccess" type="Function"> A function to execute on finding a property, which should return true to stop.
+        ///<para>if an Array, onSuccess receives (key, value)</para> 										 
+        ///<para>if an Object, onSuccess receives (thisObject, name, parentObject)</para>
+        ///</param>
         /// <returns type="Object">Returns the return of onSuccess</returns>
         //http://stackoverflow.com/questions/7356835/jquery-each-fumbles-if-non-array-object-has-length-property
         var ret = false,

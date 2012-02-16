@@ -77,10 +77,10 @@
                     selVals.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
 
-                editTable.add(1, 1, 'Flammability');
-                editTable.add(2, 1, 'Health');
-                editTable.add(3, 1, 'Reactivity');
-                editTable.add(4, 1, 'Special');
+                editTable.cell(1, 1).text('Flammability');
+                editTable.cell(2, 1).text('Health');
+                editTable.cell(3, 1).text('Reactivity');
+                editTable.cell(4, 1).text('Special');
 
                 makeSelect(editTable.cell(1, 2), 'red', red, redDiv);
                 makeSelect(editTable.cell(2, 2), 'yellow', yellow, yellowDiv);

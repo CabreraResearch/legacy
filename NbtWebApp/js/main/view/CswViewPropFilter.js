@@ -107,11 +107,12 @@
                     filtSelected = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {},
                     placeholder = '',
                     subfieldCell, filterModesCell, propFilterValueCell, $defaultSubField,
-                    field, thisField, filtermodes, mode, thisMode, $subfieldsList, $filterModesList, filt, $filtInput;
+                    field, thisField, filtermodes, mode, thisMode, $subfieldsList, $filterModesList, filt, filtInput;
 
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
-                    propFilterTable.add(filtOpt.propRow, filtOpt.firstColumn, '<span id="' + makePropFilterId(propertyName, filtOpt) + '">' + propertyName + '</span>') //3
+                    propFilterTable.cell(filtOpt.propRow, filtOpt.firstColumn)
+                        .span({ text: propertyName, ID: makePropFilterId(propertyName, filtOpt) }) //3
                 }
 
                 //Row propRow, Column 4: Subfield Cell
@@ -207,7 +208,7 @@
                                 filtValAry.push({ value: Csw.string(filt).trim(), display: Csw.string(filtValOpt[filt]).trim() });
                             }
                         }
-                        $filtInput = propFilterValueCell.CswSelect('init', { ID: filtValInputId,
+                        filtInput = propFilterValueCell.select({ ID: filtValInputId,
                             values: filtValAry,
                             selected: filtSelected,
                             cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name
@@ -215,7 +216,7 @@
                     }
                 }
                 else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
-                    $filtInput = propFilterValueCell.CswTristateCheckBox('init', { ID: filtValInputId,
+                    filtInput = propFilterValueCell.triStateCheckBox({ ID: filtValInputId,
                         Checked: (defaultSubfieldVal === 'checked') ? 'true' : 'false',
                         cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                     });
@@ -226,7 +227,7 @@
                             placeholder += "'s " + $subfieldsList.find(':selected').text();
                         }
                     }
-                    $filtInput = propFilterValueCell.CswInput('init', {
+                    filtInput = propFilterValueCell.input({
                         ID: filtValInputId,
                         type: Csw.enums.inputTypes.text,
                         cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name,
@@ -237,8 +238,8 @@
                         autocomplete: 'on'
                     });
                 }
-                if (false === Csw.isNullOrEmpty($filtInput, true)) {
-                    $filtInput.data('propsData', propsData);
+                if (false === Csw.isNullOrEmpty(filtInput, true)) {
+                    filtInput.data('propsData', propsData);
                 }
             }
             return propFilterTable.$;

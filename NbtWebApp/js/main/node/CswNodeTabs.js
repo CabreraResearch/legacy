@@ -336,7 +336,7 @@
                         };
 
                         /* Show the 'fake' config button to open the dialog */
-                        formTblCell12.$.CswImageButton({
+                        formTblCell12.imageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                             AlternateText: 'Configure',
                             ID: o.ID + 'configbtn',
