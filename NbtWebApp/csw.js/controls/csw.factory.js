@@ -426,22 +426,33 @@
         };
 
         external.append = function (object) {
-            /// <summary>Attach an object to this element.</summary>
+            /// <summary>Append an object to this element.</summary>
             /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
-            /// <returns type="Object">The appended Csw object (for chaining)</returns> 
-            var _$element, ret;
+            /// <returns type="Object">The parent Csw object (for chaining)</returns> 
             try {
-                _$element = $(object);
+                $element.append(object);
             } catch (e) {
-                _$element = '';
+                if (Csw.isString(object)) {
+                    $element.text(object);
+                }
             }
-            if (false === Csw.isNullOrEmpty(object) && _$element.length === 0) {
-                /* This handles plain text */
-                $element.append(Csw.string(object));
-            } else {
-                $element.append(_$element);
+            return external;
+        };
+
+        external.attach = function (object) {
+            /// <summary>Attach an object to this element.</summary>
+            /// <param name="object" type="Object">Raw HTML. Warning: Do not pass a selector to this method!</param>
+            /// <returns type="Object">The new Csw object (for chaining)</returns> 
+            var $child = null, ret;
+            try {
+                $child = $(object);
+                if (false === Csw.isNullOrEmpty($child)) {
+                    $element.append($child);
+                }
+            } catch (e) {
+                /* One day we'll implement client-side error handling */
             }
-            ret = internal.makeControlForChain(_$element, factory);
+            ret = internal.makeControlForChain($child);
             return ret;
         };
 

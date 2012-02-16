@@ -116,7 +116,7 @@
                     html += attr.get();
                     html += '>';
                     html += '</td>';
-                    newCell = thisRow.append(html);
+                    newCell = thisRow.attach(html);
                     external.trigger('CswTable_onCreateCell', [newCell, row, thisRow.children('td').length()]);
                 }
                 $cell = thisRow.children('td:eq(' + Csw.number(col - 1) + ')').$;
@@ -131,16 +131,16 @@
             return retCell;
         };
 
-        external.add = function (row, col, content, id) {
-            /// <summary>Add content to a cell of this table.</summary>
-            /// <param name="row" type="Number">Row number.</param>
-            /// <param name="col" type="Number">Column number.</param>
-            /// <param name="content" type="String">Content to add.</param>
-            /// <returns type="Object">The specified cell.</returns>
-            var retCell = external.cell(row, col, id);
-            retCell.append(content);
-            return retCell;
-        };
+//        external.add = function (row, col, content, id) {
+//            /// <summary>Add content to a cell of this table.</summary>
+//            /// <param name="row" type="Number">Row number.</param>
+//            /// <param name="col" type="Number">Column number.</param>
+//            /// <param name="content" type="String">Content to add.</param>
+//            /// <returns type="Object">The specified cell.</returns>
+//            var retCell = external.cell(row, col, id);
+//            retCell.append(content);
+//            return retCell;
+//        };
 
         external.maxrows = function () {
             /// <summary>Get the maximum table row number</summary>
