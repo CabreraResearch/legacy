@@ -48,6 +48,7 @@
     <None Include="csw\Actions\Example.xsd">
       <SubType>Designer</SubType>
     </None>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M06.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M05.cs" />
   </ItemGroup>
   <ItemGroup>

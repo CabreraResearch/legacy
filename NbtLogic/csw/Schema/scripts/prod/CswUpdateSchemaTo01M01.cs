@@ -12,6 +12,15 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
+            #region case 24481
+            
+            // Also in 01M-06
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "field_types", "searchable" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "field_types", "searchable", "Whether the field type is searchable", false, true );
+            }
+
+            #endregion case 24481
 
 
         }//Update()
