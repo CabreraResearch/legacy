@@ -26,7 +26,9 @@
             value: '',
             title: '',
             align: '',
-            height: ''
+            height: '',
+            styles: {},
+            onClick: null
         };
         var external = {};
 
@@ -45,9 +47,10 @@
             attr.add('class', internal.cssclass);
             attr.add('value', internal.value);
             attr.add('align', internal.align);
-            style.add('align', internal.align);
-            style.add('height', internal.height);
-            
+            internal.styles.align = internal.align;
+            internal.styles.height = internal.height;
+            style.set(internal.styles);
+
             html += '<div ';
 
             html += attr.get();
@@ -58,6 +61,10 @@
             html += '</div>';
             $div = $(html);
             Csw.controls.factory($div, external);
+
+            if (Csw.isFunction(internal.onClick)) {
+                external.bind('click', internal.onClick);
+            }
 
             internal.$parent.append(external.$);
         } ());
