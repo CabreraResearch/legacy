@@ -192,10 +192,9 @@
             /// <param name="criteria" type="String"></param>
             /// <returns type="Object">Rows matching search</returns>
             var rows = external.children('tbody').children('tr'),
-                $rows, ret = {};
+                ret = {};
             if (false === Csw.isNullOrEmpty(criteria)) {
-                $rows = rows.$.filter(criteria);
-                ret = external.jquery($rows);
+                ret = rows.filter(criteria);
             }
             return ret;
         };
@@ -205,17 +204,17 @@
             /// <param name="criteria" type="String"></param>
             /// <returns type="Object">Cells matching search</returns>
             var $retCell = null,
-                cells;
+                cells, ret = {};
             if (Csw.contains(criteria, 'row') &&
                 Csw.contains(criteria, 'column')) {
-                $retCell = $(external.$[0].rows[criteria.row].cells[criteria.column]);
+                ret = external.jquery($(external.$[0].rows[criteria.row].cells[criteria.column]));
             } else {
                 cells = external.children('tbody').children('tr').children('td');
-                if (false === Csw.isNullOrEmpty(criteria)) {
-                    $retCell = cells.$.filter(criteria);
+                if (cells.isValid && false === Csw.isNullOrEmpty(criteria)) {
+                    ret = cells.filter(criteria);
                 }
             }
-            return external.jquery($retCell);
+            return ret;
         };
 
         external.rowFindCell = function (row, criteria) {

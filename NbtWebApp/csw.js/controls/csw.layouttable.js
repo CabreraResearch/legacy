@@ -59,16 +59,16 @@
 
         internal.toggleRemove = function () {
             if (internal.isRemoveMode(external.table)) {
-                internal.removeOff(external.table);
+                external.table.propNonDom('removemode', 'false');
+                if (internal.removeBtn) {
+                    internal.removeBtn.removeClass('CswLayoutTable_removeEnabled');
+                }
             } else {
                 external.table.propNonDom('removemode', 'true');
-                internal.$removeBtn.addClass('CswLayoutTable_removeEnabled');
+                if (internal.removeBtn) {
+                    internal.removeBtn.addClass('CswLayoutTable_removeEnabled');
+                }
             }
-        };
-
-        internal.removeOff = function () {
-            external.table.propNonDom('removemode', 'false');
-            internal.$removeBtn.removeClass('CswLayoutTable_removeEnabled');
         };
 
         internal.addRow = function () {
@@ -280,12 +280,18 @@
         external.configOff = function () {
             /// <summary>Turn config mode off on the layout table.</summary>
             /// <returns type="Undefined"></returns>
-
-            internal.$addBtn.hide();
-            internal.$removeBtn.hide();
-            internal.$expandColBtn.hide();
-            internal.$expandRowBtn.hide();
-
+            if (internal.addBtn) {
+                internal.addBtn.hide();
+            }
+            if (internal.removeBtn) {
+                internal.removeBtn.hide();
+            }
+            if (internal.expandColBtn) {
+                internal.expandColBtn.hide();
+            }
+            if (internal.expandRowBtn) {
+                internal.expandRowBtn.hide();
+            }
             external.table.findCell('.CswLayoutTable_cell')
                 .removeClass('CswLayoutTable_configcell');
 
@@ -299,10 +305,18 @@
         external.configOn = function () {
             /// <summary>Turn config mode on, on the layout table. </summary>
             /// <returns type="Undefined"></returns>
-            internal.$addBtn.show();
-            internal.$removeBtn.show();
-            internal.$expandColBtn.show();
-            internal.$expandRowBtn.show();
+            if (internal.addBtn) {
+                internal.addBtn.show();
+            }
+            if (internal.removeBtn) {
+                internal.removeBtn.show();
+            }
+            if (internal.expandColBtn) {
+                internal.expandColBtn.show();
+            }
+            if (internal.expandRowBtn) {
+                internal.expandRowBtn.show();
+            }
             external.table.finish(null);
 
             external.table.findCell('.CswLayoutTable_cell')
@@ -319,9 +333,8 @@
             if (options) {
                 $.extend(internal, options);
             }
-
-            var buttonDiv = Csw.controls.div({
-                $parent: internal.$parent,
+            var parent = Csw.controls.div(internal);
+            var buttonDiv = parent.div({
                 ID: Csw.controls.dom.makeId(internal.ID, 'btnDiv')
             });
             buttonDiv.css({ 'float': 'right' });
@@ -333,8 +346,7 @@
             internal.tableId = Csw.controls.dom.makeId(internal.ID, 'tbl');
             internal.buttonTableId = Csw.controls.dom.makeId(internal.ID, 'buttontbl');
 
-            external.table = Csw.controls.table({
-                $parent: internal.$parent,
+            external.table = parent.table({
                 ID: internal.tableId,
                 TableCssClass: internal.TableCssClass + ' CswLayoutTable_table',
                 CellCssClass: internal.CellCssClass + ' CswLayoutTable_cell',
@@ -345,7 +357,7 @@
                 width: internal.width,
                 align: internal.align,
                 onCreateCell: function (ev, newCell, realrow, realcolumn) {
-                    if (Csw.contains(newCell, '$')) {
+                    if (newCell.isValid) {
                         internal.onCreateCell(newCell, realrow, realcolumn, internal.cellSet.rows, internal.cellSet.columns);
                     }
                 }
@@ -365,7 +377,7 @@
                 ID: Csw.controls.dom.makeId(internal.ID, 'buttontbl')
             });
             if (internal.showAddButton) {
-                internal.$addBtn = external.buttonTable.cell(1, 1).$.CswImageButton({
+                internal.addBtn = external.buttonTable.cell(1, 1).imageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Add,
                     AlternateText: 'Add',
                     ID: internal.ID + 'addbtn',
@@ -374,22 +386,22 @@
                         return Csw.enums.imageButton_ButtonType.None;
                     }
                 });
-                internal.$addBtn.hide();
+                internal.addBtn.hide();
             }
             if (internal.showRemoveButton) {
-                internal.$removeBtn = external.buttonTable.cell(1, 2).$.CswImageButton({
+                internal.removeBtn = external.buttonTable.cell(1, 2).imageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                     AlternateText: 'Remove',
                     ID: internal.ID + 'rembtn',
-                    onClick: function ($ImageDiv) {
-                        internal.toggleRemove($ImageDiv);
+                    onClick: function () {
+                        internal.toggleRemove();
                         return Csw.enums.imageButton_ButtonType.None;
                     }
                 });
-                internal.$removeBtn.hide();
+                internal.removeBtn.hide();
             }
             if (internal.showExpandColButton) {
-                internal.$expandColBtn = external.buttonTable.cell(1, 3).$.CswImageButton({
+                internal.expandColBtn = external.buttonTable.cell(1, 3).imageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.ArrowEast,
                     AlternateText: 'Add Column',
                     ID: internal.ID + 'addcolumnbtn',
@@ -398,10 +410,10 @@
                         return Csw.enums.imageButton_ButtonType.None;
                     }
                 });
-                internal.$expandColBtn.hide();
+                internal.expandColBtn.hide();
             }
             if (internal.showExpandRowButton) {
-                internal.$expandRowBtn = external.buttonTable.cell(1, 4).$.CswImageButton({
+                internal.expandRowBtn = external.buttonTable.cell(1, 4).imageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.ArrowSouth,
                     AlternateText: 'Add Row',
                     ID: internal.ID + 'addrowbtn',
@@ -410,10 +422,10 @@
                         return Csw.enums.imageButton_ButtonType.None;
                     }
                 });
-                internal.$expandRowBtn.hide();
+                internal.expandRowBtn.hide();
             }
             if (internal.showConfigButton) {
-                internal.$configBtn = external.buttonTable.cell(1, 5).$.CswImageButton({
+                internal.configBtn = external.buttonTable.cell(1, 5).imageButton({
                     ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                     AlternateText: 'Configure',
                     ID: internal.ID + 'configbtn',
