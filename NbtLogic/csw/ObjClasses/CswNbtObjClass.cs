@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
         public abstract void beforeCreateNode( bool OverrideUniqueValidation );
         public abstract void afterCreateNode();
-        public abstract void beforeWriteNode( bool OverrideUniqueValidation );
+        public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterWriteNode();
         public abstract void beforeDeleteNode();
         public abstract void afterDeleteNode();

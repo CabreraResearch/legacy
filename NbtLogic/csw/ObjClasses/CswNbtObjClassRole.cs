@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // The user cannot change his or her own Administrator privileges.
             if( Administrator.WasModified && _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
                 } // foreach( string ActionNameString in ActionPermissions.YValues )
             } // if( ActionPermissions.WasModified )
 
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
