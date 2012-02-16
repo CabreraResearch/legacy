@@ -61,9 +61,9 @@
 //            _CswNbtObjClassDefault.afterCreateNode();
 //        } // afterCreateNode()
 
-//        public override void beforeWriteNode( bool OverrideUniqueValidation )
+//        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
 //        {
-//            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+//            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 //        }//beforeWriteNode()
 
 //        public override void afterWriteNode()
