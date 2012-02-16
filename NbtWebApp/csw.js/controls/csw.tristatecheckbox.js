@@ -1,7 +1,7 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function () {
+(function _cswTriStateCheckBox() {
 
     function triStateCheckBox(options) {
 
@@ -40,11 +40,12 @@
             return ret;
         };
 
-        internal.onClick = function () {
+        internal.changeState = function () {
             if (internal.value === 'null') {
                 internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                 internal.value = 'true';
-            } else if (internal.buttonVal === 'false') {
+            }
+            else if (internal.value === 'false') {
                 if (Csw.bool(internal.Required)) {
                     internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                     internal.value = 'true';
@@ -52,11 +53,14 @@
                     internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
                     internal.value = 'null';
                 }
-            } else if (internal.buttonVal === 'true') {
+            } else if (internal.value === 'true') {
                 internal.btnValue = Csw.enums.imageButton_ButtonType.CheckboxFalse;
                 internal.value = 'false';
             }
-            return internal.btnValue;
+            external.val(internal.value);
+            external.propDom('alt', internal.value);
+            internal.onChange();
+            return external.click(internal.btnValue);
         }; // onClick()
 
 
@@ -84,17 +88,17 @@
                 $.extend(external, Csw.controls.div(internal));
             } else {
                 internal.ID = elementId;
-                internal.ButtonType = getButtonType(tristateVal);
+                internal.ButtonType = external.getButtonType(tristateVal);
                 internal.AlternateText = tristateVal;
-                internal.onClick = function () {
-                    internal.onChange();
-                    return internal.onClick();
-                };
                 $.extend(external, Csw.controls.imageButton(internal));
+                external.bind('click', internal.changeState);
             }
 
         } ());
 
         return external;
     }
+    Csw.controls.register('triStateCheckBox', triStateCheckBox)
+    Csw.controls.triStateCheckBox = Csw.controls.triStateCheckBox || triStateCheckBox;
+
 } ());

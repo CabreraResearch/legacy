@@ -285,6 +285,14 @@
             return Csw.controls.timeInterval(opts);
         };
 
+        external.triStateCheckBox = function (opts) {
+            /// <summary> Creates a Csw.triStateCheckBox on this element</summary>
+            /// <param name="opts" type="Object">Options to define the triStateCheckBox.</param>
+            /// <returns type="Object">A Csw.triStateCheckBox</returns>
+            opts = internal.prepControl(opts, 'triStateCheckBox');
+            return Csw.controls.triStateCheckBox(opts);
+        };
+
         external.ul = function (opts) {
             /// <summary> Creates a Csw.ul on this element</summary>
             /// <param name="opts" type="Object">Options to define the ul.</param>
