@@ -571,6 +571,70 @@ namespace ChemSW.Nbt.WebServices
             return ThisFilterObj;
         }
 
+        public JObject saveSearchAsView( CswNbtView View, string SearchTerm, JObject Filters )
+        {
+            JObject ret = new JObject();
+            //CswNbtView SearchView = new CswNbtView( _CswNbtResources );
+            View.Root.ChildRelationships.Clear();
+
+            // NodeType filter becomes Relationship
+            Int32 NodeTypeId = Int32.MinValue;
+            CswNbtMetaDataNodeType NodeType= null;
+            CswNbtViewRelationship ViewRel = null;
+            foreach( JProperty FilterProp in Filters.Properties() )
+            {
+                JObject Filter = (JObject) FilterProp.Value;
+                if( Filter["filtertype"].ToString() == "nodetype" )
+                {
+                    NodeTypeId = CswConvert.ToInt32( Filter["firstversionid"] );
+                    NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                    ViewRel = View.AddViewRelationship( NodeType, false );
+                    break;
+                }
+            } // foreach( JProperty FilterProp in Filters.Properties() )
+
+            if( ViewRel != null )
+            {
+                // Add property filters
+                foreach( JProperty FilterProp in Filters.Properties() )
+                {
+                    JObject Filter = (JObject) FilterProp.Value;
+                    if( Filter["filtertype"].ToString() == "propval" )
+                    {
+                        CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByFirstVersionId( CswConvert.ToInt32( Filter["firstpropversionid"] ) );
+                        CswNbtViewProperty ViewProp = View.AddViewProperty( ViewRel, NodeTypeProp );
+
+                        string FilterValue = Filter["filtervalue"].ToString();
+                        if( FilterValue == "[blank]" )
+                        {
+                            View.AddViewPropertyFilter( ViewProp,
+                                                        NodeTypeProp.getFieldTypeRule().SubFields.Default.Name,
+                                                        CswNbtPropFilterSql.PropertyFilterMode.Null,
+                                                        string.Empty,
+                                                        false );
+                        }
+                        else
+                        {
+                            View.AddViewPropertyFilter( ViewProp,
+                                                        NodeTypeProp.getFieldTypeRule().SubFields.Default.Name,
+                                                        CswNbtPropFilterSql.PropertyFilterMode.Begins,
+                                                        FilterValue,
+                                                        false );
+                        }
+                    }
+                } // foreach( JProperty FilterProp in Filters.Properties() )
+
+                View.save();
+                View.SaveToCache( true );
+                ret["result"] = "true";
+            } // if(ViewRel != null)
+            else
+            {
+                ret["result"] = "false";
+            }
+            return ret;
+        } // saveSearchAsView()
+
         #endregion Universal Search
 
     } // class CswNbtWebServiceSearch

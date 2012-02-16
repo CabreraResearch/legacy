@@ -14,8 +14,10 @@
             align: 'right',
             onBeforeSearch: null,
             onAfterSearch: null,
+            onLoadView: null,
             maxheight: '600',
             searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
+            saveurl: '/NbtWebApp/wsNBT.asmx/saveSearchAsView',
             searchterm: '',
             filters: {}
         };
@@ -114,6 +116,14 @@
                     Csw.each(internal.filters, showFilter);
 
                     fdiv.br();
+                    fdiv.button({
+                        ID: Csw.controls.dom.makeId(filtersdivid, '', "saveview"),
+                        enabledText: 'Save as View',
+                        disableOnClick: false,
+                        onClick: internal.saveAsView
+                    });
+
+                    fdiv.br();
                     fdiv.br();
 
                     // Filters to add
@@ -156,6 +166,28 @@
             }
             internal.search();
         } // removeFilter()
+
+        internal.saveAsView = function () {
+            $.CswDialog('AddViewDialog', {
+                ID: Csw.controls.dom.makeId(internal.ID, '', 'addviewdialog'),
+                viewmode: 'table',
+                onAddView: function (newviewid, viewmode) {
+
+                    Csw.ajax.post({
+                        url: internal.saveurl,
+                        data: {
+                            ViewId: newviewid,
+                            SearchTerm: internal.searchterm,
+                            Filters: JSON.stringify(internal.filters)
+                        },
+                        success: function (data) {
+                            Csw.tryExec(internal.onLoadView, newviewid, viewmode);
+                        }
+                    }); // ajax  
+
+                } // onAddView()
+            }); // CswDialog
+        } // saveAsView()
 
         return external;
     };
