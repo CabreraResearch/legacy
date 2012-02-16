@@ -65,24 +65,27 @@
                 value = Csw.string(propVals.text, o.propData.name),
                 mode = Csw.string(propVals.mode, 'button'),
                 button;
+            
+            function onClick() {
+                onButtonClick(o.propid, button, o);
+            }
 
             if (mode === 'button') {
                 button = propDiv.button({
                     ID: o.ID,
                     enabledText: value,
                     disabledText: value,
-                    disableOnClick: true
+                    disableOnClick: true,
+                    onClick: onClick
                 });
             }
             else {
                 button = propDiv.link({
                     ID: o.ID,
-                    value: value
+                    value: value,
+                    onClick: onClick
                 });
             }
-            button.click(function () {
-                onButtonClick(o.propid, button, o);
-            });
 
             if (o.Required) {
                 button.addClass('required');
