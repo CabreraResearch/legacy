@@ -36,7 +36,7 @@
             return opts;
         };
 
-        internal.makeControlForChain = function (_$element, method) {
+        internal.makeControlForChain = function ($child, method) {
             var ret,
                 _options = {
                     parent: function () { return external; },
@@ -49,11 +49,11 @@
             _options.children = function () {
                 return _options;
             };
-            if (false === Csw.isNullOrEmpty(_$element, true)) {
+            if (false === Csw.isNullOrEmpty($child, true)) {
                 if (Csw.isFunction(method)) {
-                    ret = method(_$element, _options);
+                    ret = method($child, _options);
                 } else {
-                    ret = external.jquery(_$element, _options);
+                    ret = external.jquery($child, _options);
                 }
             } else {
                 ret = _options;
@@ -324,6 +324,7 @@
             try {
                 $element.append(object);
             } catch (e) {
+                Csw.log('Warning: append() failed, text() was used instead.', true);
                 if (Csw.isString(object)) {
                     $element.text(object);
                 }
