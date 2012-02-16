@@ -100,7 +100,6 @@
     <Content Include="js\main\actions\CswQuotas.js" />
     <Content Include="js\main\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\main\actions\CswSessions.js" />
-    <Content Include="js\main\controls\CswCheckBoxArray.js" />
     <Content Include="js\main\controls\CswComboBox.js" />
     <Content Include="js\main\controls\CswDateTimePicker.js" />
     <Content Include="js\main\controls\CswImageButton.js" />
