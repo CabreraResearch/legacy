@@ -24,11 +24,14 @@ namespace ChemSW.Nbt.Actions
         CswNbtResources _CswNbtResources = null;
         private readonly ICswNbtUser _CurrentUser;
         private readonly TextInfo _TextInfo;
+        private bool _IsSchemaUpdater = false;
 
-        public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources )
+        public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources, bool isSchemaUpdater=false )
         {
             _CswNbtResources = CswNbtResources;
-            if( _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
+            _IsSchemaUpdater = isSchemaUpdater;
+
+            if( false==_IsSchemaUpdater && _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
             {
                 throw new CswDniException( ErrorType.Error, "Only the ChemSW Admin role can access the Inspection Design wizard.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }

@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
 
         public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
         {
-            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources ) );
+            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, true ) );
         }
 
         #region TransactionManagement
