@@ -208,15 +208,14 @@
         var displayModeSpan = table2.add(5, 2, '<span id="' + o.ID + '_displaymode"></span>');
 
         var gridWidthLabelCell = table2.add(6, 1, 'Grid Width (in characters):');
-        var gridWidthTextboxCell = table2.cell(6, 2);
-        gridWidthTextboxCell.$.CswNumberTextBox('init', {
-            'ID': o.ID + '_gridwidth',
-            'Value': '',
-            'MinValue': '1',
-            'MaxValue': '',
-            'Precision': '0',
-            "onChange": function () { }
-        });
+        var gridWidthTextBox = table2.cell(6, 2)
+            .numberTextBox({
+                ID: o.ID + '_gridwidth',
+                value: '',
+                MinValue: '1',
+                MaxValue: '',
+                Precision: '0'
+            });
 
         // Step 3 - Add Relationships
         var $div3 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.relationships.step);
@@ -284,13 +283,13 @@
                             }
                             var mode = currentViewJson.mode;
                             displayModeSpan.text(mode);
-                            gridWidthTextboxCell.$.CswNumberTextBox('setValue', o.ID + '_gridwidth', currentViewJson.width);
+                            gridWidthTextBox.val(currentViewJson.width);
                             if (mode === "Grid") {
                                 gridWidthLabelCell.show();
-                                gridWidthTextboxCell.show();
+                                gridWidthTextBox.show();
                             } else {
                                 gridWidthLabelCell.hide();
-                                gridWidthTextboxCell.hide();
+                                gridWidthTextBox.hide();
                             }
 
                             $nextWizard.CswWizard('button', 'next', 'enable');
@@ -347,7 +346,7 @@
             }
             var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
             currentViewJson.formobile = formobile;
-            currentViewJson.width = gridWidthTextboxCell.$.CswNumberTextBox('value', o.ID + '_gridwidth');
+            currentViewJson.width = gridWidthTextBox.val();
         }
 
         function _handlePrevious($wizard, newstepno) {
