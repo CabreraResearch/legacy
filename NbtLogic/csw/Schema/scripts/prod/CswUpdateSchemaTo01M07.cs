@@ -14,11 +14,11 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01M-06
+    /// Updates the schema to version 01M-07
     /// </summary>
-    public class CswUpdateSchemaTo01M06 : CswUpdateSchemaTo
+    public class CswUpdateSchemaTo01M07 : CswUpdateSchemaTo
     {
-        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 06 ); } }
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 07 ); } }
         public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
         public override void update()
@@ -125,6 +125,6 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-    }//class CswUpdateSchemaTo01M05
+    }//class CswUpdateSchemaTo01M07
 
 }//namespace ChemSW.Nbt.Schema
