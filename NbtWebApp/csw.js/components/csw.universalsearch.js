@@ -14,8 +14,10 @@
             align: 'right',
             onBeforeSearch: null,
             onAfterSearch: null,
+            onLoadView: null,
             maxheight: '600',
             searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
+            saveurl: '/NbtWebApp/wsNBT.asmx/saveSearchAsView',
             searchterm: '',
             filters: {}
         };
@@ -65,6 +67,10 @@
                     var fdiv, filtersdivid;
 
                     // Search results
+                    internal.$searchresults_parent
+                        .css({ paddingTop: '15px' })
+                        .append('<b>Search Results:</b>');
+
                     internal.$searchresults_parent.CswNodeTable({
                         ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
                         onEditNode: null,
@@ -83,6 +89,7 @@
                         ID: filtersdivid,
                         $parent: internal.$searchfilters_parent
                     }).css({
+                        paddingTop: '15px',
                         height: internal.maxheight + 'px',
                         overflow: 'auto'
                     });
@@ -90,6 +97,7 @@
                     fdiv.span({ text: 'Searched For: ' + internal.searchterm }).br();
 
                     // Filters in use
+                    var hasFilters = false;
                     function showFilter(thisFilter) {
                         fdiv.span({
                             //ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
@@ -105,9 +113,19 @@
                             }
                         });
                         fdiv.br();
+                        hasFilters = true;
                     }
                     Csw.each(internal.filters, showFilter);
 
+                    if (hasFilters) {
+                        fdiv.br();
+                        fdiv.button({
+                            ID: Csw.controls.dom.makeId(filtersdivid, '', "saveview"),
+                            enabledText: 'Save as View',
+                            disableOnClick: false,
+                            onClick: internal.saveAsView
+                        });
+                    }
                     fdiv.br();
                     fdiv.br();
 
@@ -151,6 +169,28 @@
             }
             internal.search();
         } // removeFilter()
+
+        internal.saveAsView = function () {
+            $.CswDialog('AddViewDialog', {
+                ID: Csw.controls.dom.makeId(internal.ID, '', 'addviewdialog'),
+                viewmode: 'table',
+                onAddView: function (newviewid, viewmode) {
+
+                    Csw.ajax.post({
+                        url: internal.saveurl,
+                        data: {
+                            ViewId: newviewid,
+                            SearchTerm: internal.searchterm,
+                            Filters: JSON.stringify(internal.filters)
+                        },
+                        success: function (data) {
+                            Csw.tryExec(internal.onLoadView, newviewid, viewmode);
+                        }
+                    }); // ajax  
+
+                } // onAddView()
+            }); // CswDialog
+        } // saveAsView()
 
         return external;
     };

@@ -513,7 +513,7 @@ namespace ChemSW.Nbt.MetaData
         public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             doSetFk setFk = _doSetFk;
-            getFieldTypeRule().setFk( setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            getFieldTypeRule().setFk( this, setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public string FKType

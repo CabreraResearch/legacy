@@ -73,7 +73,7 @@
                 cssclass: 'textinput'
             });
             var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
-            if (Csw.isNullOrEmpty(o.viewid)) {
+            if (Csw.isNullOrEmpty(o.viewmode)) {
                 table.cell(2, 1).text('Display Mode:');
                 $displaymodeselect.append('<option value="Grid">Grid</option>');
                 $displaymodeselect.append('<option value="List" selected>List</option>');
@@ -112,7 +112,7 @@
                         data: createData,
                         success: function (data) {
                             $div.dialog('close');
-                            o.onAddView(data.newviewid);
+                            Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
                         },
                         error: function () {
                             $savebtn.CswButton('enable');
