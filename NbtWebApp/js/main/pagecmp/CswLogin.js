@@ -46,7 +46,7 @@
                                             disabledText: 'Logging in...',
                                             width: '100px',
                                             onClick: function () {
-                                                loginMsg.empty();
+                                                loginMsg.hide().empty();
 
                                                 _handleLogin({
                                                     AccessId: inpAccessId.val(),
