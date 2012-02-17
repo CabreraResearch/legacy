@@ -19,24 +19,30 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActInspectionDesignWiz
     {
-        
-#       region ctor
+
+        #       region ctor
         CswNbtResources _CswNbtResources = null;
         private readonly ICswNbtUser _CurrentUser;
         private readonly TextInfo _TextInfo;
         private bool _IsSchemaUpdater = false;
+        private NbtViewVisibility _newViewVis;
+        private Int32 _VisId = Int32.MinValue;
 
-        public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources, bool isSchemaUpdater=false )
+        public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources, NbtViewVisibility newViewVis, ICswNbtUser newViewUser, bool isSchemaUpdater)
         {
             _CswNbtResources = CswNbtResources;
             _IsSchemaUpdater = isSchemaUpdater;
+            _newViewVis = newViewVis;
+            _CurrentUser = newViewUser;
 
-            if( false==_IsSchemaUpdater && _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
+            if( NbtViewVisibility.User == _newViewVis && null != _CurrentUser ) _VisId = _CurrentUser.UserId.PrimaryKey;
+            if( NbtViewVisibility.Role == _newViewVis && null != _CurrentUser ) _VisId = _CurrentUser.RoleId.PrimaryKey;
+
+            if( false == _IsSchemaUpdater && _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
             {
                 throw new CswDniException( ErrorType.Error, "Only the ChemSW Admin role can access the Inspection Design wizard.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
 
-            _CurrentUser = _CswNbtResources.CurrentNbtUser;
             CultureInfo Culture = Thread.CurrentThread.CurrentCulture;
             _TextInfo = Culture.TextInfo;
         }//ctor
@@ -324,7 +330,7 @@ namespace ChemSW.Nbt.Actions
             //Inspection Target has a tab to host a grid view of Inspections
             CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTab( RetInspectionTargetNt, InspectionDesignName, 2 );
             CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewProp( RetInspectionTargetNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionDesignName, ItInspectionsTab.TabId );
-            CswNbtView ItInspectionsGridView = _createInspectionsGridView( ItInspectionsNtp, InspectionDesignNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
+            CswNbtView ItInspectionsGridView = _createInspectionsGridView( ItInspectionsNtp, InspectionDesignNt, string.Empty, NbtViewRenderingMode.Grid, true, DateTime.MinValue, InspectionTargetName + " Grid Prop View" );
             ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
             ItInspectionsNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             #endregion Set new InspectionTarget Props and Tabs
@@ -341,7 +347,7 @@ namespace ChemSW.Nbt.Actions
             //Inspection Target Group has a tab to host a grid view of Inspection Targets
             CswNbtMetaDataNodeTypeTab ItgLocationsTab = _CswNbtResources.MetaData.makeNewTab( InspectionTargetGroupNt, InspectionTargetName + " Locations", 2 );
             CswNbtMetaDataNodeTypeProp ItgLocationsNtp = _CswNbtResources.MetaData.makeNewProp( InspectionTargetGroupNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, InspectionTargetName + " Locations", ItgLocationsTab.TabId );
-            CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsGridView( InspectionTargetGroupNt, RetInspectionTargetNt, string.Empty, NbtViewRenderingMode.Grid, NbtViewVisibility.Property, InspectionTargetName + " Grid Prop View" );
+            CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsGridView( InspectionTargetGroupNt, RetInspectionTargetNt, string.Empty, NbtViewRenderingMode.Grid, InspectionTargetName + " Grid Prop View" );
             ItgLocationsNtp.ViewId = ItgInspectionPointsGridView.ViewId;
             ItgLocationsNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             #endregion Set InspectionTargetGroup Props and Tabs
@@ -472,18 +478,24 @@ namespace ChemSW.Nbt.Actions
             CswNbtView RetView = null;
             string InspectionSchedulesViewName = "Scheduling, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionSchedulesViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
                 break;
             }
-
             if( null == RetView )
             {
                 try
                 {
                     RetView = new CswNbtView( _CswNbtResources );
-                    RetView.makeNew( InspectionSchedulesViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
+                    if( NbtViewVisibility.Global == _newViewVis )
+                    {
+                        RetView.makeNew( InspectionSchedulesViewName, _newViewVis, null, null, null );
+                    }
+                    else
+                    {
+                        RetView.makeNew( InspectionSchedulesViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
+                    }
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
 
@@ -523,7 +535,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtView RetView = null;
             string GroupAssignmentViewName = "Groups, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
 
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( GroupAssignmentViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
                 break;
@@ -534,7 +546,14 @@ namespace ChemSW.Nbt.Actions
                 try
                 {
                     RetView = new CswNbtView( _CswNbtResources );
-                    RetView.makeNew( GroupAssignmentViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
+                    if( NbtViewVisibility.Global == _newViewVis )
+                    {
+                        RetView.makeNew( GroupAssignmentViewName, _newViewVis, null, null, null );
+                    }
+                    else
+                    {
+                        RetView.makeNew( GroupAssignmentViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
+                    }
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
 
@@ -561,7 +580,7 @@ namespace ChemSW.Nbt.Actions
         }
 
         private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeTypeProp InspectionsGridProp, CswNbtMetaDataNodeType InspectionDesignNt, string Category, NbtViewRenderingMode ViewMode,
-            NbtViewVisibility Visibility, bool AllInspections, DateTime DueDate, string InspectionsViewName )
+             bool AllInspections, DateTime DueDate, string InspectionsViewName )
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
             if( string.IsNullOrEmpty( InspectionsViewName ) )
@@ -572,13 +591,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtView RetView = new CswNbtView( _CswNbtResources );
             try
             {
-                CswPrimaryKey RoleId = null;
-                if( NbtViewVisibility.Role == Visibility )
-                {
-                    RoleId = _CurrentUser.RoleId;
-                }
-
-                RetView.makeNew( InspectionsViewName, Visibility, RoleId, null, null );
+                RetView.makeNew( InspectionsViewName, NbtViewVisibility.Property, null, null, null );
                 RetView.ViewMode = ViewMode;
                 RetView.Category = Category;
 
@@ -619,8 +632,7 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtView RetView = null;
             string InspectionTargetViewName = "Inspections, " + InspectionDesignNt.NodeTypeName + ": " + InspectionTargetNt.NodeTypeName;
-
-            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, NbtViewVisibility.Role, _CurrentUser.RoleId.PrimaryKey ) )
+            foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetViewName, _newViewVis, _VisId ) )
             {
                 RetView = SchedulingView;
                 break;
@@ -631,7 +643,15 @@ namespace ChemSW.Nbt.Actions
                 try
                 {
                     RetView = new CswNbtView( _CswNbtResources );
-                    RetView.makeNew( InspectionTargetViewName, NbtViewVisibility.Role, _CurrentUser.RoleId, null, null );
+                    if( NbtViewVisibility.Global == _newViewVis )
+                    {
+                        RetView.makeNew( InspectionTargetViewName, _newViewVis, null, null, null );
+                    }
+                    else
+                    {
+                        RetView.makeNew( InspectionTargetViewName, _newViewVis, _CurrentUser.RoleId, _CurrentUser.UserId, null );
+                    }
+
                     RetView.ViewMode = NbtViewRenderingMode.Tree;
                     RetView.Category = Category;
 
@@ -655,20 +675,15 @@ namespace ChemSW.Nbt.Actions
             return RetView;
         }
 
-        private CswNbtView _createAllInspectionPointsGridView( CswNbtMetaDataNodeType InspectionGroupNt, CswNbtMetaDataNodeType InspectionTargetNt, string Category, NbtViewRenderingMode ViewMode, NbtViewVisibility Visibility, string AllInspectionPointsViewName )
+        private CswNbtView _createAllInspectionPointsGridView( CswNbtMetaDataNodeType InspectionGroupNt, CswNbtMetaDataNodeType InspectionTargetNt, string Category, NbtViewRenderingMode ViewMode,
+             string AllInspectionPointsViewName )
         {
             _validateNodeType( InspectionTargetNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
             CswNbtView RetView = new CswNbtView( _CswNbtResources );
 
             try
             {
-                CswPrimaryKey RoleId = null;
-                if( NbtViewVisibility.Role == Visibility )
-                {
-                    RoleId = _CurrentUser.RoleId;
-                }
-
-                RetView.makeNew( AllInspectionPointsViewName, Visibility, RoleId, null, null );
+                RetView.makeNew( AllInspectionPointsViewName, NbtViewVisibility.Property, null, null, null );
                 RetView.Category = Category;
                 RetView.ViewMode = ViewMode;
 
@@ -785,7 +800,7 @@ namespace ChemSW.Nbt.Actions
         public Int32 GroupNtId { get { return ( _GroupNtId ); } }
 
 
-        public DataTable prepareDataTable(DataTable UploadDataTable)
+        public DataTable prepareDataTable( DataTable UploadDataTable )
         {
             DataTable RetDataTable = new DataTable();
             try
@@ -839,7 +854,7 @@ namespace ChemSW.Nbt.Actions
                 _CswNbtResources.CswLogger.reportError( Exception );
             }
 
-            return( RetDataTable );
+            return ( RetDataTable );
         }
 
         public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
@@ -854,21 +869,21 @@ namespace ChemSW.Nbt.Actions
 
             return RetObj;
         }
-        
+
         public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionDesignName, string InspectionTargetName, string Category )
         {
             JArray GridArray = JArray.Parse( GridArrayString );
-            return( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
+            return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
         }
 
         public JObject createInspectionDesignTabsAndProps( DataTable TheQuestions, string InspectionDesignName, string InspectionTargetName, string Category )
         {
 
-            JObject GridObj = CswConvert.DataTableToJSON( prepareDataTable( TheQuestions ));
+            JObject GridObj = CswConvert.DataTableToJSON( prepareDataTable( TheQuestions ) );
             JArray GridArray = (JArray) GridObj["data"];
-            return( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
+            return ( _createInspectionDesignTabsAndProps( GridArray, InspectionDesignName, InspectionTargetName, Category ) );
         }
-        
+
         private JObject _createInspectionDesignTabsAndProps( JArray GridArray, string InspectionDesignName, string InspectionTargetName, string Category )
         {
             CswCommaDelimitedString GridRowsSkipped = new CswCommaDelimitedString();
@@ -906,7 +921,7 @@ namespace ChemSW.Nbt.Actions
             RetObj["totalrows"] = TotalRows.ToString();
             RetObj["rownumbersskipped"] = new JArray( GridRowsSkipped.ToString() );
             RetObj["countsucceeded"] = PropsWithoutError.ToString();
-            
+
             return ( RetObj );
         }
 

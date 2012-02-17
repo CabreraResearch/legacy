@@ -656,6 +656,7 @@ namespace ChemSW.Nbt.MetaData
             TabsTable.Rows.Add( Row );
             Row["firsttabversionid"] = Row["nodetypetabsetid"];
             _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( TabsTable );
+            this.refreshAll();
 
             // Keep MetaData up to date
             //CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( Row ) as CswNbtMetaDataNodeTypeTab;

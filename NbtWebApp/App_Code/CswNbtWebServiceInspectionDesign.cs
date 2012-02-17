@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.WebServices
                 DataAdapter.Fill( UploadDataTable );
 
                 //we have finished deserializing the XLS file by now...
-                CswNbtActInspectionDesignWiz wiz = new CswNbtActInspectionDesignWiz( _CswNbtResources );
+                CswNbtActInspectionDesignWiz wiz = new CswNbtActInspectionDesignWiz( _CswNbtResources,NbtViewVisibility.Role,_CswNbtResources.CurrentNbtUser,false );
                 RetDataTable =  wiz.prepareDataTable( UploadDataTable );
 
             } // try
@@ -98,13 +98,13 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
         {
-            CswNbtActInspectionDesignWiz wiz = new CswNbtActInspectionDesignWiz( _CswNbtResources );
+            CswNbtActInspectionDesignWiz wiz = new CswNbtActInspectionDesignWiz( _CswNbtResources,NbtViewVisibility.Role, _CswNbtResources.CurrentNbtUser,false );
             return( wiz.recycleInspectionDesign(InspectionDesignName,InspectionTargetName,Category) );
         }
 
         public JObject createInspectionDesignTabsAndProps( string GridArrayString, string InspectionDesignName, string InspectionTargetName, string Category )
         {
-            CswNbtActInspectionDesignWiz wiz = new CswNbtActInspectionDesignWiz( _CswNbtResources );
+            CswNbtActInspectionDesignWiz wiz = new CswNbtActInspectionDesignWiz( _CswNbtResources,NbtViewVisibility.Role, _CswNbtResources.CurrentNbtUser,false );
             return ( wiz.createInspectionDesignTabsAndProps( GridArrayString, InspectionDesignName, InspectionTargetName, Category ) );
 
         }
