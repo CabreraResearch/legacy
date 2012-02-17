@@ -9,9 +9,10 @@
     function multiSelect(options) {
 
         var internal = {
-            cswParent: {},
+            $parent: '',
             ID: '',
-            values: [], /* [{ value: '', text: '', selected: '', disabled: ''}], */
+            values: [], 
+            multiple: true,
             cssclass: '',
             isMultiEdit: false,
             onChange: null //function () {}
@@ -24,15 +25,13 @@
             if (options) {
                 $.extend(internal, options);
             }
-            
-            var elementId = Csw.string(internal.ID),
-                select = internal.cswParent.select({ multiple: true, ID: elementId }),
-                optionCount = 0,
-                isMultiEdit = Csw.bool(internal.isMultiEdit);
 
-            if (false === Csw.isNullOrEmpty(internal.cssclass)) {
-                select.addClass(internal.cssclass);
-            }
+            var optionCount = 0,
+                isMultiEdit = Csw.bool(internal.isMultiEdit),
+                values = internal.values;
+            delete internal.values;
+            
+            $.extend(external, Csw.controls.select(internal));
 
             if (Csw.isFunction(internal.onChange)) {
                 select.bind('change', function () {
@@ -40,28 +39,27 @@
                 });
             }
 
-            Csw.each(internal.values, function (opt) {
-                var value = Csw.string(opt.value),
+            Csw.each(values, function (opt) {
+                var value = Csw.string(opt.value, opt.text),
                     text = Csw.string(opt.text, value),
                     isSelected;
                 if (false === Csw.isNullOrEmpty(value)) {
-                    isSelected = (Csw.bool(opt.selected) &&
-                        false === isMultiEdit);
-                    select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
+                    isSelected = (Csw.bool(opt.selected) && false === isMultiEdit);
+                    external.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
                     optionCount += 1;
                 }
             });
 
             if (optionCount > 20) {
-                select.$.multiselect().multiselectfilter();
+                external.$.multiselect().multiselectfilter();
             } else {
-                select.$.multiselect();
+                external.$.multiselect();
             }
         } ());
 
         external.val = function () {
             //In IE an empty array is frequently !== [], rather === null
-                values = $select.val() || [],
+            var values = external.$.val() || [],
                 valArray = values.sort();
             return valArray.join(',');
         };

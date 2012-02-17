@@ -227,6 +227,14 @@
             return Csw.controls.link(opts);
         };
 
+        external.multiSelect = function (opts) {
+            /// <summary> Creates a Csw.multiSelect on this element</summary>
+            /// <param name="opts" type="Object">Options to define the multiSelect.</param>
+            /// <returns type="Object">A Csw.multiSelect</returns>
+            opts = internal.prepControl(opts, 'multiSelect');
+            return Csw.controls.multiSelect(opts);
+        };
+
         external.numberTextBox = function (opts) {
             /// <summary> Creates a Csw.numberTextBox on this element</summary>
             /// <param name="opts" type="Object">Options to define the numberTextBox.</param>
