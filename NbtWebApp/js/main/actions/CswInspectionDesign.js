@@ -297,7 +297,7 @@
                         //2. New Inspection Design Name
                         $newDesignLabel = inspectionTable.cell(3, 1)
                                                          .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                                                         .span({ class: 'required', text: 'New Inspection Design Name&nbsp' });
+                                                         .span({ cssclass: 'required', text: 'New Inspection Design Name&nbsp' });
 
                         newDesignName = inspectionTable.cell(3, 2);
                         newDesignName.$.css({ 'padding': '1px', 'vertical-align': 'middle' })
