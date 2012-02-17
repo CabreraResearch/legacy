@@ -270,34 +270,30 @@
                 width: '100%'
             });
 
-            var cell11 = table.cell(1, 1).text('Configure:<br/>');
+            var cell11 = table.cell(1, 1).append('Configure:<br/>');
             var cell12 = table.cell(1, 2);
 
-            var $layoutSelect = cell11.$.CswSelect('init', {
+            var layoutSelect = cell11.select({
                 ID: 'EditLayoutDialog_layoutselect',
                 selected: 'Edit',
-                values: [{ value: 'Add', display: 'Add' },
-                         { value: 'Edit', display: 'Edit' },
-                         { value: 'Preview', display: 'Preview' },
-                         { value: 'Table', display: 'Table' }
-                        ],
+                values: ['Add', 'Edit', 'Preview', 'Table'],
                 onChange: function () {
                     cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
                     _resetLayout();
                 }
             });
 
-            cell11.append('<br/><br/>Add:<br/>');
-            var $addSelect = cell11.$.CswSelect('init', {
+            cell11.br({number: 2}).append('Add:').br();
+            var addSelect = cell11.select({
                 ID: 'EditLayoutDialog_addselect',
                 selected: '',
                 values: [],
                 onChange: function () {
 
                     var ajaxdata = {
-                        PropId: Csw.string($addSelect.val()),
+                        PropId: Csw.string(addSelect.val()),
                         TabId: Csw.string(cswNodeTabOptions.tabid),
-                        LayoutType: $layoutSelect.val()
+                        LayoutType: layoutSelect.val()
                     };
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
@@ -321,7 +317,7 @@
                     NodeKey: Csw.string(cswNodeTabOptions.nodekeys[0]),
                     NodeTypeId: Csw.string(cswNodeTabOptions.nodetypeid),
                     TabId: Csw.string(cswNodeTabOptions.tabid),
-                    LayoutType: $layoutSelect.val()
+                    LayoutType: layoutSelect.val()
                 };
                 Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',
@@ -336,7 +332,7 @@
                                 });
                             }
                         }
-                        $addSelect.CswSelect('setoptions', propOpts, '', true);
+                        addSelect.setOptions(propOpts, '', true);
                     } // success
                 });  // Csw.ajax
             } // _configAddOptions()

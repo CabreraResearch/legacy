@@ -568,12 +568,11 @@
                 row += 1;
 
                 subTable.cell(row, 1).text('Group By');
-                var $groupbyselect = subTable.cell(row, 2)
-                                            .$.CswSelect('init',
-                                                { ID: o.ID + '_gbs',
+                var groupBySelect = subTable.cell(row, 2)
+                                            .select({ ID: o.ID + '_gbs',
                                                     onChange: function () {
-                                                        var $selected = $groupbyselect.find(':selected');
-                                                        var selval = $selected.val();
+                                                        var selected = groupBySelect.find(':selected');
+                                                        var selval = selected.val();
                                                         var propData;
 
                                                         if (false === Csw.isNullOrEmpty(selval)) {
@@ -582,7 +581,7 @@
                                                                 viewnodejson.groupbyproptype = '';
                                                                 viewnodejson.groupbypropname = '';
                                                             } else {
-                                                                propData = $selected.data('thisPropData');
+                                                                propData = selected.data('thisPropData');
                                                                 viewnodejson.groupbypropid = Csw.string(propData.propid);
                                                                 viewnodejson.groupbyproptype = Csw.string(propData.proptype);
                                                                 viewnodejson.groupbypropname = Csw.string(propData.propname);
@@ -600,7 +599,7 @@
                     url: o.PropNamesUrl,
                     data: jsonData,
                     success: function (data) {
-                        $groupbyselect.empty();
+                        groupBySelect.empty();
                         var groupOpts = [{ value: 'none', display: '[None]'}];
                         var groupSel = 'none';
                         for (var propKey in data) {
@@ -618,7 +617,7 @@
                                 }
                             }
                         } // each
-                        $groupbyselect.CswSelect('setoptions', groupOpts, groupSel);
+                        groupBySelect.setoptions(groupOpts, groupSel);
                     } // success
                 }); // ajax
 
