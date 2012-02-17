@@ -57,7 +57,7 @@
 
                 cell1.$.click(handleClick);
 
-                cell2.$.CswImageButton({ 'ButtonType': Csw.enums.imageButton_ButtonType.Select,
+                cell2.imageButton({ 'ButtonType': Csw.enums.imageButton_ButtonType.Select,
                     'ID': o.ID + '_top_img',
                     'AlternateText': '',
                     'onClick': handleClick

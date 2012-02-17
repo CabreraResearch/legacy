@@ -70,23 +70,23 @@
 
         function modAdvanced(modOptions) {
             var a = {
-                '$link': '',
+                'link': '',
                 'advancedIsHidden': false
             };
             if (modOptions) $.extend(a, modOptions);
 
-            if ('Advanced' === a.$link.text() || (a.advancedIsHidden)) {
+            if ('Advanced' === a.link.text() || (a.advancedIsHidden)) {
                 $('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name).each(function () { $(this).show(); });
                 $('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name).each(function () { $(this).show(); });
                 $('.' + Csw.enums.cssClasses_ViewBuilder.default_filter.name).each(function () { $(this).hide(); });
-                a.$link.text('Simple');
+                a.link.text('Simple');
                 a.advancedIsHidden = false;
             }
-            else if ('Simple' === a.$link.text() || (!a.advancedIsHidden)) {
+            else if ('Simple' === a.link.text() || (!a.advancedIsHidden)) {
                 $('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name).each(function () { $(this).hide(); });
                 $('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name).each(function () { $(this).hide(); });
                 $('.' + Csw.enums.cssClasses_ViewBuilder.default_filter.name).each(function () { $(this).show(); });
-                a.$link.text('Advanced');
+                a.link.text('Advanced');
                 a.advancedIsHidden = true;
             }
             return a.advancedIsHidden;
@@ -314,13 +314,13 @@
 
             //Row i, Column 1 (1/2): advanced link
             var advancedLinkCell = clearPositionTable.cell(cellRow, advancedCellNumber);
-            var $advancedLink = advancedLinkCell.$.CswLink('init', {
+            var advancedLink = advancedLinkCell.link({
                 ID: Csw.controls.dom.makeId(o.ID, 'advanced_options'),
                 href: 'javascript:void(0)',
                 value: (o.advancedIsHidden) ? 'Advanced' : 'Simple'
             })
                                                     .click(function () {
-                                                        o.advancedIsHidden = modAdvanced({ '$link': $advancedLink, advancedIsHidden: o.advancedIsHidden });
+                                                        o.advancedIsHidden = modAdvanced({ 'link': advancedLink, advancedIsHidden: o.advancedIsHidden });
                                                         return false;
                                                     });
 

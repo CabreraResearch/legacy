@@ -359,7 +359,7 @@
 
                 $filter = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name);
                 filterText = $filter.find(':selected').val();
-                nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;
+                nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Csw.Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;
                 if (Csw.isNullOrEmpty(nodetypeorobjectclassid)) {
                     nodetypeorobjectclassid = Csw.string(o.nodetypeorobjectclassid);
                 }

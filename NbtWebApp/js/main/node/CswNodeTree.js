@@ -1,28 +1,28 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
 
     var pluginName = 'CswNodeTree';
 
     var methods = {
         'init': function (options) {
-        
-            function expandAll() {
-                $treediv.jstree('open_all', rootnode);
 
-                $togglelink.text('Collapse All')
+            function expandAll() {
+                treeDiv.jstree('open_all', rootnode);
+
+                toggleLink.text('Collapse All')
                            .unbind('click')
                            .click(collapseAll);
             }
             function collapseAll() {
-                $treediv.jstree('close_all', rootnode);
+                treeDiv.jstree('close_all', rootnode);
 
                 // show first level
-                $treediv.jstree('open_node', rootnode);
+                treeDiv.jstree('open_node', rootnode);
 
-                $togglelink.text('Expand All')
+                toggleLink.text('Expand All')
                            .unbind('click')
                            .click(expandAll);
             }
@@ -62,24 +62,24 @@
             }
 
             var idPrefix = o.ID + '_';
-            var $this = $(this);
+            var $parent = $(this);
+            var parent = Csw.controls.factory($parent);
 
-            var $togglelink;
+            var toggleLink;
             if (o.ShowToggleLink) {
-                $togglelink = $this.CswLink({
+                toggleLink = parent.link({
                     ID: o.ID + '_toggle',
                     value: 'Expand All',
                     onClick: function () { expandAll(); return false; }
                 });
-                $togglelink.hide();
+                toggleLink.hide();
             }
 
-            var $treediv = $('<div id="' + idPrefix + '" />')
-                                .appendTo($this);
+            var treeDiv = parent.div({ID: idPrefix});
             if (o.UseScrollbars) {
-                $treediv.addClass('treediv');
+                treeDiv.addClass('treediv');
             } else {
-                $treediv.addClass('treediv_noscroll');
+                treeDiv.addClass('treediv_noscroll');
             }
 
             var url = o.RunTreeUrl;
@@ -125,7 +125,7 @@
                         treeThemes = { "dots": false };
                     }
 
-                    $treediv.jstree({
+                    treeDiv.$.jstree({
                         "json_data": {
                             "data": data.root
                         },
@@ -146,12 +146,12 @@
                         "plugins": treePlugins
                     }); // jstree()
 
-                    $treediv.bind('select_node.jstree', function (e, newData) {
+                    treeDiv.bind('select_node.jstree', function (e, newData) {
                         return firstSelectNode({
                             e: e,
                             data: newData,
                             url: url,
-                            $treediv: $treediv,
+                            $treediv: treeDiv.$,
                             IdPrefix: idPrefix,
                             onSelectNode: o.onSelectNode,
                             onInitialSelectNode: o.onInitialSelectNode,
@@ -168,17 +168,17 @@
                         Csw.nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
 
                     }).bind('dehover_node.jstree', function () {
-                        Csw.jsTreeGetSelected($treediv);
+                        Csw.jsTreeGetSelected(treeDiv.$);
                         Csw.nodeHoverOut();
                     });
 
-                    $treediv.jstree('select_node', Csw.controls.dom.tryParseElement(data.selectid));
+                    treeDiv.$.jstree('select_node', Csw.controls.dom.tryParseElement(data.selectid));
                     //setTimeout(function () { Csw.log('select: #' + data.selectid);  }, 1000);
-                    rootnode = $treediv.find('li').first();
+                    rootnode = treeDiv.find('li').first();
 
                     if (Csw.bool(o.ShowCheckboxes)) {
 
-                        $treediv.find('li').each(function () {
+                        treeDiv.$.find('li').each(function () {
                             var $childObj = $(this);
                             var thisid = Csw.string($childObj.CswAttrDom('id'));
                             var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
@@ -187,15 +187,15 @@
                             var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
                             $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>')
                                 .prependTo($childObj)
-                                .click(function () { return handleCheck($treediv, $(this)); });
+                                .click(function () { return handleCheck(treeDiv.$, $(this)); });
 
                         });
 
 
                     }
 
-                    if (o.ShowToggleLink && $togglelink) {
-                        $togglelink.show();
+                    if (o.ShowToggleLink && toggleLink) {
+                        toggleLink.show();
                     }
                     // DO NOT define an onSuccess() function here that interacts with the tree.
                     // The tree has initalization events that appear to happen asynchronously,
@@ -214,7 +214,7 @@
                 } // success
             }); // ajax
 
-            return $treediv;
+            return treeDiv;
         },
 
         'selectNode': function (optSelect) {
