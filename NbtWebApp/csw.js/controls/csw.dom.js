@@ -219,6 +219,10 @@
                 }
             };
 
+            _external.set = function (stylesObj) {
+                _internal.styles = stylesObj;
+            };
+
             _external.get = function () {
                 var htmlStyle = '', ret = '';
 

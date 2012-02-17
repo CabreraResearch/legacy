@@ -14,33 +14,33 @@
         if (options) $.extend(o, options);
 
         var $parentdiv = $(this);
-        $parentdiv.show();
+        var parent = Csw.controls.factory($parentdiv);
+        parent.show();
 
         var date = new Date();
         var id = "error_" + date.getTime();
 
-        var $errordiv = $('<div />')
-                        .appendTo($parentdiv)
-                        .CswAttrDom('id', id)
-                        .addClass('CswErrorMessage_Message');
+        var errorDiv = parent.div({
+            ID: id,
+            cssclass: 'CswErrorMessage_Message'
+        });
+        
         if (o.type.toLowerCase() === "warning") {
-            $errordiv.addClass('CswErrorMessage_Warning');
+            errorDiv.addClass('CswErrorMessage_Warning');
         } else {
-            $errordiv.addClass('CswErrorMessage_Error');
+            errorDiv.addClass('CswErrorMessage_Error');
         }
 
-        var table = Csw.controls.table({
-            $parent: $errordiv,
+        var table = errorDiv.table({
             ID: Csw.controls.dom.makeId(id, 'tbl'),
             width: '100%'
         });
-        table.propDom('width', '100%');
 
         var cell21 = table.cell(2, 1);
-        cell21.text(o.detail);         // using append() on error messages can send the browser into an infinite loop!
+        cell21.append(o.detail);         // using append() on error messages can send the browser into an infinite loop!
         cell21.hide();
 
-        table.cell(1,1).link({
+        table.cell(1, 1).link({
             ID: Csw.controls.dom.makeId({ ID: id, suffix: 'cell' }),
             text: o.message,
             onClick: function () { cell21.$.toggle(); }
@@ -48,12 +48,12 @@
         var cell12 = table.cell(1, 2);
 
 
-        cell12.$.CswImageButton({
+        cell12.imageButton({
             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
             AlternateText: 'Hide',
-            ID: Csw.controls.dom.makeId({ 'prefix': id, 'id': 'hidebtn' }),
+            ID: Csw.controls.dom.makeId(id, 'hidebtn'),
             onClick: function () {
-                $errordiv.remove();
+                errorDiv.remove();
                 if ($parentdiv.children().length === 0)
                     $parentdiv.hide();
                 return Csw.enums.imageButton_ButtonType.None;
@@ -61,11 +61,11 @@
         });
         $('html, body').animate({ scrollTop: 0 }, 0);
         //case 23675
-        var $dialog = $(this).parent();
-        if ($dialog.hasClass('ui-dialog-content')) {
-            $dialog.animate({ scrollTop: 0 }, 0);
+        var dialog = parent.parent();
+        if (dialog.$.hasClass('ui-dialog-content')) {
+            dialog.$.animate({ scrollTop: 0 }, 0);
         }
-        return $errordiv;
+        return errorDiv;
 
     }; // function (options) {
 })(jQuery);

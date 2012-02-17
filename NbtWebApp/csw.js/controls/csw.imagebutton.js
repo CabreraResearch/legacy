@@ -6,6 +6,7 @@
 
     function imageButton(options) {
         var internal = {
+            $parent: '',
             ButtonType: Csw.enums.imageButton_ButtonType.None,
             Active: false,
             AlternateText: '',
@@ -29,10 +30,10 @@
             prefix += '/NbtWebApp';
             if (newButtonType !== undefined && newButtonType !== Csw.enums.imageButton_ButtonType.None) {
                 external.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') 0px ' + newButtonType * multiplier + 'px no-repeat';
-                external.$.unbind('mouseover');
-                external.$.unbind('mouseout');
-                external.$.unbind('mousedown');
-                external.$.unbind('mouseup');
+                external.unbind('mouseover');
+                external.unbind('mouseout');
+                external.unbind('mousedown');
+                external.unbind('mouseup');
                 external.bind('mouseover', function () {
                     external.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                 });
@@ -49,25 +50,11 @@
             return false;
         };
 
-        //        external.reBindClick = function (newButtonType, id, onClickEvent) {
-        //            var $this = $(this);
-        //            if (Csw.isNullOrEmpty($this, true)) {
-        //                $this = $('#' + id);
-        //            }
-        //            if (false === Csw.isNullOrEmpty($this, true)) {
-        //                $this.click(function () {
-        //                    if (Csw.isFunction(onClickEvent)) {
-        //                        onClickEvent();
-        //                    }
-        //                    return setButton(newButtonType, $this);
-        //                });
-        //            }
-        //        };
         external.click = function (newButtonType, func) {
             if (Csw.isFunction(func)) {
                 return external.bind('click', func);
             } else {
-                return setButton(newButtonType);
+                return internal.setButton(newButtonType);
             }
         };
 
@@ -75,9 +62,7 @@
             if (options) {
                 $.extend(internal, options);
             }
-            var btnType = internal.onClick();
 
-            //$Div.contents().remove();
             //using 'title' instead of 'alt' does make the alternate text appear in Chrome, 
             //but it also screws up clicking.
 
@@ -86,10 +71,9 @@
             external.propNonDom('alt', internal.AlternateText);
             external.css('display', 'inline-block');
 
-
-            setButton(internal.ButtonType);
-            external.click(btnType, function () {
-                return setButton(btnType);
+            internal.setButton(internal.ButtonType);
+            external.bind('click', function () {
+                return internal.setButton();
             });
         } ());
 

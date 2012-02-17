@@ -30,12 +30,12 @@
                 row = 1;
 
                 // Header row
-                table.add(row, 1, '<b>End</b>');
-                table.add(row, 2, '<b>Username</b>');
-                table.add(row, 3, '<b>Login Date</b>');
-                table.add(row, 4, '<b>Timeout Date</b>');
-                table.add(row, 5, '<b>Access ID</b>');
-                table.add(row, 6, '<b>Session ID</b>');
+                table.cell(row, 1).text('<b>End</b>');
+                table.cell(row, 2).text('<b>Username</b>');
+                table.cell(row, 3).text('<b>Login Date</b>');
+                table.cell(row, 4).text('<b>Timeout Date</b>');
+                table.cell(row, 5).text('<b>Access ID</b>');
+                table.cell(row, 6).text('<b>Session ID</b>');
                 row += 1;
 
                 // Sessions table
@@ -56,11 +56,11 @@
                             if (childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
                                 cell2name += "&nbsp;(you)";
                             } 
-                            table.add(row, 2, cell2name);
-                            table.add(row, 3, childObj.logindate);
-                            table.add(row, 4, childObj.timeoutdate);
-                            table.add(row, 5, childObj.accessid);
-                            table.add(row, 6, childObj.sessionid);
+                            table.cell(row, 2).text(cell2name);
+                            table.cell(row, 3).text(childObj.logindate);
+                            table.cell(row, 4).text(childObj.timeoutdate);
+                            table.cell(row, 5).text(childObj.accessid);
+                            table.cell(row, 6).text(childObj.sessionid);
 
                             row += 1;
                         }, false); // Csw.crawlObject()

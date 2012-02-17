@@ -145,27 +145,59 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
 
-                CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
+                //CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
+                CswNbtView CswNbtView = this.NodeType.CreateDefaultView();
                 CswNbtView.ViewName = "For compound unique";
 
-                CswNbtViewRelationship ViewRel = null;
+                CswNbtViewRelationship ViewRelationship = null; 
 
                 foreach( CswNbtNodePropWrapper CurrentCompoundUniuqeProp in CompoundUniqueProps )
                 {
+                    if( null == ViewRelationship )
+                    {
+                        ViewRelationship = CswNbtView.Root.ChildRelationships[0];
+                        if( CurrentCompoundUniuqeProp.NodeTypeProp.IsGlobalUnique() )  // BZ 9754
+                        {
+                            CswNbtView.Root.ChildRelationships.Clear(); 
+                            ViewRelationship = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( CurrentCompoundUniuqeProp.NodeTypeProp.NodeTypeId ), false );
+                        }
 
+                        if( NodeId != null )
+                        {
+                            ViewRelationship.NodeIdsToFilterOut.Add( NodeId );
+                        }
+                    }
+
+
+                    CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniuqeProp.NodeTypeProp );
+
+                    //CswNbtViewPropertyFilter CswNbtViewPropertyFilter = CswNbtView.AddViewPropertyFilter( CswNbtViewProperty, CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, , );
+                    CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniuqeProp );
+
+
+
+                    /*
                     if( CurrentCompoundUniuqeProp.NodeTypeProp.IsGlobalUnique() )  // BZ 9754
-                        ViewRel = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( CurrentCompoundUniuqeProp.NodeTypeProp.NodeTypeId ), false );
+                    {
+                        ViewRelationship = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( CurrentCompoundUniuqeProp.NodeTypeProp.NodeTypeId ), false );
+                    }
                     else
-                        ViewRel = CswNbtView.AddViewRelationship( CurrentCompoundUniuqeProp.NodeTypeProp.getNodeType(), false );
+                    {
+                        ViewRelationship = CswNbtView.AddViewRelationship( CurrentCompoundUniuqeProp.NodeTypeProp.getNodeType(), false );
+                    }
+
 
                     if( NodeId != null )
-                        ViewRel.NodeIdsToFilterOut.Add( NodeId );
+                    {
+                        ViewRelationship.NodeIdsToFilterOut.Add( NodeId );
+                    }
 
                     //bz# 5959
-                    CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, CurrentCompoundUniuqeProp.NodeTypeProp );
+                    CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniuqeProp.NodeTypeProp );
 
                     // BZ 10099
                     CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, CurrentCompoundUniuqeProp );
+                     */
                 }
 
                 ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
@@ -186,7 +218,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
 
                         string ExotericMessage = "The following properties must have unique values:  " + CompoundUniquePropNames.ToString();
-                        string EsotericMessage = "The " + CompoundUniquePropNames.ToString() + " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString(); 
+                        string EsotericMessage = "The " + CompoundUniquePropNames.ToString() + " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
 
                         throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
                     }

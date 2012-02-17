@@ -31,10 +31,10 @@
                 row = 1;
 
                 // Header row
-                table.add(row, 1, '<b>Object Class</b>');
-                table.add(row, 2, '<b>Node Types</b>');
-                table.add(row, 3, '<b>Current Usage</b>');
-                table.add(row, 4, '<b>Quota</b>');
+                table.cell(row, 1).text('<b>Object Class</b>');
+                table.cell(row, 2).text('<b>Node Types</b>');
+                table.cell(row, 3).text('<b>Current Usage</b>');
+                table.cell(row, 4).text('<b>Quota</b>');
                 row += 1;
 
                 // Quota table
@@ -75,9 +75,9 @@
             function makeQuotaRow(row, canedit, id, objectclass, nodetype, currentusage, quota) {
                 // one object class row                                
                 var cell4;
-                table.add(row, 1, objectclass);
-                table.add(row, 2, nodetype);
-                table.add(row, 3, currentusage);
+                table.cell(row, 1).text(objectclass);
+                table.cell(row, 2).text(nodetype);
+                table.cell(row, 3).text(currentusage);
                 
                 if(canedit) {
                     cell4 = table.cell(row, 4);
@@ -89,7 +89,7 @@
                         width: '50px'
                     });
                 } else {
-                    table.add(row, 4, quota);
+                    table.cell(row, 4).text(quota);
                 }
             } // makeQuotaRow()
 

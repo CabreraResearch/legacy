@@ -119,14 +119,13 @@
                 $parent: $newTopContent,
                 ID: x.ID + 'selectedtbl' 
         });
-        var $icondiv = $('<div />');
-        table.add(1, 1, $icondiv);
+        var iconDiv = table.cell(1, 1).div();
         
-        $icondiv.css('background-image', x.iconurl);
-        $icondiv.css('width', '16px');
-        $icondiv.css('height' ,'16px');
+        iconDiv.css('background-image', x.iconurl);
+        iconDiv.css('width', '16px');
+        iconDiv.css('height' ,'16px');
 
-        table.add(1, 2, x.viewname.substr(0,30));
+        table.cell(1, 2).text(x.viewname.substr(0,30));
 
         x.$selectdiv.CswComboBox( 'TopContent', $newTopContent );
         x.$selectdiv.CswAttrNonDom('selectedType', x.type);

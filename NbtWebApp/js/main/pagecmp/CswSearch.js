@@ -101,9 +101,10 @@
 
             while (andRow <= o.propsCount) { //eventually this will be configurable: and/or, or, and/not, etc
                 //Row i, Column 1: and
-                o.searchTable.add(andRow, 1, '<span>&nbsp;and&nbsp;</span>')
-                               .propDom({ align: 'right' })
-                               .css({ 'text-align': 'right' });
+                o.searchTable.cell(andRow, 1)
+                    .propDom({align: 'right'})
+                    .css({'text-align': 'right'})
+                    .span({text: '&nbsp;and&nbsp;'});
 
                 andRow += 1;
             }
@@ -112,7 +113,8 @@
                 if (Csw.contains(properties, prop)) {
                     thisProp = properties[prop];
                     nodeTypeId = Csw.controls.dom.makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
-                    o.searchTable.add(propRow, 2, '<span id="' + nodeTypeId + '" class="' + Csw.enums.cssClasses_ViewBuilder.metadatatype_static.name + '">' + thisProp.metadatatypename + '</span>')
+                    o.searchTable.cell(propRow, 2)
+                        .span({ ID: nodeTypeId, cssclass: Csw.enums.cssClasses_ViewBuilder.metadatatype_static.name,  text: thisProp.metadatatypename })
                         .propNonDom('relatedidtype', thisProp.relatedidtype);
                     o.selectedSubfieldVal = '';
                     o.selectedFilterVal = '';
@@ -197,7 +199,7 @@
             if (false === Csw.isNullOrEmpty(o.nodetypeorobjectclassid)) {
                 o.$nodeTypesSelect.find('option[id="' + o.optionId + '"]').CswAttrDom('selected', true);
             }
-            o.searchTable.add(2, 2, o.$nodeTypesSelect); //1
+            o.searchTable.cell(2, 2).append(o.$nodeTypesSelect); //1
 
             var propRow = 2, //1
                 genProps = o.propsData.properties['Generic Properties'],
@@ -235,7 +237,7 @@
             if (false === Csw.isNullOrEmpty(o.propertyid)) {
                 $propSelect.val(o.propertyid).CswAttrDom('selected', true);
             }
-            o.searchTable.add(propRow, 3, $propSelect);
+            o.searchTable.cell(propRow, 3).append($propSelect);
 
             o.propertyid = $propSelect.find(':selected').val();
             var oH = Csw.object(o.propsData.properties);
@@ -300,7 +302,7 @@
             //Row i, Column 1 (1/1): clear button
             var clearButtonCell = clearPositionTable.cell(cellRow, clearCellNumber);
             //clear btn
-            clearButtonCell.$.CswButton({ 
+            clearButtonCell.$.CswButton({
                 ID: Csw.controls.dom.makeId(o.ID, 'clear_button'),
                 enabledText: 'Reset', //case 22756: this is more accurate name-to-behavior.
                 disabledText: 'Reset',
@@ -326,7 +328,7 @@
             var searchButtonCell = o.searchTable.cell(o.bottomRow, o.searchBtnCell)
                                     .propDom({ align: 'right' })
                                     .css({ 'text-align': 'right' });
-            var $searchButton = searchButtonCell.$.CswButton({ 
+            var $searchButton = searchButtonCell.$.CswButton({
                 ID: Csw.controls.dom.makeId(o.ID, 'search_button'),
                 enabledText: 'Search',
                 disabledText: 'Searching',
@@ -365,7 +367,7 @@
                     o.searchTable.cell(1, 10)
                                    .propDom({ align: 'right' })
                                    .css({ 'text-align': 'right' })
-                                   .$.CswImageButton({
+                                   .imageButton({
                                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                                        AlternateText: 'Close',
                                        ID: Csw.controls.dom.makeId({ 'prefix': o.ID, 'id': 'closebtn' }),

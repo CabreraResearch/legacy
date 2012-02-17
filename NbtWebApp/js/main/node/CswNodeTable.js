@@ -29,7 +29,8 @@
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var $scrollingdiv, layoutTable;
+            var parent = Csw.controls.factory($parent);
+            var scrollingDiv, layoutTable;
 
             if (false == Csw.isNullOrEmpty(o.tabledata)) {
                 _HandleTableData(o.tabledata);
@@ -74,42 +75,45 @@
                     textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
 
                     // Name
-                    var name = '<b>' + nodeObj.nodename + '</b>';
+                    textCell.append('<b>' + nodeObj.nodename + '</b>');
 
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                        thumbnailCell.append('<img src="' + nodeObj.thumbnailurl + '" style="max-width: 90%;">');
+                        thumbnailCell.img({
+                            src: nodeObj.thumbnailurl
+                        }).css('max-width', '90%');
                     }
                     thumbnailCell.br();
 
                     if (Csw.bool(nodeObj.locked)) {
-                        name += '<img src="Images/quota/lock.gif" title="Quota exceeded" />';
+                        textCell.img({
+                            src: 'Images/quota/lock.gif',
+                            title: 'Quota exceeded'
+                        });
                     }
-                    textCell.append(name);
                     textCell.br();
 
                     // Props
                     Csw.crawlObject(nodeObj.props, function (propObj) {
                         if (propObj.fieldtype == "Button") {
 
-                            var $propdiv = textCell.CswDiv({});
+                            var propDiv = textCell.div();
                             $.CswFieldTypeFactory('make', {
                                 nodeid: nodeid,
                                 fieldtype: propObj.fieldtype,
-                                propDiv: $propdiv,
+                                propDiv: propDiv,
                                 propData: propObj.propData,
                                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: propObj.id }),
                                 EditMode: Csw.enums.EditMode.Table
                             });
 
                         } else {
-                            textCell.append('<span>' + propObj.propname + ': ' + propObj.gestalt + '</span>');
+                            textCell.span({text: propObj.propname + ': ' + propObj.gestalt});
                         }
                         textCell.br();
                     });
 
                     // Buttons
-                    var btnTable = Csw.controls.table({
-                        $parent: textCell,
+                    var btnTable = textCell.table({
                         ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl')
                     });
 
@@ -119,7 +123,7 @@
                             btntext = "Edit";
                         }
                         btnTable.cell(1, 1).button({
-                            ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_editbtn' }),
+                            ID: Csw.controls.dom.makeId( o.ID, nodeid, 'editbtn' ),
                             enabledText: btntext,
                             disableOnClick: false,
                             onClick: function () {
@@ -136,7 +140,7 @@
 
                     if (nodeObj.allowdelete) {
                         btnTable.cell(1, 2).button({
-                            ID: Csw.controls.dom.makeId({ id: o.ID, suffix: nodeid + '_btn' }),
+                            ID: Csw.controls.dom.makeId(o.ID, nodeid, 'btn' ),
                             enabledText: 'Delete',
                             disableOnClick: false,
                             onClick: function () {
@@ -158,14 +162,13 @@
                     Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
                 } else {
 
-                    $scrollingdiv = $parent.CswDiv({ ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }) })
-                                            .css({
-                                                height: o.maxheight + 'px',
-                                                overflow: 'auto'
-                                            });
+                    scrollingDiv = parent.div({
+                        ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }),
+                        height: o.maxheight + 'px',
+                        overflow: 'auto'
+                    });
 
-                    layoutTable = Csw.controls.layoutTable({
-                        $parent: $scrollingdiv,
+                    layoutTable = scrollingDiv.layoutTable({
                         ID: o.ID + '_tbl',
                         cellSet: { rows: 2, columns: 1 },
                         cellalign: 'center',

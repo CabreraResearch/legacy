@@ -192,8 +192,9 @@
                             FirstCellRightAlign: true
                         });
 
-                        rowOneTable.add(1, 1, '<span>What do you want to inspect?</span>')
-                                   .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                        rowOneTable.cell(1, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'What do you want to inspect?' });
 
                         makeTargetSelect();
                         stepOneComplete = true;
@@ -263,8 +264,9 @@
                         });
 
                         //1. Copy from Inspection Design
-                        inspectionTable.add(1, 1, '<span>Select an Inspection Design&nbsp</span>')
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                        inspectionTable.cell(1, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'Select an Inspection Design&nbsp' });
 
                         inspectionDesignSelect = inspectionTable.cell(1, 2);
                         inspectionDesignSelect.$.CswDiv('init')
@@ -290,11 +292,12 @@
                         selectedInspectionDesign.id = inspectionDesignSelect.find(':selected').val();
                         selectedInspectionDesign.name = makeInspectionDesignName(selectedInspectionTarget);
 
-                        inspectionTable.add(2, 1, '<br />');
+                        inspectionTable.cell(2, 1).br();
 
                         //2. New Inspection Design Name
-                        $newDesignLabel = inspectionTable.add(3, 1, '<span class="required">New Inspection Design Name&nbsp</span>')
-                                                         .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                        $newDesignLabel = inspectionTable.cell(3, 1)
+                                                         .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                                         .span({ class: 'required', text: 'New Inspection Design Name&nbsp' });
 
                         newDesignName = inspectionTable.cell(3, 2);
                         newDesignName.$.css({ 'padding': '1px', 'vertical-align': 'middle' })
@@ -317,14 +320,16 @@
                                 }, 10);
                             });
 
-                        newDesignNameDisplay = inspectionTable.add(4, 2, '<span>' + tempInspectionName + '</span>')
-                                                              .css({ 'padding': '1px', 'vertical-align': 'middle' });
+                        newDesignNameDisplay = inspectionTable.cell(4, 2)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: tempInspectionName });
 
-                        inspectionTable.add(5, 1, '<br />');
+                        inspectionTable.cell(5, 1).br();
 
                         //2. Category Name
-                        inspectionTable.add(6, 1, '<span>Category Name&nbsp</span>')
-                                        .css({'padding': '1px', 'vertical-align': 'middle'});
+                        inspectionTable.cell(6, 1)
+                            .css({'padding': '1px', 'vertical-align': 'middle'})
+                            .span({text: 'Category Name&nbsp'});
 
                         categoryNameInput = categoryNameInput || inspectionTable.cell(6, 2)
                         categoryNameInput.$.css({ 'padding': '1px', 'vertical-align': 'middle' })
@@ -338,7 +343,7 @@
 
                         toggleNewDesignName();
 
-                        inspectionTable.add(6, 1, '<br />');
+                        inspectionTable.cell(6, 1).br();
                     }
                     stepTwoComplete = true;
                 };

@@ -201,7 +201,7 @@
                 //[none] row
                 if (internal.UseRadios && false === internal.Required) {
                     // Row label
-                    var labelCell = table.add(tablerow, 1, '[none]');
+                    var labelCell = table.cell(tablerow, 1).text('[none]');
                     labelCell.addClass('cbarraycell');
 
                     for (var e = 0; e < internal.cols.length; e += 1) {
@@ -256,13 +256,13 @@
                 };
 
                 // Data
-                for (var s = 0; s < internal.data.length; s++) {
+                for (var s = 0; s < internal.data.length; s+=1) {
                     var sRow = internal.data[s];
                     // Row label
-                    var sLabelcell = table.add(tablerow + s, 1, sRow.label);
+                    var sLabelcell = table.cell(tablerow + s, 1).text(sRow.label);
                     sLabelcell.addClass('cbarraycell');
 
-                    for (var f = 0; f < internal.cols.length; f++) {
+                    for (var f = 0; f < internal.cols.length; f+=1) {
                         var fCell = table.cell(tablerow + s, f + 2);
                         fCell.addClass('cbarraycell');
                         var fCheckid = internal.ID + '_' + s + '_' + f;

@@ -116,7 +116,7 @@
                     html += attr.get();
                     html += '>';
                     html += '</td>';
-                    newCell = thisRow.append(html);
+                    newCell = thisRow.attach(html);
                     external.trigger('CswTable_onCreateCell', [newCell, row, thisRow.children('td').length()]);
                 }
                 $cell = thisRow.children('td:eq(' + Csw.number(col - 1) + ')').$;
@@ -131,16 +131,16 @@
             return retCell;
         };
 
-        external.add = function (row, col, content, id) {
-            /// <summary>Add content to a cell of this table.</summary>
-            /// <param name="row" type="Number">Row number.</param>
-            /// <param name="col" type="Number">Column number.</param>
-            /// <param name="content" type="String">Content to add.</param>
-            /// <returns type="Object">The specified cell.</returns>
-            var retCell = external.cell(row, col, id);
-            retCell.append(content);
-            return retCell;
-        };
+//        external.add = function (row, col, content, id) {
+//            /// <summary>Add content to a cell of this table.</summary>
+//            /// <param name="row" type="Number">Row number.</param>
+//            /// <param name="col" type="Number">Column number.</param>
+//            /// <param name="content" type="String">Content to add.</param>
+//            /// <returns type="Object">The specified cell.</returns>
+//            var retCell = external.cell(row, col, id);
+//            retCell.append(content);
+//            return retCell;
+//        };
 
         external.maxrows = function () {
             /// <summary>Get the maximum table row number</summary>
@@ -192,10 +192,9 @@
             /// <param name="criteria" type="String"></param>
             /// <returns type="Object">Rows matching search</returns>
             var rows = external.children('tbody').children('tr'),
-                $rows, ret = {};
+                ret = {};
             if (false === Csw.isNullOrEmpty(criteria)) {
-                $rows = rows.$.filter(criteria);
-                ret = external.jquery($rows);
+                ret = rows.filter(criteria);
             }
             return ret;
         };
@@ -205,17 +204,17 @@
             /// <param name="criteria" type="String"></param>
             /// <returns type="Object">Cells matching search</returns>
             var $retCell = null,
-                cells;
+                cells, ret = {};
             if (Csw.contains(criteria, 'row') &&
                 Csw.contains(criteria, 'column')) {
-                $retCell = $(external.$[0].rows[criteria.row].cells[criteria.column]);
+                ret = external.jquery($(external.$[0].rows[criteria.row].cells[criteria.column]));
             } else {
                 cells = external.children('tbody').children('tr').children('td');
-                if (false === Csw.isNullOrEmpty(criteria)) {
-                    $retCell = cells.$.filter(criteria);
+                if (cells.isValid && false === Csw.isNullOrEmpty(criteria)) {
+                    ret = cells.filter(criteria);
                 }
             }
-            return external.jquery($retCell);
+            return ret;
         };
 
         external.rowFindCell = function (row, criteria) {

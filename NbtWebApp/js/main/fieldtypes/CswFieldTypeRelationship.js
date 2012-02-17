@@ -51,7 +51,7 @@
 
                         table.cell(1, 2)
                             .div()
-                            .$.CswImageButton({
+                            .imageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Add,
                                 AlternateText: "Add New",
                                 onClick: function () {

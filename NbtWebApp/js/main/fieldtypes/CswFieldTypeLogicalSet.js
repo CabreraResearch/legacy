@@ -33,7 +33,9 @@
             var attributes = { logicalsetjson: null };
             var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
             
-            if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+            if(false === Csw.isNullOrEmpty(formdata) && (
+               false === o.Multi || 
+                    false === formdata.MultiIsUnchanged)) {
                 attributes.logicalsetjson = formdata;
             }
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);

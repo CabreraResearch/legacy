@@ -42,7 +42,7 @@
                 });
                 table.propDom('width', '100%');
 
-                var cell1 = table.add(1, 1, o.TopContent);
+                var cell1 = table.cell(1, 1).text(o.TopContent);
                 cell1.propDom('width', '100%');
 
                 var cell2 = table.cell(1, 2);

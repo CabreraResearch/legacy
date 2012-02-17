@@ -34,7 +34,7 @@
             if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
                 /* Edit Button */
                 cell22.div()
-                    .$.CswImageButton({
+                    .imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
@@ -54,7 +54,7 @@
 
                 /* Clear Button */
                 cell23.div()
-                    .$.CswImageButton({
+                    .imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                         AlternateText: 'Clear',
                         ID: o.ID + '_clr',

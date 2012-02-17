@@ -32,11 +32,11 @@
                     });
                     loginTable = loginDiv.form().table({cellalign: 'center', cellvalign: 'center'});
                     loginMsg = loginTable.cell(1, 2, 'loginmsg').hide();
-                    loginTable.add(2, 1, 'Customer ID: ').align('right');
+                    loginTable.cell(2, 1).text('Customer ID: ').align('right');
                     inpAccessId = loginTable.cell(2, 2).input({ ID: 'login_accessid', width: '120px' });
-                    loginTable.add(3, 1, 'User Name: ').align('right');
+                    loginTable.cell(3, 1).text('User Name: ').align('right');
                     inpUserName = loginTable.cell(3, 2).input({ ID: 'login_username', width: '120px' });
-                    loginTable.add(4, 1, 'Password: ').align('right');
+                    loginTable.cell(4, 1).text('Password: ').align('right');
                     inpPassword = loginTable.cell(4, 2).input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
                                         .align('center')

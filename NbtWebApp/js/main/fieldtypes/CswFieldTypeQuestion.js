@@ -40,7 +40,7 @@
                     FirstCellRightAlign: true
                 });
 
-                table.add(1, 1, 'Answer');
+                table.cell(1, 1).text('Answer');
                 var splitAnswers = allowedAnswers.split(',');
                 if (o.Multi) {
                     splitAnswers.push(Csw.enums.multiEditDefaultValue);
@@ -58,7 +58,7 @@
                                           selected: answer
                                       });
 
-                var correctiveActionLabel = table.add(2, 1, 'Corrective Action');
+                var correctiveActionLabel = table.cell(2, 1).text('Corrective Action');
                 var correctiveActionTextBox = table.cell(2, 2).textArea({
                     ID: o.ID + '_cor',
                     text: correctiveAction,
@@ -68,14 +68,13 @@
                     }
                 });
 
-                table.add(3, 1, 'Comments');
-                var commentsTextBox = table.cell(3, 2).textArea({
+                table.cell(3, 1).text('Comments');
+                table.cell(3, 2).textArea({
                     ID: o.ID + '_com',
                     text: comments,
                     onChange: o.onChange
                 });
 
-                table.add(3, 2, commentsTextBox);
                 checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
             }
         },
