@@ -326,7 +326,7 @@
 
         external.print = function () {
 
-            Csw.print(function (newDiv) {
+            Csw.newWindow(function (newDiv) {
                 var printOpts = {},
                     printTableId = Csw.controls.dom.makeId(internal.gridTableId, 'printTable'),
                     newGrid, data, i;
@@ -341,15 +341,14 @@
                 };
 
                 $.extend(printOpts, internal);
+                
+                /* Nuke anything that might be holding onto a reference */
                 Csw.each(printOpts, function (thisObj, name) {
-                    if (Csw.isFunction(thisObj)) {
+                    if (Csw.isFunction(thisObj) || Csw.isJQuery(thisObj) ) {
                         delete printOpts[name];
                     }
                 });
-                /* 
-                It is vital that grids have a unique ID--even across window objects. 
-                Until this callback returns, we're still sharing a global space.
-                */
+                
                 printOpts.ID = printTableId;
 
                 /* 
@@ -360,7 +359,6 @@
                 delete printOpts.gridOpts.canDelete;
                 delete printOpts.canEdit;
                 delete printOpts.canDelete;
-                delete printOpts.$parent;
 
                 printOpts.gridPagerId += '_print';
                 printOpts.gridTableId += '_print';
@@ -387,7 +385,6 @@
                 Just delete it and rebuild instead.
                 */
                 data = printOpts.gridOpts.data;
-                delete printOpts.gridOpts.data;
 
                 Csw.each(printOpts.gridOpts.colModel, function (column) {
                     /* This provides text wrapping in cells */

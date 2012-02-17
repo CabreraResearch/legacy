@@ -1,10 +1,10 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function _cswPrint() {
+(function _cswNewWindow() {
     'use strict';
 
-    function doPrint(onSuccess) {
+    function newWindow(onSuccess) {
         var printWindow, printDoc, $newBody, newFactory;
 
         printWindow = window.open();
@@ -44,7 +44,7 @@
 
         return false;
     }
-    Csw.register('print', doPrint);
-    Csw.print = Csw.print || doPrint;
-
+    Csw.register('newWindow', newWindow);
+    Csw.newWindow = Csw.newWindow || newWindow;
+    //@ sourceURL=csw.newwindow.js
 } ());
