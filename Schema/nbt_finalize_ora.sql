@@ -200,9 +200,14 @@ create or replace procedure createNTview(ntid in number) is
   pcount number;
   viewname varchar2(30);
   objid number;
+  ntcount number;
 begin
   dbms_output.enable(32000);
 
+
+ select count(*) into ntcount from nodetypes where nodetypeid=ntid;
+  
+ if(ntcount>0) then
   select nodetypename,objectclassid into viewname,objid from nodetypes where nodetypeid=ntid;
 
   var_line:='create or replace view ' || OraColLen('NT',alnumonly(viewname,''),'') || ' as select n.nodeid ';
@@ -249,6 +254,7 @@ begin
     commit;
     createOCview(objid);
   end if;
+ end if;
 
 end createNTview;
 /

@@ -48,8 +48,10 @@
     <None Include="csw\Actions\Example.xsd">
       <SubType>Designer</SubType>
     </None>
+    <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M06.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M05.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M07.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActQuotas.cs" />
