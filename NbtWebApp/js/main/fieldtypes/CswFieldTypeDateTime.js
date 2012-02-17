@@ -33,19 +33,22 @@
             }
         },
         save: function (o) { //$propdiv, $xml
-            var attributes, dtPickerDiv, dateVal;
+            var attributes, dPickerDiv, tPickerDiv;
             attributes = { 
                 value: {
                     date: null,
                     time: null
                 } 
             };
-            dtPickerDiv = o.propDiv.find('#' + o.ID);
-            if (false === Csw.isNullOrEmpty(dtPickerDiv)) {
-                dateVal = dtPickerDiv.val(o.propData.readonly);
-                attributes.value.date = dateVal.date;
-                attributes.value.time = dateVal.time;
+            dPickerDiv = o.propDiv.find('#' + o.ID + '_date');
+            tPickerDiv = o.propDiv.find('#' + o.ID + '_date');
+            if (false === Csw.isNullOrEmpty(dPickerDiv)) {
+                attributes.value.date = dPickerDiv.val();
             }
+            if (false === Csw.isNullOrEmpty(tPickerDiv)) {
+                attributes.value.time = tPickerDiv.val();
+            }
+
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
