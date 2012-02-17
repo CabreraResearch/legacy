@@ -23,7 +23,7 @@
         },
         save: function (o) {
             var propDiv = o.propDiv.find('div');
-            var attributes = { checked: propDiv.val() };
+            var attributes = { checked: Csw.string(propDiv.val(), propDiv.propNonDom('alt')) };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };

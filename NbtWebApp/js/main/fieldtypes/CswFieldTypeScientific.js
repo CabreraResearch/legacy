@@ -48,8 +48,8 @@
         },
         save: function (o) { //$propdiv, $xml
             var attributes = {
-                base: o.propDiv.val(),
-                exponent: o.propDiv.val()
+                base: o.propDiv.find('#' + o.ID + '_val').val(),
+                exponent: o.propDiv.find('#' + o.ID + '_exp').val()
             };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }

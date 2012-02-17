@@ -14,7 +14,7 @@
                 precision = Csw.number(propVals.precision, 6),
                 ceilingVal = '999999999' + Csw.getMaxValueForPrecision(precision);
             
-            var $NumberTextBox = propDiv.numberTextBox({
+            var numberTextBox = propDiv.numberTextBox({
                 ID: o.ID + '_qty',
                 value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
                 MinValue: Csw.number(propVals.minvalue),
@@ -26,8 +26,8 @@
                 onChange: o.onChange
             });
             
-            if(false === Csw.isNullOrEmpty($NumberTextBox) && $NumberTextBox.length > 0) {
-                $NumberTextBox.clickOnEnter(o.saveBtn);
+            if(false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {
+                numberTextBox.clickOnEnter(o.saveBtn);
             }
 
             //this is an array
@@ -39,7 +39,7 @@
             }
             
             propDiv.select({
-                    ID: o.ID,
+                    ID: o.ID + '_units',
                     onChange: o.onChange,
                     values: units,
                     selected: selectedUnit
@@ -47,7 +47,7 @@
         },
         save: function (o) {
             var attributes = {
-                value: o.propDiv.val(),
+                value: o.propDiv.find('#' + o.ID + '_qty').val(),
                 units: null
             };
             
