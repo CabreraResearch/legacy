@@ -31,10 +31,10 @@
                 row = 1;
 
                 // Header row
-                table.cell(row, 1).text('<b>Object Class</b>');
-                table.cell(row, 2).text('<b>Node Types</b>');
-                table.cell(row, 3).text('<b>Current Usage</b>');
-                table.cell(row, 4).text('<b>Quota</b>');
+                table.cell(row, 1).append('<b>Object Class</b>');
+                table.cell(row, 2).append('<b>Node Types</b>');
+                table.cell(row, 3).append('<b>Current Usage</b>');
+                table.cell(row, 4).append('<b>Quota</b>');
                 row += 1;
 
                 // Quota table

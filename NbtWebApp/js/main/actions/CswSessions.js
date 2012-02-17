@@ -30,12 +30,12 @@
                 row = 1;
 
                 // Header row
-                table.cell(row, 1).text('<b>End</b>');
-                table.cell(row, 2).text('<b>Username</b>');
-                table.cell(row, 3).text('<b>Login Date</b>');
-                table.cell(row, 4).text('<b>Timeout Date</b>');
-                table.cell(row, 5).text('<b>Access ID</b>');
-                table.cell(row, 6).text('<b>Session ID</b>');
+                table.cell(row, 1).append('<b>End</b>');
+                table.cell(row, 2).append('<b>Username</b>');
+                table.cell(row, 3).append('<b>Login Date</b>');
+                table.cell(row, 4).append('<b>Timeout Date</b>');
+                table.cell(row, 5).append('<b>Access ID</b>');
+                table.cell(row, 6).append('<b>Session ID</b>');
                 row += 1;
 
                 // Sessions table
