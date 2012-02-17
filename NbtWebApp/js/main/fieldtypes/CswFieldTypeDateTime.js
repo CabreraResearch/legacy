@@ -41,7 +41,7 @@
                 } 
             };
             dPickerDiv = o.propDiv.find('#' + o.ID + '_date');
-            tPickerDiv = o.propDiv.find('#' + o.ID + '_date');
+            tPickerDiv = o.propDiv.find('#' + o.ID + '_time');
             if (false === Csw.isNullOrEmpty(dPickerDiv)) {
                 attributes.value.date = dPickerDiv.val();
             }
