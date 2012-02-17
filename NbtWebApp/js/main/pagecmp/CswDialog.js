@@ -68,7 +68,7 @@
             table.cell(1, 1).text('Name:');
 
             var nameTextCell = table.cell(1, 2);
-            var $nametextbox = nameTextCell.$.CswInput('init', { ID: o.ID + '_nametb',
+            var nameTextBox = nameTextCell.input({ ID: o.ID + '_nametb',
                 type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
@@ -90,7 +90,7 @@
                 onClick: function () {
 
                     var createData = {};
-                    createData.ViewName = $nametextbox.val();
+                    createData.ViewName = nameTextBox.val();
                     createData.ViewId = o.viewid;
                     if (Csw.isNullOrEmpty(o.viewmode)) {
                         createData.ViewMode = $displaymodeselect.val();
@@ -527,7 +527,7 @@
                                 o.onDeleteNode(nodeid, nodekey);
                             }
                             if (Csw.bool(o.publishDeleteEvent)) {
-                                $.publish(Csw.enums.events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
+                                Csw.publish(Csw.enums.events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
                             }
                         },
                         onError: function () {

@@ -83,12 +83,12 @@
 
             var handle = function () {
                 tabParent.empty();
-                $.unsubscribe(Csw.enums.events.CswNodeDelete, handle);
+                Csw.unsubscribe(Csw.enums.events.CswNodeDelete, handle);
                 return false;
             };
 
             if (false === Csw.isNullOrEmpty(tabParent.parent(), true)) {
-                $.subscribe(Csw.enums.events.CswNodeDelete, handle);
+                Csw.subscribe(Csw.enums.events.CswNodeDelete, handle);
             }
             tabContentDiv.data('canEditLayout', canEditLayout);
             return tabContentDiv;
