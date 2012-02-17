@@ -22,12 +22,10 @@
             internal.id = '';
             external.$ = {};
         }
-        internal.idCount = 0;
         internal.data = {};
         internal.prepControl = function (opts, controlName) {
-            internal.idCount += 1;
             opts = opts || {};
-            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'sub' + internal.idCount, controlName);
+            opts.ID = opts.ID || Csw.controls.dom.makeId(internal.id, 'sub', controlName);
             opts.$parent = $element;
             opts.root = external.root;
             opts.parent = function () {
@@ -155,6 +153,14 @@
             /// <returns type="Object">A Csw.div</returns> 
             opts = internal.prepControl(opts, 'div');
             return Csw.controls.div(opts);
+        };
+
+        external.grid = function (opts) {
+            /// <summary> Creates a Csw.grid on this element</summary>
+            /// <param name="opts" type="Object">Options to define the grid.</param>
+            /// <returns type="Object">A Csw.grid</returns>
+            opts = internal.prepControl(opts, 'grid');
+            return Csw.controls.grid(opts);
         };
 
         external.form = function (opts) {

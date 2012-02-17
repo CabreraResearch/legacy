@@ -17,6 +17,7 @@ window.abandonHope = false;
             $: $,
             homeUrl: 'Main.html',
             methods: ['register'],
+            uniqueIdCount: 0,
             protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp']
         };
 
