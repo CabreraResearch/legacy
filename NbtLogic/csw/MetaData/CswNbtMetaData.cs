@@ -449,6 +449,7 @@ namespace ChemSW.Nbt.MetaData
 
                     // Keep MetaData up to date
                     //RetFieldType = _CswNbtMetaDataResources.FieldTypesCollection.RegisterNew( Row ) as CswNbtMetaDataFieldType;
+                    refreshAll();
                 }
             }
 
@@ -607,6 +608,8 @@ namespace ChemSW.Nbt.MetaData
             if( OnMakeNewNodeType != null )
                 OnMakeNewNodeType( NewNodeType, false );
 
+            refreshAll();
+
             //will need to refresh auto-views
             _RefreshViewForNodetypeId.Add(NodeTypeId);
 
@@ -656,7 +659,8 @@ namespace ChemSW.Nbt.MetaData
             TabsTable.Rows.Add( Row );
             Row["firsttabversionid"] = Row["nodetypetabsetid"];
             _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( TabsTable );
-            this.refreshAll();
+
+            refreshAll();
 
             // Keep MetaData up to date
             //CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( Row ) as CswNbtMetaDataNodeTypeTab;
@@ -867,6 +871,8 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
             }
+
+            refreshAll();
 
             //will need to refresh auto-views
             _RefreshViewForNodetypeId.Add( NodeTypeId );
@@ -1247,6 +1253,7 @@ namespace ChemSW.Nbt.MetaData
             NodeType._DataRow.Delete();
             _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeType._DataRow.Table );
 
+            refreshAll();
             _ResetAllViews = true;
 
         }//DeleteNodeType()
@@ -1363,6 +1370,7 @@ namespace ChemSW.Nbt.MetaData
             //refresh the views
             _RefreshViewForNodetypeId.Add( UpdateNodeType.NodeTypeId );
 
+            refreshAll();
             return ret;
         } // DeleteNodeTypeProp()
 
@@ -1408,7 +1416,8 @@ namespace ChemSW.Nbt.MetaData
 
 
             // Update MetaData
-            _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
+            refreshAll();
+            //_CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
 
             // Delete NodeType Tab record
             NodeTypeTab._DataRow.Delete();
