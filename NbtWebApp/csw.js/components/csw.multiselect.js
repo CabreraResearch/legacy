@@ -59,8 +59,7 @@
             }
         } ());
 
-        external.val = function ($element) {
-            var $select = $element || $(this),
+        external.val = function () {
             //In IE an empty array is frequently !== [], rather === null
                 values = $select.val() || [],
                 valArray = values.sort();
