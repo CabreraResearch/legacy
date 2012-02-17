@@ -119,6 +119,7 @@
                     $rulesGrid.empty();
 
                     gridOptions = {
+                        $parent: $rulesGrid,
                         ID: makeStepId('rulesGrid'),
                         pagermode: 'default',
                         gridOpts: {
@@ -139,7 +140,7 @@
                                     closeAfterEdit: true,
                                     afterComplete: makeRulesGrid
                                 };
-                                return scheduledRulesGrid.$gridTable.jqGrid('editGridRow', rowid, onEdit);
+                                return scheduledRulesGrid.gridTable.$.jqGrid('editGridRow', rowid, onEdit);
                             }
                         }
                     };
@@ -149,7 +150,8 @@
                         data: { AccessId: selectedCustomerId },
                         success: function (data) {
                             $.extend(gridOptions.gridOpts, data);
-                            scheduledRulesGrid = Csw.controls.grid(gridOptions, $rulesGrid);
+                            gridOptions.$parnet = $rulesGrid;
+                            scheduledRulesGrid = Csw.controls.grid(gridOptions);
                         }
                     });
                 };
@@ -167,7 +169,7 @@
                     ID: makeStepId('headerTable')
                 });
                 headerTable.cell(1, 1)
-                    .span({text: 'Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.'});
+                    .span({ text: 'Review Customer ID <b>' + selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.' });
 
                 headerTable.cell(1, 2)
                            .button({

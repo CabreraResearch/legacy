@@ -389,6 +389,7 @@
                 }
 
                 gridOptions = {
+                    $parent: $previewGrid,
                     ID: makeStepId('previewGrid'),
                     pagermode: 'default',
                     gridOpts: {
@@ -401,13 +402,13 @@
                         edit: true,
                         view: false,
                         editfunc: function (rowid) {
-                            return inspectionGrid.$gridTable.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
+                            return inspectionGrid.gridTable.$.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
                         },
                         addfunc: function () {
-                            return inspectionGrid.$gridTable.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
+                            return inspectionGrid.gridTable.$.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
                         },
                         delfunc: function (rowid) {
-                            return inspectionGrid.$gridTable.jqGrid('delRowData', rowid);
+                            return inspectionGrid.gridTable.$.jqGrid('delRowData', rowid);
                         }
                     }
                 };
@@ -421,7 +422,7 @@
                 } else {
                     $.extend(gridOptions.gridOpts, jqGridOpts);
                 }
-                inspectionGrid = Csw.controls.grid(gridOptions, $previewGrid);
+                inspectionGrid = Csw.controls.grid(gridOptions);
             },
 
         //File upload button for Step 3
@@ -586,7 +587,7 @@
                             }
 
                             confirmGridOptions.ID = makeStepId('confirmGrid');
-                            confirmGridOptions.gridOpts.data = inspectionGrid.$gridTable.jqGrid('getRowData');
+                            confirmGridOptions.gridOpts.data = inspectionGrid.gridTable.$.jqGrid('getRowData');
                             confirmGridOptions.gridOpts.autowidth = false;
                             confirmGridOptions.gridOpts.shrinkToFit = true;
                             confirmGridOptions.gridOpts.height = 150;
@@ -605,11 +606,11 @@
                                     delete col.edittype;
                                 }
                             });
-                            $confirmationDesign = $confirmationList.CswList('addItem', {
+                            confirmGridOptions.$parent = $confirmationList.CswList('addItem', {
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
-
-                            Csw.controls.grid(confirmGridOptions, $confirmationDesign);
+                            
+                            Csw.controls.grid(confirmGridOptions);
                         } else {
                             $confirmationList.CswList('addItem', {
                                 value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'

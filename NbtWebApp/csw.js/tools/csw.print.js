@@ -3,9 +3,9 @@
 
 (function _cswPrint() {
     'use strict';
-    
+
     function doPrint(onSuccess) {
-        var printWindow, printDoc, $styleDiv, $newBody;
+        var printWindow, printDoc, $newBody, newFactory;
 
         printWindow = window.open();
         printDoc = printWindow.document;
@@ -26,15 +26,15 @@
         printDoc.close();
 
         $newBody = $(printDoc).find('body');
+        newFactory = Csw.controls.factory($newBody);
 
         /* 
         In theory, this would create a DIV with all the styles required, but it's probably not necessary to do so.
         $styleDiv = $('<div>').append( $('style').clone() ) 
         */
-        $styleDiv = $newBody.CswDiv();
 
         if (Csw.isFunction(onSuccess)) {
-            onSuccess($styleDiv);
+            onSuccess(newFactory.div());
         }
 
         /*
@@ -46,5 +46,5 @@
     }
     Csw.register('print', doPrint);
     Csw.print = Csw.print || doPrint;
-    
-}());
+
+} ());

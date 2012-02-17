@@ -206,7 +206,7 @@
 
         table2.cell(5, 1).text('Display Mode:');
         var displayModeSpan = table2.cell(5, 2)
-            .span({ID: o.ID + '_displaymode'});
+            .span({ ID: o.ID + '_displaymode' });
 
         var gridWidthLabelCell = table2.cell(6, 1).text('Grid Width (in characters):');
         var gridWidthTextBox = table2.cell(6, 2)
@@ -472,8 +472,9 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        cswViewGrid = Csw.controls.grid(g, $viewgrid);
-                        cswViewGrid.$gridPager.css({ width: '100%', height: '20px' });
+                        g.$parent = $viewgrid;
+                        cswViewGrid = Csw.controls.grid(g);
+                        cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
 
                         cswViewGrid.hideColumn(o.ColumnFullViewId);
                         if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {

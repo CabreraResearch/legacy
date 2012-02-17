@@ -1,10 +1,10 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { 
-    "use strict";    
+(function ($) {
+    "use strict";
     var pluginName = 'CswNodeGrid';
-    
+
     function deleteRows(rowid, grid, func) {
         var delOpt = {
             cswnbtnodekey: [],
@@ -22,8 +22,8 @@
         };
         return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
     }
-    
-    function editRows (rowid, grid, func, editViewFunc) {
+
+    function editRows(rowid, grid, func, editViewFunc) {
         var editOpt = {
             cswnbtnodekey: [],
             nodename: []
@@ -40,9 +40,9 @@
         };
         return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
     }
-    
+
     var methods = {
-    
+
         'init': function (optJqGrid) {
 
             var o = {
@@ -56,12 +56,12 @@
                 cswnbtnodekey: '',
                 reinit: false,
                 EditMode: Csw.enums.editMode.Edit,
-                onEditNode: null, 
-                onDeleteNode: null, 
+                onEditNode: null,
+                onDeleteNode: null,
                 onSuccess: null,
                 onEditView: null
             };
-        
+
             if (optJqGrid) {
                 $.extend(o, optJqGrid);
             }
@@ -72,7 +72,7 @@
                 if (isPrint) {
                     url += '&Page=1&Rows=100000000';
                 }
-                return url; 
+                return url;
             }
 
             if (o.reinit) $parent.empty();
@@ -96,7 +96,7 @@
                             buildGrid(data);
                         }
                     });
-                }());
+                } ());
 
                 //jqGrid will handle the rest
                 var buildGrid = function (gridJson) {
@@ -109,11 +109,11 @@
                             canEdit: (Csw.bool(jqGridOpt.CanEdit) && false === forReporting),
                             canDelete: (Csw.bool(jqGridOpt.CanDelete) && false === forReporting),
                             pagermode: 'default',
-                            gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
-                            optNav: { },
-                            optSearch: { },
-                            optNavEdit: { },
-                            optNavDelete: { }
+                            gridOpts: {}, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
+                            optNav: {},
+                            optSearch: {},
+                            optNavEdit: {},
+                            optNavDelete: {}
                         };
                         $.extend(cswGridOpts.gridOpts, jqGridOpt);
 
@@ -154,13 +154,13 @@
                                 In the case of the latter, we need to guarantee that ONLY jqGrid properties defined in the jsonReader property are returned from the server.
 
                                 cswGridOpts.gridOpts.ajaxGridOptions = {
-                                    url: o.gridPageUrl,
-                                    dataType: 'json',
-                                    contentType: 'application/json; charset=utf-8',
-                                    type: 'POST',
-                                    data: JSON.stringify({
-                                        ViewId: o.viewid, Page: currentPage(), PageSize: 50, IsReport: forReporting  
-                                    })
+                                url: o.gridPageUrl,
+                                dataType: 'json',
+                                contentType: 'application/json; charset=utf-8',
+                                type: 'POST',
+                                data: JSON.stringify({
+                                ViewId: o.viewid, Page: currentPage(), PageSize: 50, IsReport: forReporting  
+                                })
                                 };
 
                                 */
@@ -177,14 +177,14 @@
                         }
 
                         cswGridOpts.printUrl = getGridRowsUrl(true);
-
-                        ret = Csw.controls.grid(cswGridOpts, $parent);
+                        cswGridOpts.$parent = $parent;
+                        ret = Csw.controls.grid(cswGridOpts);
 
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
                     };
-                    
+
                     if (false === doPaging) {
                         Csw.ajax.post({
                             url: o.gridAllRowsUrl,

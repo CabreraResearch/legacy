@@ -3,12 +3,97 @@
 
 (function _cswGrid() {
     'use strict';
-    function grid(options, $parent) {
+    function grid(options) {
         ///<summary>Generates a grid</summary>
         ///<param name="options" type="Object">Object defining paramaters for jqGrid construction</param>
         ///<param name="$parent" type="JQuery">Parent element to attach grid to.</param>
         ///<returns type="Object">Object representing a CswGrid</returns>
-        var internal = {};
+        var internal = {
+            $parent: '',
+            canEdit: false,
+            canDelete: false,
+            pagermode: 'default',
+            ID: '',
+            gridOpts: {
+                autoencode: true,
+                //autowidth: true,
+                altRows: false,
+                caption: '',
+                datatype: 'local',
+                emptyrecords: 'No Results',
+                height: '300',
+                loadtext: 'Loading...',
+                multiselect: false,
+                toppager: false,
+                shrinkToFit: true,
+                sortname: '',
+                sortorder: 'asc',
+                width: '600px',
+                rowNum: 10,
+                rowList: [10, 25, 50],        /* page size dropdown */
+                pgbuttons: true,     /* page control like next, back button */
+                /*pgtext: null,         pager text like 'Page 0 of 10' */
+                viewrecords: true    /* current view record text like 'View 1-10 of 100' */
+            },
+            optSearch: {
+                caption: "Search...",
+                Find: "Find",
+                Reset: "Reset",
+                odata: ['equal',
+                            'not equal',
+                            'less',
+                            'less or equal',
+                            'greater',
+                            'greater or equal',
+                            'begins with',
+                            'does not begin with',
+                            'is in',
+                            'is not in',
+                            'ends with',
+                            'does not end with',
+                            'contains',
+                            'does not contain'],
+                groupOps: [{ op: "AND", text: "all" }, { op: "OR", text: "any"}],
+                matchText: "match",
+                rulesText: "rules"
+            },
+            optNavEdit: {
+                edit: true,
+                edittext: "",
+                edittitle: "Edit row",
+                editfunc: null
+            },
+            optNavDelete: {
+                del: true,
+                deltext: "",
+                deltitle: "Delete row",
+                delfunc: null
+            },
+            optNav: {
+                cloneToTop: false,
+
+                add: false,
+                del: false,
+                edit: false,
+
+                //search
+                search: false,
+                searchtext: "",
+                searchtitle: "Find records",
+
+                //refresh
+                refreshtext: "",
+                refreshtitle: "Reload Grid",
+                alertcap: "Warning",
+                alerttext: "Please, select row",
+
+                //view
+                view: true,
+                viewtext: "",
+                viewtitle: "View row"
+                //viewfunc: none--use jqGrid built-in function for read-only
+            }
+        };
         var external = {};
 
         internal.insertWhiteSpace = function (num) {
@@ -26,15 +111,15 @@
                 position: 'last',
                 title: '',
                 cursor: '',
-                id: internal.gridPagerId + '_prevBtn'
+                id: Csw.controls.dom.makeId(internal.gridPagerId, 'prevBtn')
             };
             if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onPrevPageClick)) {
                 prevButton.onClickButton = function (eventObj) {
-                    var nodes = external.$gridTable.jqGrid('getDataIDs'),
+                    var nodes = external.gridTable.$.jqGrid('getDataIDs'),
                         firstNodeId = nodes[0],
                         lastNodeId = nodes[nodes.length],
-                        firstRow = external.$gridTable.jqGrid('getRowData', firstNodeId),
-                        lastRow = external.$gridTable.jqGrid('getRowData', lastNodeId);
+                        firstRow = external.gridTable.$.jqGrid('getRowData', firstNodeId),
+                        lastRow = external.gridTable.$.jqGrid('getRowData', lastNodeId);
 
                     pagerDef.onPrevPageClick(eventObj, firstRow, lastRow);
                 };
@@ -52,200 +137,77 @@
                 position: 'last',
                 title: 'Next',
                 cursor: '',
-                id: internal.gridPagerId + '_nextBtn'
+                id: Csw.controls.dom.makeId(internal.gridPagerId, 'nextBtn')
             };
             if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onNextPageClick)) {
                 nextButton.onClickButton = function (eventObj) {
-                    var nodes = external.$gridTable.jqGrid('getDataIDs'),
+                    var nodes = external.gridTable.$.jqGrid('getDataIDs'),
                         firstNodeId = nodes[0],
                         lastNodeId = nodes[nodes.length - 1],
-                        firstRow = external.$gridTable.jqGrid('getRowData', firstNodeId),
-                        lastRow = external.$gridTable.jqGrid('getRowData', lastNodeId);
+                        firstRow = external.gridTable.$.jqGrid('getRowData', firstNodeId),
+                        lastRow = external.gridTable.$.jqGrid('getRowData', lastNodeId);
 
                     pagerDef.onNextPageClick(eventObj, firstRow, lastRow);
                 };
             }
-            external.$gridTable.jqGrid('navSeparatorAdd', '#' + internal.gridPagerId, spacer)
+            external.gridTable.$.jqGrid('navSeparatorAdd', '#' + internal.gridPagerId, spacer)
                 .jqGrid('navButtonAdd', '#' + internal.gridPagerId, prevButton)
                 .jqGrid('navButtonAdd', '#' + internal.gridPagerId, nextButton);
         };
 
-        internal.makeGrid = function (o) {
-            var table;
-            internal.multiEdit = o.gridOpts.multiselect;
-            if (Csw.isNullOrEmpty($parent)) {
-                $parent = $('<div id="' + internal.gridTableId + '_parent"></div>');
-            }
-            table = Csw.controls.table({
-                ID: internal.gridTableId,
-                $parent: $parent
+        internal.makeGrid = function () {
+            external.empty();
+            internal.multiEdit = internal.gridOpts.multiselect;
+
+            external.gridTable = external.table({
+                ID: internal.gridTableId
             });
-            external.$gridTable = table.$;
-            
-            external.$gridPager = $parent.CswDiv('init', {ID: internal.gridPagerId});
-            o.gridOpts.pager = external.$gridPager;
 
-            if (o.canEdit) {
-                $.extend(true, o.optNav, o.optNavEdit);
+            external.gridPager = external.div({ ID: internal.gridPagerId });
+            internal.gridOpts.pager = external.gridPager.$;
+
+            if (internal.canEdit) {
+                $.extend(true, internal.optNav, internal.optNavEdit);
             }
-            if (o.canDelete) {
-                $.extend(true, o.optNav, o.optNavDelete);
+            if (internal.canDelete) {
+                $.extend(true, internal.optNav, internal.optNavDelete);
             }
 
-            if (o.pagermode === 'default' || o.pagermode === 'custom') {
+            if (internal.pagermode === 'default' || internal.pagermode === 'custom') {
                 try {
-                    if (false === Csw.contains(o.gridOpts, 'colNames') ||
-                        o.gridOpts.colNames.length === 0 ||
-                            (Csw.contains(o.gridOpts, 'colModel') && o.gridOpts.colNames.length !== o.gridOpts.colModel.length)) {
+                    if (false === Csw.contains(internal.gridOpts, 'colNames') ||
+                        internal.gridOpts.colNames.length === 0 ||
+                            (Csw.contains(internal.gridOpts, 'colModel') && internal.gridOpts.colNames.length !== internal.gridOpts.colModel.length)) {
                         throw new Error('Cannot create a grid without at least one column defined.');
                     }
-                    external.$gridTable.jqGrid(o.gridOpts)
-                        .jqGrid('navGrid', '#' + internal.gridPagerId, o.optNav, {}, {}, {}, {}, {}); //Case 24032: Removed jqGrid search
+                    external.gridTable.$.jqGrid(internal.gridOpts)
+                        .jqGrid('navGrid', '#' + internal.gridPagerId, internal.optNav, {}, {}, {}, {}, {}); //Case 24032: Removed jqGrid search
                 } catch (e) {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, e.message));
                 }
-                if (o.pagermode === 'custom') {
-                    internal.makeCustomPager(o.customPager);
+                if (internal.pagermode === 'custom') {
+                    internal.makeCustomPager(internal.customPager);
                 }
             } else {
-                external.$gridTable.jqGrid(o.gridOpts);
+                external.gridTable.$.jqGrid(internal.gridOpts);
             }
-            external.$gridTable.data(internal.gridTableId + '_data', o);
         };
-
-        /* "Constuctor" */
-        (function () {
-            var o = {
-                canEdit: false,
-                canDelete: false,
-                pagermode: 'default',
-                ID: '',
-                gridOpts: {
-                    autoencode: true,
-                    //autowidth: true,
-                    altRows: false,
-                    caption: '',
-                    datatype: 'local',
-                    emptyrecords: 'No Results',
-                    height: '300',
-                    loadtext: 'Loading...',
-                    multiselect: false,
-                    pager: external.$gridPager,
-                    toppager: false,
-                    shrinkToFit: true,
-                    sortname: '',
-                    sortorder: 'asc',
-                    width: '600px',
-                    rowNum: 10,
-                    rowList: [10, 25, 50],        /* page size dropdown */
-                    pgbuttons: true,     /* page control like next, back button */
-                    /*pgtext: null,         pager text like 'Page 0 of 10' */
-                    viewrecords: true    /* current view record text like 'View 1-10 of 100' */
-                },
-                optSearch: {
-                    caption: "Search...",
-                    Find: "Find",
-                    Reset: "Reset",
-                    odata: ['equal', 
-                            'not equal', 
-                            'less', 
-                            'less or equal', 
-                            'greater', 
-                            'greater or equal', 
-                            'begins with', 
-                            'does not begin with', 
-                            'is in', 
-                            'is not in', 
-                            'ends with', 
-                            'does not end with', 
-                            'contains', 
-                            'does not contain'],
-                    groupOps: [{op: "AND", text: "all"}, {op: "OR", text: "any"}],
-                    matchText: "match",
-                    rulesText: "rules"
-                },
-                optNavEdit: {
-                    edit: true,
-                    edittext: "",
-                    edittitle: "Edit row",
-                    editfunc: null
-                },
-                optNavDelete: {
-                    del: true,
-                    deltext: "",
-                    deltitle: "Delete row",
-                    delfunc: null
-                },
-                optNav: {
-                    cloneToTop: false,
-
-                    add: false,
-                    del: false,
-                    edit: false,
-
-                    //search
-                    search: false,
-                    searchtext: "",
-                    searchtitle: "Find records",
-
-                    //refresh
-                    refreshtext: "",
-                    refreshtitle: "Reload Grid",
-                    alertcap: "Warning",
-                    alerttext: "Please, select row",
-
-                    //view
-                    view: true,
-                    viewtext: "",
-                    viewtitle: "View row"
-                //viewfunc: none--use jqGrid built-in function for read-only
-                }
-            };
-
-            $.extend(true, o, options);
-
-            switch (o.pagermode) {
-                case 'none':
-                    delete o.gridOpts.pager;
-                    delete o.gridOpts.rowNum;
-                    delete o.gridOpts.rowList;
-                    delete o.gridOpts.pgbuttons;
-                    delete o.gridOpts.viewrecords;
-                    delete o.gridOpts.pgtext;
-                    break;
-                case 'default':
-                //accept defaults
-                    break;
-                case 'custom':
-                    o.gridOpts.rowNum = null;
-                    o.gridOpts.rowList = [];
-                    o.gridOpts.pgbuttons = false;
-                    o.gridOpts.viewrecords = false;
-                    o.gridOpts.pgtext = null;
-                    break;
-            }
-
-            internal.gridPagerId = Csw.controls.dom.makeId({ID: 'cswGridPager', prefix: o.ID});
-            internal.gridTableId = Csw.controls.dom.makeId({ID: 'cswGridTable', prefix: o.ID});
-
-            internal.makeGrid(o);
-        }());
 
         internal.getCell = function (rowid, key) {
             var ret = '';
             if (false === Csw.isNullOrEmpty(rowid) && false === Csw.isNullOrEmpty(key)) {
-                ret = external.$gridTable.jqGrid('getCell', rowid, key);
+                ret = external.gridTable.$.jqGrid('getCell', rowid, key);
             }
             return ret;
         };
 
         internal.getSelectedRowId = function () {
-            var rowid = external.$gridTable.jqGrid('getGridParam', 'selrow');
+            var rowid = external.gridTable.$.jqGrid('getGridParam', 'selrow');
             return rowid;
         };
 
         internal.getSelectedRowsIds = function () {
-            var rowid = external.$gridTable.jqGrid('getGridParam', 'selarrrow');
+            var rowid = external.gridTable.$.jqGrid('getGridParam', 'selarrrow');
             return rowid;
         };
 
@@ -254,12 +216,12 @@
             ///<param name="column" type="String">Column name</param>
             ///<param name="returnType" type="Boolean">If false, returns a simple array of values. If true, returns an array [{id: id, value: value},{...}]</param>
             ///<returns type="Array">An array of the columns values</returns>
-            var ret = external.$gridTable.jqGrid('getCol', column, returnType);
+            var ret = external.gridTable.$.jqGrid('getCol', column, returnType);
             return ret;
         };
 
         external.hideColumn = function (id) {
-            external.$gridTable.jqGrid('hideCol', id);
+            external.gridTable.$.jqGrid('hideCol', id);
         };
 
         external.scrollToRow = function (rowid) {
@@ -269,9 +231,9 @@
             if (Csw.isNullOrEmpty(rowid)) {
                 rowid = internal.getSelectedRowId();
             }
-            var rowHeight = external.getGridRowHeight(external.$gridTable) || 23; // Default height
-            var index = external.$gridTable.getInd(rowid);
-            external.$gridTable.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
+            var rowHeight = external.getGridRowHeight() || 23; // Default height
+            var index = external.gridTable.$.getInd(rowid);
+            external.gridTable.$.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
         };
 
         external.getRowIdForVal = function (value, column) {
@@ -304,15 +266,13 @@
         external.setSelection = function (rowid) {
             ///<summary>Sets the selected row by jqGrid's rowid</summary>
             if (false === Csw.isNullOrEmpty(rowid)) {
-                external.$gridTable.setSelection(rowid);
+                external.gridTable.$.setSelection(rowid);
             }
         };
 
         external.changeGridOpts = function (opts) {
-            var currentOpts = external.$gridTable.data(internal.gridTableId + '_data');
-            $.extend(true, currentOpts, opts);
-            $parent.empty();
-            internal.makeGrid(currentOpts);
+            $.extend(true, internal, opts);
+            internal.makeGrid(internal);
         };
 
         external.opGridRows = function (opts, rowid, onSelect, onEmpty) {
@@ -322,7 +282,7 @@
 
             var rowids = [];
 
-            function onEachGridRow (prop, key, parent) {
+            function onEachGridRow(prop, key, parent) {
                 if (false === Csw.isFunction(parent[key])) {
                     if (Csw.isArray(parent[key])) {
                         rowid = rowids[i];
@@ -361,43 +321,49 @@
         };
 
         external.getAllGridRows = function () {
-            return external.$gridTable.jqGrid('getRowData');
+            return external.gridTable.$.jqGrid('getRowData');
         };
 
         external.print = function () {
 
-            Csw.print(function ($printElement) {
+            Csw.print(function (newDiv) {
                 var printOpts = {},
-                    currentOpts = external.$gridTable.data(internal.gridTableId + '_data'),
-                    printTableId = Csw.controls.dom.makeId({prefix: internal.gridTableId, ID: 'printTable'}),
+                    printTableId = Csw.controls.dom.makeId(internal.gridTableId, 'printTable'),
                     newGrid, data, i;
 
                 var addRowsToGrid = function (rowData) {
                     if (rowData) {
                         /* Add the rows to the new newGrid */
                         for (i = 0; i <= rowData.length; i += 1) {
-                            newGrid.external.$gridTable.jqGrid('addRowData', i + 1, rowData[i]);
+                            newGrid.gridTable.$.jqGrid('addRowData', i + 1, rowData[i]);
                         }
                     }
                 };
 
-                $.extend(printOpts, currentOpts);
-
+                $.extend(printOpts, internal);
+                Csw.each(printOpts, function (thisObj, name) {
+                    if (Csw.isFunction(thisObj)) {
+                        delete printOpts[name];
+                    }
+                });
                 /* 
-            It is vital that grids have a unique ID--even across window objects. 
-            Until this callback returns, we're still sharing a global space.
-            */
+                It is vital that grids have a unique ID--even across window objects. 
+                Until this callback returns, we're still sharing a global space.
+                */
                 printOpts.ID = printTableId;
 
                 /* 
-            Nuke any existing options with vanilla defaults.
-            Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
-            */
+                Nuke any existing options with vanilla defaults.
+                Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
+                */
                 delete printOpts.gridOpts.canEdit;
                 delete printOpts.gridOpts.canDelete;
                 delete printOpts.canEdit;
                 delete printOpts.canDelete;
+                delete printOpts.$parent;
 
+                printOpts.gridPagerId += '_print';
+                printOpts.gridTableId += '_print';
                 printOpts.gridOpts.rowNum = 100000;
                 printOpts.gridOpts.rowList = [100000];
                 printOpts.gridOpts.add = false;
@@ -431,7 +397,7 @@
                 });
 
                 /* Get a new Csw.newGrid */
-                newGrid = grid(printOpts, $printElement);
+                newGrid = newDiv.grid(printOpts);
 
                 if (Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
                     Csw.ajax.get({
@@ -455,7 +421,7 @@
 
             var height = null; // Default
             try {
-                height = external.$gridTable.find('tbody').find('tr:first').outerHeight();
+                height = external.gridTable.$.find('tbody').find('tr:first').outerHeight();
             } catch (e) {
                 //catch and just suppress error
             }
@@ -466,10 +432,44 @@
             return internal.multiEdit;
         };
 
+        /* "Constuctor" */
+        (function () {
+            $.extend(true, internal, options);
+
+            switch (internal.pagermode) {
+                case 'none':
+                    delete internal.gridOpts.pager;
+                    delete internal.gridOpts.rowNum;
+                    delete internal.gridOpts.rowList;
+                    delete internal.gridOpts.pgbuttons;
+                    delete internal.gridOpts.viewrecords;
+                    delete internal.gridOpts.pgtext;
+                    break;
+                case 'default':
+                    //accept defaults
+                    break;
+                case 'custom':
+                    internal.gridOpts.rowNum = null;
+                    internal.gridOpts.rowList = [];
+                    internal.gridOpts.pgbuttons = false;
+                    internal.gridOpts.viewrecords = false;
+                    internal.gridOpts.pgtext = null;
+                    break;
+            }
+
+            internal.gridPagerId = internal.gridPagerId || Csw.controls.dom.makeId({ ID: 'cswGridPager', prefix: internal.ID });
+            internal.gridTableId = internal.gridTableId || Csw.controls.dom.makeId({ ID: 'cswGridTable', prefix: internal.ID });
+
+            $.extend(external, Csw.controls.div(internal));
+
+            internal.makeGrid();
+        } ());
+
+
         return external;
     }
 
-    Csw.register('grid', grid);
+    Csw.controls.register('grid', grid);
     Csw.controls.grid = Csw.controls.grid || grid;
-    
-}());
+
+} ());
