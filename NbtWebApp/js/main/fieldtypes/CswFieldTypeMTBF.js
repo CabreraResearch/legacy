@@ -22,7 +22,7 @@
             });
 
             var mtbfStatic = (units !== Csw.enums.multiEditDefaultValue) ? value + '&nbsp;' + units : value;
-            table.cell(1, 1).text(mtbfStatic);
+            table.cell(1, 1).append(mtbfStatic);
 
             var cell12 = table.cell(1, 2);
 
