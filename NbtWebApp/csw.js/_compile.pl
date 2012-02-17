@@ -7,11 +7,13 @@ unlink($destfile);
 
 my $param = "";
 $param .= extract("$dir\\csw.js");
+$param .= extract("$dir\\csw.js\\components");
+$param .= extract("$dir\\csw.js\\controls");
 $param .= extract("$dir\\csw.js\\core");
 $param .= extract("$dir\\csw.js\\nodes");
 $param .= extract("$dir\\csw.js\\props");
 $param .= extract("$dir\\csw.js\\tools");
-$param .= extract("$dir\\csw.js\\controls");
+
 
 `java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 

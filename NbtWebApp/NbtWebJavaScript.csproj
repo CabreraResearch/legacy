@@ -92,7 +92,7 @@
     <Content Include="csw.js\props\csw.props.js" />
     <Content Include="csw.js\tools\csw.clientdb.js" />
     <Content Include="csw.js\tools\csw.cookie.js" />
-    <Content Include="csw.js\tools\csw.print.js" />
+    <Content Include="csw.js\tools\csw.newwindow.js" />
     <Content Include="js\main\actions\CswAuditHistoryGrid.js" />
     <Content Include="js\main\actions\CswInspectionDesign.js" />
     <Content Include="js\main\actions\CswInspectionStatus.js" />
