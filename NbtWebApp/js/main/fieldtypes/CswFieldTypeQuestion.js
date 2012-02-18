@@ -1,143 +1,141 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswSelect.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
-    "use strict";        
+    "use strict";
     var pluginName = 'CswFieldTypeQuestion';
     var multi = false;
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
-            var answer = (false === o.Multi) ? tryParseString(propVals.answer).trim() : CswMultiEditDefaultValue;
-            var allowedAnswers = tryParseString(propVals.allowedanswers).trim();
-            var compliantAnswers = tryParseString(propVals.compliantanswers).trim();
-            var comments =  (false === o.Multi) ? tryParseString(propVals.comments).trim() : CswMultiEditDefaultValue;
-            var correctiveAction = (false === o.Multi) ? tryParseString(propVals.correctiveaction).trim() : CswMultiEditDefaultValue;
+            var answer = (false === o.Multi) ? Csw.string(propVals.answer).trim() : Csw.enums.multiEditDefaultValue;
+            var allowedAnswers = Csw.string(propVals.allowedanswers).trim();
+            var compliantAnswers = Csw.string(propVals.compliantanswers).trim();
+            var comments = (false === o.Multi) ? Csw.string(propVals.comments).trim() : Csw.enums.multiEditDefaultValue;
+            var correctiveAction = (false === o.Multi) ? Csw.string(propVals.correctiveaction).trim() : Csw.enums.multiEditDefaultValue;
             multi = o.Multi;
-            
-            var dateAnswered =  (false === o.Multi) ? tryParseString(propVals.dateanswered.date).trim() : ''; 
-            var dateCorrected =  (false === o.Multi) ? tryParseString(propVals.datecorrected.date).trim() : '';
 
-            if(o.ReadOnly) {
-                $Div.append('Answer: ' + answer);
-                if(dateAnswered !== '') {
-                    $Div.append(' ('+ dateAnswered +')');
+            var dateAnswered = (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : '';
+            var dateCorrected = (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
+
+            if (o.ReadOnly) {
+                propDiv.append('Answer: ' + answer);
+                if (dateAnswered !== '') {
+                    propDiv.append(' (' + dateAnswered + ')');
                 }
-                $Div.append('<br/>');
-                $Div.append('Corrective Action: ' + correctiveAction);
-                if(dateCorrected !== '') {
-                    $Div.append(' ('+ dateCorrected +')');
+                propDiv.br();
+                propDiv.append('Corrective Action: ' + correctiveAction);
+                if (dateCorrected !== '') {
+                    propDiv.append(' (' + dateCorrected + ')');
                 }
-                $Div.append('<br/>');
-                $Div.append('Comments: ' + comments + '<br/>');
+                propDiv.br();
+                propDiv.append('Comments: ' + comments);
+                propDiv.br();
             } else {
-                var $table = $Div.CswTable('init', { 
-                                                    'ID': o.ID + '_tbl', 
-                                                    'FirstCellRightAlign': true 
-                                                    });
+                var table = propDiv.table({
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                    FirstCellRightAlign: true
+                });
 
-                $table.CswTable('cell', 1, 1).append('Answer');
+                table.cell(1, 1).text('Answer');
                 var splitAnswers = allowedAnswers.split(',');
                 if (o.Multi) {
-                    splitAnswers.push(CswMultiEditDefaultValue);
+                    splitAnswers.push(Csw.enums.multiEditDefaultValue);
                 } else {
                     splitAnswers.push('');
                 }
-                var $AnswerSel = $table.CswTable('cell', 1, 2)
-                                       .CswSelect('init', {
-                                           ID: o.ID + '_ans',
-                                           onChange: function() {
-                                               checkCompliance(compliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
-                                               o.onchange();
-                                           },
-                                           values: splitAnswers,
-                                           selected: answer
-                                       });
+                var answerSel = table.cell(1, 2)
+                                      .select({
+                                          ID: o.ID + '_ans',
+                                          onChange: function () {
+                                              checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                                              o.onChange();
+                                          },
+                                          values: splitAnswers,
+                                          selected: answer
+                                      });
 
-                var $CorrectiveActionLabel = $table.CswTable('cell', 2, 1).append('Corrective Action');
-                var $CorrectiveActionTextBox = $('<textarea id="'+ o.ID +'_cor" />')
-                                    .appendTo($table.CswTable('cell', 2, 2))
-                                    .text(correctiveAction)
-                                    .change(function() { 
-                                        checkCompliance(compliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
-                                        o.onchange();
-                                    });
+                var correctiveActionLabel = table.cell(2, 1).text('Corrective Action');
+                var correctiveActionTextBox = table.cell(2, 2).textArea({
+                    ID: o.ID + '_cor',
+                    text: correctiveAction,
+                    onChange: function () {
+                        checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                        o.onChange();
+                    }
+                });
 
-                $table.CswTable('cell', 3, 1).append('Comments');
-                $('<textarea id="'+ o.ID +'_com" />')
-                                    .appendTo($table.CswTable('cell', 3, 2))
-                                    .text(comments)
-                                    .change(o.onchange);
+                table.cell(3, 1).text('Comments');
+                table.cell(3, 2).textArea({
+                    ID: o.ID + '_com',
+                    text: comments,
+                    onChange: o.onChange
+                });
 
-                checkCompliance(compliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox);
+                checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
             }
         },
-        save: function(o) {
+        save: function (o) {
             var attributes = {
                 answer: null,
                 correctiveaction: null,
                 comments: null
             };
-            var $answer = o.$propdiv.find('#' + o.ID + '_ans');
-            if (false === isNullOrEmpty($answer, true)) {
-                attributes.answer = $answer.val();
+            var answer = o.propDiv.find('#' + o.ID + '_ans');
+            if (false === Csw.isNullOrEmpty(answer, true)) {
+                attributes.answer = answer.val();
             }
-            var $correct = o.$propdiv.find('#' + o.ID + '_cor');
-            if (false === isNullOrEmpty($correct, true)) {
-                attributes.correctiveaction = $correct.val();
+            var correct = o.propDiv.find('#' + o.ID + '_cor');
+            if (false === Csw.isNullOrEmpty(correct, true)) {
+                attributes.correctiveaction = correct.val();
             }
-            var $comments = o.$propdiv.find('#' + o.ID + '_com');
-            if (false === isNullOrEmpty($comments, true)) {
-                attributes.comments = $comments.val();
+            var comments = o.propDiv.find('#' + o.ID + '_com');
+            if (false === Csw.isNullOrEmpty(comments, true)) {
+                attributes.comments = comments.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
-    
-    function checkCompliance(compliantAnswers, $AnswerSel, $CorrectiveActionLabel, $CorrectiveActionTextBox)
-    {
+
+    function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox) {
         if (false === multi) {
             var splitCompliantAnswers = compliantAnswers.split(',');
             var isCompliant = true;
-            var selectedAnswer = $AnswerSel.val();
-            var correctiveAction = $CorrectiveActionTextBox.val();
+            var selectedAnswer = answerSel.val();
+            var correctiveAction = correctiveActionTextBox.val();
 
             if (selectedAnswer !== '' && correctiveAction === '') {
                 isCompliant = false;
-                for (var i = 0; i < splitCompliantAnswers.length; i++) {
-                    isCompliant = isCompliant || (trim(splitCompliantAnswers[i].toLowerCase()) === trim(selectedAnswer.toLowerCase())) ;
+                for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
+                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
                 }
             }
             if (isCompliant) {
-                $AnswerSel.removeClass('CswFieldTypeQuestion_OOC');
+                answerSel.removeClass('CswFieldTypeQuestion_OOC');
                 if (correctiveAction === '') {
-                    $CorrectiveActionLabel.hide();
-                    $CorrectiveActionTextBox.hide();
+                    correctiveActionLabel.hide();
+                    correctiveActionTextBox.hide();
                 }
             } else {
-                $AnswerSel.addClass('CswFieldTypeQuestion_OOC');
-                $CorrectiveActionLabel.show();
-                $CorrectiveActionTextBox.show();
+                answerSel.addClass('CswFieldTypeQuestion_OOC');
+                correctiveActionLabel.show();
+                correctiveActionTextBox.show();
             }
         }
     } // checkCompliance()
 
     // Method calling logic
     $.fn.CswFieldTypeQuestion = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
     };
 })(jQuery);

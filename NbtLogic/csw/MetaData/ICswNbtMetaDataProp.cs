@@ -29,17 +29,17 @@ namespace ChemSW.Nbt.MetaData
         string PropName { get; }
         string PropNameWithQuestionNo { get; }
         bool IsRequired { get; }
-        CswNbtMetaDataFieldType FieldType { get; }
+        CswNbtMetaDataFieldType getFieldType();
         string FKType { get; }
         Int32 FKValue { get; }
         string ValuePropType { get; }
         Int32 ValuePropId { get; }
         string ListOptions { get; }
         PropertySelectMode Multi { get; }
-        ICswNbtFieldTypeRule FieldTypeRule { get; }
+        ICswNbtFieldTypeRule getFieldTypeRule();
         bool IsUserRelationship();
-        bool IsUnique { get; }
-        bool IsGlobalUnique { get; }
+        bool IsUnique();
+        bool IsGlobalUnique();
         string StaticText { get; }
         Int32 NumberPrecision { get; }
         double MinValue { get; }

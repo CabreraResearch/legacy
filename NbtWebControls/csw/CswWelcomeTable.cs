@@ -1,28 +1,18 @@
 ﻿using System;
-using System.Data;
-using System.Configuration;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Web;
-using System.Web.Security;
+using System.Data;
 using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
-using Telerik.Web.UI;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
-using ChemSW.NbtWebControls.FieldTypes;
+using System.Web.UI.WebControls;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Session;
 using ChemSW.CswWebControls;
 using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
 {
@@ -471,7 +461,7 @@ namespace ChemSW.NbtWebControls
             Int32 TaskNodeTypeId = Int32.MinValue;
             Int32 ScheduleNodeTypeId = Int32.MinValue;
             Int32 EquipmentNodeTypeId = Int32.MinValue;
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
                 if( NodeType.NodeTypeName == "Equipment Problem" )
                     ProblemNodeTypeId = NodeType.FirstVersionNodeTypeId;

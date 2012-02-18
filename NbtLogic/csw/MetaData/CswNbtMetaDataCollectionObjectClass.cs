@@ -1,119 +1,133 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using System.Collections.ObjectModel;
-using System.Text;
 using System.Data;
-using ChemSW.Exceptions;
+using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataCollectionObjectClass : ICswNbtMetaDataObjectCollection
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
-
-        private Collection<ICswNbtMetaDataObject> _AllObjectClasses;
-        private SortedList _ByName;
-        private Hashtable _ById;
+        private CswNbtMetaDataCollectionImpl _CollImpl;
 
         public CswNbtMetaDataCollectionObjectClass( CswNbtMetaDataResources CswNbtMetaDataResources )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
-
-            _AllObjectClasses = new Collection<ICswNbtMetaDataObject>();
-            _ByName = new SortedList();
-            _ById = new Hashtable();
+            _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
+                                                          "objectclassid",
+                                                          "objectclass",
+                                                          _CswNbtMetaDataResources.ObjectClassTableUpdate,
+                                                          makeObjectClass );
         }
 
-        public Collection<ICswNbtMetaDataObject> All { get { return _AllObjectClasses; } }
-        public ICollection getObjectClassIds()
+        public void clearCache()
         {
-            return _ById.Keys;
+            _CollImpl.clearCache();
         }
-        public ICollection getObjectClasses()
+
+        public CswNbtMetaDataObjectClass makeObjectClass( CswNbtMetaDataResources Resources, DataRow Row )
         {
-            return _ByName.Values;
+            return new CswNbtMetaDataObjectClass( Resources, Row );
+        }
+
+        public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass,Int32> getObjectClassIds()
+        {
+            Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> ret = new Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32>();
+            Dictionary<string, Int32> OCDict = _CollImpl.getPkDict();
+            CswNbtMetaDataObjectClass.NbtObjectClass OCKey = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
+            foreach( string Key in OCDict.Keys )
+            {
+                Enum.TryParse<CswNbtMetaDataObjectClass.NbtObjectClass>( Key, out OCKey );
+                if( false == ret.ContainsKey( OCKey ) )
+                {
+                    ret.Add( OCKey, OCDict[Key] );
+                }
+            }
+            return ret;
+        }
+        public IEnumerable<CswNbtMetaDataObjectClass> getObjectClasses()
+        {
+            return _CollImpl.getAll().Cast<CswNbtMetaDataObjectClass>();
         }
 
         public CswNbtMetaDataObjectClass getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
         {
-            CswNbtMetaDataObjectClass ret = null;
-            if( _ByName.ContainsKey( ObjectClass ) )
-                ret = _ByName[ObjectClass] as CswNbtMetaDataObjectClass;
-            return ret;
+            return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
         }
         public CswNbtMetaDataObjectClass getObjectClass( Int32 ObjectClassId )
         {
-            CswNbtMetaDataObjectClass ret = null;
-            if( _ById.ContainsKey( ObjectClassId ) )
-                ret = _ById[ObjectClassId] as CswNbtMetaDataObjectClass;
-            return ret;
+            return (CswNbtMetaDataObjectClass) _CollImpl.getByPk( ObjectClassId );
+        }
+        public CswNbtMetaDataObjectClass getObjectClassByNodeTypeId( Int32 NodeTypeId )
+        {
+            return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclassid in (select objectclassid from nodetypes where nodetypeid = " + NodeTypeId.ToString() + ")" );
         }
 
-        public void ClearKeys()
-        {
-            _ByName.Clear();
-            _ById.Clear();
-        }
+        //public void ClearKeys()
+        //{
+        //    _ByName.Clear();
+        //    _ById.Clear();
+        //}
 
-        public ICswNbtMetaDataObject RegisterNew( DataRow Row )
-        {
-            return RegisterNew( Row, Int32.MinValue );
-        }
-        public ICswNbtMetaDataObject RegisterNew( DataRow Row, Int32 PkToOverride )
-        {
-            CswNbtMetaDataObjectClass ObjectClass = null;
-            if( PkToOverride != Int32.MinValue )
-            {
-                // This allows existing objects to always point to the latest version of a node type prop in the collection
-                ObjectClass = getObjectClass( PkToOverride );
-                Deregister( ObjectClass );
+        //public ICswNbtMetaDataObject RegisterNew( DataRow Row )
+        //{
+        //    return RegisterNew( Row, Int32.MinValue );
+        //}
+        //public ICswNbtMetaDataObject RegisterNew( DataRow Row, Int32 PkToOverride )
+        //{
+        //    CswNbtMetaDataObjectClass ObjectClass = null;
+        //    if( PkToOverride != Int32.MinValue )
+        //    {
+        //        // This allows existing objects to always point to the latest version of a node type prop in the collection
+        //        ObjectClass = getObjectClass( PkToOverride );
+        //        Deregister( ObjectClass );
 
-                CswNbtMetaDataObjectClass OldObjectClass = new CswNbtMetaDataObjectClass( _CswNbtMetaDataResources, ObjectClass._DataRow );
-                _AllObjectClasses.Add( OldObjectClass );
+        //        CswNbtMetaDataObjectClass OldObjectClass = new CswNbtMetaDataObjectClass( _CswNbtMetaDataResources, ObjectClass._DataRow );
+        //        _AllObjectClasses.Add( OldObjectClass );
 
-                ObjectClass.Reassign( Row );
+        //        ObjectClass.Reassign( Row );
                 
-                RegisterExisting( OldObjectClass );
-                RegisterExisting( ObjectClass );
-            }
-            else
-            {
-                ObjectClass = new CswNbtMetaDataObjectClass( _CswNbtMetaDataResources, Row );
-                _AllObjectClasses.Add( ObjectClass );
+        //        RegisterExisting( OldObjectClass );
+        //        RegisterExisting( ObjectClass );
+        //    }
+        //    else
+        //    {
+        //        ObjectClass = new CswNbtMetaDataObjectClass( _CswNbtMetaDataResources, Row );
+        //        _AllObjectClasses.Add( ObjectClass );
 
-                RegisterExisting( ObjectClass );
-            }
-            return ObjectClass;
-        }
+        //        RegisterExisting( ObjectClass );
+        //    }
+        //    return ObjectClass;
+        //}
 
-        public void RegisterExisting( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataObjectClass ) )
-                throw new CswDniException( "CswNbtMetaDataCollectionObjectClass.Register got an invalid Object as a parameter" );
-            CswNbtMetaDataObjectClass ObjectClass = Object as CswNbtMetaDataObjectClass;
+        //public void RegisterExisting( ICswNbtMetaDataObject Object )
+        //{
+        //    if( !( Object is CswNbtMetaDataObjectClass ) )
+        //        throw new CswDniException( "CswNbtMetaDataCollectionObjectClass.Register got an invalid Object as a parameter" );
+        //    CswNbtMetaDataObjectClass ObjectClass = Object as CswNbtMetaDataObjectClass;
 
-            _ByName.Add( ObjectClass.ObjectClass, ObjectClass );
-            _ById.Add( ObjectClass.ObjectClassId, ObjectClass );
-        }
+        //    _ByName.Add( ObjectClass.ObjectClass, ObjectClass );
+        //    _ById.Add( ObjectClass.ObjectClassId, ObjectClass );
+        //}
 
-        public void Deregister( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataObjectClass ) )
-                throw new CswDniException( "CswNbtMetaDataCollectionObjectClass.Register got an invalid Object as a parameter" );
-            CswNbtMetaDataObjectClass ObjectClass = Object as CswNbtMetaDataObjectClass;
+        //public void Deregister( ICswNbtMetaDataObject Object )
+        //{
+        //    if( !( Object is CswNbtMetaDataObjectClass ) )
+        //        throw new CswDniException( "CswNbtMetaDataCollectionObjectClass.Register got an invalid Object as a parameter" );
+        //    CswNbtMetaDataObjectClass ObjectClass = Object as CswNbtMetaDataObjectClass;
 
-            _ByName.Remove( ObjectClass.ObjectClass );
-            _ById.Remove( ObjectClass.ObjectClassId );
-        }
+        //    _ByName.Remove( ObjectClass.ObjectClass );
+        //    _ById.Remove( ObjectClass.ObjectClassId );
+        //}
 
-        public void Remove( ICswNbtMetaDataObject Object )
-        {
-            if( !( Object is CswNbtMetaDataObjectClass ) )
-                throw new CswDniException( "CswNbtMetaDataCollectionObjectClass.Register got an invalid Object as a parameter" );
-            CswNbtMetaDataObjectClass ObjectClass = Object as CswNbtMetaDataObjectClass;
+        //public void Remove( ICswNbtMetaDataObject Object )
+        //{
+        //    if( !( Object is CswNbtMetaDataObjectClass ) )
+        //        throw new CswDniException( "CswNbtMetaDataCollectionObjectClass.Register got an invalid Object as a parameter" );
+        //    CswNbtMetaDataObjectClass ObjectClass = Object as CswNbtMetaDataObjectClass;
 
-            _AllObjectClasses.Remove( ObjectClass );
-        }
-    }
-}
+        //    _AllObjectClasses.Remove( ObjectClass );
+        //}
+    } // class CswNbtMetaDataCollectionObjectClass
+} // namespace ChemSW.Nbt.MetaData

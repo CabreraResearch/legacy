@@ -15,9 +15,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMol( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _MolSubField = ( (CswNbtFieldTypeRuleMol) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).MolSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleMol) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _MolSubField = _FieldTypeRule.MolSubField;
         }
-
+        private CswNbtFieldTypeRuleMol _FieldTypeRule;
         private CswNbtSubField _MolSubField;
 
         override public bool Empty

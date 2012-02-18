@@ -1,9 +1,5 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswCheckBoxArray.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
@@ -12,16 +8,17 @@
     var keyCol = 'key';
   
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
-            var $Div = $(this),
-                propVals = o.propData.values,
+            var propDiv =  o.propDiv;
+            propDiv.empty();
+            var propVals = o.propData.values,
                 logicalSetJson = propVals.logicalsetjson;
 
-            var $cbaDiv = $('<div />')
-                    .CswCheckBoxArray('init', {
+            propDiv.div()
+                   .checkBoxArray({
                         ID: o.ID + '_cba',
-                        onchange: o.onchange,
+                        onChange: o.onChange,
                         ReadOnly: o.ReadOnly,
                         dataAry: logicalSetJson.data,
                         cols: logicalSetJson.columns,
@@ -29,20 +26,19 @@
                         keyCol: keyCol,
                         Multi: o.Multi
                     });
-            
-            $Div.contents().remove();
-            $Div.append($cbaDiv);
-            return $Div;
+
+            return propDiv;
         },
-        save: function(o) { //$propdiv, $xml
-            var $CBADiv = o.$propdiv.children('div').first();
+        save: function (o) { //$propdiv, $xml
             var attributes = { logicalsetjson: null };
-            var formdata = $CBADiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
+            var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
             
-            if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+            if(false === Csw.isNullOrEmpty(formdata) && (
+               false === o.Multi || 
+                    false === formdata.MultiIsUnchanged)) {
                 attributes.logicalsetjson = formdata;
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             return $(this);
         } // save()
     };

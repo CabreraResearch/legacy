@@ -1,8 +1,7 @@
 using System;
-using System.Web.UI.WebControls;
+using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Core;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {

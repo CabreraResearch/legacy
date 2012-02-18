@@ -1,45 +1,41 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../thirdparty/js/jmol/Jmol.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) {
     "use strict";
     var pluginName = 'CswFieldTypeMol';
 
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
-            var width = 100; //tryParseString(propVals.width);
-            var mol = tryParseString(propVals.mol).trim();
+            var width = 100; //Csw.string(propVals.width);
+            var mol = Csw.string(propVals.mol).trim();
 
-            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
-            var $cell11 = $table.CswTable('cell', 1, 1).CswAttrDom('colspan', '3');
-            var $cell21 = $table.CswTable('cell', 2, 1).css('width', width - 36);
-            var $cell22 = $table.CswTable('cell', 2, 2).css('textAlign', 'right');
-            var $cell23 = $table.CswTable('cell', 2, 3).css('textAlign', 'right');
+            var table = propDiv.table({
+                ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+            });
+            var cell11 = table.cell(1, 1).propDom('colspan', '3');
+            var cell21 = table.cell(2, 1).css('width', width - 36);
+            var cell22 = table.cell(2, 2).css('textAlign', 'right');
+            var cell23 = table.cell(2, 3).css('textAlign', 'right');
 
-            if (false === isNullOrEmpty(mol)) {
-                jmolInitialize('./js/thirdparty/js/jmol/', 'JmolApplet.jar');
-                jmolSetDocument(false);
-                var myApplet = jmolAppletInline('300px', mol);
-                $cell11.append(myApplet); 
-                var myCheck = jmolCheckbox("spin on", "spin off", "Rotate");
-                $cell21.append(myCheck);
-                //$Div.css('z-index', '0'); //this doesn't prevent jmol overlapping dialog
+            if (false === Csw.isNullOrEmpty(mol)) {
+                window.jmolInitialize('./js/thirdparty/js/jmol/', 'JmolApplet.jar');
+                window.jmolSetDocument(false);
+                var myApplet = window.jmolAppletInline('300px', mol);
+                cell11.append(myApplet);
+                var myCheck = window.jmolCheckbox("spin on", "spin off", "Rotate");
+                cell21.append(myCheck);
             }
 
-            if (false === isTrue(o.ReadOnly) && o.EditMode !== EditMode.AddInPopup.name) {
+            if (false === Csw.bool(o.ReadOnly) && o.EditMode !== Csw.enums.editMode.Add) {
                 /* Edit Button */
-                $('<div/>')
-                    .appendTo($cell22)
-                    .CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Edit,
+                cell22.div()
+                    .imageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
                         onClick: function () {
@@ -52,14 +48,14 @@
                                     o.onReload();
                                 }
                             });
-                            return CswImageButton_ButtonType.None;
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
+
                 /* Clear Button */
-                $('<div/>')
-                    .appendTo($cell23)
-                    .CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Clear,
+                cell23.div()
+                    .imageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                         AlternateText: 'Clear',
                         ID: o.ID + '_clr',
                         onClick: function () {
@@ -70,20 +66,19 @@
                                     IncludeBlob: true
                                 };
 
-                                CswAjaxJson({
+                                Csw.ajax.post({
                                     url: '/NbtWebApp/wsNBT.asmx/clearProp',
                                     data: dataJson,
                                     success: function () { o.onReload(); }
                                 });
                             }
-                            return CswImageButton_ButtonType.None;
+                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
             }
-
         },
         save: function (o) { //$propdiv, o.propData
-            preparePropJsonForSave(o.propData);
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
 

@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
 {
@@ -24,19 +21,22 @@ namespace ChemSW.Nbt
 		{
 			_CswNbtResources = CswNbtResources;
 
-			if( TheView.ViewId != null && TheView.ViewId.isSet() )
-			{
-				_KeyString = TheView.ViewId.ToString();
-			}
-			else if( TheView.SessionViewId != null && TheView.SessionViewId.isSet() )
-			{
-				//TheView.SaveToCache(false);
-				_KeyString = TheView.SessionViewId.ToString();
-			}
-			else
-			{
-				// stay empty
-			}
+            if( TheView != null )
+            {
+                if( TheView.ViewId != null && TheView.ViewId.isSet() )
+                {
+                    _KeyString = TheView.ViewId.ToString();
+                }
+                else if( TheView.SessionViewId != null && TheView.SessionViewId.isSet() )
+                {
+                    //TheView.SaveToCache(false);
+                    _KeyString = TheView.SessionViewId.ToString();
+                }
+            }
+            else
+            {
+                // stay empty
+            }
 		}//ctor
 
 		/// <summary>

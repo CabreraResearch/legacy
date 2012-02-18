@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Collections.Generic;
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
-using ChemSW.DB;
-using ChemSW.Exceptions;
 
 
 namespace ChemSW.Nbt.Schema

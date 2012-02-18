@@ -1,7 +1,7 @@
 using System;
 using System.Web.UI;
-using ChemSW.Nbt;
 using ChemSW.Exceptions;
+using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -31,7 +31,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
                     if( _View != null )
                     {
-                        _Grid.ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, null, string.Empty, Prop.NodeId, NodeSpecies.Plain, Prop.NodeTypeProp.NodeType.NodeTypeId, Prop.NodeTypeProp.NodeType.ObjectClass.ObjectClassId, string.Empty, string.Empty );
+                        _Grid.ParentNodeKey = new CswNbtNodeKey( _CswNbtResources, null, Prop.NodeId, NodeSpecies.Plain, Prop.NodeTypeProp.NodeTypeId, Prop.NodeTypeProp.getNodeType().ObjectClassId, string.Empty, string.Empty );
                         _Grid.View = _View;
                         _Grid.ReadOnly = ReadOnly;
                     }

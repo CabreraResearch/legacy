@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
+using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.CswWebControls;
 
 namespace ChemSW.NbtWebControls
 {
@@ -78,7 +78,7 @@ namespace ChemSW.NbtWebControls
                 _TabStripDiv.Controls.Add( UL );
 
                 Int32 tabcnt = 0;
-                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                 {
                     HtmlGenericControl ThisLI = new HtmlGenericControl( "li" );
                     UL.Controls.Add( ThisLI );

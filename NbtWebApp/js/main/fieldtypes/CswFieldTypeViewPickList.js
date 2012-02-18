@@ -1,62 +1,57 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
-    "use strict";        
+    "use strict";
     var pluginName = 'CswFieldTypeViewPickList';
     var nameCol = 'label';
     var keyCol = 'key';
     var valueCol = 'value';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) {
 
-            var $Div = $(this);
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
             var optionData = propVals.options;
             var selectMode = propVals.selectmode;
-            var $cbaDiv = $('<div />')
-                            .CswCheckBoxArray('init', {
-                                ID: o.ID + '_cba',
-                                UseRadios: (selectMode === 'Single'),
-                                Required: o.Required,
-                                ReadOnly: o.ReadOnly,
-                                Multi: o.Multi,
-                                onchange: o.onchange,
-                                dataAry: optionData,
-                                nameCol: nameCol,
-                                keyCol: keyCol,
-                                valCol: valueCol,
-                                valColName: 'Include'
-                            });
-            $Div.contents().remove();
-            $Div.append($cbaDiv);
-            return $Div;    
+            propDiv.div()
+                .checkBoxArray({
+                    ID: o.ID + '_cba',
+                    UseRadios: (selectMode === 'Single'),
+                    Required: o.Required,
+                    ReadOnly: o.ReadOnly,
+                    Multi: o.Multi,
+                    onChange: o.onChange,
+                    dataAry: optionData,
+                    nameCol: nameCol,
+                    keyCol: keyCol,
+                    valCol: valueCol,
+                    valColName: 'Include'
+                });
+            return propDiv;
         },
-        'save': function(o) {
+        'save': function (o) {
             var attributes = { options: null };
-            var $cbaDiv = o.$propdiv.children('div').first();
-            var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-            if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+            var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
+            if (false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.options = formdata.data;
-            } 
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            }
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
-    
+
     // Method calling logic
     $.fn.CswFieldTypeViewPickList = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

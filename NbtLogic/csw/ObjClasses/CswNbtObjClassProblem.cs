@@ -55,11 +55,11 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _checkClosed();
 
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         private void _checkClosed()
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode EquipmentOrAssemblyNode = _CswNbtResources.Nodes[Owner.RelatedNodeId];
                 if( EquipmentOrAssemblyNode != null )
                 {
-                    if( EquipmentOrAssemblyNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipment EquipmentNodeAsEquipment = CswNbtNodeCaster.AsEquipment( EquipmentOrAssemblyNode );
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         this.Parts.YValues = NewYValues;
                     }
-                    else if( EquipmentOrAssemblyNode.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
+                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = CswNbtNodeCaster.AsEquipmentAssembly( EquipmentOrAssemblyNode );

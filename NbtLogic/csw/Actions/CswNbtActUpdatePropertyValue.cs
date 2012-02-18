@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Core;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -23,7 +17,7 @@ namespace ChemSW.Nbt.Actions
         public void UpdateNode( CswNbtNode Node, bool ForceUpdate )
         {
             // BZ 10240
-            if( ( Node.PendingUpdate || ForceUpdate ) && Node.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+            if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
             {
                 CswNbtNodeCaster.AsEquipment( Node ).SynchEquipmentToAssembly();
             }
@@ -34,7 +28,7 @@ namespace ChemSW.Nbt.Actions
             {
                 if( PropWrapper.PendingUpdate || Node.PendingUpdate || ForceUpdate )
                 {
-                    switch( PropWrapper.FieldType.FieldType )
+                    switch( PropWrapper.getFieldType().FieldType )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.Composite:
                             CswNbtNodePropComposite CompositeProp = PropWrapper.AsComposite;

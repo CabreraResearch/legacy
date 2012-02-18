@@ -1,25 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Text;
-using System.Collections;
-using ChemSW;
-using ChemSW.RscAdo;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Mail;
-using ChemSW.Log;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
 using ChemSW.Config;
-using ChemSW.Security;
-using ChemSW.TblDn;
-using ChemSW.Nbt.Actions;
+using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Config;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.TreeEvents;
 
 namespace ChemSW.Nbt
@@ -45,7 +28,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Create a new CswNbtResources
         /// </summary>
-        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null )
+        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null , ChemSW.RscAdo.PooledConnectionState PooledConnectionState = RscAdo.PooledConnectionState.Open )
         {
 
 
@@ -68,6 +51,7 @@ namespace ChemSW.Nbt
             string FilesPath = CswTools.getConfigurationFilePath( SetupMode );
 
             CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache );
+            ReturnVal.PooledConnectionState = PooledConnectionState; 
             ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ) );
 
             //bz # 9896: This events must only be assigned when we first instance the class;

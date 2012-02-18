@@ -1,111 +1,102 @@
-﻿/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswButton.js" />
+﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswFieldTypeButton';
 
-    var onButtonClick = function (propid, $button, o) {
-        var propAttr = tryParseString(propid),
+    var onButtonClick = function (propid, button, o) {
+        var propAttr = Csw.string(propid),
             params;
 
-        $button.CswButton('disable');
-        if (isNullOrEmpty(propAttr)) {
-            CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
-            $button.CswButton('enable');
+        button.disable();
+        if (Csw.isNullOrEmpty(propAttr)) {
+            Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
+            button.enable();
         } else {
             params = {
                 NodeTypePropAttr: propAttr
             };
 
-            CswAjaxJson({
+            Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                 data: params,
                 success: function (data) {
-                    $button.CswButton('enable');
-                    if (isTrue(data.success)) {
+                    button.enable();
+                    if (Csw.bool(data.success)) {
                         switch (data.action) {
-                            case ChemSW.enums.CswOnObjectClassClick.reauthenticate:
-                                if (manuallyCheckChanges()) // case 24669
-                                {
-                                    $.CswCookie('clearAll');
-                                    CswAjaxJson({
+                            case Csw.enums.onObjectClassClick.reauthenticate:
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    /* case 24669 */
+                                    Csw.cookie.clearAll();
+                                    Csw.ajax.post({
                                         url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
                                         data: { PropId: propAttr },
                                         success: function () {
-                                            unsetChanged();
+                                            Csw.clientChanges.unsetChanged();
                                             window.location = "Main.html";
                                         }
                                     });
                                 }
                                 break;
-                            case ChemSW.enums.CswOnObjectClassClick.refresh:
+                            case Csw.enums.onObjectClassClick.refresh:
                                 o.onReload();
                                 break;
                             default:
-                                //Nada
+                                /* Nada */
                                 break;
                         }
                     }
                 },
                 error: function () {
-                    $button.CswButton('enable');
+                    button.enable();
                 }
             });
         }
     };
 
     var methods = {
-        init: function (o) { //nodepk = o.nodeid, $xml = o.$propxml, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly , cswnbtnodekey
+        init: function (o) { 
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
 
             var propVals = o.propData.values,
-                value = tryParseString(propVals.text, o.propData.name),
-                mode = tryParseString(propVals.mode, 'button'),
-                $button;
+                value = Csw.string(propVals.text, o.propData.name),
+                mode = Csw.string(propVals.mode, 'button'),
+                button;
+            
+            function onClick() {
+                onButtonClick(o.propid, button, o);
+            }
 
-            //Read-only doesn't make sense for buttons
-            //            if(o.ReadOnly) {
-            //                $Div.append(value);
-            //            } else {
             if (mode === 'button') {
-                $button = $Div.CswButton('init', {
+                button = propDiv.button({
                     ID: o.ID,
                     enabledText: value,
                     disabledText: value,
-                    disableOnClick: true
+                    disableOnClick: true,
+                    onClick: onClick
                 });
             }
             else {
-                $button = $Div.CswLink('init', {
+                button = propDiv.link({
                     ID: o.ID,
                     value: value,
-                    href: '#'
+                    onClick: onClick
                 });
             }
-            $button.click(function () {
-                onButtonClick(o.propid, $button, o);
-            });
 
             if (o.Required) {
-                $button.addClass('required');
+                button.addClass('required');
             }
-            //}
         },
         save: function (o) {
-            preparePropJsonForSave(o.propData);
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
 
-    // Method calling logic
     $.fn.CswFieldTypeButton = function (method) {
-
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
         } else if (typeof method === 'object' || !method) {
@@ -113,6 +104,5 @@
         } else {
             $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
         }
-
     };
 })(jQuery);

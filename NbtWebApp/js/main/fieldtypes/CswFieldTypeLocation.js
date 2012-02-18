@@ -1,130 +1,112 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
-    "use strict";        
+    "use strict";
     $.fn.CswFieldTypeLocation = function (method) {
 
         var pluginName = 'CswFieldTypeLocation';
 
         var methods = {
-            init: function(o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
-            
-                var $Div = $(this);
-                $Div.contents().remove();
+            init: function (o) {
+
+                var propDiv = o.propDiv;
+                propDiv.empty();
                 var propVals = o.propData.values;
-                var nodeId = (false === o.Multi) ? tryParseString(propVals.nodeid).trim() : '';
-                var nodeKey = (false === o.Multi) ? tryParseString(propVals.nodekey).trim() : '';
-                var name = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue;
-                var path = (false === o.Multi) ? tryParseString(propVals.path).trim() : CswMultiEditDefaultValue;
-                var viewId = tryParseString(propVals.viewid).trim();
+                var nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : '';
+                var nodeKey = (false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
+                var name = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue;
+                var path = (false === o.Multi) ? Csw.string(propVals.path).trim() : Csw.enums.multiEditDefaultValue;
+                var viewId = Csw.string(propVals.viewid).trim();
+                var comboBox;
 
-                if(o.ReadOnly) {
-                    $Div.append(path);
-                    $Div.hover(function(event) { nodeHoverIn(event, nodeId); }, nodeHoverOut);
+                if (o.ReadOnly) {
+                    propDiv.append(path);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, nodeId); }, Csw.nodeHoverOut);
                 } else {
-                    var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+                    var table = propDiv.table({
+                        ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    });
 
-                    var $pathcell = $table.CswTable('cell', 1, 1);
-                    $pathcell.CswAttrDom('colspan', '2');
-                    $pathcell.append(path + "<br/>");
+                    table.cell(1, 1).text(path).propDom('colspan', '2').br();
 
-                    var $selectcell = $table.CswTable('cell', 2, 1);
-                    var $selectdiv = $('<div class="locationselect" value="'+ nodeId +'"/>' )
-                                        .appendTo($selectcell);
+                    var selectDiv = table.cell(2, 1).div({
+                        cssclass: 'locationselect',
+                        value: nodeId
+                    });
 
-                    var $locationtree = $('<div />')
-                                            .CswNodeTree('init', {  
-                                                ID: o.ID,
-                                                viewid: viewId,
-                                                nodeid: nodeId,
-                                                cswnbtnodekey: nodeKey,
-                                                onSelectNode: function (optSelect) {
-                                                    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onchange);
-                                                },
-                                                onInitialSelectNode: function(optSelect) {
-                                                    onTreeSelect($selectdiv, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function() {}); 
-                                                }, 
-                                                //SelectFirstChild: false,
-                                                //UsePaging: false,
-                                                UseScrollbars: false,
-                                                IncludeInQuickLaunch: false,
-                                                ShowToggleLink: false,
-                                                DefaultSelect: CswNodeTree_DefaultSelect.root.name
-                                            });
-    
-                    $selectdiv.CswComboBox( 'init', {	'ID': o.ID + '_combo', 
-                                                        'TopContent': name,
-                                                        'SelectContent': $locationtree,
-                                                        'Width': '290px',
-                                                        onClick: function () {
-                                                                    var first = true;
-                                                                    return function() { 
-                                                                        // only do this once
-                                                                        if(first) {
-                                                                            $locationtree.CswNodeTree('expandAll');
-                                                                            first = false;
-                                                                        }
-                                                                    }
-                                                                }()
-                                                    });
+                    comboBox = selectDiv.comboBox({ 
+                        ID: o.ID + '_combo',
+                        topContent: name,
+                        selectContent: '',
+                        width: '290px'
+                    });
 
-//					var $addcell = $table.CswTable('cell', 2, 2);
-//					var $AddButton = $('<div />').appendTo($addcell);
-//					$AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add, 
-//												AlternateText: "Add New",
-//												onClick: function($ImageDiv) { 
-//														onAdd();
-//														return CswImageButton_ButtonType.None;
-//													}
-//												});
+                    var $locationtree = comboBox.pickList.$
+                        .CswNodeTree('init', {
+                            ID: o.ID,
+                            viewid: viewId,
+                            nodeid: nodeId,
+                            cswnbtnodekey: nodeKey,
+                            onSelectNode: function (optSelect) {
+                                onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
+                            },
+                            onInitialSelectNode: function (optSelect) {
+                                onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () {
+                                });
+                            },
+                            //SelectFirstChild: false,
+                            //UsePaging: false,
+                            UseScrollbars: false,
+                            IncludeInQuickLaunch: false,
+                            ShowToggleLink: false,
+                            DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                        });
 
-//                        if(o.Required)
-//                        {
-//                            $SelectBox.addClass("required");
-//                        }
-                    $Div.hover(function(event) { nodeHoverIn(event, $selectdiv.val()); }, nodeHoverOut);
+                    comboBox.bind('click', (function () {
+                        var first = true;
+                        return function () {
+                            // only do this once
+                            if (first) {
+                                $locationtree.CswNodeTree('expandAll');
+                                first = false;
+                            }
+                        };
+                    }()));
+                    propDiv.$.hover(function (event) {
+                        Csw.nodeHoverIn(event, selectDiv.val());
+                    }, Csw.nodeHoverOut);
                 }
             },
-            save: function(o) { //($propdiv, $xml
+            save: function (o) { //($propdiv, $xml
                 var attributes = { nodeid: null };
-                var $selectdiv = o.$propdiv.find('.locationselect');
-                if (false === isNullOrEmpty($selectdiv)) {
-                    attributes.nodeid = $selectdiv.val();
+                var selectDiv = o.propDiv.find('.locationselect');
+                if (false === Csw.isNullOrEmpty(selectDiv.children())) {
+                    attributes.nodeid = selectDiv.children().val();
                 }
-                preparePropJsonForSave(o.Multi, o.propData, attributes);
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
         };
-    
-    
-        function onTreeSelect($selectdiv, itemid, text, iconurl, onchange)
-        {
-            if(itemid === 'root') itemid = '';   // case 21046
-            $selectdiv.CswComboBox( 'TopContent', text );
-            if($selectdiv.val() !== itemid)
-            {
-                $selectdiv.val(itemid);
-                onchange();
+
+
+        function onTreeSelect(comboBox, itemid, text, iconurl, onChange) {
+            if (itemid === 'root') itemid = '';   // case 21046
+            comboBox.topContent(text, itemid);
+            if (comboBox.val() !== itemid) {
+                comboBox.val(itemid);
+                onChange();
             }
-            setTimeout(function() { $selectdiv.CswComboBox( 'close'); }, 300);
+            setTimeout(function () { comboBox.close(); }, 100);
         }
-        
-//		function onAdd()
-//		{
-//			alert('This function has not been implemented yet.');
-//		}
 
         // Method calling logic
-        if ( methods[method] ) {
-            return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-            return methods.init.apply( this, arguments );
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-            $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

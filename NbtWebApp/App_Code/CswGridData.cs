@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JqGridViewProperty( CswViewBuilderProp ViewProperty, bool DoCssOverride = false )
         {
-            switch( ViewProperty.FieldType.FieldType )
+            switch( ViewProperty.FieldType )
             {
                 case CswNbtMetaDataFieldType.NbtFieldType.Number:
                     _JqFieldType = JqFieldType.number;

@@ -1,7 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -13,7 +11,7 @@
             init: function (options) {
 
                 function handleClick() {
-                    if (isFunction(o.onClick)) {
+                    if (Csw.isFunction(o.onClick)) {
                         o.onClick();
                     }
                     toggle($TopDiv, $ChildDiv);
@@ -24,7 +22,7 @@
                     TopContent: '',
                     SelectContent: 'This ComboBox Is Empty!',
                     Width: '180px',
-                    onClick: null // function() { }
+                    onClick: null // function () { }
                 };
 
                 if (options) {
@@ -38,15 +36,17 @@
                             .appendTo($Div)
                             .css('width', o.Width);
 
-                var $table = $TopDiv.CswTable('init', { ID: o.ID + '_tbl' });
-                $table.CswAttrDom('width', '100%');
+                var table = Csw.controls.table({
+                    $parent: $TopDiv,
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                });
+                table.propDom('width', '100%');
 
-                var $cell1 = $table.CswTable('cell', 1, 1);
-                $cell1.CswAttrDom('width', '100%');
-                $cell1.append(o.TopContent);
+                var cell1 = table.cell(1, 1).text(o.TopContent);
+                cell1.propDom('width', '100%');
 
-                var $cell2 = $table.CswTable('cell', 1, 2);
-                $cell2.addClass("CswComboBox_ImageCell");
+                var cell2 = table.cell(1, 2);
+                cell2.addClass("CswComboBox_ImageCell");
 
                 var hideTo;
                 var $ChildDiv = $('<div id="' + o.ID + '_child" class="CswComboBox_ChildDiv">')
@@ -55,9 +55,9 @@
                                   .append(o.SelectContent)
                                   .hover(function () { clearTimeout(hideTo); }, function () { hideTo = setTimeout(function () { $ChildDiv.hide(); }, 750); });
 
-                $cell1.click(handleClick);
+                cell1.$.click(handleClick);
 
-                $cell2.CswImageButton({ 'ButtonType': CswImageButton_ButtonType.Select,
+                cell2.imageButton({ 'ButtonType': Csw.enums.imageButton_ButtonType.Select,
                     'ID': o.ID + '_top_img',
                     'AlternateText': '',
                     'onClick': handleClick
@@ -68,10 +68,11 @@
                 var $Div = $(this);
                 var $TopDiv = $Div.children('.CswComboBox_TopDiv');
                 var $table = $TopDiv.children('table');
-                var $cell1 = $table.CswTable('cell', 1, 1);
-                $cell1.text('');
-                $cell1.contents().remove();
-                $cell1.append(content);
+                var table = Csw.controls.table($table);
+                var cell1 = table.cell(1, 1);
+                cell1.text('');
+                cell1.empty();
+                cell1.append(content);
             },
             toggle: function () {
                 var $Div = $(this);

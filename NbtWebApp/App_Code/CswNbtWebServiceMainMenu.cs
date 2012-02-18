@@ -87,16 +87,15 @@ namespace ChemSW.Nbt.WebServices
 
             JObject Ret = new JObject();
 
-            string NodeKey = wsTools.FromSafeJavaScriptParam( SafeNodeKey );
             string RelatedNodeId = string.Empty;
             string RelatedNodeTypeId = string.Empty;
             CswNbtNode Node = null;
             Int32 NodeTypeId = Int32.MinValue;
             Int32 NodeId = Int32.MinValue;
 
-            if( false == string.IsNullOrEmpty( NodeKey ) )
+            if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
-                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, SafeNodeKey );
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {
@@ -125,22 +124,22 @@ namespace ChemSW.Nbt.WebServices
                         SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
                         HasChildren = true;
                     }
-                    if( View.Visibility != NbtViewVisibility.Property )
-                    {
-                        SearchObj["Generic Search"] = new JObject();
-                        SearchObj["Generic Search"]["nodeid"] = NodeId;
-                        SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
-                        SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                        HasChildren = true;
-                    }
+                    //if( View.Visibility != NbtViewVisibility.Property )
+                    //{
+                    //    SearchObj["Generic Search"] = new JObject();
+                    //    SearchObj["Generic Search"]["nodeid"] = NodeId;
+                    //    SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
+                    //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                    //    HasChildren = true;
+                    //}
                     /* Case 24744: No Generic Search on Grid Props */
                 }
-                else
-                {
-                    SearchObj["Generic Search"] = new JObject();
-                    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                    HasChildren = true;
-                }
+                //else
+                //{
+                //    SearchObj["Generic Search"] = new JObject();
+                //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+                //    HasChildren = true;
+                //}
 
                 if( HasChildren )
                 {
@@ -182,10 +181,10 @@ namespace ChemSW.Nbt.WebServices
                 if( _MenuItems.Contains( "Copy" ) &&
                     null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.NodeType ) )
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) )
                 {
                     string BadPropertyName = string.Empty;
-                    if( false == Node.NodeType.IsUniqueAndRequired( ref BadPropertyName ) )
+                    if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
                     {
                         Ret["Copy"] = new JObject();
                         Ret["Copy"]["action"] = MenuActions.CopyNode.ToString();
@@ -196,11 +195,11 @@ namespace ChemSW.Nbt.WebServices
 
                 // DELETE
                 if( _MenuItems.Contains( "Delete" ) &&
-                    false == string.IsNullOrEmpty( NodeKey ) &&
+                    false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     Node.NodeSpecies == NodeSpecies.Plain &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.NodeType, false, null, null, Node, null ) )
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), false, null, null, Node, null ) )
                 {
                     Ret["Delete"] = new JObject();
                     Ret["Delete"]["action"] = MenuActions.DeleteNode.ToString();
@@ -222,11 +221,11 @@ namespace ChemSW.Nbt.WebServices
 
                 // PRINT LABEL
                 if( _MenuItems.Contains( "Print Label" ) &&
-                    false == string.IsNullOrEmpty( NodeKey ) &&
+                    false == string.IsNullOrEmpty( SafeNodeKey ) &&
                     null != Node &&
-                    null != Node.NodeType )
+                    null != Node.getNodeType() )
                 {
-                    CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.NodeType.BarcodeProperty;
+                    CswNbtMetaDataNodeTypeProp BarcodeProperty = Node.getNodeType().getBarcodeProperty();
                     if( null != BarcodeProperty )
                     {
                         Ret["Print Label"] = new JObject();

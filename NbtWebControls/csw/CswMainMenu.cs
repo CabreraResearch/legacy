@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -8,8 +9,8 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using Telerik.Web.UI;
 using ChemSW.Nbt.Security;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
 {
@@ -440,11 +441,11 @@ namespace ChemSW.NbtWebControls
                                 break;
                             case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
                                 CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Convert.ToInt32( DesignSelectedValue ) );
-                                NodeType = NodeTypeProp.NodeType;
+                                NodeType = NodeTypeProp.getNodeType();
                                 break;
                             case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
                                 CswNbtMetaDataNodeTypeTab NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-                                NodeType = NodeTypeTab.NodeType;
+                                NodeType = NodeTypeTab.getNodeType();
                                 break;
                         }
 
@@ -513,7 +514,7 @@ namespace ChemSW.NbtWebControls
                                     TypeMenuItem.CssClass = SubMenuGroupCssClass;
                                     //TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToJavaScriptParam() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + Entry.ViewRelationship.UniqueId + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "');" );
                                     // Case 20544 - Add viewid to querystring
-                                    TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToJavaScriptParam() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "', '" + _View.ViewId.ToString() + "');" );
+                                    TypeMenuItem.Attributes.Add( "onclick", "openNewNodePopup('" + Entry.NodeType.NodeTypeId.ToString() + "', '" + ParentNodeKey.ToString() + "', '" + ParentNodeKeyViewNode.View.SessionViewId.ToString() + "', '" + AddMenuDoesntChangeViewString + "', '" + AddMenuDoesntChangeSelectedNodeString + "', '" + _View.ViewId.ToString() + "');" );
                                     _AddMenuItem.Items.Add( TypeMenuItem );
                                 }
                             }
@@ -533,9 +534,9 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab )
                     {
                         CswNbtMetaDataNodeTypeTab SelectedTab = CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedTab.NodeType ) )
+						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedTab.getNodeType() ) )
                         {
-                            if( SelectedTab.NodeType.IsLatestVersion )
+                            if( SelectedTab.getNodeType().IsLatestVersion() )
                             {
                                 _AddMenuItem.Visible = true;
                                 RadMenuItem AddPropMenuItem = new RadMenuItem();
@@ -561,7 +562,7 @@ namespace ChemSW.NbtWebControls
                         CswNbtMetaDataNodeType SelectedNodeType = CswNbtResources.MetaData.getNodeType( Convert.ToInt32( DesignSelectedValue ) );
 						if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
                         {
-                            if( SelectedNodeType != null && SelectedNodeType.IsLatestVersion )
+                            if( SelectedNodeType != null && SelectedNodeType.IsLatestVersion() )
                             {
                                 _AddMenuItem.Visible = true;
                                 RadMenuItem AddTabMenuItem = new RadMenuItem();
@@ -658,7 +659,7 @@ namespace ChemSW.NbtWebControls
                         if( !CopyNodeType.IsUniqueAndRequired( ref badproperty ) )
                         {
                             _CopyMenuItem.Visible = true;
-                            _CopyMenuItem.Attributes.Add( "onclick", "openCopyPopup('" + SelectedNodeKey.ToJavaScriptParam() + "');" );
+                            _CopyMenuItem.Attributes.Add( "onclick", "openCopyPopup('" + SelectedNodeKey.ToString() + "');" );
                         }
                     }
                 }
@@ -873,8 +874,8 @@ namespace ChemSW.NbtWebControls
                     CswNbtMetaDataNodeType SelectedNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId );
                     if( SelectedNodeType != null )
                     {
-                        CswNbtMetaDataNodeTypeProp BarcodeProperty = SelectedNodeType.BarcodeProperty;
-                        if( SelectedNodeType.BarcodeProperty != null )
+                        CswNbtMetaDataNodeTypeProp BarcodeProperty = SelectedNodeType.getBarcodeProperty();
+                        if( BarcodeProperty != null )
                         {
                             PrintLabelMenuItem.Visible = true;
                             PrintLabelMenuItem.Attributes.Add( "onclick", "openPrintLabelPopup('" + SelectedNodeKey.NodeId.ToString() + "','" + BarcodeProperty.PropId.ToString() + "');" );
@@ -905,7 +906,7 @@ namespace ChemSW.NbtWebControls
                             DeleteMenuItem.Visible = true;
 
                             // This lives in MainLayout.aspx, because the dialog cannot be inside an UpdatePanel.
-                            DeleteMenuItem.Attributes.Add( "onclick", "openDeleteNodePopup('" + SelectedNodeKey.ToJavaScriptParam() + "');" );
+                            DeleteMenuItem.Attributes.Add( "onclick", "openDeleteNodePopup('" + SelectedNodeKey.ToString() + "');" );
                         }
                     }
                     else if( IsDesignMode &&
@@ -917,7 +918,7 @@ namespace ChemSW.NbtWebControls
                     {
                         // Can't delete the first tab
                         if( ( DesignSelectedType != CswNodeTypeTree.NodeTypeTreeSelectedType.Tab ) ||
-                            ( _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) ).NodeType.NodeTypeTabs.Count > 1 ) )
+                            ( _CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) ).getNodeType().getNodeTypeTabs().Count() > 1 ) )
                         {
                             DeleteMenuItem.Visible = true;
 

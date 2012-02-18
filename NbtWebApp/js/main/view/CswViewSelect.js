@@ -1,23 +1,19 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="CswViewListTree.js" />
-
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
     var pluginName = "CswViewSelect";
 
     var methods = {
-        'init': function(options) 
+        'init': function (options) 
             {
 
                 var o = {
                     ID: '',
                     //viewid: '',
                     onSelect: null,
-//				        function() { 
+//				        function () { 
 //						var x = {
 //									iconurl: '',
 //									type: '',
@@ -30,7 +26,7 @@
 //									reportid: ''
 //								};
 //					},
-                    onSuccess: null, //function() {},
+                    onSuccess: null, //function () {},
                     ClickDelay: 300,
                     issearchable: false,
                     usesession: true
@@ -49,7 +45,7 @@
                                                  Width: '266px' });
 
                 $viewtreediv.CswViewListTree({ 
-                                            onSelect: function(optSelect) 
+                                            onSelect: function (optSelect) 
                                                 { 
                                                     _onTreeSelect({
                                                                     ID: o.ID,
@@ -75,7 +71,7 @@
                 return $selectdiv;
             },
 
-        'value': function() 
+        'value': function () 
             {
                 var $selectdiv = $(this);
                 return {
@@ -119,15 +115,17 @@
         if(optSelect) $.extend(x, optSelect);
 
         var $newTopContent = $('<div></div>');
-        var $table = $newTopContent.CswTable('init', { ID: x.ID + 'selectedtbl' });
-        var $cell1 = $table.CswTable('cell', 1, 1);
-        var $icondiv = $('<div />').appendTo($cell1);
-        $icondiv.css('background-image', x.iconurl);
-        $icondiv.css('width', '16px');
-        $icondiv.css('height' ,'16px');
+        var table = Csw.controls.table({
+                $parent: $newTopContent,
+                ID: x.ID + 'selectedtbl' 
+        });
+        var iconDiv = table.cell(1, 1).div();
+        
+        iconDiv.css('background-image', x.iconurl);
+        iconDiv.css('width', '16px');
+        iconDiv.css('height' ,'16px');
 
-        var $cell2 = $table.CswTable('cell', 1, 2);
-        $cell2.append(x.viewname.substr(0,30));
+        table.cell(1, 2).text(x.viewname.substr(0,30));
 
         x.$selectdiv.CswComboBox( 'TopContent', $newTopContent );
         x.$selectdiv.CswAttrNonDom('selectedType', x.type);
@@ -144,8 +142,8 @@
                 break;
         }
 
-        setTimeout(function() { x.$selectdiv.CswComboBox( 'toggle'); }, x.ClickDelay);
-        if(isFunction(x.onSelect)) {
+        setTimeout(function () { x.$selectdiv.CswComboBox( 'toggle'); }, x.ClickDelay);
+        if(Csw.isFunction(x.onSelect)) {
             x.onSelect({
                         iconurl: x.iconurl,
                         type: x.type,

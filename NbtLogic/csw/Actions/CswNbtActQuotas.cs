@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Actions
             {
                 Dictionary<Int32, Int32> NodeCountsForNodeType;
                 Dictionary<Int32, Int32> NodeCountsForObjectClass;
-                _GetNodeCounts( NodeType.ObjectClass.ObjectClassId, out NodeCountsForNodeType, out NodeCountsForObjectClass );
+                _GetNodeCounts( NodeType.ObjectClassId, out NodeCountsForNodeType, out NodeCountsForObjectClass );
 
                 if( NodeCountsForNodeType.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                 {
@@ -322,7 +322,7 @@ namespace ChemSW.Nbt.Actions
 
 
         /// <summary>
-        /// Determins a percentage for total quota usage
+        /// Determines a percentage for total quota usage
         /// </summary>
         public Double GetQuotaPercent()
         {
@@ -334,7 +334,7 @@ namespace ChemSW.Nbt.Actions
             Dictionary<Int32, Int32> NodeCountsForObjectClass;
             GetNodeCounts( out NodeCountsForNodeType, out NodeCountsForObjectClass );
 
-            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
                 if( ObjectClass.Quota > 0 )
                 {
@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.Actions
                 }
             } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
                 if( NodeType.Quota > 0 )
                 {
@@ -379,9 +379,9 @@ namespace ChemSW.Nbt.Actions
             if( NodeType != null )
             {
                 Int32 NodeCount = GetNodeCountForNodeType( NodeTypeId );
-                Int32 Quota = NodeType.FirstVersionNodeType.Quota;
+                Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
                 ret = ( ( Quota <= 0 || NodeCount < Quota ) &&
-                        CheckQuotaOC( NodeType.ObjectClass.ObjectClassId ) );
+                        CheckQuotaOC( NodeType.ObjectClassId ) );
             }
             return ret;
         } // CheckQuota()

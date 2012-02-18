@@ -16,12 +16,13 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMTBF( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _StartDateTimeSubField = ( (CswNbtFieldTypeRuleMTBF) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).StartDateTimeSubField;
-            _UnitsSubField = ( (CswNbtFieldTypeRuleMTBF) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).UnitsSubField;
-            _ValueSubField = ( (CswNbtFieldTypeRuleMTBF) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ValueSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleMTBF) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _StartDateTimeSubField = _FieldTypeRule.StartDateTimeSubField;
+            _UnitsSubField = _FieldTypeRule.UnitsSubField;
+            _ValueSubField = _FieldTypeRule.ValueSubField;
         }
 
-
+        private CswNbtFieldTypeRuleMTBF _FieldTypeRule;
         private CswNbtSubField _StartDateTimeSubField;
         private CswNbtSubField _UnitsSubField;
         private CswNbtSubField _ValueSubField;
@@ -158,7 +159,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 CswNbtView ProblemFailuresView = new CswNbtView( _CswNbtResources );
                 ProblemFailuresView.ViewName = "Problem Failures";
-                CswNbtViewRelationship ParentRelationship = ProblemFailuresView.AddViewRelationship( this.NodeTypeProp.NodeType, true );
+                CswNbtViewRelationship ParentRelationship = ProblemFailuresView.AddViewRelationship( this.NodeTypeProp.getNodeType(), true );
                 ParentRelationship.NodeIdsToFilterIn.Add( this.NodeId );
                 CswNbtViewRelationship ChildRelationship = ProblemFailuresView.AddViewRelationship( ParentRelationship,
                                                                                                     CswNbtViewRelationship.PropOwnerType.Second,

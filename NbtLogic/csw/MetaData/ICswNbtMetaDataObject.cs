@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -10,6 +8,6 @@ namespace ChemSW.Nbt.MetaData
         DataRow _DataRow { get; }
         Int32 UniqueId { get; }
         string UniqueIdFieldName { get; }
-        void Reassign( DataRow NewRow );
+        //void Reassign( DataRow NewRow );
     }
 }

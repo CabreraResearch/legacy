@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -130,27 +131,27 @@ namespace ChemSW.Nbt
         /// </summary>
         string SourceViewXml { get; set; }
 
-        /// <summary>
-        /// When converting the tree to XML, use this format
-        /// </summary>
-        XmlTreeDestinationFormat XmlTreeDestinationFormat { get; set; }
+        ///// <summary>
+        ///// When converting the tree to XML, use this format
+        ///// </summary>
+        //XmlTreeDestinationFormat XmlTreeDestinationFormat { get; set; }
 
         //void pushCurrentKey();
         //void popKey();
 
-        /// <summary>
-        /// Converts the tree to an XML string
-        /// </summary>
-        string getTreeAsXml();
+        ///// <summary>
+        ///// Converts the tree to an XML string
+        ///// </summary>
+        //string getTreeAsXml();
 
         /// <summary>
         /// Gets the Tree XML as it is stored internally
         /// </summary>
-        XmlDocument getRawTreeXml();
-        /// <summary>
-        /// Sets the Tree XML, for copying trees
-        /// </summary>
-        void setRawTreeXml( XmlDocument XmlDoc );
+        JObject getRawTreeJSON();
+        ///// <summary>
+        ///// Sets the Tree XML, for copying trees
+        ///// </summary>
+        //void setRawTreeXml( XmlDocument XmlDoc );
 
         /// <summary>
         /// Name of view that created this tree.  Also name of root node of tree.
@@ -206,14 +207,14 @@ namespace ChemSW.Nbt
         /// <param name="AddChildren">True if users can add children to the root, false otherwise</param>
         void makeRootNode( string IconFileName, bool Selectable, NbtViewAddChildrenSetting AddChildren );
 
-        /// <summary>
-        /// Creates a placeholder "More..." node on the tree.  Mostly used by TreeLoaders.
-        /// </summary>
-        /// <param name="ParentNodeKey">NodeKey of Parent Node</param>
-        /// <param name="Row">DataRow of real node on which the paging stopped</param>
-        /// <param name="NodeCount">Rowcount in results for this node</param>
-        /// <param name="ViewNode">Node of View which created this placeholder node and its siblings</param>
-        void makeMoreNodeFromRow( CswNbtNodeKey ParentNodeKey, DataRow Row, Int32 NodeCount, CswNbtViewNode ViewNode );
+        ///// <summary>
+        ///// Creates a placeholder "More..." node on the tree.  Mostly used by TreeLoaders.
+        ///// </summary>
+        ///// <param name="ParentNodeKey">NodeKey of Parent Node</param>
+        ///// <param name="Row">DataRow of real node on which the paging stopped</param>
+        ///// <param name="NodeCount">Rowcount in results for this node</param>
+        ///// <param name="ViewNode">Node of View which created this placeholder node and its siblings</param>
+        //void makeMoreNodeFromRow( CswNbtNodeKey ParentNodeKey, DataRow Row, Int32 NodeCount, CswNbtViewNode ViewNode );
 
         /// <summary>
         /// Returns all node keys of nodes of a given Object Class
@@ -233,7 +234,7 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="NodeTypeId">Primary key of Node Type</param>
         /// <returns>Collection of Node Keys</returns>
-        IEnumerable<XElement> getChildNodePropsOfNode();
+        JArray getChildNodePropsOfNode();
 
         //Navigation and interrogation methods*****************************************
         #region Navigation and interrogation methods
@@ -258,24 +259,24 @@ namespace ChemSW.Nbt
         /// </summary>
         bool isCurrentPositionRoot();
 
-        /// <summary>
-        /// Sets the current index to the currently indexed node's parent's next child
-        /// </summary>
-        void goToNextSibling();
-        /// <summary>
-        /// True if the currently indexed node's parent has a next child
-        /// </summary>
-        bool nextSiblingExists();
+        ///// <summary>
+        ///// Sets the current index to the currently indexed node's parent's next child
+        ///// </summary>
+        //void goToNextSibling();
+        ///// <summary>
+        ///// True if the currently indexed node's parent has a next child
+        ///// </summary>
+        //bool nextSiblingExists();
 
-        /// <summary>
-        /// Sets the current index to the currently indexed node's parent's previous child
-        /// </summary>
-        void goToPreviousSibling();
+        ///// <summary>
+        ///// Sets the current index to the currently indexed node's parent's previous child
+        ///// </summary>
+        //void goToPreviousSibling();
 
-        /// <summary>
-        /// True if the currently indexed node's parent has a previous child
-        /// </summary>
-        bool previousSiblingExists();
+        ///// <summary>
+        ///// True if the currently indexed node's parent has a previous child
+        ///// </summary>
+        //bool previousSiblingExists();
 
         /// <summary>
         /// Sets the current index to the currently indexed node's parent
@@ -323,10 +324,10 @@ namespace ChemSW.Nbt
         /// Sets a given node to be the currently indexed node in the tree, by node key
         /// </summary>
         void makeNodeCurrent( CswNbtNodeKey CswNbtNodeKey );
-        /// <summary>
-        /// Sets a given node to be the currently indexed node in the tree, by path
-        /// </summary>
-        void makeNodeCurrent( CswDelimitedString TreePath );
+        ///// <summary>
+        ///// Sets a given node to be the currently indexed node in the tree, by path
+        ///// </summary>
+        //void makeNodeCurrent( CswDelimitedString TreePath );
 
 
         /// <summary>
@@ -339,10 +340,10 @@ namespace ChemSW.Nbt
         /// </summary>
         int getNodeCountForCurrentLevel();
 
-        /// <summary>
-        /// Returns all siblings and cousins on a tree level
-        /// </summary>
-        Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level );
+        ///// <summary>
+        ///// Returns all siblings and cousins on a tree level
+        ///// </summary>
+        //Collection<CswNbtNodeKey> getKeysForLevel( Int32 Level );
 
         /// <summary>
         /// Returns the total number of children of the currently indexed node
@@ -389,6 +390,18 @@ namespace ChemSW.Nbt
         /// </summary>
         void setCurrentNodeExpandMode( string ExpandMode );
 
+
+        /// <summary>
+        /// Sets whether the current node's children are truncated
+        /// </summary>
+        void setCurrentNodeChildrenTruncated( bool Truncated );
+        
+        /// <summary>
+        /// True if the current node's children are truncated
+        /// </summary>
+        /// <returns></returns>
+        bool getCurrentNodeChildrenTruncated();
+
         /// <summary>
         /// Adds a Property value to a node.  This is the uncommon way to fill property data in for nodes.
         /// </summary>
@@ -399,6 +412,8 @@ namespace ChemSW.Nbt
         void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType );
 
         //CswNbtNodeKey loadNodeAsChildFromDb( System.Int32 NodeId, string GroupName );
+
+        void removeCurrentNode();
 
         #endregion //Modification******************************
 

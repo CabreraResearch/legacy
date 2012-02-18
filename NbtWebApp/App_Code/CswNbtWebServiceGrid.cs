@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
                     Relationship.SecondId != Int32.MinValue )
                 {
                     CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
-                    foreach( CswNbtMetaDataNodeType NT in SecondOc.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType NT in SecondOc.getNodeTypes() )
                     {
                         FirstLevelNodeTypes.Add( NT );
                     }
@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.WebServices
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             string ThisNodeIcon = ThisNodeType.IconFileName;
-            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+            string ThisNodeKeyString = ThisNodeKey.ToString();
             string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
             bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
 
@@ -326,7 +326,7 @@ namespace ChemSW.Nbt.WebServices
             Icon += "\'/>";
             ThisNodeObj["Icon"] = Icon;
 
-            foreach( XElement Prop in Tree.getChildNodePropsOfNode() )
+            foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
             {
                 _addSafeCellContent( _CswNbtResources, Prop, ThisNodeObj, PropsInGrid );
             }
@@ -340,14 +340,14 @@ namespace ChemSW.Nbt.WebServices
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private static void _addSafeCellContent( CswNbtResources CswNbtResources, XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
+        private static void _addSafeCellContent( CswNbtResources CswNbtResources, JObject DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
         {
             if( null != DirtyElement )
             {
-                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
-                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
+                string CleanPropName = DirtyElement["propname"].ToString().Trim().ToLower().Replace( " ", "_" );
+                string DirtyValue = DirtyElement["gestalt"].ToString();
+                string PropFieldTypeString = DirtyElement["fieldtype"].ToString();
+                string PropId = DirtyElement["nodetypepropid"].ToString();
                 CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
 
                 var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );

@@ -24,9 +24,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropNodeTypeSelect( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            _SelectedNodeTypeIdsSubField = ( (CswNbtFieldTypeRuleNodeTypeSelect) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).SelectedNodeTypeIdsSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleNodeTypeSelect) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _SelectedNodeTypeIdsSubField = _FieldTypeRule.SelectedNodeTypeIdsSubField;
         }//ctor
-
+        private CswNbtFieldTypeRuleNodeTypeSelect _FieldTypeRule;
         private CswNbtSubField _SelectedNodeTypeIdsSubField;
 
         /// <summary>
@@ -134,9 +135,9 @@ namespace ChemSW.Nbt.PropTypes
                 //}
 
                 bool first = true;
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
-                    if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClass.ObjectClassId == ConstrainObjectClassId )
+                    if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainObjectClassId )
                     {
                         DataRow NTRow = Data.NewRow();
                         NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name
@@ -297,7 +298,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
                     if( null != NodeType )
                     {
-                        NodeTypeNames.Add( NodeType.LatestVersionNodeType.NodeTypeName );
+                        NodeTypeNames.Add( NodeType.getNodeTypeLatestVersion().NodeTypeName );
                     }
                 }
             } // foreach(string NodeTypeId in SelectedNodeTypeIds)

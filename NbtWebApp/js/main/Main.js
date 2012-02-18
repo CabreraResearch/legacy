@@ -1,26 +1,24 @@
-﻿/// <reference path="../globals/Global.js" />
+﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="../globals/CswEnums.js" />
-/// <reference path="../globals/CswGlobalTools.js" />
-/// <reference path="../globals/CswPrototypeExtensions.js" />
-/// <reference path="../../Scripts/jquery-1.7.1-vsdoc.js" />
 
 window.initMain = window.initMain || function (undefined) {
 
     "use strict";
 
-    var MainTreeId = 'main';
-    var MainGridId = 'CswNodeGrid';
-    var MainTableId = 'CswNodeTable';
-    var MainSearchId = 'CswSearchForm';
+    var mainTreeId = 'main';
+    var mainGridId = 'CswNodeGrid';
+    var mainTableId = 'CswNodeTable';
+    var mainSearchId = 'CswSearchForm';
 
-    window.onBeforeAjax = function (watchGlobal) {
+    Csw.ajax.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
             $('#ajaxSpacer').hide();
             $('#ajaxImage').show();
         }
     };
-    window.onAfterAjax = function (succeeded) {
-        if (!ajaxInProgress()) {
+    Csw.ajax.onAfterAjax = function () {
+        if (false === Csw.ajax.ajaxInProgress()) {
             $('#ajaxImage').hide();
             $('#ajaxSpacer').show();
         }
@@ -28,59 +26,72 @@ window.initMain = window.initMain || function (undefined) {
 
     // handle querystring arguments
     var qs = $.CswQueryString();
-    if (false == isNullOrEmpty(qs.viewid)) {
-        setCurrentView(qs.viewid, tryParseString(qs.viewmode, 'tree'));
+    if (false == Csw.isNullOrEmpty(qs.viewid)) {
+        Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode, 'tree'));
         window.location = "Main.html";
-    } else if (false == isNullOrEmpty(qs.reportid)) {
-        setCurrentReport(qs.reportid);
+    } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
+        Csw.clientState.setCurrentReport(qs.reportid);
         window.location = "Main.html";
-    } else if (false == isNullOrEmpty(qs.clear)) {
-        clearCurrent();
+    } else if (false == Csw.isNullOrEmpty(qs.clear)) {
+        Csw.clientState.clearCurrent();
         window.location = "Main.html";
     } else {
         initAll();
     }
 
-
     function initAll() {
-        //if (debugOn()) log('Main.initAll()');
-
+        //if (debugOn()) Csw.log('Main.initAll()');
         $('#CenterBottomDiv').CswLogin('init', {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
-                     .hover(function () { $(this).CswAttrDom('title', getExpireTime()); });
+                     .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
+
+                Csw.controls.universalSearch({
+                    $searchbox_parent: $('#SearchDiv'),
+                    $searchresults_parent: $('#RightDiv'),
+                    $searchfilters_parent: $('#LeftDiv'),
+                    onBeforeSearch: function () { clear({ all: true }); },
+                    onAfterSearch: function () { refreshMainMenu(); },
+                    onLoadView: function (viewid, viewmode) {
+                        handleItemSelect({
+                            'type': 'view',
+                            'viewid': viewid,
+                            'viewmode': viewmode
+                        });
+                    }
+                });
 
                 $('#header_quota').CswQuotaImage();
 
                 $('#header_menu').CswMenuHeader({
                     'onLogout': function () {
-                        Logout();
+                        Csw.clientSession.logout();
                     },
                     'onQuotas': function () {
-                        _handleAction({ 'actionname': 'Quotas' });
+                        handleAction({ 'actionname': 'Quotas' });
                     },
                     'onSessions': function () {
-                        _handleAction({ 'actionname': 'Sessions' });
+                        handleAction({ 'actionname': 'Sessions' });
                     }
                 }); // CswMenuHeader
 
                 refreshViewSelect();
 
-                var current = getCurrent();
-                if (false === isNullOrEmpty(current.viewid)) {
+                var current = Csw.clientState.getCurrent();
+                if (false === Csw.isNullOrEmpty(current.viewid)) {
                     handleItemSelect({
                         'type': 'view',
                         'viewid': current.viewid,
                         'viewmode': current.viewmode
                     });
-                } else if (false === isNullOrEmpty(current.actionname)) {
+                } else if (false === Csw.isNullOrEmpty(current.actionname)) {
                     handleItemSelect({
                         'type': 'action',
                         'actionname': current.actionname,
                         'actionurl': current.actionurl
                     });
-                } else if (false === isNullOrEmpty(current.reportid)) {
+                } else if (false === Csw.isNullOrEmpty(current.reportid)) {
                     handleItemSelect({
                         'type': 'report',
                         'reportid': current.reportid
@@ -113,7 +124,7 @@ window.initMain = window.initMain || function (undefined) {
 
 
     function clear(options) {
-        //if (debugOn()) log('Main.clear()');
+        //if (debugOn()) Csw.log('Main.clear()');
 
         var o = {
             left: false,
@@ -144,7 +155,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function refreshWelcome() {
-        //if (debugOn()) log('Main.refreshWelcome()');
+        //if (debugOn()) Csw.log('Main.refreshWelcome()');
         clear({ all: true });
 
         $('#CenterBottomDiv').CswWelcome('initTable', {
@@ -173,7 +184,7 @@ window.initMain = window.initMain || function (undefined) {
     // refreshWelcome()
 
     function handleItemSelect(options) {
-        //if (debugOn()) log('Main.handleItemSelect()');
+        //if (debugOn()) Csw.log('Main.handleItemSelect()');
         var o = {
             type: 'view', // Action, Report, View
             viewmode: 'tree', // Grid, Tree, List
@@ -189,21 +200,21 @@ window.initMain = window.initMain || function (undefined) {
             $.extend(o, options);
         }
 
-        var linkType = tryParseString(o.linktype).toLowerCase();
+        var linkType = Csw.string(o.linktype).toLowerCase();
 
-        var type = tryParseString(o.type).toLowerCase();
+        var type = Csw.string(o.type).toLowerCase();
 
         function itemIsSupported() {
-            var ret = (linkType === 'search' || false === isNullOrEmpty(o.viewid) ||
+            var ret = (linkType === 'search' || false === Csw.isNullOrEmpty(o.viewid) ||
                  type === 'action' || type === 'report');
             return ret;
         }
 
-        if (manuallyCheckChanges() && itemIsSupported()) {
+        if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
             clear({ all: true });
 
-            if (!isNullOrEmpty(o.viewid)) {
-                setCurrentView(o.viewid, o.viewmode);
+            if (false === Csw.isNullOrEmpty(o.viewid)) {
+                Csw.clientState.setCurrentView(o.viewid, o.viewmode);
 
                 var linkOpt = {
                     showempty: false,
@@ -216,7 +227,7 @@ window.initMain = window.initMain || function (undefined) {
                         linkOpt.forsearch = true;
                         break;
                 }
-                var viewMode = tryParseString(o.viewmode).toLowerCase();
+                var viewMode = Csw.string(o.viewmode).toLowerCase();
                 switch (viewMode) {
                     case 'grid':
                         getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
@@ -228,10 +239,10 @@ window.initMain = window.initMain || function (undefined) {
                         refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
                         break;
                 }
-            } else if (!isNullOrEmpty(type)) {
+            } else if (false === Csw.isNullOrEmpty(type)) {
                 switch (type) {
                     case 'action':
-                        _handleAction({
+                        handleAction({
                             'actionname': o.actionname,
                             'actionurl': o.actionurl
                         });
@@ -251,7 +262,7 @@ window.initMain = window.initMain || function (undefined) {
     // handleItemSelect()
 
     function refreshMainMenu(options) {
-        //if (debugOn()) log('Main.refreshMainMenu()');
+        //if (debugOn()) Csw.log('Main.refreshMainMenu()');
 
         var o = {
             viewid: '',
@@ -274,7 +285,7 @@ window.initMain = window.initMain || function (undefined) {
             },
             'onMultiEdit': function () {
                 switch (o.viewmode) {
-                    case CswViewMode.grid.name:
+                    case Csw.enums.viewMode.grid.name:
                         multi = (false === o.grid.isMulti());
                         var g = {
                             gridOpts: {
@@ -292,23 +303,23 @@ window.initMain = window.initMain || function (undefined) {
             },
             'onPrintView': function () {
                 switch (o.viewmode) {
-                    case CswViewMode.grid.name:
-                        if (contains(o, 'grid') &&
-                             false == isNullOrEmpty(o.grid)) {
+                    case Csw.enums.viewMode.grid.name:
+                        if (Csw.contains(o, 'grid') &&
+                             false == Csw.isNullOrEmpty(o.grid)) {
                             o.grid.print();
                         }
                         break;
                     default:
-                        CswError(ChemSW.makeClientSideError(ChemSW.enums.ErrorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
+                        Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'View Printing is not enabled for views of type ' + o.viewmode));
                         break;
                 }
             },
             'onSearch':
                  {
                      'onViewSearch': function () {
-                         var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
-                         var $searchForm = refreshSearchPanel({
+                         var genericSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+                         var viewSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+                         refreshSearchPanel({
                              'genericSearchId': genericSearchId,
                              'viewSearchId': viewSearchId,
                              'searchType': 'view',
@@ -317,9 +328,9 @@ window.initMain = window.initMain || function (undefined) {
                          });
                      },
                      'onGenericSearch': function () {
-                         var genericSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = makeId({ 'ID': MainSearchId, prefix: o.prefix, suffix: 'view' });
-                         var $searchForm = refreshSearchPanel({
+                         var genericSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+                         var viewSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+                         refreshSearchPanel({
                              'genericSearchId': genericSearchId,
                              'viewSearchId': viewSearchId,
                              'searchType': 'generic',
@@ -327,25 +338,25 @@ window.initMain = window.initMain || function (undefined) {
                          });
                      }
                  },
-            'onEditView': function (viewid) {
-                _handleAction({
+            'onEditView': function () {
+                handleAction({
                     'actionname': 'Edit_View',
                     'ActionOptions': {
-                        'viewid': $.CswCookie('get', CswCookieName.CurrentViewId),
-                        'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode)
+                        'viewid': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId),
+                        'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode)
                     }
                 });
             },
             'onSaveView': function (newviewid) {
-                handleItemSelect({ 'viewid': newviewid, 'viewmode': $.CswCookie('get', CswCookieName.CurrentViewMode) });
+                handleItemSelect({ 'viewid': newviewid, 'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode) });
             },
             'Multi': multi,
-            'NodeCheckTreeId': MainTreeId
+            'NodeCheckTreeId': mainTreeId
         });
     }
 
     function refreshSearchPanel(options) {
-        //if (debugOn()) log('Main.refreshSearchPanel()');
+        //if (debugOn()) Csw.log('Main.refreshSearchPanel()');
 
         var o = {
             viewid: '',
@@ -360,11 +371,11 @@ window.initMain = window.initMain || function (undefined) {
             $.extend(o, options);
         }
 
-        var $viewSearch = $('#CenterTopDiv').children('#' + o.viewSearchId)
+        $('#CenterTopDiv').children('#' + o.viewSearchId)
              .empty();
-        var $genericSearch = $('#CenterTopDiv').children('#' + o.genericSearchId)
+        $('#CenterTopDiv').children('#' + o.genericSearchId)
              .empty();
-        var $thisSearchForm;
+        var $thisSearchForm = '';
 
         switch (o.searchType.toLowerCase()) {
             case 'generic':
@@ -400,7 +411,7 @@ window.initMain = window.initMain || function (undefined) {
             if (viewMode === 'list') {
                 viewMode = 'tree';
             }
-            setCurrentView(searchviewid, viewMode);
+            Csw.clientState.setCurrentView(searchviewid, viewMode);
 
             refreshSelected({
                 viewmode: viewMode,
@@ -415,22 +426,22 @@ window.initMain = window.initMain || function (undefined) {
             clear({ centertop: true }); //clear Search first
 
             var viewid;
-            if (isNullOrEmpty(parentviewid)) {
-                viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+            if (Csw.isNullOrEmpty(parentviewid)) {
+                viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
             } else {
                 viewid = parentviewid;
             }
 
-            if (!isNullOrEmpty(viewid)) {
+            if (false === Csw.isNullOrEmpty(viewid)) {
                 clear({ right: true, centerbottom: true }); //wait to clear rest until we have a valid viewid
-                var viewmode = 'tree';
-                if (isNullOrEmpty(parentviewmode)) {
-                    viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+                var viewmode;
+                if (Csw.isNullOrEmpty(parentviewmode)) {
+                    viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
                 } else {
                     viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
                 }
 
-                setCurrentView(viewid, viewmode);
+                Csw.clientState.setCurrentView(viewid, viewmode);
 
                 refreshSelected({
                     viewmode: viewmode,
@@ -458,7 +469,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function getViewGrid(options) {
-        //if (debugOn()) log('Main.getViewGrid()');
+        //if (debugOn()) Csw.log('Main.getViewGrid()');
 
         var o = {
             viewid: '',
@@ -475,24 +486,17 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         // Defaults
-        var getEmptyGrid = (isTrue(o.showempty));
-        if (isNullOrEmpty(o.nodeid)) {
-            o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+        var getEmptyGrid = (Csw.bool(o.showempty));
+        if (Csw.isNullOrEmpty(o.nodeid)) {
+            o.nodeid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
         }
-        if (isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+        if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
+            o.cswnbtnodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
         }
-        if (!isNullOrEmpty(o.viewid)) {
-            $.CswCookie('get', CswCookieName.CurrentViewId);
+        if (false === Csw.isNullOrEmpty(o.viewid)) {
+            Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
 
-        //		o.onAddNode = function (nodeid, cswnbtnodekey)
-        //			{
-        //				var ocopy = o;
-        //				var x = { 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey };
-        //				$.extend(ocopy, x);
-        //				getViewGrid(ocopy);
-        //			};
         o.onEditNode = function () { getViewGrid(o); };
         o.onDeleteNode = function () { getViewGrid(o); };
 
@@ -503,7 +507,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
             showempty: getEmptyGrid,
-            ID: MainGridId,
+            ID: mainGridId,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
@@ -511,7 +515,7 @@ window.initMain = window.initMain || function (undefined) {
                 if (o.doMenuRefresh) {
                     refreshMainMenu({
                         viewid: o.viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         grid: grid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey
@@ -519,11 +523,11 @@ window.initMain = window.initMain || function (undefined) {
                 }
             },
             onEditView: function (viewid) {
-                _handleAction({
+                handleAction({
                     'actionname': 'Edit_View',
                     'ActionOptions': {
                         viewid: viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
                         IgnoreReturn: true
                     }
@@ -548,23 +552,16 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         // Defaults
-        if (isNullOrEmpty(o.nodeid)) {
-            o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+        if (Csw.isNullOrEmpty(o.nodeid)) {
+            o.nodeid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
         }
-        if (isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+        if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
+            o.cswnbtnodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
         }
-        if (!isNullOrEmpty(o.viewid)) {
-            $.CswCookie('get', CswCookieName.CurrentViewId);
+        if (false === Csw.isNullOrEmpty(o.viewid)) {
+            Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
 
-        //		o.onAddNode = function (nodeid, cswnbtnodekey)
-        //			{
-        //				var ocopy = o;
-        //				var x = { 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey };
-        //				$.extend(ocopy, x);
-        //				getViewTable(ocopy);
-        //			};
         o.onEditNode = function () { getViewTable(o); };
         o.onDeleteNode = function () { getViewTable(o); };
 
@@ -574,24 +571,26 @@ window.initMain = window.initMain || function (undefined) {
             viewid: o.viewid,
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
-            ID: MainTableId,
+            ID: mainTableId,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
             onSuccess: function () {
-                //				refreshMainMenu({ viewid: o.viewid,
-                //					viewmode: CswViewMode.table.name,
-                //					nodeid: o.nodeid,
-                //					cswnbtnodekey: o.cswnbtnodekey
-                //				});
-            }
+                refreshMainMenu({
+                    viewid: o.viewid,
+                    viewmode: Csw.enums.viewMode.table.name//,
+                    //                    nodeid: o.nodeid,
+                    //                    cswnbtnodekey: o.cswnbtnodekey
+                });
+            },
+            onNoResults: showDefaultContentTable
         });
     }
 
     function onSelectTreeNode(options) {
-        //if (debugOn()) log('Main.onSelectTreeNode()');
+        //if (debugOn()) Csw.log('Main.onSelectTreeNode()');
 
-        if (manuallyCheckChanges()) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
                 viewid: '',
                 nodeid: '',
@@ -603,28 +602,47 @@ window.initMain = window.initMain || function (undefined) {
                 $.extend(o, options);
             }
 
-            $.CswCookie('set', CswCookieName.CurrentNodeId, o.nodeid);
-            $.CswCookie('set', CswCookieName.CurrentNodeKey, o.cswnbtnodekey);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, o.nodeid);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, o.cswnbtnodekey);
 
             if (o.nodeid !== '' && o.nodeid !== 'root') {
                 getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
             } else {
-                showDefaultContent({ viewid: o.viewid, viewmode: CswViewMode.tree.name });
-                refreshMainMenu({ viewid: o.viewid, viewmode: CswViewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
+                showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
             }
         }
     } // onSelectTreeNode()
 
-    function showDefaultContent(options) {
+    function showDefaultContentTree(viewopts) {
+        var v = {
+            viewid: '',
+            viewmode: ''
+        };
+        if (viewopts) $.extend(v, viewopts);
+        clear({ centerbottom: true });
+        $('#RightDiv').CswDefaultContent(viewopts);
 
-        $('#RightDiv').CswDefaultContent(options);
+    } // showDefaultContentTree()
 
-    } // showDefaultContent()
+    function showDefaultContentTable(viewopts) {
+        var v = {
+            viewid: '',
+            viewmode: ''
+        };
+        if (viewopts) $.extend(v, viewopts);
+        clear({ centerbottom: true });
+        var $div = $('#CenterBottomDiv').CswDiv({ ID: 'deftbldiv' });
+        $div.CswAttrDom('align', 'center');
+        $div.css({ textAlign: 'center' });
+        $div.append('No Results.<BR/><BR/>');
+        $div.CswDefaultContent(viewopts);
 
+    } // showDefaultContentTable()
 
     function getTabs(options) {
-        //if (debugOn()) log('Main.getTabs()');
+        //if (debugOn()) Csw.log('Main.getTabs()');
 
         var o = {
             nodeid: '',
@@ -637,46 +655,45 @@ window.initMain = window.initMain || function (undefined) {
             ID: 'nodetabs',
             nodeids: [o.nodeid],
             nodekeys: [o.cswnbtnodekey],
-            onSave: function (nodeid, nodekey) {
-                unsetChanged();
+            onSave: function () {
+                Csw.clientChanges.unsetChanged();
                 // case 24304
                 // refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
-            tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
-            onBeforeTabSelect: function (tabid) {
-                return manuallyCheckChanges();
+            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
+            onBeforeTabSelect: function () {
+                return Csw.clientChanges.manuallyCheckChanges();
             },
             Refresh: function (nodeid, nodekey) {
-                unsetChanged();
+                Csw.clientChanges.unsetChanged();
                 refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
             onTabSelect: function (tabid) {
-                $.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+                Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
             },
-            onPropertyChange: function (propid, propname) {
-                //if(debug) log('Property Changed: propid = ' + propid + ', propname = ' + propname);
-                setChanged();
+            onPropertyChange: function () {
+                Csw.clientChanges.setChanged();
             },
             onEditView: function (viewid) {
-                _handleAction({
+                handleAction({
                     'actionname': 'Edit_View',
                     'ActionOptions': {
                         viewid: viewid,
-                        viewmode: CswViewMode.grid.name,
+                        viewmode: Csw.enums.viewMode.grid.name,
                         startingStep: 2,
                         IgnoreReturn: true
                     }
                 });
             },
             ShowCheckboxes: multi,
-            NodeCheckTreeId: MainTreeId
+            NodeCheckTreeId: mainTreeId
         });
     }
 
     function refreshSelected(options) {
-        //if (debugOn()) log('Main.refreshSelected()');
+        //if (debugOn()) Csw.log('Main.refreshSelected()');
 
-        if (manuallyCheckChanges()) {
+        if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
                 nodeid: '',
                 cswnbtnodekey: '',
@@ -692,14 +709,14 @@ window.initMain = window.initMain || function (undefined) {
                 $.extend(o, options);
             }
 
-            if (isNullOrEmpty(o.viewid)) {
-                o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+            if (Csw.isNullOrEmpty(o.viewid)) {
+                o.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
             }
-            if (isNullOrEmpty(o.viewmode)) {
-                o.viewmode = $.CswCookie('get', CswCookieName.CurrentViewMode);
+            if (Csw.isNullOrEmpty(o.viewmode)) {
+                o.viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
             }
 
-            var viewMode = tryParseString(o.viewmode).toLowerCase();
+            var viewMode = Csw.string(o.viewmode).toLowerCase();
             switch (viewMode) {
                 case 'grid':
                     getViewGrid({
@@ -743,7 +760,7 @@ window.initMain = window.initMain || function (undefined) {
     var multi = false;
 
     function refreshNodesTree(options) {
-        //if (debugOn()) log('Main.refreshNodesTree()');
+        //if (debugOn()) Csw.log('Main.refreshNodesTree()');
 
         var o = {
             'nodeid': '',
@@ -760,21 +777,21 @@ window.initMain = window.initMain || function (undefined) {
             $.extend(o, options);
         }
 
-        var getEmptyTree = (isTrue(o.showempty));
-        if (isNullOrEmpty(o.nodeid)) {
-            o.nodeid = $.CswCookie('get', CswCookieName.CurrentNodeId);
+        var getEmptyTree = (Csw.bool(o.showempty));
+        if (Csw.isNullOrEmpty(o.nodeid)) {
+            o.nodeid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
         }
-        if (isNullOrEmpty(o.cswnbtnodekey)) {
-            o.cswnbtnodekey = $.CswCookie('get', CswCookieName.CurrentNodeKey);
+        if (Csw.isNullOrEmpty(o.cswnbtnodekey)) {
+            o.cswnbtnodekey = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeKey);
         }
-        if (isNullOrEmpty(o.viewid)) {
-            o.viewid = $.CswCookie('get', CswCookieName.CurrentViewId);
+        if (Csw.isNullOrEmpty(o.viewid)) {
+            o.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
 
         clear({ left: true });
 
         $('#LeftDiv').CswNodeTree('init', {
-            'ID': MainTreeId,
+            'ID': mainTreeId,
             'viewid': o.viewid,
             'viewmode': o.viewmode,
             'nodeid': o.nodeid,
@@ -784,7 +801,7 @@ window.initMain = window.initMain || function (undefined) {
             'forsearch': o.forsearch,
             'IncludeNodeRequired': o.IncludeNodeRequired,
             'onViewChange': function (newviewid, newviewmode) {
-                setCurrentView(newviewid, newviewmode);
+                Csw.clientState.setCurrentView(newviewid, newviewmode);
             },
             'onSelectNode': function (optSelect) {
                 onSelectTreeNode({
@@ -800,7 +817,7 @@ window.initMain = window.initMain || function (undefined) {
     // refreshNodesTree()
 
 
-    function _handleAction(options) {
+    function handleAction(options) {
         var o = {
             'actionname': '',
             'actionurl': '',
@@ -810,29 +827,29 @@ window.initMain = window.initMain || function (undefined) {
             $.extend(o, options);
         }
 
-        setCurrentAction(o.actionname, o.actionurl);
+        Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
 
-        CswAjaxJson({
+        Csw.ajax.post({
             'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
             'data': { 'ActionName': o.actionname }
         });
 
-        function _setupOOCInspections() {
+        function setupOocInspections() {
             clear({ 'all': true });
 
             $('#CenterTopDiv').CswInspectionStatus({
                 'onEditNode': function () {
-                    _setupOOCInspections();
+                    setupOocInspections();
                 }
             });
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                
-            //				break;                
-            //			case 'Assign_Tests':                
-            //				break;                
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                
+            //			case 'Assign_Inspection':                        
+            //				break;                        
+            //			case 'Assign_Tests':                        
+            //				break;                        
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                        
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -842,7 +859,7 @@ window.initMain = window.initMain || function (undefined) {
                     viewmode: o.ActionOptions.viewmode,
                     onCancel: function () {
                         clear({ 'all': true });
-                        setCurrent(getLast());
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
                     onFinish: function (viewid) {
@@ -866,23 +883,23 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':                
-            //				break;                
+            //			case 'Design':                        
+            //				break;                        
             case 'Edit_View':
                 clear({ 'all': true });
 
-                var EditViewOptions = {
+                var editViewOptions = {
                     'viewid': o.ActionOptions.viewid,
                     'viewmode': o.ActionOptions.viewmode,
                     'onCancel': function () {
                         clear({ 'all': true });
-                        setCurrent(getLast());
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
                     'onFinish': function (viewid, viewmode) {
                         clear({ 'all': true });
-                        if (isTrue(o.ActionOptions.IgnoreReturn)) {
-                            setCurrent(getLast());
+                        if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
+                            Csw.clientState.setCurrent(Csw.clientState.getLast());
                             refreshSelected();
                         } else {
                             handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
@@ -891,19 +908,19 @@ window.initMain = window.initMain || function (undefined) {
                     'startingStep': o.ActionOptions.startingStep
                 };
 
-                $('#CenterTopDiv').CswViewEditor(EditViewOptions);
+                $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                
-            //				break;                
-            //			case 'Future_Scheduling':                
-            //				break;                
-            //			case 'Import_Fire_Extinguisher_Data':                
-            //				break;                
-            //			case 'Inspection_Design':                
-            //				break;                
+            //			case 'Enter_Results':                        
+            //				break;                        
+            //			case 'Future_Scheduling':                        
+            //				break;                        
+            //			case 'Import_Fire_Extinguisher_Data':                        
+            //				break;                        
+            //			case 'Inspection_Design':                        
+            //				break;                        
             case 'OOC_Inspections':
-                _setupOOCInspections();
+                setupOocInspections();
 
                 break;
             case 'Quotas':
@@ -926,7 +943,7 @@ window.initMain = window.initMain || function (undefined) {
                 var rulesOpt = {
                     exitFunc: function () {
                         clear({ 'all': true });
-                        setCurrent(getLast());
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
                         refreshSelected();
                     },
                     menuRefresh: refreshSelected
@@ -935,16 +952,16 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':                
-            //				break;                
-            //			case 'Receiving':                
-            //				break;                
-            //			case 'Split_Samples':                
-            //				break;                
-            //			case 'View_By_Location':                
-            //				break;                
+            //			case 'Load_Mobile_Data':                        
+            //				break;                        
+            //			case 'Receiving':                        
+            //				break;                        
+            //			case 'Split_Samples':                        
+            //				break;                        
+            //			case 'View_By_Location':                        
+            //				break;                        
             default:
-                if (!isNullOrEmpty(o.actionurl)) {
+                if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;
                 }
                 break;

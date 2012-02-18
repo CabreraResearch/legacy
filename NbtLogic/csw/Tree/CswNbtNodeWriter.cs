@@ -128,7 +128,7 @@ namespace ChemSW.Nbt
         {
             string ReturnVal = "";
 
-            ReturnVal = Node.NodeType.NodeTypeName + " " + Node.NodeId.PrimaryKey.ToString();
+            ReturnVal = Node.getNodeType().NodeTypeName + " " + Node.NodeId.PrimaryKey.ToString();
 
             return ( ReturnVal );
         }//_makeDefaultNodeName
@@ -153,11 +153,12 @@ namespace ChemSW.Nbt
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
-                if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldType().FieldType;
+                if( FT == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                 {
                     Prop.AsBarcode.setBarcodeValue();  // does not overwrite
                 }
-                else if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
+                else if( FT == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
                 {
                     Prop.AsSequence.setSequenceValue();  // does not overwrite
                 }
@@ -178,7 +179,7 @@ namespace ChemSW.Nbt
         {
             string OldNodeName = Node.NodeName;
 
-            string NameTemplate = Node.NodeType.NameTemplateValue;
+            string NameTemplate = Node.getNodeType().NameTemplateValue;
             if( NameTemplate.Length > 0 )
             {
                 //we assume that the nodetype has nodetype_props corresponding to all "[]" 

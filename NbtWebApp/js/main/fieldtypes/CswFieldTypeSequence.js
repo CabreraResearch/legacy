@@ -1,46 +1,45 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";        
     var pluginName = 'CswFieldTypeSequence';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) { 
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? tryParseString(propVals.sequence).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.sequence).trim() : Csw.enums.multiEditDefaultValue;
 
             if (o.ReadOnly || o.Multi) {
-                $Div.append(value);
+                propDiv.append(value);
             } else {
-                var $TextBox = $Div.CswInput('init',{ID: o.ID,
-                                                      type: CswInput_Types.text,
-                                                      cssclass: 'textinput',
-                                                      onChange: o.onchange,
-                                                      value: value
-                                                 }); 
+                var textBox = propDiv.input({
+                    ID: o.ID,
+                    type: Csw.enums.inputTypes.text,
+                    cssclass: 'textinput',
+                    onChange: o.onChange,
+                    value: value,
+                    required: o.Required
+                }); 
 
                 if(o.Required) {
-                    $TextBox.addClass("required");
+                    textBox.addClass('required');
                 }
-                $TextBox.clickOnEnter(o.$savebtn);
+                textBox.clickOnEnter(o.saveBtn);
             }
         },
-        save: function(o) {
+        save: function (o) {
             var attributes = {
                 sequence: null
             };
-            var $sequence = o.$propdiv.find('input');
-            if (false === isNullOrEmpty($sequence)) {
-                attributes.sequence = $sequence.val();
+            var sequence = o.propDiv.find('input');
+            if (false === Csw.isNullOrEmpty(sequence)) {
+                attributes.sequence = sequence.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

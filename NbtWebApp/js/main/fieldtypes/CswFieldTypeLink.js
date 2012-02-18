@@ -1,104 +1,107 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
-    "use strict";        
+    "use strict";
     var pluginName = 'CswFieldTypeLink';
 
     var methods = {
-        init: function(o) { 
+        init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
 
             var propVals = o.propData.values;
-            var text = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
-            var href = (false === o.Multi) ? tryParseString(propVals.href).trim() : CswMultiEditDefaultValue;
+            var text = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+            var href = (false === o.Multi) ? Csw.string(propVals.href).trim() : Csw.enums.multiEditDefaultValue;
 
-            var $Link = $('<a href="' + href + '" target="_blank">' + text + '</a>&nbsp;&nbsp;');
-
-            if(o.ReadOnly) {
-                $Div.append($Link);
+            if (o.ReadOnly) {
+                propDiv.link({
+                    href: href,
+                    text: text
+                });
             } else {
-                var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+                var table = propDiv.table({
+                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                });
 
-                $Link.appendTo($table.CswTable('cell', 1, 1));
+                table.cell(1, 1).link({
+                    href: href,
+                    text: text
+                });
+                var cell12 = table.cell(1, 2).div();
 
-                $('<div/>')
-                    .appendTo($table.CswTable('cell', 1, 2))
-                    .CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Edit,
+                cell12.imageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                         AlternateText: 'Edit',
                         ID: o.ID + '_edit',
                         Required: o.Required,
-                        onClick: function () { 
-                                $edittable.show();
-                                return CswImageButton_ButtonType.None; 
-                            }
+                        onClick: function () {
+                            editTable.show();
+                            return Csw.enums.imageButton_ButtonType.None;
+                        }
                     });
 
-                var $edittable = $Div.CswTable('init', { ID: o.ID + '_edittbl' })
-                                    .hide();
+                var editTable = propDiv.table({
+                    ID: Csw.controls.dom.makeId(o.ID, 'edittbl')
+                }).hide();
 
-                $( '<span>Text</span>' )
-                    .appendTo($edittable.CswTable('cell', 1, 1));
-                
-                var $edittextcell = $edittable.CswTable('cell', 1, 2);
-                var $edittext = $edittextcell.CswInput('init',{ID: o.ID + '_text',
-                                                                type: CswInput_Types.text,
-                                                                value: text,
-                                                                onChange: o.onchange
-                                                                }); 
-                
-                $( '<span>URL</span>' )
-                    .appendTo($edittable.CswTable('cell', 2, 1));
-                
-                var $edithrefcell = $edittable.CswTable('cell', 2, 2);
-                var $edithref = $edithrefcell.CswInput('init',{ID: o.ID + '_href',
-                                                               type: CswInput_Types.text,
-                                                               value: href,
-                                                               onChange: o.onchange
-                                                       }); 
+                editTable.cell(1, 1).span({text: 'Text'});
 
-                if(o.Required && href === '') {
-                    $edittable.show();
-                    $edittext.addClass("required");
-                    $edithref.addClass("required");
+                var editTextCell = editTable.cell(1, 2);
+                var editText = editTextCell.input({ 
+                    ID: o.ID + '_text',
+                    type: Csw.enums.inputTypes.text,
+                    value: text,
+                    onChange: o.onChange
+                });
+
+                editTable.cell(2, 1).span({text: 'URL'});
+
+                var editHrefCell = editTable.cell(2, 2);
+                var editHref = editHrefCell.input({ 
+                    ID: o.ID + '_href',
+                    type: Csw.enums.inputTypes.text,
+                    value: href,
+                    onChange: o.onChange
+                });
+
+                if (o.Required && href === '') {
+                    editTable.show();
+                    editText.addClass("required");
+                    editHref.addClass("required");
                 }
-                $edittext.clickOnEnter(o.$savebtn);
-                $edithref.clickOnEnter(o.$savebtn);
+                editText.clickOnEnter(o.saveBtn);
+                editHref.clickOnEnter(o.saveBtn);
             }
         },
-        save: function(o) {
+        save: function (o) {
             var attributes = {
                 text: null,
                 href: null
             };
-            var $edittext = o.$propdiv.find('#' + o.ID + '_text');
-            if (false === isNullOrEmpty($edittext)) {
-                attributes.text = $edittext.val();
+            var editText = o.propDiv.find('#' + o.ID + '_text');
+            if (false === Csw.isNullOrEmpty(editText)) {
+                attributes.text = editText.val();
             }
-            var $edithref = o.$propdiv.find('#' + o.ID + '_href');
-            if (false === isNullOrEmpty($edithref)) {
-                attributes.href = $edithref.val();
+            var editHref = o.propDiv.find('#' + o.ID + '_href');
+            if (false === Csw.isNullOrEmpty(editHref)) {
+                attributes.href = editHref.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
-    
+
     // Method calling logic
     $.fn.CswFieldTypeLink = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

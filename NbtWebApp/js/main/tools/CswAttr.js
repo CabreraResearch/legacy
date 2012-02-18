@@ -1,7 +1,7 @@
 /// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="../../globals/Global.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     $.fn.CswAttrDom = function (name, value) {
         /// <summary>
@@ -27,7 +27,7 @@
         }
         return ret;
 
-    }; // function(options) {
+    }; // function (options) {
 
     function doProp($Dom, name, value) {
         var ret = '';
@@ -84,7 +84,7 @@
         }
         return ret;
 
-    }; // function(options) {
+    }; // function (options) {
 
     function doAttr($this, name, value) {
         var ret = $this;

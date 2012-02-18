@@ -219,7 +219,6 @@ namespace ChemSW.Nbt.WebServices
             {
                 case ScheduledRuleActions.Unknown:
                     throw new CswDniException( ErrorType.Error, "Method was invoked with an invalid action", "Cannot call this web method with action " + Action + "." );
-                    break;
                 case ScheduledRuleActions.ClearAllReprobates:
                     CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "ClearAllReprobates_on_accessid_" + _OtherResources.AccessId + "_id", "scheduledrules" );
                     DataTable RulesTable = RulesUpdate.getTable();
@@ -260,7 +259,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNode CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
 
             if( null == CustomerNode ||
-                CustomerNode.ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass )
+                CustomerNode.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass )
             {
                 throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
             }

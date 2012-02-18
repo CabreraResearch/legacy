@@ -1,14 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Text;
-using System.Reflection;
-using ChemSW.Nbt;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Mail;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -30,7 +22,8 @@ namespace ChemSW.Nbt.Sched
             CswNbtSchdItem ReturnVal = null;
 
             // These classes should implement ICswNbtPropertySetScheduler
-            switch( CswNbtNode.ObjectClass.ObjectClass )
+            CswNbtMetaDataObjectClass OC = CswNbtNode.getObjectClass();
+            switch( OC.ObjectClass )
             {
                 case CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass:
                     ReturnVal = new CswNbtSchdItemGenerateNode( _CswNbtResources, CswNbtNode );
@@ -42,7 +35,7 @@ namespace ChemSW.Nbt.Sched
                     ReturnVal = new CswNbtSchdItemGenerateEmailReport( _CswNbtResources, CswNbtNode );
                     break;
                 default:
-                    throw new CswDniException( "CswNbtSchdItemFactory.makeSchdItem() found an unsupported Object Class: " + CswNbtNode.ObjectClass.ObjectClass.ToString() );
+                    throw new CswDniException( "CswNbtSchdItemFactory.makeSchdItem() found an unsupported Object Class: " + OC.ObjectClass.ToString() );
             }
 
             CswNbtDbBasedSchdEvents CswNbtDbBasedSchdEvents = new CswNbtDbBasedSchdEvents();

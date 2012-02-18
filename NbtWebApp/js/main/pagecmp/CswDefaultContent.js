@@ -1,9 +1,5 @@
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../controls/CswDiv.js" />
-/// <reference path="../controls/CswLink.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -18,29 +14,27 @@
         if (options) $.extend(o, options);
 
         var $this = $(this);
-        $this.contents().remove();
 
-        CswAjaxJson({
+        Csw.ajax.post({
             url: o.Url,
             data: { ViewId: o.viewid },
             success: function (data) {
                 
-                var $addDiv = $this.CswDiv({ ID: makeId({ id: o.ID, suffix: 'adddiv' }), cssclass: 'adddiv' });
+                var $addDiv = $this.CswDiv({ ID: Csw.controls.dom.makeId({ id: o.ID, suffix: 'adddiv' }), cssclass: 'adddiv' });
                 $addDiv.append('Add New:');
 
                 function _makeAddLinksRecursive(addObj, $parent) {
-                    if (contains(addObj, 'entries')) {
+                    var $ul = $('<ul></ul>');
+                    function onEach(entryObj) {
+                        var $li = Csw.handleMenuItem({
+                            $ul: $ul,
+                            itemKey: entryObj.text,
+                            itemJson: entryObj
+                        }).appendTo($ul);
+                    }
 
-                        var $ul = $('<ul></ul>');
-
-                        each(addObj.entries, function (entryObj) {
-                            var $li = HandleMenuItem({
-                                $ul: $ul,
-                                itemKey: entryObj.text,
-                                itemJson: entryObj
-                            }).appendTo($ul);
-                        });
-                        
+                    if (Csw.contains(addObj, 'entries')) {
+                        Csw.each(addObj.entries, onEach);
                         if ($ul.children().length > 0) {
                             $ul.appendTo($parent);
                             _makeAddLinksRecursive(addObj.children, $ul);

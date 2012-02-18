@@ -1,15 +1,12 @@
 using System;
 using System.Data;
-using System.Collections;
-using System.Text;
-using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -86,7 +83,7 @@ namespace ChemSW.Nbt.Sched
                         if( Node == null )
                             throw new CswDniException( "Node not found (" + nodeid.ToString() + ")" );
                         // Don't update nodes of disabled nodetypes
-                        if( Node.NodeType != null )
+                        if( Node.getNodeType() != null )
                         {
                             CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                             CswNbtActUpdatePropertyValue.UpdateNode( Node, false );

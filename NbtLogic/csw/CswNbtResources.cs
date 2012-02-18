@@ -627,6 +627,8 @@ namespace ChemSW.Nbt
 
             _CswResources.finalize( Commit );
 
+            if( null != _CswNbtMetaData )
+                _CswNbtMetaData.afterFinalize();
         }//finalize()
 
         /// <summary>
@@ -834,6 +836,24 @@ namespace ChemSW.Nbt
         /// </summary>
         /// 
         public CswConfigurationVariables ConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+
+        private Int32 _TreeViewResultLimit = Int32.MinValue;
+        public Int32 TreeViewResultLimit
+        {
+            get
+            {
+                if( _TreeViewResultLimit == Int32.MinValue )
+                {
+                    _TreeViewResultLimit = CswConvert.ToInt32( ConfigVbls.getConfigVariableValue( ConfigurationVariables.treeview_resultlimit.ToString() ) );
+                    if( _TreeViewResultLimit == Int32.MinValue )
+                    {
+                        _TreeViewResultLimit = 1001;
+                    }
+                }
+                return _TreeViewResultLimit;
+            }
+        } // TreeViewResultLimit
+
         //public string getConfigVariableValue( string VariableName ) { return _CswResources.getConfigVariableValue( VariableName ); }
         ///// <summary>
         ///// Setting of values located in the configuration_variables table

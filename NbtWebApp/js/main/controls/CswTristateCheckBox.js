@@ -4,7 +4,7 @@
 /// <reference path="../../globals/Global.js" />
 /// <reference path="CswImageButton.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) { 
     "use strict";
     var pluginName = 'CswTristateCheckBox';
 
@@ -18,18 +18,18 @@
                 Required: false,
                 Multi: false,
                 cssclass: 'CswTristateCheckBox',
-                onchange: function() { }
+                onChange: function () { }
             };
             if(options) $.extend(o, options);
 
             var $parent = $(this).empty(),
-                elementId = makeId({ prefix: o.prefix, ID: o.ID }),
-                tristateVal = tryParseString(o.Checked, 'null').toLowerCase(), //Case 21769
+                elementId = Csw.controls.dom.makeId({ prefix: o.prefix, ID: o.ID }),
+                tristateVal = Csw.string(o.Checked, 'null').toLowerCase(), //Case 21769
                 ret = $parent;
             
             if(o.ReadOnly) {
                 if(o.Multi) {
-                    $parent.append(CswMultiEditDefaultValue);
+                    $parent.append(Csw.enums.multiEditDefaultValue);
                 } else {
                     switch (tristateVal) {
                         case 'true': $parent.append('Yes'); break;
@@ -41,8 +41,8 @@
                                         ButtonType: getButtonType(tristateVal), 
                                         AlternateText: tristateVal,
                                         cssclass: o.cssclass,
-                                        onClick: function($ImageDiv) {
-                                            o.onchange($ImageDiv); 
+                                        onClick: function ($ImageDiv) {
+                                            o.onChange($ImageDiv); 
                                             return onClick($ImageDiv, o.Required);
                                         }
                                     });
@@ -57,14 +57,14 @@
         reBindClick: function (id, required, onClickEvent) {
             var $this = $(this),
                 buttonType;   
-            if (isNullOrEmpty($this, true)) {
+            if (Csw.isNullOrEmpty($this, true)) {
                 $this = $('#' + id); 
             }
-            if (false === isNullOrEmpty($this, true)) {
-                $this.bind('click', function() {
+            if (false === Csw.isNullOrEmpty($this, true)) {
+                $this.bind('click', function () {
                     buttonType = onClick($this, required);
                     $this.CswImageButton('doClick', buttonType);
-                    if (isFunction(onClickEvent)) {
+                    if (Csw.isFunction(onClickEvent)) {
                         onClickEvent();
                     }
                     return false;
@@ -74,31 +74,31 @@
     };
 
     function getButtonType(val) {
-        var ret = CswImageButton_ButtonType.CheckboxNull;
+        var ret = Csw.enums.imageButton_ButtonType.CheckboxNull;
         switch(val) {
-            case 'true': ret = CswImageButton_ButtonType.CheckboxTrue; break;
-            case 'false': ret = CswImageButton_ButtonType.CheckboxFalse; break;
+            case 'true': ret = Csw.enums.imageButton_ButtonType.CheckboxTrue; break;
+            case 'false': ret = Csw.enums.imageButton_ButtonType.CheckboxFalse; break;
         }
         return ret;
     }
     
     function onClick($ImageDiv, required) {
         var currentValue = $ImageDiv.CswAttrDom('alt');
-        var newValue = CswImageButton_ButtonType.CheckboxNull;
+        var newValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
         var newAltText = "null";
         if (currentValue === "null") {
-            newValue = CswImageButton_ButtonType.CheckboxTrue;
+            newValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
             newAltText = "true";
         } else if ( currentValue === "false") {
-            if ( isTrue(required) ) {
-                newValue = CswImageButton_ButtonType.CheckboxTrue;
+            if ( Csw.bool(required) ) {
+                newValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                 newAltText = "true";
             } else {
-                newValue = CswImageButton_ButtonType.CheckboxNull;
+                newValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
                 newAltText = "null";
             }
         } else if (currentValue === "true") {
-            newValue = CswImageButton_ButtonType.CheckboxFalse;
+            newValue = Csw.enums.imageButton_ButtonType.CheckboxFalse;
             newAltText = "false";
         }
         $ImageDiv.CswAttrDom('alt', newAltText);

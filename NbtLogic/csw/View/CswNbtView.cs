@@ -1147,7 +1147,7 @@ namespace ChemSW.Nbt
                 {
                     if( null != findFirstProperty().NodeTypeProp )
                     {
-                        ReturnVal = findFirstProperty().NodeTypeProp.NodeType.NodeTypeId;
+                        ReturnVal = findFirstProperty().NodeTypeProp.NodeTypeId;
                     }
                     else if( null != findFirstProperty().ObjectClassProp )
                     {

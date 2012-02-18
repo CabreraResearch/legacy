@@ -18,11 +18,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropQuantity( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Quantity )
-            {
-                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-                                            "CswNbtNodePropQuantity() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            }
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Quantity )
+            //{
+            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+            //                                "CswNbtNodePropQuantity() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
+            //}
 
             // Get the units
 
@@ -46,13 +46,13 @@ namespace ChemSW.Nbt.PropTypes
                 _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
                 UnitsTree.goToParentNode();
             }
-
-            _QuantitySubField = ( (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).QuantitySubField;
-            _UnitsSubField = ( (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).UnitsSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _QuantitySubField = _FieldTypeRule.QuantitySubField;
+            _UnitsSubField = _FieldTypeRule.UnitsSubField;
 
         }//CswNbtNodePropQuantity()
 
-
+        private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
         private CswNbtSubField _QuantitySubField;
         private CswNbtSubField _UnitsSubField;
 

@@ -1,28 +1,25 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) {
     "use strict";
     var pluginName = 'CswFieldTypeAuditHistoryGrid';
 
     var methods = {
         init: function (o) {
 
-            var $Div = $(this);
+            var propDiv = o.propDiv;
             var ret = '';
             if (false === o.Multi) {
-                ret = $Div.CswAuditHistoryGrid({
+                ret = propDiv.$.CswAuditHistoryGrid({
                     ID: o.ID,
                     nodeid: o.nodeid,
-                        cswnbtnodekey: o.cswnbtnodekey,
+                    cswnbtnodekey: o.cswnbtnodekey,
                     EditMode: o.EditMode,
                     onEditRow: function (date) {
                         $.CswDialog('EditNodeDialog', {
                             nodeids: [o.nodeid],
-                                nodekeys: [ o.cswnbtnodekey ],
+                            nodekeys: [o.cswnbtnodekey],
                             onEditNode: o.onEditNode,
                             date: date
                         });
@@ -32,7 +29,7 @@
             return ret;
         },
         save: function (o) {
-            preparePropJsonForSave(o.propData);
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
 

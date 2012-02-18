@@ -1,7 +1,5 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -9,7 +7,7 @@
 
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getDashboard',
-            onSuccess: function() { }
+            onSuccess: function () { }
         };
 
         if (options) {
@@ -18,21 +16,25 @@
 
         var $DashDiv = $(this);
         
-        CswAjaxJson({
+        Csw.ajax.post({
             url: o.Url,
             data: {},
             stringify: false,
             success: function (data) {
 
-                var $table = $DashDiv.CswTable('init', { ID: 'DashboardTable' });
-                $table.addClass('DashboardTable');
-                var $tr = $table.append('<tr />');
+                var table = Csw.controls.table({
+                    $parent: $DashDiv,
+                    ID: Csw.controls.dom.makeId(o.ID, 'DashboardTable')
+                });
+                table.addClass('DashboardTable');
+
+                var $tr = table.append('<tr />');
 
                 for (var dashId in data) {
                     if (data.hasOwnProperty(dashId)) {
                         var thisIcon = data[dashId];
                         var cellcontent;
-                        if (false === isNullOrEmpty( thisIcon.href )) {
+                        if (false === Csw.isNullOrEmpty( thisIcon.href )) {
                             cellcontent = '<td class="DashboardCell">' +
                                 '  <a target="_blank" href="' + thisIcon.href + '">' +
                                     '    <div title="' + thisIcon.text + '" id="' + dashId + '" class="' + dashId + '" />' +
@@ -54,7 +56,7 @@
         // For proper chaining support
         return this;
 
-    }; // function(options) {
+    }; // function (options) {
 })(jQuery);
 
 

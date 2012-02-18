@@ -24,6 +24,9 @@ namespace ChemSW.Nbt
         public bool Selectable = true;
         //public bool ShowInGrid = true;
         public bool ShowInTree = true;
+
+        public bool AllowView = true;
+        public bool AllowEdit = true;
         public bool AllowDelete = true;
 
         private Int32 _PropId = Int32.MinValue;
@@ -65,7 +68,7 @@ namespace ChemSW.Nbt
         public void overrideFirst( CswNbtMetaDataNodeType NodeType )
         {
             if( NodeType != null )
-                setFirst( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.LatestVersionNodeType.NodeTypeName );
+                setFirst( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName );
             else
                 setFirst( RelatedIdType.Unknown, Int32.MinValue, string.Empty );
         }
@@ -91,7 +94,7 @@ namespace ChemSW.Nbt
 
         public void overrideSecond( CswNbtMetaDataNodeType NodeType )
         {
-            setSecond( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.LatestVersionNodeType.NodeTypeName, NodeType.LatestVersionNodeType.IconFileName );
+            setSecond( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
         }
         public void overrideSecond( CswNbtMetaDataObjectClass ObjectClass )
         {
@@ -127,17 +130,18 @@ namespace ChemSW.Nbt
 
         private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
         {
-            if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
+            CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
+            if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
             {
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
-            setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.LatestVersionNodeTypeProp.PropName );
+            setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.getNodeTypePropLatestVersion().PropName );
 
             if( InOwnerType == PropOwnerType.First )
             {
-                overrideFirst( Prop.NodeType );
+                overrideFirst( Prop.getNodeType() );
                 if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
                     overrideSecond( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
                 else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
@@ -149,7 +153,7 @@ namespace ChemSW.Nbt
                     overrideFirst( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
                 else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
                     overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
-                overrideSecond( Prop.NodeType );
+                overrideSecond( Prop.getNodeType() );
             }
             else
             {
@@ -159,8 +163,9 @@ namespace ChemSW.Nbt
 
         private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop )
         {
-            if( Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                Prop.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
+            CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
+            if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
             {
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
@@ -169,13 +174,13 @@ namespace ChemSW.Nbt
 
             if( InOwnerType == PropOwnerType.First )
             {
-                overrideFirst( Prop.ObjectClass );
+                overrideFirst( Prop.getObjectClass() );
                 overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
             }
             else if( InOwnerType == PropOwnerType.Second )
             {
                 overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
-                overrideSecond( Prop.ObjectClass );
+                overrideSecond( Prop.getObjectClass() );
             }
             else
             {
@@ -290,6 +295,20 @@ namespace ChemSW.Nbt
             set { _Properties = value; }
         }
 
+        public CswNbtViewProperty findProperty( Int32 NodeTypePropId )
+        {
+            CswNbtViewProperty ret = null;
+            foreach( CswNbtViewProperty ViewProp in Properties )
+            {
+                if( ViewProp.NodeTypePropId == NodeTypePropId )
+                {
+                    ret = ViewProp;
+                    break;
+                }
+            }
+            return ret;
+        } // findProperty()
+
         #endregion For the View
 
 
@@ -354,6 +373,8 @@ namespace ChemSW.Nbt
             //ShowInGrid = CopyFrom.ShowInGrid;
             ShowInTree = CopyFrom.ShowInTree;
             AddChildren = CopyFrom.AddChildren;
+            AllowView = CopyFrom.AllowView;
+            AllowEdit = CopyFrom.AllowEdit;
             AllowDelete = CopyFrom.AllowDelete;
             NodeIdsToFilterIn = CopyFrom.NodeIdsToFilterIn;
             NodeIdsToFilterOut = CopyFrom.NodeIdsToFilterOut;
@@ -421,6 +442,10 @@ namespace ChemSW.Nbt
                                         CswConvert.ToInt32( StringRelationship[21] ),
                                         StringRelationship[22] );
                     }
+                    if( StringRelationship[23] != String.Empty )
+                        AllowView = Convert.ToBoolean( StringRelationship[23] );
+                    if( StringRelationship[24] != String.Empty )
+                        AllowEdit = Convert.ToBoolean( StringRelationship[24] );
                 }
             }
             catch( Exception ex )
@@ -487,6 +512,11 @@ namespace ChemSW.Nbt
                     ShowInTree = Convert.ToBoolean( RelationshipNode.Attributes[ShowInTreeAttrName].Value );
                 if( RelationshipNode.Attributes[AllowAddChildrenAttrName] != null && RelationshipNode.Attributes[AllowAddChildrenAttrName].Value.ToString() != string.Empty )
                     AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), RelationshipNode.Attributes[AllowAddChildrenAttrName].Value, true );
+                
+                if( RelationshipNode.Attributes[AllowViewAttrName] != null && RelationshipNode.Attributes[AllowViewAttrName].ToString() != string.Empty )
+                    AllowView = Convert.ToBoolean( RelationshipNode.Attributes[AllowViewAttrName].Value );
+                if( RelationshipNode.Attributes[AllowEditAttrName] != null && RelationshipNode.Attributes[AllowEditAttrName].ToString() != string.Empty )
+                    AllowEdit = Convert.ToBoolean( RelationshipNode.Attributes[AllowEditAttrName].Value );
                 if( RelationshipNode.Attributes[AllowDeleteAttrName] != null && RelationshipNode.Attributes[AllowDeleteAttrName].ToString() != string.Empty )
                     AllowDelete = Convert.ToBoolean( RelationshipNode.Attributes[AllowDeleteAttrName].Value );
 
@@ -599,14 +629,12 @@ namespace ChemSW.Nbt
 
                 if( RelationshipObj[SelectableAttrName] != null )
                 {
-                    bool _Selectable = CswConvert.ToBoolean( RelationshipObj[SelectableAttrName] );
-                    Selectable = _Selectable;
+                    Selectable = CswConvert.ToBoolean( RelationshipObj[SelectableAttrName] );
                 }
 
                 if( RelationshipObj[ShowInTreeAttrName] != null )
                 {
-                    bool _ShowInTree = CswConvert.ToBoolean( RelationshipObj[ShowInTreeAttrName] );
-                    ShowInTree = _ShowInTree;
+                    ShowInTree = CswConvert.ToBoolean( RelationshipObj[ShowInTreeAttrName] );
                 }
 
                 string _AllowAddChildrenAttrName = CswConvert.ToString( RelationshipObj[AllowAddChildrenAttrName] );
@@ -615,10 +643,17 @@ namespace ChemSW.Nbt
                     AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddChildrenAttrName, true );
                 }
 
+                if( RelationshipObj[AllowViewAttrName] != null )
+                {
+                    AllowView = CswConvert.ToBoolean( RelationshipObj[AllowViewAttrName] );
+                }
+                if( RelationshipObj[AllowEditAttrName] != null )
+                {
+                    AllowEdit = CswConvert.ToBoolean( RelationshipObj[AllowEditAttrName] );
+                }
                 if( RelationshipObj[AllowDeleteAttrName] != null )
                 {
-                    bool _AllowDelete = CswConvert.ToBoolean( RelationshipObj[AllowDeleteAttrName] );
-                    AllowDelete = _AllowDelete;
+                    AllowDelete = CswConvert.ToBoolean( RelationshipObj[AllowDeleteAttrName] );
                 }
 
                 string _NodeIdFilterInAttrName = CswConvert.ToString( RelationshipObj[NodeIdFilterInAttrName] );
@@ -696,7 +731,7 @@ namespace ChemSW.Nbt
             {
                 CswNbtMetaDataNodeType DefaultFilterNT = _CswNbtResources.MetaData.getNodeType( SecondId );
                 if( DefaultFilterNT != null )
-                    DefaultFilterOC = DefaultFilterNT.ObjectClass;
+                    DefaultFilterOC = DefaultFilterNT.getObjectClass();
             }
             if( DefaultFilterOC != null )
             {
@@ -787,6 +822,8 @@ namespace ChemSW.Nbt
                 ret.Add( "" );
                 ret.Add( "" );
             }
+            ret.Add( AllowView.ToString() );
+            ret.Add( AllowEdit.ToString() );
             return ret;
         }
 
@@ -809,6 +846,8 @@ namespace ChemSW.Nbt
         //public static string ShowInGridAttrName = "showingrid";
         public static string ShowInTreeAttrName = "showintree";
         public static string AllowAddChildrenAttrName = "allowaddchildren";
+        public static string AllowViewAttrName = "allowview";
+        public static string AllowEditAttrName = "allowedit";
         public static string AllowDeleteAttrName = "allowdelete";
         public static string NodeIdFilterInAttrName = "nodeidstofilterin";
         public static string NodeIdFilterOutAttrName = "nodeidstofilterout";
@@ -905,6 +944,14 @@ namespace ChemSW.Nbt
             XmlAttribute AllowAddChildrenAttr = XmlDoc.CreateAttribute( AllowAddChildrenAttrName );
             AllowAddChildrenAttr.Value = AddChildren.ToString();
             RelationshipNode.Attributes.Append( AllowAddChildrenAttr );
+
+            XmlAttribute AllowViewAttr = XmlDoc.CreateAttribute( AllowViewAttrName );
+            AllowViewAttr.Value = AllowView.ToString();
+            RelationshipNode.Attributes.Append( AllowViewAttr );
+
+            XmlAttribute AllowEditAttr = XmlDoc.CreateAttribute( AllowEditAttrName );
+            AllowEditAttr.Value = AllowEdit.ToString();
+            RelationshipNode.Attributes.Append( AllowEditAttr );
 
             XmlAttribute AllowDeleteAttr = XmlDoc.CreateAttribute( AllowDeleteAttrName );
             AllowDeleteAttr.Value = AllowDelete.ToString();
@@ -1006,6 +1053,8 @@ namespace ChemSW.Nbt
             RelationshipObj[ArbitraryIdAttrName] = ArbitraryId.ToString();
             RelationshipObj[ShowInTreeAttrName] = ShowInTree.ToString().ToLower();
             RelationshipObj[AllowAddChildrenAttrName] = AddChildren.ToString();
+            RelationshipObj[AllowViewAttrName] = AllowView.ToString();
+            RelationshipObj[AllowEditAttrName] = AllowEdit.ToString();
             RelationshipObj[AllowDeleteAttrName] = AllowDelete.ToString();
 
             string FilterInString = "";

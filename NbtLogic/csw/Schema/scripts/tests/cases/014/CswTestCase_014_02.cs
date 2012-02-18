@@ -1,16 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
 using System.Data;
-using System.Text;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
-using ChemSW.DB;
-using ChemSW.Nbt.Schema;
 using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -46,9 +38,9 @@ namespace ChemSW.Nbt.Schema
 
             //bz # 9102: This is the way of getting the record that causes the updated record disappear
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-            foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
             {
-                foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                 {
                     if( CurrentSubField.RelationalColumn != string.Empty )
                         SelectColumns.Add( CurrentSubField.RelationalColumn );

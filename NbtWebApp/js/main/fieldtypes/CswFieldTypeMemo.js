@@ -1,57 +1,53 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
-    "use strict";    
+    "use strict";
     var pluginName = 'CswFieldTypeMemo';
 
     var methods = {
-        init: function(o) {
-        
-            var $Div = $(this);
-            $Div.contents().remove();
+        init: function (o) {
+
+            var propDiv = o.propDiv;
+            propDiv.empty();
 
             //var Value = extractCDataValue($xml.children('text'));
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? tryParseString(propVals.text).trim() : CswMultiEditDefaultValue;
-            var rows = tryParseString(propVals.rows);
-            var columns = tryParseString(propVals.columns);
+            var value = (false === o.Multi) ? Csw.string(propVals.text).trim() : Csw.enums.multiEditDefaultValue;
+            var rows = Csw.string(propVals.rows);
+            var columns = Csw.string(propVals.columns);
 
-            if(o.ReadOnly) {
-                $Div.append(value);
-            } else {
-                var $TextArea = $('<textarea id="'+ o.ID +'" name="' + o.ID + '" rows="'+rows+'" cols="'+columns+'">'+ value +'</textarea>' )
-                                    .appendTo($Div)
-                                    .change(o.onchange); 
-                if(o.Required)
-                {
-                    $TextArea.addClass("required");
-                }
-            }
+            propDiv.textArea({
+                onChange: o.onChange,
+                ID: o.ID,
+                rows: rows,
+                cols: columns,
+                value: value,
+                disabled: o.ReadOnly,
+                required: o.Required,
+                readonly: o.ReadOnly
+            });
         },
-        save: function(o) { //$propdiv, $xml
+        save: function (o) { //$propdiv, $xml
             var attributes = { text: null };
-            var $TextArea = o.$propdiv.find('textarea');
-            if (false === isNullOrEmpty($TextArea)) {
-                attributes.text = $TextArea.val();
+            var textArea = o.propDiv.find('textarea');
+            if (false === Csw.isNullOrEmpty(textArea)) {
+                attributes.text = textArea.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
-    
+
     // Method calling logic
     $.fn.CswFieldTypeMemo = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

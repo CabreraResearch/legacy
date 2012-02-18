@@ -1,9 +1,5 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswCheckBoxArray.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -12,64 +8,62 @@
         keyCol = 'key',
         valueCol = 'value',
         methods = {
-            init: function (o) { //nodepk = o.nodeid, $xml = o.propData, onchange = o.onchange, ID = o.ID, Required = o.Required, ReadOnly = o.ReadOnly 
+            init: function (o) {
 
-                var $Div = $(this);
+                var propDiv = o.propDiv;
+                propDiv.empty();
 
                 var propVals = o.propData.values;
                 var optData = propVals.options;
                 var selectMode = propVals.selectmode; // Single, Multiple, Blank
-                var editMode = ChemSW.enums.tryParse(ChemSW.enums.EditMode, o.EditMode);
 
                 /*
+                var editMode = Csw.enums.tryParse(Csw.enums.editMode, o.EditMode);
                 Case 24606: Once we can validate the control
-                if(editMode === ChemSW.enums.EditMode.AddInPopup) {
-                    each(propVals.options, function(option) {
-                        if (contains(option, 'key')) {
+                if(editMode === Csw.enums.editMode.Add) {
+                Csw.each(propVals.options, function (option) {
+                if (Csw.contains(option, 'key')) {
                             
-                              var relatedNodeTypeId = tryParseString(o.relatednodetypeid);
-                              if (tryParseString(option.key) === relatedNodeTypeId) 
-                              one day we can try to set the defaults using the context of the view. Not today.
+                var relatedNodeTypeId = Csw.string(o.relatednodetypeid);
+                if (Csw.string(option.key) === relatedNodeTypeId) 
+                one day we can try to set the defaults using the context of the view. Not today.
                             
-                                option.value = 'False';
-                        }
-                    });
+                option.value = 'False';
+                }
+                });
                 }
                 */
-                var $cbaDiv = $('<div />')
-                                .CswCheckBoxArray('init', {
-                                    ID: o.ID + '_cba',
-                                    UseRadios: (selectMode === 'Single'),
-                                    Required: o.Required,
-                                    ReadOnly: o.ReadOnly,
-                                    Multi: o.Multi,
-                                    onchange: o.onchange,
-                                    dataAry: optData,
-                                    nameCol: nameCol,
-                                    keyCol: keyCol,
-                                    valCol: valueCol,
-                                    valColName: 'Include'
-                                });
-                
-                if(o.Required) {
-                    $cbaDiv.addClass("required");
+                var cbaDiv = propDiv.div()
+                    .cswCheckBoxArray({
+                        ID: o.ID + '_cba',
+                        UseRadios: (selectMode === 'Single'),
+                        Required: o.Required,
+                        ReadOnly: o.ReadOnly,
+                        Multi: o.Multi,
+                        onChange: o.onChange,
+                        dataAry: optData,
+                        nameCol: nameCol,
+                        keyCol: keyCol,
+                        valCol: valueCol,
+                        valColName: 'Include'
+                    });
+
+                if (o.Required) {
+                    cbaDiv.addClass("required");
                 }
-                
-                $Div.contents().remove();
-                $Div.append($cbaDiv);            
-                return $Div;
+
+                return propDiv;
             },
             save: function (o) { //$propdiv, $xml
                 var attributes = { options: null };
-                var $cbaDiv = o.$propdiv.children('div').first();
-                var formdata = $cbaDiv.CswCheckBoxArray( 'getdata', { 'ID': o.ID + '_cba' } );
-                if(false === o.Multi || false === formdata.MultiIsUnchanged) {
+                var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
+                if (false === o.Multi || false === formdata.MultiIsUnchanged) {
                     attributes.options = formdata.data;
-                } 
-                preparePropJsonForSave(o.Multi, o.propData, attributes);
+                }
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
                 return $(this);
             } // save()
-    };
+        };
 
     // Method calling logic
     $.fn.CswFieldTypeNodeTypeSelect = function (method) {

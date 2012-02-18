@@ -9,17 +9,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     {
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
-
         private CswNbtFieldResources _CswNbtFieldResources = null;
-        private ICswNbtMetaDataProp _MetaDataProp = null;
 
-        public CswNbtFieldTypeRulePropertyReference( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRulePropertyReference( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
-            _MetaDataProp = MetaDataProp;
-
-            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
+            
+            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
             CachedValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
                                               CswNbtPropFilterSql.PropertyFilterMode.Contains |
                                               CswNbtPropFilterSql.PropertyFilterMode.Ends |
@@ -55,7 +52,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
@@ -73,7 +70,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( false == RetIsInvalid )
                     {
                         CswNbtMetaDataNodeTypeProp ValueNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inValuePropId );
-                        RetIsInvalid = ( null == ValueNtp || ( ValueNtp.NodeType.FirstVersionNodeType != FkRelationshipTargetNt.FirstVersionNodeType ) );
+                        RetIsInvalid = ( null == ValueNtp ||
+                                         _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeFirstVersion( ValueNtp.NodeTypeId ) != FkRelationshipTargetNt.getFirstVersionNodeType() );
                     }
                     break;
                 case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
@@ -83,7 +81,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( false == RetIsInvalid )
                     {
                         CswNbtMetaDataObjectClassProp ValueOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inValuePropId );
-                        RetIsInvalid = ( null == ValueOcp || ( ValueOcp.ObjectClass.ObjectClass != FkRelationshipTargetOc.ObjectClass ) );
+                        RetIsInvalid = ( null == ValueOcp || ( ValueOcp.getObjectClass().ObjectClass != FkRelationshipTargetOc.ObjectClass ) );
                     }
                     break;
             }
@@ -115,7 +113,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetClearPropVal;
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             string OutFkType = inFKType;
             Int32 OutFkValue = inFKValue;
@@ -131,16 +129,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             //Current PropIdTypes
             CswNbtViewRelationship.PropIdType CurrentFkPropIdType;
-            Enum.TryParse( _MetaDataProp.FKType, true, out CurrentFkPropIdType );
+            Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
 
             CswNbtViewRelationship.PropIdType CurrentPropTypePropIdType;
-            Enum.TryParse( _MetaDataProp.ValuePropType, true, out CurrentPropTypePropIdType );
+            Enum.TryParse( MetaDataProp.ValuePropType, true, out CurrentPropTypePropIdType );
 
             //We're changing the relationship
             if( NewFkPropIdType != CurrentFkPropIdType ||
                 NewPropTypePropIdType != CurrentPropTypePropIdType ||
-                inFKValue != _MetaDataProp.FKValue ||
-                inValuePropId != _MetaDataProp.ValuePropId
+                inFKValue != MetaDataProp.FKValue ||
+                inValuePropId != MetaDataProp.ValuePropId
                 )
             {
                 bool ClearValueProp = _validateFkTarget( NewFkPropIdType, inFKValue, inValuePropId );

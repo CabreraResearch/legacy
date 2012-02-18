@@ -1,14 +1,7 @@
 using System;
 using System.Data;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Text;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt
@@ -36,9 +29,9 @@ namespace ChemSW.Nbt
                     CswTableSelect CswTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodePropCollDataRelational_PropsTable", NodeType.TableName );
                     string FilterColumn = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
                     CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
                     {
-                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                         {
                             if( CurrentSubField.RelationalColumn != string.Empty )
                                 SelectColumns.Add( CurrentSubField.RelationalColumn.ToLower() );
@@ -52,7 +45,7 @@ namespace ChemSW.Nbt
                         DataTable = CswTableSelect.getEmptyTable();
 
                     _PropsTable = makeEmptyJctNodesProps();
-                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+                    foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
                     {
                         DataRow NewRow = _PropsTable.NewRow();
                         NewRow["nodetypepropid"] = CurrentNodeTypeProp.PropId.ToString();
@@ -61,7 +54,7 @@ namespace ChemSW.Nbt
                             NewRow["nodeid"] = CswConvert.ToDbVal( _NodePk.PrimaryKey );
                             NewRow["nodeidtablename"] = _NodePk.TableName;
                         }
-                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                        foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                         {
                             if( DataTable.Rows.Count > 0 && CurrentSubField.RelationalColumn != string.Empty )
                                 NewRow[CurrentSubField.Column.ToString()] = DataTable.Rows[0][CurrentSubField.RelationalColumn];
@@ -138,9 +131,9 @@ namespace ChemSW.Nbt
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
 
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-            foreach ( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.NodeTypeProps )
+            foreach ( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
             {
-                foreach ( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.FieldTypeRule.SubFields )
+                foreach ( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
                 {
                     if ( CurrentSubField.RelationalColumn != string.Empty )
                         SelectColumns.Add( CurrentSubField.RelationalColumn );
@@ -160,7 +153,7 @@ namespace ChemSW.Nbt
             foreach ( DataRow CurrentRow in _PropsTable.Rows )
             {
                 CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow[ "nodetypepropid" ] ) );
-                foreach ( CswNbtSubField CurrentSubField in CswNbtMetaDataNodeTypeProp.FieldTypeRule.SubFields )
+                foreach ( CswNbtSubField CurrentSubField in CswNbtMetaDataNodeTypeProp.getFieldTypeRule().SubFields )
                 {
                     if ( CurrentSubField.RelationalColumn != string.Empty )
                     {

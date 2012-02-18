@@ -19,23 +19,23 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropQuestion( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question )
-            {
-                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-                                            "CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            }
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question )
+            //{
+            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+            //                                "CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
+            //}
 
-            CswNbtFieldTypeRuleQuestion FieldTypeRuleQuestion = (CswNbtFieldTypeRuleQuestion) _CswNbtMetaDataNodeTypeProp.FieldTypeRule;
+            _FieldTypeRule = (CswNbtFieldTypeRuleQuestion) _CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
 
-            _AnswerSubField = FieldTypeRuleQuestion.AnswerSubField;
-            _CommentsSubField = FieldTypeRuleQuestion.CommentsSubField;
-            _CorrectiveActionSubField = FieldTypeRuleQuestion.CorrectiveActionSubField;
-            _DateAnsweredSubField = FieldTypeRuleQuestion.DateAnsweredSubField;
-            _DateCorrectedSubField = FieldTypeRuleQuestion.DateCorrectedSubField;
-            _IsCompliantSubField = FieldTypeRuleQuestion.IsCompliantSubField;
+            _AnswerSubField = _FieldTypeRule.AnswerSubField;
+            _CommentsSubField = _FieldTypeRule.CommentsSubField;
+            _CorrectiveActionSubField = _FieldTypeRule.CorrectiveActionSubField;
+            _DateAnsweredSubField = _FieldTypeRule.DateAnsweredSubField;
+            _DateCorrectedSubField = _FieldTypeRule.DateCorrectedSubField;
+            _IsCompliantSubField = _FieldTypeRule.IsCompliantSubField;
 
         }//ctor
-
+        private CswNbtFieldTypeRuleQuestion _FieldTypeRule;
         private CswNbtSubField _AnswerSubField;
         private CswNbtSubField _CommentsSubField;
         private CswNbtSubField _CorrectiveActionSubField;

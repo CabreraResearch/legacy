@@ -1,5 +1,6 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Xml;
 using ChemSW.Core;
@@ -40,53 +41,52 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        public ICollection NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); } }
-        public ICollection NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); } }
-        public ICollection NodeTypePropsByDisplayOrder { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( TabId ); } }
+        public Collection<Int32> NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); } }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); } }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypePropsByDisplayOrder { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( NodeTypeId, TabId ); } }
 
-        public CswNbtMetaDataNodeTypeProp FirstPropByDisplayOrder()
-        {
-            CswNbtMetaDataNodeTypeProp ret = null;
-            ICollection Props = NodeTypePropsByDisplayOrder;
-            // Weird, I know.
-            foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
-            {
-                ret = Prop;
-                break;
-            }
-            return ret;
-        }
+        //public CswNbtMetaDataNodeTypeProp FirstPropByDisplayOrder()
+        //{
+        //    CswNbtMetaDataNodeTypeProp ret = null;
+        //    ICollection Props = NodeTypePropsByDisplayOrder;
+        //    // Weird, I know.
+        //    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
+        //    {
+        //        ret = Prop;
+        //        break;
+        //    }
+        //}
 
-        public CswNbtMetaDataNodeTypeProp getNextPropByDisplayOrder( CswNbtMetaDataNodeTypeProp PreviousProp )
-        {
-            CswNbtMetaDataNodeTypeProp ret = null;
-            ICollection Props = NodeTypePropsByDisplayOrder;
-            bool GetNext = false;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
-            {
-                if( GetNext )
-                {
-                    ret = Prop;
-                    break;
-                }
-                if( Prop == PreviousProp )
-                    GetNext = true;
-            }
-            return ret;
-        }
-        public CswNbtMetaDataNodeTypeProp getPreviousPropByDisplayOrder( CswNbtMetaDataNodeTypeProp NextProp )
-        {
-            CswNbtMetaDataNodeTypeProp ret = null;
-            ICollection Props = NodeTypePropsByDisplayOrder;
-            //bool GetNext = false;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
-            {
-                if( Prop == NextProp )
-                    break;
-                ret = Prop;
-            }
-            return ret;
-        }
+        //public CswNbtMetaDataNodeTypeProp getNextPropByDisplayOrder( CswNbtMetaDataNodeTypeProp PreviousProp )
+        //{
+        //    CswNbtMetaDataNodeTypeProp ret = null;
+        //    ICollection Props = NodeTypePropsByDisplayOrder;
+        //    bool GetNext = false;
+        //    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
+        //    {
+        //        if( GetNext )
+        //        {
+        //            ret = Prop;
+        //            break;
+        //        }
+        //        if( Prop == PreviousProp )
+        //            GetNext = true;
+        //    }
+        //    return ret;
+        //}
+        //public CswNbtMetaDataNodeTypeProp getPreviousPropByDisplayOrder( CswNbtMetaDataNodeTypeProp NextProp )
+        //{
+        //    CswNbtMetaDataNodeTypeProp ret = null;
+        //    ICollection Props = NodeTypePropsByDisplayOrder;
+        //    //bool GetNext = false;
+        //    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
+        //    {
+        //        if( Prop == NextProp )
+        //            break;
+        //        ret = Prop;
+        //    }
+        //    return ret;
+        //}
 
         public Int32 TabId
         {
@@ -116,14 +116,26 @@ namespace ChemSW.Nbt.MetaData
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
+                    _checkVersioningTab();
 
-                    _CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( this );
                     _NodeTypeTabRow["tabname"] = value;
-                    _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterExisting( this );
+                    _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
                 }
             }
         }
+
+        private void _checkVersioningTab()
+        {
+            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+            if( NewNodeType.NodeTypeId != NodeTypeId )
+            {
+                // Get the new tab and reassign myself
+                CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabVersion( NewNodeType.NodeTypeId, this.TabId );
+                this._NodeTypeTabRow = NewTab._DataRow;
+            }
+        }
+
+
         public Int32 TabOrder
         {
             get { return CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ); }
@@ -131,11 +143,10 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ) != value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.NodeType );
+                    _checkVersioningTab();
 
-                    _CswNbtMetaDataResources.NodeTypeTabsCollection.Deregister( this );
                     _NodeTypeTabRow["taborder"] = CswConvert.ToDbVal( value );
-                    _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterExisting( this );
+                    _CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
                 }
             }
         }
@@ -157,9 +168,13 @@ namespace ChemSW.Nbt.MetaData
             private set { TabOrder = value; }
         }
 
-        public CswNbtMetaDataNodeType NodeType
+        public Int32 NodeTypeId
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( CswConvert.ToInt32( _NodeTypeTabRow["nodetypeid"].ToString() ) ); }
+            get { return CswConvert.ToInt32( _NodeTypeTabRow["nodetypeid"] ); }
+        }
+        public CswNbtMetaDataNodeType getNodeType()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( NodeTypeId );
         }
 
 
@@ -189,10 +204,10 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public Int32 GetPropDisplayOrder( CswNbtMetaDataNodeTypeProp Prop )
-        {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropDisplayOrder( TabId, Prop );
-        }
+        //public Int32 GetPropDisplayOrder( CswNbtMetaDataNodeTypeProp Prop )
+        //{
+        //    return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropDisplayOrder( TabId, Prop );
+        //}
 
         //public Int32 getCurrentMaxDisplayRow()
         //{

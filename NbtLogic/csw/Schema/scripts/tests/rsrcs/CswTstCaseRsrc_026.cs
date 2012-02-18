@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections;
 using System.Data;
-using System.Text;
+using ChemSW.Audit;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 using ChemSW.DB;
-using ChemSW.Nbt.Schema;
-using ChemSW.Audit;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -61,7 +55,7 @@ namespace ChemSW.Nbt.Schema
                     AddedProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( TestNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "AddedProp", 0 );
                 }
 
-                CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( TestNodeType.NodeTypeId ).LatestVersionNodeType;
+                CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeLatestVersion( TestNodeType.NodeTypeId );
                 TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             }//if we haven't already made a node
 

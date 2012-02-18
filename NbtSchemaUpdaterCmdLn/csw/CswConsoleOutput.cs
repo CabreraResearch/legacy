@@ -1,17 +1,5 @@
 ﻿using System;
-using System.Threading;
-using System.Reflection;
-using System.Text;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using ChemSW.Exceptions;
-using ChemSW.Config;
-using ChemSW.Core;
 using ChemSW.Log;
-using ChemSW.Nbt.Config;
-using ChemSW.Nbt.Schema;
-using ChemSW.Nbt;
 
 
 namespace ChemSW.Nbt.Schema.CmdLn

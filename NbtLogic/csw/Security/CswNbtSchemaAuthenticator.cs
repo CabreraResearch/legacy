@@ -1,17 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
-using System.Data;
-using System.Configuration;
-using ChemSW.Core;
 using ChemSW.Encryption;
-using ChemSW.Exceptions;
-using ChemSW.Session;
-using System.Text.RegularExpressions;
-using ChemSW.Security;
-using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.Security
 {
@@ -40,7 +30,7 @@ namespace ChemSW.Nbt.Security
             if( UserAsNode != null )
             {
                 CswNbtObjClassUser UserObjClass = CswNbtNodeCaster.AsUser( UserAsNode );
-                if( !UserObjClass.IsAccountLocked() )
+                if( false == UserObjClass.IsAccountLocked() )
                 {
                     string encryptedpassword = CswEncryption.getMd5Hash( password );
                     if( UserObjClass.EncryptedPassword == encryptedpassword )

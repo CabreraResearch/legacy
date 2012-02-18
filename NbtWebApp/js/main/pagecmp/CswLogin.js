@@ -1,9 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) {
     "use strict";
     var authenticateUrl = '/NbtWebApp/wsNBT.asmx/authenticate';
 
@@ -14,106 +12,91 @@
         var methods = {
             'init': function (options) {
                 var o = {
-                    onAuthenticate: null, //function(Username) {}
-                    onFail: null // function(errormessage) {}
+                    onAuthenticate: null, //function (Username) {}
+                    onFail: null // function (errormessage) {}
                 };
                 if (options) $.extend(o, options);
 
-                var ThisSessionId = $.CswCookie('get', CswCookieName.SessionId);
-                if( !isNullOrEmpty(ThisSessionId) )
-                {
-                    o.onAuthenticate( $.CswCookie('get', CswCookieName.Username) );
+                var thisSessionId = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
+                var $parent = $(this);
+                var parent = Csw.controls.factory($parent, {});
+                var loginDiv, loginTable, loginBtn, inpAccessId, inpUserName, inpPassword, loginMsg;
+
+                if (false === Csw.isNullOrEmpty(thisSessionId)) {
+                    Csw.tryExec(o.onAuthenticate, Csw.cookie.get(Csw.cookie.cookieNames.Username));
                 }
-                else 
-                {
-                    var $LoginDiv = $( '<div id="logindiv" align="center">' +
-                                        '  <form>' +  
-                                        '    <table>' +
-                                        '    <tr>' +
-                                        '      <td align="right"></td>' +
-                                        '      <td id="loginmsg" style="display: none;"></td>' +
-                                        '    </tr>' +
-                                        '    <tr>' +
-                                        '      <td align="right">Customer ID:</td>' +
-                                        '      <td><input type="text" name="login_accessid" id="login_accessid" /></td>' +
-                                        '    </tr>' +
-                                        '    <tr>' +
-                                        '      <td align="right">User Name:</td>' +
-                                        '      <td><input type="text" name="login_username" id="login_username" /></td>' +
-                                        '    </tr>' +
-                                        '    <tr>' +
-                                        '      <td align="right">Password:</td>' +
-                                        '      <td><input type="password" name="login_password" id="login_password" /></td>' +
-                                        '    </tr>' +
-                                        '    <tr>' +
-                                        '      <td align="right"></td>' +
-                                        '      <td id="login_button_cell"> '+ //<input type="submit" id="login_button" name="Login" value="Login" />' +
-                                        '          </td>' +
-                                        '    </tr>' +
-                                        '    <tr>' +
-                                        '      <td></td>' +
-                                        '      <td></td>' +
-                                        '    </tr>' + 
-                                        '  </table>' +
-                                        ' </form>' +
-                                        ' </div>' +
-                                        ' <br/><br/><br/>' +
-                                        ' <div id="assemblydiv" width="100%" align="right"></div>')
-                                    .appendTo($(this));
+                else {
+                    loginDiv = parent.div({
+                        ID: 'logindiv',
+                        align: 'center'
+                    });
+                    loginTable = loginDiv.form().table({cellalign: 'center', cellvalign: 'center'});
+                    loginMsg = loginTable.cell(1, 2, 'loginmsg').hide();
+                    loginTable.cell(2, 1).text('Customer ID: ').align('right');
+                    inpAccessId = loginTable.cell(2, 2).input({ ID: 'login_accessid', width: '120px' });
+                    loginTable.cell(3, 1).text('User Name: ').align('right');
+                    inpUserName = loginTable.cell(3, 2).input({ ID: 'login_username', width: '120px' });
+                    loginTable.cell(4, 1).text('Password: ').align('right');
+                    inpPassword = loginTable.cell(4, 2).input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px' });
+                    loginBtn = loginTable.cell(5, 2, 'login_button_cell')
+                                        .align('left')
+                                        .button({
+                                            ID: 'login_button',
+                                            enabledText: 'Login',
+                                            disabledText: 'Logging in...',
+                                            width: '100px',
+                                            onClick: function () {
+                                                loginMsg.hide().empty();
+
+                                                _handleLogin({
+                                                    AccessId: inpAccessId.val(),
+                                                    UserName: inpUserName.val(),
+                                                    Password: inpPassword.val(),
+                                                    ForMobile: false,
+                                                    onAuthenticate: function (userName) {
+                                                        parent.empty();
+                                                        Csw.tryExec(o.onAuthenticate, userName);
+                                                    },
+                                                    onFail: function (txt) {
+                                                        loginMsg.$.CswErrorMessage({ 'type': 'Warning', 'message': txt });
+                                                        inpPassword.val('');   // case 21303
+                                                        loginBtn.enable();
+                                                        Csw.tryExec(o.onFail, txt);
+                                                    }
+                                                });
+                                            } // onClick
+                                        });
+                    loginTable.cell(6, 2);
+                    parent.br({ number: 3 });
+                    parent.div({
+                        ID: 'assemblydiv',
+                        width: '100%',
+                        align: 'right'
+                    });
 
                     $('#assemblydiv').load('_Assembly.txt');
-                            
+
                     $('#login_accessid').focus();
 
-                    var $loginbutton = $('#login_button_cell').CswButton({
-                                                ID: 'login_button', 
-                                                enabledText: 'Login', 
-                                                disabledText: 'Logging in...', 
-                                                onclick: function() {
-                                                    $('#loginmsg').hide()
-                                                            .children().remove();
 
-                                                    _handleLogin({
-                                                        AccessId: $('#login_accessid').val(), 
-                                                        UserName: $('#login_username').val(), 
-                                                        Password: $('#login_password').val(), 
-                                                        ForMobile: false, 
-                                                        onAuthenticate: function (UserName) {
-                                                            $LoginDiv.remove();
-                                                            if(isFunction(o.onAuthenticate)) {
-                                                                o.onAuthenticate(UserName);
-                                                            }
-                                                        }, 
-                                                        onFail: function (txt) {
-                                                            $('#loginmsg').CswErrorMessage({'type': 'Warning', 'message': txt });
-                                                            $('#login_password').val('');   // case 21303
-                                                            $loginbutton.CswButton('enable');
-                                                            if(isFunction(o.onFail)) {
-                                                                o.onFail(txt);
-                                                            }
-                                                        }
-                                                    });
-                                                } // onclick
-                                            }); // CswButton
-
-                    $('#login_accessid').clickOnEnter($loginbutton);
-                    $('#login_username').clickOnEnter($loginbutton);
-                    $('#login_password').clickOnEnter($loginbutton);
+                    inpAccessId.clickOnEnter(loginBtn);
+                    inpPassword.clickOnEnter(loginBtn);
+                    inpUserName.clickOnEnter(loginBtn);
 
                 } // if-else(ThisSessionId !== null)
             } // init
         }; // methods
 
         // Method calling logic
-        if ( methods[method] ) {
-            return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-            return methods.init.apply( this, arguments );
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-            $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
 
-    }; // function(options) {
+    }; // function (options) {
 
 
     // Called without context
@@ -123,12 +106,12 @@
             UserName: '',
             Password: '',
             ForMobile: false,
-            onAuthenticate: null, // function(UserName) {} 
-            onFail: null, // function(errormessage) {} 
+            onAuthenticate: null, // function (UserName) {} 
+            onFail: null, // function (errormessage) {} 
             LogoutPath: ''
         };
-        if(options) $.extend(o, options);
-        _handleLogin(o);				
+        if (options) $.extend(o, options);
+        _handleLogin(o);
     }; // login
 
     function _handleLogin(loginopts) {
@@ -137,38 +120,38 @@
             UserName: '',
             Password: '',
             ForMobile: false,
-            onAuthenticate: null, // function(UserName) {} 
-            onFail: null, // function(errormessage) {} 
+            onAuthenticate: null, // function (UserName) {} 
+            onFail: null, // function (errormessage) {} 
             LogoutPath: ''
         };
-        if(loginopts) $.extend(l, loginopts);
-        CswAjaxJson({
-                    url: authenticateUrl,
-                    data: {
-                            AccessId: l.AccessId, 
-                            UserName: l.UserName, 
-                            Password: l.Password,
-                            ForMobile: l.ForMobile
-                        },
-                    success: function () {
-                            $.CswCookie('set', CswCookieName.Username, l.UserName);
-                            $.CswCookie('set', CswCookieName.LogoutPath, l.LogoutPath);
-                            if(isFunction(l.onAuthenticate)) {
-                                l.onAuthenticate(l.UserName);
-                            }
-                        },
-                    onloginfail: function(txt) {
-                            if(isFunction(l.onFail)) {
-                                l.onFail(txt);
-                            }
-                        },
-                    error: function() {
-                            if(isFunction(l.onFail)) {
-                                l.onFail('Webservice Error');
-                            }
-                        }
+        if (loginopts) $.extend(l, loginopts);
+        Csw.ajax.post({
+            url: authenticateUrl,
+            data: {
+                AccessId: l.AccessId,
+                UserName: l.UserName,
+                Password: l.Password,
+                ForMobile: l.ForMobile
+            },
+            success: function () {
+                Csw.cookie.set(Csw.cookie.cookieNames.Username, l.UserName);
+                Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, l.LogoutPath);
+                if (Csw.isFunction(l.onAuthenticate)) {
+                    l.onAuthenticate(l.UserName);
+                }
+            },
+            onloginfail: function (txt) {
+                if (Csw.isFunction(l.onFail)) {
+                    l.onFail(txt);
+                }
+            },
+            error: function () {
+                if (Csw.isFunction(l.onFail)) {
+                    l.onFail('Webservice Error');
+                }
+            }
         }); // ajax
     } // _handleLogin()
-    
-})(jQuery);
+
+} (jQuery));
 

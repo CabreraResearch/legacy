@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -43,6 +42,16 @@ namespace ChemSW.Nbt.WebServices
                 }
                 Tree.goToParentNode();
             } // for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
+
+            if( Tree.getCurrentNodeChildrenTruncated() )
+            {
+                JObject ThisTruncated = new JObject();
+                ThisTruncated["data"] = "Results Truncated";
+                ThisTruncated["icon"] = "Images/icons/truncated.gif";
+                ThisTruncated["state"] = "leaf";
+                GrandParentNode.Add( ThisTruncated );
+            }
+
         } // _runTreeNodesRecursive()
 
 
@@ -56,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             string ThisNodeIcon = "";
-            string ThisNodeKeyString = wsTools.ToSafeJavaScriptParam( ThisNodeKey.ToString() );
+            string ThisNodeKeyString = ThisNodeKey.ToString();
             string ThisNodeId = "";
 
             string ThisNodeRel = "";
@@ -96,8 +105,8 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["data"] = ThisNodeName;
             ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
             ThisNodeObj["attr"] = new JObject();
-            //ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeKeyString;   // This is the only unique string for this node in this tree
-            ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeId;
+            ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeKeyString;   // This is the only unique string for this node in this tree
+            //ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeId;
             ThisNodeObj["attr"]["rel"] = ThisNodeRel;
             ThisNodeObj["attr"]["state"] = ThisNodeState;
             ThisNodeObj["attr"]["species"] = ThisNodeKey.NodeSpecies.ToString();
@@ -107,15 +116,15 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
             if( ParentKey.NodeSpecies != NodeSpecies.Root )
             {
-                ThisNodeObj["attr"]["parentkey"] = wsTools.ToSafeJavaScriptParam( ParentKey.ToString() );
+                ThisNodeObj["attr"]["parentkey"] = ParentKey.ToString();
             }
 
-            if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
-            {
-                ThisNodeObj["state"] = ThisNodeState;
-                ThisNodeObj["children"] = new JArray();
-                ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
-            }
+            //if( "leaf" != ThisNodeState && Tree.getChildNodeCount() > 0 )
+            //{
+            ThisNodeObj["state"] = ThisNodeState;
+            ThisNodeObj["children"] = new JArray();
+            ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
+            //}
             return ThisNodeObj;
         } // _treeNodeJObject()
 
@@ -136,7 +145,7 @@ namespace ChemSW.Nbt.WebServices
                     IncludeNodeKey = Tree.getNodeKeyByNodeId( IncludeNodeId );
                     if( IncludeNodeRequired && IncludeNodeKey == null )
                     {
-                        CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.Nodes[IncludeNodeId].NodeType;
+                        CswNbtMetaDataNodeType IncludeKeyNodeType = _CswNbtResources.Nodes[IncludeNodeId].getNodeType();
                         _View = IncludeKeyNodeType.CreateDefaultView();
                         _View.ViewName = "New " + IncludeKeyNodeType.NodeTypeName;
                         _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeId );
@@ -172,7 +181,8 @@ namespace ChemSW.Nbt.WebServices
                         Tree.makeNodeCurrent( IncludeNodeKey );
                         if( Tree.isCurrentNodeDefined() )
                         {
-                            ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.NodeId.ToString();
+                            //ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.NodeId.ToString();
+                            ReturnObj["selectid"] = _IdPrefix + IncludeNodeKey.ToString();
                         }
                     }
                     if( ReturnObj["selectid"] == null )
@@ -196,7 +206,8 @@ namespace ChemSW.Nbt.WebServices
                                 }
                                 if( CurrentKey != null && CurrentKey.NodeSpecies == NodeSpecies.Plain )
                                 {
-                                    ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                                    // ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
+                                    ReturnObj["selectid"] = _IdPrefix + CurrentKey.ToString();
                                 }
                                 break;
                         } // switch( DefaultSelect )
@@ -406,7 +417,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstObj["attr"] = new JObject();
                         FirstObj["attr"]["id"] = _IdPrefix + "root";
                         FirstObj["attr"]["rel"] = "root";
-                        FirstObj["attr"]["cswnbtnodekey"] = wsTools.ToSafeJavaScriptParam( Tree.getNodeKeyForCurrentPosition().ToString() );
+                        FirstObj["attr"]["cswnbtnodekey"] = Tree.getNodeKeyForCurrentPosition().ToString();
                         FirstObj["state"] = "open";
                         FirstObj["children"] = ChildArray;
 
@@ -480,7 +491,7 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
-                    foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+                    foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
                     {
                         if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                         {

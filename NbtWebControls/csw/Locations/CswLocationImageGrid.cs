@@ -1,18 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Text;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Xml;
-using ChemSW.Exceptions;
-using ChemSW.Nbt;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Core;
+using ChemSW.CswWebControls;
+using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.CswWebControls;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.NbtWebControls
 {
@@ -235,7 +230,7 @@ namespace ChemSW.NbtWebControls
                                     else
                                     {
                                         CswNbtMetaDataObjectClassProp ThisOCProp = _CswNbtResources.MetaData.getObjectClassProp( ChildNodeViewProp.ObjectClassPropId );
-                                        ThisNTProp = ChildNodeType.getNodeTypePropByObjectClassPropName( ThisOCProp.PropName );
+                                        ThisNTProp = ChildNodeType.getNodeTypePropByObjectClassProp( ThisOCProp.PropName );
                                     }
                                     CswNbtNodePropWrapper ThisProp = ChildNode.Properties[ThisNTProp];
                                     ThisPropString += ThisProp.PropName + ": " + ThisProp.Gestalt + "<BR>";

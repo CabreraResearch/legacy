@@ -1,18 +1,15 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Collections.ObjectModel;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using ChemSW.Nbt;
-using ChemSW.NbtWebControls;
-using ChemSW.NbtWebControls.FieldTypes;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
-using Telerik.Web.UI;
 using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
+using ChemSW.NbtWebControls.FieldTypes;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
 {
@@ -406,7 +403,7 @@ namespace ChemSW.NbtWebControls
             {
                 CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
                 if( MetaDataProp != null )
-                    SubFieldColumn = MetaDataProp.FieldTypeRule.SubFields[CswNbtViewPropertyFilter.SubfieldName].Column.ToString();
+                    SubFieldColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtViewPropertyFilter.SubfieldName].Column.ToString();
             }
             FilterMode = CswNbtViewPropertyFilter.FilterMode;
             FilterValue = CswNbtViewPropertyFilter.Value;
@@ -484,10 +481,10 @@ namespace ChemSW.NbtWebControls
             SortedList PropsById = new SortedList();
 
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getLatestVersion( NodeType );
+            CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType );
             while( ThisVersionNodeType != null )
             {
-                foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.getNodeTypeProps() )
                 {
                     if( !PropsByName.ContainsKey( ThisProp.PropNameWithQuestionNo.ToLower() ) &&
                         !PropsById.ContainsKey( ThisProp.FirstPropVersionId ) )
@@ -496,7 +493,7 @@ namespace ChemSW.NbtWebControls
                         PropsById.Add( ThisProp.FirstPropVersionId, ThisProp );
                     }
                 }
-                ThisVersionNodeType = ThisVersionNodeType.PriorVersionNodeType;
+                ThisVersionNodeType = ThisVersionNodeType.getPriorVersionNodeType();
             }
             return PropsByName.Values;
         }
@@ -506,7 +503,7 @@ namespace ChemSW.NbtWebControls
             // Need to generate all properties on all nodetypes of this object class
             SortedList AllProps = new SortedList();
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
             {
                 ICollection NodeTypeProps = _getNodeTypePropsCollection( NodeType.NodeTypeId );
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeProps )
@@ -541,11 +538,11 @@ namespace ChemSW.NbtWebControls
 
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeProps )
             {
-                if( NodeTypeProp.FieldTypeRule.SearchAllowed &&
+                if( NodeTypeProp.getFieldTypeRule().SearchAllowed &&
                     ( !_IsQuickSearch || NodeTypeProp.IsQuickSearch ) &&
 					( FilterPropertiesToTabId == Int32.MinValue || ( NodeTypeProp.EditLayout != null && NodeTypeProp.EditLayout.TabId == FilterPropertiesToTabId ) ) &&
                     ( FilterOutPropertyId == Int32.MinValue || NodeTypeProp.PropId != FilterOutPropertyId ) &&
-                    ( AllowedFieldTypes.Count == 0 || AllowedFieldTypes.Contains( NodeTypeProp.FieldType.FieldType ) ) &&
+                    ( AllowedFieldTypes.Count == 0 || AllowedFieldTypes.Contains( NodeTypeProp.getFieldType().FieldType ) ) &&
                     ( !FilterOutConditionalProperties || !NodeTypeProp.hasFilter() ) )
                 {
                     PropSelectBox.Items.Add( new ListItem( NodeTypeProp.PropName, NodeTypeProp.FirstPropVersionId.ToString() ) );
@@ -563,9 +560,9 @@ namespace ChemSW.NbtWebControls
             SubFieldSelectBox.Items.Clear();
             if( SelectedPropLatestVersion != null )
             {
-                DefaultSubFieldColumn = SelectedPropLatestVersion.FieldTypeRule.SubFields.Default.Column.ToString();
+                DefaultSubFieldColumn = SelectedPropLatestVersion.getFieldTypeRule().SubFields.Default.Column.ToString();
 
-                foreach( CswNbtSubField SubField in SelectedPropLatestVersion.FieldTypeRule.SubFields )
+                foreach( CswNbtSubField SubField in SelectedPropLatestVersion.getFieldTypeRule().SubFields )
                 {
                     SubFieldSelectBox.Items.Add( new ListItem( SubField.Name.ToString(), SubField.Column.ToString() ) );
                     if( SubFieldColumnToSelect != string.Empty )
@@ -594,7 +591,7 @@ namespace ChemSW.NbtWebControls
                 {
                     if( AllowedFilterModes.Count == 0 || AllowedFilterModes.Contains( FilterModeOpt ) )
                     {
-                        FilterModeSelectBox.Items.Add( new ListItem( SelectedPropLatestVersion.FieldTypeRule.FilterModeToString( SelectedSubField, FilterModeOpt ), FilterModeOpt.ToString() ) );
+                        FilterModeSelectBox.Items.Add( new ListItem( SelectedPropLatestVersion.getFieldTypeRule().FilterModeToString( SelectedSubField, FilterModeOpt ), FilterModeOpt.ToString() ) );
 
                         if( FilterModeToSelect == CswNbtPropFilterSql.PropertyFilterMode.Undefined )
                         {
@@ -625,7 +622,7 @@ namespace ChemSW.NbtWebControls
                 if( SelectedFilterMode != CswNbtPropFilterSql.PropertyFilterMode.Null &&
                     SelectedFilterMode != CswNbtPropFilterSql.PropertyFilterMode.NotNull )
                 {
-                    switch( SelectedPropLatestVersion.FieldType.FieldType )
+                    switch( SelectedPropLatestVersion.getFieldType().FieldType )
                     {
                         case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                             FilterValueDatePicker.Style[HtmlTextWriterStyle.Display] = "";
@@ -711,7 +708,7 @@ namespace ChemSW.NbtWebControls
                                         NewFilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), values[FilterModeSelectBox.UniqueID].ToString() );
                                     if( values[OldFilterModeField.UniqueID] == null || NewFilterMode.ToString() == values[OldFilterModeField.UniqueID].ToString() )
                                     {
-                                        switch( MetaDataProp.FieldType.FieldType )
+                                        switch( MetaDataProp.getFieldType().FieldType )
                                         {
                                             case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                                 if( FilterValueDatePicker.Today )
@@ -894,7 +891,7 @@ namespace ChemSW.NbtWebControls
                 Int32 PropId = SelectedNodeTypePropFirstVersionId;
                 if( PropId != Int32.MinValue )
                 {
-                    ret = _CswNbtResources.MetaData.getNodeTypeProp( PropId ).LatestVersionNodeTypeProp;
+                    ret = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( PropId );
                 }
                 return ret;
             }
@@ -925,7 +922,7 @@ namespace ChemSW.NbtWebControls
                 if( SubFieldSelectBox.SelectedValue != string.Empty )
                 {
                     CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), SubFieldSelectBox.SelectedValue );
-                    ret = SelectedPropLatestVersion.FieldTypeRule.SubFields[Column];
+                    ret = SelectedPropLatestVersion.getFieldTypeRule().SubFields[Column];
                 }
                 return ret;
             }
@@ -956,7 +953,7 @@ namespace ChemSW.NbtWebControls
             {
                 EnsureChildControls();
                 object ret = null;
-                switch( SelectedPropLatestVersion.FieldType.FieldType )
+                switch( SelectedPropLatestVersion.getFieldType().FieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                         if( FilterValueDatePicker.Today )
@@ -1067,7 +1064,7 @@ namespace ChemSW.NbtWebControls
                 return ( SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                          SelectedFilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null ||
                          ( FilterValue.ToString() != string.Empty &&
-                           ( SelectedPropLatestVersion.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
+                           ( SelectedPropLatestVersion.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.DateTime ||
                              FilterValue.ToString().Substring( 0, "today".Length ) == "today" ||
                              CswConvert.ToDateTime( FilterValue ) != DateTime.MinValue ) ) );
             }

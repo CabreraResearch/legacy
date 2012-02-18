@@ -1,12 +1,12 @@
 using System;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
-using ChemSW.Nbt;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
-using Telerik.Web.UI;
 using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
@@ -42,8 +42,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
                             if( View != null )
                             {
                                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
-                                string XmlStr = Tree.getTreeAsXml();
-                                _TreeView.LoadXml( XmlStr );
+                                
+                                // BROKEN BY case 24709
+                                //string XmlStr = Tree.getTreeAsXml();
+                                //_TreeView.LoadXml( XmlStr );
 
                                 _SelectedNodeKey = Tree.getNodeKeyByNodeId( Prop.AsLocation.SelectedNodeId );
                             }

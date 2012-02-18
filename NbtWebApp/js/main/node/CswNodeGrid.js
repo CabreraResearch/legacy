@@ -1,52 +1,48 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../controls/CswGrid.js" />
-/// <reference path="../pagecmp/CswDialog.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
-    "use strict";    
+(function ($) {
+    "use strict";
     var pluginName = 'CswNodeGrid';
-    
+
     function deleteRows(rowid, grid, func) {
         var delOpt = {
             cswnbtnodekey: [],
             nodename: []
         };
-        var delFunc = function(opts) {
+        var delFunc = function (opts) {
             opts.onDeleteNode = func;
             opts.publishDeleteEvent = false;
-            renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
-            renameProperty(opts, 'nodename', 'nodenames');
+            Csw.renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
+            Csw.renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('DeleteNodeDialog', opts);
         };
-        var emptyFunc = function() {
+        var emptyFunc = function () {
             $.CswDialog('AlertDialog', 'Please select a row to delete');
         };
         return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
     }
-    
-    function editRows (rowid, grid, func, editViewFunc) {
+
+    function editRows(rowid, grid, func, editViewFunc) {
         var editOpt = {
             cswnbtnodekey: [],
             nodename: []
         };
-        var editFunc = function(opts) {
+        var editFunc = function (opts) {
             opts.onEditNode = func;
             opts.onEditView = editViewFunc;
-            renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
-            renameProperty(opts, 'nodename', 'nodenames');
+            Csw.renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
+            Csw.renameProperty(opts, 'nodename', 'nodenames');
             $.CswDialog('EditNodeDialog', opts);
         };
-        var emptyFunc = function() {
+        var emptyFunc = function () {
             $.CswDialog('AlertDialog', 'Please select a row to edit');
         };
         return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
     }
-    
+
     var methods = {
-    
+
         'init': function (optJqGrid) {
 
             var o = {
@@ -59,69 +55,69 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 reinit: false,
-                EditMode: EditMode.Edit.name,
-                onEditNode: null, 
-                onDeleteNode: null, 
+                EditMode: Csw.enums.editMode.Edit,
+                onEditNode: null,
+                onDeleteNode: null,
                 onSuccess: null,
                 onEditView: null
             };
-        
+
             if (optJqGrid) {
                 $.extend(o, optJqGrid);
             }
             var $parent = $(this);
 
             function getGridRowsUrl(isPrint) {
-                var url = o.gridPageUrl + '?ViewId=' + o.viewid + '&IsReport=' + isTrue(forReporting || isPrint).toString() + '&IncludeNodeKey=' + o.cswnbtnodekey;
+                var url = o.gridPageUrl + '?ViewId=' + o.viewid + '&IsReport=' + Csw.bool(forReporting || isPrint).toString() + '&IncludeNodeKey=' + o.cswnbtnodekey;
                 if (isPrint) {
                     url += '&Page=1&Rows=100000000';
                 }
-                return url; 
+                return url;
             }
 
             if (o.reinit) $parent.empty();
 
-            var forReporting = (o.EditMode === EditMode.PrintReport.name),
+            var forReporting = (o.EditMode === Csw.enums.editMode.PrintReport),
                 ret, doPaging = false;
 
             /* fetchGridSkeleton */
             (function () {
 
                 //Get the grid skeleton definition
-                (function() {
-                    CswAjaxJson({
+                (function () {
+                    Csw.ajax.post({
                         url: o.runGridUrl,
                         data: {
                             ViewId: o.viewid,
                             IncludeNodeKey: o.cswnbtnodekey,
                             IncludeInQuickLaunch: true
                         },
-                        success: function(data) {
+                        success: function (data) {
                             buildGrid(data);
                         }
                     });
-                }());
+                } ());
 
                 //jqGrid will handle the rest
-                var buildGrid = function(gridJson) {
+                var buildGrid = function (gridJson) {
 
-                    var makeGrid = function(pagerMode, data) {
+                    var makeGrid = function (pagerMode, data) {
                         var jqGridOpt = gridJson.jqGridOpt;
 
                         var cswGridOpts = {
                             ID: o.ID,
-                            canEdit: (isTrue(jqGridOpt.CanEdit) && false === forReporting),
-                            canDelete: (isTrue(jqGridOpt.CanDelete) && false === forReporting),
+                            canEdit: (Csw.bool(jqGridOpt.CanEdit) && false === forReporting),
+                            canDelete: (Csw.bool(jqGridOpt.CanDelete) && false === forReporting),
                             pagermode: 'default',
-                            gridOpts: { }, //toppager: (jqGridOpt.rowNum >= 50 && contains(gridJson, 'rows') && gridJson.rows.length >= 49)
-                            optNav: { },
-                            optSearch: { },
-                            optNavEdit: { },
-                            optNavDelete: { }
+                            gridOpts: {}, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
+                            optNav: {},
+                            optSearch: {},
+                            optNavEdit: {},
+                            optNavDelete: {}
                         };
                         $.extend(cswGridOpts.gridOpts, jqGridOpt);
 
-                        if (isNullOrEmpty(cswGridOpts.gridOpts.width)) {
+                        if (Csw.isNullOrEmpty(cswGridOpts.gridOpts.width)) {
                             cswGridOpts.gridOpts.width = '650px';
                         }
 
@@ -129,13 +125,13 @@
                             cswGridOpts.gridOpts.caption = '';
                         } else {
                             cswGridOpts.optNavEdit = {
-                                editfunc: function(rowid) {
+                                editfunc: function (rowid) {
                                     return editRows(rowid, ret, o.onEditNode, o.onEditView);
                                 }
                             };
 
                             cswGridOpts.optNavDelete = {
-                                delfunc: function(rowid) {
+                                delfunc: function (rowid) {
                                     return deleteRows(rowid, ret, o.onDeleteNode);
                                 }
                             };
@@ -158,13 +154,13 @@
                                 In the case of the latter, we need to guarantee that ONLY jqGrid properties defined in the jsonReader property are returned from the server.
 
                                 cswGridOpts.gridOpts.ajaxGridOptions = {
-                                    url: o.gridPageUrl,
-                                    dataType: 'json',
-                                    contentType: 'application/json; charset=utf-8',
-                                    type: 'POST',
-                                    data: JSON.stringify({
-                                        ViewId: o.viewid, Page: currentPage(), PageSize: 50, IsReport: forReporting  
-                                    })
+                                url: o.gridPageUrl,
+                                dataType: 'json',
+                                contentType: 'application/json; charset=utf-8',
+                                type: 'POST',
+                                data: JSON.stringify({
+                                ViewId: o.viewid, Page: currentPage(), PageSize: 50, IsReport: forReporting  
+                                })
                                 };
 
                                 */
@@ -181,23 +177,23 @@
                         }
 
                         cswGridOpts.printUrl = getGridRowsUrl(true);
+                        cswGridOpts.$parent = $parent;
+                        ret = Csw.controls.grid(cswGridOpts);
 
-                        ret = CswGrid(cswGridOpts, $parent);
-
-                        if (isFunction(o.onSuccess)) {
+                        if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
                     };
-                    
+
                     if (false === doPaging) {
-                        CswAjaxJson({
+                        Csw.ajax.post({
                             url: o.gridAllRowsUrl,
                             data: {
                                 ViewId: o.viewid,
                                 IsReport: forReporting,
                                 IncludeNodeKey: o.cswnbtnodekey
                             },
-                            success: function(data) {
+                            success: function (data) {
                                 makeGrid('local', data);
                             }
                         });
@@ -210,7 +206,7 @@
         } // 'init'
     }; // methods
 
-    $.fn.CswNodeGrid = function(method) {
+    $.fn.CswNodeGrid = function (method) {
         // Method calling logic
         if (methods[method]) {
             return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));

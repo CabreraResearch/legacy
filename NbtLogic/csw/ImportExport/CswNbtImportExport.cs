@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Xml;
 using System.Data;
-using ChemSW.Nbt;
+using System.Linq;
+using System.Xml;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.ImportExport
 {
@@ -189,11 +185,11 @@ namespace ChemSW.Nbt.ImportExport
         public XmlDocument ExportAll( bool DoNodeTypes, bool DoViews, bool DoNodes )
         {
             if( DoNodeTypes )
-                return ExportAll( _CswNbtResources.MetaData.NodeTypes, DoViews, DoNodes );
+                return ExportAll( _CswNbtResources.MetaData.getNodeTypes(), DoViews, DoNodes );
             else
                 return ExportAll( new Collection<CswNbtMetaDataNodeType>(), DoViews, DoNodes );
         }
-        public XmlDocument ExportAll( ICollection NodeTypes, bool DoViews, bool DoNodes )
+        public XmlDocument ExportAll( IEnumerable<CswNbtMetaDataNodeType> NodeTypes, bool DoViews, bool DoNodes )
         {
             _StatusUpdate( "Starting Export" );
 
@@ -204,12 +200,13 @@ namespace ChemSW.Nbt.ImportExport
             //    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
 
             _StatusUpdate( "Saving Selected NodeTypes" );
+            string NodeTypeCount = NodeTypes.Count().ToString();
             Int32 t = 0;
             foreach( CswNbtMetaDataNodeType NodeType in NodeTypes )
             {
                 t++;
                 if( t % 10 == 1 )
-                    _StatusUpdate( "Processing NodeType: " + t.ToString() + " of " + NodeTypes.Count.ToString() );
+                    _StatusUpdate( "Processing NodeType: " + t.ToString() + " of " + NodeTypeCount );
                 Frame.AddNodeType( NodeType );
             }
             // }
@@ -336,7 +333,7 @@ namespace ChemSW.Nbt.ImportExport
 
             Frame.AddView( View );
 
-            foreach( CswNbtMetaDataNodeType MetaDataNodeType in _CswNbtResources.MetaData.NodeTypes )
+            foreach( CswNbtMetaDataNodeType MetaDataNodeType in _CswNbtResources.MetaData.getNodeTypes() )
             {
                 if( View.ContainsNodeType( MetaDataNodeType ) )
                     Frame.AddNodeType( MetaDataNodeType );

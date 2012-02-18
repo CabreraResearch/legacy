@@ -1,17 +1,8 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.DB;
-using ChemSW.Nbt.Actions;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -32,7 +23,7 @@ namespace ChemSW.Nbt.WebServices
 
 			CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 			CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-			Int32 NodeTypeId = MetaDataProp.NodeType.NodeTypeId;
+			Int32 NodeTypeId = MetaDataProp.NodeTypeId;
 
 			string PrintLabelNodeTypesPropertyName = "NodeTypes";
 			CswNbtMetaDataObjectClass PrintLabelObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass );

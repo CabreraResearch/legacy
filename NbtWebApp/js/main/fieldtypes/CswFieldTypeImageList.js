@@ -1,141 +1,155 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
-    "use strict";        
+(function ($) {
+    "use strict";
     var pluginName = 'CswFieldTypeImageList';
 
     var methods = {
-        init: function(o) {
-            
-            var $Div = $(this);
+        init: function (o) {
+
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
 
-            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
             var options = propVals.options;
-            var width = tryParseString(propVals.width);
-            var height = tryParseString(propVals.height);
-            var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+            var width = Csw.string(propVals.width);
+            var height = Csw.string(propVals.height);
+            var table = propDiv.table({
+                ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+            });
             var currCol = 1;
 
-            
+
             if (false === o.ReadOnly) {
-                var $select = $('<select id="' + o.ID + '"></select>')
-                                .append('<option value="">Select...</option>')
-                                .appendTo($Div);
+                var select = propDiv.select({ id: o.ID });
+                select.option({ value: '', display: 'Select...' });
                 if (o.Multi) {
-                    $select.append('<option value="' + CswMultiEditDefaultValue + ' selected="selected">' + CswMultiEditDefaultValue + '</option>');
+                    select.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
                 }
-                var $HiddenValue = $('<textarea style="display: none;" name="' + o.ID + '_value" id="' + o.ID + '_value">'+ value +'</textarea>')
-                                    .appendTo($Div);
-                $select.change(function() { 
-                    var $selected = $select.children(':selected');
+                var hiddenValue = propDiv.textArea({
+                    ID: o.ID + '_value',
+                    value: value
+                }).css('display', 'none');
+
+                select.bind('change', function () {
+                    var $selected = select.children(':selected');
                     addImage($selected.text(), $selected.CswAttrDom('value'), true);
                     addValue($selected.CswAttrDom('value'));
                     $selected.remove();
-                    o.onchange();
+                    o.onChange();
                 });
-                
-                crawlObject(options, 
-                    function(thisOpt) {
-                        if (isTrue(thisOpt.selected)) {
+
+                Csw.crawlObject(options,
+                    function (thisOpt) {
+                        if (Csw.bool(thisOpt.selected)) {
                             addImage(thisOpt.text, thisOpt.value, false);
                         } else {
-                            if (false === o.ReadOnly) {			
-                                $select.append('<option value="'+ thisOpt.value +'">'+ thisOpt.text +'</option>');
+                            if (false === o.ReadOnly) {
+                                select.option({ value: thisOpt.value, display: thisOpt.text });
                             }
                         }
-                    }, 
+                    },
                     false);
             }
 
             function addImage(name, href, doAnimation) {
-                var $imagecell = $table.CswTable('cell', 1, currCol)
+                var imageCell = table.cell(1, currCol)
                                     .css({ 'text-align': 'center',
-                                            'padding-left': '10px' });
-                var $namecell = $table.CswTable('cell', 2, currCol)
+                                        'padding-left': '10px'
+                                    });
+                imageCell.link({
+                    href: href,
+                    target: '_blank'
+                })
+                    .img({
+                        src: href,
+                        alt: name,
+                        width: width,
+                        height: height
+                    });
+                var nameCell = table.cell(2, currCol)
                                     .css({ 'text-align': 'center',
-                                            'padding-left': '10px' });
-                currCol++;
+                                        'padding-left': '10px'
+                                    });
+                currCol += 1;
 
                 if (doAnimation) {
-                    $imagecell.hide();
-                    $namecell.hide();
+                    imageCell.hide();
+                    nameCell.hide();
                 }
 
-                $imagecell.append('<a href="' + href + '" target="_blank"><img src="' + href + '" alt="' + name + '" width="' + width + '" height="' + height + '"/></a>');
+
                 if (name !== href) {
-                    $namecell.append('<a href="'+ href +'" target="_blank">'+ name +'</a>');
+                    nameCell.link({ href: href, target: '_blank', text: name });
                 }
                 if (false === o.ReadOnly) {
-                    $namecell.CswImageButton({
-                        ButtonType: CswImageButton_ButtonType.Delete,
+                    nameCell.imageButton({
+                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
-                        ID: makeId({ 'prefix': 'image_' + currCol, 'id': 'rembtn' }),
+                        ID: Csw.controls.dom.makeId('image', currCol, 'rembtn'),
                         onClick: function () {
-                            $namecell.fadeOut('fast');
-                            $imagecell.fadeOut('fast');
+                            nameCell.$.fadeOut('fast');
+                            imageCell.$.fadeOut('fast');
 
                             removeValue(href);
-                            $select.append('<option value="'+ href +'">'+ name +'</option>');
+                            select.option({ value: href, display: name });
 
-                            o.onchange();
-                            return CswImageButton_ButtonType.None; 
+                            Csw.tryExec(o.onChange);
+                            return Csw.enums.imageButton_ButtonType.None;
                         } // onClick
                     }); // CswImageButton
                 } // if(!o.ReadOnly)
 
-                if(doAnimation) {
-                    $imagecell.fadeIn('fast');
-                    $namecell.fadeIn('fast'); 
+                if (doAnimation) {
+                    imageCell.$.fadeIn('fast');
+                    nameCell.$.fadeIn('fast');
                 }
 
             } // addImage()
 
             function addValue(valueToAdd) {
-                var currentvalue = $HiddenValue.val();
-                if(!isNullOrEmpty(currentvalue)) currentvalue += '\n';
-                $HiddenValue.text(currentvalue + valueToAdd);
+                var currentvalue = hiddenValue.val();
+                if (false === Csw.isNullOrEmpty(currentvalue)) currentvalue += '\n';
+                hiddenValue.text(currentvalue + valueToAdd);
             }
-            
+
             function removeValue(valueToRemove) {
-                var currentvalue = $HiddenValue.val();
+                var currentvalue = hiddenValue.val();
                 var splitvalue = currentvalue.split('\n');
                 var newvalue = '';
-                for(var i = 0; i < splitvalue.length; i++) {
-                    if(splitvalue[i] != valueToRemove) {
-                        if(!isNullOrEmpty(newvalue)) newvalue += '\n';
+                for (var i = 0; i < splitvalue.length; i++) {
+                    if (splitvalue[i] != valueToRemove) {
+                        if (false === Csw.isNullOrEmpty(newvalue)) newvalue += '\n';
                         newvalue += splitvalue[i];
                     }
                 }
-                $HiddenValue.text(newvalue);
+                hiddenValue.text(newvalue);
             }
 
         },
-        save: function(o) {
+        save: function (o) {
             var imageList = null;
-            var $HiddenValue = o.$propdiv.find('#' + o.ID + '_value');
-            if (false === isNullOrEmpty($HiddenValue)) {
-                imageList = $HiddenValue.text();
+            var hiddenValue = o.propDiv.find('#' + o.ID + '_value');
+            if (false === Csw.isNullOrEmpty(hiddenValue)) {
+                imageList = hiddenValue.text();
             }
             var attributes = { value: imageList };
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
-    
+
     // Method calling logic
     $.fn.CswFieldTypeImageList = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 })(jQuery);

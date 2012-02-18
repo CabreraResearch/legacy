@@ -1,5 +1,5 @@
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
             isbatchentry,
             isrequired,
             isunique,
+            iscompoundunique,
             servermanaged,
             valuefieldid,
             numberprecision,
@@ -88,14 +89,11 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private ICswNbtFieldTypeRule _FieldTypeRule = null;
-        public ICswNbtFieldTypeRule FieldTypeRule
+        public ICswNbtFieldTypeRule getFieldTypeRule()
         {
-            get
-            {
-                if( _FieldTypeRule == null )
-                    _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this );
-                return _FieldTypeRule;
-            }
+            if( _FieldTypeRule == null )
+                _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldType().FieldType );
+            return _FieldTypeRule;
         }
 
         public Int32 PropId
@@ -114,18 +112,26 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return _ObjectClassPropRow["propname"].ToString(); }
         }
-        public CswNbtMetaDataObjectClass ObjectClass
+        public CswNbtMetaDataObjectClass getObjectClass()
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswConvert.ToInt32( _ObjectClassPropRow["objectclassid"] ) ); }
+            return _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( ObjectClassId );
         }
-        public CswNbtMetaDataFieldType FieldType
+        public Int32 ObjectClassId
         {
-            get { return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( CswConvert.ToInt32( _ObjectClassPropRow["fieldtypeid"] ) ); }
+            get { return CswConvert.ToInt32( _ObjectClassPropRow["objectclassid"] ); }
+        }
+        public Int32 FieldTypeId
+        {
+            get { return CswConvert.ToInt32( _ObjectClassPropRow["fieldtypeid"] ); }
+        }
+        public CswNbtMetaDataFieldType getFieldType()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId );
         }
 
-        public ICollection NodeTypeProps
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps()
         {
-            get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByObjectClassProp( PropId ); }
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByObjectClassProp( ObjectClassPropId );
         }
 
         public bool IsRequired
@@ -137,13 +143,20 @@ namespace ChemSW.Nbt.MetaData
             get { return _ObjectClassPropRow["statictext"].ToString(); }
         }
 
-        public bool IsUnique //bz # 6686
+        public bool IsUnique() //bz # 6686
         {
-            get { return ( CswConvert.ToBoolean( _ObjectClassPropRow["isunique"] ) || IsGlobalUnique ); }
+            return ( CswConvert.ToBoolean( _ObjectClassPropRow["isunique"] ) || IsGlobalUnique() );
         }
-        public bool IsGlobalUnique // BZ 9754
+
+        public bool IsCompoundUnique() //bz # 24979
         {
-            get { return CswConvert.ToBoolean( _ObjectClassPropRow["isglobalunique"] ); }
+            return ( CswConvert.ToBoolean( _ObjectClassPropRow["iscompoundunique"] ) );
+        }
+
+
+        public bool IsGlobalUnique() // BZ 9754
+        {
+            return CswConvert.ToBoolean( _ObjectClassPropRow["isglobalunique"] );
         }
 
         //bz# 5640
@@ -205,7 +218,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 string[] filter = _ObjectClassPropRow["filter"].ToString().Split( FilterDelimiter );
                 CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
-                SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).FieldTypeRule.SubFields[Column];
+                SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).getFieldTypeRule().SubFields[Column];
                 FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
                 if( filter.GetUpperBound( 0 ) > 1 )
                     FilterValue = filter[2];
@@ -410,7 +423,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUserRelationship()
         {
             bool ret = false;
-            if( this.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            if( this.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
             {
                 if( FKType != string.Empty )
                 {
@@ -419,7 +432,7 @@ namespace ChemSW.Nbt.MetaData
                     if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     }
                     else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                     {

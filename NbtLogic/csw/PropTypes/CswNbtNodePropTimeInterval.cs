@@ -26,10 +26,11 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _RateInterval = new CswRateInterval( _CswNbtResources );
             }
-            _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).IntervalSubField;
-            _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).StartDateSubField;
+            _FieldTypeRule = (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _IntervalSubField = _FieldTypeRule.IntervalSubField;
+            _StartDateSubField = _FieldTypeRule.StartDateSubField;
         }
-
+        private CswNbtFieldTypeRuleTimeInterval _FieldTypeRule;
         private CswNbtSubField _IntervalSubField;
         private CswNbtSubField _StartDateSubField;
 

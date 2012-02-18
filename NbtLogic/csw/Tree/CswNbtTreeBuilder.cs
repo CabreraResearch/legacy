@@ -142,6 +142,11 @@ namespace ChemSW.Nbt
             return ( _CswNbtTreeFactory.makeTree( _TreeMode, View, IsFullyPopulated ) ); //, CswNbtTreeKey ) );
 
         }//_makeTree()
+        private ICswNbtTree _makeTree( bool IsFullyPopulated ) //CswNbtTreeKey CswNbtTreeKey )
+        {
+            return ( _CswNbtTreeFactory.makeTree( _TreeMode, null, IsFullyPopulated ) ); //, CswNbtTreeKey ) );
+
+        }//_makeTree()
 
 
         /// <summary>
@@ -198,15 +203,38 @@ namespace ChemSW.Nbt
 
         }//getTreeFromView()
 
+
         /// <summary>
-        /// Instance a Tree from Raw XML
+        /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromXml( CswNbtView View, XmlDocument XmlDoc )
+        public ICswNbtTree getTreeFromSearch( string SearchTerm, string WhereClause, bool IncludeSystemNodes )
         {
-            ICswNbtTree ReturnVal = _makeTree( View, true );
-            ReturnVal.setRawTreeXml( XmlDoc );
-            return ( ReturnVal );
+            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, WhereClause, IncludeSystemNodes );
         }
+
+        /// <summary>
+        /// Instance a Tree from a Universal Search
+        /// </summary>
+        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, string WhereClause, bool IncludeSystemNodes )
+        {
+            ICswNbtTree ReturnVal = _makeTree( true );
+
+            CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, WhereClause, IncludeSystemNodes );
+            TreeLoader.load();
+
+            return ( ReturnVal );
+
+        }//getTreeFromSearch()
+
+        ///// <summary>
+        ///// Instance a Tree from Raw XML
+        ///// </summary>
+        //public ICswNbtTree getTreeFromXml( CswNbtView View, XmlDocument XmlDoc )
+        //{
+        //    ICswNbtTree ReturnVal = _makeTree( View, true );
+        //    ReturnVal.setRawTreeXml( XmlDoc );
+        //    return ( ReturnVal );
+        //}
 
     }//CswNbtTreeBuilder
 

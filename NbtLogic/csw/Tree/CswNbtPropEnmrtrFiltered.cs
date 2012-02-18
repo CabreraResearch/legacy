@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt
 {
@@ -40,7 +38,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    CswNbtMetaDataFieldType CurrentFieldType = ((CswNbtNodePropWrapper)_PropList[_Position]).FieldType;
+                    CswNbtMetaDataFieldType CurrentFieldType = ((CswNbtNodePropWrapper)_PropList[_Position]).getFieldType();
                     if( CurrentFieldType.FieldType == _FieldType )
                     {
                         FoundProp = true;

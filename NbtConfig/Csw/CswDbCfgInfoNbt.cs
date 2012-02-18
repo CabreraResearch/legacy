@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Specialized;
 using ChemSW.Config;
 
@@ -186,6 +184,16 @@ namespace ChemSW.Nbt.Config
             get
             {
                 return ( _CswDbCfgInfo.AccessIds );
+            }
+
+        }//AccessIds
+
+
+        public StringCollection ActiveAccessIds
+        {
+            get
+            {
+                return ( _CswDbCfgInfo.ActiveAccessIds );
             }
 
         }//AccessIds

@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Data;
-using System.Threading;
-using System.Reflection;
-using System.Text;
-using System.Linq;
 using System.Collections.Generic;
-using ChemSW.Exceptions;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Nbt.Config;
-using ChemSW.Nbt.Schema;
-using ChemSW.Nbt;
-using ChemSW.DB;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
@@ -108,7 +100,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         private CswNbtResources _makeResources( string AccessId )
 		{
-			CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false );
+            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false, null, ChemSW.RscAdo.PooledConnectionState.Closed );
 			ret.InitCurrentUser = InitUser;
 			if( AccessId != string.Empty )
 			{
@@ -145,7 +137,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 					}
 					else if( _UserArgs.ContainsKey( _ArgKey_All ) )
 					{
-						foreach( string AccessId in CswNbtResources.CswDbCfgInfo.AccessIds )
+						foreach( string AccessId in CswNbtResources.CswDbCfgInfo.ActiveAccessIds )
 						{
 							AccessIdsToUpdate.Add( AccessId );
 						}

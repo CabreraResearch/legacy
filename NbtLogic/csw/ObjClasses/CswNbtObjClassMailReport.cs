@@ -77,9 +77,9 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
             _checkView();
@@ -143,10 +143,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
-            if( null != NodeTypeProp &&
-                    null != NodeTypeProp.ObjectClassProp )
+            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            if( null != NodeTypeProp && null != OCP )
             {
-                if( RunNowPropertyName == NodeTypeProp.ObjectClassProp.PropName )
+                if( RunNowPropertyName == OCP.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
                     RunStatus.StaticText = string.Empty;

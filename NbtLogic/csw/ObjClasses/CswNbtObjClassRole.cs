@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // The user cannot change his or her own Administrator privileges.
             if( Administrator.WasModified && _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId )
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
             // case 22512
             // also case 22557 - use the original name, not the new one
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-            if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule(NamePropWrapper.getFieldType().FieldType).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt.ObjClasses
                 } // foreach( string ActionNameString in ActionPermissions.YValues )
             } // if( ActionPermissions.WasModified )
 
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             // case 22635 - prevent deleting the chemsw admin role
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-            if( NamePropWrapper.GetOriginalPropRowValue( NamePropWrapper.NodeTypeProp.FieldTypeRule.SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue(  _CswNbtResources.MetaData.getFieldTypeRule(NamePropWrapper.getFieldType().FieldType).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
@@ -164,28 +164,29 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
-        public static string MakeNodeTypePermissionValue( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
+        public static string MakeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission Permission )
         {
-            return "nt_" + NodeType.FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
+            return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
-        public static string MakeNodeTypePermissionText( CswNbtMetaDataNodeType NodeType, CswNbtPermit.NodeTypePermission Permission )
+        public static string MakeNodeTypePermissionText( string LatestVersionNodeTypeName, CswNbtPermit.NodeTypePermission Permission )
         {
-            return NodeType.LatestVersionNodeType.NodeTypeName + ": " + Permission.ToString();
+            return LatestVersionNodeTypeName + ": " + Permission.ToString();
         }
-        public static string MakeNodeTypeTabPermissionValue( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
+        public static string MakeNodeTypeTabPermissionValue( Int32 FirstVersionNodeTypeId, Int32 FirstTabVersionID, CswNbtPermit.NodeTypeTabPermission Permission )
         {
             return "nt_" +
-                    NodeTypeTab.NodeType.FirstVersionNodeTypeId.ToString() +
+                    FirstVersionNodeTypeId.ToString() +
                     "_tab_" +
-                    NodeTypeTab.FirstTabVersionId +
+                    FirstTabVersionID +
                     "_" +
                     Permission.ToString();
         }
-        public static string MakeNodeTypeTabPermissionText( CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtPermit.NodeTypeTabPermission Permission )
+        public static string MakeNodeTypeTabPermissionText( string LatestVersionNodeTypeName, string LatestVersionTabName, CswNbtPermit.NodeTypeTabPermission Permission )
         {
-            return NodeTypeTab.NodeType.LatestVersionNodeType.NodeTypeName +
+            return LatestVersionNodeTypeName +
                    ", " +
-                   NodeTypeTab.NodeType.LatestVersionNodeType.getNodeTypeTabByFirstVersionId( NodeTypeTab.FirstTabVersionId ).TabName +
+                   //NodeTypeTab.NodeType.LatestVersionNodeType.getNodeTypeTabByFirstVersionId( NodeTypeTab.FirstTabVersionId ).TabName +
+                   LatestVersionTabName +
                    ": " +
                    Permission.ToString();
         }
@@ -201,25 +202,26 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
             {
                 // set NodeType Permissions options
+                // Could be a performance problem!!!
                 Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
                     foreach( CswNbtPermit.NodeTypePermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypePermission ) ) )
                     {
-                        string Key = MakeNodeTypePermissionValue( NodeType, Permission );
-                        string Value = MakeNodeTypePermissionText( NodeType, Permission );
+                        string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
+                        string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
                         NodeTypeOptions.Add( Key, Value );
 
                     }
-                    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                     {
                         foreach( CswNbtPermit.NodeTypeTabPermission Permission in Enum.GetValues( typeof( CswNbtPermit.NodeTypeTabPermission ) ) )
                         {
-                            string Key = MakeNodeTypeTabPermissionValue( Tab, Permission );
-                            string Value = MakeNodeTypeTabPermissionText( Tab, Permission );
+                            string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
+                            string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );
                             NodeTypeOptions.Add( Key, Value );
 
                         }
@@ -230,7 +232,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[ActionPermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            if( _CswNbtNode.Properties[ActionPermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
             {
                 // set Action Permissions options
                 Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
@@ -253,11 +255,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
         {
-            if( null != NodeTypeProp &&
-                   null != NodeTypeProp.ObjectClassProp )
-            {
+            //CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            //if( null != NodeTypeProp && null != OCP )
+            //{
 
-            }
+            //}
         }
         #endregion
 

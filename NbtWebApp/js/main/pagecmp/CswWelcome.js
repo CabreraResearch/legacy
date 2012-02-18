@@ -1,11 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="CswDialog.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) {
     "use strict";
     var pluginName = "CswWelcome";
 
@@ -14,57 +10,58 @@
         initTable: function (options) {
             var o = {
                 Url: '/NbtWebApp/wsNBT.asmx/getWelcomeItems',
-                MoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
+                moveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
                 RemoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/deleteWelcomeItem',
-                onLinkClick: null, //function(optSelect) { }, //viewid, actionid, reportid
-                onSearchClick: null, //function(optSelect) { }, //viewid
-                onAddClick: null, //function(nodetypeid) { },
-                onAddComponent: null //function() { }
+                onLinkClick: null, //function (optSelect) { }, //viewid, actionid, reportid
+                onSearchClick: null, //function (optSelect) { }, //viewid
+                onAddClick: null, //function (nodetypeid) { },
+                onAddComponent: null //function () { }
             };
 
             if (options) {
                 $.extend(o, options);
             }
-            var $this = $(this);
-
+            var $parent = $(this);
+            var parent = Csw.controls.factory($parent);
+            
             var jsonData = {
                 RoleId: ''
             };
 
-            CswAjaxJson({
+            Csw.ajax.post({
                 url: o.Url,
                 data: jsonData,
                 success: function (data) {
-                    var $WelcomeDiv = $('<div id="welcomediv"></div>')
-                            .appendTo($this)
-                            .css('text-align', 'center')
-                            .css('font-size', '1.2em');
+                    var welcomeDiv = parent.div({ID: 'welcomediv' })
+                            .css({'text-align': 'center',
+                                  'font-size': '1.2em'});
 
-                    var $table = $WelcomeDiv.CswLayoutTable('init', {
-                        'ID': 'welcometable',
-                        'cellset': { rows: 2, columns: 1 },
-                        'TableCssClass': 'WelcomeTable',
-                        'cellpadding': 10,
-                        'align': 'center',
-                        'onSwap': function (ev, onSwapData) {
+                    var layoutTable = welcomeDiv.layoutTable({
+                        ID: 'welcometable',
+                        cellSet: { rows: 2, columns: 1 },
+                        TableCssClass: 'WelcomeTable',
+                        cellpadding: 10,
+                        align: 'center',
+                        onSwap: function (ev, onSwapData) {
                             _onSwap({
-                                cellset: onSwapData.cellset,
+                                cellSet: onSwapData.cellSet,
                                 row: onSwapData.row,
                                 column: onSwapData.column,
                                 swapcellset: onSwapData.swapcellset,
                                 swaprow: onSwapData.swaprow,
                                 swapcolumn: onSwapData.swapcolumn,
-                                MoveWelcomeItemUrl: o.MoveWelcomeItemUrl
+                                moveWelcomeItemUrl: o.moveWelcomeItemUrl
                             });
                         },
-                        'showConfigButton': true,
-                        'showRowColButtons': true,
-                        'showAddButton': true,
-                        'showRemoveButton': true,
-                        'onAddClick': function () { $.CswDialog('AddWelcomeItemDialog', { 'onAdd': o.onAddComponent }); },
-                        'onRemove': function (ev, onRemoveData) {
+                        showConfigButton: true,
+                        showExpandRowButton: true,
+                        showExpandColButton: true,
+                        showAddButton: true,
+                        showRemoveButton: true,
+                        onAddClick: function () { $.CswDialog('AddWelcomeItemDialog', { onAdd: o.onAddComponent }); },
+                        onRemove: function (ev, onRemoveData) {
                             _removeItem({
-                                cellset: onRemoveData.cellset,
+                                cellSet: onRemoveData.cellSet,
                                 row: onRemoveData.row,
                                 column: onRemoveData.column,
                                 RemoveWelcomeItemUrl: o.RemoveWelcomeItemUrl
@@ -73,42 +70,55 @@
                     });
 
                     for (var welcomeId in data) {
-                        if (contains(data, welcomeId)) {
+                        if (Csw.contains(data, welcomeId)) {
                             var thisItem = data[welcomeId];
-                            if (false === isNullOrEmpty(thisItem)) {
-                                var $cellset = $table.CswLayoutTable('cellset', thisItem.displayrow, thisItem.displaycol);
-                                var $imagecell = $cellset[1][1].children('div');
-                                var $textcell = $cellset[2][1].children('div');
-
-                                if (false === isNullOrEmpty(thisItem.buttonicon))
-                                    $imagecell.append($('<a href="javascript:void(0);"><img border="0" src="' + thisItem.buttonicon + '"/></a>'));
+                            if (false === Csw.isNullOrEmpty(thisItem)) {
+                                var cellSet = layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
+                                var imageCell = cellSet[1][1].children('div');
+                                var textCell = cellSet[2][1].children('div');
+                                var link;
+                                if (false === Csw.isNullOrEmpty(thisItem.buttonicon)) {
+                                    link = imageCell.link({
+                                        href: 'javascript:void(0);'
+                                    });
+                                    link.img({
+                                        border: 0,
+                                        src: thisItem.buttonicon
+                                    });
+                                }
 
                                 var clickopts = {
                                     itemData: thisItem,
-                                    $table: $table,
+                                    layoutTable: layoutTable,
                                     onAddClick: o.onAddClick,
                                     onLinkClick: o.onLinkClick,
                                     onSearchClick: o.onSearchClick
                                 };
 
-                                if (tryParseString(thisItem.linktype).toLowerCase() === 'text') {
-                                    $textcell.append('<span>' + thisItem.text + '</span>');
+                                if (Csw.string(thisItem.linktype).toLowerCase() === 'text') {
+                                    textCell.span(thisItem.text);
                                 } else {
-                                    var onClick = makeDelegate(_clickItem, clickopts);
-                                    $textcell.append($('<a href="javascript:void(0);">' + thisItem.text + '</a>'));
-                                    $textcell.find('a').click(onClick);
-                                    $imagecell.find('a').click(onClick);
+                                    var onClick = Csw.makeDelegate(_clickItem, clickopts);
+                                    textCell.link({
+                                        href: 'javascript:void(0);',
+                                        value: thisItem.text,
+                                        onClick: onClick
+                                    });
+                                    if (link) {
+                                        link.bind('click', onClick);
+                                    }
                                 }
 
-                                var $welcomehidden = $textcell.CswInput('init', { ID: welcomeId,
-                                    type: CswInput_Types.hidden
+                                var welcomeHidden = textCell.input({
+                                    ID: welcomeId,
+                                    type: Csw.enums.inputTypes.hidden
                                 });
-                                $welcomehidden.CswAttrNonDom('welcomeid', welcomeId);
+                                welcomeHidden.propNonDom('welcomeid', welcomeId);
                             }
                         }
                     }
                 } // success{}
-            }); // CswAjaxJson
+            }); // Csw.ajax
         }, // initTable
 
         'getAddItemForm': function (options) {
@@ -121,126 +131,117 @@
             }
 
             var $parent = $(this);
-            var $table = $parent.CswTable('init', { ID: 'addwelcomeitem_tbl' });
+            var parent = Csw.controls.factory($parent);
+            var table = parent.table({
+                ID: 'addwelcomeitem_tbl'
+            });
 
             /* Type Select Label */
-            $('<span>Type:</span>').appendTo($table.CswTable('cell', 1, 1));
-            var $typeselect = $('<select id="welcome_type" name="welcome_type"></select>')
-                                        .appendTo($table.CswTable('cell', 1, 2));
-            $typeselect.append('<option value="Add" selected>Add</option>');
-            $typeselect.append('<option value="Link">Link</option>');
-            $typeselect.append('<option value="Search">Search</option>');
-            $typeselect.append('<option value="Text">Text</option>');
+            table.cell(1, 1).span({ text: 'Type:' });
+            var typeSelect = table.cell(1, 2).select({
+                ID: 'welcome_type'
+            });
+            typeSelect.option({ value: 'Add', display: 'Add', isSelected: true });
+            typeSelect.option({ value: 'Link', display: 'Link' });
+            typeSelect.option({ value: 'Search', display: 'Search' });
+            typeSelect.option({ value: 'Text', display: 'Text' });
 
-            var $viewselect_label = $('<span>View:</span>')
-                                        .appendTo($table.CswTable('cell', 2, 1))
-                                        .hide();
-            var $viewselectcell = $table.CswTable('cell', 2, 2).CswTable('init', { ID: 'viewselecttable' });
-            var $viewselect = $viewselectcell.CswTable('cell', 1, 1).CswViewSelect({
-                'ID': 'welcome_viewsel'
-                //'viewid': '',
-                //'onSelect': function(optSelect) { },
-            })
-                                        .hide();
 
-            var $searchviewselect = $viewselectcell.CswTable('cell', 2, 1).CswViewSelect({
-                'ID': 'welcome_searchviewsel',
-                'issearchable': true,
-                'usesession': false
-            })
-                                        .hide();
+            var viewSelectLabel = table.cell(2, 1).span({ text: 'View:' }).hide();
 
-            var $ntselect_label = $('<span>Add New:</span>')
-                                        .appendTo($table.CswTable('cell', 3, 1));
-            var $ntselect = $table.CswTable('cell', 3, 2)
-                                  .CswNodeTypeSelect({
-                                      'ID': 'welcome_ntsel'
-                                  });
+            var viewSelectTable = table.cell(2, 2).table({
+                ID: 'viewselecttable'
+            });
+
+            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
+                ID: 'welcome_viewsel'
+            }).hide();
+
+            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
+                ID: 'welcome_searchviewsel',
+                issearchable: true,
+                usesession: false
+            }).hide();
+
+            var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
+            var $ntselect = table.cell(3, 2)
+                                 .$.CswNodeTypeSelect({
+                                     'ID': 'welcome_ntsel'
+                                 });
 
             /* Welcome Text Label */
-            $('<span>Text:</span>').appendTo($table.CswTable('cell', 4, 1));
-            var $welcometextcell = $table.CswTable('cell', 4, 2);
-            var $welcometext = $welcometextcell.CswInput('init', { ID: 'welcome_text',
-                type: CswInput_Types.text
-            });
-            var $buttonsel_label = $('<span>Use Button:</span>')
-                                        .appendTo($table.CswTable('cell', 5, 1));
-            var $buttonsel = $('<select id="welcome_button" />')
-                                        .appendTo($table.CswTable('cell', 5, 2));
-            $buttonsel.append('<option value="blank.gif"></option>')
+            table.cell(4, 1).span({ text: 'Text:' });
+
+            var welcomeText = table.cell(4, 2).input({ ID: 'welcome_text' });
+            var buttonselLabel = table.cell(5, 1).span({ text: 'Use Button:' });
+            var buttonSel = table.cell(5, 2).select({ ID: 'welcome_button' });
+            buttonSel.option({ value: 'blank.gif', display: '', isSelected: true })
                                         .css('width', '100px');
 
-            var $buttonimg = $('<img id="welcome_btnimg" />')
-                                        .appendTo($table.CswTable('cell', 6, 2));
+            var buttonImg = table.cell(6, 2).img({ ID: 'welcome_btnimg' });
 
-            var $addbutton = $table.CswTable('cell', 7, 2).CswButton({ ID: 'welcome_add',
+            var addButton = table.cell(7, 2).button({ ID: 'welcome_add',
                 enabledText: 'Add',
                 disabledText: 'Adding',
-                onclick: function () {
+                onClick: function () {
                     var viewtype = '';
                     var viewvalue = '';
                     var selectedView;
-                    if (!$viewselect.is(':hidden')) {
-                        selectedView = $viewselect.CswViewSelect('value');
+                    if (!$viewSelect.is(':hidden')) {
+                        selectedView = $viewSelect.CswViewSelect('value');
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
-                    else if (!$searchviewselect.is(':hidden')) {
-                        selectedView = $searchviewselect.CswViewSelect('value');
+                    else if (!$searchViewSelect.is(':hidden')) {
+                        selectedView = $searchViewSelect.CswViewSelect('value');
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
 
                     _addItem({
-                        'AddWelcomeItemUrl': o.AddWelcomeItemUrl,
-                        'type': $typeselect.val(),
-                        'viewtype': viewtype,
-                        'viewvalue': viewvalue,
-                        'nodetypeid': $ntselect.CswNodeTypeSelect('value'),
-                        'text': $welcometext.val(),
-                        'iconfilename': $buttonsel.val(),
-                        'onSuccess': o.onAdd,
-                        'onError': function () { $addbutton.CswButton('enable'); }
+                        AddWelcomeItemUrl: o.AddWelcomeItemUrl,
+                        type: typeSelect.val(),
+                        viewtype: viewtype,
+                        viewvalue: viewvalue,
+                        nodetypeid: $ntselect.CswNodeTypeSelect('value'),
+                        text: welcomeText.val(),
+                        iconfilename: buttonSel.val(),
+                        onSuccess: o.onAdd,
+                        onError: function () { addButton.enable(); }
                     });
                 }
             });
-            $table.CswTable('cell', 7, 2).append($addbutton);
 
-            $buttonsel.change(function () {
-                $buttonimg.CswAttrDom('src', 'Images/biggerbuttons/' + $buttonsel.val());
+            buttonSel.bind('change', function () {
+                buttonImg.propDom('src', 'Images/biggerbuttons/' + buttonSel.val());
             });
 
-            $typeselect.change(function () {
+            typeSelect.change(function () {
                 _onTypeChange({
-                    //'$table': $table,
-                    //'$typeselect_label': $typeselect_label,
-                    '$typeselect': $typeselect,
-                    '$viewselect_label': $viewselect_label,
-                    '$viewselect': $viewselect,
-                    '$searchviewselect': $searchviewselect,
-                    '$ntselect_label': $ntselect_label,
-                    '$ntselect': $ntselect,
-                    //											'$welcometext_label': $welcometext_label,
-                    //											'$welcometext': $welcometext,
-                    '$buttonsel_label': $buttonsel_label,
-                    '$buttonsel': $buttonsel,
-                    '$buttonimg': $buttonimg
-                    //											'$addbutton': $addbutton
+                    typeSelect: typeSelect,
+                    viewSelectLabel: viewSelectLabel,
+                    $viewselect: $viewSelect,
+                    $searchviewselect: $searchViewSelect,
+                    ntSelectLabel: ntSelectLabel,
+                    $ntselect: $ntselect,
+                    buttonSelLabel: buttonselLabel,
+                    buttonSel: buttonSel,
+                    buttonImg: buttonImg
                 });
             });
 
-            CswAjaxJson({
-                'url': '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
-                'success': function (data) {
-                    for (var icon in data) {
-                        var filename = icon;
-                        if (filename !== 'blank.gif') {
-                            $buttonsel.append('<option value="' + filename + '">' + filename + '</option>');
+            Csw.ajax.post({
+                url: '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
+                success: function (data) {
+                    for (var filename in data) {
+                        if (false === Csw.isNullOrEmpty(filename) && 
+                            filename !== 'blank.gif') {
+                            buttonSel.option({ value: filename, display: filename });
                         }
-                        $buttonsel.css('width', '');
+                        buttonSel.css('width', '');
                     } // each
                 } // success
-            }); // CswAjaxJson
+            }); // Csw.ajax
         } // getAddItemForm
 
     };
@@ -261,11 +262,11 @@
 
     function _clickItem(clickopts) {
         var c = {
-            itemData: '',
-            $table: '',
-            onAddClick: function () { },
-            onLinkClick: function () { },
-            onSearchClick: function () { }
+            itemData: {},
+            layoutTable: {},
+            onAddClick: null,
+            onLinkClick: null,
+            onSearchClick: null
         };
         if (clickopts) $.extend(c, clickopts);
 
@@ -280,21 +281,19 @@
             actionname: c.itemData.actionname,
             actionurl: c.itemData.actionurl,
             reportid: c.itemData.reportid,
-            //nodetypeid: itemData.nodetypeid,
             linktype: c.itemData.linktype
         };
 
-        if (c.$table.CswLayoutTable('isConfig') === false)   // case 22288
-        {
+        if (c.layoutTable.isConfig() === false) {   // case 22288
             switch (optSelect.linktype.toLowerCase()) {
                 case 'add':
-                    if (isFunction(c.onAddClick)) { c.onAddClick(c.itemData.nodetypeid); }
+                    Csw.tryExec(c.onAddClick, c.itemData.nodetypeid);
                     break;
                 case 'link':
-                    if (isFunction(c.onLinkClick)) { c.onLinkClick(optSelect); }
+                    Csw.tryExec(c.onLinkClick, optSelect);
                     break;
                 case 'search':
-                    if (isFunction(c.onSearchClick)) { c.onSearchClick(optSelect); }
+                    Csw.tryExec(c.onSearchClick, optSelect);
                     break;
                 case 'text':
                     break;
@@ -305,7 +304,7 @@
 
     function _removeItem(removedata) {
         var r = {
-            cellset: '',
+            cellSet: '',
             row: '',
             column: '',
             RemoveWelcomeItemUrl: '',
@@ -314,22 +313,22 @@
         if (removedata) {
             $.extend(r, removedata);
         }
-        var $textcell = $(r.cellset[2][1]),
+        var textCell = r.cellSet[2][1],
             welcomeid, dataJson;
-        
-        if ($textcell.length > 0) {
-            welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
-            if(welcomeid) {
+
+        if (textCell.length() > 0) {
+            welcomeid = textCell.find('input').propNonDom('welcomeid');
+            if (welcomeid) {
                 dataJson = {
                     RoleId: '',
                     WelcomeId: welcomeid
                 };
 
-                CswAjaxJson({
+                Csw.ajax.post({
                     url: r.RemoveWelcomeItemUrl,
                     data: dataJson,
-                    success: function() {
-                        r.onSuccess();
+                    success: function () {
+                        Csw.tryExec(r.onSuccess);
                     }
                 });
             }
@@ -362,11 +361,11 @@
             IconFileName: a.iconfilename
         };
 
-        CswAjaxJson({
+        Csw.ajax.post({
             url: a.AddWelcomeItemUrl,
             data: dataJson,
             success: function () {
-                a.onSuccess();
+                Csw.tryExec(a.onSuccess);
             },
             error: a.onError
         });
@@ -375,27 +374,27 @@
 
     function _onSwap(onSwapData) {
         var s = {
-            cellset: '',
+            cellSet: '',
             row: '',
             column: '',
             swapcellset: '',
             swaprow: '',
             swapcolumn: '',
-            MoveWelcomeItemUrl: ''
+            moveWelcomeItemUrl: ''
         };
         if (onSwapData) {
             $.extend(s, onSwapData);
         }
 
-        _moveItem(s.MoveWelcomeItemUrl, s.cellset, s.swaprow, s.swapcolumn);
-        _moveItem(s.MoveWelcomeItemUrl, s.swapcellset, s.row, s.column);
+        _moveItem(s.moveWelcomeItemUrl, s.cellSet, s.swaprow, s.swapcolumn);
+        _moveItem(s.moveWelcomeItemUrl, s.swapcellset, s.row, s.column);
     } // onSwap()
 
-    function _moveItem(MoveWelcomeItemUrl, cellset, newrow, newcolumn) {
-        var $textcell = $(cellset[2][1]);
-        if ($textcell.length > 0) {
-            var welcomeid = $textcell.find('input').CswAttrNonDom('welcomeid');
-            if (false === isNullOrEmpty(welcomeid)) {
+    function _moveItem(moveWelcomeItemUrl, cellSet, newrow, newcolumn) {
+        var textCell = cellSet[2][1];
+        if (textCell.length() > 0) {
+            var welcomeid = textCell.find('input').propNonDom('welcomeid');
+            if (false === Csw.isNullOrEmpty(welcomeid)) {
                 var dataJson = {
                     RoleId: '',
                     WelcomeId: welcomeid,
@@ -403,8 +402,8 @@
                     NewColumn: newcolumn
                 };
 
-                CswAjaxJson({
-                    url: MoveWelcomeItemUrl,
+                Csw.ajax.post({
+                    url: moveWelcomeItemUrl,
                     data: dataJson
                 });
             }
@@ -413,65 +412,60 @@
 
     function _onTypeChange(options) {
         var o = {
-            //$table: '',
-            //$typeselect_label: '',
-            $typeselect: '',
-            $viewselect_label: '',
+            typeSelect: '',
+            viewSelectLabel: '',
             $viewselect: '',
             $searchviewselect: '',
-            $ntselect_label: '',
+            ntSelectLabel: '',
             $ntselect: '',
-            //			$welcometext_label: '',
-            //			$welcometext: '',
-            $buttonsel_label: '',
-            $buttonsel: '',
-            $buttonimg: ''//,
-            //			$addbutton: '',
+            buttonSelLabel: '',
+            buttonSel: '',
+            buttonImg: ''
         };
         if (options) {
             $.extend(o, options);
         }
 
-        switch (o.$typeselect.val()) {
-            case "Add":
-                o.$viewselect_label.hide();
+        switch (o.typeSelect.val()) {
+            case 'Add':
+                o.viewSelectLabel.hide();
                 o.$viewselect.hide();
                 o.$searchviewselect.hide();
-                o.$ntselect_label.show();
+                o.ntSelectLabel.show();
                 o.$ntselect.show();
-                o.$buttonsel_label.show();
-                o.$buttonsel.show();
-                o.$buttonimg.show();
+                o.buttonSelLabel.show();
+                o.buttonSel.show();
+                o.buttonImg.show();
                 break;
-            case "Link":
-                o.$viewselect_label.show();
+            case 'Link':
+                o.viewSelectLabel.show();
                 o.$viewselect.show();
                 o.$searchviewselect.hide();
-                o.$ntselect_label.hide();
+                o.ntSelectLabel.hide();
                 o.$ntselect.hide();
-                o.$buttonsel_label.show();
-                o.$buttonsel.show();
-                o.$buttonimg.show();
+                o.buttonSelLabel.show();
+                o.buttonSel.show();
+                o.buttonImg.show();
                 break;
-            case "Search":
-                o.$viewselect_label.show();
+            case 'Search':
+                o.viewSelectLabel.show();
                 o.$viewselect.hide();
                 o.$searchviewselect.show();
-                o.$ntselect_label.hide();
+                o.ntSelectLabel.hide();
                 o.$ntselect.hide();
-                o.$buttonsel_label.show();
-                o.$buttonsel.show();
-                o.$buttonimg.show();
+                o.buttonSelLabel.show();
+                o.buttonSel.show();
+                o.buttonImg.show();
                 break;
-            case "Text":
-                o.$viewselect_label.hide();
+            case 'Text':
+                o.viewSelectLabel.hide();
                 o.$viewselect.hide();
                 o.$searchviewselect.hide();
-                o.$ntselect_label.hide();
+                o.ntSelectLabel.hide();
                 o.$ntselect.hide();
-                o.$buttonsel_label.hide();
-                o.$buttonsel.hide();
-                o.$buttonimg.hide();
+                o.buttonSelLabel.hide();
+                o.buttonSel.hide();
+                o.buttonImg.hide();
                 break;
         } // switch
 

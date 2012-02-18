@@ -1,28 +1,19 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Text;
-using System.Xml;
 using System.Windows.Forms;
-using System.IO;
-using Microsoft.VisualBasic.FileIO;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Log;
-using ChemSW.Config;
-using ChemSW.Security;
 using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
-
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.TreeEvents;
+using Microsoft.VisualBasic.FileIO;
 
 namespace ChemSW.NbtSchemaDiff
 {
@@ -241,7 +232,7 @@ namespace ChemSW.NbtSchemaDiff
                     foreach( CswNbtNode RightNode in RightNodes )
                     {
                         if( LeftNode.NodeName == RightNode.NodeName &&
-                            LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            LeftNode.getNodeType().NodeTypeName == RightNode.getNodeType().NodeTypeName )
                         {
                             MatchingRightNode = RightNode;
                             NodeMatches.Add( LeftNode, RightNode );
@@ -271,15 +262,17 @@ namespace ChemSW.NbtSchemaDiff
                         CswNbtNode MatchingRightNode = null;
                         foreach( CswNbtNode RightNode in RightNodes )
                         {
-                            if( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            if( LeftNode.getNodeType().NodeTypeName == RightNode.getNodeType().NodeTypeName )
                             {
                                 Int32 PropCount = 0;
                                 Int32 MatchCount = 0;
-                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.NodeTypeProps )
+                                foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.getNodeType().getNodeTypeProps() )
                                 {
                                     PropCount++;
-                                    if( LeftNode.Properties[MetaDataProp].Field1 == RightNode.Properties[RightNode.NodeType.getNodeTypeProp( MetaDataProp.PropName )].Field1 )
+                                    if( LeftNode.Properties[MetaDataProp].Field1 == RightNode.Properties[_CswNbtResourcesRight.MetaData.getNodeTypeProp( RightNode.NodeTypeId, MetaDataProp.PropName )].Field1 )
+                                    {
                                         MatchCount++;
+                                    }
                                 } // foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in LeftNode.NodeType.NodeTypeProps )
                                 if( PropCount > 0 &&
                                     ( Convert.ToDouble( MatchCount ) / Convert.ToDouble( PropCount ) ) >= CurrentTolerance )
@@ -314,7 +307,7 @@ namespace ChemSW.NbtSchemaDiff
                         CswNbtNode MatchingRightNode = null;
                         foreach( CswNbtNode RightNode in RightNodes )
                         {
-                            if( LeftNode.NodeType.NodeTypeName == RightNode.NodeType.NodeTypeName )
+                            if( LeftNode.getNodeType().NodeTypeName == RightNode.getNodeType().NodeTypeName )
                             {
 
                                 MatchingRightNode = RightNode;
@@ -425,14 +418,14 @@ namespace ChemSW.NbtSchemaDiff
                 foreach( CswNbtNodePropWrapper RightPropWrapper in RightProps )
                 {
                     if( LeftPropWrapper.PropName == RightPropWrapper.PropName &&
-                        LeftPropWrapper.FieldType.FieldType == RightPropWrapper.FieldType.FieldType )
+                        LeftPropWrapper.getFieldType().FieldType == RightPropWrapper.getFieldType().FieldType )
                     {
                         MatchingRightProp = RightPropWrapper;
 
                         //bool SpecialCase = _CompareValue( Subfield.Name, LeftPropWrapper, RightPropWrapper, NodeMatches );
-                        CompareValueMatchCase SpecialCase = _CompareValue( LeftPropWrapper.NodeTypeProp.FieldType.FieldType, LeftPropWrapper, RightPropWrapper, NodeMatches );
+                        CompareValueMatchCase SpecialCase = _CompareValue( LeftPropWrapper.getFieldType().FieldType, LeftPropWrapper, RightPropWrapper, NodeMatches );
 
-                        foreach( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.FieldTypeRule.SubFields )
+                        foreach( CswNbtSubField Subfield in RightPropWrapper.NodeTypeProp.getFieldTypeRule().SubFields )
                         {
                             //string LeftValue = LeftPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );
                             //string RightValue = RightPropWrapper.GetPropRowValue( ( (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), Subfield.Column ) ) );
@@ -614,7 +607,7 @@ namespace ChemSW.NbtSchemaDiff
                     }
                     Condition = ( LeftObj != null && RightObj != null &&
                                   ( (CswNbtMetaDataNodeType) LeftObj ).NodeTypeName == ( (CswNbtMetaDataNodeType) RightObj ).NodeTypeName &&
-                                  ( (CswNbtMetaDataNodeType) LeftObj ).ObjectClass.ObjectClass == ( (CswNbtMetaDataNodeType) RightObj ).ObjectClass.ObjectClass );
+                                  ( (CswNbtMetaDataNodeType) LeftObj ).getObjectClass().ObjectClass == ( (CswNbtMetaDataNodeType) RightObj ).getObjectClass().ObjectClass );
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
                     Applies = true;

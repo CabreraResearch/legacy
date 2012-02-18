@@ -18,16 +18,17 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.List )
-            {
-                throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-                                            "CswNbtNodePropList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            }
-
-            _ValueSubField = ( (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.FieldTypeRule ).ValueSubField;
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.List )
+            //{
+            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
+            //                                "CswNbtNodePropList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
+            //}
+            _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            _ValueSubField = _FieldTypeRule.ValueSubField;
 
         }//generic
 
+        private CswNbtFieldTypeRuleList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
 
         override public bool Empty

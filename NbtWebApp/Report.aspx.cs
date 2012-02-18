@@ -1,25 +1,14 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Configuration;
 using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Xml.Linq;
 using System.IO;
-using CrystalDecisions.CrystalReports.Engine;
-using CrystalDecisions.Web;
-using ChemSW.Nbt;
-using ChemSW.CswWebControls;
-using ChemSW.Nbt.ObjClasses;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
+using CrystalDecisions.CrystalReports.Engine;
+using CrystalDecisions.Web;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -108,11 +97,12 @@ namespace ChemSW.Nbt.WebPages
                 //Tree.goToNthChild( 0 );
                 if( Tree.getChildNodeCount() > 0 )
                 {
-                    Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
-                    string TransformedXml = Tree.getTreeAsXml();
-                    StringReader XmlReader = new StringReader( TransformedXml );
+                    // BROKEN BY case 24709
+                    //Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
+                    //string TransformedXml = Tree.getTreeAsXml();
+                    //StringReader XmlReader = new StringReader( TransformedXml );
                     DataSet ReportData = new DataSet();
-                    ReportData.ReadXml( XmlReader );
+                    //ReportData.ReadXml( XmlReader );
 
                     // Get the Report Layout File
                     Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;

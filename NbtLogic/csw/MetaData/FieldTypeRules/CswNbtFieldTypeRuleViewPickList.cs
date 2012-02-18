@@ -13,13 +13,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
-        public CswNbtFieldTypeRuleViewPickList( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp )
+        public CswNbtFieldTypeRuleViewPickList( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
 
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Gestalt, CswNbtSubField.SubFieldName.Name );
+            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Gestalt, CswNbtSubField.SubFieldName.Name );
             CachedViewNameSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                                  CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                                  CswNbtPropFilterSql.PropertyFilterMode.Null |
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                                  CswNbtPropFilterSql.PropertyFilterMode.NotEquals;
             SubFields.add( CachedViewNameSubField );
 
-            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources, MetaDataProp, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.ViewID );
+            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.ViewID );
             SelectedViewIdsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
                                                   CswNbtPropFilterSql.PropertyFilterMode.NotNull |
                                                   CswNbtPropFilterSql.PropertyFilterMode.Null;
@@ -60,14 +60,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

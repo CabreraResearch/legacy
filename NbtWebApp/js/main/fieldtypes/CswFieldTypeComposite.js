@@ -1,25 +1,22 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";
     var pluginName = 'CswFieldTypeComposite';
 
     var methods = {
-        init: function (o) { 
+        init: function (o) {
 
-            var $Div = $(this);
-            $Div.contents().remove();
+            var propDiv = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
-            var value = (false === o.Multi) ? tryParseString(propVals.value).trim() : CswMultiEditDefaultValue;
-            $Div.append(value);
+            var value = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+            propDiv.append(value);
 
         },
-        save: function (o) { //$propdiv, $xml
-            preparePropJsonForSave(o.propData);
+        save: function (o) {
+            Csw.preparePropJsonForSave(o.propData);
         }
     };
 

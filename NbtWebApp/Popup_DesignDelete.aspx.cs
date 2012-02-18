@@ -1,21 +1,13 @@
 using System;
-using System.Data;
-using System.Configuration;
-using System.Collections.Specialized;
 using System.Collections;
-using System.Web;
-using System.Web.Security;
-using System.Web.UI;
+using System.Data;
 using System.Web.UI.WebControls;
-using System.Web.UI.WebControls.WebParts;
-using System.Web.UI.HtmlControls;
-using Telerik.Web.UI;
-using ChemSW.NbtWebControls;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
-using ChemSW.DB;
-using ChemSW.CswWebControls;
 using ChemSW.Core;
+using ChemSW.CswWebControls;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.NbtWebControls;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -76,7 +68,7 @@ namespace ChemSW.Nbt.WebPages
                     if (Convert.ToInt32(_SelectedValue) > 0)
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp(Convert.ToInt32(_SelectedValue));
-                        _SelectedNodeType = _SelectedNodeTypeProp.NodeType;
+                        _SelectedNodeType = _SelectedNodeTypeProp.getNodeType();
 						_SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
                     }
                     else
@@ -97,7 +89,7 @@ namespace ChemSW.Nbt.WebPages
                     if (Convert.ToInt32(_SelectedValue) > 0)
                     {
                         _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab(Convert.ToInt32(_SelectedValue));
-                        _SelectedNodeType = _SelectedNodeTypeTab.NodeType;
+                        _SelectedNodeType = _SelectedNodeTypeTab.getNodeType();
                     }
                     else
                     {
@@ -327,19 +319,20 @@ namespace ChemSW.Nbt.WebPages
 				CswNbtView DeleteNodeTypeView = SelectedNT.CreateDefaultView();
                 DeleteNodeTypeView.ViewName = "Nodes to Delete";
                 ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView(DeleteNodeTypeView, false, true, false, true);
-                string XmlStr = CswNbtTree.getTreeAsXml();
-                TreeOfDeletedNodeType.LoadXml(XmlStr);
+                // BROKEN BY case 24709
+                //string XmlStr = CswNbtTree.getTreeAsXml();
+                //TreeOfDeletedNodeType.LoadXml(XmlStr);
 
-                if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
-                {
-                    TreeOfDeletedNodeType.Visible = true;
-                    TreeOfDeletedNodeType.ExpandAllNodes();
-                    DeleteNodeTypeGenericLabel.Visible = true;
-                }
-                else
-                {
+                //if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
+                //{
+                //    TreeOfDeletedNodeType.Visible = true;
+                //    TreeOfDeletedNodeType.ExpandAllNodes();
+                //    DeleteNodeTypeGenericLabel.Visible = true;
+                //}
+                //else
+                //{
                     TreeOfDeletedNodeType.Visible = false;
-                }
+                //}
 
                 DataTable ViewsOfNodeType = getViewsUsingNodeType(Convert.ToInt32(_SelectedValue));
 
@@ -347,10 +340,10 @@ namespace ChemSW.Nbt.WebPages
                 ViewsOfDeletedNodeType.Visible = false;
                 ViewsOfDeletedTypeLabel.Visible = false;
                 EditSelectedViewsButton.Visible = false;
-                if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
-                {
-                    DeleteNodeTypeGenericLabel.Visible = false;
-                }
+                //if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
+                //{
+                //    DeleteNodeTypeGenericLabel.Visible = false;
+                //}
 
                 if (ViewsOfNodeType.Rows.Count > 0)
                 {

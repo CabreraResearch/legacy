@@ -1,54 +1,55 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function ($) {
     "use strict";    
     var pluginName = 'CswFieldTypeDateTime';
 
     var methods = {
-        init: function(o) {
+        init: function (o) {
 
-            var $Div = $(this);
+            var propDiv  = o.propDiv;
+            propDiv.empty();
             var propVals = o.propData.values;
-            var date = (false === o.Multi) ? tryParseString(propVals.value.date).trim() : CswMultiEditDefaultValue;
-            var time = (false === o.Multi) ? tryParseString(propVals.value.time).trim() : CswMultiEditDefaultValue;
+            var date = (false === o.Multi) ? Csw.string(propVals.value.date).trim() : Csw.enums.multiEditDefaultValue;
+            var time = (false === o.Multi) ? Csw.string(propVals.value.time).trim() : Csw.enums.multiEditDefaultValue;
             
             if(o.ReadOnly) {
-                $Div.append(o.propData.gestalt);    
+                propDiv.append(o.propData.gestalt);    
             } else {
-                var $DTPickerDiv = $Div.CswDateTimePicker('init', {
+                var dtPickerDiv = propDiv.dateTimePicker({
                     ID: o.ID,
                     Date: date,
                     Time: time,
-                    DateFormat: ServerDateFormatToJQuery(propVals.value.dateformat),
-                    TimeFormat: ServerTimeFormatToJQuery(propVals.value.timeformat),
+                    DateFormat: Csw.serverDateFormatToJQuery(propVals.value.dateformat),
+                    TimeFormat: Csw.serverTimeFormatToJQuery(propVals.value.timeformat),
                     DisplayMode: propVals.displaymode,
                     ReadOnly: o.ReadOnly,
                     Required: o.Required,
-                    OnChange: o.onchange
+                    onChange: o.onChange
                 });
 
-                $DTPickerDiv.find('input').clickOnEnter(o.$savebtn);
+                dtPickerDiv.find('input').clickOnEnter(o.saveBtn);
             }
         },
-        save: function(o) { //$propdiv, $xml
-            var attributes, $DTPickerDiv, dateVal;
+        save: function (o) { //$propdiv, $xml
+            var attributes, dPickerDiv, tPickerDiv;
             attributes = { 
                 value: {
                     date: null,
                     time: null
                 } 
             };
-            $DTPickerDiv = o.$propdiv.find('#' + o.ID);
-            if (false === isNullOrEmpty($DTPickerDiv)) {
-                dateVal = $DTPickerDiv.CswDateTimePicker('value', o.propData.readonly);
-                attributes.value.date = dateVal.date;
-                attributes.value.time = dateVal.time;
+            dPickerDiv = o.propDiv.find('#' + o.ID + '_date');
+            tPickerDiv = o.propDiv.find('#' + o.ID + '_time');
+            if (false === Csw.isNullOrEmpty(dPickerDiv)) {
+                attributes.value.date = dPickerDiv.val();
             }
-            preparePropJsonForSave(o.Multi, o.propData, attributes);
+            if (false === Csw.isNullOrEmpty(tPickerDiv)) {
+                attributes.value.time = tPickerDiv.val();
+            }
+
+            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
     

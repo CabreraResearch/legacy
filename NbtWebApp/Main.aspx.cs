@@ -1,14 +1,14 @@
 using System;
 using System.Collections;
 using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
-using Telerik.Web.UI;
-using ChemSW.Exceptions;
-using ChemSW.NbtWebControls;
+using System.Web.UI.WebControls;
 using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.CswWebControls;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.NbtWebControls;
+using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -460,8 +460,9 @@ namespace ChemSW.Nbt.WebPages
                     }
 
                     // Load tree
-                    string XmlStr = CswNbtTree.getTreeAsXml();
-                    _MainTreeView.LoadXml( XmlStr );
+                    // BROKEN BY case 24709
+                    //string XmlStr = CswNbtTree.getTreeAsXml();
+                    //_MainTreeView.LoadXml( XmlStr );
 
                     if( RestoreChecked )
                     {

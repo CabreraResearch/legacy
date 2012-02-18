@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
     {
-        public Int32 ResultLimit = 1001;  // BZ 8460
+        //public Int32 ResultLimit = 1001;  // BZ 8460
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
@@ -27,25 +27,25 @@ namespace ChemSW.Nbt
             _View = View;
             _IncludeSystemNodes = IncludeSystemNodes;
 
-            string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
-            if( CswTools.IsInteger( ResultLimitString ) )
-                ResultLimit = CswConvert.ToInt32( ResultLimitString );
+            //string ResultLimitString = CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" );
+            //if( CswTools.IsInteger( ResultLimitString ) )
+            //    ResultLimit = CswConvert.ToInt32( ResultLimitString );
         }
 
-        /// <summary>
-        /// Deprecated, non-functional, old interface
-        /// </summary>
-        public override void load( ref CswNbtNodeKey ParentNodeKey,
-                                   CswNbtViewRelationship ChildRelationshipToStartWith,
-                                   Int32 PageSize,
-                                   bool FetchAllPrior,
-                                   bool SingleLevelOnly,
-                                   CswNbtNodeKey IncludedKey,
-                                   bool RequireViewPermissions )
-        {
-        }
+        ///// <summary>
+        ///// Deprecated, non-functional, old interface
+        ///// </summary>
+        //public override void load( ref CswNbtNodeKey ParentNodeKey,
+        //                           CswNbtViewRelationship ChildRelationshipToStartWith,
+        //                           Int32 PageSize,
+        //                           bool FetchAllPrior,
+        //                           bool SingleLevelOnly,
+        //                           CswNbtNodeKey IncludedKey,
+        //                           bool RequireViewPermissions )
+        //{
+        //}
 
-        public void load()
+        public override void load()
         {
             _CswNbtTree.makeRootNode( _View.Root );
 
@@ -66,10 +66,10 @@ namespace ChemSW.Nbt
             DataTable NodesTable = new DataTable();
             string Sql = _makeNodeSql( Relationship );
 
-            Int32 thisResultLimit = ResultLimit;
+            Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit;
             if( Relationship.Properties.Count > 0 )
             {
-                thisResultLimit = ResultLimit * Relationship.Properties.Count;
+                thisResultLimit = thisResultLimit * Relationship.Properties.Count;
             }
 
             CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
@@ -87,7 +87,6 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.logMessage( "Tree View SQL required longer than 2 seconds to run: " + Sql );
             }
-
 
             Int32 PriorNodeId = Int32.MinValue;
             Collection<CswNbtNodeKey> NewNodeKeys = null;
@@ -145,14 +144,14 @@ namespace ChemSW.Nbt
                 // It also assumes that loadNodeAsChildFromRow() made the node current
                 if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
                 {
-                    Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
-                    if( ThisJctNodePropId != Int32.MinValue )
-                    {
+                    //Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
+                    //if( ThisJctNodePropId != Int32.MinValue )
+                    //{
                         foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         {
                             _CswNbtTree.makeNodeCurrent( NewNodeKey );
                             _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
-                                                     ThisJctNodePropId,
+                                                     CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                      NodesRow["propname"].ToString(),
                                                      NodesRow["gestalt"].ToString(),
                                                      _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
@@ -165,18 +164,39 @@ namespace ChemSW.Nbt
                         {
                             _CswNbtTree.goToRoot();
                         }
-                    } // if( ThisJctNodePropId != Int32.MinValue )
+                    //} // if( ThisJctNodePropId != Int32.MinValue )
                 } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
 
             } // foreach(DataRow NodesRow in NodesTable.Rows)
-            
 
             // Recurse
             foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
             {
                 loadRelationshipRecursive( ChildRelationship );
             }
-            
+
+            // case 24678 - Mark truncated results
+            if( NodesTable.Rows.Count == thisResultLimit )
+            {
+                if( ParentNodeKey != null )
+                {
+                    // assume truncation on every potential parent
+                    _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                    _CswNbtTree.goToParentNode();
+                    for( Int32 c = 0; c < _CswNbtTree.getChildNodeCount(); c++ )
+                    {
+                        _CswNbtTree.goToNthChild( c );
+                        _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                        _CswNbtTree.goToParentNode();
+                    }
+                }
+                else
+                {
+                    _CswNbtTree.goToRoot();
+                    _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                }
+            }
+
             _CswNbtTree.makeNodeCurrent( PriorCurrentNodeKey );
 
         } // loadRelationshipRecursive()
@@ -296,7 +316,7 @@ namespace ChemSW.Nbt
                 {
                     // Case 10530
                     sortAlias++;
-                    CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.FieldTypeRule.SubFields.Default.Column;
+                    CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.getFieldTypeRule().SubFields.Default.Column;
                     if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
                         SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
                         SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
@@ -372,15 +392,16 @@ namespace ChemSW.Nbt
                 // This will multiplex the results by the number of properties!
                 if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
                 {
-                    Select += @" ,props.nodetypepropid, props.propname, props.jctnodepropid, props.gestalt, props.fieldtypeid ";
+                    // Properties
+                    // We match on propname because that's how the view editor works.
+                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtypeid ";
 
                     From += @"  left outer join ( ";
                     if( NTPropsInClause.Count > 0 )
                     {
-                        From += @"  select p2.nodetypepropid, p2.propname, j.jctnodepropid, j.gestalt, p2.fieldtypeid, j.nodeid
+                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, p2.fieldtypeid
                                   from nodetype_props p1
-                                  join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid)
-                                  join jct_nodes_props j on (p2.nodetypepropid = j.nodetypepropid)
+                                  join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
                                  where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
                         if( OCPropsInClause.Count > 0 )
                         {
@@ -389,13 +410,18 @@ namespace ChemSW.Nbt
                     }
                     if( OCPropsInClause.Count > 0 )
                     {
-                        From += @" select ntp.nodetypepropid, ntp.propname, j.jctnodepropid, j.gestalt, ntp.fieldtypeid, j.nodeid
+                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, ntp.fieldtypeid
                                   from object_class_props op
-                                  join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid)
-                                  join jct_nodes_props j on (ntp.nodetypepropid = j.nodetypepropid)
+                                  join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
                                  where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
                     }
-                    From += @"   ) props on (props.nodeid = n.nodeid)";
+                    From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
+
+                    // Property Values
+                    Select += @" ,propval.jctnodepropid, propval.gestalt ";
+                    From += @"  left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid) ";  // better performance from indexes if we do this first
+                    From += @"  left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
+
                 } // if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
             } // if(Relationship.Properties.Count > 0)
 
@@ -410,15 +436,15 @@ namespace ChemSW.Nbt
                         Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
                         Filter.Value != string.Empty )
                     {
-                        ICswNbtFieldTypeRule FilterFieldTypeRule = null;
-                        if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
-                        {
-                            FilterFieldTypeRule = Prop.NodeTypeProp.FieldTypeRule;
-                        }
-                        else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
-                        {
-                            FilterFieldTypeRule = Prop.ObjectClassProp.FieldTypeRule;
-                        }
+                        ICswNbtFieldTypeRule FilterFieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( Prop.FieldType );
+                        //if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                        //{
+                        //    FilterFieldTypeRule = Prop.NodeTypeProp.getFieldTypeRule();
+                        //}
+                        //else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+                        //{
+                        //    FilterFieldTypeRule = Prop.ObjectClassProp.getFieldTypeRule();
+                        //}
                         string FilterValue = string.Empty;
                         if( null != FilterFieldTypeRule )
                         {
@@ -467,13 +493,7 @@ namespace ChemSW.Nbt
                                 }
 
                                 Where += @"                                         and p.nodetypeid = s.nodetypeid) 
-                                                         left outer join (select j.jctnodepropid,
-                                                                     j.nodetypepropid, j.nodeid, j.nodeidtablename,
-                                                                     j.field1, j.field2, j.field3, j.field4, j.field5,
-                                                                     j.gestalt,
-                                                                     j.field1_fk, j.field1_numeric, j.field1_date,
-                                                                     j.field2_numeric, j.field2_date
-                                                                     from jct_nodes_props j) jnp
+                                                         left outer join jct_nodes_props jnp
                                                           ON (jnp.nodeid = s.nodeid and jnp.nodetypepropid = p.nodetypepropid)
                                              where " + FilterValue + @"))";
 
@@ -535,12 +555,12 @@ namespace ChemSW.Nbt
             if( Type == CswNbtViewRelationship.PropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
-                ret = NodeTypeProp.FieldTypeRule.SubFields.Default;
+                ret = NodeTypeProp.getFieldTypeRule().SubFields.Default;
             }
             else if( Type == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
             {
                 CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
-                ret = ObjectClassProp.FieldTypeRule.SubFields.Default;
+                ret = ObjectClassProp.getFieldTypeRule().SubFields.Default;
             }
             return ret;
         }

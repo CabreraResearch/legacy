@@ -1,14 +1,13 @@
 using System;
 using System.Data;
-using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using Telerik.Web.UI;
-using ChemSW.Nbt;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Core;
 using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
+using ChemSW.Nbt;
+using ChemSW.Nbt.MetaData;
+using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
 {
@@ -170,14 +169,15 @@ namespace ChemSW.NbtWebControls
                     CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentKey, null, ResultsLimit, true, false, null, false );
                     //_MainFilterEditor.LoadView(Master.CswNbtView);
 
-                    if( ParentKey != null )
-                        CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
-                    else
-                        CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGrid;
+                    // BROKEN BY case 24709
+                    //if( ParentKey != null )
+                    //    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
+                    //else
+                    //    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGrid;
 
-                    string XmlStrForGrid = CswNbtTree.getTreeAsXml();
+                    //string XmlStrForGrid = CswNbtTree.getTreeAsXml();
                     DataSet UnsortedXmlDataSet = new DataSet();
-                    UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( XmlStrForGrid ), XmlReadMode.InferTypedSchema );
+                    //UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( XmlStrForGrid ), XmlReadMode.InferTypedSchema );
 
                     if( UnsortedXmlDataSet.Tables.Count > 0 && UnsortedXmlDataSet.Tables[0].Rows.Count > 0 )
                     {
@@ -356,16 +356,16 @@ namespace ChemSW.NbtWebControls
                                 CswNbtMetaDataNodeType CurrentNT = _CswNbtResources.MetaData.getNodeType( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
                                 CswNbtMetaDataNodeTypeProp CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
                                 if( CurrentNTP != null )
-                                    ColFieldType = CurrentNTP.FieldType.FieldType;
+                                    ColFieldType = CurrentNTP.getFieldType().FieldType;
                             }
                             else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
                             {
                                 CswNbtMetaDataObjectClass CurrentOC = _CswNbtResources.MetaData.getObjectClass( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
-                                foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.NodeTypes )
+                                foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.getNodeTypes() )
                                 {
                                     CswNbtMetaDataNodeTypeProp CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
                                     if( CurrentNTP != null )
-                                        ColFieldType = CurrentNTP.FieldType.FieldType;
+                                        ColFieldType = CurrentNTP.getFieldType().FieldType;
                                 }
                             }
                         }

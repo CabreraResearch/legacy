@@ -1,40 +1,5 @@
-/// <reference path="CswFieldTypeAuditHistoryGrid.js" />
-/// <reference path="CswFieldTypeViewReference.js" />
-/// <reference path="CswFieldTypeBarcode.js" />
-/// <reference path="CswFieldTypeComposite.js" />
-/// <reference path="CswFieldTypeDateTime.js" />
-/// <reference path="CswFieldTypeFile.js" />
-/// <reference path="CswFieldTypeGrid.js" />
-/// <reference path="CswFieldTypeImage.js" />
-/// <reference path="CswFieldTypeImageList.js" />
-/// <reference path="CswFieldTypeLink.js" />
-/// <reference path="CswFieldTypeList.js" />
-/// <reference path="CswFieldTypeLocation.js" />
-/// <reference path="CswFieldTypeLocationContents.js" />
-/// <reference path="CswFieldTypeLogical.js" />
-/// <reference path="CswFieldTypeLogicalSet.js" />
-/// <reference path="CswFieldTypeMemo.js" />
-/// <reference path="CswFieldTypeMTBF.js" />
-/// <reference path="CswFieldTypeMultiList.js" />
-/// <reference path="CswFieldTypeNFPA.js" />
-/// <reference path="CswFieldTypeNodeTypeSelect.js" />
-/// <reference path="CswFieldTypeNumber.js" />
-/// <reference path="CswFieldTypePassword.js" />
-/// <reference path="CswFieldTypePropertyReference.js" />
-/// <reference path="CswFieldTypeQuantity.js" />
-/// <reference path="CswFieldTypeQuestion.js" />
-/// <reference path="CswFieldTypeRelationship.js" />
-/// <reference path="CswFieldTypeScientific.js" />
-/// <reference path="CswFieldTypeSequence.js" />
-/// <reference path="CswFieldTypeStatic.js" />
-/// <reference path="CswFieldTypeText.js" />
-/// <reference path="CswFieldTypeTimeInterval.js" />
-/// <reference path="CswFieldTypeUserSelect.js" />
-/// <reference path="CswFieldTypeViewPickList.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 $.CswFieldTypeFactory = function (method) {
     "use strict";
@@ -43,16 +8,16 @@ $.CswFieldTypeFactory = function (method) {
     var m = {
         nodeid: '',
         fieldtype: '',
-        $propdiv: '',
-        $savebtn: '',
+        propDiv: '',
+        saveBtn: '',
         propData: '',
-        onchange: function () { },
+        onChange: function () { },
         onReload: function () { },    // if a control needs to reload the tab
         cswnbtnodekey: '',
         ID: '',
         Required: '',
         ReadOnly: '',
-        EditMode: EditMode.Edit.name,
+        EditMode: Csw.enums.editMode.Edit,
         Multi: false,
         onEditView: function () { }
     };
@@ -64,121 +29,124 @@ $.CswFieldTypeFactory = function (method) {
                 m = options;
             }
             m.ID = m.propData.id;
-            m.Required = isTrue(m.propData.required);
-            m.ReadOnly = isTrue(m.propData.readonly) || m.EditMode === EditMode.PrintReport.name;
+            m.Required = Csw.bool(m.propData.required);
+            m.ReadOnly = Csw.bool(m.propData.readonly) || m.EditMode === Csw.enums.editMode.PrintReport;
 
             switch (m.fieldtype) {
                 case "AuditHistoryGrid":
-                    m.$propdiv.CswFieldTypeAuditHistoryGrid('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeAuditHistoryGrid('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Barcode":
-                    m.$propdiv.CswFieldTypeBarcode('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeBarcode('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Button":
-                    m.$propdiv.CswFieldTypeButton('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeButton('init', m); //'init', nodeid, propData, onChange
+                    break;
+                case "Comments":
+                    m.propDiv.$.CswFieldTypeComments('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Composite":
-                    m.$propdiv.CswFieldTypeComposite('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeComposite('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "DateTime":
-                    m.$propdiv.CswFieldTypeDateTime('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeDateTime('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "File":
-                    m.$propdiv.CswFieldTypeFile('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeFile('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Grid":
-                    m.$propdiv.CswFieldTypeGrid('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeGrid('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Image":
-                    m.$propdiv.CswFieldTypeImage('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeImage('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "ImageList":
-                    m.$propdiv.CswFieldTypeImageList('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeImageList('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Link":
-                    m.$propdiv.CswFieldTypeLink('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeLink('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "List":
-                    m.$propdiv.CswFieldTypeList('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeList('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Location":
-                    m.$propdiv.CswFieldTypeLocation('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeLocation('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "LocationContents":
-                    m.$propdiv.CswFieldTypeLocationContents('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeLocationContents('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Logical":
-                    m.$propdiv.CswFieldTypeLogical('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeLogical('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "LogicalSet":
-                    m.$propdiv.CswFieldTypeLogicalSet('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeLogicalSet('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Memo":
-                    m.$propdiv.CswFieldTypeMemo('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeMemo('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "MOL":
-                    m.$propdiv.CswFieldTypeMol('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeMol('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "MTBF":
-                    m.$propdiv.CswFieldTypeMTBF('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeMTBF('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "MultiList":
-                    m.$propdiv.CswFieldTypeMultiList('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeMultiList('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "NFPA":
-                    m.$propdiv.CswFieldTypeNFPA('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeNFPA('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "NodeTypeSelect":
-                    m.$propdiv.CswFieldTypeNodeTypeSelect('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeNodeTypeSelect('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Number":
-                    m.$propdiv.CswFieldTypeNumber('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeNumber('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Password":
-                    m.$propdiv.CswFieldTypePassword('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypePassword('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "PropertyReference":
-                    m.$propdiv.CswFieldTypePropertyReference('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypePropertyReference('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Quantity":
-                    m.$propdiv.CswFieldTypeQuantity('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeQuantity('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Question":
-                    m.$propdiv.CswFieldTypeQuestion('init', m); //'init', nodeid, propData, onchange
+                    m.propDiv.$.CswFieldTypeQuestion('init', m); //'init', nodeid, propData, onChange
                     break;
                 case "Relationship":
-                    m.$propdiv.CswFieldTypeRelationship('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeRelationship('init', m); //('init', nodeid, propData, onChange);
                     break;
                 case "Scientific":
-                    m.$propdiv.CswFieldTypeScientific('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeScientific('init', m); //('init', nodeid, propData, onChange);
                     break;
                 case "Sequence":
-                    m.$propdiv.CswFieldTypeSequence('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeSequence('init', m); //('init', nodeid, propData, onChange);
                     break;
                 case "Static":
-                    m.$propdiv.CswFieldTypeStatic('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeStatic('init', m); //('init', nodeid, propData, onChange);
                     break;
                 case "Text":
-                    m.$propdiv.CswFieldTypeText('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeText('init', m); //('init', nodeid, propData, onChange);
                     break;
-                //				case "Time":   
-                //					m.$propdiv.CswFieldTypeTime('init', m); //('init', nodeid, propData, onchange);   
-                //					break;   
+                //				case "Time":     
+                //					m.propDiv.$.CswFieldTypeTime('init', m); //('init', nodeid, propData, onChange);     
+                //					break;     
                 case "TimeInterval":
-                    m.$propdiv.CswFieldTypeTimeInterval('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeTimeInterval('init', m); //('init', nodeid, propData, onChange);
                     break;
                 case "UserSelect":
-                    m.$propdiv.CswFieldTypeUserSelect('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeUserSelect('init', m); //('init', nodeid, propData, onChange);
                     break;
                 case "ViewPickList":
-                    m.$propdiv.CswFieldTypeViewPickList('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeViewPickList('init', m); //('init', nodeid, propData, onChange);
                     break;
                 case "ViewReference":
-                    m.$propdiv.CswFieldTypeViewReference('init', m); //('init', nodeid, propData, onchange);
+                    m.propDiv.$.CswFieldTypeViewReference('init', m); //('init', nodeid, propData, onChange);
                     break;
                 default:
-                    m.$propdiv.append(m.propData.gestalt);
-                    CswError({
+                    m.propDiv.$.append(m.propData.gestalt);
+                    Csw.error.showError({
                         'type': 'Error',
                         'message': 'Unrecognized Field Type',
                         'detail': 'CswFieldTypeFactory.make: Unrecognized Field Type: ' + m.fieldtype,
@@ -194,117 +162,120 @@ $.CswFieldTypeFactory = function (method) {
                 m = options;
             }
             m.ID = m.propData.id;
-            m.Required = isTrue(m.propData.required);
-            m.ReadOnly = isTrue(m.propData.readonly);
+            m.Required = Csw.bool(m.propData.required);
+            m.ReadOnly = Csw.bool(m.propData.readonly);
 
             switch (m.fieldtype) {
                 case "Barcode":
-                    m.$propdiv.CswFieldTypeBarcode('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeBarcode('save', m); //('save', $propdiv, propData);
                     break;
                 case "Button":
-                    m.$propdiv.CswFieldTypeButton('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeButton('save', m); //('save', $propdiv, propData);
+                    break;
+                case "Comments":
+                    m.propDiv.$.CswFieldTypeComments('save', m); //('save', $propdiv, propData);
                     break;
                 case "Composite":
-                    m.$propdiv.CswFieldTypeComposite('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeComposite('save', m); //('save', $propdiv, propData);
                     break;
                 case "DateTime":
-                    m.$propdiv.CswFieldTypeDateTime('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeDateTime('save', m); //('save', $propdiv, propData);
                     break;
                 case "File":
-                    m.$propdiv.CswFieldTypeFile('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeFile('save', m); //('save', $propdiv, propData);
                     break;
                 case "Grid":
-                    m.$propdiv.CswFieldTypeGrid('save', m); //('save', $propdiv, propData, cswnbtnodekey);
+                    m.propDiv.$.CswFieldTypeGrid('save', m); //('save', $propdiv, propData, cswnbtnodekey);
                     break;
                 case "Image":
-                    m.$propdiv.CswFieldTypeImage('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeImage('save', m); //('save', $propdiv, propData);
                     break;
                 case "ImageList":
-                    m.$propdiv.CswFieldTypeImageList('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeImageList('save', m); //('save', $propdiv, propData);
                     break;
                 case "Link":
-                    m.$propdiv.CswFieldTypeLink('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeLink('save', m); //('save', $propdiv, propData);
                     break;
                 case "List":
-                    m.$propdiv.CswFieldTypeList('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeList('save', m); //('save', $propdiv, propData);
                     break;
                 case "Location":
-                    m.$propdiv.CswFieldTypeLocation('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeLocation('save', m); //('save', $propdiv, propData);
                     break;
                 case "LocationContents":
-                    m.$propdiv.CswFieldTypeLocationContents('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeLocationContents('save', m); //('save', $propdiv, propData);
                     break;
                 case "Logical":
-                    m.$propdiv.CswFieldTypeLogical('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeLogical('save', m); //('save', $propdiv, propData);
                     break;
                 case "LogicalSet":
-                    m.$propdiv.CswFieldTypeLogicalSet('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeLogicalSet('save', m); //('save', $propdiv, propData);
                     break;
                 case "Memo":
-                    m.$propdiv.CswFieldTypeMemo('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeMemo('save', m); //('save', $propdiv, propData);
                     break;
                 case "MOL":
-                    m.$propdiv.CswFieldTypeMol('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeMol('save', m); //('save', $propdiv, propData);
                     break;
                 case "MTBF":
-                    m.$propdiv.CswFieldTypeMTBF('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeMTBF('save', m); //('save', $propdiv, propData);
                     break;
                 case "MultiList":
-                    m.$propdiv.CswFieldTypeMultiList('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeMultiList('save', m); //('save', $propdiv, propData);
                     break;
                 case "NFPA":
-                    m.$propdiv.CswFieldTypeNFPA('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeNFPA('save', m); //('save', $propdiv, propData);
                     break;
                 case "NodeTypeSelect":
-                    m.$propdiv.CswFieldTypeNodeTypeSelect('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeNodeTypeSelect('save', m); //('save', $propdiv, propData);
                     break;
                 case "Number":
-                    m.$propdiv.CswFieldTypeNumber('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeNumber('save', m); //('save', $propdiv, propData);
                     break;
                 case "Password":
-                    m.$propdiv.CswFieldTypePassword('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypePassword('save', m); //('save', $propdiv, propData);
                     break;
                 case "PropertyReference":
-                    m.$propdiv.CswFieldTypePropertyReference('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypePropertyReference('save', m); //('save', $propdiv, propData);
                     break;
                 case "Quantity":
-                    m.$propdiv.CswFieldTypeQuantity('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeQuantity('save', m); //('save', $propdiv, propData);
                     break;
                 case "Question":
-                    m.$propdiv.CswFieldTypeQuestion('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeQuestion('save', m); //('save', $propdiv, propData);
                     break;
                 case "Relationship":
-                    m.$propdiv.CswFieldTypeRelationship('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeRelationship('save', m); //('save', $propdiv, propData);
                     break;
                 case "Scientific":
-                    m.$propdiv.CswFieldTypeScientific('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeScientific('save', m); //('save', $propdiv, propData);
                     break;
                 case "Sequence":
-                    m.$propdiv.CswFieldTypeSequence('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeSequence('save', m); //('save', $propdiv, propData);
                     break;
                 case "Static":
-                    m.$propdiv.CswFieldTypeStatic('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeStatic('save', m); //('save', $propdiv, propData);
                     break;
                 case "Text":
-                    m.$propdiv.CswFieldTypeText('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeText('save', m); //('save', $propdiv, propData);
                     break;
-                //				case "Time":   
-                //					m.$propdiv.CswFieldTypeTime('save', m); //('save', $propdiv, propData);   
-                //					break;   
+                //				case "Time":     
+                //					m.propDiv.$.CswFieldTypeTime('save', m); //('save', $propdiv, propData);     
+                //					break;     
                 case "TimeInterval":
-                    m.$propdiv.CswFieldTypeTimeInterval('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeTimeInterval('save', m); //('save', $propdiv, propData);
                     break;
                 case "UserSelect":
-                    m.$propdiv.CswFieldTypeUserSelect('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeUserSelect('save', m); //('save', $propdiv, propData);
                     break;
                 case "ViewPickList":
-                    m.$propdiv.CswFieldTypeViewPickList('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeViewPickList('save', m); //('save', $propdiv, propData);
                     break;
                 case "ViewReference":
-                    m.$propdiv.CswFieldTypeViewReference('save', m); //('save', $propdiv, propData);
+                    m.propDiv.$.CswFieldTypeViewReference('save', m); //('save', $propdiv, propData);
                     break;
                 default:
-                    CswError({
+                    Csw.error.showError({
                         'type': 'Error',
                         'message': 'Unrecognized Field Type',
                         'detail': 'CswFieldTypeFactory.save: Unrecognized Field Type: ' + m.fieldtype,
@@ -324,4 +295,4 @@ $.CswFieldTypeFactory = function (method) {
     } else {
         $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
     }
-}      // $.CswFieldTypeFactory
+}        // $.CswFieldTypeFactory

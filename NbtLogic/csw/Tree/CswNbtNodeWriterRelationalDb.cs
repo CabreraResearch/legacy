@@ -1,15 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Text;
 using System.Data;
-using System.Text.RegularExpressions;
-using ChemSW.DB;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt
 {
@@ -30,7 +23,7 @@ namespace ChemSW.Nbt
         public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
         {
 
-            string TableName = Node.NodeType.TableName;
+            string TableName = Node.getNodeType().TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
             CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.makeNewNodeEntry_update", TableName );
 

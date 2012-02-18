@@ -1,11 +1,7 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../controls/CswSelect.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) {
     "use strict";
     $.fn.CswFieldTypeRelationship = function (method) {
 
@@ -14,73 +10,78 @@
         var methods = {
             init: function (o) {
 
-                var $Div = $(this),
-                    propVals = o.propData.values,
-                    selectedNodeId = (false === o.Multi) ? tryParseString(propVals.nodeid).trim() : CswMultiEditDefaultValue,
-                    selectedName = (false === o.Multi) ? tryParseString(propVals.name).trim() : CswMultiEditDefaultValue,
-                    nodeTypeId = tryParseString(propVals.nodetypeid).trim(),
-                    allowAdd = isTrue(propVals.allowadd),
+                var propDiv = o.propDiv;
+                propDiv.empty();
+                var propVals = o.propData.values,
+                    selectedNodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : Csw.enums.multiEditDefaultValue,
+                    selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue,
+                    nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
+                    allowAdd = Csw.bool(propVals.allowadd),
                     options = propVals.options,
                     relationships = [];
 
-                if (false === isNullOrEmpty(o.relatednodeid) && isNullOrEmpty(selectedNodeId) && false === o.Multi) {
+                if (false === Csw.isNullOrEmpty(o.relatednodeid) && Csw.isNullOrEmpty(selectedNodeId) && false === o.Multi) {
                     selectedNodeId = o.relatednodeid;
                 }
 
                 if (o.Multi) {
-                    relationships.push({ value: CswMultiEditDefaultValue, display: CswMultiEditDefaultValue });
+                    relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
-                crawlObject(options, function (relatedObj) {
+                Csw.crawlObject(options, function (relatedObj) {
                     relationships.push({ value: relatedObj.id, display: relatedObj.value });
                 }, false);
 
                 if (o.ReadOnly) {
-                    $Div.append(selectedName);
-                    $Div.hover(function(event) { nodeHoverIn(event, selectedNodeId); }, nodeHoverOut);
+                    propDiv.append(selectedName);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); }, Csw.nodeHoverOut);
                 } else {
-                    var $table = $Div.CswTable('init', { ID: o.ID + '_tbl' });
+                    var table = propDiv.table({
+                        ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    });
 
-                    var $selectcell = $table.CswTable('cell', 1, 1);
-
-                    var $SelectBox = $selectcell.CswSelect('init', {
+                    var selectBox = table.cell(1, 1).select({
                         ID: o.ID,
                         cssclass: 'selectinput',
-                        onChange: o.onchange,
+                        onChange: o.onChange,
                         values: relationships,
                         selected: selectedNodeId
                     });
 
-                    if (false === isNullOrEmpty(nodeTypeId) && allowAdd) {
-                        var $addcell = $table.CswTable('cell', 1, 2);
-                        var $AddButton = $('<div />').appendTo($addcell);
-                        $AddButton.CswImageButton({ ButtonType: CswImageButton_ButtonType.Add,
-                            AlternateText: "Add New",
-                            onClick: function () {
-                                $.CswDialog('AddNodeDialog', {
-                                    'nodetypeid': nodeTypeId,
-                                    'onAddNode': function () { o.onReload(); }
-                                });
-                                return CswImageButton_ButtonType.None;
-                            }
-                        });
+                    if (false === Csw.isNullOrEmpty(nodeTypeId) && allowAdd) {
+
+                        table.cell(1, 2)
+                            .div()
+                            .imageButton({
+                                ButtonType: Csw.enums.imageButton_ButtonType.Add,
+                                AlternateText: "Add New",
+                                onClick: function () {
+                                    $.CswDialog('AddNodeDialog', {
+                                        'nodetypeid': nodeTypeId,
+                                        'onAddNode': function () {
+                                            o.onReload();
+                                        }
+                                    });
+                                    return Csw.enums.imageButton_ButtonType.None;
+                                }
+                            });
                     }
 
                     if (o.Required) {
-                        $SelectBox.addClass("required");
+                        selectBox.addClass("required");
                     }
 
-                    $Div.hover(function(event) { nodeHoverIn(event, $SelectBox.val()); }, nodeHoverOut);
+                    propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
                 }
             },
             save: function (o) {
                 var attributes = {
                     nodeid: null
                 };
-                var $nodeid = o.$propdiv.find('select');
-                if (false === isNullOrEmpty($nodeid)) {
-                    attributes.nodeid = $nodeid.val();
+                var nodeId = o.propDiv.find('select');
+                if (false === Csw.isNullOrEmpty(nodeId)) {
+                    attributes.nodeid = nodeId.val();
                 }
-                preparePropJsonForSave(o.Multi, o.propData, attributes);
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
         };
 

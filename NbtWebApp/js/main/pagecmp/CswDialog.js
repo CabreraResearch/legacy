@@ -1,12 +1,7 @@
-/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../controls/CswTable.js" />
-/// <reference path="../actions/CswAuditHistoryGrid.js" />
-/// <reference path="../node/CswNodeTabs.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { /// <param name="$" type="jQuery" />
+(function ($) {
     "use strict";
     var pluginName = 'CswDialog';
 
@@ -28,7 +23,7 @@
             $div.CswButton({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
-                onclick: function () { $div.dialog('close'); o.onYes(); }
+                onClick: function () { $div.dialog('close'); o.onYes(); }
             });
 
             openDialog($div, 300, 250, null, 'Expire Warning');
@@ -45,7 +40,7 @@
 
             $div.CswWelcome('getAddItemForm', { 'onAdd': function () {
                 $div.dialog('close');
-                if (isFunction(o.onAdd)) {
+                if (Csw.isFunction(o.onAdd)) {
                     o.onAdd();
                 }
             }
@@ -64,55 +59,60 @@
             if (options) $.extend(o, options);
 
             var $div = $('<div></div>');
-            var $table = $div.CswTable('init', { 'ID': o.ID + '_tbl', 'FirstCellRightAlign': true });
+            var table = Csw.controls.table({
+                $parent: $div,
+                ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                FirstCellRightAlign: true
+            });
 
-            $table.CswTable('cell', 1, 1).append('Name:');
-            var $nametextcell = $table.CswTable('cell', 1, 2);
-            var $nametextbox = $nametextcell.CswInput('init', { ID: o.ID + '_nametb',
-                type: CswInput_Types.text,
+            table.cell(1, 1).text('Name:');
+
+            var nameTextCell = table.cell(1, 2);
+            var nameTextBox = nameTextCell.input({ ID: o.ID + '_nametb',
+                type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
             var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
-            if (isNullOrEmpty(o.viewid)) {
-                $table.CswTable('cell', 2, 1).append('Display Mode:');
+            if (Csw.isNullOrEmpty(o.viewmode)) {
+                table.cell(2, 1).text('Display Mode:');
                 $displaymodeselect.append('<option value="Grid">Grid</option>');
                 $displaymodeselect.append('<option value="List" selected>List</option>');
                 $displaymodeselect.append('<option value="Table">Table</option>');
                 $displaymodeselect.append('<option value="Tree">Tree</option>');
-                $displaymodeselect.appendTo($table.CswTable('cell', 2, 2));
+                table.cell(2, 2).text($displaymodeselect);
             }
 
-            var v = makeViewVisibilitySelect($table, 3, 'Available to:');
+            var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
             var $savebtn = $div.CswButton({
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
                 disabledText: 'Creating View',
-                onclick: function () {
+                onClick: function () {
 
                     var createData = {};
-                    createData.ViewName = $nametextbox.val();
+                    createData.ViewName = nameTextBox.val();
                     createData.ViewId = o.viewid;
-                    if (isNullOrEmpty(o.viewmode)) {
+                    if (Csw.isNullOrEmpty(o.viewmode)) {
                         createData.ViewMode = $displaymodeselect.val();
                     } else {
                         createData.ViewMode = o.viewmode;
                     }
-                    if (!isNullOrEmpty(v.getvisibilityselect())) {
-                        createData.Visibility = v.getvisibilityselect().val();
-                        createData.VisibilityRoleId = v.getvisroleselect().val();
-                        createData.VisibilityUserId = v.getvisuserselect().val();
+                    if (!Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
+                        createData.Visibility = visSelect.$visibilityselect.val();
+                        createData.VisibilityRoleId = visSelect.$visroleselect.val();
+                        createData.VisibilityUserId = visSelect.$visuserselect.val();
                     } else {
                         createData.Visibility = "";
                         createData.VisibilityRoleId = "";
                         createData.VisibilityUserId = "";
                     }
 
-                    CswAjaxJson({
+                    Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/createView',
                         data: createData,
                         success: function (data) {
                             $div.dialog('close');
-                            o.onAddView(data.newviewid);
+                            Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
                         },
                         error: function () {
                             $savebtn.CswButton('enable');
@@ -125,7 +125,7 @@
                 ID: o.ID + '_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -150,7 +150,7 @@
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
-                EditMode: EditMode.AddInPopup.name,
+                EditMode: Csw.enums.editMode.Add,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
                     o.onAddNode(nodeid, cswnbtnodekey);
@@ -178,13 +178,13 @@
                 $newNode;
 
             $div.append('New ' + o.nodetypename + ': ');
-            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: CswInput_Types.text });
+            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: Csw.enums.inputTypes.text });
 
             $div.CswButton({
                 ID: o.objectClassId + '_add',
                 enabledText: 'Add',
-                onclick: function () {
-                    if (isFunction(o.onSuccess)) {
+                onClick: function () {
+                    if (Csw.isFunction(o.onSuccess)) {
                         o.onSuccess($newNode.val());
                     }
                     $div.dialog('close');
@@ -210,33 +210,33 @@
 
             var $div = $('<div></div>'),
                 $nodeType, $category, $addBtn,
-                category = tryParseString(o.category);
+                category = Csw.string(o.category);
 
             $div.append('New ' + o.nodeTypeDescriptor + ': ');
-            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: CswInput_Types.text, value: o.nodetypename, maxlength: o.maxlength });
+            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: Csw.enums.inputTypes.text, value: o.nodetypename, maxlength: o.maxlength });
             $div.append('<br />');
-            if (isNullOrEmpty(category)) {
+            if (Csw.isNullOrEmpty(category)) {
                 $div.append('Category Name: ');
-                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: CswInput_Types.text });
+                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: Csw.enums.inputTypes.text });
                 $div.append('<br />');
             }
             $addBtn = $div.CswButton({
                 ID: o.objectClassId + '_add',
                 enabledText: 'Add',
-                onclick: function () {
+                onClick: function () {
                     var newNodeTypeName = $nodeType.val();
-                    CswAjaxJson({
+                    Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                         async: false,
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
                             o.$select.append('<option data-newNodeType="true" value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>');
                             o.$select.val($nodeType.val());
-                            if (isNullOrEmpty(category) && false === isNullOrEmpty($category)) {
+                            if (Csw.isNullOrEmpty(category) && false === Csw.isNullOrEmpty($category)) {
                                 category = $category.val();
                             }
                             $div.dialog('close');
-                            if (isFunction(o.onSuccess)) {
+                            if (Csw.isFunction(o.onSuccess)) {
                                 o.onSuccess({
                                     nodetypename: newNodeTypeName,
                                     category: category
@@ -264,60 +264,62 @@
             };
 
             var $div = $('<div></div>');
-            var $table = $div.CswTable('init', { ID: 'EditLayoutDialog_table', width: '100%' });
-            var $cell11 = $table.CswTable('cell', 1, 1);
-            var $cell12 = $table.CswTable('cell', 1, 2);
+            var table = Csw.controls.table({
+                $parent: $div,
+                ID: 'EditLayoutDialog_table',
+                width: '100%'
+            });
 
-            $cell11.append("Configure:<br/>");
-            var $layoutSelect = $cell11.CswSelect('init', {
+            var cell11 = table.cell(1, 1).append('Configure:<br/>');
+            var cell12 = table.cell(1, 2);
+
+            var layoutSelect = cell11.select({
                 ID: 'EditLayoutDialog_layoutselect',
                 selected: 'Edit',
-                values: [{ value: 'AddInPopup', display: 'Add' },
-                                                { value: 'Edit', display: 'Edit' },
-                                                { value: 'Preview', display: 'Preview'}],
+                values: ['Add', 'Edit', 'Preview', 'Table'],
                 onChange: function () {
                     cswNodeTabOptions.EditMode = $('#EditLayoutDialog_layoutselect option:selected').val();
                     _resetLayout();
                 }
             });
 
-            $cell11.append("<br/><br/>Add:<br/>");
-            var $addSelect = $cell11.CswSelect('init', {
+            cell11.br({number: 2}).append('Add:').br();
+            var addSelect = cell11.select({
                 ID: 'EditLayoutDialog_addselect',
                 selected: '',
                 values: [],
                 onChange: function () {
 
                     var ajaxdata = {
-                        PropId: tryParseString($addSelect.val()),
-                        TabId: tryParseString(cswNodeTabOptions.tabid),
-                        EditMode: $layoutSelect.val()
+                        PropId: Csw.string(addSelect.val()),
+                        TabId: Csw.string(cswNodeTabOptions.tabid),
+                        LayoutType: layoutSelect.val()
                     };
-                    CswAjaxJson({
+                    Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
                         data: ajaxdata,
                         success: function () {
                             _resetLayout();
                         }
-                    }); // CswAjaxJson
+                    }); // Csw.ajax
                 } // onChange
             }); // CswSelect
 
             function _resetLayout() {
-                $cell12.contents().remove();
-                $cell12.CswNodeTabs(cswNodeTabOptions);
+                cell12.empty();
+                cell12.$.CswNodeTabs(cswNodeTabOptions);
                 _configAddOptions();
             }
 
             function _configAddOptions() {
                 var ajaxdata = {
-                    NodeId: tryParseString(cswNodeTabOptions.nodeids[0]),
-                    NodeKey: tryParseString(cswNodeTabOptions.nodekeys[0]),
-                    NodeTypeId: tryParseString(cswNodeTabOptions.nodetypeid),
-                    TabId: tryParseString(cswNodeTabOptions.tabid),
-                    EditMode: $layoutSelect.val()
+                    NodeId: Csw.string(cswNodeTabOptions.nodeids[0]),
+                    NodeKey: Csw.string(cswNodeTabOptions.nodekeys[0]),
+                    NodeTypeId: Csw.string(cswNodeTabOptions.nodetypeid),
+                    TabId: Csw.string(cswNodeTabOptions.tabid),
+                    LayoutType: layoutSelect.val()
                 };
-                CswAjaxJson({
+                Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/getPropertiesForLayoutAdd',
                     data: ajaxdata,
                     success: function (data) {
@@ -330,13 +332,13 @@
                                 });
                             }
                         }
-                        $addSelect.CswSelect('setoptions', propOpts, '', true);
+                        addSelect.setOptions(propOpts, '', true);
                     } // success
-                });  // CswAjaxJson
+                });  // Csw.ajax
             } // _configAddOptions()
 
             function _onclose() {
-                ChemSW.tools.tryExecMethod(cswNodeTabOptions.Refresh);
+                Csw.tryExec(cswNodeTabOptions.Refresh);
             }
 
             _resetLayout();
@@ -350,6 +352,7 @@
                 nodekeys: [],
                 nodenames: [],
                 Multi: false,
+                ReadOnly: false,
                 filterToPropId: '',
                 title: '',
                 onEditNode: null, // function (nodeid, nodekey) { },
@@ -360,11 +363,13 @@
 
             var $div = $('<div></div>');
 
-            var myEditMode = EditMode.EditInPopup.name;
-            var $table = $div.CswTable();
-            if (false === isNullOrEmpty(o.date) && false === o.Multi) {
-                myEditMode = EditMode.AuditHistoryInPopup.name;
-                $table.CswTable('cell', 1, 1).CswAuditHistoryGrid({
+            var myEditMode = Csw.enums.editMode.EditInPopup;
+            var table = Csw.controls.table({
+                $parent: $div
+            });
+            if (false === Csw.isNullOrEmpty(o.date) && false === o.Multi) {
+                myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
+                table.cell(1, 1).$.CswAuditHistoryGrid({
                     ID: o.nodeids[0] + '_history',
                     nodeid: o.nodeids[0],
                     cswnbtnodekey: o.nodekeys[0],
@@ -375,51 +380,52 @@
                     allowEditRow: false
                 });
             }
-            var $tabcell = $table.CswTable('cell', 1, 2);
+            var tabCell = table.cell(1, 2);
 
             setupTabs(o.date);
 
             function setupTabs(date) {
-                $tabcell.empty();
-                $tabcell.CswNodeTabs({
+                tabCell.empty();
+                tabCell.$.CswNodeTabs({
                     nodeids: o.nodeids,
                     nodekeys: o.nodekeys,
                     nodenames: o.nodenames,
                     filterToPropId: o.filterToPropId,
                     Multi: o.Multi,
+                    ReadOnly: o.ReadOnly,
                     EditMode: myEditMode,
                     //title: o.title,
-                    tabid: $.CswCookie('get', CswCookieName.CurrentTabId),
+                    tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     date: date,
                     onEditView: function (viewid) {
-                        if (isFunction(o.onEditView)) {
+                        if (Csw.isFunction(o.onEditView)) {
                             $div.dialog('close');
                             o.onEditView(viewid);
                         }
                     },
                     onSave: function (nodeids, nodekeys, tabcount) {
-                        unsetChanged();
+                        Csw.clientChanges.unsetChanged();
                         if (tabcount === 1 || o.Multi) {
                             $div.dialog('close');
                         }
                         setupTabs(date);
-                        if (isFunction(o.onEditNode)) {
+                        if (Csw.isFunction(o.onEditNode)) {
                             o.onEditNode(nodeids, nodekeys);
                         }
                     },
                     onBeforeTabSelect: function () {
-                        return manuallyCheckChanges();
+                        return Csw.clientChanges.manuallyCheckChanges();
                     },
                     onTabSelect: function (tabid) {
-                        $.CswCookie('set', CswCookieName.CurrentTabId, tabid);
+                        Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
                     },
                     onPropertyChange: function () {
-                        setChanged();
+                        Csw.clientChanges.setChanged();
                     }
                 });
             } // _setupTabs()
-            var title = tryParseString(o.title);
-            if (isNullOrEmpty(title)) {
+            var title = Csw.string(o.title);
+            if (Csw.isNullOrEmpty(title)) {
                 title = (false === o.Multi) ? o.nodenames[0] : o.nodenames.join(', ');
             }
             openDialog($div, 900, 600, null, title);
@@ -441,8 +447,8 @@
             var $copybtn = $div.CswButton({ ID: 'copynode_submit',
                 enabledText: 'Copy',
                 disabledText: 'Copying',
-                onclick: function () {
-                    copyNode({
+                onClick: function () {
+                    Csw.copyNode({
                         'nodeid': o.nodeid,
                         'nodekey': o.nodekey,
                         'onSuccess': function (nodeid, nodekey) {
@@ -459,7 +465,7 @@
             $div.CswButton({ ID: 'copynode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -471,7 +477,7 @@
                 nodenames: [],
                 nodeids: [],
                 cswnbtnodekeys: [],
-                onDeleteNode: null, //function(nodeid, nodekey) { },
+                onDeleteNode: null, //function (nodeid, nodekey) { },
                 Multi: false,
                 NodeCheckTreeId: '',
                 publishDeleteEvent: true
@@ -485,7 +491,7 @@
 
             if (o.Multi) {
                 var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                if (false === isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
+                if (false === Csw.isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
                     var n = 0;
                     $nodechecks.each(function () {
                         var $nodecheck = $(this);
@@ -507,17 +513,17 @@
             var $deletebtn = $div.CswButton({ ID: 'deletenode_submit',
                 enabledText: 'Delete',
                 disabledText: 'Deleting',
-                onclick: function () {
-                    deleteNodes({
+                onClick: function () {
+                    Csw.deleteNodes({
                         nodeids: o.nodeids,
                         nodekeys: o.cswnbtnodekeys,
                         onSuccess: function (nodeid, nodekey) {
                             $div.dialog('close');
-                            if (isFunction(o.onDeleteNode)) {
+                            if (Csw.isFunction(o.onDeleteNode)) {
                                 o.onDeleteNode(nodeid, nodekey);
                             }
-                            if (isTrue(o.publishDeleteEvent)) {
-                                $.publish(ChemSW.enums.Events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
+                            if (Csw.bool(o.publishDeleteEvent)) {
+                                Csw.publish(Csw.enums.events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
                             }
                         },
                         onError: function () {
@@ -530,7 +536,7 @@
             $div.CswButton({ ID: 'deletenode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -538,28 +544,27 @@
         }, // DeleteNodeDialog
         AboutDialog: function () {
             var $div = $('<div></div>');
-            CswAjaxJson({
+            Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/getAbout',
                 data: {},
                 success: function (data) {
                     $div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
-                    var $table = $div.CswTable('init', { ID: 'abouttable' });
+                    var table = Csw.controls.table({
+                        $parent: $div,
+                        ID: 'abouttale'
+                    });
+
                     var row = 1;
 
                     var components = data.components;
                     for (var comp in components) {
-                        if (contains(components, comp)) {
+                        if (Csw.contains(components, comp)) {
                             var thisComp = components[comp];
-                            var $namecell = $table.CswTable('cell', row, 1);
-                            var $versioncell = $table.CswTable('cell', row, 2);
-                            var $copyrightcell = $table.CswTable('cell', row, 3);
-                            $namecell.css('padding', '2px 5px 2px 5px');
-                            $versioncell.css('padding', '2px 5px 2px 5px');
-                            $copyrightcell.css('padding', '2px 5px 2px 5px');
-                            $namecell.append(thisComp.name);
-                            $versioncell.append(thisComp.version);
-                            $copyrightcell.append(thisComp.copyright);
-                            row++;
+                            
+                            table.cell(row, 1).text(thisComp.name).css('padding', '2px 5px 2px 5px');
+                            table.cell(row, 2).text(thisComp.version).css('padding', '2px 5px 2px 5px');
+                            table.cell(row, 3).text(thisComp.copyright).css('padding', '2px 5px 2px 5px');
+                            row += 1;
                         }
                     }
                 }
@@ -594,7 +599,7 @@
             $div.CswButton({ ID: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -635,7 +640,7 @@
                 ID: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -647,8 +652,8 @@
             $txtsave = $div.CswButton({ ID: 'txt_save',
                 enabledText: 'Save MOL Text',
                 disabledText: 'Saving MOL...',
-                onclick: function () {
-                    CswAjaxJson({
+                onClick: function () {
+                    Csw.ajax.post({
                         url: o.TextUrl,
                         data: {
                             molData: $moltxtarea.val(),
@@ -662,7 +667,7 @@
                             $txtsave.CswButton('enable');
                         }
                     }); // ajax
-                } // onclick
+                } // onClick
             }); // CswButton
 
 
@@ -682,7 +687,7 @@
                                     .appendTo($div);
             $div.append('<br/>');
 
-            CswAjaxJson({
+            Csw.ajax.post({
                 url: o.GetLicenseUrl,
                 success: function (data) {
                     $licensetextarea.text(data.license);
@@ -693,8 +698,8 @@
                 ID: 'license_accept',
                 enabledText: 'I Accept',
                 disabledText: 'Accepting...',
-                onclick: function () {
-                    CswAjaxJson({
+                onClick: function () {
+                    Csw.ajax.post({
                         url: o.AcceptLicenseUrl,
                         success: function () {
                             $div.dialog('close');
@@ -704,13 +709,13 @@
                             $acceptbtn.CswButton('enable');
                         }
                     }); // ajax
-                } // onclick
+                } // onClick
             }); // CswButton
 
             $div.CswButton({ ID: 'license_decline',
                 enabledText: 'I Decline',
                 disabledText: 'Declining...',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                     o.onDecline();
                 }
@@ -737,7 +742,7 @@
             var $labelsel;
 
             var jData = { PropId: o.propid };
-            CswAjaxJson({
+            Csw.ajax.post({
                 url: o.GetPrintLabelsUrl,
                 data: jData,
                 success: function (data) {
@@ -761,9 +766,9 @@
                 enabledText: 'Print',
                 //disabledText: 'Printing...', 
                 disableOnClick: false,
-                onclick: function () {
+                onClick: function () {
                     var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
-                    CswAjaxJson({
+                    Csw.ajax.post({
                         url: o.GetEPLTextUrl,
                         data: jData2,
                         success: function (data) {
@@ -772,14 +777,14 @@
                             labelx.Print();
                         } // success
                     }); // ajax
-                } // onclick
+                } // onClick
             }); // CswButton
             $printbtn.CswButton('disable');
 
             $div.CswButton({ ID: 'print_label_close',
                 enabledText: 'Close',
                 disabledText: 'Closing...',
-                onclick: function () {
+                onClick: function () {
                     $div.dialog('close');
                 }
             });
@@ -806,7 +811,7 @@
                 ID: '',
                 title: 'Select from the following options',
                 navigationText: 'Click OK to continue',
-                buttons: ChemSW.enums.CswDialogButtons["1"],
+                buttons: Csw.enums.dialogButtons["1"],
                 values: [],
                 onOkClick: null,
                 onCancelClick: null
@@ -818,15 +823,15 @@
 
             var $div = $('<div id="' + o.ID + '"><p>' + o.navigationText + '</p></div>'),
                 $select = $div.CswSelect('init', {
-                    ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
+                    ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
                     values: o.values
                 });
 
             $div.CswButton({
-                ID: makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
+                ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
                 enabledText: 'OK',
-                onclick: function () {
-                    if (isFunction(o.onOkClick)) {
+                onClick: function () {
+                    if (Csw.isFunction(o.onOkClick)) {
                         o.onOkClick($select.find(':selected'));
                     }
                     $div.dialog('close');
@@ -838,7 +843,7 @@
 
         //#region Generic
 
-        //		'OpenPopup': function(url) { 
+        //		'OpenPopup': function (url) { 
         //							var popup = window.open(url, null, 'height=600, width=600, status=no, resizable=yes, scrollbars=yes, toolbar=yes,location=no, menubar=yes');
         //							popup.focus();
         //							return popup;
@@ -871,7 +876,7 @@
             title: title,
             close: function () {
                 $div.remove();
-                if (isFunction(onClose)) onClose();
+                if (Csw.isFunction(onClose)) onClose();
             }
         });
     }

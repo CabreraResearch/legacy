@@ -31,10 +31,9 @@
     <RootNamespace>ChemSW.Nbt</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=4.0.3.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="Newtonsoft.Json, Version=4.0.7.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.0.3\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.4.0.7\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,6 +48,8 @@
     <None Include="csw\Actions\Example.xsd">
       <SubType>Designer</SubType>
     </None>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M06.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M05.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActQuotas.cs" />
@@ -63,7 +64,6 @@
     <Compile Include="csw\CswNbtNotificationKey.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
     <Compile Include="csw\ImportExport\CswNbtPersistedImportState.cs" />
-    <Compile Include="csw\ImportExport\CswNbtImportNodeId.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportOptions.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportStatus.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
@@ -73,6 +73,7 @@
     <Compile Include="csw\ImportExport\ICswImporter.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExport.cs" />
     <Compile Include="csw\ImportExport\CswNbtImportExportFrame.cs" />
+    <Compile Include="csw\MetaData\CswNbtMetaDataCollectionImpl.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataTableCache.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataNodeTypeLayoutMgr.cs" />
     <Compile Include="csw\MetaData\CswNbtFieldResources.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="csw\MetaData\CswNbtPropFilterSql.cs" />
     <Compile Include="csw\MetaData\CswNbtSubField.cs" />
     <Compile Include="csw\MetaData\CswNbtSubFieldColl.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleComments.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleButton.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleNFPA.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleImageList.cs" />
@@ -185,6 +187,7 @@
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetGeneratorTarget.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetScheduler.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropComments.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropButton.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNFPA.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropImageList.cs" />
@@ -247,31 +250,16 @@
     <Compile Include="csw\Sched\runner\CswNbtSchdItemFactory.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemGenerateEmailReport.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemGenerateNode.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L21.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L20.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L19.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L18.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L17.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L16.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L15.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L14.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L13.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L12.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M04.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M03.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M02.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M01.cs" />
+    <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Welcome\CswNbtWelcomeTable.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />
     <Compile Include="csw\Schema\scripts\ICswSchemaScripts.cs" />
     <Compile Include="csw\Schema\scripts\infr\CswUpdateSchema_Infr_TakeDump.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L11.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L10.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L09.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L08.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L07.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L06.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L05.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L04.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L03.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L01.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswProdUpdtRsrc.cs" />
     <Compile Include="csw\Sched\runner\CswNbtSchdItemRunner.cs" />
     <Compile Include="csw\Sched\logic_legacy\CswNbtSchdItemUpdateInspectionStatus.cs" />
@@ -289,7 +277,6 @@
     <Compile Include="csw\Schema\CswSequenceDdlOp.cs" />
     <Compile Include="csw\Schema\CswTableDdlOp.cs" />
     <Compile Include="csw\Schema\scripts\CswUpdateSchemaTo.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01L02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\001\CswTestCase_001_03.cs" />
