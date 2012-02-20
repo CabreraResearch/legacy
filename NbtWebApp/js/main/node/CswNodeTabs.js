@@ -155,7 +155,8 @@
                                 select: function (event, ui) {
                                     var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                     var selectTabid = selectTabContentDiv.getId();
-                                    if (Csw.isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(selectTabid)) {
+                                    Csw.tryExec(o.onBeforeTabSelect, selectedtabid);
+                                    if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
                                         getProps(selectTabContentDiv, selectTabid);
                                         Csw.tryExec(o.onTabSelect, selectTabid);
                                     } else {
@@ -375,8 +376,8 @@
         } // onRemove()
 
         function onSwap(onSwapData) {
-            _moveProp(_getPropertyCell(onSwapData.cellSet).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
-            _moveProp(_getPropertyCell(onSwapData.swapcellset).children('div').first(), onSwapData.row, onSwapData.column);
+            _moveProp(_getPropertyCell(onSwapData.cellSet), onSwapData.swaprow, onSwapData.swapcolumn);
+            _moveProp(_getPropertyCell(onSwapData.swapcellset), onSwapData.row, onSwapData.column);
         } // onSwap()
 
         function _moveProp(propDiv, newrow, newcolumn) {
@@ -394,8 +395,11 @@
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.MovePropUrl,
                     data: dataJson,
-                    success: function () {
-
+                    success: function (newData) {
+                        Csw.log(newData);
+                    },
+                    error: function(newData) {
+                        Csw.log(newData);
                     }
                 });
             }
