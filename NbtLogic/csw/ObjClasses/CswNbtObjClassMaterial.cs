@@ -34,7 +34,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static string PhysicalStatePropertyName { get { return "Physcial State"; } }
         public static string CasNoPropertyName { get { return "CAS No"; } }
         public static string RegulatoryListsPropName { get { return "Regulatory Lists"; } }
-        public static string PartNumberPropName { get { return "Part Number"; } }
         public static string TradenamePropName { get { return "Tradename"; } }
         public static string StorageCapacityPropName { get { return "Storage Capacity"; } }
 
@@ -155,11 +154,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropText StorageCapacity
+        public CswNbtNodePropImageList StorageCapacity
         {
             get
             {
-                return ( _CswNbtNode.Properties[StorageCapacityPropName].AsText );
+                return ( _CswNbtNode.Properties[StorageCapacityPropName].AsImageList );
             }
         }
 
