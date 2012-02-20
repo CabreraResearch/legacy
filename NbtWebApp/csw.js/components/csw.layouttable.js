@@ -36,9 +36,9 @@
             if (internal.isRemoveMode(external.table)) {
                 removeCells = external.table.find('.CswLayoutTable_remove');
                 if (removeCells.length() > 0) {
-                    external.table.trigger(internal.tableId + 'CswLayoutTable_onRemove', {
+                    external.table.trigger(internal.ID + 'CswLayoutTable_onRemove', {
                         table: external.table,
-                        cellSet: external.cellSet(external.table, row, column),
+                        cellSet: external.cellSet(row, column),
                         row: removeCells.propNonDom('row'),
                         column: removeCells.propNonDom('column')
                     });
@@ -78,7 +78,7 @@
                 tablemaxcolumns = external.table.maxcolumns();
 
             // add a row and column
-            internal.getCell(external.table, (tablemaxrows / cellsetrows) + 1, (tablemaxcolumns / cellsetcolumns), cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            internal.getCell((tablemaxrows / cellsetrows) + 1, (tablemaxcolumns / cellsetcolumns), cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
             external.table.finish(null);
 
             if (external.isConfig()) {
@@ -94,7 +94,7 @@
                 tablemaxcolumns = external.table.maxcolumns();
 
             // add a row and column
-            internal.getCell(external.table, (tablemaxrows / cellsetrows), (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            internal.getCell((tablemaxrows / cellsetrows), (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
             external.table.finish(null);
 
             if (external.isConfig()) {
@@ -162,47 +162,47 @@
                 .$.draggable('destroy');
         };
 
-        internal.onHoverIn = function (ev, dd, cell) {
+        internal.onHoverIn = function (ev, dd, $cell) {
             var cellSet;
             if (internal.isRemoveMode()) {
-                cellSet = external.table.findCell('[row="' + cell.propNonDom('row') + '"][column="' + cell.propNonDom('column') + '"]');
+                cellSet = external.table.findCell('[row="' + $cell.attr('row') + '"][column="' + $cell.attr('column') + '"]');
                 cellSet.addClass('CswLayoutTable_remove');
             }
         }; // internal.onHoverIn()
 
-        internal.onHoverOut = function (ev, dd, cell) {
+        internal.onHoverOut = function (ev, dd, $cell) {
             var cellSet;
             if (internal.isRemoveMode()) {
-                cellSet = external.table.findCell('[row="' + cell.propNonDom('row') + '"][column="' + cell.propNonDom('column') + '"]');
+                cellSet = external.table.findCell('[row="' + $cell.attr('row') + '"][column="' + $cell.attr('column') + '"]');
                 cellSet.removeClass('CswLayoutTable_remove');
             }
         }; // internal.onHoverOut()
 
-        internal.onDrag = function (ev, dd, dragDiv) {
-            var dragCell, cells;
+        internal.onDrag = function (ev, dd, $dragDiv) {
+            var $dragCell, cells;
             if (external.isConfig(external.table)) {
-                dragCell = dragDiv.parent();
-                cells = external.table.findCell('[row="' + dragCell.propNonDom('row') + '"][column="' + dragCell.propNonDom('column') + '"]');
+                $dragCell = $dragDiv.parent();
+                cells = external.table.findCell('[row="' + $dragCell.attr('row') + '"][column="' + $dragCell.attr('column') + '"]');
                 cells.addClass('CswLayoutTable_dragcell');
             }
         }; // internal.onDrag
 
-        internal.onDrop = function (ev, dd, dropCell, cellsetrows, cellsetcolumns) {
+        internal.onDrop = function (ev, dd, $dropCell, cellsetrows, cellsetcolumns) {
             var dragDiv, dragCell, dragCells, dropCells, r, c, thisDragCell, thisDropCell, thisDragDiv, thisDropDiv;
             if (external.isConfig(external.table)) {
                 dragDiv = dd.draggable;
                 dragCell = Csw.controls.factory(dragDiv.parent(), {});
 
                 dragCells = external.table.findCell('[row="' + dragCell.propNonDom('row') + '"][column="' + dragCell.propNonDom('column') + '"]');
-                dropCells = external.table.findCell('[row="' + dropCell.propNonDom('row') + '"][column="' + dropCell.propNonDom('column') + '"]');
+                dropCells = external.table.findCell('[row="' + $dropCell.attr('row') + '"][column="' + $dropCell.attr('column') + '"]');
 
                 dragCells.removeClass('CswLayoutTable_dragcell');
 
                 // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
-                external.table.trigger(internal.tableId + 'CswLayoutTable_onSwap', {
+                external.table.trigger(internal.ID + 'CswLayoutTable_onSwap', {
                     table: external.table,
-                    cellSet: external.cellSet(external.table, dragCell.propNonDom('row'), dragCell.propNonDom('column')),
-                    swapcellset: external.cellSet(external.table, dropCells.first().propNonDom('row'), dropCells.first().propNonDom('column')),
+                    cellSet: external.cellSet(dragCell.first().propNonDom('row'), dragCell.first().propNonDom('column')),
+                    swapcellset: external.cellSet(dropCells.first().propNonDom('row'), dropCells.first().propNonDom('column')),
                     row: dragCell.propNonDom('row'),
                     column: dragCell.propNonDom('column'),
                     swaprow: dropCells.first().propNonDom('row'),
@@ -222,14 +222,14 @@
                         thisDragDiv.$.position({
                             my: 'left top',
                             at: 'left top',
-                            of: thisDropCell,
+                            of: thisDropCell.$,
                             offset: external.table.propNonDom('cellpadding')
                         });
 
                         thisDropDiv.$.position({
                             my: "left top",
                             at: "left top",
-                            of: thisDragCell,
+                            of: thisDragCell.$,
                             offset: external.table.propNonDom('cellpadding')
                         });
 
@@ -298,7 +298,7 @@
             internal.disableDrag();
 
             internal.setConfigMode('false');
-            external.table.trigger(internal.tableId + 'CswLayoutTable_onConfigOff');
+            external.table.trigger(internal.ID + 'CswLayoutTable_onConfigOff');
             internal.removeOff();
         };
 
@@ -325,7 +325,7 @@
             internal.enableDrag();
 
             internal.setConfigMode('true');
-            external.table.trigger(internal.tableId + 'CswLayoutTable_onConfigOn');
+            external.table.trigger(internal.ID + 'CswLayoutTable_onConfigOn');
         }; // external.configOn()
 
         /* Ctor: Build the init table */
