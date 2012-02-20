@@ -116,35 +116,38 @@
             ///     &#10;3 - options.suffix: String suffix to append
             ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
             /// </param>
-            /// <param name="options" type="Object"></param>
-            /// <param name="options" type="Object"></param>
-            /// <param name="options" type="Object"></param>
+            /// <param name="ID" type="Object"></param>
+            /// <param name="suffix" type="Object"></param>
+            /// <param name="delimiter" type="Object"></param>
             ///	<returns type="String">A concatenated string of provided values</returns>
             var _internal = {
                 idCount: 1 + Csw.number(Csw.getGlobalProp('uniqueIdCount'), 0),
                 prefix: '',
-                ID: Csw.string(ID),
-                suffix: Csw.string(suffix),
-                Delimiter: Csw.string(delimiter, '_'),
-                elementId: ''
+                ID: ID,
+                suffix: suffix,
+                Delimiter: delimiter
             };
+            var elementId = [];
 
             if (Csw.isPlainObject(options)) {
                 $.extend(_internal, options);
             } else {
                 _internal.prefix = options;
             }
-            _internal.elementId = Csw.string(_internal.prefix);
-
+            _internal.Delimiter = Csw.string(_internal.Delimiter, '_');
+            
+            if (false === Csw.isNullOrEmpty(_internal.prefix)) {
+                elementId.push(Csw.string(_internal.prefix));
+            }
             if (false === Csw.isNullOrEmpty(_internal.ID)) {
-                _internal.elementId = _internal.prefix + _internal.Delimiter + _internal.elementId;
+                elementId.push(_internal.ID);
             }
             if (false === Csw.isNullOrEmpty(_internal.suffix)) {
-                _internal.elementId += _internal.Delimiter + _internal.suffix;
+                elementId.push(_internal.suffix);
             }
             Csw.setGlobalProp('uniqueIdCount', _internal.idCount);
-            _internal.elementId += _internal.Delimiter += _internal.idCount;
-            return _internal.elementId;
+            elementId.push(_internal.idCount);
+            return elementId.join(_internal.Delimiter);
         };
 
         external.makeSafeId = function (options, prefix, suffix, delimiter) {
