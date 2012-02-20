@@ -185,19 +185,21 @@ namespace ChemSW.Nbt.Welcome
                         throw new CswDniException( ErrorType.Warning, "You must select something to add", "No nodetype selected for new Add Welcome Page Component" );
                     break;
                 case WelcomeComponentType.Link:
-                    switch( ViewType )
+                    if( ViewType == CswNbtView.ViewType.View )
                     {
-                        case CswNbtView.ViewType.View:
-                            NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
-                            break;
-                        case CswNbtView.ViewType.Action:
-                            NewWelcomeRow["actionid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
-                            break;
-                        case CswNbtView.ViewType.Report:
-                            NewWelcomeRow["reportid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
-                            break;
-                        default:
-                            throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Link Welcome Page Component" );
+                        NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
+                    }
+                    else if( ViewType == CswNbtView.ViewType.Action )
+                    {
+                        NewWelcomeRow["actionid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
+                    }
+                    else if( ViewType == CswNbtView.ViewType.Report )
+                    {
+                        NewWelcomeRow["reportid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Link Welcome Page Component" );
                     }
                     NewWelcomeRow["buttonicon"] = ButtonIcon;
                     NewWelcomeRow["displaytext"] = DisplayText;
