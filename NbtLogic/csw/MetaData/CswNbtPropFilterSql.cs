@@ -1,35 +1,64 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
 
     public class CswNbtPropFilterSql
     {
+        ///// <summary>
+        ///// Indicates the type of operator to be used for a property filter. 
+        ///// The numbers assigned to the enum values is absolutely required in 
+        ///// order for bitwise operators to work. 
+        ///// </summary>
+        //[Flags]
+        //public enum PropertyFilterMode
+        //{
+        //    Equals = 1,
+        //    GreaterThan = 2,
+        //    GreaterThanOrEquals = 4,
+        //    LessThan = 8,
+        //    LessThanOrEquals = 16,
+        //    NotEquals = 32,
+        //    //Range = 64,
+        //    Begins = 64,
+        //    Ends = 128,
+        //    Contains = 256,
+        //    //            In = 1024,
+        //    Null = 512,
+        //    NotNull = 1024,
+        //    Undefined = 2048
+        //};
+
         /// <summary>
         /// Indicates the type of operator to be used for a property filter. 
-        /// The numbers assigned to the enum values is absolutely required in 
-        /// order for bitwise operators to work. 
         /// </summary>
-        [Flags]
-        public enum PropertyFilterMode
+        public sealed class PropertyFilterMode : CswEnum<PropertyFilterMode>
         {
-            Equals = 1,
-            GreaterThan = 2,
-            GreaterThanOrEquals = 4,
-            LessThan = 8,
-            LessThanOrEquals = 16,
-            NotEquals = 32,
-            //Range = 64,
-            Begins = 64,
-            Ends = 128,
-            Contains = 256,
-            //            In = 1024,
-            Null = 512,
-            NotNull = 1024,
-            Undefined = 2048
-        };
+            private PropertyFilterMode( String Name ) : base( Name ) { }
+            public new static IEnumerable<PropertyFilterMode> All { get { return CswEnum<PropertyFilterMode>.All; } }
+            public static explicit operator PropertyFilterMode( string str ) { return Parse( str ); }
+            public static readonly PropertyFilterMode Unknown = new PropertyFilterMode( "Unknown" );
+
+            public new static readonly PropertyFilterMode Equals = new PropertyFilterMode( "Equals" );
+            public static readonly PropertyFilterMode GreaterThan = new PropertyFilterMode( "GreaterThan" );
+            public static readonly PropertyFilterMode GreaterThanOrEquals = new PropertyFilterMode( "GreaterThanOrEquals" );
+            public static readonly PropertyFilterMode LessThan = new PropertyFilterMode( "LessThan" );
+            public static readonly PropertyFilterMode LessThanOrEquals = new PropertyFilterMode( "LessThanOrEquals" );
+            public static readonly PropertyFilterMode NotEquals = new PropertyFilterMode( "NotEquals" );
+            //public static readonly PropertyFilterMode Range = new PropertyFilterMode("Range");
+            public static readonly PropertyFilterMode Begins = new PropertyFilterMode( "Begins" );
+            public static readonly PropertyFilterMode Ends = new PropertyFilterMode( "Ends" );
+            public static readonly PropertyFilterMode Contains = new PropertyFilterMode( "Contains" );
+            //public static readonly PropertyFilterMode In = new PropertyFilterMode("In");
+            public static readonly PropertyFilterMode Null = new PropertyFilterMode( "Null" );
+            public static readonly PropertyFilterMode NotNull = new PropertyFilterMode( "NotNull" );
+            //public static readonly PropertyFilterMode Undefined = new PropertyFilterMode("Undefined");
+        }
+
         public enum PropertyFilterConjunction { And, AndNot };
 
 
@@ -79,29 +108,34 @@ namespace ChemSW.Nbt.MetaData
 
                     string NumericValueColumn = " nvl(" + FilterTableAlias + Column + ", 0) ";
 
-                    switch( CswNbtViewPropertyFilterIn.FilterMode )
+                    if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                     {
-                        case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                            ReturnVal = NumericValueColumn + " = " + CswNbtViewPropertyFilterIn.Value;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.GreaterThan:
-                            ReturnVal = NumericValueColumn + " > " + CswNbtViewPropertyFilterIn.Value;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals:
-                            ReturnVal = NumericValueColumn + " >= " + CswNbtViewPropertyFilterIn.Value;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.LessThan:
-                            ReturnVal = NumericValueColumn + " < " + CswNbtViewPropertyFilterIn.Value;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals:
-                            ReturnVal = NumericValueColumn + " <= " + CswNbtViewPropertyFilterIn.Value;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                            ReturnVal = NumericValueColumn + " <> " + CswNbtViewPropertyFilterIn.Value;
-                            break;
-                        default:
-                            throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
-                    }  //switch
+                        ReturnVal = NumericValueColumn + " = " + CswNbtViewPropertyFilterIn.Value;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
+                    {
+                        ReturnVal = NumericValueColumn + " > " + CswNbtViewPropertyFilterIn.Value;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+                    {
+                        ReturnVal = NumericValueColumn + " >= " + CswNbtViewPropertyFilterIn.Value;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+                    {
+                        ReturnVal = NumericValueColumn + " < " + CswNbtViewPropertyFilterIn.Value;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+                    {
+                        ReturnVal = NumericValueColumn + " <= " + CswNbtViewPropertyFilterIn.Value;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    {
+                        ReturnVal = NumericValueColumn + " <> " + CswNbtViewPropertyFilterIn.Value;
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                    }
                 }
                 else
                 {
@@ -116,39 +150,50 @@ namespace ChemSW.Nbt.MetaData
                     string NonNumericValueColumn = CasePrepend + FilterTableAlias + Column + CaseAppend;
                     string SafeValue = CswNbtViewPropertyFilterIn.Value.Replace( "'", "''" );   // case 21455
 
-                    switch( CswNbtViewPropertyFilterIn.FilterMode )
+
+                    if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Begins )
                     {
-                        case CswNbtPropFilterSql.PropertyFilterMode.Begins:
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "%'" + CaseAppend;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.Contains:
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.Ends:
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "'" + CaseAppend;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.Equals: //covers the case of clobs
-                            ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.GreaterThan:
-                            ReturnVal = NonNumericValueColumn + " > '" + SafeValue + "'";
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals:
-                            ReturnVal = NonNumericValueColumn + " >= '" + SafeValue + "'";
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.LessThan:
-                            ReturnVal = NonNumericValueColumn + " < '" + SafeValue + "'";
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals:
-                            ReturnVal = NonNumericValueColumn + " <= '" + SafeValue + "'";
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                            ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend +
-                                        " or " + NonNumericValueColumn + " is null )";   // case 21623
-                            break;
-                        default:
-                            throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
-                    }  //switch
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "%'" + CaseAppend;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Contains )
+                    {
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "%'" + CaseAppend;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Ends )
+                    {
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'%" + SafeValue + "'" + CaseAppend;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                    {
+                        //covers the case of clobs
+                        ReturnVal = NonNumericValueColumn + " like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
+                    {
+                        ReturnVal = NonNumericValueColumn + " > '" + SafeValue + "'";
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+                    {
+                        ReturnVal = NonNumericValueColumn + " >= '" + SafeValue + "'";
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+                    {
+                        ReturnVal = NonNumericValueColumn + " < '" + SafeValue + "'";
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+                    {
+                        ReturnVal = NonNumericValueColumn + " <= '" + SafeValue + "'";
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    {
+                        ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend +
+                                    " or " + NonNumericValueColumn + " is null )";   //case 21623
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                    }
+
 
                 }//if-else UserNumericHack
             }
@@ -156,18 +201,18 @@ namespace ChemSW.Nbt.MetaData
             {
                 string NullValueColumn = FilterTableAlias + Column;
 
-                switch( CswNbtViewPropertyFilterIn.FilterMode )
+                if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
                 {
-                    case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
-                        ReturnVal = NullValueColumn + " is not null";
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.Null:
-                        ReturnVal = NullValueColumn + " is null";
-                        break;
-                    default:
-                        throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
-                }  //switch
-
+                    ReturnVal = NullValueColumn + " is not null";
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                {
+                    ReturnVal = NullValueColumn + " is null";
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                }
             }//if-else filter mode is not null or not-null
 
             return ( ReturnVal );
