@@ -261,7 +261,7 @@
                                 var propId = key; //key
                                 var subTable = layoutTable.find('#' + propId + '_subproptable');
                                 var parentCell = subTable.parent().parent();
-                                var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'), { propId: propId });
                                 var propCell = _getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -376,14 +376,13 @@
         } // onRemove()
 
         function onSwap(onSwapData) {
-            _moveProp(_getPropertyCell(onSwapData.cellSet), onSwapData.swaprow, onSwapData.swapcolumn);
-            _moveProp(_getPropertyCell(onSwapData.swapcellset), onSwapData.row, onSwapData.column);
+            _moveProp(_getPropertyCell(onSwapData.cellSet), onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+            _moveProp(_getPropertyCell(onSwapData.swapcellset), onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
         } // onSwap()
 
-        function _moveProp(propDiv, newrow, newcolumn) {
+        function _moveProp(propDiv, newrow, newcolumn, propId) {
             if (propDiv.length() > 0) {
-                var propid = propDiv.propNonDom('propid');
-
+                var propid = Csw.string(propDiv.propNonDom('propid'), propId);
                 var dataJson = {
                     PropId: propid,
                     NewRow: newrow,
@@ -394,13 +393,7 @@
                 Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.MovePropUrl,
-                    data: dataJson,
-                    success: function (newData) {
-                        Csw.log(newData);
-                    },
-                    error: function(newData) {
-                        Csw.log(newData);
-                    }
+                    data: dataJson
                 });
             }
         } // _moveProp()
@@ -415,7 +408,7 @@
         function handleProp(layoutTable, thisProp, tabContentDiv, tabid, configMode, savBtn, atLeastOne) {
             var propid = thisProp.id,
                 fieldtype = thisProp.fieldtype,
-                cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol),
+                cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol, { propId: propid }),
                 helpText = Csw.string(thisProp.helptext),
                 propName = Csw.string(thisProp.name),
                 labelCell = {};
@@ -706,7 +699,7 @@
                     cswnbtnodekey: o.cswnbtnodekey
                 };
 
-                var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
+                var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol, { propId: thisProp.id });
                 propOpt.propCell = _getPropertyCell(cellSet);
                 propOpt.propDiv = propOpt.propCell.children('div').first();
 
