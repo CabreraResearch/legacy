@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "objectclassid",
                                                           "objectclass",
+                                                          _CswNbtMetaDataResources.ObjectClassTableSelect,
                                                           _CswNbtMetaDataResources.ObjectClassTableUpdate,
                                                           makeObjectClass );
         }

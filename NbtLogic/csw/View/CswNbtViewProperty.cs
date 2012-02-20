@@ -50,9 +50,10 @@ namespace ChemSW.Nbt
                 if( value != _NodeTypePropId )
                 {
                     _NodeTypePropId = value;
-                    CswNbtMetaDataNodeTypeProp thisNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
-                    if( thisNodeTypeProp != null )
-                        FieldType = thisNodeTypeProp.getFieldType().FieldType;
+                    //CswNbtMetaDataNodeTypeProp thisNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
+                    //if( thisNodeTypeProp != null )
+                    //    FieldType = thisNodeTypeProp.getFieldType().FieldType;
+                    FieldType = _CswNbtResources.MetaData.getFieldTypeValueForNodeTypePropId( value );
                 }
             }
         }
@@ -77,12 +78,13 @@ namespace ChemSW.Nbt
                 if( value != _ObjectClassPropId )
                 {
                     _ObjectClassPropId = value;
-                    CswNbtMetaDataObjectClassProp ThisObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId );
-                    // case 20031
-                    if( ThisObjectClassProp != null )
-                    {
-                        FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldType().FieldType;
-                    }
+                    //CswNbtMetaDataObjectClassProp ThisObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId );
+                    //// case 20031
+                    //if( ThisObjectClassProp != null )
+                    //{
+                    //    FieldType = _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ).getFieldType().FieldType;
+                    //}
+                    FieldType = _CswNbtResources.MetaData.getFieldTypeValueForObjectClassPropId( value );
                 }
             }
         }

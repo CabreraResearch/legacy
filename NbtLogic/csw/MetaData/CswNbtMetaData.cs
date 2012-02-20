@@ -231,6 +231,22 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns the NbtFieldType value for a property
+        /// </summary>
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
+        {
+            return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeValueForNodeTypePropId( NodeTypePropId );
+        }
+
+        /// <summary>
+        /// Returns the NbtFieldType value for a property
+        /// </summary>
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForObjectClassPropId( Int32 ObjectClassPropId )
+        {
+            return _CswNbtMetaDataResources.FieldTypesCollection.getFieldTypeValueForObjectClassPropId( ObjectClassPropId );
+        }
+
+        /// <summary>
         /// Fetches a NodeType Property based on the primary key (all nodetypes)
         /// </summary>
         public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )
