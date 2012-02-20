@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             EncryptedPasswordSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Password );
             //// BZ 8638
-            //EncryptedPasswordSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.NotNull |
+            //EncryptedPasswordSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull |
             //                                        CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( EncryptedPasswordSubField );
 

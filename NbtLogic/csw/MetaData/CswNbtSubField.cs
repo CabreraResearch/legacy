@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.MetaData
             //}
         }
 
-        public CswNbtPropFilterSql.PropertyFilterMode FilterModes;
+        public Collection<CswNbtPropFilterSql.PropertyFilterMode> _FilterModes = new Collection<CswNbtPropFilterSql.PropertyFilterMode>();
         public CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode
         {
             get
@@ -132,20 +132,21 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                Collection<CswNbtPropFilterSql.PropertyFilterMode> ReturnVal = new Collection<CswNbtPropFilterSql.PropertyFilterMode>();
+                return _FilterModes;
+                //Collection<CswNbtPropFilterSql.PropertyFilterMode> ReturnVal = new Collection<CswNbtPropFilterSql.PropertyFilterMode>();
 
-                Type enumType = typeof( CswNbtPropFilterSql.PropertyFilterMode );
-                Array AllFilterModes = Enum.GetValues( enumType );
+                //Type enumType = typeof( CswNbtPropFilterSql.PropertyFilterMode );
+                //Array AllFilterModes = Enum.GetValues( enumType );
 
-                foreach( CswNbtPropFilterSql.PropertyFilterMode CurrentFilterMode in AllFilterModes )
-                {
-                    if( CurrentFilterMode == ( CurrentFilterMode & FilterModes ) )
-                    {
-                        ReturnVal.Add( CurrentFilterMode );
-                    }
-                }//iterate all filter modes
+                //foreach( CswNbtPropFilterSql.PropertyFilterMode CurrentFilterMode in AllFilterModes )
+                //{
+                //    if( CurrentFilterMode == ( CurrentFilterMode & FilterModes ) )
+                //    {
+                //        ReturnVal.Add( CurrentFilterMode );
+                //    }
+                //}//iterate all filter modes
 
-                return ( ReturnVal );
+                //return ( ReturnVal );
             }//get
 
         }//FilterModes

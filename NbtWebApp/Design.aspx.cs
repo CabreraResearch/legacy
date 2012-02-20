@@ -2400,7 +2400,7 @@ namespace ChemSW.Nbt.WebPages
                         if( SelectedNodeTypeProp.hasFilter() )
                         {
                             CswNbtSubField SubField = SelectedNodeTypeProp.getFieldTypeRule().SubFields.Default;
-                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
                             string FilterValue = null;
                             CswNbtMetaDataNodeTypeProp FilterProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FilterNodeTypePropId );
                             SelectedNodeTypeProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );

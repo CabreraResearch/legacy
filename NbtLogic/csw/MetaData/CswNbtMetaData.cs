@@ -612,7 +612,7 @@ namespace ChemSW.Nbt.MetaData
                         CswNbtMetaDataNodeTypeProp TargetOfFilter = NewNodeType.getNodeTypePropByObjectClassProp( ObjectClass.getObjectClassProp( OCProp.FilterObjectClassPropId ).PropName );
                         //NTProp.FilterNodeTypePropId = TargetOfFilter.FirstPropVersionId;
                         CswNbtSubField SubField = null;
-                        CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                        CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
                         string FilterValue = string.Empty;
                         OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
                         // We don't have to worry about versioning in this function

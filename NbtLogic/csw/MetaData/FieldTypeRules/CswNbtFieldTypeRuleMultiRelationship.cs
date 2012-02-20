@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //SubFields.add( CswNbtSubField.PropColumn.Gestalt, "Permissions" ); 
-            //SubFields[ "Permissions" ].FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains;
+            //SubFields[ "Permissions" ].SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains;
         }//ctor
 
         //public CswNbtSubField SubField;

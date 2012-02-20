@@ -18,61 +18,61 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //List
-            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Answer,true );
-            AnswerSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                         CswNbtPropFilterSql.PropertyFilterMode.Null;
+            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Answer, true );
+            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( AnswerSubField, true );
 
             //List
-            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.CorrectiveAction,true );
-            CorrectiveActionSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                         CswNbtPropFilterSql.PropertyFilterMode.Null;
+            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.CorrectiveAction, true );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( CorrectiveActionSubField );
 
             //Logical
-            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.IsCompliant,true );
-            IsCompliantSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                         CswNbtPropFilterSql.PropertyFilterMode.Null;
+            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.IsCompliant, true );
+            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( IsCompliantSubField );
 
             //Memo
-            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Comments,true );
-            CommentsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                       CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Null;
+            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Comments, true );
+            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( CommentsSubField );
 
             //Date
-            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.DateAnswered,true );
-            DateAnsweredSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                            CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                            CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                            CswNbtPropFilterSql.PropertyFilterMode.Null;
+            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.DateAnswered, true );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( DateAnsweredSubField );
 
             //Date
-            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2_Date, CswNbtSubField.SubFieldName.DateCorrected,true );
-            DateCorrectedSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                            CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                            CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                            CswNbtPropFilterSql.PropertyFilterMode.Null;
+            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2_Date, CswNbtSubField.SubFieldName.DateCorrected, true );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( DateCorrectedSubField );
 
         }//ctor
