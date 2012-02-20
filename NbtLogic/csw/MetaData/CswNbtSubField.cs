@@ -1,14 +1,13 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
-
-
     public class CswNbtSubField
     {
-
         public enum PropColumn
         {
             Field1,
@@ -30,50 +29,52 @@ namespace ChemSW.Nbt.MetaData
 
         /// <summary>
         /// Names of SubFields of Properties
-        /// There are SERIOUS repercussions if these are changed!  Beware!
+        /// There are SERIOUS repercussions if these are changed!  Beware!  (e.g. import)
         /// </summary>
-        public enum SubFieldName
+        public sealed class SubFieldName : TypeSafeEnum
         {
-            Unknown, // generates an exception when run
-            AllowedAnswers,
-            Answer,
-            Barcode,
-            Blob,
-            Checked,
-            Column,
-            Comments,
-            CompliantAnswers,
-            ContentType,
-            CorrectiveAction,
-            DateAnswered,
-            DateCorrected,
-            Href,
-            Image,
-            Interval,
-            IsCompliant,
-            Mol,
-            Name,
-            NodeID,
-            NodeType,
-            Number,
-            Password,
-            Path,
-            Required,
-            Row,
-            Sequence,
-            StartDateTime,
-            Text,
-            Units,
-            Value,
-            ViewID,
-            ChangedDate,
-			Base,
-			Exponent,
-			Health,
-			Flammability,
-			Reactivity,
-			Special
-        }
+            private SubFieldName( string name ) : base( name ) { }
+
+            public static readonly SubFieldName Unknown = new SubFieldName( "Unknown" );
+            public static readonly SubFieldName AllowedAnswers = new SubFieldName( "AllowedAnswers" );
+            public static readonly SubFieldName Answer = new SubFieldName( "Answer" );
+            public static readonly SubFieldName Barcode = new SubFieldName( "Barcode" );
+            public static readonly SubFieldName Blob = new SubFieldName( "Blob" );
+            public static readonly SubFieldName Checked = new SubFieldName( "Checked" );
+            public static readonly SubFieldName Column = new SubFieldName( "Column" );
+            public static readonly SubFieldName Comments = new SubFieldName( "Comments" );
+            public static readonly SubFieldName CompliantAnswers = new SubFieldName( "CompliantAnswers" );
+            public static readonly SubFieldName ContentType = new SubFieldName( "ContentType" );
+            public static readonly SubFieldName CorrectiveAction = new SubFieldName( "CorrectiveAction" );
+            public static readonly SubFieldName DateAnswered = new SubFieldName( "DateAnswered" );
+            public static readonly SubFieldName DateCorrected = new SubFieldName( "DateCorrected" );
+            public static readonly SubFieldName Href = new SubFieldName( "Href" );
+            public static readonly SubFieldName Image = new SubFieldName( "Image" );
+            public static readonly SubFieldName Interval = new SubFieldName( "Interval" );
+            public static readonly SubFieldName IsCompliant = new SubFieldName( "IsCompliant" );
+            public static readonly SubFieldName Mol = new SubFieldName( "Mol" );
+            public static readonly SubFieldName Name = new SubFieldName( "Name" );
+            public static readonly SubFieldName NodeID = new SubFieldName( "NodeID" );
+            public static readonly SubFieldName NodeType = new SubFieldName( "NodeType" );
+            public static readonly SubFieldName Number = new SubFieldName( "Number" );
+            public static readonly SubFieldName Password = new SubFieldName( "Password" );
+            public static readonly SubFieldName Path = new SubFieldName( "Path" );
+            public static readonly SubFieldName Required = new SubFieldName( "Required" );
+            public static readonly SubFieldName Row = new SubFieldName( "Row" );
+            public static readonly SubFieldName Sequence = new SubFieldName( "Sequence" );
+            public static readonly SubFieldName StartDateTime = new SubFieldName( "StartDateTime" );
+            public static readonly SubFieldName Text = new SubFieldName( "Text" );
+            public static readonly SubFieldName Units = new SubFieldName( "Units" );
+            public static readonly SubFieldName Value = new SubFieldName( "Value" );
+            public static readonly SubFieldName ViewID = new SubFieldName( "ViewID" );
+            public static readonly SubFieldName ChangedDate = new SubFieldName( "ChangedDate" );
+            public static readonly SubFieldName Base = new SubFieldName( "Base" );
+            public static readonly SubFieldName Exponent = new SubFieldName( "Exponent" );
+            public static readonly SubFieldName Health = new SubFieldName( "Health" );
+            public static readonly SubFieldName Flammability = new SubFieldName( "Flammability" );
+            public static readonly SubFieldName Reactivity = new SubFieldName( "Reactivity" );
+            public static readonly SubFieldName Special = new SubFieldName( "Special" );
+        } // class SubFieldName
 
         public SubFieldName Name = SubFieldName.Value;
         public string Table = string.Empty;
@@ -84,7 +85,7 @@ namespace ChemSW.Nbt.MetaData
         public bool isReportable;
 
         //public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, ICswNbtMetaDataProp MetaDataProp, PropColumn DefaultColumn, SubFieldName SubFieldName )
-        public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, PropColumn DefaultColumn, SubFieldName SubFieldName, bool Reportable = false  )
+        public CswNbtSubField( CswNbtFieldResources CswNbtFieldResources, PropColumn DefaultColumn, SubFieldName SubFieldName, bool Reportable = false )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             Name = SubFieldName;

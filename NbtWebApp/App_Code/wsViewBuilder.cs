@@ -410,8 +410,8 @@ namespace ChemSW.Nbt.WebServices
 
             if( ViewPropFilt != null )
             {
-                CswNbtSubField.SubFieldName FieldName;
-                Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
+                CswNbtSubField.SubFieldName FieldName = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                //Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
 
                 CswNbtPropFilterSql.PropertyFilterMode FilterMode;
                 Enum.TryParse( CswConvert.ToString( FilterProp["filter"] ), true, out FilterMode );

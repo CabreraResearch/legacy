@@ -48,8 +48,8 @@ namespace ChemSW.Nbt
                 //if( Values[ 5 ] != String.Empty )
                 //    ArbitraryId = Values[ 5 ].ToString();
                 if( FilterString[6] != String.Empty )
-                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterString[6].ToString() );
-
+                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterString[6].ToString() );
+                    SubfieldName = (CswNbtSubField.SubFieldName) FilterString[6].ToString();
                 _validate();
             }
 
@@ -72,7 +72,8 @@ namespace ChemSW.Nbt
                 //if( FilterNode.Attributes[ "arbitraryid" ] != null )
                 //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
                 if( FilterNode.Attributes["subfieldname"] != null )
-                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
+                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
+                    SubfieldName = (CswNbtSubField.SubFieldName) FilterNode.Attributes["subfieldname"].Value;
 
                 _validate();
 
@@ -116,7 +117,8 @@ namespace ChemSW.Nbt
                 string _SfName = CswConvert.ToString( FilterObj["subfieldname"] );
                 if( !string.IsNullOrEmpty( _SfName ) )
                 {
-                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), _SfName );
+                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), _SfName );
+                    SubfieldName = (CswNbtSubField.SubFieldName) _SfName;
                 }
 
                 _validate();

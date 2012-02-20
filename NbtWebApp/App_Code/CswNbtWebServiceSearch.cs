@@ -302,8 +302,8 @@ namespace ChemSW.Nbt.WebServices
                         Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
                         CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
 
-                        CswNbtSubField.SubFieldName SubField;
-                        Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
+                        CswNbtSubField.SubFieldName SubField = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                        //Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
 
                         CswNbtPropFilterSql.PropertyFilterMode FilterMode;
                         Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
