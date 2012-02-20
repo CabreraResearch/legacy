@@ -332,12 +332,21 @@ namespace ChemSW.Nbt
                                                                                and propvaljoin.nodeid = n.nodeid)
                                left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 
-                    Where += @" and n.nodeid in (select nodeid 
+                    Where += @" and (n.nodeid in (select nodeid 
                                                    from jct_nodes_props jnp 
                                                    join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
                                                    join field_types f on (p.fieldtypeid = f.fieldtypeid) 
                                                   where f.searchable = '1' 
-                                                    and lower(jnp.gestalt) like '%" + _SearchTerm.ToLower() + "%' ) ";
+                                                    and lower(jnp.gestalt) like '%" + _SearchTerm.ToLower() + @"%' )";
+
+                    if( CswTools.IsInteger( _SearchTerm ) )
+                    {
+                        Where += " or n.nodeid = '" + _SearchTerm + "')";
+                    }
+                    else
+                    {
+                        Where += ")";
+                    }
                     
                     OrderBy += ", props.display_row ";
 

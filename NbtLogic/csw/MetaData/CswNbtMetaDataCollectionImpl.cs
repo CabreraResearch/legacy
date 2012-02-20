@@ -30,6 +30,25 @@ namespace ChemSW.Nbt.MetaData
             _MetaDataObjectMaker = MetaDataObjectMaker;
         } // constructor
 
+
+        private Dictionary<Int32, ICswNbtMetaDataObject> _Cache = new Dictionary<Int32, ICswNbtMetaDataObject>();
+        private ICswNbtMetaDataObject _makeObj( DataRow Row )
+        {
+            ICswNbtMetaDataObject ret = null;
+            Int32 PkValue = CswConvert.ToInt32( Row[_PkColumnName] );
+            if( _Cache.ContainsKey( PkValue ) )
+            {
+                // In order to guarantee only one reference per row, use the existing reference
+                ret = _Cache[PkValue];
+            }
+            else
+            {
+                ret = _MetaDataObjectMaker( _CswNbtMetaDataResources, Row );
+                _Cache[PkValue] = ret;
+            }
+            return ret;
+        }
+
         public void clearCache()
         {
             _All = null;
@@ -37,6 +56,9 @@ namespace ChemSW.Nbt.MetaData
             _PksWhere = null;
             _ByPk = null;
             _getWhere = null;
+
+            // Don't clear this one
+            // _Cache = null;
         }
 
         private Collection<ICswNbtMetaDataObject> _All = null;
@@ -48,7 +70,7 @@ namespace ChemSW.Nbt.MetaData
                 DataTable Table = _TableUpdate.getTable();
                 foreach( DataRow Row in Table.Rows )
                 {
-                    _All.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
+                    _All.Add( _makeObj( Row ) );
                 }
             }
             return _All;
@@ -137,7 +159,7 @@ namespace ChemSW.Nbt.MetaData
                     DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
                     if( Table.Rows.Count > 0 )
                     {
-                        _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                        _ByPk[Pk] = _makeObj( Table.Rows[0] );
                     }
                     else
                     {
@@ -162,7 +184,7 @@ namespace ChemSW.Nbt.MetaData
                 DataTable Table = _TableUpdate.getTable( WhereClause );
                 foreach( DataRow Row in Table.Rows )
                 {
-                    Coll.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
+                    Coll.Add( _makeObj( Row ) );
                 }
                 _getWhere[WhereClause] = Coll;
             }
