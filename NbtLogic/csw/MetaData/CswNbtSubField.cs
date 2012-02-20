@@ -13,9 +13,9 @@ namespace ChemSW.Nbt.MetaData
             Field1,
             Field1_FK,
             Field1_Date,
-			Field1_Numeric,
-			Field2_Numeric,
-			Field2,
+            Field1_Numeric,
+            Field2_Numeric,
+            Field2,
             Field2_Date,
             Field3,
             Field4,
@@ -31,9 +31,11 @@ namespace ChemSW.Nbt.MetaData
         /// Names of SubFields of Properties
         /// There are SERIOUS repercussions if these are changed!  Beware!  (e.g. import)
         /// </summary>
-        public sealed class SubFieldName : TypeSafeEnum
+        public sealed class SubFieldName : CswEnum<SubFieldName>
         {
-            private SubFieldName( string name ) : base( name ) { }
+            private SubFieldName( String Name ) : base( Name ) { }
+            public new static IEnumerable<SubFieldName> All { get { return CswEnum<SubFieldName>.All; } }
+            public static explicit operator SubFieldName( string str ) { return Parse( str ); }
 
             public static readonly SubFieldName Unknown = new SubFieldName( "Unknown" );
             public static readonly SubFieldName AllowedAnswers = new SubFieldName( "AllowedAnswers" );
