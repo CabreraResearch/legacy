@@ -6,10 +6,10 @@ my $destfile = "$dir\\js\\mobile\\CswAllMobile.min.js";
 unlink($destfile);
 
 my $param = "";
-$param .= extract("$dir\\js\\globals");
+$param .= extract("$dir\\js\\mobile\\lear\\globals");
 $param .= extract("$dir\\js\\mobile\\globals");
-$param .= extract("$dir\\js\\main\\controls");
-$param .= extract("$dir\\js\\main\\tools");
+$param .= extract("$dir\\js\\mobile\\lear\\main\\controls");
+$param .= extract("$dir\\js\\mobile\\lear\\main\\tools");
 $param .= extract("$dir\\js\\mobile");
 $param .= extract("$dir\\js\\mobile\\clientdb");
 $param .= extract("$dir\\js\\mobile\\controls");

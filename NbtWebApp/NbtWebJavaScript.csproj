@@ -102,7 +102,6 @@
     <Content Include="js\main\actions\CswSessions.js" />
     <Content Include="js\main\controls\CswComboBox.js" />
     <Content Include="js\main\controls\CswImageButton.js" />
-    <Content Include="js\main\controls\CswMultiselect.js" />
     <Content Include="js\main\controls\CswNodeTypeSelect.js" />
     <Content Include="js\main\controls\CswTristateCheckBox.js" />
     <Content Include="js\main\controls\CswButton.js" />
@@ -192,6 +191,7 @@
     <Content Include="js\mobile\controls\CswMobilePageFooter.js" />
     <Content Include="js\mobile\controls\CswMobilePageHeader.js" />
     <Content Include="js\mobile\controls\ICswMobileWebControls.js" />
+    <Content Include="js\mobile\CswAllMobile.min.js" />
     <Content Include="js\mobile\CswMobile.css" />
     <Content Include="js\mobile\CswMobile.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
@@ -209,6 +209,23 @@
     <Content Include="js\mobile\fieldtypes\CswMobilePropFactory.js" />
     <Content Include="js\mobile\globals\CswMobileEnums.js" />
     <Content Include="js\mobile\globals\CswMobileTools.js" />
+    <Content Include="js\mobile\lear\globals\CswEnums.js" />
+    <Content Include="js\mobile\lear\globals\CswGlobalTools.js" />
+    <Content Include="js\mobile\lear\globals\CswPrototypeExtensions.js" />
+    <Content Include="js\mobile\lear\globals\Global.js" />
+    <Content Include="js\mobile\lear\main\controls\CswButton.js" />
+    <Content Include="js\mobile\lear\main\controls\CswDiv.js" />
+    <Content Include="js\mobile\lear\main\controls\CswInput.js" />
+    <Content Include="js\mobile\lear\main\controls\CswLink.js" />
+    <Content Include="js\mobile\lear\main\controls\CswList.js" />
+    <Content Include="js\mobile\lear\main\controls\CswSelect.js" />
+    <Content Include="js\mobile\lear\main\controls\CswSpan.js" />
+    <Content Include="js\mobile\lear\main\controls\CswTable.js" />
+    <Content Include="js\mobile\lear\main\tools\CswAttr.js" />
+    <Content Include="js\mobile\lear\main\tools\CswClientDb.js" />
+    <Content Include="js\mobile\lear\main\tools\CswCookie.js" />
+    <Content Include="js\mobile\lear\main\tools\CswString.js" />
+    <Content Include="js\mobile\lear\main\tools\CswTools.js" />
     <Content Include="js\mobile\objectclasses\CswMobileGenericClass.js" />
     <Content Include="js\mobile\objectclasses\CswMobileInspectionDesignClass.js" />
     <Content Include="js\mobile\objectclasses\CswMobileNodesFactory.js" />
@@ -265,6 +282,7 @@
     <PreBuildEvent>call $(ProjectDir)csw.js\_compile.pl $(ProjectDir)
 call $(ProjectDir)csw.css\_compressor.pl $(ProjectDir)
 call $(ProjectDir)js\_compile.pl $(ProjectDir)
+call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)
 CD $(ProjectDir)csw.js
 CALL make_vsdoc.bat</PreBuildEvent>
   </PropertyGroup>
