@@ -71,19 +71,23 @@ namespace ChemSW.Nbt
             }
         } // IsQuickLaunch
 
-        public enum ViewType
+        public sealed class ViewType : CswEnum<ViewType>
         {
-            Unknown,
-            Root,
-            View,
-            //ViewCategory, 
-            Category,
-            Action,
-            Report,
-            //ReportCategory, 
-            Search,
-            RecentView
-        };
+            private ViewType( String Name ) : base( Name ) { }
+            public new static IEnumerable<ViewType> All { get { return CswEnum<ViewType>.All; } }
+            public static explicit operator ViewType( string str ) { return Parse( str ); }
+            public static readonly ViewType Unknown = new ViewType( "Unknown" );
+
+            public static readonly ViewType Root = new ViewType( "Root" );
+            public static readonly ViewType View = new ViewType( "View" );
+            //public static readonly ViewType ViewCategory  = new ViewType( "ViewCategory " );
+            public static readonly ViewType Category = new ViewType( "Category" );
+            public static readonly ViewType Action = new ViewType( "Action" );
+            public static readonly ViewType Report = new ViewType( "Report" );
+            //public static readonly ViewType ReportCategory = new ViewType( "ReportCategory" );
+            public static readonly ViewType Search = new ViewType( "Search" );
+            public static readonly ViewType RecentView = new ViewType( "RecentView" );
+        }
 
         /// <summary>
         /// Visibility permission setting
