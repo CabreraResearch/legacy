@@ -39,7 +39,7 @@
                     loginTable.cell(4, 1).text('Password: ').align('right');
                     inpPassword = loginTable.cell(4, 2).input({ ID: 'login_password', type: Csw.enums.inputTypes.password, width: '120px' });
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
-                                        .align('center')
+                                        .align('left')
                                         .button({
                                             ID: 'login_button',
                                             enabledText: 'Login',

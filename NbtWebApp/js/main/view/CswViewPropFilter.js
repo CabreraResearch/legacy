@@ -107,7 +107,7 @@
                     filtSelected = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {},
                     placeholder = '',
                     subfieldCell, filterModesCell, propFilterValueCell, $defaultSubField,
-                    field, thisField, filtermodes, mode, thisMode, $subfieldsList, $filterModesList, filt, filtInput;
+                    field, thisField, filtermodes, mode, thisMode, subfieldsList, filterModesList, filt, filtInput;
 
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
@@ -156,15 +156,15 @@
                 }
 
                 //Subfield picklist
-                $subfieldsList = subfieldCell.CswSelect('init', { ID: subfieldOptionsId,
+                subfieldsList = subfieldCell.select({ ID: subfieldOptionsId,
                     values: subFieldVals,
                     selected: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.subfield_select.name,
-                    onChange: function ($this) {
+                    onChange: function () {
                         var r = {
-                            selectedSubfieldVal: $this.val(),
+                            selectedSubfieldVal: subfieldsList.val(),
                             selectedFilterVal: '',
-                            advancedIsHidden: Csw.bool($this.is(':hidden'))
+                            advancedIsHidden: Csw.bool(subfieldsList.$.is(':hidden'))
                         };
                         $.extend(filtOpt, r);
                         renderPropFiltRow(filtOpt);
@@ -172,19 +172,19 @@
                 });
 
                 if (filtOpt.advancedIsHidden) {
-                    $subfieldsList.hide();
+                    subfieldsList.hide();
                 }
 
                 //Filter picklist
-                $filterModesList = filterModesCell.CswSelect('init', { ID: filterModesId,
+                filterModesList = filterModesCell.select({ ID: filterModesId,
                     values: filterModeVals,
                     selected: defaultFilterModeVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name,
-                    onChange: function ($this) {
+                    onChange: function () {
                         var r = {
-                            selectedSubfieldVal: $subfieldsList.val(),
-                            selectedFilterVal: $this.val(),
-                            advancedIsHidden: Csw.bool($this.is(':hidden'))
+                            selectedSubfieldVal: subfieldsList.val(),
+                            selectedFilterVal: filterModesList.val(),
+                            advancedIsHidden: Csw.bool(filterModesList.$.is(':hidden'))
                         };
                         $.extend(filtOpt, r);
                         renderPropFiltRow(filtOpt);
@@ -192,11 +192,11 @@
                 });
 
                 if (false === Csw.isNullOrEmpty(filtOpt.selectedFilterVal)) {
-                    $filterModesList.val(filtOpt.selectedFilterVal).CswAttrDom('selected', true);
+                    filterModesList.val(filtOpt.selectedFilterVal).propDom('selected', true);
                 }
 
                 if (filtOpt.advancedIsHidden) {
-                    $filterModesList.hide();
+                    filterModesList.hide();
                 }
 
                 //Filter input (value)
@@ -223,8 +223,8 @@
                 } else {
                     if (Csw.isNullOrEmpty(defaultSubfieldVal)) {
                         placeholder = propertyName;
-                        if (placeholder !== $subfieldsList.find(':selected').text()) {
-                            placeholder += "'s " + $subfieldsList.find(':selected').text();
+                        if (placeholder !== subfieldsList.find(':selected').text()) {
+                            placeholder += "'s " + subfieldsList.find(':selected').text();
                         }
                     }
                     filtInput = propFilterValueCell.input({
@@ -359,7 +359,7 @@
 
                 $filter = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name);
                 filterText = $filter.find(':selected').val();
-                nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;
+                nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Csw.Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;
                 if (Csw.isNullOrEmpty(nodetypeorobjectclassid)) {
                     nodetypeorobjectclassid = Csw.string(o.nodetypeorobjectclassid);
                 }

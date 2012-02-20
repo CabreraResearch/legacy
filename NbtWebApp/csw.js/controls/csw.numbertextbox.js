@@ -44,7 +44,7 @@
 
             if (internal.ReadOnly) {
                 $.extend(external, Csw.controls.div(internal));
-                external.append(internal.Value);
+                external.append(internal.value);
             } else {
                 /* Case 24499: Client-side logic to validate numbers. */
                 if (maxLength <= 0 ||

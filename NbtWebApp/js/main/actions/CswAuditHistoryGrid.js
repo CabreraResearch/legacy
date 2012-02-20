@@ -1,10 +1,10 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswAuditHistoryGrid';
-    
+
     var methods = {
         init: function (options) {
             var o = {
@@ -26,7 +26,7 @@
             Csw.ajax.post({
                 url: o.Url,
                 data: {
-                    NodeId: Csw.string(o.nodeid), 
+                    NodeId: Csw.string(o.nodeid),
                     NbtNodeKey: Csw.string(o.cswnbtnodekey),
                     JustDateColumn: o.JustDateColumn
                 },
@@ -65,7 +65,7 @@
                         }
                     };
 
-                    if (Csw.contains(gridJson,'jqGridOpt')) {
+                    if (Csw.contains(gridJson, 'jqGridOpt')) {
 
                         $.extend(g.gridOpts, gridJson.jqGridOpt);
 
@@ -87,9 +87,9 @@
                                 }
                             };
                         }
-
-                        var grid = Csw.controls.grid(g, $auditGrid);
-                        grid.$gridPager.css({ width: '100%', height: '20px' });
+                        g.$parent = $auditGrid;
+                        var grid = Csw.controls.grid(g);
+                        grid.gridPager.css({ width: '100%', height: '20px' });
 
                         // set selected row by date
 

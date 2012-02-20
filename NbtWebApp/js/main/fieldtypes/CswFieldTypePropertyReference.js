@@ -13,14 +13,16 @@
 
             var propVals = o.propData.values;
             var text = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
-            text += '&nbsp;';
-
-            /* Static Div */
-            propDiv.div({
-                ID: o.ID,
-                cssclass: 'staticvalue',
-                value: text
-            });
+            
+            if (false === Csw.isNullOrEmpty(text)) {
+                text += '&nbsp;';
+                /* Static Div */
+                propDiv.div({
+                    ID: o.ID,
+                    cssclass: 'staticvalue',
+                    value: text
+                });
+            }
         },
         save: function (o) { //$propdiv, $xml
             Csw.preparePropJsonForSave(o.propData);

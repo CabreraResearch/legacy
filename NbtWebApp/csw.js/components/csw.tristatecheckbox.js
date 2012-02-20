@@ -69,14 +69,14 @@
                 $.extend(internal, options);
             }
 
-            var elementId = Csw.controls.dom.makeId(internal.ID, 'tst'),
-                tristateVal = Csw.string(internal.Checked, 'null').toLowerCase(); //Case 21769
+            internal.value = Csw.string(internal.Checked, 'null').toLowerCase(); //Case 21769
+            internal.AlternateText = internal.value;
 
             if (internal.ReadOnly) {
                 if (internal.Multi) {
                     internal.value = Csw.enums.multiEditDefaultValue;
                 } else {
-                    switch (tristateVal) {
+                    switch (internal.value) {
                         case 'true':
                             internal.value = 'Yes';
                             break;
@@ -87,9 +87,8 @@
                 }
                 $.extend(external, Csw.controls.div(internal));
             } else {
-                internal.ID = elementId;
-                internal.ButtonType = external.getButtonType(tristateVal);
-                internal.AlternateText = tristateVal;
+                internal.ID = Csw.controls.dom.makeId(internal.ID, 'tst');
+                internal.ButtonType = external.getButtonType();
                 $.extend(external, Csw.controls.imageButton(internal));
                 external.bind('click', internal.changeState);
             }

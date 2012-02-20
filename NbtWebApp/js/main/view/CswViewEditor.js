@@ -182,14 +182,12 @@
         });
 
         table2.cell(1, 1).text('View Name:');
-        var viewNameTextCell = table2.cell(1, 2);
-        var $viewnametextbox = viewNameTextCell.$.CswInput('init', { ID: o.ID + '_viewname',
+        var viewNameTextBox = table2.cell(1, 2).input({ ID: o.ID + '_viewname',
             type: Csw.enums.inputTypes.text
         });
 
         table2.cell(2, 1).text('Category:');
-        var categoryTextCell = table2.cell(2, 2);
-        var $categorytextbox = categoryTextCell.$.CswInput('init', { ID: o.ID + '_category',
+        var categoryTextBox = table2.cell(2, 2).input({ ID: o.ID + '_category',
             type: Csw.enums.inputTypes.text
         });
 
@@ -202,13 +200,13 @@
 
         table2.cell(4, 1).text('For Mobile:');
         var forMobileCheckCell = table2.cell(4, 2);
-        var $formobilecheckbox = forMobileCheckCell.$.CswInput('init', { ID: o.ID + '_formobile',
+        var $formobilecheckbox = forMobileCheckCell.input('init', { ID: o.ID + '_formobile',
             type: Csw.enums.inputTypes.checkbox
         });
 
         table2.cell(5, 1).text('Display Mode:');
         var displayModeSpan = table2.cell(5, 2)
-                                    .span({ ID: o.ID + '_displaymode' })
+            .span({ ID: o.ID + '_displaymode' });
 
         var gridWidthLabelCell = table2.cell(6, 1).text('Grid Width (in characters):');
         var gridWidthTextBox = table2.cell(6, 2)
@@ -270,8 +268,8 @@
                         success: function (data) {
                             currentViewJson = data.TreeView;
 
-                            $viewnametextbox.val(currentViewJson.viewname);
-                            $categorytextbox.val(currentViewJson.category);
+                            viewNameTextBox.val(currentViewJson.viewname);
+                            categoryTextBox.val(currentViewJson.category);
                             var visibility = Csw.string(currentViewJson.visibility);
                             if (visibility !== 'Property') {
                                 if (visSelect.$visibilityselect !== undefined) {
@@ -321,8 +319,8 @@
         } // _handleNext()
 
         function cacheStepTwo() {
-            currentViewJson.viewname = $viewnametextbox.val();
-            currentViewJson.category = $categorytextbox.val();
+            currentViewJson.viewname = viewNameTextBox.val();
+            currentViewJson.category = categoryTextBox.val();
             if (currentViewJson.visibility !== 'Property') {
                 if (visSelect.$visibilityselect !== undefined) {
                     var visibility = visSelect.$visibilityselect.val();
@@ -474,8 +472,9 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        cswViewGrid = Csw.controls.grid(g, $viewgrid);
-                        cswViewGrid.$gridPager.css({ width: '100%', height: '20px' });
+                        g.$parent = $viewgrid;
+                        cswViewGrid = Csw.controls.grid(g);
+                        cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
 
                         cswViewGrid.hideColumn(o.ColumnFullViewId);
                         if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
@@ -569,12 +568,11 @@
                 row += 1;
 
                 subTable.cell(row, 1).text('Group By');
-                var $groupbyselect = subTable.cell(row, 2)
-                                            .$.CswSelect('init',
-                                                { ID: o.ID + '_gbs',
+                var groupBySelect = subTable.cell(row, 2)
+                                            .select({ ID: o.ID + '_gbs',
                                                     onChange: function () {
-                                                        var $selected = $groupbyselect.find(':selected');
-                                                        var selval = $selected.val();
+                                                        var selected = groupBySelect.find(':selected');
+                                                        var selval = selected.val();
                                                         var propData;
 
                                                         if (false === Csw.isNullOrEmpty(selval)) {
@@ -583,7 +581,7 @@
                                                                 viewnodejson.groupbyproptype = '';
                                                                 viewnodejson.groupbypropname = '';
                                                             } else {
-                                                                propData = $selected.data('thisPropData');
+                                                                propData = selected.data('thisPropData');
                                                                 viewnodejson.groupbypropid = Csw.string(propData.propid);
                                                                 viewnodejson.groupbyproptype = Csw.string(propData.proptype);
                                                                 viewnodejson.groupbypropname = Csw.string(propData.propname);
@@ -601,7 +599,7 @@
                     url: o.PropNamesUrl,
                     data: jsonData,
                     success: function (data) {
-                        $groupbyselect.empty();
+                        groupBySelect.empty();
                         var groupOpts = [{ value: 'none', display: '[None]'}];
                         var groupSel = 'none';
                         for (var propKey in data) {
@@ -619,7 +617,7 @@
                                 }
                             }
                         } // each
-                        $groupbyselect.CswSelect('setoptions', groupOpts, groupSel);
+                        groupBySelect.setoptions(groupOpts, groupSel);
                     } // success
                 }); // ajax
 
@@ -1064,13 +1062,15 @@
         }
 
         function makeDeleteSpan(arbid) {
-            var $td = $('<span style="" class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name + '" arbid="' + arbid + '"></span>');
-            $td.CswImageButton({
+            var td = Csw.controls.span({
+                cssclass: Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name
+            }).propNonDom('arbid', arbid);
+            td.imageButton({
                 ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                 AlternateText: 'Delete',
                 ID: arbid + '_delete'
             });
-            return $td;
+            return td.$;
         }
 
         function getTreeDiv(stepno) {

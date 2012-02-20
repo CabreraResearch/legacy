@@ -66,17 +66,17 @@
             return opt;
         };
 
-        external.setOptions = function (values, selected, $select, doEmpty) {
+        external.setOptions = function (values, selected, doEmpty) {
             if (Csw.isArray(values) && values.length > 0) {
                 if (doEmpty) {
-                    $select.empty();
+                    external.empty();
                 }
                 Csw.each(values, function (thisOpt) {
                     var opt = external.makeOption(thisOpt);
-                    external.addOption(opt, (opt.value === selected), $select);
+                    external.addOption(opt, (opt.value === selected));
                 });
             }
-            return $select;
+            return external;
         };
 
         (function () {
@@ -118,7 +118,6 @@
 
             if (Csw.bool(internal.multiple)) {
                 external.propDom('multiple', 'multiple');
-                external.$.multiselect();
             }
 
         } ());
@@ -133,7 +132,8 @@
         var internal = {
             value: '',
             display: '',
-            isSelected: false
+            isSelected: false,
+            isDisabled: false
         };
         var external = {
 
@@ -147,8 +147,12 @@
                 attr = Csw.controls.dom.attributes();
 
             attr.add('value', internal.value);
+            attr.add('text', internal.display);
             if (internal.isSelected) {
                 attr.add('selected', 'selected');
+            }
+            if (internal.isDisabled) {
+                attr.add('disabled', 'disabled');
             }
             html += attr.get();
             html += '>';

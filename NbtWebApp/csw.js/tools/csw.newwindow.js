@@ -1,11 +1,11 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function _cswPrint() {
+(function _cswNewWindow() {
     'use strict';
-    
-    function doPrint(onSuccess) {
-        var printWindow, printDoc, $styleDiv, $newBody;
+
+    function newWindow(onSuccess) {
+        var printWindow, printDoc, $newBody, newFactory;
 
         printWindow = window.open();
         printDoc = printWindow.document;
@@ -26,15 +26,15 @@
         printDoc.close();
 
         $newBody = $(printDoc).find('body');
+        newFactory = Csw.controls.factory($newBody);
 
         /* 
         In theory, this would create a DIV with all the styles required, but it's probably not necessary to do so.
         $styleDiv = $('<div>').append( $('style').clone() ) 
         */
-        $styleDiv = $newBody.CswDiv();
 
         if (Csw.isFunction(onSuccess)) {
-            onSuccess($styleDiv);
+            onSuccess(newFactory.div());
         }
 
         /*
@@ -44,7 +44,7 @@
 
         return false;
     }
-    Csw.register('print', doPrint);
-    Csw.print = Csw.print || doPrint;
-    
-}());
+    Csw.register('newWindow', newWindow);
+    Csw.newWindow = Csw.newWindow || newWindow;
+    //@ sourceURL=csw.newwindow.js
+} ());

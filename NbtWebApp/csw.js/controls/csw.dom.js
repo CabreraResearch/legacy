@@ -105,39 +105,46 @@
             return ret;
         };
 
-        external.makeId = function (options, prefix, suffix, delimiter) {
+        external.makeId = function (options, ID, suffix, delimiter) {
             /// <summary>
             ///   Generates an ID for DOM assignment
             /// </summary>
             /// <param name="options" type="Object">
-            ///     A JSON Object
+            ///     A JSON Object or a prefix as string
             ///     &#10;1 - options.ID: Base ID string
             ///     &#10;2 - options.prefix: String prefix to prepend
             ///     &#10;3 - options.suffix: String suffix to append
             ///     &#10;4 - options.Delimiter: String to use as delimiter for concatenation
             /// </param>
-            /// <returns type="String">A concatenated string of provided values</returns>
-            var elementId;
-            var o = {
-                ID: '',
-                prefix: Csw.string(prefix),
+            /// <param name="options" type="Object"></param>
+            /// <param name="options" type="Object"></param>
+            /// <param name="options" type="Object"></param>
+            ///	<returns type="String">A concatenated string of provided values</returns>
+            var _internal = {
+                idCount: 1 + Csw.number(Csw.getGlobalProp('uniqueIdCount'), 0),
+                prefix: '',
+                ID: Csw.string(ID),
                 suffix: Csw.string(suffix),
-                Delimiter: Csw.string(delimiter, '_')
+                Delimiter: Csw.string(delimiter, '_'),
+                elementId: ''
             };
-            if (Csw.isPlainObject(options)) {
-                $.extend(o, options);
-            } else {
-                o.ID = Csw.string(options);
-            }
 
-            elementId = o.ID;
-            if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
-                elementId = o.prefix + o.Delimiter + elementId;
+            if (Csw.isPlainObject(options)) {
+                $.extend(_internal, options);
+            } else {
+                _internal.prefix = options;
             }
-            if (false === Csw.isNullOrEmpty(o.suffix) && false === Csw.isNullOrEmpty(elementId)) {
-                elementId += o.Delimiter + o.suffix;
+            _internal.elementId = Csw.string(_internal.prefix);
+
+            if (false === Csw.isNullOrEmpty(_internal.ID)) {
+                _internal.elementId = _internal.prefix + _internal.Delimiter + _internal.elementId;
             }
-            return elementId;
+            if (false === Csw.isNullOrEmpty(_internal.suffix)) {
+                _internal.elementId += _internal.Delimiter + _internal.suffix;
+            }
+            Csw.setGlobalProp('uniqueIdCount', _internal.idCount);
+            _internal.elementId += _internal.Delimiter += _internal.idCount;
+            return _internal.elementId;
         };
 
         external.makeSafeId = function (options, prefix, suffix, delimiter) {
@@ -213,10 +220,7 @@
             var _external = {};
 
             _external.add = function (key, value) {
-                if (false === Csw.isNullOrEmpty(key) &&
-                        false === Csw.isNullOrEmpty(value)) {
-                    _internal.styles[key] = value;
-                }
+                _internal.styles[key] = value;
             };
 
             _external.set = function (stylesObj) {
@@ -227,7 +231,10 @@
                 var htmlStyle = '', ret = '';
 
                 function buildStyle(val, key) {
-                    htmlStyle += key + ': ' + val + ';';
+                    if (false === Csw.isNullOrEmpty(key) &&
+                        false === Csw.isNullOrEmpty(val)) {
+                        htmlStyle += key + ': ' + val + ';';
+                    }
                 }
 
                 Csw.each(_internal.styles, buildStyle);
