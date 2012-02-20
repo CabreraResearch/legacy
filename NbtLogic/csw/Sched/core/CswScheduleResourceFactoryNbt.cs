@@ -1,6 +1,9 @@
 using ChemSW.Config;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using ChemSW.Nbt.Config;
+using ChemSW.Core;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -11,7 +14,29 @@ namespace ChemSW.Nbt.Sched
 
         public ICswResources make()
         {
-			CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
+
+            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode.NbtExe );
+            PooledConnectionState PooledConnectionState; 
+
+            if( SetupVbls.doesSettingExist( "CloseSchedulerDbConnections" ) )
+            {
+                if( true == CswConvert.ToBoolean( SetupVbls["CloseSchedulerDbConnections"] ) )
+                {
+                    PooledConnectionState = RscAdo.PooledConnectionState.Closed;
+
+                }
+                else
+                {
+                    PooledConnectionState = RscAdo.PooledConnectionState.Open;
+                }
+            }
+            else
+            {
+                PooledConnectionState = RscAdo.PooledConnectionState.Closed;
+            }
+
+
+            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false, null, PooledConnectionState );
 			ReturnVal.InitCurrentUser = InitUser;
             return ( ReturnVal );
         }

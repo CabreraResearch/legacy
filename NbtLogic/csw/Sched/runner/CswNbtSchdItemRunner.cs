@@ -197,8 +197,9 @@ namespace ChemSW.Nbt.Sched
 
 			_CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Sched, SetupMode.NbtExe, true, false ); 
 			
-            _CswNbtResources.SetDbResources( new CswNbtTreeFactory( _Path ) );
+            //_CswNbtResources.SetDbResources( new CswNbtTreeFactory( _Path ) );
 
+            /*
             string CloseSchedulerDbConnectionsVariableName = "CloseSchedulerDbConnections";
             if( _CswSetupVblsNbt.doesSettingExist( CloseSchedulerDbConnectionsVariableName ) && "1" == _CswSetupVblsNbt[CloseSchedulerDbConnectionsVariableName] )
             {
@@ -208,7 +209,7 @@ namespace ChemSW.Nbt.Sched
             {
                 _CswNbtResources.PooledConnectionState = ChemSW.RscAdo.PooledConnectionState.Open;
             }
-
+            */
             _CswLogger = _CswNbtResources.CswLogger;
             //END: Formerlly init cycle resources
 
