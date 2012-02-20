@@ -8,24 +8,28 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtSubField
     {
-        public enum PropColumn
+        public sealed class PropColumn : CswEnum<PropColumn>
         {
-            Field1,
-            Field1_FK,
-            Field1_Date,
-            Field1_Numeric,
-            Field2_Numeric,
-            Field2,
-            Field2_Date,
-            Field3,
-            Field4,
-            Field5,
-            Gestalt, //bz # 6628
-            ClobData,
-            ReadOnly,
-            PendingUpdate,
-            Unknown
-        };
+            private PropColumn( String Name ) : base( Name ) { }
+            public new static IEnumerable<PropColumn> All { get { return CswEnum<PropColumn>.All; } }
+            public static explicit operator PropColumn( string str ) { return Parse( str ); }
+            public static readonly PropColumn Unknown = new PropColumn( "Unknown" );
+
+            public static readonly PropColumn Field1 = new PropColumn( "Field1" );
+            public static readonly PropColumn Field1_FK = new PropColumn( "Field1_FK" );
+            public static readonly PropColumn Field1_Date = new PropColumn( "Field1_Date" );
+            public static readonly PropColumn Field1_Numeric = new PropColumn( "Field1_Numeric" );
+            public static readonly PropColumn Field2_Numeric = new PropColumn( "Field2_Numeric" );
+            public static readonly PropColumn Field2 = new PropColumn( "Field2" );
+            public static readonly PropColumn Field2_Date = new PropColumn( "Field2_Date" );
+            public static readonly PropColumn Field3 = new PropColumn( "Field3" );
+            public static readonly PropColumn Field4 = new PropColumn( "Field4" );
+            public static readonly PropColumn Field5 = new PropColumn( "Field5" );
+            public static readonly PropColumn Gestalt = new PropColumn( "Gestalt" ); //bz # 6628
+            public static readonly PropColumn ClobData = new PropColumn( "ClobData" );
+            public static readonly PropColumn ReadOnly = new PropColumn( "ReadOnly" );
+            public static readonly PropColumn PendingUpdate = new PropColumn( "PendingUpdate" );
+        }
 
         /// <summary>
         /// Names of SubFields of Properties
@@ -36,8 +40,8 @@ namespace ChemSW.Nbt.MetaData
             private SubFieldName( String Name ) : base( Name ) { }
             public new static IEnumerable<SubFieldName> All { get { return CswEnum<SubFieldName>.All; } }
             public static explicit operator SubFieldName( string str ) { return Parse( str ); }
-
             public static readonly SubFieldName Unknown = new SubFieldName( "Unknown" );
+
             public static readonly SubFieldName AllowedAnswers = new SubFieldName( "AllowedAnswers" );
             public static readonly SubFieldName Answer = new SubFieldName( "Answer" );
             public static readonly SubFieldName Barcode = new SubFieldName( "Barcode" );

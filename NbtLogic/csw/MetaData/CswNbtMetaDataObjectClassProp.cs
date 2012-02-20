@@ -217,7 +217,8 @@ namespace ChemSW.Nbt.MetaData
             if( _ObjectClassPropRow["filter"].ToString() != string.Empty )
             {
                 string[] filter = _ObjectClassPropRow["filter"].ToString().Split( FilterDelimiter );
-                CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) filter[0];
                 SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).getFieldTypeRule().SubFields[Column];
                 FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
                 if( filter.GetUpperBound( 0 ) > 1 )

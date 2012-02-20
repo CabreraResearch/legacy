@@ -921,7 +921,8 @@ namespace ChemSW.NbtWebControls
                 CswNbtSubField ret = null;
                 if( SubFieldSelectBox.SelectedValue != string.Empty )
                 {
-                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), SubFieldSelectBox.SelectedValue );
+                    //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), SubFieldSelectBox.SelectedValue );
+                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) SubFieldSelectBox.SelectedValue;
                     ret = SelectedPropLatestVersion.getFieldTypeRule().SubFields[Column];
                 }
                 return ret;
