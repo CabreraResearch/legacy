@@ -95,7 +95,12 @@ namespace ChemSW.Nbt
                 //if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
                 //    ret = NbtViewRenderingMode.Tree;
                 //return ret;
-                return (NbtViewRenderingMode) _RootString[4];
+                NbtViewRenderingMode ret = (NbtViewRenderingMode) _RootString[4];
+                if( ret == NbtViewRenderingMode.Unknown )
+                {
+                    ret = NbtViewRenderingMode.Tree;
+                }
+                return ret;
             }
             set
             {

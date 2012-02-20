@@ -12,7 +12,11 @@ namespace ChemSW.Nbt.MetaData
         {
             private PropColumn( String Name ) : base( Name ) { }
             public new static IEnumerable<PropColumn> All { get { return CswEnum<PropColumn>.All; } }
-            public static explicit operator PropColumn( string str ) { return Parse( str ); }
+            public static explicit operator PropColumn( string str )
+            {
+                PropColumn ret = Parse( str );
+                return ( ret != null ) ? ret : PropColumn.Unknown;
+            }
             public static readonly PropColumn Unknown = new PropColumn( "Unknown" );
 
             public static readonly PropColumn Field1 = new PropColumn( "Field1" );
@@ -39,7 +43,11 @@ namespace ChemSW.Nbt.MetaData
         {
             private SubFieldName( String Name ) : base( Name ) { }
             public new static IEnumerable<SubFieldName> All { get { return CswEnum<SubFieldName>.All; } }
-            public static explicit operator SubFieldName( string str ) { return Parse( str ); }
+            public static explicit operator SubFieldName( string str )
+            {
+                SubFieldName ret = Parse( str );
+                return ( ret != null ) ? ret : SubFieldName.Unknown;
+            }
             public static readonly SubFieldName Unknown = new SubFieldName( "Unknown" );
 
             public static readonly SubFieldName AllowedAnswers = new SubFieldName( "AllowedAnswers" );

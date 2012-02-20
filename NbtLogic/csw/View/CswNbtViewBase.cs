@@ -12,7 +12,11 @@ namespace ChemSW.Nbt
     {
         private NbtViewRenderingMode( string Name ) : base( Name ) { }
         public new static IEnumerable<NbtViewRenderingMode> All { get { return CswEnum<NbtViewRenderingMode>.All; } }
-        public static explicit operator NbtViewRenderingMode( string str ) { return Parse( str ); }
+        public static explicit operator NbtViewRenderingMode( string str )
+        {
+            NbtViewRenderingMode ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewRenderingMode.Unknown;
+        }
         public static readonly NbtViewRenderingMode Unknown = new NbtViewRenderingMode( "Unknown" );
 
         public static readonly NbtViewRenderingMode Tree = new NbtViewRenderingMode( "Tree" );

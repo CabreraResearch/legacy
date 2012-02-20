@@ -75,7 +75,11 @@ namespace ChemSW.Nbt
         {
             private ViewType( String Name ) : base( Name ) { }
             public new static IEnumerable<ViewType> All { get { return CswEnum<ViewType>.All; } }
-            public static explicit operator ViewType( string str ) { return Parse( str ); }
+            public static explicit operator ViewType( string str )
+            {
+                ViewType ret = Parse( str );
+                return ( ret != null ) ? ret : ViewType.Unknown;
+            }
             public static readonly ViewType Unknown = new ViewType( "Unknown" );
 
             public static readonly ViewType Root = new ViewType( "Root" );

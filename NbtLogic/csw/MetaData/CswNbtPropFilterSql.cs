@@ -40,7 +40,11 @@ namespace ChemSW.Nbt.MetaData
         {
             private PropertyFilterMode( String Name ) : base( Name ) { }
             public new static IEnumerable<PropertyFilterMode> All { get { return CswEnum<PropertyFilterMode>.All; } }
-            public static explicit operator PropertyFilterMode( string str ) { return Parse( str ); }
+            public static explicit operator PropertyFilterMode( string str )
+            {
+                PropertyFilterMode ret = Parse( str );
+                return ( ret != null ) ? ret : PropertyFilterMode.Unknown;
+            }
             public static readonly PropertyFilterMode Unknown = new PropertyFilterMode( "Unknown" );
 
             public new static readonly PropertyFilterMode Equals = new PropertyFilterMode( "Equals" );
