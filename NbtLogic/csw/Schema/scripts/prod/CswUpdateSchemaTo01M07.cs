@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 
 
 namespace ChemSW.Nbt.Schema
@@ -26,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             DataRow NewObjectClassRow = ObjectClasstable.NewRow();
             ObjectClasstable.Rows.Add( NewObjectClassRow );
             NewObjectClassRow["objectclass"] = CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass.ToString();
-            ObjectClassUpdate.update( ObjectClasstable ); 
+            ObjectClassUpdate.update( ObjectClasstable );
 
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Approval Status", CswNbtMetaDataFieldType.NbtFieldType.Logical );
@@ -53,14 +54,16 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeType CurrentNodeType in _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ).getNodeTypes() )
             {
                 AtLeastOneNodeTypeWasUpdated = true;
-                CurrentNodeType.getNodeTypeProp( SupplierOcp.PropName ).SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ).ObjectClassId );
+                CurrentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName ).SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ).ObjectClassId );
 
             }//iterate material node types
 
             if( false == AtLeastOneNodeTypeWasUpdated )
             {
                 CswNbtMetaDataNodeType MaterialNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), "Material", "Materials" );
-                MaterialNodeType.getNodeTypeProp( SupplierOcp.PropName ).SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ).ObjectClassId );
+                CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
+                CswNbtMetaDataObjectClass VendorObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass );
+                SupplierNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), VendorObjClass.ObjectClassId );
             }
 
             #endregion case 24981

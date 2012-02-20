@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        public static string AssemblyPropertyName { get { return "Supplier"; } }
+        public static string SupplierPropertyName { get { return "Supplier"; } }
         public static string ApprovalStatusPropertyName { get { return "Approval Status"; } }
         public static string PartNumberPropertyName { get { return "Part Number"; } }
         public static string SpecificGravityPropertyName { get { return "Specific Gravity"; } }
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[AssemblyPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[SupplierPropertyName].AsRelationship );
             }
         }
 
