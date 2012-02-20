@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -6,33 +8,19 @@ namespace ChemSW.Nbt
     /// <summary>
     /// View Rendering Mode
     /// </summary>
-    public enum NbtViewRenderingMode
+    public sealed class NbtViewRenderingMode : CswEnum<NbtViewRenderingMode>
     {
-        /// <summary>
-        /// The View should be rendered as a Tree
-        /// </summary>
-        Tree,
-        /// <summary>
-        /// The View should be rendered as a Grid
-        /// </summary>
-        Grid,
-		/// <summary>
-		/// The View should be rendered as a List
-		/// </summary>
-		List,
-		/// <summary>
-		/// The View should be rendered as a Table
-		/// </summary>
-		Table,
-		/// <summary>
-        /// Unknown rendering mode
-        /// </summary>
-        Unknown,
-        /// <summary>
-        /// Any View render mode
-        /// </summary>
-        Any
-    };
+        private NbtViewRenderingMode( string Name ) : base( Name ) { }
+        public new static IEnumerable<NbtViewRenderingMode> All { get { return CswEnum<NbtViewRenderingMode>.All; } }
+        public static explicit operator NbtViewRenderingMode( string str ) { return Parse( str ); }
+        public static readonly NbtViewRenderingMode Unknown = new NbtViewRenderingMode( "Unknown" );
+
+        public static readonly NbtViewRenderingMode Tree = new NbtViewRenderingMode( "Tree" );
+        public static readonly NbtViewRenderingMode Grid = new NbtViewRenderingMode( "Grid" );
+        public static readonly NbtViewRenderingMode List = new NbtViewRenderingMode( "List" );
+        public static readonly NbtViewRenderingMode Table = new NbtViewRenderingMode( "Table" );
+        public static readonly NbtViewRenderingMode Any = new NbtViewRenderingMode( "Any" );
+    }
 
     /// <summary>
     /// View permissions concerning adding new nodes

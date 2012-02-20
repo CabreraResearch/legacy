@@ -91,10 +91,11 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NbtViewRenderingMode ret;
-                if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
-                    ret = NbtViewRenderingMode.Tree;
-                return ret;
+                //NbtViewRenderingMode ret;
+                //if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
+                //    ret = NbtViewRenderingMode.Tree;
+                //return ret;
+                return (NbtViewRenderingMode) _RootString[4];
             }
             set
             {
@@ -293,7 +294,10 @@ namespace ChemSW.Nbt
                 if( Node.Attributes["selectable"] != null )
                     Selectable = Convert.ToBoolean( Node.Attributes["selectable"].Value );
                 if( Node.Attributes["mode"] != null )
-                    ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Node.Attributes["mode"].Value, true );
+                {
+                    //ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Node.Attributes["mode"].Value, true );
+                    ViewMode = (NbtViewRenderingMode) Node.Attributes["mode"].Value;
+                }
                 if( Node.Attributes["width"] != null && Node.Attributes["width"].Value != String.Empty )
                     Width = CswConvert.ToInt32( Node.Attributes["width"].Value );
                 //if( Node.Attributes[ "editmode" ] != null )
@@ -365,7 +369,8 @@ namespace ChemSW.Nbt
                 string _Mode = CswConvert.ToString( Node["mode"] );
                 if( !string.IsNullOrEmpty( _Mode ) )
                 {
-                    ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), _Mode, true );
+                    //ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), _Mode, true );
+                    ViewMode = (NbtViewRenderingMode) _Mode;
                 }
 
                 Int32 _Width = CswConvert.ToInt32( Node["width"] );

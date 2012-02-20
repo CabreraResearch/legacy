@@ -106,13 +106,22 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         } // getViewTree()
 
-        private JObject _makeViewTreeObject( ref JArray DocRoot, string Category, ItemType Type, object Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
+        private JObject _makeViewTreeObject( ref JArray DocRoot, string Category, ItemType Type, object Id, string Text )
+        {
+            return _makeViewTreeObject( ref DocRoot, Category, Type, Id, Text, NbtViewRenderingMode.Unknown );
+        }
+
+        private JObject _makeViewTreeObject( ref JArray DocRoot, string Category, ItemType Type, object Id, string Text, NbtViewRenderingMode ViewMode )
         {
             JArray CategoryNode = _getCategoryObject( ref DocRoot, Category );
             return _makeItemObject( CategoryNode, Type, Id, Text, ViewMode );
         }
 
-        private static JObject _makeItemObject( JArray ParentNode, ItemType ItemType, object Id, string Text, NbtViewRenderingMode ViewMode = NbtViewRenderingMode.Unknown )
+        private static JObject _makeItemObject( JArray ParentNode, ItemType ItemType, object Id, string Text )
+        {
+            return _makeItemObject( ParentNode, ItemType, Id, Text, NbtViewRenderingMode.Unknown );
+        }
+        private static JObject _makeItemObject( JArray ParentNode, ItemType ItemType, object Id, string Text, NbtViewRenderingMode ViewMode )
         {
             string Type = ItemType.ToString().ToLower();
             string Mode = ViewMode.ToString().ToLower();
