@@ -4,56 +4,89 @@
 (function _cswClientSession() {
     'use strict';
 
-    var _expiretime = '';
-    var _expiretimeInterval;
-    var _expiredInterval;
-
     var clientSession = (function clientSessionP() {
+        var internal = {
+            AccessId: '',
+            UserName: '',
+            Password: '',
+            ForMobile: false,
+            onAuthenticate: null, // function (UserName) {} 
+            onFail: null, // function (errormessage) {} 
+            logoutpath: '',
+            authenticateUrl: '/NbtWebApp/wsNBT.asmx/authenticate',
+            DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
+            onDeauthenticate: '',
+            expiretimeInterval: '',
+            expiretime: '',
+            expiredInterval: ''
+        };
+        var external = {};
 
-        function finishLogout() {
-            var logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
+        external.finishLogout = function () {
+            internal.logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
             Csw.clientDb.clear();
             Csw.cookie.clearAll();
-            if (false === Csw.isNullOrEmpty(logoutpath)) {
-                window.location = logoutpath;
+            if (false === Csw.isNullOrEmpty(internal.logoutpath)) {
+                window.location = internal.logoutpath;
             } else {
                 window.location = Csw.getGlobalProp('homeUrl');
             }
-        }
+        };
 
-        function logout(options) {
-            var o = {
-                DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-                onDeauthenticate: function () {
-                }
-            };
-
-            if (options) {
-                $.extend(o, options);
+        external.login = function (loginopts) {
+            if (loginopts) {
+                $.extend(internal, loginopts);
             }
 
             Csw.ajax.post({
-                url: o.DeauthenticateUrl,
+                url: internal.authenticateUrl,
+                data: {
+                    AccessId: internal.AccessId,
+                    UserName: internal.UserName,
+                    Password: internal.Password,
+                    ForMobile: internal.ForMobile
+                },
+                success: function () {
+                    Csw.cookie.set(Csw.cookie.cookieNames.Username, internal.UserName);
+                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, internal.logoutPath);
+                    Csw.tryExec(internal.onAuthenticate, internal.UserName);
+                },
+                onloginfail: function (txt) {
+                    Csw.tryExec(internal.onFail, txt);
+                },
+                error: function () {
+                    Csw.tryExec(internal.onFail, 'Webservice Error');
+                }
+            }); // ajax
+        };
+
+        external.logout = function (options) {
+            if (options) {
+                $.extend(internal, options);
+            }
+
+            Csw.ajax.post({
+                url: internal.DeauthenticateUrl,
                 data: {},
                 success: function () {
-                    finishLogout();
-                    o.onDeauthenticate();
+                    external.finishLogout();
+                    internal.onDeauthenticate();
                 }
             });
         }
 
-        function _checkExpired() {
+        internal.checkExpired = function () {
             var now = new Date();
-            if (Date.parse(_expiretime) - Date.parse(now) < 0) {
-                window.clearInterval(_expiredInterval);
-                logout();
+            if (Date.parse(internal.expiretime) - Date.parse(now) < 0) {
+                window.clearInterval(internal.expiredInterval);
+                external.logout();
             }
-        }
+        };
 
-        function _checkExpireTime() {
+        internal.checkExpireTime = function () {
             var now = new Date();
-            if (Date.parse(_expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
-                window.clearInterval(_expiretimeInterval);
+            if (Date.parse(internal.expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
+                window.clearInterval(internal.expiretimeInterval);
                 $.CswDialog('ExpireDialog', {
                     'onYes': function () {
                         Csw.ajax.post({
@@ -64,29 +97,29 @@
                     }
                 });
             }
-        }
+        };
 
-        function _setExpireTimeInterval() {
-            window.clearInterval(_expiretimeInterval);
-            window.clearInterval(_expiredInterval);
-            _expiretimeInterval = window.setInterval(function () {
-                _checkExpireTime();
+        internal.setExpireTimeInterval = function () {
+            window.clearInterval(internal.expiretimeInterval);
+            window.clearInterval(internal.expiredInterval);
+            internal.expiretimeInterval = window.setInterval(function () {
+                internal.checkExpireTime();
             }, 60000);
-            _expiredInterval = window.setInterval(function () {
-                _checkExpired();
+            internal.expiredInterval = window.setInterval(function () {
+                internal.checkExpired();
             }, 60000);
-        }
+        };
 
-        function getExpireTime() {
-            return _expiretime;
-        }
+        external.getExpireTime = function () {
+            return internal.expiretime;
+        };
 
-        function setExpireTime(value) {
-            _expiretime = value;
-            _setExpireTimeInterval();
-        }
+        external.setExpireTime = function (value) {
+            internal.expiretime = value;
+            internal.setExpireTimeInterval();
+        };
 
-        function handleAuthenticationStatus(options) {
+        external.handleAuthenticationStatus = function (options) {
             var o = {
                 status: '',
                 success: function () {
@@ -174,9 +207,9 @@
             } else if (false === Csw.isNullOrEmpty(txt) && o.status !== 'Authenticated') {
                 o.failure(txt, o.status);
             }
-        }
+        };
 
-        function isAdministrator(options) {
+        external.isAdministrator = function (options) {
             var o = {
                 'Yes': function () {
                 },
@@ -197,16 +230,9 @@
                     }
                 }
             });
-        }
-
-        return {
-            isAdministrator: isAdministrator,
-            finishLogout: finishLogout,
-            logout: logout,
-            handleAuthenticationStatus: handleAuthenticationStatus,
-            getExpireTime: getExpireTime,
-            setExpireTime: setExpireTime
         };
+
+        return external;
 
     } ());
     Csw.register('clientSession', clientSession);

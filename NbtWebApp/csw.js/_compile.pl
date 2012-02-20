@@ -25,7 +25,8 @@ sub extract
 	while((my $filename = readdir(JSDIR)))
 	{
 		if($filename =~ /.*\.js$/ &&
-		   $filename !~ /-vsdoc/) 
+		   $filename !~ /-vsdoc/ &&
+		   $filename !~ /.min\.js/) 
 		{
 			printf("Compiling: $path\\$filename\n");
 			$filelist .= "--js $path\\$filename ";
