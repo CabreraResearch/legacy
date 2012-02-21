@@ -145,7 +145,7 @@
             if (false === Csw.isNullOrEmpty(_internal.suffix)) {
                 elementId.push(_internal.suffix);
             }
-            if (Csw.bool(isUnique)) {
+            if (Csw.bool(isUnique, true)) {
                 Csw.setGlobalProp('uniqueIdCount', _internal.idCount);
                 elementId.push(_internal.idCount);
             }
