@@ -147,28 +147,36 @@ namespace ChemSW.Nbt
         public static readonly NbtViewVisibility Property = new NbtViewVisibility( "Property" );
     }
 
-
     /// <summary>
     /// Type of ViewNode
     /// </summary>
-    public enum NbtViewNodeType
+    public sealed class NbtViewNodeType : CswEnum<NbtViewNodeType>
     {
+        private NbtViewNodeType( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewNodeType> _All { get { return CswEnum<NbtViewNodeType>.All; } }
+        public static explicit operator NbtViewNodeType( string str )
+        {
+            NbtViewNodeType ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewNodeType.Unknown;
+        }
+        public static readonly NbtViewNodeType Unknown = new NbtViewNodeType( "Unknown" );
+
         /// <summary>
         /// Property
         /// </summary>
-        CswNbtViewProperty,
+        public static readonly NbtViewNodeType CswNbtViewProperty = new NbtViewNodeType( "CswNbtViewProperty" );
         /// <summary>
         /// Property Filter
         /// </summary>
-        CswNbtViewPropertyFilter,
+        public static readonly NbtViewNodeType CswNbtViewPropertyFilter = new NbtViewNodeType( "CswNbtViewPropertyFilter" );
         /// <summary>
         /// Relationship
         /// </summary>
-        CswNbtViewRelationship,
+        public static readonly NbtViewNodeType CswNbtViewRelationship = new NbtViewNodeType( "CswNbtViewRelationship" );
         /// <summary>
         /// Root
         /// </summary>
-        CswNbtViewRoot
+        public static readonly NbtViewNodeType CswNbtViewRoot = new NbtViewNodeType( "CswNbtViewRoot" );
     }
 
     #endregion Enums

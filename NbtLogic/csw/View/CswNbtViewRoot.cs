@@ -21,9 +21,15 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NbtViewNodeType ret;
-                if( !Enum.TryParse<NbtViewNodeType>( _RootString[0], out ret ) )
+                //NbtViewNodeType ret;
+                //if( !Enum.TryParse<NbtViewNodeType>( _RootString[0], out ret ) )
+                //    ret = NbtViewNodeType.CswNbtViewRoot;
+                //return ret;
+                NbtViewNodeType ret = (NbtViewNodeType) _RootString[0];
+                if( ret == NbtViewNodeType.Unknown )
+                {
                     ret = NbtViewNodeType.CswNbtViewRoot;
+                }
                 return ret;
             }
         }
