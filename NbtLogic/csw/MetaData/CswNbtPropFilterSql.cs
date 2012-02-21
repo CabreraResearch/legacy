@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.MetaData
         public sealed class PropertyFilterMode : CswEnum<PropertyFilterMode>
         {
             private PropertyFilterMode( String Name ) : base( Name ) { }
-            public new static IEnumerable<PropertyFilterMode> _All { get { return CswEnum<PropertyFilterMode>.All; } }
+            public static IEnumerable<PropertyFilterMode> _All { get { return CswEnum<PropertyFilterMode>.All; } }
             public static explicit operator PropertyFilterMode( string str )
             {
                 PropertyFilterMode ret = Parse( str );

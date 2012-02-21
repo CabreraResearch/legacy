@@ -74,7 +74,7 @@ namespace ChemSW.Nbt
         public sealed class ViewType : CswEnum<ViewType>
         {
             private ViewType( String Name ) : base( Name ) { }
-            public new static IEnumerable<ViewType> _All { get { return CswEnum<ViewType>.All; } }
+            public static IEnumerable<ViewType> _All { get { return CswEnum<ViewType>.All; } }
             public static explicit operator ViewType( string str )
             {
                 ViewType ret = Parse( str );

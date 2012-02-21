@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.MetaData
         public sealed class PropColumn : CswEnum<PropColumn>
         {
             private PropColumn( String Name ) : base( Name ) { }
-            public new static IEnumerable<PropColumn> _All { get { return CswEnum<PropColumn>.All; } }
+            public static IEnumerable<PropColumn> _All { get { return CswEnum<PropColumn>.All; } }
             public static explicit operator PropColumn( string str )
             {
                 PropColumn ret = Parse( str );
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.MetaData
         public sealed class SubFieldName : CswEnum<SubFieldName>
         {
             private SubFieldName( String Name ) : base( Name ) { }
-            public new static IEnumerable<SubFieldName> _All { get { return CswEnum<SubFieldName>.All; } }
+            public static IEnumerable<SubFieldName> _All { get { return CswEnum<SubFieldName>.All; } }
             public static explicit operator SubFieldName( string str )
             {
                 SubFieldName ret = Parse( str );

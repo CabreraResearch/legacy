@@ -11,7 +11,7 @@ namespace ChemSW.Nbt
     public sealed class NbtViewRenderingMode : CswEnum<NbtViewRenderingMode>
     {
         private NbtViewRenderingMode( string Name ) : base( Name ) { }
-        public new static IEnumerable<NbtViewRenderingMode> _All { get { return CswEnum<NbtViewRenderingMode>.All; } }
+        public static IEnumerable<NbtViewRenderingMode> _All { get { return CswEnum<NbtViewRenderingMode>.All; } }
         public static explicit operator NbtViewRenderingMode( string str )
         {
             NbtViewRenderingMode ret = Parse( str );
@@ -32,7 +32,7 @@ namespace ChemSW.Nbt
     public sealed class NbtViewAddChildrenSetting : CswEnum<NbtViewAddChildrenSetting>
     {
         private NbtViewAddChildrenSetting( string Name ) : base( Name ) { }
-        public new static IEnumerable<NbtViewAddChildrenSetting> _All { get { return CswEnum<NbtViewAddChildrenSetting>.All; } }
+        public static IEnumerable<NbtViewAddChildrenSetting> _All { get { return CswEnum<NbtViewAddChildrenSetting>.All; } }
         public static explicit operator NbtViewAddChildrenSetting( string str )
         {
             NbtViewAddChildrenSetting ret = Parse( str );
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// DEPRECATED For backwards-compatibility, this means InView
         /// </summary>
-        public static readonly NbtViewAddChildrenSetting All = new NbtViewAddChildrenSetting( "All" );
+        public new static readonly NbtViewAddChildrenSetting All = new NbtViewAddChildrenSetting( "All" );
         /// <summary>
         /// DEPRECATED For backwards-compatibility, this means None
         /// </summary>
@@ -65,50 +65,56 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Type of XML node used in Views
     /// </summary>
-    public enum CswNbtViewXmlNodeName
+    public sealed class CswNbtViewXmlNodeName : CswEnum<CswNbtViewXmlNodeName>
     {
+        private CswNbtViewXmlNodeName( string Name ) : base( Name ) { }
+        public static IEnumerable<CswNbtViewXmlNodeName> _All { get { return CswEnum<CswNbtViewXmlNodeName>.All; } }
+        public static explicit operator CswNbtViewXmlNodeName( string str )
+        {
+            CswNbtViewXmlNodeName ret = Parse( str );
+            return ( ret != null ) ? ret : CswNbtViewXmlNodeName.Unknown;
+        }
+        public static readonly CswNbtViewXmlNodeName Unknown = new CswNbtViewXmlNodeName( "Unknown" );
+
         /// <summary>
         /// The real Root node of a View
         /// </summary>
-        TreeView,
+        public static readonly CswNbtViewXmlNodeName TreeView = new CswNbtViewXmlNodeName( "TreeView" );
         /// <summary>
         /// A Relationship in the View
         /// </summary>
-        Relationship,
+        public static readonly CswNbtViewXmlNodeName Relationship = new CswNbtViewXmlNodeName( "Relationship" );
         /// <summary>
         /// Group-By
         /// </summary>
-        Group,
+        public static readonly CswNbtViewXmlNodeName Group = new CswNbtViewXmlNodeName( "Group" );
         /// <summary>
         /// A Property
         /// </summary>
-        Property,
+        public static readonly CswNbtViewXmlNodeName Property = new CswNbtViewXmlNodeName( "Property" );
         /// <summary>
         /// A Property Filter
         /// </summary>
-        Filter,
+        public static readonly CswNbtViewXmlNodeName Filter = new CswNbtViewXmlNodeName( "Filter" );
         /// <summary>
         /// The FilterMode of a Filter
         /// </summary>
-        FilterMode,
+        public static readonly CswNbtViewXmlNodeName FilterMode = new CswNbtViewXmlNodeName( "FilterMode" );
         /// <summary>
         /// And, Or, or And Not for a filter
         /// </summary>
-        Conjunction,
-        //RetrievalType,
+        public static readonly CswNbtViewXmlNodeName Conjunction = new CswNbtViewXmlNodeName( "Conjunction" );
+        //public static readonly CswNbtViewXmlNodeName RetrievalType= new CswNbtViewXmlNodeName( "RetrievalType" );
         /// <summary>
         /// The Value of a filter
         /// </summary>
-        Value,
+        public static readonly CswNbtViewXmlNodeName Value = new CswNbtViewXmlNodeName( "Value" );
         /// <summary>
         /// Whether the Filter is CaseSensitive
         /// </summary>
-        CaseSensitive,
-        /// <summary>
-        /// Unknown ViewNode 
-        /// </summary>
-        Unknown
-    };
+        public static readonly CswNbtViewXmlNodeName CaseSensitive = new CswNbtViewXmlNodeName( "CaseSensitive" );
+    }
+
     /// <summary>
     /// Visibility permission setting on a View
     /// </summary>
