@@ -9,6 +9,8 @@
             $parent: '',
             ID: '',
             cellSet: { rows: 1, columns: 1 },
+            firstRow: null,
+            firstCol: null,
             onSwap: null,
             onAddClick: null,
             onConfigOn: null,
@@ -27,7 +29,9 @@
             showExpandRowButton: false,
             showExpandColButton: false,
             OddCellRightAlign: false,
-            ReadOnly: false
+            ReadOnly: false,
+            called: 0,
+            created: []
         };
         var external = {};
 
@@ -79,7 +83,7 @@
             // add a row and column
             internal.getCell((tablemaxrows / internal.cellSet.rows) + 1,
                              (tablemaxcolumns / internal.cellSet.columns));
-            external.table.finish(null);
+            external.table.finish(null, internal.firstRow, internal.firstCol);
 
             if (external.isConfig()) {
                 external.table.findCell('.CswLayoutTable_cell')
@@ -94,7 +98,7 @@
             // add a row and column
             internal.getCell((tablemaxrows / internal.cellSet.rows),
                              (tablemaxcolumns / internal.cellSet.columns) + 1);
-            external.table.finish(null);
+            external.table.finish(null, internal.firstRow, internal.firstCol);
 
             if (external.isConfig()) {
                 external.table.findCell('.CswLayoutTable_cell')
@@ -114,36 +118,46 @@
             }
             realrow = ((row - 1) * internal.cellSet.rows) + cellsetrow;
             realcolumn = ((column - 1) * internal.cellSet.columns) + cellsetcolumn;
-            cell = external.table.cell(realrow, realcolumn);
+
+            cell = external.table.cell(realrow, realcolumn, internal.ID);
+
             return cell;
         };
 
-        internal.onCreateCell = function (cell, realrow, realcolumn) {
-            var row = Math.ceil(realrow / internal.cellSet.rows),
-                column = Math.ceil(realcolumn / internal.cellSet.columns),
-                cellsetrow = Csw.number(internal.cellSet.rows - realrow % internal.cellSet.rows),
-                cellsetcolumn = Csw.number(internal.cellSet.columns - realcolumn % internal.cellSet.columns);
+        internal.onCreateCell = function (cell, row, column, isFillerCell) {
+            var realrow = Math.ceil(row / internal.cellSet.rows),
+                    realcolumn = Math.ceil(column / internal.cellSet.columns),
+                    cellsetrow = Csw.number(internal.cellSet.rows - realrow % internal.cellSet.rows),
+                    cellsetcolumn = Csw.number(internal.cellSet.columns - realcolumn % internal.cellSet.columns);
+
+            if (null === internal.firstRow || realrow < internal.firstRow) {
+                internal.firstRow = realrow;
+            }
+
+            if (null === internal.firstCol || realcolumn < internal.firstCol) {
+                internal.firstCol = realcolumn;
+            }
 
             cell.propNonDom({
-                row: row,
-                column: column,
+                row: realrow,
+                column: realcolumn,
                 cellsetrow: cellsetrow,
                 cellsetcolumn: cellsetcolumn
             });
 
             cell.bind('click', function (ev, dd) {
-                internal.onClick(ev, dd, row, column);
+                internal.onClick(ev, dd, realrow, realcolumn);
             }).$.droppable({
                 hoverClass: 'CswLayoutTable_hover',
                 drop: function (ev, dd) {
                     internal.onDrop(ev, dd, $(this));
                 }
             })
-                .hover(function (ev, dd) {
-                    internal.onHoverIn(ev, dd, $(this));
-                }, function (ev, dd) {
-                    internal.onHoverOut(ev, dd, $(this));
-                });
+                    .hover(function (ev, dd) {
+                        internal.onHoverIn(ev, dd, $(this));
+                    }, function (ev, dd) {
+                        internal.onHoverOut(ev, dd, $(this));
+                    });
 
             cell.div({ cssclass: 'CswLayoutTable_celldiv' });
         };
@@ -196,7 +210,10 @@
 
         internal.eachCell = function (cellSet, func) {
             for (var r = 1; r <= internal.cellSet.rows; r += 1) {
-                for (var c = 1; c <= internal.cellSet.rows; c += 1) {
+                for (var c = 1; c <= internal.cellSet.columns; c += 1) {
+                    if (cellSet[r] === undefined) {
+                        cellSet[r] = Csw.array();
+                    }
                     func(cellSet[r][c], r, c);
                 }
             }
@@ -221,47 +238,44 @@
                     swaprow: dropCells[1][1].propNonDom('row'),
                     swapcolumn: dropCells[1][1].propNonDom('column')
                 });
-                var onSuccess = [];
+
 
                 for (var r = 1; r <= internal.cellSet.rows; r += 1) {
                     for (var c = 1; c <= internal.cellSet.columns; c += 1) {
-                        var onSuccessOpts = {};
-                        onSuccessOpts.dragCell = dragCells[r][c];
-                        onSuccessOpts.dropCell = dropCells[r][c];
+                        var dragCell = dragCells[r][c];
+                        var dropCell = dropCells[r][c];
 
-                        var onSuccessFunc = function (opts) {
-                            opts.dragCell.removeClass('CswLayoutTable_dragcell');
-                            var $dragCellDiv = opts.dragCell.children('div').$.clone(true, true);
-                            opts.dropCell.removeClass('CswLayoutTable_dragcell');
-                            var $dropCellDiv = opts.dropCell.children('div').$.clone(true, true);
+                        dragCell.removeClass('CswLayoutTable_dragcell');
+                        var $dragCellDiv = dragCell.children('div').$;
+                        dropCell.removeClass('CswLayoutTable_dragcell');
+                        var $dropCellDiv = dropCell.children('div').$;
 
-                            opts.dragCell.children('div').remove();
-                            opts.dragCell.append($dropCellDiv);
+                        dropCell.$.append($dragCellDiv);
 
-                            opts.dropCell.children('div').remove();
-                            opts.dropCell.append($dragCellDiv);
-                        };
-                        onSuccess.push(Csw.makeDelegate(onSuccessFunc, onSuccessOpts));
+                        //dragCell.children('div');
+                        dragCell.$.append($dropCellDiv);
 
-                        //                        $dragCellDiv.position({
-                        //                            my: 'left top',
-                        //                            at: 'left top',
-                        //                            of: $dropCellDiv,
-                        //                            offset: external.table.propNonDom('cellpadding')
-                        //                        });
+                        //dropCell.children('div');
+                        
 
-                        //                        $dropCellDiv.position({
-                        //                            my: 'left top',
-                        //                            at: 'left top',
-                        //                            of: $dragCellDiv,
-                        //                            offset: external.table.propNonDom('cellpadding')
-                        //                        });
+//                        $dragCellDiv.position({
+//                            my: 'left top',
+//                            at: 'left top',
+//                            of: $dropCellDiv,
+//                            offset: external.table.propNonDom('cellpadding')
+//                        });
+
+//                        $dropCellDiv.position({
+//                            my: 'left top',
+//                            at: 'left top',
+//                            of: $dragCellDiv,
+//                            offset: external.table.propNonDom('cellpadding')
+//                        });
+
+
                     }
                 }
 
-                for (var i = 0; i < onSuccess.length; i += 1) {
-                    onSuccess[i]();
-                }
             } // if(external.isConfig($external.table))
         }; // internal.onDrop()
 
@@ -289,12 +303,14 @@
                     }
                 }
             }
+
             return cellSet;
         };
 
         external.toggleConfig = function () {
             /// <summary>Toggles config mode.</summary>
             /// <returns type="Boolean">The resulting config state.</returns>
+            Csw.log(internal.called);
             var ret = false;
             if (external.isConfig(external.table)) {
                 external.configOff();
@@ -345,7 +361,7 @@
             if (internal.expandRowBtn) {
                 internal.expandRowBtn.show();
             }
-            external.table.finish(null);
+            external.table.finish(null, internal.firstRow, internal.firstCol);
 
             external.table.findCell('.CswLayoutTable_cell')
                 .addClass('CswLayoutTable_configcell');
@@ -384,9 +400,9 @@
                 OddCellRightAlign: internal.OddCellRightAlign,
                 width: internal.width,
                 align: internal.align,
-                onCreateCell: function (ev, newCell, realrow, realcolumn) {
-                    if (newCell.isValid) {
-                        internal.onCreateCell(newCell, realrow, realcolumn, internal.cellSet.rows, internal.cellSet.columns);
+                onCreateCell: function (ev, newCell, realrow, realcolumn, isFillerCell) {
+                    if (false === Csw.isNullOrEmpty(newCell)) {
+                        internal.onCreateCell(newCell, realrow, realcolumn, isFillerCell);
                     }
                 }
             });
