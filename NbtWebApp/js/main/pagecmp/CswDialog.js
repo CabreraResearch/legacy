@@ -153,7 +153,7 @@
                 EditMode: Csw.enums.editMode.Add,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
-                    o.onAddNode(nodeid, cswnbtnodekey);
+                    Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey);
                 },
                 onInitFinish: function () {
                     openDialog($div, 800, 600, null, title);
