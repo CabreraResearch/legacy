@@ -116,7 +116,7 @@
                 $.extend(internal, options);
             }
 
-            var storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix);
+            var storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix, false);
             internal.cbaPrevSelected = Csw.controls.dom.makeId(storeDataId, internal.cbaPrevSelectedSuffix);
 
             Csw.clientDb.removeItem(storeDataId);
@@ -241,7 +241,7 @@
                     var cache = Csw.clientDb.getItem(storeDataId);
                     cache.MultiIsUnchanged = false;
                     if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row], 'values')) {
-                        cache.data[row].values[col] = cB.checked;
+                        cache.data[row].values[col] = cB.$.is(':checked');
                     }
                     if (internal.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
                         var data = Csw.clientDb.getItem(internal.cbaPrevSelected);

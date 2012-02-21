@@ -105,7 +105,7 @@
             return ret;
         };
 
-        external.makeId = function (options, ID, suffix, delimiter) {
+        external.makeId = function (options, ID, suffix, delimiter, isUnique) {
             /// <summary>
             ///   Generates an ID for DOM assignment
             /// </summary>
@@ -135,7 +135,7 @@
                 _internal.prefix = options;
             }
             _internal.Delimiter = Csw.string(_internal.Delimiter, '_');
-            
+
             if (false === Csw.isNullOrEmpty(_internal.prefix)) {
                 elementId.push(Csw.string(_internal.prefix));
             }
@@ -145,8 +145,10 @@
             if (false === Csw.isNullOrEmpty(_internal.suffix)) {
                 elementId.push(_internal.suffix);
             }
-            Csw.setGlobalProp('uniqueIdCount', _internal.idCount);
-            elementId.push(_internal.idCount);
+            if (Csw.bool(isUnique)) {
+                Csw.setGlobalProp('uniqueIdCount', _internal.idCount);
+                elementId.push(_internal.idCount);
+            }
             return elementId.join(_internal.Delimiter);
         };
 
