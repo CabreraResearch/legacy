@@ -11,7 +11,7 @@ namespace ChemSW.Nbt
     public sealed class NbtViewRenderingMode : CswEnum<NbtViewRenderingMode>
     {
         private NbtViewRenderingMode( string Name ) : base( Name ) { }
-        public new static IEnumerable<NbtViewRenderingMode> All { get { return CswEnum<NbtViewRenderingMode>.All; } }
+        public new static IEnumerable<NbtViewRenderingMode> _All { get { return CswEnum<NbtViewRenderingMode>.All; } }
         public static explicit operator NbtViewRenderingMode( string str )
         {
             NbtViewRenderingMode ret = Parse( str );
@@ -29,29 +29,38 @@ namespace ChemSW.Nbt
     /// <summary>
     /// View permissions concerning adding new nodes
     /// </summary>
-    public enum NbtViewAddChildrenSetting
+    public sealed class NbtViewAddChildrenSetting : CswEnum<NbtViewAddChildrenSetting>
     {
+        private NbtViewAddChildrenSetting( string Name ) : base( Name ) { }
+        public new static IEnumerable<NbtViewAddChildrenSetting> _All { get { return CswEnum<NbtViewAddChildrenSetting>.All; } }
+        public static explicit operator NbtViewAddChildrenSetting( string str )
+        {
+            NbtViewAddChildrenSetting ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewAddChildrenSetting.Unknown;
+        }
+        public static readonly NbtViewAddChildrenSetting Unknown = new NbtViewAddChildrenSetting( "Unknown" );
+
         /// <summary>
         /// No children can be added
         /// </summary>
-        None,
+        public static readonly NbtViewAddChildrenSetting None = new NbtViewAddChildrenSetting( "None" );
         /// <summary>
         /// Only nodetypes defined in this view can be added as children
         /// </summary>
-        InView,
+        public static readonly NbtViewAddChildrenSetting InView = new NbtViewAddChildrenSetting( "InView" );
         /// <summary>
         /// DEPRECATED Any child nodetype can be added to any nodetype
         /// </summary>
-        All,
+        public static readonly NbtViewAddChildrenSetting True = new NbtViewAddChildrenSetting( "True" );
         /// <summary>
         /// DEPRECATED For backwards-compatibility, this means InView
         /// </summary>
-        True,
+        public static readonly NbtViewAddChildrenSetting All = new NbtViewAddChildrenSetting( "All" );
         /// <summary>
         /// DEPRECATED For backwards-compatibility, this means None
         /// </summary>
-        False
-    };
+        public static readonly NbtViewAddChildrenSetting False = new NbtViewAddChildrenSetting( "False" );
+    }
 
     /// <summary>
     /// Type of XML node used in Views

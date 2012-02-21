@@ -421,7 +421,10 @@ namespace ChemSW.Nbt
                     //if( StringRelationship[14] != String.Empty )
                     //    ShowInGrid = Convert.ToBoolean( StringRelationship[14] );
                     if( StringRelationship[15] != String.Empty )
-                        AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), StringRelationship[15], true );
+                    {
+                        //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), StringRelationship[15], true );
+                        AddChildren = (NbtViewAddChildrenSetting) StringRelationship[15];
+                    }
                     if( StringRelationship[16] != String.Empty )
                         AllowDelete = Convert.ToBoolean( StringRelationship[16] );
                     if( StringRelationship[17] != String.Empty )
@@ -511,7 +514,10 @@ namespace ChemSW.Nbt
                 if( RelationshipNode.Attributes[ShowInTreeAttrName] != null )
                     ShowInTree = Convert.ToBoolean( RelationshipNode.Attributes[ShowInTreeAttrName].Value );
                 if( RelationshipNode.Attributes[AllowAddChildrenAttrName] != null && RelationshipNode.Attributes[AllowAddChildrenAttrName].Value.ToString() != string.Empty )
-                    AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), RelationshipNode.Attributes[AllowAddChildrenAttrName].Value, true );
+                {
+                    //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), RelationshipNode.Attributes[AllowAddChildrenAttrName].Value, true );
+                    AddChildren = (NbtViewAddChildrenSetting) RelationshipNode.Attributes[AllowAddChildrenAttrName].Value;
+                }
                 
                 if( RelationshipNode.Attributes[AllowViewAttrName] != null && RelationshipNode.Attributes[AllowViewAttrName].ToString() != string.Empty )
                     AllowView = Convert.ToBoolean( RelationshipNode.Attributes[AllowViewAttrName].Value );
@@ -640,7 +646,8 @@ namespace ChemSW.Nbt
                 string _AllowAddChildrenAttrName = CswConvert.ToString( RelationshipObj[AllowAddChildrenAttrName] );
                 if( !string.IsNullOrEmpty( _AllowAddChildrenAttrName ) )
                 {
-                    AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddChildrenAttrName, true );
+                    //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddChildrenAttrName, true );
+                    AddChildren = (NbtViewAddChildrenSetting) _AllowAddChildrenAttrName;
                 }
 
                 if( RelationshipObj[AllowViewAttrName] != null )
