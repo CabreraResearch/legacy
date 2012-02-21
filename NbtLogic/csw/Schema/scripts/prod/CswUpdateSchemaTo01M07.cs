@@ -26,16 +26,14 @@ namespace ChemSW.Nbt.Schema
             #region case 25050
 
             string newCat = "SI_Example";
-            if( null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "ExampleSiInspectionDesign" ) &&
-                null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "ExampleSiTargetItem" ) &&
-                null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "ExampleSiGroup" ) &&
-                null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "ExampleSiScheduler" ) &&
-                null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "ExampleSiRoute" ) )
+            if( null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SI_Protocol" ) &&
+                null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SI_Target" ) &&
+                null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SI_Group" ) &&
+                null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SI_Scheduler" ))
             {
-                //  implement nodetypes:
-                // ExampleSiRoute (NO user relationship at this time)
-                Int32 routentid = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "InspectionRouteClass", "ExampleSiRoute", newCat ).FirstVersionNodeTypeId;
-                Int32 schedntid = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "GeneratorClass", "ExampleSiScheduler", newCat ).FirstVersionNodeTypeId;
+                //  implement nodetypes:                
+                
+                Int32 schedntid = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "GeneratorClass", "SI_Scheduler", newCat ).FirstVersionNodeTypeId;
 
                 // ExampleSiTargetItem
                 // ExampleSiTargetItem Group
@@ -50,7 +48,7 @@ namespace ChemSW.Nbt.Schema
 
                 // Section1: Q1.1 Is the item present?
                 DataRow dr1 = qTable.NewRow();
-                dr1["SECTION"] = "Section1";
+                dr1["SECTION"] = "";
                 dr1["QUESTION"] = "Is the item present?";
                 dr1["ALLOWED_ANSWERS"] = "Yes,No,n/a";
                 dr1["COMPLIANT_ANSWERS"] = "Yes,n/a";
@@ -59,7 +57,7 @@ namespace ChemSW.Nbt.Schema
 
                 // Section1: Q1.2 Is the item operable?
                 DataRow dr2 = qTable.NewRow();
-                dr2["SECTION"] = "Section1";
+                dr2["SECTION"] = "";
                 dr2["QUESTION"] = "Is the item operable?";
                 dr2["ALLOWED_ANSWERS"] = "Yes,No,n/a";
                 dr2["COMPLIANT_ANSWERS"] = "Yes,n/a";
@@ -68,35 +66,39 @@ namespace ChemSW.Nbt.Schema
 
                 // Section1: Q1.3 Item passes inspection?
                 DataRow dr3 = qTable.NewRow();
-                dr3["SECTION"] = "Section1";
+                dr3["SECTION"] = "";
                 dr3["QUESTION"] = "Item passes inspection?";
                 dr3["ALLOWED_ANSWERS"] = "Yes,No";
                 dr3["COMPLIANT_ANSWERS"] = "Yes";
                 dr3["HELP_TEXT"] = "Choose an answer.";
                 qTable.Rows.Add( dr3 );
-
-                JObject newObj = wiz.createInspectionDesignTabsAndProps( qTable, "ExampleSiInspectionDesign", "ExampleSiTargetItem", newCat );
+                
+                JObject newObj = wiz.createInspectionDesignTabsAndProps( qTable, "SI_protocol", "SI_target", newCat );
 
                 //create nodes
-                //ExampleRoute
-                CswNbtNode routeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( routentid, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                routeNode.NodeName = "ExampleSiRoute";
+
+                //routeNode.NodeName = "Example_SI_Route";
                 //ExampleGroup
                 CswNbtNode groupNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( wiz.GroupNtId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                groupNode.NodeName = "ExampleSiGroup";
+                //groupNode.NodeName = "Example_SI_Group";
+                CswNbtObjClassInspectionTargetGroup groupNodeAsGroup = CswNbtNodeCaster.AsInspectionTargetGroup( groupNode );
+                groupNodeAsGroup.Name.Text = "Example Group";
+                groupNodeAsGroup.postChanges(true);
 
                 //ExampleMonthlyInspectionSchedule (disabled)
                 CswNbtNode schedNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( schedntid, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                schedNode.NodeName = "ExampleSiSchedule";
                 CswNbtObjClassGenerator schedNodeAsGenerator = CswNbtNodeCaster.AsGenerator( schedNode );
                 schedNodeAsGenerator.Owner.RelatedNodeId = groupNode.NodeId;
                 schedNodeAsGenerator.TargetType.SelectedNodeTypeIds.Add( wiz.DesignNtId.ToString() );
                 schedNodeAsGenerator.ParentType.SelectedNodeTypeIds.Add( wiz.TargetNtId.ToString() );
+                schedNodeAsGenerator.Description.Text = "Example Schedule";
+                schedNodeAsGenerator.postChanges(true);
 
                 //ExampleItem
                 CswNbtNode itemNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( wiz.TargetNtId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                itemNode.NodeName = "ExampleSiInspectionPoint";
+                //itemNode.NodeName = "Example_SI_InspectionPoint";
                 CswNbtObjClassInspectionTarget itemNodeAsTarget = CswNbtNodeCaster.AsInspectionTarget( itemNode );
+                itemNodeAsTarget.Description.Text = "Example Target";
                 //set location, set group
                 CswPrimaryKey somelocationid = null;
                 foreach( CswNbtNode anode in _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ).getNodes( false, false ) )
@@ -108,17 +110,18 @@ namespace ChemSW.Nbt.Schema
                 }
                 if( null != somelocationid ) itemNodeAsTarget.Location.SelectedNodeId = somelocationid;
                 itemNodeAsTarget.InspectionTargetGroup.RelatedNodeId = groupNode.NodeId;
-                //route?
+                itemNodeAsTarget.postChanges(true);
+                //route (don't have this relationship on the objclass yet, save for future release)
                 //itemNodeAsTarget.InspectionTargetGroup.NodeTypeProp.SetFK(CswNbtViewRelationship.PropIdType.NodeTypePropId,groupNode.NodeId);
 
 
                 //ExampleInspection (manual)
                 CswNbtNode inspectNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( wiz.DesignNtId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                inspectNode.NodeName = "ExampleSiInspection";
+                //inspectNode.NodeName = "Example_SI_Inspection";
                 //set target
                 CswNbtObjClassInspectionDesign inspectNodeAsDesign = CswNbtNodeCaster.AsInspectionDesign( inspectNode );
                 inspectNodeAsDesign.Owner.RelatedNodeId= itemNode.NodeId;
-
+                inspectNodeAsDesign.postChanges(true);
 
             }
             #endregion case 25050

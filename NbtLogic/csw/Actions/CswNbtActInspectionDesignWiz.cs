@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         private string _standardizeName( object Name, Int32 AllowedLength = Int32.MinValue )
         {
-            string RetString = _TextInfo.ToTitleCase( CswConvert.ToString( Name ).Trim() );
+            string RetString = CswConvert.ToString( Name ).Trim();
             if( 0 < AllowedLength &&
                     AllowedLength < RetString.Length )
             {
@@ -165,6 +165,7 @@ namespace ChemSW.Nbt.Actions
 
         private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
         {
+            int qtab_order = 0;
             Dictionary<string, CswNbtMetaDataNodeTypeTab> RetDict = new Dictionary<string, CswNbtMetaDataNodeTypeTab>();
             for( Int32 Index = 0; Index < Grid.Count; Index += 1 )
             {
@@ -174,14 +175,16 @@ namespace ChemSW.Nbt.Actions
                     string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
-                        TabName = "Section 1";
+                        TabName = "Section 1"; //this is objectclass voodoo, don't mess with it! we will rename it to Questions later...
                     }
                     if( false == RetDict.ContainsKey( TabName ) )
                     {
                         CswNbtMetaDataNodeTypeTab ThisTab = NodeType.getNodeTypeTab( TabName );
                         if( null == ThisTab )
                         {
-                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
+                            ++qtab_order;
+//                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
+                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, qtab_order );
                         }
                         RetDict.Add( TabName, ThisTab );
                     }
@@ -243,7 +246,7 @@ namespace ChemSW.Nbt.Actions
                                 ThisQuestion.ListOptions = AllowedAnswers;
                                 ThisQuestion.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                                 RetCount += 1;
-                            }
+                            }                         
                         }
                         else
                         {
