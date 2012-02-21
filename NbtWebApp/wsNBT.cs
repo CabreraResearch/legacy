@@ -1426,12 +1426,12 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
+                    NbtViewVisibility RealVisibility = (NbtViewVisibility) Visibility;
                     CswPrimaryKey RealVisibilityRoleId = null;
                     CswPrimaryKey RealVisibilityUserId = null;
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
-                        Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+                        //Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
                         if( RealVisibility == NbtViewVisibility.Role )
                         {
                             RealVisibilityRoleId = _getNodeId( VisibilityRoleId );

@@ -704,25 +704,25 @@ namespace ChemSW.Nbt
                 if( ViewId.get() > 0 )
                     WhereClause += " and nodeviewid <> " + ViewId.get().ToString();
 
-                switch( Visibility )
+                if( Visibility == NbtViewVisibility.User )
                 {
-                    case NbtViewVisibility.User:
-                        // Must be unique against other private views for this user
-                        // Must be unique against all role and global views 
-                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                        WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
-                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
-                        break;
-                    case NbtViewVisibility.Role:
-                        // Must be unique against other role views for the same role
-                        // Must be unique against all private and global views 
-                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                        WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
-                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
-                        break;
-                    case NbtViewVisibility.Global:
-                        // Must be globally unique 
-                        break;
+                    // Must be unique against other private views for this user
+                    // Must be unique against all role and global views 
+                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                    WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
+                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                }
+                else if( Visibility == NbtViewVisibility.Role )
+                {
+                    // Must be unique against other role views for the same role
+                    // Must be unique against all private and global views 
+                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                    WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
+                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                }
+                else if( Visibility == NbtViewVisibility.Global )
+                {
+                    // Must be globally unique 
                 }
                 // don't include Property views for uniqueness
                 WhereClause += " and visibility <> '" + NbtViewVisibility.Property.ToString() + "'";

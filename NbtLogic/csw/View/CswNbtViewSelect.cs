@@ -59,7 +59,8 @@ namespace ChemSW.Nbt
                         ReturnVal.ViewId = NbtViewId; // BZ 8068
 
                         // Override XML values with values from row
-                        ReturnVal.Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), ViewTable.Rows[0]["visibility"].ToString() );
+                        //ReturnVal.Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), ViewTable.Rows[0]["visibility"].ToString() );
+                        ReturnVal.Visibility = (NbtViewVisibility) ViewTable.Rows[0]["visibility"].ToString();
                         ReturnVal.VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["roleid"] ) );
                         ReturnVal.VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["userid"] ) );
                         ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
@@ -76,7 +77,11 @@ namespace ChemSW.Nbt
 
         }//restoreView()
 
-        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility = NbtViewVisibility.Unknown, Int32 VisibilityId = Int32.MinValue )
+        public List<CswNbtView> restoreViews( string ViewName )
+        {
+            return restoreViews( ViewName, NbtViewVisibility.Unknown, Int32.MinValue );
+        }
+        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility, Int32 VisibilityId )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
 
@@ -98,21 +103,19 @@ namespace ChemSW.Nbt
             {
                 WhereClause = "where visibility='" + Visibility.ToString() + "'";
             }
-
-            switch( Visibility )
+            else if( Visibility == NbtViewVisibility.Role )
             {
-                case NbtViewVisibility.Role:
-                    if( Int32.MinValue != VisibilityId )
-                    {
-                        WhereClause += " and roleid='" + VisibilityId.ToString() + "'";
-                    }
-                    break;
-                case NbtViewVisibility.User:
-                    if( Int32.MinValue != VisibilityId )
-                    {
-                        WhereClause += " and userid='" + VisibilityId.ToString() + "'";
-                    }
-                    break;
+                if( Int32.MinValue != VisibilityId )
+                {
+                    WhereClause += " and roleid='" + VisibilityId.ToString() + "'";
+                }
+            }
+            else if( Visibility == NbtViewVisibility.User )
+            {
+                if( Int32.MinValue != VisibilityId )
+                {
+                    WhereClause += " and userid='" + VisibilityId.ToString() + "'";
+                }
             }
 
             DataTable ViewTable = ViewSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
@@ -194,21 +197,23 @@ namespace ChemSW.Nbt
         {
             CswTableSelect ViewsTable = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_viewExists_select", "node_views" );
             string WhereClause = "where viewname = '" + ViewName + "'";
-            switch( Visibility )
+            if( Visibility == NbtViewVisibility.Global )
             {
-                case NbtViewVisibility.Global:
-                    //Globally unique name
-                    //WhereClause += " and visibility = 'Global'";
-                    break;
-                case NbtViewVisibility.Role:
-                    WhereClause += " and visibility = 'Role' and roleid = " + VisibilityRoleId.PrimaryKey.ToString();
-                    break;
-                case NbtViewVisibility.User:
-                    WhereClause += " and visibility = 'User' and userid = " + VisibilityUserId.PrimaryKey.ToString();
-                    break;
-                case NbtViewVisibility.Property:
-                    WhereClause += " and visibility = 'Property'";  // This will probably return more than one match
-                    break;
+                //Globally unique name
+                //WhereClause += " and visibility = 'Global'";
+            }
+            else if( Visibility == NbtViewVisibility.Role )
+            {
+                WhereClause += " and visibility = 'Role' and roleid = " + VisibilityRoleId.PrimaryKey.ToString();
+            }
+            else if( Visibility == NbtViewVisibility.User )
+            {
+                WhereClause += " and visibility = 'User' and userid = " + VisibilityUserId.PrimaryKey.ToString();
+            }
+            else if( Visibility == NbtViewVisibility.Property )
+            {
+                WhereClause += " and visibility = 'Property'";  // This will probably return more than one match
+
             }
             return ViewsTable.getTable( WhereClause );
         } // getViews()

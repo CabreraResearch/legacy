@@ -147,10 +147,11 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NbtViewVisibility ret;
-                if( !Enum.TryParse<NbtViewVisibility>( _RootString[9], out ret ) )
-                    ret = NbtViewVisibility.Unknown;
-                return ret;
+                //NbtViewVisibility ret;
+                //if( !Enum.TryParse<NbtViewVisibility>( _RootString[9], out ret ) )
+                //    ret = NbtViewVisibility.Unknown;
+                //return ret;
+                return (NbtViewVisibility) _RootString[9];
             }
             set
             {
@@ -312,7 +313,10 @@ namespace ChemSW.Nbt
                 if( Node.Attributes["category"] != null && Node.Attributes["category"].Value != String.Empty )
                     Category = Node.Attributes["category"].Value;
                 if( Node.Attributes["visibility"] != null && Node.Attributes["visibility"].Value != String.Empty )
-                    Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), Node.Attributes["visibility"].Value, true );
+                {
+                    //Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), Node.Attributes["visibility"].Value, true );
+                    Visibility = (NbtViewVisibility) Node.Attributes["visibility"].Value;
+                }
                 //if (Node.Attributes["addchildren"] != null && Node.Attributes["addchildren"].Value != String.Empty)
                 //    AddChildren = ( NbtViewAddChildrenSetting ) Enum.Parse( typeof( NbtViewAddChildrenSetting ), Node.Attributes[ "addchildren" ].Value, true );
                 if( Node.Attributes["visibilityroleid"] != null && Node.Attributes["visibilityroleid"].Value != String.Empty )
@@ -399,7 +403,8 @@ namespace ChemSW.Nbt
                 string _Visibility = CswConvert.ToString( Node["visibility"] );
                 if( !string.IsNullOrEmpty( _Visibility ) )
                 {
-                    Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _Visibility, true );
+                    //Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _Visibility, true );
+                    Visibility = (NbtViewVisibility) _Visibility;
                 }
 
                 Int32 _VisibilityRoleId = CswConvert.ToInt32( Node["visibilityroleid"] );

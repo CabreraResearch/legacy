@@ -118,29 +118,34 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Visibility permission setting on a View
     /// </summary>
-    public enum NbtViewVisibility
+    public sealed class NbtViewVisibility : CswEnum<NbtViewVisibility>
     {
+        private NbtViewVisibility( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewVisibility> _All { get { return CswEnum<NbtViewVisibility>.All; } }
+        public static explicit operator NbtViewVisibility( string str )
+        {
+            NbtViewVisibility ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewVisibility.Unknown;
+        }
+        public static readonly NbtViewVisibility Unknown = new NbtViewVisibility( "Unknown" );
+
         /// <summary>
         /// Only one User can use this View
         /// </summary>
-        User,
+        public static readonly NbtViewVisibility User = new NbtViewVisibility( "User" );
         /// <summary>
         /// All Users of a given Role can use this View
         /// </summary>
-        Role,
+        public static readonly NbtViewVisibility Role = new NbtViewVisibility( "Role" );
         /// <summary>
         /// All Users can use this View
         /// </summary>
-        Global,
+        public static readonly NbtViewVisibility Global = new NbtViewVisibility( "Global" );
         /// <summary>
         /// The View is used by a Property (relationship or grid)
         /// </summary>
-        Property,
-        /// <summary>
-        /// Unknown
-        /// </summary>
-        Unknown
-    };
+        public static readonly NbtViewVisibility Property = new NbtViewVisibility( "Property" );
+    }
 
 
     /// <summary>
