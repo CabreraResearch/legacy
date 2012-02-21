@@ -581,6 +581,7 @@ namespace ChemSW.Nbt.MetaData
 
                 //CswNbtMetaDataNodeTypeProp NewProp = (CswNbtMetaDataNodeTypeProp) _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewNodeTypePropRow );
                 CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, NewNodeTypePropRow );
+                _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
 
                 // Handle default values
                 CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
@@ -680,7 +681,10 @@ namespace ChemSW.Nbt.MetaData
 
             // Keep MetaData up to date
             //CswNbtMetaDataNodeTypeTab NewTab = _CswNbtMetaDataResources.NodeTypeTabsCollection.RegisterNew( Row ) as CswNbtMetaDataNodeTypeTab;
-            return new CswNbtMetaDataNodeTypeTab( _CswNbtMetaDataResources, Row );
+            CswNbtMetaDataNodeTypeTab NewTab = new CswNbtMetaDataNodeTypeTab( _CswNbtMetaDataResources, Row );
+            _CswNbtMetaDataResources.NodeTypeTabsCollection.AddToCache( NewTab );
+            return NewTab;
+
         }//makeNewTab()
 
         /// <summary>
@@ -862,6 +866,7 @@ namespace ChemSW.Nbt.MetaData
             // Keep MetaData up to date
             //CswNbtMetaDataNodeTypeProp NewProp = _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( InsertedRow ) as CswNbtMetaDataNodeTypeProp;
             CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, InsertedRow );
+            _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
             NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
 
             NewProp.getFieldTypeRule().afterCreateNodeTypeProp( NewProp );

@@ -33,6 +33,14 @@ namespace ChemSW.Nbt.MetaData
             _MetaDataObjectMaker = MetaDataObjectMaker;
         } // constructor
 
+        /// <summary>
+        ///  Add an ICswNbtMetaDataObject to the Cache 
+        ///  (for use by MetaData for newly created objects)
+        /// </summary>
+        public void AddToCache(ICswNbtMetaDataObject NewObj)
+        {
+            _Cache.Add( NewObj.UniqueId, NewObj );
+        }
 
         private Dictionary<Int32, ICswNbtMetaDataObject> _Cache = new Dictionary<Int32, ICswNbtMetaDataObject>();
         private ICswNbtMetaDataObject _makeObj( DataRow Row )
@@ -42,7 +50,9 @@ namespace ChemSW.Nbt.MetaData
             if( _Cache.ContainsKey( PkValue ) )
             {
                 // In order to guarantee only one reference per row, use the existing reference
+                // and, to prevent dirty writes, remove the row
                 ret = _Cache[PkValue];
+                Row.Table.Rows.Remove( Row );
             }
             else
             {
@@ -51,6 +61,23 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         }
+
+
+        private Collection<ICswNbtMetaDataObject> _makeObjs( DataTable Table )
+        {
+            Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
+            Collection<DataRow> RowsToIterate = new Collection<DataRow>();
+            // We have to iterate rows separately, because _makeObj() can remove a row
+            foreach( DataRow Row in Table.Rows )
+            {
+                RowsToIterate.Add( Row );
+            }
+            foreach( DataRow Row in RowsToIterate )
+            {
+                Coll.Add( _makeObj( Row ) );
+            }
+            return Coll;
+        } // _makeObjs()
 
         public void clearCache()
         {
@@ -69,12 +96,8 @@ namespace ChemSW.Nbt.MetaData
         {
             if( _All == null )
             {
-                _All = new Collection<ICswNbtMetaDataObject>();
                 DataTable Table = _TableUpdate.getTable();
-                foreach( DataRow Row in Table.Rows )
-                {
-                    _All.Add( _makeObj( Row ) );
-                }
+                _All = _makeObjs( Table );
             }
             return _All;
         } // getAll()
@@ -111,6 +134,18 @@ namespace ChemSW.Nbt.MetaData
             }
             return _PksWhere[Where];
         } // getPks(Where)
+
+        public Int32 getPksFirst( string WhereClause )
+        {
+            Int32 ret = Int32.MinValue;
+            Collection<Int32> Coll = getPks( WhereClause );
+            if( Coll.Count > 0 )
+            {
+                ret = Coll[0];
+            }
+            return ret;
+        } // getPksFirst()
+
 
 
         private Dictionary<string, Int32> _PkDict = null;
@@ -173,7 +208,7 @@ namespace ChemSW.Nbt.MetaData
             } // if( Pk != Int32.MinValue )
             return ret;
         } // getByPk()
-
+        
         private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;
         public Collection<ICswNbtMetaDataObject> getWhere( string WhereClause )
         {
@@ -183,13 +218,8 @@ namespace ChemSW.Nbt.MetaData
             }
             if( false == _getWhere.ContainsKey( WhereClause ) )
             {
-                Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
                 DataTable Table = _TableUpdate.getTable( WhereClause );
-                foreach( DataRow Row in Table.Rows )
-                {
-                    Coll.Add( _makeObj( Row ) );
-                }
-                _getWhere[WhereClause] = Coll;
+                _getWhere[WhereClause] = _makeObjs( Table );
             }
             return _getWhere[WhereClause];
         } // getWhere()

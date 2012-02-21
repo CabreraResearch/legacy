@@ -22,6 +22,11 @@ namespace ChemSW.Nbt.MetaData
                                                           makeFieldType );
         }
 
+        public void AddToCache( CswNbtMetaDataFieldType NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
+        }
+
         public void clearCache()
         {
             _CollImpl.clearCache();

@@ -22,6 +22,11 @@ namespace ChemSW.Nbt.MetaData
                                                           makeObjectClass );
         }
 
+        public void AddToCache( CswNbtMetaDataObjectClass NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
+        }
+
         public void clearCache()
         {
             _CollImpl.clearCache();

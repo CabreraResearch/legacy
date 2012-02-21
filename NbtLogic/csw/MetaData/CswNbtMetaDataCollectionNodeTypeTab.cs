@@ -22,6 +22,11 @@ namespace ChemSW.Nbt.MetaData
                                                           makeNodeTypeTab );
         }
 
+        public void AddToCache( CswNbtMetaDataNodeTypeTab NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
+        }
+
         public void clearCache()
         {
             _CollImpl.clearCache();
