@@ -594,7 +594,7 @@ namespace ChemSW.Nbt.MetaData
                 //CswNbtMetaDataNodeTypeProp NewProp = (CswNbtMetaDataNodeTypeProp) _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewNodeTypePropRow );
                 CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, NewNodeTypePropRow );
                 _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
-		NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, NewProp );
+		        NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, NewProp );
 
                 // Handle default values
                 CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
@@ -709,16 +709,13 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName )
         {
-            Int32 FieldTypeId = getFieldType( FieldType ).FieldTypeId;
-            return makeNewProp( NodeType, InsertAfterProp, FieldTypeId, PropName, Int32.MinValue, false, null );
+            return makeNewProp( NodeType, InsertAfterProp, getFieldType( FieldType ), PropName, Int32.MinValue, false, null );
         }
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
         public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, string NodeTypeTabName )
         {
-            Int32 FieldTypeId = getFieldType( FieldType ).FieldTypeId;
-
             CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab = null;
             if( string.Empty == NodeTypeTabName )
                 CswNbtMetaDataNodeTypeTab = NodeType.getFirstNodeTypeTab();
@@ -727,7 +724,7 @@ namespace ChemSW.Nbt.MetaData
             if( null == CswNbtMetaDataNodeTypeTab )
                 throw ( new CswDniException( ErrorType.Error, "No such Nodetype Tab: " + NodeTypeTabName, "NodeType " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") does not contain a tab with name: " + NodeTypeTabName ) );
 
-            return makeNewProp( NodeType, null, FieldTypeId, PropName, CswNbtMetaDataNodeTypeTab.TabId, false, null );
+            return makeNewProp( NodeType, null, getFieldType( FieldType ), PropName, CswNbtMetaDataNodeTypeTab.TabId, false, null );
         }
 
         /// <summary>
@@ -735,8 +732,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataFieldType.NbtFieldType FieldType, string PropName, Int32 TabId )
         {
-            Int32 FieldTypeId = getFieldType( FieldType ).FieldTypeId;
-            return makeNewProp( NodeType, null, FieldTypeId, PropName, TabId, false, null );
+            return makeNewProp( NodeType, null, getFieldType( FieldType ), PropName, TabId, false, null );
         }
 
         /// <summary>
@@ -763,10 +759,10 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeTypePropRowFromXml">A DataRow derived from exported XML</param>
         public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
         {
-            Int32 FieldTypeId = getFieldType( (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() ) ).FieldTypeId;
+            CswNbtMetaDataFieldType FieldType = getFieldType( (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() ) );
             CswNbtMetaDataNodeTypeProp NewProp = makeNewProp( NodeType,
                                                               null,
-                                                              FieldTypeId,
+                                                              FieldType,
                                                               NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString(),
                                                               Tab.TabId,
                                                               true,
@@ -778,11 +774,17 @@ namespace ChemSW.Nbt.MetaData
 
         protected CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
         {
+            CswNbtMetaDataFieldType FieldType = getFieldType( FieldTypeId );
+            return makeNewProp( NodeType, InsertAfterProp, FieldType, PropName, TabId, PreventVersioning, ObjectClassPropToCopy );
+        }
+
+        protected CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswNbtMetaDataFieldType FieldType, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
+        {
             bool OldPreventVersioning = _CswNbtMetaDataResources._PreventVersioning;
             if( PreventVersioning )
                 _CswNbtMetaDataResources._PreventVersioning = true;
 
-            CswNbtMetaDataFieldType FieldType = getFieldType( FieldTypeId );
+            //CswNbtMetaDataFieldType FieldType = getFieldType( FieldTypeId );
             //ICswNbtFieldTypeRule CswNbtFieldTypeRule = FieldType.FieldTypeRule;
 
             if( PropName == string.Empty )
@@ -815,7 +817,7 @@ namespace ChemSW.Nbt.MetaData
             //Apply parameter values
             Int32 NodeTypeId = NodeType.NodeTypeId;
             InsertedRow["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
-            InsertedRow["fieldtypeid"] = CswConvert.ToDbVal( FieldTypeId );
+            InsertedRow["fieldtypeid"] = CswConvert.ToDbVal( FieldType.FieldTypeId );
 
             //InsertedRow["nodetypetabsetid"] = CswConvert.ToDbVal(Tab.TabId);
             if( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
