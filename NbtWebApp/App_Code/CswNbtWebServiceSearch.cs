@@ -302,11 +302,11 @@ namespace ChemSW.Nbt.WebServices
                         Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
                         CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
 
-                        CswNbtSubField.SubFieldName SubField;
-                        Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
+                        CswNbtSubField.SubFieldName SubField = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                        //Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
 
-                        CswNbtPropFilterSql.PropertyFilterMode FilterMode;
-                        Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
+                        CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
+                        //Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
 
                         string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
@@ -579,7 +579,7 @@ namespace ChemSW.Nbt.WebServices
 
             // NodeType filter becomes Relationship
             Int32 NodeTypeId = Int32.MinValue;
-            CswNbtMetaDataNodeType NodeType= null;
+            CswNbtMetaDataNodeType NodeType = null;
             CswNbtViewRelationship ViewRel = null;
             foreach( JProperty FilterProp in Filters.Properties() )
             {

@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != ViewBuilderProp && ViewBuilderProp.FieldTypeRule.SearchAllowed )
             {
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
-                
+
                 ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
                 ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId.ToString();
                 ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
@@ -375,8 +375,9 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-            var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+            //var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
+            //CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+            CswNbtViewProperty.CswNbtPropType PropType = (CswNbtViewProperty.CswNbtPropType) FilterProp["proptype"].ToString();
 
             string FiltArbitraryId = CswConvert.ToString( FilterProp["filtarbitraryid"] );
             string PropArbitraryId = CswConvert.ToString( FilterProp["proparbitraryid"] );
@@ -396,7 +397,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                        ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty, false );
                     }
 
                     //Case 23779, 23937, 24064
@@ -410,16 +411,16 @@ namespace ChemSW.Nbt.WebServices
 
             if( ViewPropFilt != null )
             {
-                CswNbtSubField.SubFieldName FieldName;
-                Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
+                CswNbtSubField.SubFieldName FieldName = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                //Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
 
-                CswNbtPropFilterSql.PropertyFilterMode FilterMode;
-                Enum.TryParse( CswConvert.ToString( FilterProp["filter"] ), true, out FilterMode );
+                CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
+                //Enum.TryParse( CswConvert.ToString( FilterProp["filter"] ), true, out FilterMode );
 
                 string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
                 if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
-                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Undefined )
+                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Unknown )
                 {
                     ViewPropFilt.FilterMode = FilterMode;
                     ViewPropFilt.SubfieldName = FieldName;

@@ -1426,12 +1426,12 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    NbtViewVisibility RealVisibility = NbtViewVisibility.Unknown;
+                    NbtViewVisibility RealVisibility = (NbtViewVisibility) Visibility;
                     CswPrimaryKey RealVisibilityRoleId = null;
                     CswPrimaryKey RealVisibilityUserId = null;
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
-                        Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
+                        //Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
                         if( RealVisibility == NbtViewVisibility.Role )
                         {
                             RealVisibilityRoleId = _getNodeId( VisibilityRoleId );
@@ -1458,9 +1458,9 @@ namespace ChemSW.Nbt.WebServices
 
                     if( ViewMode != string.Empty )
                     {
-                        NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
-                        Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
-                        NewView.ViewMode = RealViewMode;
+                        //NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
+                        //Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
+                        NewView.ViewMode = (NbtViewRenderingMode) ViewMode;
                     }
 
                     NewView.save();
@@ -2856,8 +2856,8 @@ namespace ChemSW.Nbt.WebServices
                         UseRoleId = RoleId;
                     CswNbtWelcomeTable.WelcomeComponentType ComponentType;
                     Enum.TryParse( Type, true, out ComponentType );
-                    CswNbtView.ViewType RealViewType;
-                    Enum.TryParse( ViewType, true, out RealViewType );
+                    CswNbtView.ViewType RealViewType = (CswNbtView.ViewType) ViewType;
+                    //Enum.TryParse( ViewType, true, out RealViewType );
                     ws.AddWelcomeItem( ComponentType, RealViewType, ViewValue, CswConvert.ToInt32( NodeTypeId ), Text, Int32.MinValue, Int32.MinValue, IconFileName, UseRoleId );
                     ReturnVal.Add( new JProperty( "Succeeded", true ) );
                 }

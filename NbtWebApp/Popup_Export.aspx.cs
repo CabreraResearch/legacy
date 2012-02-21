@@ -195,8 +195,10 @@ namespace ChemSW.Nbt.WebPages
 
                 NbtViewRenderingMode NbtViewRenderingMode = NbtViewRenderingMode.Grid;
                 if( null != Request.QueryString["renderingmode"] )
-                    NbtViewRenderingMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Request.QueryString["renderingmode"].ToString() );
-
+                {
+                    //NbtViewRenderingMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Request.QueryString["renderingmode"].ToString() );
+                    NbtViewRenderingMode = (NbtViewRenderingMode) Request.QueryString["renderingmode"].ToString();
+                }
                 if( NbtViewRenderingMode.Grid == NbtViewRenderingMode )
                 {
                     if( Request.QueryString["nodeid"] != null &&

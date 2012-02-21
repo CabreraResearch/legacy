@@ -16,35 +16,35 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            RedSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Flammability,true );
-            YellowSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Reactivity,true );
-            BlueSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Health,true );
-            WhiteSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.Special,true );
+            RedSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Flammability, true );
+            YellowSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Reactivity, true );
+            BlueSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Health, true );
+            WhiteSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.Special, true );
 
-            RedSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                     CswNbtPropFilterSql.PropertyFilterMode.Null;
-            YellowSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                     CswNbtPropFilterSql.PropertyFilterMode.Null;
-            BlueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                     CswNbtPropFilterSql.PropertyFilterMode.Null;
-            WhiteSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                     CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                     CswNbtPropFilterSql.PropertyFilterMode.Null;
+            RedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            RedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            RedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            RedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            RedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            RedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            YellowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            YellowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            YellowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            YellowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            YellowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            YellowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            BlueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            BlueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            BlueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            BlueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            BlueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            BlueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            WhiteSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            WhiteSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            WhiteSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            WhiteSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            WhiteSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            WhiteSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
 
             SubFields.add( RedSubField );
             SubFields.add( YellowSubField );

@@ -39,7 +39,7 @@ namespace ChemSW.Nbt
 
         public override void load()
         {
-            _CswNbtTree.makeRootNode( "", false, NbtViewAddChildrenSetting.False );
+            _CswNbtTree.makeRootNode( "", false, NbtViewAddChildrenSetting.None );
 
             _CswNbtTree.goToRoot();
 

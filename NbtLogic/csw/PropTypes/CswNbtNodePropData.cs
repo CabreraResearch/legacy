@@ -306,46 +306,57 @@ namespace ChemSW.Nbt.PropTypes
         public string GetPropRowValue( CswNbtSubField.PropColumn Column )
         {
             string ret = string.Empty;
-            switch( Column )
+            if( Column == CswNbtSubField.PropColumn.Field1 )
             {
-                case CswNbtSubField.PropColumn.Field1:
-                    ret = Field1;
-                    break;
-                case CswNbtSubField.PropColumn.Field1_FK:
-                    ret = CswConvert.ToString( Field1_Fk );
-                    break;
-                case CswNbtSubField.PropColumn.Field1_Numeric:
-                    ret = CswConvert.ToString( Field1_Numeric );
-                    break;
-                case CswNbtSubField.PropColumn.Field1_Date:
-                    ret = CswConvert.ToString( Field1_Date );
-                    break;
-                case CswNbtSubField.PropColumn.Field2:
-                    ret = Field2;
-                    break;
-                case CswNbtSubField.PropColumn.Field2_Date:
-                    ret = CswConvert.ToString( Field2_Date );
-                    break;
-                case CswNbtSubField.PropColumn.Field2_Numeric:
-                    ret = CswConvert.ToString( Field2_Numeric );
-                    break;
-                case CswNbtSubField.PropColumn.Field3:
-                    ret = Field3;
-                    break;
-                case CswNbtSubField.PropColumn.Field4:
-                    ret = Field4;
-                    break;
-                case CswNbtSubField.PropColumn.Field5:
-                    ret = Field5;
-                    break;
-                case CswNbtSubField.PropColumn.Gestalt:
-                    ret = Gestalt;
-                    break;
-                case CswNbtSubField.PropColumn.ClobData:
-                    ret = ClobData;
-                    break;
-                default:
-                    throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
+                ret = Field1;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field1_FK )
+            {
+                ret = CswConvert.ToString( Field1_Fk );
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field1_Numeric )
+            {
+                ret = CswConvert.ToString( Field1_Numeric );
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field1_Date )
+            {
+                ret = CswConvert.ToString( Field1_Date );
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field2 )
+            {
+                ret = Field2;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field2_Date )
+            {
+                ret = CswConvert.ToString( Field2_Date );
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field2_Numeric )
+            {
+                ret = CswConvert.ToString( Field2_Numeric );
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field3 )
+            {
+                ret = Field3;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field4 )
+            {
+                ret = Field4;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field5 )
+            {
+                ret = Field5;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Gestalt )
+            {
+                ret = Gestalt;
+            }
+            else if( Column == CswNbtSubField.PropColumn.ClobData )
+            {
+                ret = ClobData;
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         } // GetPropRowValue()
@@ -353,16 +364,17 @@ namespace ChemSW.Nbt.PropTypes
         public DateTime GetPropRowValueDate( CswNbtSubField.PropColumn Column )
         {
             DateTime ret = DateTime.MinValue;
-            switch( Column )
+            if( Column == CswNbtSubField.PropColumn.Field1_Date )
             {
-                case CswNbtSubField.PropColumn.Field1_Date:
-                    ret = Field1_Date;
-                    break;
-                case CswNbtSubField.PropColumn.Field2_Date:
-                    ret = Field2_Date;
-                    break;
-                default:
-                    throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
+                ret = Field1_Date;
+            }
+            else if( Column == CswNbtSubField.PropColumn.Field2_Date )
+            {
+                ret = Field2_Date;
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         } // GetPropRowValueDate()

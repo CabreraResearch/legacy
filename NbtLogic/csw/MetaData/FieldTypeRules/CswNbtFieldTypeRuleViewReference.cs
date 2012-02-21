@@ -18,20 +18,20 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
-            CachedViewNameSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Null |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.NotEquals;
+            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             SubFields.add( CachedViewNameSubField );
 
-            ViewIdSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.ViewID );
-            ViewIdSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                                  CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                                  CswNbtPropFilterSql.PropertyFilterMode.Null;
+            ViewIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.ViewID );
+            ViewIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            ViewIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            ViewIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( ViewIdSubField );
 
         }//ctor

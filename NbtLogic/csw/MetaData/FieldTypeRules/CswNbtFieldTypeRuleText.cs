@@ -16,16 +16,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            TextSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Text );
-            TextSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                                 CswNbtPropFilterSql.PropertyFilterMode.Null;
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Text );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( TextSubField );
         }//ctor
 

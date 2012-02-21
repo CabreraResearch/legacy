@@ -38,35 +38,41 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             if( FilterValue != DateTime.MinValue )
             {
                 string FilterValueString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue ); //FilterValue.ToShortDateString();
-                switch( CswNbtViewPropertyFilterIn.FilterMode )
+                if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                 {
-                    case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                        ReturnVal = ValueColumn + " = " + FilterValueString;
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.GreaterThan:
-                        ReturnVal = ValueColumn + " > " + FilterValueString;
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals:
-                        ReturnVal = ValueColumn + " >= " + FilterValueString;
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.LessThan:
-                        ReturnVal = ValueColumn + " < " + FilterValueString;
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals:
-                        ReturnVal = ValueColumn + " <= " + FilterValueString;
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                        ReturnVal = ValueColumn + " <> " + FilterValueString;
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
-                        ReturnVal = ValueColumn + " is not null";
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.Null:
-                        ReturnVal = ValueColumn + " is null";
-                        break;
-                    default:
-                        throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter(): " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
-
+                    ReturnVal = ValueColumn + " = " + FilterValueString;
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
+                {
+                    ReturnVal = ValueColumn + " > " + FilterValueString;
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+                {
+                    ReturnVal = ValueColumn + " >= " + FilterValueString;
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+                {
+                    ReturnVal = ValueColumn + " < " + FilterValueString;
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+                {
+                    ReturnVal = ValueColumn + " <= " + FilterValueString;
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                {
+                    ReturnVal = ValueColumn + " <> " + FilterValueString;
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+                {
+                    ReturnVal = ValueColumn + " is not null";
+                }
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                {
+                    ReturnVal = ValueColumn + " is null";
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                 }// switch( CswNbtViewPropertyFilterIn.FilterMode )
             }// if( FilterValue != DateTime.MinValue )
 
@@ -78,26 +84,29 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public static string FilterModeToString( CswNbtPropFilterSql.PropertyFilterMode FilterMode )
         {
             string ret = FilterMode.ToString();
-            switch( FilterMode )
+            if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
             {
-                case CswNbtPropFilterSql.PropertyFilterMode.GreaterThan:
-                    ret = "After";
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals:
-                    ret = "After Or On";
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.LessThan:
-                    ret = "Before";
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals:
-                    ret = "Before Or On";
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                    ret = "On";
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                    ret = "Not On";
-                    break;
+                ret = "After";
+            }
+            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+            {
+                ret = "After Or On";
+            }
+            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+            {
+                ret = "Before";
+            }
+            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+            {
+                ret = "Before Or On";
+            }
+            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+            {
+                ret = "On";
+            }
+            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+            {
+                ret = "Not On";
             }
             return ret;
         }

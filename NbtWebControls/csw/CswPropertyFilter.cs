@@ -74,7 +74,7 @@ namespace ChemSW.NbtWebControls
         private string _DefaultNodeTypeId = string.Empty;
         private string _DefaultNodeTypePropName = string.Empty;
         private string _DefaultSubFieldColumn = string.Empty;
-        private CswNbtPropFilterSql.PropertyFilterMode _DefaultFilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+        private CswNbtPropFilterSql.PropertyFilterMode _DefaultFilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
         private string _DefaultFilterValue = string.Empty;
         private CswNbtViewNode _DefaultViewNode = null;
 
@@ -188,7 +188,7 @@ namespace ChemSW.NbtWebControls
                     else if( _DefaultNodeTypeId != string.Empty )
                         init_NodeTypeSelectBox( _DefaultNodeTypeId, _DefaultNodeTypePropName, _DefaultSubFieldColumn, _DefaultFilterMode, _DefaultFilterValue );
                     else
-                        init_NodeTypeSelectBox( PrimarySelectBox.Items[0].Value, string.Empty, string.Empty, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty );
+                        init_NodeTypeSelectBox( PrimarySelectBox.Items[0].Value, string.Empty, string.Empty, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty );
                 }
             }
             catch( Exception ex )
@@ -387,7 +387,7 @@ namespace ChemSW.NbtWebControls
             string PrimaryId = string.Empty;
             Int32 PropId = Int32.MinValue;
             string SubFieldColumn = string.Empty;
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
             string FilterValue = string.Empty;
 
             if( CswNbtViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
@@ -422,7 +422,7 @@ namespace ChemSW.NbtWebControls
 
             string PrimaryId = string.Empty;
             string SubFieldColumn = string.Empty;
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
             string FilterValue = string.Empty;
 
             if( CswNbtViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
@@ -451,7 +451,7 @@ namespace ChemSW.NbtWebControls
         /// </summary>
         public void Set( Int32 NodeTypeId, string PropName )
         {
-            Set( NodeTypeId, PropName, string.Empty, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty );
+            Set( NodeTypeId, PropName, string.Empty, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty );
         }
         /// <summary>
         /// Set to use this nodetype, property, and filter
@@ -593,7 +593,7 @@ namespace ChemSW.NbtWebControls
                     {
                         FilterModeSelectBox.Items.Add( new ListItem( SelectedPropLatestVersion.getFieldTypeRule().FilterModeToString( SelectedSubField, FilterModeOpt ), FilterModeOpt.ToString() ) );
 
-                        if( FilterModeToSelect == CswNbtPropFilterSql.PropertyFilterMode.Undefined )
+                        if( FilterModeToSelect == CswNbtPropFilterSql.PropertyFilterMode.Unknown )
                         {
                             if( FilterModeOpt == SelectedSubField.DefaultFilterMode )
                                 FilterModeSelectBox.SelectedValue = SelectedSubField.DefaultFilterMode.ToString();
@@ -679,7 +679,7 @@ namespace ChemSW.NbtWebControls
                 string NewId = string.Empty;
                 Int32 NewPropId = Int32.MinValue;
                 string NewSubFieldColumn = string.Empty;
-                CswNbtPropFilterSql.PropertyFilterMode NewFilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                CswNbtPropFilterSql.PropertyFilterMode NewFilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
                 string NewFilterValue = string.Empty;
                 string NewPropName = string.Empty;
 
@@ -705,7 +705,10 @@ namespace ChemSW.NbtWebControls
                                 if( values[OldSubFieldField.UniqueID] == null || NewSubFieldColumn == values[OldSubFieldField.UniqueID].ToString() )
                                 {
                                     if( values[FilterModeSelectBox.UniqueID] != null )
-                                        NewFilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), values[FilterModeSelectBox.UniqueID].ToString() );
+                                    {
+                                        //NewFilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), values[FilterModeSelectBox.UniqueID].ToString() );
+                                        NewFilterMode = (CswNbtPropFilterSql.PropertyFilterMode) values[FilterModeSelectBox.UniqueID].ToString();
+                                    }
                                     if( values[OldFilterModeField.UniqueID] == null || NewFilterMode.ToString() == values[OldFilterModeField.UniqueID].ToString() )
                                     {
                                         switch( MetaDataProp.getFieldType().FieldType )
@@ -921,7 +924,8 @@ namespace ChemSW.NbtWebControls
                 CswNbtSubField ret = null;
                 if( SubFieldSelectBox.SelectedValue != string.Empty )
                 {
-                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), SubFieldSelectBox.SelectedValue );
+                    //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), SubFieldSelectBox.SelectedValue );
+                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) SubFieldSelectBox.SelectedValue;
                     ret = SelectedPropLatestVersion.getFieldTypeRule().SubFields[Column];
                 }
                 return ret;
@@ -937,9 +941,12 @@ namespace ChemSW.NbtWebControls
             {
                 EnsureChildControls();
 
-                CswNbtPropFilterSql.PropertyFilterMode ret = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                CswNbtPropFilterSql.PropertyFilterMode ret = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
                 if( FilterModeSelectBox.SelectedValue != string.Empty )
-                    ret = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterModeSelectBox.SelectedValue );
+                {
+                    //ret = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterModeSelectBox.SelectedValue );
+                    ret = (CswNbtPropFilterSql.PropertyFilterMode) FilterModeSelectBox.SelectedValue;
+                }
                 return ret;
             }
         }

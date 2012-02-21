@@ -15,17 +15,17 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
-            
-            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
-            CachedValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                              CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                              CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                              CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                              CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Null;
+
+            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( CachedValueSubField );
 
         }//ctor

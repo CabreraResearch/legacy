@@ -21,9 +21,15 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NbtViewNodeType ret;
-                if( !Enum.TryParse<NbtViewNodeType>( _RootString[0], out ret ) )
+                //NbtViewNodeType ret;
+                //if( !Enum.TryParse<NbtViewNodeType>( _RootString[0], out ret ) )
+                //    ret = NbtViewNodeType.CswNbtViewRoot;
+                //return ret;
+                NbtViewNodeType ret = (NbtViewNodeType) _RootString[0];
+                if( ret == NbtViewNodeType.Unknown )
+                {
                     ret = NbtViewNodeType.CswNbtViewRoot;
+                }
                 return ret;
             }
         }
@@ -91,9 +97,15 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NbtViewRenderingMode ret;
-                if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
+                //NbtViewRenderingMode ret;
+                //if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
+                //    ret = NbtViewRenderingMode.Tree;
+                //return ret;
+                NbtViewRenderingMode ret = (NbtViewRenderingMode) _RootString[4];
+                if( ret == NbtViewRenderingMode.Unknown )
+                {
                     ret = NbtViewRenderingMode.Tree;
+                }
                 return ret;
             }
             set
@@ -141,10 +153,11 @@ namespace ChemSW.Nbt
         {
             get
             {
-                NbtViewVisibility ret;
-                if( !Enum.TryParse<NbtViewVisibility>( _RootString[9], out ret ) )
-                    ret = NbtViewVisibility.Unknown;
-                return ret;
+                //NbtViewVisibility ret;
+                //if( !Enum.TryParse<NbtViewVisibility>( _RootString[9], out ret ) )
+                //    ret = NbtViewVisibility.Unknown;
+                //return ret;
+                return (NbtViewVisibility) _RootString[9];
             }
             set
             {
@@ -293,7 +306,10 @@ namespace ChemSW.Nbt
                 if( Node.Attributes["selectable"] != null )
                     Selectable = Convert.ToBoolean( Node.Attributes["selectable"].Value );
                 if( Node.Attributes["mode"] != null )
-                    ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Node.Attributes["mode"].Value, true );
+                {
+                    //ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Node.Attributes["mode"].Value, true );
+                    ViewMode = (NbtViewRenderingMode) Node.Attributes["mode"].Value;
+                }
                 if( Node.Attributes["width"] != null && Node.Attributes["width"].Value != String.Empty )
                     Width = CswConvert.ToInt32( Node.Attributes["width"].Value );
                 //if( Node.Attributes[ "editmode" ] != null )
@@ -303,7 +319,10 @@ namespace ChemSW.Nbt
                 if( Node.Attributes["category"] != null && Node.Attributes["category"].Value != String.Empty )
                     Category = Node.Attributes["category"].Value;
                 if( Node.Attributes["visibility"] != null && Node.Attributes["visibility"].Value != String.Empty )
-                    Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), Node.Attributes["visibility"].Value, true );
+                {
+                    //Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), Node.Attributes["visibility"].Value, true );
+                    Visibility = (NbtViewVisibility) Node.Attributes["visibility"].Value;
+                }
                 //if (Node.Attributes["addchildren"] != null && Node.Attributes["addchildren"].Value != String.Empty)
                 //    AddChildren = ( NbtViewAddChildrenSetting ) Enum.Parse( typeof( NbtViewAddChildrenSetting ), Node.Attributes[ "addchildren" ].Value, true );
                 if( Node.Attributes["visibilityroleid"] != null && Node.Attributes["visibilityroleid"].Value != String.Empty )
@@ -365,7 +384,8 @@ namespace ChemSW.Nbt
                 string _Mode = CswConvert.ToString( Node["mode"] );
                 if( !string.IsNullOrEmpty( _Mode ) )
                 {
-                    ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), _Mode, true );
+                    //ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), _Mode, true );
+                    ViewMode = (NbtViewRenderingMode) _Mode;
                 }
 
                 Int32 _Width = CswConvert.ToInt32( Node["width"] );
@@ -389,7 +409,8 @@ namespace ChemSW.Nbt
                 string _Visibility = CswConvert.ToString( Node["visibility"] );
                 if( !string.IsNullOrEmpty( _Visibility ) )
                 {
-                    Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _Visibility, true );
+                    //Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _Visibility, true );
+                    Visibility = (NbtViewVisibility) _Visibility;
                 }
 
                 Int32 _VisibilityRoleId = CswConvert.ToInt32( Node["visibilityroleid"] );
