@@ -9,7 +9,8 @@
             ID: 'defcont',
             Url: '/NbtWebApp/wsNBT.asmx/getDefaultContent',
             viewid: '',
-            viewmode: ''
+            viewmode: '',
+            onAddNode: null
         };
         if (options) $.extend(o, options);
 
@@ -29,7 +30,8 @@
                         var $li = Csw.handleMenuItem({
                             $ul: $ul,
                             itemKey: entryObj.text,
-                            itemJson: entryObj
+                            itemJson: entryObj,
+                            onAlterNode: o.onAddNode
                         }).appendTo($ul);
                     }
 

@@ -624,18 +624,24 @@ window.initMain = window.initMain || function (undefined) {
     function showDefaultContentTree(viewopts) {
         var v = {
             viewid: '',
-            viewmode: ''
+            viewmode: '',
+            onAddNode: function (nodeid, cswnbtnodekey) {
+                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+            }
         };
         if (viewopts) $.extend(v, viewopts);
         clear({ centerbottom: true });
-        $('#RightDiv').CswDefaultContent(viewopts);
+        $('#RightDiv').CswDefaultContent(v);
 
     } // showDefaultContentTree()
 
     function showDefaultContentTable(viewopts) {
         var v = {
             viewid: '',
-            viewmode: ''
+            viewmode: '',
+            onAddNode: function (nodeid, cswnbtnodekey) {
+                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': cswnbtnodekey, 'IncludeNodeRequired': true });
+            }
         };
         if (viewopts) $.extend(v, viewopts);
         clear({ centerbottom: true });
@@ -643,7 +649,7 @@ window.initMain = window.initMain || function (undefined) {
         $div.CswAttrDom('align', 'center');
         $div.css({ textAlign: 'center' });
         $div.append('No Results.<BR/><BR/>');
-        $div.CswDefaultContent(viewopts);
+        $div.CswDefaultContent(v);
 
     } // showDefaultContentTable()
 
