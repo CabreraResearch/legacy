@@ -42,10 +42,11 @@
                         row: removeCells.propNonDom('row'),
                         column: removeCells.propNonDom('column')
                     });
-                }
-                removeCells.children().hide();
+                    removeCells.children().hide();
 
-                removeCells.removeClass('CswLayoutTable_remove');
+                    removeCells.removeClass('CswLayoutTable_remove');
+                }
+
             } // if(internal.isRemoveMode($external.table))
         }; // internal.onClick()
 
@@ -72,13 +73,12 @@
         };
 
         internal.addRow = function () {
-            var cellsetrows = Csw.number(external.table.propNonDom('cellset_rows')),
-                cellsetcolumns = Csw.number(external.table.propNonDom('cellset_columns')),
-                tablemaxrows = external.table.maxrows(),
+            var tablemaxrows = external.table.maxrows(),
                 tablemaxcolumns = external.table.maxcolumns();
 
             // add a row and column
-            internal.getCell((tablemaxrows / cellsetrows) + 1, (tablemaxcolumns / cellsetcolumns), cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            internal.getCell((tablemaxrows / internal.cellSet.rows) + 1,
+                             (tablemaxcolumns / internal.cellSet.columns));
             external.table.finish(null);
 
             if (external.isConfig()) {
@@ -88,13 +88,12 @@
         }; // _addRowAndColumn()
 
         internal.addColumn = function () {
-            var cellsetrows = Csw.number(external.table.propNonDom('cellset_rows')),
-                cellsetcolumns = Csw.number(external.table.propNonDom('cellset_columns')),
-                tablemaxrows = external.table.maxrows(),
+            var tablemaxrows = external.table.maxrows(),
                 tablemaxcolumns = external.table.maxcolumns();
 
             // add a row and column
-            internal.getCell((tablemaxrows / cellsetrows), (tablemaxcolumns / cellsetcolumns) + 1, cellsetrows, cellsetcolumns, cellsetrows, cellsetcolumns);
+            internal.getCell((tablemaxrows / internal.cellSet.rows),
+                             (tablemaxcolumns / internal.cellSet.columns) + 1);
             external.table.finish(null);
 
             if (external.isConfig()) {
@@ -103,7 +102,7 @@
             }
         }; // internal.addColumn()
 
-        internal.getCell = function (getRow, getColumn, cellsetrow, cellsetcolumn, cellsetrows, cellsetcolumns) {
+        internal.getCell = function (getRow, getColumn, cellsetrow, cellsetcolumn) {
             var row = Csw.number(getRow),
                 column = Csw.number(getColumn),
                 realrow, realcolumn, cell;
@@ -113,17 +112,17 @@
             if (column < 1) {
                 column = 1;
             }
-            realrow = ((row - 1) * cellsetrows) + cellsetrow;
-            realcolumn = ((column - 1) * cellsetcolumns) + cellsetcolumn;
+            realrow = ((row - 1) * internal.cellSet.rows) + cellsetrow;
+            realcolumn = ((column - 1) * internal.cellSet.columns) + cellsetcolumn;
             cell = external.table.cell(realrow, realcolumn);
             return cell;
         };
 
-        internal.onCreateCell = function (cell, realrow, realcolumn, cellsetrows, cellsetcolumns) {
-            var row = Math.ceil(realrow / cellsetrows),
-                column = Math.ceil(realcolumn / cellsetcolumns),
-                cellsetrow = Csw.number(cellsetrows - realrow % cellsetrows),
-                cellsetcolumn = Csw.number(cellsetcolumns - realcolumn % cellsetcolumns);
+        internal.onCreateCell = function (cell, realrow, realcolumn) {
+            var row = Math.ceil(realrow / internal.cellSet.rows),
+                column = Math.ceil(realcolumn / internal.cellSet.columns),
+                cellsetrow = Csw.number(internal.cellSet.rows - realrow % internal.cellSet.rows),
+                cellsetcolumn = Csw.number(internal.cellSet.columns - realcolumn % internal.cellSet.columns);
 
             cell.propNonDom({
                 row: row,
@@ -133,11 +132,11 @@
             });
 
             cell.bind('click', function (ev, dd) {
-                internal.onClick(ev, dd, row, column, cellsetrows, cellsetcolumns);
+                internal.onClick(ev, dd, row, column);
             }).$.droppable({
                 hoverClass: 'CswLayoutTable_hover',
                 drop: function (ev, dd) {
-                    internal.onDrop(ev, dd, $(this), cellsetrows, cellsetcolumns);
+                    internal.onDrop(ev, dd, $(this));
                 }
             })
                 .hover(function (ev, dd) {
@@ -168,8 +167,9 @@
             var cellSet;
             if (internal.isRemoveMode()) {
                 cellSet = external.cellSet($cell.attr('row'), $cell.attr('column'));
-                cellSet[1][1].addClass('CswLayoutTable_remove');
-                cellSet[1][2].addClass('CswLayoutTable_remove');
+                internal.eachCell(cellSet, function (cell) {
+                    cell.addClass('CswLayoutTable_remove');
+                });
             }
         }; // internal.onHoverIn()
 
@@ -177,8 +177,9 @@
             var cellSet;
             if (internal.isRemoveMode()) {
                 cellSet = external.cellSet($cell.attr('row'), $cell.attr('column'));
-                cellSet[1][1].removeClass('CswLayoutTable_remove');
-                cellSet[1][2].removeClass('CswLayoutTable_remove');
+                internal.eachCell(cellSet, function (cell) {
+                    cell.removeClass('CswLayoutTable_remove');
+                });
             }
         }; // internal.onHoverOut()
 
@@ -187,22 +188,28 @@
             if (external.isConfig(external.table)) {
                 $dragCell = $dragDiv.parent();
                 cells = external.cellSet($dragCell.attr('row'), $dragCell.attr('column'));
-                cells[1][1].addClass('CswLayoutTable_dragcell');
-                cells[1][2].addClass('CswLayoutTable_dragcell');
+                internal.eachCell(cells, function (cell) {
+                    cell.addClass('CswLayoutTable_dragcell');
+                });
             }
         }; // internal.onDrag
 
+        internal.eachCell = function (cellSet, func) {
+            for (var r = 1; r <= internal.cellSet.rows; r += 1) {
+                for (var c = 1; c <= internal.cellSet.rows; c += 1) {
+                    func(cellSet[r][c], r, c);
+                }
+            }
+        };
+
         internal.onDrop = function (ev, dd, $dropCell) {
-            var dragDiv, dragCell, dragCells, dropCells, div1, div2, opt1, opt2;
+            var dragDiv, dragCell, dragCells, dropCells, opt;
             if (external.isConfig(external.table)) {
                 dragDiv = dd.draggable;
                 dragCell = Csw.controls.factory(dragDiv.parent(), {});
 
                 dragCells = external.cellSet(dragCell.propNonDom('row'), dragCell.propNonDom('column')); // .table.findCell('[row="' + Csw.number(dragCell.propNonDom('row')) + '"][column="' + Csw.number(dragCell.propNonDom('column')) + '"]');
                 dropCells = external.cellSet($dropCell.attr('row'), $dropCell.attr('column')); //table.findCell('[row="' + Csw.number($dropCell.attr('row')) + '"][column="' + Csw.number($dropCell.attr('column')) + '"]');
-
-                dragCells[1][1].removeClass('CswLayoutTable_dragcell');
-                dragCells[1][2].removeClass('CswLayoutTable_dragcell');
 
                 // This must happen BEFORE we do the swap, in case the caller relies on the contents of the div being where it was
                 external.table.trigger(internal.ID + 'CswLayoutTable_onSwap', {
@@ -214,30 +221,47 @@
                     swaprow: dropCells[1][1].propNonDom('row'),
                     swapcolumn: dropCells[1][1].propNonDom('column')
                 });
+                var onSuccess = [];
 
-                dragCells[1][1].append(dropCells[1][1].children('div').$);
-                dropCells[1][2].append(dragCells[1][2].children('div').$);
+                for (var r = 1; r <= internal.cellSet.rows; r += 1) {
+                    for (var c = 1; c <= internal.cellSet.columns; c += 1) {
+                        var onSuccessOpts = {};
+                        onSuccessOpts.dragCell = dragCells[r][c];
+                        onSuccessOpts.dropCell = dropCells[r][c];
 
+                        var onSuccessFunc = function (opts) {
+                            opts.dragCell.removeClass('CswLayoutTable_dragcell');
+                            var $dragCellDiv = opts.dragCell.children('div').$.clone(true, true);
+                            opts.dropCell.removeClass('CswLayoutTable_dragcell');
+                            var $dropCellDiv = opts.dropCell.children('div').$.clone(true, true);
 
-                opt1 = {
-                    my: 'left top',
-                    at: 'left top',
-                    of: div1,
-                    offset: external.table.propNonDom('cellpadding')
-                };
+                            opts.dragCell.children('div').remove();
+                            opts.dragCell.append($dropCellDiv);
 
-                //                dragCells[1][1].$.position(opt1);
-                //                dropCells[1][1].$.position(opt1);
+                            opts.dropCell.children('div').remove();
+                            opts.dropCell.append($dragCellDiv);
+                        };
+                        onSuccess.push(Csw.makeDelegate(onSuccessFunc, onSuccessOpts));
 
-                //                opt2 = {
-                //                    my: 'left top',
-                //                    at: 'left top',
-                //                    of: div2,
-                //                    offset: external.table.propNonDom('cellpadding')
-                //                };
-                //                dragCells[1][2].$.position(opt2);
-                //                dropCells[1][2].$.position(opt2);
+                        //                        $dragCellDiv.position({
+                        //                            my: 'left top',
+                        //                            at: 'left top',
+                        //                            of: $dropCellDiv,
+                        //                            offset: external.table.propNonDom('cellpadding')
+                        //                        });
 
+                        //                        $dropCellDiv.position({
+                        //                            my: 'left top',
+                        //                            at: 'left top',
+                        //                            of: $dragCellDiv,
+                        //                            offset: external.table.propNonDom('cellpadding')
+                        //                        });
+                    }
+                }
+
+                for (var i = 0; i < onSuccess.length; i += 1) {
+                    onSuccess[i]();
+                }
             } // if(external.isConfig($external.table))
         }; // internal.onDrop()
 
@@ -252,16 +276,14 @@
             /// <param name="row" type="Number">Row number</param>
             /// <param name="column" type="Number">Column number</param>
             /// <returns type="Array">An array of the content.</returns>
-            var cellsetrows = Csw.number(external.table.propNonDom('cellset_rows')),
-                cellsetcolumns = Csw.number(external.table.propNonDom('cellset_columns')),
-                cellSet = Csw.array(),
+            var cellSet = Csw.array(),
                 r, c;
-            for (r = 1; r <= cellsetrows; r += 1) {
-                for (c = 1; c <= cellsetcolumns; c += 1) {
+            for (r = 1; r <= internal.cellSet.rows; r += 1) {
+                for (c = 1; c <= internal.cellSet.columns; c += 1) {
                     if (cellSet[r] === undefined) {
                         cellSet[r] = Csw.array();
                     }
-                    cellSet[r][c] = internal.getCell(row, column, r, c, cellsetrows, cellsetcolumns);
+                    cellSet[r][c] = internal.getCell(row, column, r, c);
                     if (false === Csw.isNullOrEmpty(attributes)) {
                         cellSet[r][c].propNonDom(attributes);
                     }

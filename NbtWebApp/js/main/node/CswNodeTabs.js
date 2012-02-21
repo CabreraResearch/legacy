@@ -361,8 +361,11 @@
         } // getPropsImpl()
 
         function onRemove(onRemoveData) {
-            var propDiv = _getPropertyCell(onRemoveData.cellSet).children('div').first();
-            var propid = propDiv.propNonDom('propid');
+            var propid = '';
+            var propDiv = _getPropertyCell(onRemoveData.cellSet).children('div');
+            if (false === Csw.isNullOrEmpty(propDiv)) {
+                propid = propDiv.first().propNonDom('propId');
+            }
 
             Csw.ajax.post({
                 watchGlobal: o.AjaxWatchGlobal,
@@ -505,7 +508,7 @@
                     EditMode: o.EditMode,
                     Multi: o.Multi,
                     onEditView: o.onEditView,
-                    ReadOnly: Csw.bool(propData.readonly)
+                    ReadOnly: Csw.bool(propData.readonly) || o.Config
                 };
                 fieldOpt.propDiv.propNonDom({
                     'nodeid': fieldOpt.nodeid,
