@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "nodetypepropid",
                                                           "propname",
+                                                          _CswNbtMetaDataResources.NodeTypePropTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypePropTableUpdate,
                                                           makeNodeTypeProp );
         }

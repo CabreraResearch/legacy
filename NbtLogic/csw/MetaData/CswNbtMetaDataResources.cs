@@ -21,6 +21,13 @@ namespace ChemSW.Nbt.MetaData
         public CswTableUpdate NodeTypeTabTableUpdate;
         public CswTableUpdate JctNodesPropsTableUpdate;  // for prop default values
 
+        public CswTableSelect ObjectClassTableSelect;
+        public CswTableSelect ObjectClassPropTableSelect;
+        public CswTableSelect NodeTypeTableSelect;
+        public CswTableSelect FieldTypeTableSelect;
+        public CswTableSelect NodeTypePropTableSelect;
+        public CswTableSelect NodeTypeTabTableSelect;
+
         public CswNbtMetaDataCollectionObjectClass ObjectClassesCollection;
         public CswNbtMetaDataCollectionObjectClassProp ObjectClassPropsCollection;
         public CswNbtMetaDataCollectionFieldType FieldTypesCollection;
@@ -36,6 +43,13 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaData = MetaData;
             CswNbtFieldResources = new CswNbtFieldResources( Resources );
 
+            ObjectClassTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_ObjectClass_Select", "object_class" );
+            ObjectClassPropTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_ObjectClassProp_Select", "object_class_props" );
+            NodeTypeTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeType_Select", "nodetypes" );
+            FieldTypeTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_FieldType_Select", "field_types" );
+            NodeTypePropTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeProp_Select", "nodetype_props" );
+            NodeTypeTabTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeTab_Select", "nodetype_tabset" );
+            
             ObjectClassTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClass_update", "object_class" );
             ObjectClassPropTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClassProp_update", "object_class_props" );
             NodeTypeTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_NodeType_update", "nodetypes" );
