@@ -375,8 +375,9 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-            var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+            //var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
+            //CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+            CswNbtViewProperty.CswNbtPropType PropType = (CswNbtViewProperty.CswNbtPropType) FilterProp["proptype"].ToString();
 
             string FiltArbitraryId = CswConvert.ToString( FilterProp["filtarbitraryid"] );
             string PropArbitraryId = CswConvert.ToString( FilterProp["proparbitraryid"] );

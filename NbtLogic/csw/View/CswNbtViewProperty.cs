@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using ChemSW.Core;
@@ -16,8 +17,35 @@ namespace ChemSW.Nbt
     {
         public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewProperty; } }
 
-        public enum CswNbtPropType { NodeTypePropId, ObjectClassPropId, Unknown };
-        public enum PropertySortMethod { Ascending, Descending };
+        public sealed class CswNbtPropType : CswEnum<CswNbtPropType>
+        {
+            private CswNbtPropType( string Name ) : base( Name ) { }
+            public static IEnumerable<CswNbtPropType> _All { get { return CswEnum<CswNbtPropType>.All; } }
+            public static explicit operator CswNbtPropType( string str )
+            {
+                CswNbtPropType ret = Parse( str );
+                return ( ret != null ) ? ret : CswNbtPropType.Unknown;
+            }
+            public static readonly CswNbtPropType Unknown = new CswNbtPropType( "Unknown" );
+
+            public static readonly CswNbtPropType NodeTypePropId = new CswNbtPropType( "NodeTypePropId" );
+            public static readonly CswNbtPropType ObjectClassPropId = new CswNbtPropType( "ObjectClassPropId" );
+        }
+
+        public sealed class PropertySortMethod : CswEnum<PropertySortMethod>
+        {
+            private PropertySortMethod( string Name ) : base( Name ) { }
+            public static IEnumerable<PropertySortMethod> _All { get { return CswEnum<PropertySortMethod>.All; } }
+            public static explicit operator PropertySortMethod( string str )
+            {
+                PropertySortMethod ret = Parse( str );
+                return ( ret != null ) ? ret : PropertySortMethod.Unknown;
+            }
+            public static readonly PropertySortMethod Unknown = new PropertySortMethod( "Unknown" );
+
+            public static readonly PropertySortMethod Ascending = new PropertySortMethod( "Ascending" );
+            public static readonly PropertySortMethod Descending = new PropertySortMethod( "Descending" );
+        }
 
         private const string _FiltersName = "filters";
         private CswNbtViewRelationship _Parent;
@@ -179,7 +207,10 @@ namespace ChemSW.Nbt
                 //}
 
                 if( PropertyString[1] != String.Empty )
-                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
+                {
+                    //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
+                    Type = (CswNbtPropType) PropertyString[1];
+                }
                 if( PropertyString[2] != String.Empty )
                     NodeTypePropId = CswConvert.ToInt32( PropertyString[2] );
                 if( PropertyString[3] != String.Empty )
@@ -189,7 +220,10 @@ namespace ChemSW.Nbt
                 if( PropertyString[5] != String.Empty )
                     SortBy = Convert.ToBoolean( PropertyString[5] );
                 if( PropertyString[6] != String.Empty )
-                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropertyString[6], true );
+                {
+                    //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropertyString[6], true );
+                    SortMethod = (PropertySortMethod) PropertyString[6];
+                }
                 if( PropertyString[7] != String.Empty )
                     FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] );
                 if( PropertyString[8] != String.Empty )
@@ -210,7 +244,10 @@ namespace ChemSW.Nbt
             try
             {
                 if( PropNode.Attributes["type"] != null )
-                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropNode.Attributes["type"].Value, true );
+                {
+                    //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropNode.Attributes["type"].Value, true );
+                    Type = (CswNbtPropType) PropNode.Attributes["type"].Value;
+                }
                 if( PropNode.Attributes["value"] != null )   //backwards compatibility
                 {
                     if( Type == CswNbtPropType.NodeTypePropId )
@@ -229,7 +266,10 @@ namespace ChemSW.Nbt
                 if( PropNode.Attributes["sortby"] != null )
                     SortBy = Convert.ToBoolean( PropNode.Attributes["sortby"].Value );
                 if( PropNode.Attributes["sortmethod"] != null )
-                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropNode.Attributes["sortmethod"].Value, true );
+                {
+                    //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropNode.Attributes["sortmethod"].Value, true );
+                    SortMethod = (PropertySortMethod) PropNode.Attributes["sortmethod"].Value;
+                }
                 if( PropNode.Attributes["fieldtype"] != null && PropNode.Attributes["fieldtype"].Value != string.Empty )
                     FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value );
                 if( PropNode.Attributes["order"] != null && PropNode.Attributes["order"].Value != string.Empty )
@@ -273,7 +313,8 @@ namespace ChemSW.Nbt
                 string _Type = CswConvert.ToString( PropObj["type"] );
                 if( !string.IsNullOrEmpty( _Type ) )
                 {
-                    Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), _Type, true );
+                    //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), _Type, true );
+                    Type = (CswNbtPropType) _Type;
                 }
 
                 Int32 _Value = CswConvert.ToInt32( PropObj["value"] );
@@ -312,7 +353,8 @@ namespace ChemSW.Nbt
                 string _SortedMethod = CswConvert.ToString( PropObj["sortmethod"] );
                 if( !string.IsNullOrEmpty( _SortedMethod ) )
                 {
-                    SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), _SortedMethod, true );
+                    //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), _SortedMethod, true );
+                    SortMethod = (PropertySortMethod) _SortedMethod;
                 }
 
 
