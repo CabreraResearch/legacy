@@ -270,7 +270,8 @@
                 width: '100%'
             });
 
-            var cell11 = table.cell(1, 1).append('Configure:<br/>');
+            var cell11 = table.cell(1, 1);
+            cell11.append('Configure:');
             var cell12 = table.cell(1, 2);
 
             var layoutSelect = cell11.select({
@@ -283,7 +284,8 @@
                 }
             });
 
-            cell11.br({number: 2}).append('Add:').br();
+            cell11.br({number: 2});
+            cell11.append('Add: ');
             var addSelect = cell11.select({
                 ID: 'EditLayoutDialog_addselect',
                 selected: '',
