@@ -199,8 +199,8 @@
         }
 
         table2.cell(4, 1).text('For Mobile:');
-        var forMobileCheckBox = table2.cell(4, 2)
-                                      .input({ ID: o.ID + '_formobile',
+        var forMobileCheckCell = table2.cell(4, 2);
+        var $formobilecheckbox = forMobileCheckCell.input('init', { ID: o.ID + '_formobile',
             type: Csw.enums.inputTypes.checkbox
         });
 
@@ -280,7 +280,7 @@
                             }
 
                             if (Csw.bool(currentViewJson.formobile)) {
-                                forMobileCheckBox.propDom('checked', 'checked');
+                                $formobilecheckbox.CswAttrDom('checked', 'checked');
                             }
                             var mode = currentViewJson.mode;
                             displayModeSpan.text(mode);
@@ -345,7 +345,7 @@
                     currentViewJson.visibilityuserid = usernodeid;
                 }
             }
-            var formobile = (forMobileCheckBox.$.is(':checked') ? 'true' : 'false');
+            var formobile = ($formobilecheckbox.is(':checked') ? 'true' : 'false');
             currentViewJson.formobile = formobile;
             currentViewJson.width = gridWidthTextBox.val();
         }
@@ -570,25 +570,25 @@
                 subTable.cell(row, 1).text('Group By');
                 var groupBySelect = subTable.cell(row, 2)
                                             .select({ ID: o.ID + '_gbs',
-                                                onChange: function () {
-                                                    var selected = groupBySelect.find(':selected');
-                                                    var selval = selected.val();
-                                                    var propData;
+                                                    onChange: function () {
+                                                        var selected = groupBySelect.find(':selected');
+                                                        var selval = selected.val();
+                                                        var propData;
 
-                                                    if (false === Csw.isNullOrEmpty(selval)) {
-                                                        if (selval === 'none') {
-                                                            viewnodejson.groupbypropid = '';
-                                                            viewnodejson.groupbyproptype = '';
-                                                            viewnodejson.groupbypropname = '';
-                                                        } else {
-                                                            propData = selected.data('thisPropData');
-                                                            viewnodejson.groupbypropid = Csw.string(propData.propid);
-                                                            viewnodejson.groupbyproptype = Csw.string(propData.proptype);
-                                                            viewnodejson.groupbypropname = Csw.string(propData.propname);
-                                                        }
-                                                    } // if (false === Csw.isNullOrEmpty(selval)) {
-                                                } // onChange
-                                            }); // CswSelect
+                                                        if (false === Csw.isNullOrEmpty(selval)) {
+                                                            if (selval === 'none') {
+                                                                viewnodejson.groupbypropid = '';
+                                                                viewnodejson.groupbyproptype = '';
+                                                                viewnodejson.groupbypropname = '';
+                                                            } else {
+                                                                propData = selected.data('thisPropData');
+                                                                viewnodejson.groupbypropid = Csw.string(propData.propid);
+                                                                viewnodejson.groupbyproptype = Csw.string(propData.proptype);
+                                                                viewnodejson.groupbypropname = Csw.string(propData.propname);
+                                                            }
+                                                        } // if (false === Csw.isNullOrEmpty(selval)) {
+                                                    } // onChange
+                                                }); // CswSelect
                 row += 1;
 
                 var jsonData = {
@@ -710,17 +710,18 @@
                     'FirstCellRightAlign': true
                 });
                 filterTable.cell(1, 1).text('Case Sensitive');
-                
-                filterTable.cell(1, 2)
-                    .input({
-                        ID: o.ID + '_casecb',
-                        type: Csw.enums.inputTypes.checkbox,
-                        onChange: function () {
-                            var $this = $(this);
-                            viewNodeData.casesensitive = $this.is(':checked');
-                        },
-                        checked: Csw.bool(viewNodeData.casesensitive)
-                    });
+                var $casecheck = filterTable.cell(1, 2)
+                                       .$.CswInput('init',
+                                            { ID: o.ID + '_casecb',
+                                                type: Csw.enums.inputTypes.checkbox,
+                                                onChange: function () {
+                                                    var $this = $(this);
+                                                    viewNodeData.casesensitive = $this.is(':checked');
+                                                }
+                                            });
+                if (Csw.bool(viewNodeData.casesensitive)) {
+                    $casecheck.CswAttrDom('checked', 'true');
+                }
             });
         }
 
@@ -1054,14 +1055,14 @@
             var $ret = $('<li id="' + arbid + '" rel="' + rel + '" class="jstree-open"></li>');
             $ret.append($('<a href="#" class="' + linkclass + '" arbid="' + arbid + '">' + name + '</a>'));
             if (showDelete) {
-                makeDeleteSpan(arbid, $ret);
+                $ret.append(makeDeleteSpan(arbid, stepno));
             }
+
             return $ret;
         }
 
-        function makeDeleteSpan(arbid, $parent) {
+        function makeDeleteSpan(arbid) {
             var td = Csw.controls.span({
-                $parent: $parent,
                 cssclass: Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name
             }).propNonDom('arbid', arbid);
             td.imageButton({
