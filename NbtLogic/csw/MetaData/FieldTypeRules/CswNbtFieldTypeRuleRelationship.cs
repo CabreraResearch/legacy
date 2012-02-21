@@ -95,8 +95,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         private CswNbtView _setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtViewRelationship.RelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
         {
-            CswNbtMetaDataNodeTypeProp ThisNtProp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.PropId );
-            CswNbtView RetView = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( ThisNtProp.ViewId );
+            //CswNbtMetaDataNodeTypeProp ThisNtProp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.PropId );
+            CswNbtView RetView = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( MetaDataProp.ViewId );
             if( RelatedIdType != CswNbtViewRelationship.RelatedIdType.Unknown &&
                 ( null == RetView ||
                   RetView.Root.ChildRelationships.Count == 0 ||
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         break;
                 }
 
-                RetView.ViewId = ThisNtProp.ViewId;
+                RetView.ViewId = MetaDataProp.ViewId;
                 RetView.Visibility = NbtViewVisibility.Property;
                 RetView.ViewMode = NbtViewRenderingMode.List;
                 RetView.ViewName = MetaDataProp.PropName;

@@ -358,6 +358,16 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIds( NodeTypeId );
         }
 
+        public Int32 getNodeTypePropId( Int32 NodeTypeId, string PropName )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropId( NodeTypeId, PropName );
+        }
+
+        public Int32 getNodeTypePropIdByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdByObjectClassProp( NodeTypeId, ObjectClassPropName );
+        }
+
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( Int32 NodeTypeId )
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProps( NodeTypeId );
@@ -557,8 +567,10 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeTab FirstTab = makeNewTab( NewNodeType, InsertedNodeTypesRow["nodetypename"].ToString(), 1 );
 
             // Make initial props
+            Dictionary<Int32, CswNbtMetaDataNodeTypeProp> NewNTPropsByOCPId = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>(); 
             int DisplayRow = 1;
-            foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClass.ObjectClassProps )
+            IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps = ObjectClass.ObjectClassProps;
+            foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
             {
                 DataRow NewNodeTypePropRow = NodeTypeProps.NewRow();
 
@@ -582,6 +594,7 @@ namespace ChemSW.Nbt.MetaData
                 //CswNbtMetaDataNodeTypeProp NewProp = (CswNbtMetaDataNodeTypeProp) _CswNbtMetaDataResources.NodeTypePropsCollection.RegisterNew( NewNodeTypePropRow );
                 CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, NewNodeTypePropRow );
                 _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
+		NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, NewProp );
 
                 // Handle default values
                 CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
@@ -602,22 +615,26 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Now that we're done with all object class props, we can handle filters
-            foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClass.ObjectClassProps )
+            foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
             {
                 if( OCProp.hasFilter() )
                 {
-                    CswNbtMetaDataNodeTypeProp NTProp = NewNodeType.getNodeTypePropByObjectClassProp( OCProp.PropName );
+                    //CswNbtMetaDataNodeTypeProp NTProp = NewNodeType.getNodeTypePropByObjectClassProp( OCProp.PropName );
+                    CswNbtMetaDataNodeTypeProp NTProp = NewNTPropsByOCPId[OCProp.ObjectClassPropId];
                     if( null != NTProp )
                     {
-
-                        CswNbtMetaDataNodeTypeProp TargetOfFilter = NewNodeType.getNodeTypePropByObjectClassProp( ObjectClass.getObjectClassProp( OCProp.FilterObjectClassPropId ).PropName );
-                        //NTProp.FilterNodeTypePropId = TargetOfFilter.FirstPropVersionId;
-                        CswNbtSubField SubField = null;
-                        CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
-                        string FilterValue = string.Empty;
-                        OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
-                        // We don't have to worry about versioning in this function
-                        NTProp.setFilter( TargetOfFilter.FirstPropVersionId, SubField, FilterMode, FilterValue );
+                        //CswNbtMetaDataNodeTypeProp TargetOfFilter = NewNodeType.getNodeTypePropByObjectClassProp( ObjectClass.getObjectClassProp( OCProp.FilterObjectClassPropId ).PropName );
+                        CswNbtMetaDataNodeTypeProp TargetOfFilter = NewNTPropsByOCPId[OCProp.FilterObjectClassPropId];
+                        if( TargetOfFilter != null )
+                        {
+                            //NTProp.FilterNodeTypePropId = TargetOfFilter.FirstPropVersionId;
+                            CswNbtSubField SubField = null;
+                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                            string FilterValue = string.Empty;
+                            OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
+                            // We don't have to worry about versioning in this function
+                            NTProp.setFilter( TargetOfFilter.FirstPropVersionId, SubField, FilterMode, FilterValue );
+                        }
                     }
                 }
             }//iterate object class props

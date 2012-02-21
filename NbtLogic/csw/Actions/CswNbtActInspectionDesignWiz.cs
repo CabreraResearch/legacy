@@ -364,12 +364,14 @@ namespace ChemSW.Nbt.Actions
 
             _DesignNtId = InspectionDesignNt.FirstVersionNodeTypeId;
 
-            CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
-            IdNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            //CswNbtMetaDataNodeTypeProp IdNameNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
+            Int32 IdNameNtpId = InspectionDesignNt.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
+            //IdNameNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, InspectionDesignNt.NodeTypeId, IdNameNtpId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
             //NodeTypeName Template
             if( string.IsNullOrEmpty( InspectionDesignNt.NameTemplateValue ) )
             {
-                InspectionDesignNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName ) );
+                InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtpId.ToString() );
             }
 
             //Inspection Design Target is Inspection Target OC

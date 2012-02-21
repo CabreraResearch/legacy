@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
@@ -36,7 +37,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataCollectionNodeTypeTab NodeTypeTabsCollection;
 
 
-        CswNbtMetaDataTableCache _CswNbtMetaDataTableCache = null;
+        //CswNbtMetaDataTableCache _CswNbtMetaDataTableCache = null;
         public CswNbtMetaDataResources( CswNbtResources Resources, CswNbtMetaData MetaData )
         {
             CswNbtResources = Resources;
@@ -65,7 +66,7 @@ namespace ChemSW.Nbt.MetaData
             NodeTypePropsCollection = new CswNbtMetaDataCollectionNodeTypeProp( this );
             NodeTypeTabsCollection = new CswNbtMetaDataCollectionNodeTypeTab( this );
 
-            _CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources );
+            //_CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources );
         }
 
         //public void tryAddToMetaDataCollection( object Key, object Value, IDictionary Collection, string MetaDataObjectTypeName, Int32 MetaDataObjectId, string MetaDataObjectName )
@@ -386,14 +387,14 @@ namespace ChemSW.Nbt.MetaData
             {
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first
-                Collection<CswNbtMetaDataNodeTypeProp> PropsToDo = new Collection<CswNbtMetaDataNodeTypeProp>();
+                Dictionary<Int32, CswNbtMetaDataNodeTypeProp> PropsToDo = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>();
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
                 {
                     if( Prop.UseNumbering )
-                        PropsToDo.Add( Prop );
+                        PropsToDo.Add( Prop.FirstPropVersionId, Prop );
                 }
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
                 {
                     if( !Prop.hasFilter() )
                     {
@@ -408,11 +409,12 @@ namespace ChemSW.Nbt.MetaData
                 for( Int32 i = 1; i <= CurrentQuestionNo; i++ )
                     SubQuestionNos[i] = 1;
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
                 {
                     if( Prop.hasFilter() )
                     {
-                        CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
+                        //CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
+                        CswNbtMetaDataNodeTypeProp ParentProp = PropsToDo[Prop.FilterNodeTypePropId];
                         if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
                         {
                             Prop.QuestionNo = ParentProp.QuestionNo;
@@ -439,7 +441,7 @@ namespace ChemSW.Nbt.MetaData
             if( ChangesMade )
             {
                 CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-                _CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
+                //_CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
             }
         }
 

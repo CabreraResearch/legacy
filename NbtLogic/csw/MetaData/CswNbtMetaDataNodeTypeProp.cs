@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.MetaData
                 // BZ 5492: Make sure this is unique for this nodetype
 
                 if( _NodeTypePropRow["propname"].ToString() != value &&
-                    _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( this.NodeTypeId, value ) != null )
+                    _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypePropId( this.NodeTypeId, value ) != Int32.MinValue )
                 {
                     throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }

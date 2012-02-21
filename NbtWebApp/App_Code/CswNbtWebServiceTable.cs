@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
                     {
-                        Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+                        IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
                         foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )
                         {
                             bool AlreadyExists = false;
