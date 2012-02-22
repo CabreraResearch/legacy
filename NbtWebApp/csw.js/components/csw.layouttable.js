@@ -143,7 +143,7 @@
                 });
         };
 
-        internal.onCreateCell = function (cell, realRow, realCol, isFillerCell) {
+        internal.onCreateCell = function (cell, realRow, realCol) {
             var thisRow = Math.ceil(realRow / internal.cellSet.rows),
                     thisCol = Math.ceil(realCol / internal.cellSet.columns),
                     cellsetrow = Csw.number(internal.cellSet.rows - realRow % internal.cellSet.rows),
