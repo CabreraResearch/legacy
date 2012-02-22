@@ -29,9 +29,7 @@
             showExpandRowButton: false,
             showExpandColButton: false,
             OddCellRightAlign: false,
-            ReadOnly: false,
-            called: 0,
-            created: []
+            ReadOnly: false
         };
         var external = {};
 
@@ -311,7 +309,6 @@
         external.toggleConfig = function () {
             /// <summary>Toggles config mode.</summary>
             /// <returns type="Boolean">The resulting config state.</returns>
-            Csw.log(internal.called);
             var ret = false;
             if (external.isConfig(external.table)) {
                 external.configOff();
