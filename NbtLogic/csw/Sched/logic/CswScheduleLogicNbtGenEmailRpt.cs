@@ -88,6 +88,8 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
+                    _CompletionMessage = string.Empty; 
+
                     List<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
 
                     for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
