@@ -17,36 +17,6 @@ namespace ChemSW.Nbt
     {
         public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewProperty; } }
 
-        public sealed class CswNbtPropType : CswEnum<CswNbtPropType>
-        {
-            private CswNbtPropType( string Name ) : base( Name ) { }
-            public static IEnumerable<CswNbtPropType> _All { get { return CswEnum<CswNbtPropType>.All; } }
-            public static explicit operator CswNbtPropType( string str )
-            {
-                CswNbtPropType ret = Parse( str );
-                return ( ret != null ) ? ret : CswNbtPropType.Unknown;
-            }
-            public static readonly CswNbtPropType Unknown = new CswNbtPropType( "Unknown" );
-
-            public static readonly CswNbtPropType NodeTypePropId = new CswNbtPropType( "NodeTypePropId" );
-            public static readonly CswNbtPropType ObjectClassPropId = new CswNbtPropType( "ObjectClassPropId" );
-        }
-
-        public sealed class PropertySortMethod : CswEnum<PropertySortMethod>
-        {
-            private PropertySortMethod( string Name ) : base( Name ) { }
-            public static IEnumerable<PropertySortMethod> _All { get { return CswEnum<PropertySortMethod>.All; } }
-            public static explicit operator PropertySortMethod( string str )
-            {
-                PropertySortMethod ret = Parse( str );
-                return ( ret != null ) ? ret : PropertySortMethod.Unknown;
-            }
-            public static readonly PropertySortMethod Unknown = new PropertySortMethod( "Unknown" );
-
-            public static readonly PropertySortMethod Ascending = new PropertySortMethod( "Ascending" );
-            public static readonly PropertySortMethod Descending = new PropertySortMethod( "Descending" );
-        }
-
         private const string _FiltersName = "filters";
         private CswNbtViewRelationship _Parent;
         public override CswNbtViewNode Parent

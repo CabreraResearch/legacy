@@ -16,10 +16,6 @@ namespace ChemSW.Nbt
     {
         public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewRelationship; } }
 
-        public enum RelatedIdType { Unknown, NodeTypeId, ObjectClassId };
-        public enum PropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
-        public enum PropOwnerType { First, Second, Unknown };
-
         // For the Relationship
         public bool Selectable = true;
         //public bool ShowInGrid = true;
@@ -142,16 +138,16 @@ namespace ChemSW.Nbt
             if( InOwnerType == PropOwnerType.First )
             {
                 overrideFirst( Prop.getNodeType() );
-                if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
                     overrideSecond( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
-                else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                else if( Prop.FKType == RelatedIdType.ObjectClassId.ToString() )
                     overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
             }
             else if( InOwnerType == PropOwnerType.Second )
             {
-                if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
                     overrideFirst( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
-                else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                else if( Prop.FKType == RelatedIdType.ObjectClassId.ToString() )
                     overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
                 overrideSecond( Prop.getNodeType() );
             }
@@ -1160,7 +1156,7 @@ namespace ChemSW.Nbt
                 string NodeText = SecondName;
                 if( PropName != String.Empty )
                 {
-                    if( PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+                    if( PropOwner == PropOwnerType.First )
                         NodeText += " (by " + FirstName + "'s " + PropName + ")";
                     else
                         NodeText += " (by " + PropName + ")";

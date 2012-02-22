@@ -179,6 +179,40 @@ namespace ChemSW.Nbt
         public static readonly NbtViewNodeType CswNbtViewRoot = new NbtViewNodeType( "CswNbtViewRoot" );
     }
 
+    public enum RelatedIdType { Unknown, NodeTypeId, ObjectClassId };
+    public enum PropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
+    public enum PropOwnerType { First, Second, Unknown };
+
+    public sealed class CswNbtPropType : CswEnum<CswNbtPropType>
+    {
+        private CswNbtPropType( string Name ) : base( Name ) { }
+        public static IEnumerable<CswNbtPropType> _All { get { return CswEnum<CswNbtPropType>.All; } }
+        public static explicit operator CswNbtPropType( string str )
+        {
+            CswNbtPropType ret = Parse( str );
+            return ( ret != null ) ? ret : CswNbtPropType.Unknown;
+        }
+        public static readonly CswNbtPropType Unknown = new CswNbtPropType( "Unknown" );
+
+        public static readonly CswNbtPropType NodeTypePropId = new CswNbtPropType( "NodeTypePropId" );
+        public static readonly CswNbtPropType ObjectClassPropId = new CswNbtPropType( "ObjectClassPropId" );
+    }
+
+    public sealed class PropertySortMethod : CswEnum<PropertySortMethod>
+    {
+        private PropertySortMethod( string Name ) : base( Name ) { }
+        public static IEnumerable<PropertySortMethod> _All { get { return CswEnum<PropertySortMethod>.All; } }
+        public static explicit operator PropertySortMethod( string str )
+        {
+            PropertySortMethod ret = Parse( str );
+            return ( ret != null ) ? ret : PropertySortMethod.Unknown;
+        }
+        public static readonly PropertySortMethod Unknown = new PropertySortMethod( "Unknown" );
+
+        public static readonly PropertySortMethod Ascending = new PropertySortMethod( "Ascending" );
+        public static readonly PropertySortMethod Descending = new PropertySortMethod( "Descending" );
+    }
+    
     #endregion Enums
 
 } // namespace ChemSW.Nbt
