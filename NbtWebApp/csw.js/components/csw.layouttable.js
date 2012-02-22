@@ -287,7 +287,7 @@
             return Csw.bool(external.table.propNonDom('configmode'));
         };
 
-        external.cellSet = function (row, column, attributes) {
+        external.cellSet = function (row, column) {
             /// <summary>Get the set of cells representing a layout item.</summary>
             /// <param name="row" type="Number">Row number</param>
             /// <param name="column" type="Number">Column number</param>
@@ -300,13 +300,18 @@
                         cellSet[r] = Csw.array();
                     }
                     cellSet[r][c] = internal.getCell(row, column, r, c);
-                    if (false === Csw.isNullOrEmpty(attributes)) {
-                        cellSet[r][c].propNonDom(attributes);
-                    }
                 }
             }
-
             return cellSet;
+        };
+
+        external.addCellSetAttributes = function (cellSet, attributes) {
+            function applyAttributes(cell) {
+                if (false === Csw.isNullOrEmpty(attributes)) {
+                    cell.propNonDom(attributes);
+                }
+            }
+            internal.eachCell(cellSet, applyAttributes);
         };
 
         external.toggleConfig = function () {
