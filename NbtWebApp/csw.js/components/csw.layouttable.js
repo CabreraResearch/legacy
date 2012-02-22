@@ -223,7 +223,7 @@
                     if (cellSet[r] === undefined) {
                         cellSet[r] = Csw.array();
                     }
-                    func(cellSet[r][c], r, c);
+                    Csw.tryExec(func, cellSet[r][c], r, c);
                 }
             }
         };
