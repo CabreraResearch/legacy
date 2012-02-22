@@ -394,7 +394,7 @@ namespace ChemSW.Nbt
                     CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, true );
                     foreach( CswNbtViewProperty Prop in Relationship.Properties )
                     {
-                        if( Prop.Type == CswNbtPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
+                        if( Prop.Type == NbtViewPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
                         {
                             NTPropsInClause.Add( Prop.NodeTypePropId.ToString() );
                         }
@@ -478,7 +478,7 @@ namespace ChemSW.Nbt
                                   select jnp.nodeid
                                     from jct_nodes_props jnp
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                                    if( Prop.Type == CswNbtPropType.NodeTypePropId )
+                                    if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                     {
                                         Where += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
                                     }
@@ -497,7 +497,7 @@ namespace ChemSW.Nbt
 
                                 Where += @" n.nodeid in (select s.nodeid from nodes s ";
 
-                                if( Prop.Type == CswNbtPropType.NodeTypePropId )
+                                if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                 {
                                     Where += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
                                 }

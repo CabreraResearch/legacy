@@ -346,7 +346,7 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in Node.ChildNodes )
                 {
-                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == NbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationship = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationship );
@@ -449,7 +449,7 @@ namespace ChemSW.Nbt
                         select (JObject) Relationship.Value
                             into RelationshipObj
                             let NodeName = CswConvert.ToString( RelationshipObj["nodename"] )
-                            where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            where NodeName == NbtViewXmlNodeName.Relationship.ToString().ToLower()
                             select new CswNbtViewRelationship( CswNbtResources, _View, RelationshipObj ) )
                     {
                         this.addChildRelationship( ChildRelationship );
@@ -479,7 +479,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode RootXmlNode = XmlDoc.CreateNode( XmlNodeType.Element, CswNbtViewXmlNodeName.TreeView.ToString(), "" );
+            XmlNode RootXmlNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.TreeView.ToString(), "" );
 
             XmlAttribute ViewNameAttribute = XmlDoc.CreateAttribute( "viewname" );
             ViewNameAttribute.Value = ViewName;
@@ -569,11 +569,11 @@ namespace ChemSW.Nbt
             JObject Ret = new JObject();
 
             JObject RootPropObj = new JObject();
-            JProperty RootProperty = new JProperty( CswNbtViewXmlNodeName.TreeView.ToString(), RootPropObj );
+            JProperty RootProperty = new JProperty( NbtViewXmlNodeName.TreeView.ToString(), RootPropObj );
 
             Ret.Add( RootProperty );
 
-            RootPropObj.Add( new JProperty( "nodename", CswNbtViewXmlNodeName.TreeView.ToString().ToLower() ) );
+            RootPropObj.Add( new JProperty( "nodename", NbtViewXmlNodeName.TreeView.ToString().ToLower() ) );
             RootPropObj.Add( new JProperty( "viewname", ViewName ) );
             RootPropObj.Add( new JProperty( "version", "1.0" ) );
             RootPropObj.Add( new JProperty( "iconfilename", IconFileName ) );

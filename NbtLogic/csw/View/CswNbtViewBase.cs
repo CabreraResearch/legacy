@@ -65,54 +65,54 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Type of XML node used in Views
     /// </summary>
-    public sealed class CswNbtViewXmlNodeName : CswEnum<CswNbtViewXmlNodeName>
+    public sealed class NbtViewXmlNodeName : CswEnum<NbtViewXmlNodeName>
     {
-        private CswNbtViewXmlNodeName( string Name ) : base( Name ) { }
-        public static IEnumerable<CswNbtViewXmlNodeName> _All { get { return CswEnum<CswNbtViewXmlNodeName>.All; } }
-        public static explicit operator CswNbtViewXmlNodeName( string str )
+        private NbtViewXmlNodeName( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewXmlNodeName> _All { get { return CswEnum<NbtViewXmlNodeName>.All; } }
+        public static explicit operator NbtViewXmlNodeName( string str )
         {
-            CswNbtViewXmlNodeName ret = Parse( str );
-            return ( ret != null ) ? ret : CswNbtViewXmlNodeName.Unknown;
+            NbtViewXmlNodeName ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewXmlNodeName.Unknown;
         }
-        public static readonly CswNbtViewXmlNodeName Unknown = new CswNbtViewXmlNodeName( "Unknown" );
+        public static readonly NbtViewXmlNodeName Unknown = new NbtViewXmlNodeName( "Unknown" );
 
         /// <summary>
         /// The real Root node of a View
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName TreeView = new CswNbtViewXmlNodeName( "TreeView" );
+        public static readonly NbtViewXmlNodeName TreeView = new NbtViewXmlNodeName( "TreeView" );
         /// <summary>
         /// A Relationship in the View
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName Relationship = new CswNbtViewXmlNodeName( "Relationship" );
+        public static readonly NbtViewXmlNodeName Relationship = new NbtViewXmlNodeName( "Relationship" );
         /// <summary>
         /// Group-By
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName Group = new CswNbtViewXmlNodeName( "Group" );
+        public static readonly NbtViewXmlNodeName Group = new NbtViewXmlNodeName( "Group" );
         /// <summary>
         /// A Property
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName Property = new CswNbtViewXmlNodeName( "Property" );
+        public static readonly NbtViewXmlNodeName Property = new NbtViewXmlNodeName( "Property" );
         /// <summary>
         /// A Property Filter
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName Filter = new CswNbtViewXmlNodeName( "Filter" );
+        public static readonly NbtViewXmlNodeName Filter = new NbtViewXmlNodeName( "Filter" );
         /// <summary>
         /// The FilterMode of a Filter
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName FilterMode = new CswNbtViewXmlNodeName( "FilterMode" );
+        public static readonly NbtViewXmlNodeName FilterMode = new NbtViewXmlNodeName( "FilterMode" );
         /// <summary>
         /// And, Or, or And Not for a filter
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName Conjunction = new CswNbtViewXmlNodeName( "Conjunction" );
+        public static readonly NbtViewXmlNodeName Conjunction = new NbtViewXmlNodeName( "Conjunction" );
         //public static readonly CswNbtViewXmlNodeName RetrievalType= new CswNbtViewXmlNodeName( "RetrievalType" );
         /// <summary>
         /// The Value of a filter
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName Value = new CswNbtViewXmlNodeName( "Value" );
+        public static readonly NbtViewXmlNodeName Value = new NbtViewXmlNodeName( "Value" );
         /// <summary>
         /// Whether the Filter is CaseSensitive
         /// </summary>
-        public static readonly CswNbtViewXmlNodeName CaseSensitive = new CswNbtViewXmlNodeName( "CaseSensitive" );
+        public static readonly NbtViewXmlNodeName CaseSensitive = new NbtViewXmlNodeName( "CaseSensitive" );
     }
 
     /// <summary>
@@ -183,34 +183,34 @@ namespace ChemSW.Nbt
     public enum PropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
     public enum PropOwnerType { First, Second, Unknown };
 
-    public sealed class CswNbtPropType : CswEnum<CswNbtPropType>
+    public sealed class NbtViewPropType : CswEnum<NbtViewPropType>
     {
-        private CswNbtPropType( string Name ) : base( Name ) { }
-        public static IEnumerable<CswNbtPropType> _All { get { return CswEnum<CswNbtPropType>.All; } }
-        public static explicit operator CswNbtPropType( string str )
+        private NbtViewPropType( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewPropType> _All { get { return CswEnum<NbtViewPropType>.All; } }
+        public static explicit operator NbtViewPropType( string str )
         {
-            CswNbtPropType ret = Parse( str );
-            return ( ret != null ) ? ret : CswNbtPropType.Unknown;
+            NbtViewPropType ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewPropType.Unknown;
         }
-        public static readonly CswNbtPropType Unknown = new CswNbtPropType( "Unknown" );
+        public static readonly NbtViewPropType Unknown = new NbtViewPropType( "Unknown" );
 
-        public static readonly CswNbtPropType NodeTypePropId = new CswNbtPropType( "NodeTypePropId" );
-        public static readonly CswNbtPropType ObjectClassPropId = new CswNbtPropType( "ObjectClassPropId" );
+        public static readonly NbtViewPropType NodeTypePropId = new NbtViewPropType( "NodeTypePropId" );
+        public static readonly NbtViewPropType ObjectClassPropId = new NbtViewPropType( "ObjectClassPropId" );
     }
 
-    public sealed class PropertySortMethod : CswEnum<PropertySortMethod>
+    public sealed class NbtViewPropertySortMethod : CswEnum<NbtViewPropertySortMethod>
     {
-        private PropertySortMethod( string Name ) : base( Name ) { }
-        public static IEnumerable<PropertySortMethod> _All { get { return CswEnum<PropertySortMethod>.All; } }
-        public static explicit operator PropertySortMethod( string str )
+        private NbtViewPropertySortMethod( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewPropertySortMethod> _All { get { return CswEnum<NbtViewPropertySortMethod>.All; } }
+        public static explicit operator NbtViewPropertySortMethod( string str )
         {
-            PropertySortMethod ret = Parse( str );
-            return ( ret != null ) ? ret : PropertySortMethod.Unknown;
+            NbtViewPropertySortMethod ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewPropertySortMethod.Unknown;
         }
-        public static readonly PropertySortMethod Unknown = new PropertySortMethod( "Unknown" );
+        public static readonly NbtViewPropertySortMethod Unknown = new NbtViewPropertySortMethod( "Unknown" );
 
-        public static readonly PropertySortMethod Ascending = new PropertySortMethod( "Ascending" );
-        public static readonly PropertySortMethod Descending = new PropertySortMethod( "Descending" );
+        public static readonly NbtViewPropertySortMethod Ascending = new NbtViewPropertySortMethod( "Ascending" );
+        public static readonly NbtViewPropertySortMethod Descending = new NbtViewPropertySortMethod( "Descending" );
     }
     
     #endregion Enums

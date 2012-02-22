@@ -544,12 +544,12 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in RelationshipNode.ChildNodes )
                 {
-                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == NbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationshipNode = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationshipNode );
                     }
-                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Property.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == NbtViewXmlNodeName.Property.ToString().ToLower() )
                     {
                         CswNbtViewProperty ChildProp = new CswNbtViewProperty( CswNbtResources, _View, ChildNode );
                         this.addProperty( ChildProp );
@@ -690,7 +690,7 @@ namespace ChemSW.Nbt
                         select (JObject) Relationship.Value
                             into ChildRelationObj
                             let NodeName = CswConvert.ToString( ChildRelationObj["nodename"] )
-                            where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            where NodeName == NbtViewXmlNodeName.Relationship.ToString().ToLower()
                             select new CswNbtViewRelationship( CswNbtResources, _View, ChildRelationObj ) )
                     {
                         this.addChildRelationship( ChildRelationship );
@@ -707,7 +707,7 @@ namespace ChemSW.Nbt
                         select (JObject) Property.Value
                             into PropObj
                             let NodeName = CswConvert.ToString( PropObj["nodename"] )
-                            where NodeName == CswNbtViewXmlNodeName.Property.ToString().ToLower()
+                            where NodeName == NbtViewXmlNodeName.Property.ToString().ToLower()
                             select new CswNbtViewProperty( CswNbtResources, _View, PropObj ) )
                     {
                         this.addProperty( ChildProp );
@@ -857,7 +857,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode RelationshipNode = XmlDoc.CreateNode( XmlNodeType.Element, CswNbtViewXmlNodeName.Relationship.ToString(), "" );
+            XmlNode RelationshipNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.Relationship.ToString(), "" );
 
             if( PropId != Int32.MinValue )
             {
@@ -1010,7 +1010,7 @@ namespace ChemSW.Nbt
         {
             JObject RelationshipObj = new JObject();
 
-            RelationshipObj["nodename"] = CswNbtViewXmlNodeName.Relationship.ToString().ToLower();
+            RelationshipObj["nodename"] = NbtViewXmlNodeName.Relationship.ToString().ToLower();
 
             string RelationshipId = string.Empty;
             if( PropId != Int32.MinValue )
@@ -1099,7 +1099,7 @@ namespace ChemSW.Nbt
                 }
                 if( string.IsNullOrEmpty( RPropName ) )
                 {
-                    RPropName = CswNbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId; ;
+                    RPropName = NbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId; ;
                 }
             }
             JProperty RelationshipProp = new JProperty( RPropName, RelationshipObj );

@@ -587,7 +587,7 @@ namespace ChemSW.Nbt
             }
             foreach( CswNbtViewProperty Property in this.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) )
             {
-                if( Property.Type == CswNbtPropType.NodeTypePropId )
+                if( Property.Type == NbtViewPropType.NodeTypePropId )
                 {
                     if( NodeTypePropMap.ContainsKey( Property.NodeTypePropId ) )
                         Property.NodeTypePropId = NodeTypePropMap[Property.NodeTypePropId];
@@ -882,7 +882,7 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewProperty CurrentProp in CurrentRelationship.Properties )
                 {
-                    if( CurrentProp.Type == CswNbtPropType.NodeTypePropId &&
+                    if( CurrentProp.Type == NbtViewPropType.NodeTypePropId &&
                         CurrentProp.NodeTypePropId == NodeTypeProp.FirstPropVersionId )
                     {
                         ReturnVal = true;
@@ -1169,7 +1169,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns the CswNbtViewProperty which corresponds to the property type and primary key provided
         /// </summary>
-        public CswNbtViewProperty findPropertyById( CswNbtPropType PropType, Int32 PropId )
+        public CswNbtViewProperty findPropertyById( NbtViewPropType PropType, Int32 PropId )
         {
             CswNbtViewProperty ret = null;
             foreach( CswNbtViewRelationship Child in Root.ChildRelationships )
@@ -1180,13 +1180,13 @@ namespace ChemSW.Nbt
             }
             return ret;
         }
-        private static CswNbtViewProperty findPropertyByIdRecursive( CswNbtViewRelationship Relationship, CswNbtPropType PropType, Int32 PropId )
+        private static CswNbtViewProperty findPropertyByIdRecursive( CswNbtViewRelationship Relationship, NbtViewPropType PropType, Int32 PropId )
         {
             CswNbtViewProperty ret = null;
             foreach( CswNbtViewProperty ChildProperty in Relationship.Properties )
             {
-                if( ( PropType == CswNbtPropType.ObjectClassPropId && ChildProperty.ObjectClassPropId == PropId ) ||
-                    ( PropType == CswNbtPropType.NodeTypePropId && ChildProperty.NodeTypePropId == PropId ) )
+                if( ( PropType == NbtViewPropType.ObjectClassPropId && ChildProperty.ObjectClassPropId == PropId ) ||
+                    ( PropType == NbtViewPropType.NodeTypePropId && ChildProperty.NodeTypePropId == PropId ) )
                 {
                     ret = ChildProperty;
                     break;
@@ -1364,7 +1364,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the Property used to sort the View.  Only one property can have this setting.
         /// </summary>
-        public void setSortProperty( CswNbtViewProperty Property, PropertySortMethod SortMethod )
+        public void setSortProperty( CswNbtViewProperty Property, NbtViewPropertySortMethod SortMethod )
         {
             clearSortProperty();
             Property.SortBy = true;

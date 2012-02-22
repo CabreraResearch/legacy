@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Statistics
                 if ( null != ViewProp )
                 {
                     CswNbtStatisticsEntry.Stats_count_searches++;
-                    if ( ViewProp.Type == CswNbtPropType.NodeTypePropId )
+                    if ( ViewProp.Type == NbtViewPropType.NodeTypePropId )
                         CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.NodeTypePropsSearched, ViewProp.NodeTypePropId.ToString() );
                     else
                         CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.ObjectClassPropsSearched, ViewProp.ObjectClassPropId.ToString() );
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Statistics
                                 OldFilter.Value != NewFilter.Value )
                             {
                                 CswNbtViewProperty ParentProp = ( CswNbtViewProperty )NewFilter.Parent;
-                                if ( ParentProp.Type == CswNbtPropType.NodeTypePropId )
+                                if ( ParentProp.Type == NbtViewPropType.NodeTypePropId )
                                     CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.NodeTypePropsFilterMod, ParentProp.NodeTypePropId.ToString() );
                                 else
                                     CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.ObjectClassPropsFilterMod, ParentProp.ObjectClassPropId.ToString() );

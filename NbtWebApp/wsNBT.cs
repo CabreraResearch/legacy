@@ -1674,13 +1674,13 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( nId );
                             Props = NodeType.getNodeTypeProps();
-                            PropType = CswNbtPropType.NodeTypePropId.ToString();
+                            PropType = NbtViewPropType.NodeTypePropId.ToString();
                         }
                         else if( Type == "ObjectClassId" )
                         {
                             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( nId );
                             Props = ObjectClass.ObjectClassProps;
-                            PropType = CswNbtPropType.ObjectClassPropId.ToString();
+                            PropType = NbtViewPropType.ObjectClassPropId.ToString();
                         }
 
                         if( null != Props )

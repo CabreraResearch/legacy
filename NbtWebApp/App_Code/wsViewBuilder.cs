@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.WebServices
             string FiltId = Filter.ArbitraryId;
             ParentObj[FiltId] = new JObject();
             ParentObj[FiltId]["arbitraryid"] = Filter.ArbitraryId;
-            ParentObj[FiltId]["nodename"] = CswNbtViewXmlNodeName.Filter.ToString().ToLower();
+            ParentObj[FiltId]["nodename"] = NbtViewXmlNodeName.Filter.ToString().ToLower();
             ParentObj[FiltId]["subfield"] = Filter.SubfieldName.ToString();
             ParentObj[FiltId]["value"] = Filter.Value;
             ParentObj[FiltId]["filtermode"] = Filter.FilterMode.ToString();
@@ -377,7 +377,7 @@ namespace ChemSW.Nbt.WebServices
 
             //var PropType = CswNbtPropType.Unknown;
             //CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
-            CswNbtPropType PropType = (CswNbtPropType) FilterProp["proptype"].ToString();
+            NbtViewPropType PropType = (NbtViewPropType) FilterProp["proptype"].ToString();
 
             string FiltArbitraryId = CswConvert.ToString( FilterProp["filtarbitraryid"] );
             string PropArbitraryId = CswConvert.ToString( FilterProp["proparbitraryid"] );
@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.WebServices
             if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
 
             CswNbtViewPropertyFilter ViewPropFilt = null;
-            if( PropType != CswNbtPropType.Unknown )
+            if( PropType != NbtViewPropType.Unknown )
             {
                 if( false == string.IsNullOrEmpty( PropArbitraryId ) )
                 {
@@ -479,11 +479,11 @@ namespace ChemSW.Nbt.WebServices
         public readonly CswNbtMetaDataFieldType.NbtFieldType FieldType;
         public readonly ICswNbtFieldTypeRule FieldTypeRule = null;
         public readonly CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
-        public readonly CswNbtPropType Type = CswNbtPropType.Unknown;
+        public readonly NbtViewPropType Type = NbtViewPropType.Unknown;
         public readonly RelatedIdType RelatedIdType = RelatedIdType.Unknown;
         public readonly ArrayList Filters = new ArrayList();
         public readonly bool SortBy = false;
-        public readonly PropertySortMethod SortMethod = PropertySortMethod.Ascending;
+        public readonly NbtViewPropertySortMethod SortMethod = NbtViewPropertySortMethod.Ascending;
         public readonly Int32 Width = Int32.MinValue;
         public readonly string PropName = string.Empty;
         public CswCommaDelimitedString AssociatedPropIds = new CswCommaDelimitedString();
@@ -510,7 +510,7 @@ namespace ChemSW.Nbt.WebServices
             MetaDataPropName = NodeTypeProp.PropName;
             MetaDataTypeName = NodeTypeProp.getNodeType().NodeTypeName;
             FieldTypeRule = NodeTypeProp.getFieldTypeRule();
-            Type = CswNbtPropType.NodeTypePropId;
+            Type = NbtViewPropType.NodeTypePropId;
             PropName = MetaDataPropName;
             AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
@@ -525,14 +525,14 @@ namespace ChemSW.Nbt.WebServices
             MetaDataPropName = ObjectClassProp.PropName;
             MetaDataTypeName = ObjectClassProp.getObjectClass().ObjectClass.ToString();
             FieldTypeRule = ObjectClassProp.getFieldTypeRule();
-            Type = CswNbtPropType.ObjectClassPropId;
+            Type = NbtViewPropType.ObjectClassPropId;
             PropName = MetaDataPropName;
             AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtViewProperty ViewProperty )
         {
-            if( ViewProperty.Type == CswNbtPropType.NodeTypePropId &&
+            if( ViewProperty.Type == NbtViewPropType.NodeTypePropId &&
                 null != ViewProperty.NodeTypeProp )
             {
                 FieldType = ViewProperty.NodeTypeProp.getFieldType().FieldType;
@@ -544,7 +544,7 @@ namespace ChemSW.Nbt.WebServices
                 MetaDataTypeName = ViewProperty.NodeTypeProp.getNodeType().NodeTypeName;
                 FieldTypeRule = ViewProperty.NodeTypeProp.getFieldTypeRule();
             }
-            else if( ViewProperty.Type == CswNbtPropType.ObjectClassPropId &&
+            else if( ViewProperty.Type == NbtViewPropType.ObjectClassPropId &&
                 null != ViewProperty.ObjectClassProp )
             {
                 FieldType = ViewProperty.ObjectClassProp.getFieldType().FieldType;

@@ -59,9 +59,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             {
                 CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
                 ICswNbtMetaDataProp MetaDataProp = null;
-                if( Prop.Type == CswNbtPropType.NodeTypePropId )
+                if( Prop.Type == NbtViewPropType.NodeTypePropId )
                     MetaDataProp = Prop.NodeTypeProp;
-                else if( Prop.Type == CswNbtPropType.ObjectClassPropId )
+                else if( Prop.Type == NbtViewPropType.ObjectClassPropId )
                     MetaDataProp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( Prop.ObjectClassPropId );
 
                 if( MetaDataProp != null && MetaDataProp.IsUserRelationship() )

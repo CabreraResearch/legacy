@@ -164,9 +164,9 @@ namespace ChemSW.Nbt
                 if( SubfieldName == CswNbtSubField.SubFieldName.Unknown )
                 {
                     // Set the subfield to be the default subfield for the new parent's field type:
-                    if( _Parent.Type == CswNbtPropType.NodeTypePropId )
+                    if( _Parent.Type == NbtViewPropType.NodeTypePropId )
                         SubfieldName = _Parent.NodeTypeProp.getFieldTypeRule().SubFields.Default.Name;
-                    else if( _Parent.Type == CswNbtPropType.ObjectClassPropId )
+                    else if( _Parent.Type == NbtViewPropType.ObjectClassPropId )
                         SubfieldName = _Parent.ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
                 }
             }
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, CswNbtViewXmlNodeName.Filter.ToString(), "" );
+            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.Filter.ToString(), "" );
 
             XmlAttribute FilterValueAttribute = XmlDoc.CreateAttribute( "value" );
             FilterValueAttribute.Value = Value;
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt
 
         public XElement ToXElement()
         {
-            XElement PropFilter = new XElement( CswNbtViewXmlNodeName.Filter.ToString(),
+            XElement PropFilter = new XElement( NbtViewXmlNodeName.Filter.ToString(),
                                      new XAttribute( "value", Value ),
                                      new XAttribute( "filtermode", FilterMode.ToString() ),
                                      new XAttribute( "casesensitive", CaseSensitive.ToString() ),
@@ -270,9 +270,9 @@ namespace ChemSW.Nbt
 
         public JProperty ToJson()
         {
-            JProperty PropFilter = new JProperty( CswNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
+            JProperty PropFilter = new JProperty( NbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
                                             new JObject(
-                                                new JProperty( "nodename", CswNbtViewXmlNodeName.Filter.ToString().ToLower() ),
+                                                new JProperty( "nodename", NbtViewXmlNodeName.Filter.ToString().ToLower() ),
                                                 new JProperty( "value", Value ),
                                                 new JProperty( "filtermode", FilterMode.ToString() ),
                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),
