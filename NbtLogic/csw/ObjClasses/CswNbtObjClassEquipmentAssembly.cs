@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
             //View.ViewName = "_CswNbtNodeWriteEquipmentAssembly.handleAfterWriteNode()";
 
             //CswNbtViewRelationship AssemblyRelationship = View.MakeEmptyViewRelationship();
-            //AssemblyRelationship.SecondType = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
+            //AssemblyRelationship.SecondType = RelatedIdType.ObjectClassId;
             //AssemblyRelationship.SecondId = AssemblyObjectClass.ObjectClassId;
             //AssemblyRelationship.SecondName = AssemblyObjectClass.ObjectClass.ToString();
             //View.Root.addChildRelationship( AssemblyRelationship );
@@ -106,12 +106,12 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship EquipmentRelationship = View.MakeEmptyViewRelationship();
             //EquipmentRelationship.PropId = EquipmentAssemblyObjectClassProp.PropId;
             //EquipmentRelationship.PropName = EquipmentAssemblyObjectClassPropName;
-            //EquipmentRelationship.PropType = CswNbtViewRelationship.PropIdType.ObjectClassPropId;
-            //EquipmentRelationship.PropOwner = CswNbtViewRelationship.PropOwnerType.Second;
-            //EquipmentRelationship.FirstType = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
+            //EquipmentRelationship.PropType = PropIdType.ObjectClassPropId;
+            //EquipmentRelationship.PropOwner = PropOwnerType.Second;
+            //EquipmentRelationship.FirstType = RelatedIdType.ObjectClassId;
             //EquipmentRelationship.FirstId = AssemblyObjectClass.ObjectClassId;
             //EquipmentRelationship.FirstName = AssemblyObjectClass.ObjectClass.ToString();
-            //EquipmentRelationship.SecondType = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
+            //EquipmentRelationship.SecondType = RelatedIdType.ObjectClassId;
             //EquipmentRelationship.SecondId = EquipmentObjectClass.ObjectClassId;
             //EquipmentRelationship.SecondName = EquipmentObjectClass.ObjectClass.ToString();
             //AssemblyRelationship.addChildRelationship( EquipmentRelationship );

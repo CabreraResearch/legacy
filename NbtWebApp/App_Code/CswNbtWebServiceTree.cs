@@ -480,14 +480,14 @@ namespace ChemSW.Nbt.WebServices
             ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
             foreach( CswNbtViewRelationship Rel in Relationships )
             {
-                if( Rel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                if( Rel.SecondType == RelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
                     if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                     {
                         NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
                     }
-                } // if( Rel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
                 else
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );

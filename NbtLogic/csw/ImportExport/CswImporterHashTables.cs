@@ -419,13 +419,13 @@ namespace ChemSW.Nbt.ImportExport
                 {
                     //if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     //{
-                        if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                        if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
                         {
                             if( NodeTypeMap.ContainsKey( Prop.FKValue ) )
                             {
                                 Prop.SetFK( Prop.FKType, NodeTypeMap[Prop.FKValue], Prop.ValuePropType, Prop.ValuePropId );
                             }
-                        } // if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                        } // if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
                     //} // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                 } // foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
             //} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )

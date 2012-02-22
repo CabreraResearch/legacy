@@ -1544,14 +1544,14 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( FKType != string.Empty )
                 {
-                    CswNbtViewRelationship.RelatedIdType TargetType = (CswNbtViewRelationship.RelatedIdType) Enum.Parse( typeof( CswNbtViewRelationship.RelatedIdType ), FKType, true );
+                    RelatedIdType TargetType = (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), FKType, true );
 
-                    if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( TargetType == RelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
                         ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     }
-                    else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+                    else if( TargetType == RelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
                         ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );

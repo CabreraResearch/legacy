@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 Order = -1000;
                 foreach( CswNbtViewRelationship ViewRel in _View.Root.ChildRelationships )
                 {
-                    if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( ViewRel.SecondType == RelatedIdType.NodeTypeId )
                     {
                         IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
                         foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.WebServices
                                 Order++;
                             }
                         } // foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )
-                    } // if( ViewRel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    } // if( ViewRel.SecondType == RelatedIdType.NodeTypeId )
                 } // foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
 
                 Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );

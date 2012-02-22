@@ -208,7 +208,7 @@
 //            CswNbtViewProperty ArbitraryObjectClassProp = View.AddViewProperty( ( (CswNbtViewRelationship) View.Root.ChildRelationships[0] ),
 //                                                                                ArbitraryObjectClass.getObjectClassProp( ObjClassPropName ) );
 //            //ArbitraryObjectClassProp.ObjectClassPropId = ArbitraryObjectClass.getObjectClassProp( ObjClassPropName ).PropId;
-//            //ArbitraryObjectClassProp.Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
+//            //ArbitraryObjectClassProp.Type = CswNbtPropType.ObjectClassPropId;
 
 //            //( ( CswNbtViewRelationship ) View.Root.ChildRelationships[ 0 ] ).addProperty( ArbitraryObjectClassProp );
 

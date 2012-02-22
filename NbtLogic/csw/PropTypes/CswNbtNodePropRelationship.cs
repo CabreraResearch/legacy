@@ -65,13 +65,13 @@ namespace ChemSW.Nbt.PropTypes
                 string ret = "nodes";
                 if( TargetId != Int32.MinValue )
                 {
-                    if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( TargetType == RelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
                         if( TargetNodeType != null )
                             ret = TargetNodeType.TableName;
                     }
-                    //else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+                    //else if( TargetType == RelatedIdType.ObjectClassId )
                     //    ret = _CswNbtResources.MetaData.getObjectClass( TargetId ).TableName;
                 }
                 return ret;
@@ -136,16 +136,16 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
-        /// CswNbtViewRelationship.RelatedIdType of the TargetId
+        /// RelatedIdType of the TargetId
         /// </summary>
-        public CswNbtViewRelationship.RelatedIdType TargetType
+        public RelatedIdType TargetType
         {
             get
             {
-                CswNbtViewRelationship.RelatedIdType ret = CswNbtViewRelationship.RelatedIdType.Unknown;
+                RelatedIdType ret = RelatedIdType.Unknown;
                 try
                 {
-                    ret = (CswNbtViewRelationship.RelatedIdType) Enum.Parse( typeof( CswNbtViewRelationship.RelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
+                    ret = (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
                 }
                 catch( Exception ex )
                 {
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.PropTypes
 
             CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
 
-            if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            if( TargetType == RelatedIdType.NodeTypeId )
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.PropTypes
                 RelatedNodeId.PrimaryKey.ToString() : string.Empty ),
                             new XElement( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
 
-            if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            if( TargetType == RelatedIdType.NodeTypeId )
             {
                 ParentNode.Add( new XElement( "nodetypeid", TargetId.ToString() ) );
             }
@@ -296,7 +296,7 @@ namespace ChemSW.Nbt.PropTypes
                                 RelatedNodeId.PrimaryKey.ToString() : string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
-            if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            if( TargetType == RelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }

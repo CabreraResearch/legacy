@@ -280,13 +280,13 @@ namespace ChemSW.Nbt
                     ChildRelationship.NodeIdsToFilterIn.Count == 0 )  // BZ 8022
                 {
                     Collection<CswNbtMetaDataNodeType> PotentialNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                    if( ChildRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( ChildRelationship.SecondType == RelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( ChildRelationship.SecondId );
                         if( NodeType != null )
                             PotentialNodeTypes.Add( NodeType.getFirstVersionNodeType() );
                     }
-                    else if( ChildRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+                    else if( ChildRelationship.SecondType == RelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ChildRelationship.SecondId );
                         if( ObjectClass != null )
@@ -354,11 +354,11 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewRelationship CurrentRelationship in Relationships )
                 {
-                    if(//((CswNbtViewRelationship.RelatedIdType.NodeTypeId == CurrentRelationship.FirstType) &&
+                    if(//((RelatedIdType.NodeTypeId == CurrentRelationship.FirstType) &&
                         // (CurrentRelationship.FirstId == NodeTypeID)) ||
-                        ( ( CswNbtViewRelationship.RelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
+                        ( ( RelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
                          ( CurrentRelationship.SecondId == NodeTypeID ) ) ||
-                        ( ( CswNbtViewRelationship.RelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
+                        ( ( RelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
                          ( CurrentRelationship.SecondId == _CswNbtResources.MetaData.getNodeType( NodeTypeID ).ObjectClassId ) ) )
                     {
                         ReturnVal = true;

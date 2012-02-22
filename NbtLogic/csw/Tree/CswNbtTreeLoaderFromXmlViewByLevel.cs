@@ -246,7 +246,7 @@ namespace ChemSW.Nbt
                                 where j.nodetypeid = t.firstversionid) )) ";
 
             // Nodetype/Object Class filter
-            if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+            if( Relationship.SecondType == RelatedIdType.NodeTypeId )
                 Where += " and (t.firstversionid = " + Relationship.SecondId + ") ";
             else
                 Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
@@ -262,12 +262,12 @@ namespace ChemSW.Nbt
 
                 Where += " and parent.parentnodeid in (" + _makeNodeSql( (CswNbtViewRelationship) Relationship.Parent, true ) + ")";
 
-                if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+                if( Relationship.PropOwner == PropOwnerType.First )
                 {
                     From += @"            join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
                                                   from jct_nodes_props jnp
                                                   join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                    if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                    if( Relationship.PropType == PropIdType.NodeTypePropId )
                     {
                         From += @"               where p.firstpropversionid = " + Relationship.PropId;
                     }
@@ -283,7 +283,7 @@ namespace ChemSW.Nbt
                     From += @"          join (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid
                                                 from jct_nodes_props jnp
                                                 join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                    if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                    if( Relationship.PropType == PropIdType.NodeTypePropId )
                     {
                         From += @"             where p.firstpropversionid = " + Relationship.PropId;
                     }
@@ -303,7 +303,7 @@ namespace ChemSW.Nbt
                 {
                     CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
                     Select += " ,g." + GroupBySubField.Column + " groupname";
-                    if( Relationship.GroupByPropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+                    if( Relationship.GroupByPropType == PropIdType.ObjectClassPropId )
                     {
                         From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
                                                       from jct_nodes_props j 
@@ -394,7 +394,7 @@ namespace ChemSW.Nbt
                     CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, true );
                     foreach( CswNbtViewProperty Prop in Relationship.Properties )
                     {
-                        if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
+                        if( Prop.Type == CswNbtPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
                         {
                             NTPropsInClause.Add( Prop.NodeTypePropId.ToString() );
                         }
@@ -452,11 +452,11 @@ namespace ChemSW.Nbt
                         Filter.Value != string.Empty )
                     {
                         ICswNbtFieldTypeRule FilterFieldTypeRule = _CswNbtResources.MetaData.getFieldTypeRule( Prop.FieldType );
-                        //if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                        //if( Prop.Type == CswNbtPropType.NodeTypePropId )
                         //{
                         //    FilterFieldTypeRule = Prop.NodeTypeProp.getFieldTypeRule();
                         //}
-                        //else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+                        //else if( Prop.Type == CswNbtPropType.ObjectClassPropId )
                         //{
                         //    FilterFieldTypeRule = Prop.ObjectClassProp.getFieldTypeRule();
                         //}
@@ -478,7 +478,7 @@ namespace ChemSW.Nbt
                                   select jnp.nodeid
                                     from jct_nodes_props jnp
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                                    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                                    if( Prop.Type == CswNbtPropType.NodeTypePropId )
                                     {
                                         Where += @"  where p.firstpropversionid = " + Prop.FirstVersionNodeTypeProp.PropId + @")";
                                     }
@@ -497,7 +497,7 @@ namespace ChemSW.Nbt
 
                                 Where += @" n.nodeid in (select s.nodeid from nodes s ";
 
-                                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                                if( Prop.Type == CswNbtPropType.NodeTypePropId )
                                 {
                                     Where += @"            join nodetype_props p on (lower(p.propname) = '" + Prop.NodeTypeProp.PropName.ToLower() + @"' ";
                                 }
@@ -569,15 +569,15 @@ namespace ChemSW.Nbt
             return ret;
         } //_makeNodeSql()
 
-        private CswNbtSubField _getDefaultSubFieldForProperty( CswNbtViewRelationship.PropIdType Type, Int32 Id )
+        private CswNbtSubField _getDefaultSubFieldForProperty( PropIdType Type, Int32 Id )
         {
             CswNbtSubField ret = null;
-            if( Type == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+            if( Type == PropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
                 ret = NodeTypeProp.getFieldTypeRule().SubFields.Default;
             }
-            else if( Type == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+            else if( Type == PropIdType.ObjectClassPropId )
             {
                 CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
                 ret = ObjectClassProp.getFieldTypeRule().SubFields.Default;

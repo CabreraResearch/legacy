@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Actions
                         throw new CswDniException( "CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
                     ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) TargetObjClass;
 
-                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, CswNbtViewRelationship.PropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
+                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, PropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
                     //bz# 5959
                     CswNbtViewProperty IsFutureFlagProperty = ReturnVal.AddViewProperty( TargetRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName ) );
                     CswNbtViewPropertyFilter IsFutureFilter = ReturnVal.AddViewPropertyFilter( IsFutureFlagProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, "1", false );

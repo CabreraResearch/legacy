@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.Schema
                 itemNodeAsTarget.InspectionTargetGroup.RelatedNodeId = groupNode.NodeId;
                 itemNodeAsTarget.postChanges(true);
                 //route (don't have this relationship on the objclass yet, save for future release)
-                //itemNodeAsTarget.InspectionTargetGroup.NodeTypeProp.SetFK(CswNbtViewRelationship.PropIdType.NodeTypePropId,groupNode.NodeId);
+                //itemNodeAsTarget.InspectionTargetGroup.NodeTypeProp.SetFK(PropIdType.NodeTypePropId,groupNode.NodeId);
 
 
                 //ExampleInspection (manual)

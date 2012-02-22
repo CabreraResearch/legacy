@@ -376,11 +376,11 @@ namespace ChemSW.Nbt.WebServices
 
             if( ViewProperty.SortBy )
             {
-                if( ViewProperty.SortMethod == CswNbtViewProperty.PropertySortMethod.Ascending )
+                if( ViewProperty.SortMethod == PropertySortMethod.Ascending )
                 {
                     _SortBy = JqGridSortBy.asc;
                 }
-                else if( ViewProperty.SortMethod == CswNbtViewProperty.PropertySortMethod.Descending )
+                else if( ViewProperty.SortMethod == PropertySortMethod.Descending )
                 {
                     _SortBy = JqGridSortBy.desc;
                 }

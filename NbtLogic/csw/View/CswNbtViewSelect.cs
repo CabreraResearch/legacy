@@ -339,7 +339,7 @@ namespace ChemSW.Nbt
                     ThisView.LoadXml( Row["viewxml"].ToString() );
 
                     if( ( ( ThisView.Root.ChildRelationships.Count > 0 &&
-                            ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+                            ( ThisView.Root.ChildRelationships.Where( R => R.SecondType != RelatedIdType.NodeTypeId ||
                                                                            _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( R.SecondId ), true, null, User ) ).Count() > 0 )
                           ) || IncludeEmptyViews ) &&
                         ThisView.IsFullyEnabled() &&
