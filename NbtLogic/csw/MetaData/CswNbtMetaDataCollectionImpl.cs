@@ -87,6 +87,16 @@ namespace ChemSW.Nbt.MetaData
             return _PksWhere[Where];
         } // getPks(Where)
 
+        public Int32 getPksFirst( string WhereClause )
+        {
+            Int32 ret = Int32.MinValue;
+            Collection<Int32> Coll = getPks( WhereClause );
+            if( Coll.Count > 0 )
+            {
+                ret = Coll[0];
+            }
+            return ret;
+        } // getPksFirst()
 
         private Dictionary<string, Int32> _PkDict = null;
         public Dictionary<string, Int32> getPkDict()
