@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        
+
 
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
@@ -125,6 +125,14 @@ namespace ChemSW.Nbt.MetaData
         public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> getObjectClassIds()
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds();
+        }
+
+        /// <summary>
+        /// Collection of Object Class primary keys (Int32)
+        /// </summary>
+        public Int32 getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassId( ObjectClass );
         }
 
         /// <summary>

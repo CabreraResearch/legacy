@@ -136,77 +136,42 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( CompoundUniqueProps.Count > 0 )
             {
-                //check for other compound unique props that were _not_ modififed
-                foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+
+                if( false == IsCopy && false == OverrideUniqueValidation )
                 {
-                    if( CurrentProp.NodeTypeProp.IsCompoundUnique() && ( false == CompoundUniqueProps.Contains( CurrentProp ) ) )
+
+                    //check for other compound unique props that were _not_ modififed
+                    foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
                     {
-                        CompoundUniqueProps.Add( CurrentProp );
-                    }
-                }
-
-                //CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
-                CswNbtView CswNbtView = this.NodeType.CreateDefaultView();
-                CswNbtView.ViewName = "For compound unique";
-
-                CswNbtViewRelationship ViewRelationship = null; 
-
-                foreach( CswNbtNodePropWrapper CurrentCompoundUniuqeProp in CompoundUniqueProps )
-                {
-                    if( null == ViewRelationship )
-                    {
-                        ViewRelationship = CswNbtView.Root.ChildRelationships[0];
-                        if( CurrentCompoundUniuqeProp.NodeTypeProp.IsGlobalUnique() )  // BZ 9754
+                        if( CurrentProp.NodeTypeProp.IsCompoundUnique() && ( false == CompoundUniqueProps.Contains( CurrentProp ) ) )
                         {
-                            CswNbtView.Root.ChildRelationships.Clear(); 
-                            ViewRelationship = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( CurrentCompoundUniuqeProp.NodeTypeProp.NodeTypeId ), false );
-                        }
-
-                        if( NodeId != null )
-                        {
-                            ViewRelationship.NodeIdsToFilterOut.Add( NodeId );
+                            CompoundUniqueProps.Add( CurrentProp );
                         }
                     }
 
+                    //CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
+                    CswNbtView CswNbtView = this.NodeType.CreateDefaultView();
+                    CswNbtView.ViewName = "For compound unique";
 
-                    CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniuqeProp.NodeTypeProp );
-
-                    //CswNbtViewPropertyFilter CswNbtViewPropertyFilter = CswNbtView.AddViewPropertyFilter( CswNbtViewProperty, CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.Equals, , );
-                    CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniuqeProp );
-
-
-
-                    /*
-                    if( CurrentCompoundUniuqeProp.NodeTypeProp.IsGlobalUnique() )  // BZ 9754
-                    {
-                        ViewRelationship = CswNbtView.AddViewRelationship( _CswNbtResources.MetaData.getObjectClassByNodeTypeId( CurrentCompoundUniuqeProp.NodeTypeProp.NodeTypeId ), false );
-                    }
-                    else
-                    {
-                        ViewRelationship = CswNbtView.AddViewRelationship( CurrentCompoundUniuqeProp.NodeTypeProp.getNodeType(), false );
-                    }
-
+                    CswNbtViewRelationship ViewRelationship = CswNbtView.Root.ChildRelationships[0];
 
                     if( NodeId != null )
                     {
                         ViewRelationship.NodeIdsToFilterOut.Add( NodeId );
                     }
 
-                    //bz# 5959
-                    CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniuqeProp.NodeTypeProp );
 
-                    // BZ 10099
-                    CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, CurrentCompoundUniuqeProp );
-                     */
-                }
-
-                ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
-
-                if( NodeTree.getChildNodeCount() > 0 )
-                {
-                    NodeTree.goToNthChild( 0 );
-                    if( false == IsCopy && false == OverrideUniqueValidation )
+                    foreach( CswNbtNodePropWrapper CurrentCompoundUniuqeProp in CompoundUniqueProps )
                     {
+                        CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniuqeProp.NodeTypeProp );
+                        CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniuqeProp );
+                    }
+
+                    ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
+
+                    if( NodeTree.getChildNodeCount() > 0 )
+                    {
+                        NodeTree.goToNthChild( 0 );
                         CswNbtNode DuplicateValueNode = NodeTree.getNodeForCurrentPosition();
 
                         CswCommaDelimitedString CompoundUniquePropNames = new CswCommaDelimitedString();
@@ -221,18 +186,20 @@ namespace ChemSW.Nbt.ObjClasses
                         string EsotericMessage = "The " + CompoundUniquePropNames.ToString() + " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
 
                         throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
-                    }
-                    else
+
+
+                    }//we have a duplicate value situation
+                }
+
+                else
+                {
+                    foreach( CswNbtNodePropWrapper CurrentPropWrapper in CompoundUniqueProps )
                     {
-                        foreach( CswNbtNodePropWrapper CurrentPropWrapper in CompoundUniqueProps )
-                        {
-                            CurrentPropWrapper.ClearValue();
-                            CurrentPropWrapper.clearModifiedFlag();
-                        }
-                    }//if-else we're not a copy and not overridding
+                        CurrentPropWrapper.ClearValue();
+                        CurrentPropWrapper.clearModifiedFlag();
+                    }
 
-                }//we have a duplicate value situation
-
+                }//if-else we're not a copy and not overridding
 
             }//if we have at leaste one modified compound unique prop
 

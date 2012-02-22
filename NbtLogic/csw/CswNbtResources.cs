@@ -183,8 +183,6 @@ namespace ChemSW.Nbt
 
         public ICswSuperCycleCache CswSuperCycleCache { get { return ( _CswResources.CswSuperCycleCache ); } }
 
-        public PooledConnectionState PooledConnectionState { set { _CswResources.PooledConnectionState = value; } }
-
         /// <summary>
         /// Information related to the set of workflows registered in the database
         /// </summary>
@@ -489,21 +487,27 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Prepare this class for storage in the cache
         /// </summary>
+        ///
+        /*
         public void BeforeStoreInCache()
         {
             this.CswEventLinker = null;
             _CswNbtNodeCollection = null;        // case 21246
-            _CswResources.BeforeStoreInCache();
+            //_CswResources.BeforeStoreInCache();
         }
+         */
         /// <summary>
         /// Clean-up after storing this class in the cache
         /// </summary>
+        /// 
+        /*
         public void AfterRestoreFromCache()
         {
             _CswResources.AfterRestoreFromCache();
             CswEventLinker = new CswEventLinker();
             _CswNbtNodeCollection = new CswNbtNodeCollection( this );  // case 21246
         }
+         */
 
 
         public bool CacheInitialized
@@ -565,7 +569,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// During initialization, allows setting database resources
         /// </summary>
-        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory )
+        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, PooledConnectionState PooledConnectionState )
         {
             _CswNbtNodeCollection = new CswNbtNodeCollection( this ); //, _ICswNbtObjClassFactory );
             _CswNbtTreeFactory = CswNbtTreeFactory;
@@ -574,7 +578,7 @@ namespace ChemSW.Nbt
             //_CswNbtTreeCache = new CswNbtTreeCache( this, _CswNbtTreeFactory );
 
             _CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory );
-            _CswResources.SetDbResources();
+            _CswResources.SetDbResources( PooledConnectionState );
 
             _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }

@@ -59,6 +59,7 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
+                    _CompletionMessage = string.Empty; 
                     CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
                     CswNbtObjClassUser CswAdminAsUser = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode );
                     if( false == _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.NBTManager ) )
