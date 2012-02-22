@@ -48,8 +48,8 @@
             }
             Csw.controls.factory($table, external);
 
-            external.bind('CswTable_onCreateCell', function (e, cell, row, column, isFillerCell) {
-                Csw.tryExec(internal.onCreateCell(e, cell, row, column, isFillerCell));
+            external.bind('CswTable_onCreateCell', function (e, cell, row, column) {
+                Csw.tryExec(internal.onCreateCell(e, cell, row, column));
                 e.stopPropagation(); // prevents events from triggering in nested tables
             });
             external.trigger('CswTable_onCreateCell', [external.find('td'), 1, 1]);
@@ -81,7 +81,7 @@
             /// <param name="col" type="Number">Column number</param>
             /// <returns type="Object">A Csw table cell object.</returns>
             var thisRow, align, newCell, retCell = {}, html = '',
-                iterations = 0, columnCount,
+                iterations = 0, thisCol,
                 attr = Csw.controls.dom.attributes();
 
             if (external.length() > 0 &&
@@ -110,13 +110,12 @@
                         external.append('<tr></tr>');
                     }
                     thisRow = external.children('tbody').children('tr:eq(' + Csw.number(row - 1) + ')');
-                    columnCount = thisRow.children('td').length();
+                    thisCol = thisRow.children('td').length();
 
-                    while (col > columnCount) {
+                    while (col > thisCol) {
                         html = '';
-                        iterations += 1;
-                        columnCount += 1;
-                        id = Csw.controls.dom.makeId(id, 'row_' + row, 'col_' + columnCount, '', false);
+                        thisCol += 1;
+                        id = Csw.controls.dom.makeId(id, 'row_' + row, 'col_' + thisCol, '', false);
                         align = external.propNonDom('cellalign');
                         if ((thisRow.children('td').length() === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
                             (thisRow.children('td').length() % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
@@ -126,8 +125,8 @@
                         if (false === Csw.isNullOrEmpty(id)) {
                             attr.add('id', id);
                         }
-                        attr.add('realrow', row + 1);
-                        attr.add('realcol', columnCount + 1);
+                        attr.add('realrow', row);
+                        attr.add('realcol', thisCol);
                         attr.add('class', external.propNonDom('cellcssclass'));
                         attr.add('align', align);
                         attr.add('valign', external.propNonDom('cellvalign'));
@@ -136,8 +135,8 @@
                         html += '</td>';
                         newCell = thisRow.attach(html);
 
-                        external.trigger('CswTable_onCreateCell', [newCell, row, columnCount, columnCount !== col]);
-                        if (columnCount === col) {
+                        external.trigger('CswTable_onCreateCell', [newCell, row, thisCol]);
+                        if (thisCol === col) {
                             retCell = newCell;
                         }
                     }
