@@ -34,7 +34,7 @@
                 }
                 */
                 var cbaDiv = propDiv.div()
-                    .cswCheckBoxArray({
+                    .checkBoxArray({
                         ID: o.ID + '_cba',
                         UseRadios: (selectMode === 'Single'),
                         Required: o.Required,

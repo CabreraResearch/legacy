@@ -160,7 +160,7 @@
                         }
 
                         inspectionTarget = rowOneTable.cell(2, 1);
-                        inspectionTarget.css({'padding': '1px', 'vertical-align': 'middle'})
+                        inspectionTarget.css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .div()
                             .$.CswNodeTypeSelect('init', {
                                 ID: makeStepId('nodeTypeSelect'),
@@ -299,17 +299,17 @@
                                                          .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                                          .span({ cssclass: 'required', text: 'New Inspection Design Name&nbsp' });
 
-                        newDesignName = inspectionTable.cell(3, 2);
-                        newDesignName.$.css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .CswInput('init', {
-                                ID: o.ID + '_newDesignName',
-                                type: Csw.enums.inputTypes.text,
-                                cssclass: 'required',
-                                maxlength: 50,
-                                width: (50 * 7) + 'px',
-                                value: tempInspectionName
-                            })
-                            .on('change keypress keydown keyup', function () {
+                        newDesignName = inspectionTable.cell(3, 2)
+                                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                            .input({
+                                                ID: o.ID + '_newDesignName',
+                                                type: Csw.enums.inputTypes.text,
+                                                cssclass: 'required',
+                                                maxlength: 50,
+                                                width: (50 * 7) + 'px',
+                                                value: tempInspectionName
+                                            })
+                            .bind('change keypress keydown keyup', function () {
                                 setTimeout(function () {
                                     var newInspectionDesignName = makeInspectionDesignName(newDesignName.val());
                                     selectedInspectionDesign.id = '[Create New]';
@@ -331,7 +331,7 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'Category Name&nbsp' });
 
-                        categoryNameInput = categoryNameInput || inspectionTable.cell(6, 2)
+                        categoryNameInput = categoryNameInput || inspectionTable.cell(6, 2);
                         categoryNameInput.$.css({ 'padding': '1px', 'vertical-align': 'middle' })
                                             .CswInput('init', {
                                                 ID: o.ID + '_newDesignCategory',
@@ -379,7 +379,7 @@
 
                 var designChangeHandle = function () {
                     $helpText.html('<p>Review the <b>' + selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.</p>');
-                }
+                };
                 Csw.subscribe(createInspectionEvents.designNameChanged, designChangeHandle);
 
                 if (Csw.isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
@@ -554,7 +554,9 @@
                 if (Csw.string(targetName).trim().toLowerCase() != Csw.string(selectedInspectionDesign.name).trim().toLowerCase()) {
                     ret = true;
                 } else {
-                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'An Inspection Design and an Inspection Target cannot have the same name.', 'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
+                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 
+                        'An Inspection Design and an Inspection Target cannot have the same name.', 
+                        'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
                 }
                 return ret;
             },
@@ -563,7 +565,7 @@
             makeStepFive = (function () {
 
                 return function () {
-                    var $confirmationList, $confirmTypesList, $confirmViewsList, $confirmationDesign, confirmGridOptions = {};
+                    var $confirmationList, $confirmTypesList, $confirmViewsList, confirmGridOptions = {};
 
                     if (checkTargetIsClientSideUnique()) {
 
@@ -609,7 +611,7 @@
                             confirmGridOptions.$parent = $confirmationList.CswList('addItem', {
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
-                            
+
                             Csw.controls.grid(confirmGridOptions);
                         } else {
                             $confirmationList.CswList('addItem', {

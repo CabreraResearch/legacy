@@ -17,16 +17,20 @@
         function toBool() {
             /// <summary>Converts the input to a boolean.</summary>
             /// <returns type="Bool" />
-            var ret;
-            var truthy = Csw.string(str).toLowerCase().trim();
-            if (truthy === 'true' || truthy === '1') {
-                ret = true;
-            } else if (truthy === 'false' || truthy === '0') {
+            var ret, truthy;
+            if (str === false) {
                 ret = false;
-            } else if (isTrueIfNull && Csw.isNullOrEmpty(str)) {
-                ret = true;
             } else {
-                ret = false;
+                truthy = Csw.string(str).toLowerCase().trim();
+                if (truthy === 'true' || truthy === '1') {
+                    ret = true;
+                } else if (truthy === 'false' || truthy === '0') {
+                    ret = false;
+                } else if (isTrueIfNull && Csw.isNullOrEmpty(str)) {
+                    ret = true;
+                } else {
+                    ret = false;
+                }
             }
             return ret;
         }
@@ -39,4 +43,4 @@
     Csw.register('bool', bool);
     Csw.bool = Csw.bool || bool;
 
-}());
+} ());

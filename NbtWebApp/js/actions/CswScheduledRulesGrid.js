@@ -97,7 +97,7 @@
                             url: '/NbtWebApp/wsNBT.asmx/getActiveAccessIds',
                             success: function (data) {
                                 var values = data.customerids;
-                                customerIdSelect.setoptions(values);
+                                customerIdSelect.setOptions(values);
                                 selectedCustomerId = customerIdSelect.find(':selected').val();
                             }
                         });

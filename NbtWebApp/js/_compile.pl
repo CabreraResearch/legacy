@@ -7,14 +7,13 @@ unlink($destfile);
 
 my $param = "";
 $param .= extract("$dir\\js");
-$param .= extract("$dir\\js\\main");
-$param .= extract("$dir\\js\\main\\actions");
-$param .= extract("$dir\\js\\main\\controls");
-$param .= extract("$dir\\js\\main\\fieldtypes");
-$param .= extract("$dir\\js\\main\\node");
-$param .= extract("$dir\\js\\main\\pagecmp");
-$param .= extract("$dir\\js\\main\\tools");
-$param .= extract("$dir\\js\\main\\view");
+$param .= extract("$dir\\js\\actions");
+$param .= extract("$dir\\js\\controls");
+$param .= extract("$dir\\js\\fieldtypes");
+$param .= extract("$dir\\js\\node");
+$param .= extract("$dir\\js\\pagecmp");
+$param .= extract("$dir\\js\\tools");
+$param .= extract("$dir\\js\\view");
 
 `java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 
@@ -26,7 +25,8 @@ sub extract
 	while((my $filename = readdir(JSDIR)))
 	{
 		if($filename =~ /.*\.js$/ &&
-		   $filename !~ /-vsdoc/) 
+		   $filename !~ /-vsdoc/ &&
+		   $filename !~ /.min\.js/) 
 		{
 			printf("Compiling: $path\\$filename\n");
 			$filelist .= "--js $path\\$filename ";

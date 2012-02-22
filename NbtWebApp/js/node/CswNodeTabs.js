@@ -155,7 +155,8 @@
                                 select: function (event, ui) {
                                     var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                     var selectTabid = selectTabContentDiv.getId();
-                                    if (Csw.isFunction(o.onBeforeTabSelect) && o.onBeforeTabSelect(selectTabid)) {
+                                    Csw.tryExec(o.onBeforeTabSelect, selectedtabid);
+                                    if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
                                         getProps(selectTabContentDiv, selectTabid);
                                         Csw.tryExec(o.onTabSelect, selectTabid);
                                     } else {
@@ -258,9 +259,10 @@
                         var updOnSuccess = function (thisProp, key) {
                             if (Csw.bool(thisProp.hassubprops)) {
                                 var propId = key; //key
-                                var subTable = layoutTable.find('#' + propId + '_subproptable');
+                                var subTable = layoutTable[propId + '_subproptable'];
                                 var parentCell = subTable.parent().parent();
                                 var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                layoutTable.addCellSetAttributes(cellSet, {propId: propId});
                                 var propCell = _getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -279,7 +281,7 @@
                                         cswnbtnodekey: Csw.tryParseObjByIdx(o.nodekeys, 0)
                                     };
 
-                                    _updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn, saveBtn);
+                                    _updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn, saveBtn, layoutTable);
                                 }
                             }
                             return false;
@@ -360,8 +362,11 @@
         } // getPropsImpl()
 
         function onRemove(onRemoveData) {
-            var propDiv = _getPropertyCell(onRemoveData.cellSet).children('div').first();
-            var propid = propDiv.propNonDom('propid');
+            var propid = '';
+            var propDiv = _getPropertyCell(onRemoveData.cellSet).children('div');
+            if (false === Csw.isNullOrEmpty(propDiv)) {
+                propid = propDiv.first().propNonDom('propId');
+            }
 
             Csw.ajax.post({
                 watchGlobal: o.AjaxWatchGlobal,
@@ -375,14 +380,13 @@
         } // onRemove()
 
         function onSwap(onSwapData) {
-            _moveProp(_getPropertyCell(onSwapData.cellSet).children('div').first(), onSwapData.swaprow, onSwapData.swapcolumn);
-            _moveProp(_getPropertyCell(onSwapData.swapcellset).children('div').first(), onSwapData.row, onSwapData.column);
+            _moveProp(_getPropertyCell(onSwapData.cellSet), onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+            _moveProp(_getPropertyCell(onSwapData.swapcellset), onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
         } // onSwap()
 
-        function _moveProp(propDiv, newrow, newcolumn) {
+        function _moveProp(propDiv, newrow, newcolumn, propId) {
             if (propDiv.length() > 0) {
-                var propid = propDiv.propNonDom('propid');
-
+                var propid = Csw.string(propDiv.propNonDom('propid'), propId);
                 var dataJson = {
                     PropId: propid,
                     NewRow: newrow,
@@ -393,10 +397,7 @@
                 Csw.ajax.post({
                     watchGlobal: o.AjaxWatchGlobal,
                     url: o.MovePropUrl,
-                    data: dataJson,
-                    success: function () {
-
-                    }
+                    data: dataJson
                 });
             }
         } // _moveProp()
@@ -415,6 +416,8 @@
                 helpText = Csw.string(thisProp.helptext),
                 propName = Csw.string(thisProp.name),
                 labelCell = {};
+
+                layoutTable.addCellSetAttributes(cellSet, {propId: propid});
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
                  fieldtype !== Csw.enums.subFieldsMap.Image.name &&
@@ -463,7 +466,7 @@
             if (Csw.bool(thisProp.highlight)) {
                 propCell.addClass('ui-state-highlight');
             }
-            _makeProp(propCell, thisProp, tabContentDiv, tabid, configMode, savBtn, atLeastOne);
+            _makeProp(propCell, thisProp, tabContentDiv, tabid, configMode, savBtn, atLeastOne, layoutTable);
         }
 
         function _handleProperties(layoutTable, data, tabContentDiv, tabid, configMode, saveBtn) {
@@ -485,7 +488,7 @@
             return atLeastOne;
         } // _handleProps()
 
-        function _makeProp(propCell, propData, tabContentDiv, tabid, configMode, saveBtn, atLeastOne) {
+        function _makeProp(propCell, propData, tabContentDiv, tabid, configMode, saveBtn, atLeastOne, layoutTable) {
             propCell.empty();
             if ((Csw.bool(propData.display, true) || configMode) &&
                 (o.filterToPropId === '' || o.filterToPropId === propData.id)) {
@@ -508,7 +511,7 @@
                     EditMode: o.EditMode,
                     Multi: o.Multi,
                     onEditView: o.onEditView,
-                    ReadOnly: Csw.bool(propData.readonly)
+                    ReadOnly: Csw.bool(propData.readonly) || o.Config
                 };
                 fieldOpt.propDiv.propNonDom({
                     'nodeid': fieldOpt.nodeid,
@@ -519,7 +522,7 @@
                 fieldOpt.onChange = function () { if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName); };
                 if (Csw.bool(propData.hassubprops)) {
                     fieldOpt.onChange = function () {
-                        _updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, saveBtn);
+                        _updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, saveBtn, layoutTable);
                         if (Csw.isFunction(o.onPropertyChange)) o.onPropertyChange(fieldOpt.propid, propName);
                     };
                 } // if (Csw.bool(propData.hassubprops)) {
@@ -545,7 +548,7 @@
                         showExpandColButton: false,
                         showRemoveButton: false
                     });
-
+                    layoutTable[fieldOpt.propid + '_subproptable'] = subLayoutTable;
                     var subOnSuccess = function (subProp, key) {
                         subProp.propId = key;
                         if (Csw.bool(subProp.display) || configMode) {
@@ -563,7 +566,7 @@
             } // if (propData.display != 'false' || ConfigMode )
         } // _makeProp()
 
-        function _updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, saveBtn) {
+        function _updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, saveBtn, layoutTable) {
             /// <summary>Update a properties sub props</summary>
             /// <param name="fieldOpt" type="Object"> An object defining a prop's fieldtype </param>
             /// <param name="propId" type="String"> A propertyid </param>
@@ -603,7 +606,7 @@
                         success: function (data) {
                             var atLeastOne = {};
                             data.wasmodified = true; // keep the fact that the parent property was modified
-                            _makeProp(propCell, data, tabContentDiv, tabid, configMode, saveBtn, atLeastOne);
+                            _makeProp(propCell, data, tabContentDiv, tabid, configMode, saveBtn, atLeastOne, layoutTable);
                         }
                     });
                 }
@@ -703,6 +706,7 @@
                 };
 
                 var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
+                layoutTable.addCellSetAttributes(cellSet, {propId: thisProp.id});
                 propOpt.propCell = _getPropertyCell(cellSet);
                 propOpt.propDiv = propOpt.propCell.children('div').first();
 
@@ -715,7 +719,7 @@
                 if (Csw.bool(thisProp.hassubprops) && Csw.contains(thisProp, 'subprops')) {
                     var subProps = thisProp.subprops;
                     if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
-                        var subTable = propOpt.propCell.children('#' + thisProp.id + '_subproptable').first();
+                        var subTable = layoutTable[thisProp.id + '_subproptable'];
                         if (subTable.length() > 0) {
                             _updatePropJsonFromForm(subTable, subProps);
                         }

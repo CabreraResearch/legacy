@@ -29,7 +29,7 @@
             width: '',
             cellalign: 'top',
             cellvalign: 'top',
-            onCreateCell: function () {},
+            onCreateCell: function () { },
             FirstCellRightAlign: false,
             OddCellRightAlign: false,
             border: 0
@@ -80,8 +80,8 @@
             /// <param name="row" type="Number">Row number</param>
             /// <param name="col" type="Number">Column number</param>
             /// <returns type="Object">A Csw table cell object.</returns>
-            var $cell = null,
-                thisRow, align, newCell, retCell = {}, html = '',
+            var thisRow, align, newCell, retCell = {}, html = '',
+                iterations = 0, thisCol,
                 attr = Csw.controls.dom.attributes();
 
             if (external.length() > 0 &&
@@ -96,51 +96,73 @@
                     col = 1;
                 }
 
-                while (row > external.children('tbody').children('tr').length()) {
-                    external.append('<tr></tr>');
+                if (id) {
+                    retCell = external.find('#' + Csw.controls.dom.makeId(id, 'row_' + row, 'col_' + col, '', false));
                 }
-                thisRow = external.children('tbody').children('tr:eq(' + Csw.number(row - 1) + ')');
-                while (col > thisRow.children('td').length()) {
-                    align = external.propNonDom('cellalign');
-                    if ((thisRow.children('td').length() === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
-                        (thisRow.children('td').length() % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
-                        align = 'right';
-                    }
-                    html += '<td ';
-                    if (false === Csw.isNullOrEmpty(id)) {
-                        attr.add('id', id);
-                    }
-                    attr.add('class', external.propNonDom('cellcssclass'));
-                    attr.add('align', align);
-                    attr.add('valign', external.propNonDom('cellvalign'));
-                    html += attr.get();
-                    html += '>';
-                    html += '</td>';
-                    newCell = thisRow.attach(html);
-                    external.trigger('CswTable_onCreateCell', [newCell, row, thisRow.children('td').length()]);
+                if (Csw.isNullOrEmpty(retCell)) {
+                    retCell = external.children('tbody')
+                        .children('tr:eq(' + Csw.number(row - 1) + ')')
+                        .children('td:eq(' + Csw.number(col - 1) + ')');
                 }
-                $cell = thisRow.children('td:eq(' + Csw.number(col - 1) + ')').$;
-            }
-            Csw.controls.factory($cell, retCell);
-            retCell.align = function (alignTo) {
-                retCell.css('text-align', alignTo);
-                retCell.propDom('align', alignTo);
-                return retCell;
-            };
 
+                if (Csw.isNullOrEmpty(retCell)) {
+                    while (row > external.children('tbody').children('tr').length()) {
+                        external.append('<tr></tr>');
+                    }
+                    thisRow = external.children('tbody').children('tr:eq(' + Csw.number(row - 1) + ')');
+                    thisCol = thisRow.children('td').length();
+
+                    while (col > thisCol) {
+                        html = '';
+                        thisCol += 1;
+                        id = Csw.controls.dom.makeId(id, 'row_' + row, 'col_' + thisCol, '', false);
+                        align = external.propNonDom('cellalign');
+                        if ((thisRow.children('td').length() === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
+                            (thisRow.children('td').length() % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
+                            align = 'right';
+                        }
+                        html += '<td ';
+                        if (false === Csw.isNullOrEmpty(id)) {
+                            attr.add('id', id);
+                        }
+                        attr.add('realrow', row);
+                        attr.add('realcol', thisCol);
+                        attr.add('class', external.propNonDom('cellcssclass'));
+                        attr.add('align', align);
+                        attr.add('valign', external.propNonDom('cellvalign'));
+                        html += attr.get();
+                        html += '>';
+                        html += '</td>';
+                        newCell = thisRow.attach(html);
+
+                        external.trigger('CswTable_onCreateCell', [newCell, row, thisCol]);
+                        if (thisCol === col) {
+                            retCell = newCell;
+                        }
+                    }
+                    //                    $cell = thisRow.children('td:eq(' + Csw.number(col - 1) + ')').$;
+                    //                    Csw.controls.factory($cell, retCell);
+                }
+
+                retCell.align = function (alignTo) {
+                    retCell.css('text-align', alignTo);
+                    retCell.propDom('align', alignTo);
+                    return retCell;
+                };
+            }
             return retCell;
         };
 
-//        external.add = function (row, col, content, id) {
-//            /// <summary>Add content to a cell of this table.</summary>
-//            /// <param name="row" type="Number">Row number.</param>
-//            /// <param name="col" type="Number">Column number.</param>
-//            /// <param name="content" type="String">Content to add.</param>
-//            /// <returns type="Object">The specified cell.</returns>
-//            var retCell = external.cell(row, col, id);
-//            retCell.append(content);
-//            return retCell;
-//        };
+        //        external.add = function (row, col, content, id) {
+        //            /// <summary>Add content to a cell of this table.</summary>
+        //            /// <param name="row" type="Number">Row number.</param>
+        //            /// <param name="col" type="Number">Column number.</param>
+        //            /// <param name="content" type="String">Content to add.</param>
+        //            /// <returns type="Object">The specified cell.</returns>
+        //            var retCell = external.cell(row, col, id);
+        //            retCell.append(content);
+        //            return retCell;
+        //        };
 
         external.maxrows = function () {
             /// <summary>Get the maximum table row number</summary>
@@ -164,7 +186,7 @@
             return maxcolumns;
         };
 
-        external.finish = function (onEmptyCell) {
+        external.finish = function (onEmptyCell, startingRow, startingCol) {
             /// <summary>Finish</summary>
             /// <returns type="undefined"></returns>
             var maxrows = external.maxrows(),
@@ -172,8 +194,8 @@
                 r, c, cell;
 
             // make missing cells, and add &nbsp; to empty cells
-            for (r = 1; r <= maxrows; r += 1) {
-                for (c = 1; c <= maxcolumns; c += 1) {
+            for (r = Csw.number(startingRow, 1); r <= maxrows; r += 1) {
+                for (c = Csw.number(startingCol, 1); c <= maxcolumns; c += 1) {
                     cell = external.cell(r, c);
                     if (cell.length() === 0) {
                         if (onEmptyCell !== null) {
@@ -203,8 +225,7 @@
             /// <summary>Find a cells by jQuery search criteria</summary>
             /// <param name="criteria" type="String"></param>
             /// <returns type="Object">Cells matching search</returns>
-            var $retCell = null,
-                cells, ret = {};
+            var cells, ret = {};
             if (Csw.contains(criteria, 'row') &&
                 Csw.contains(criteria, 'column')) {
                 ret = external.jquery($(external.$[0].rows[criteria.row].cells[criteria.column]));

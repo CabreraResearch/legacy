@@ -75,13 +75,13 @@
                 units: null
             };
 
-            var startDate = o.propDiv.find('#' + o.ID + '_sd'),
+            var startDate = o.propDiv.find('#' + o.ID + '_sd').find('input'),
                 dateVal;
 
             if (false === Csw.isNullOrEmpty(startDate)) {
-                dateVal = startDate.dateTimePicker().val(o.propData.readonly);
-                attributes.startdatetime.date = dateVal.date;
-                attributes.startdatetime.time = dateVal.time;
+                dateVal = startDate.val();
+                attributes.startdatetime.date = dateVal;
+                //attributes.startdatetime.time = dateVal.time;
             }
 
             var units = o.propDiv.find('#' + o.ID + '_units');

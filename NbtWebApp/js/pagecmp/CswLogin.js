@@ -48,7 +48,7 @@
                                             onClick: function () {
                                                 loginMsg.hide().empty();
 
-                                                _handleLogin({
+                                                Csw.clientSession.login({
                                                     AccessId: inpAccessId.val(),
                                                     UserName: inpUserName.val(),
                                                     Password: inpPassword.val(),
@@ -111,47 +111,10 @@
             LogoutPath: ''
         };
         if (options) $.extend(o, options);
-        _handleLogin(o);
+        Csw.clientSession.login(o);
     }; // login
 
-    function _handleLogin(loginopts) {
-        var l = {
-            AccessId: '',
-            UserName: '',
-            Password: '',
-            ForMobile: false,
-            onAuthenticate: null, // function (UserName) {} 
-            onFail: null, // function (errormessage) {} 
-            LogoutPath: ''
-        };
-        if (loginopts) $.extend(l, loginopts);
-        Csw.ajax.post({
-            url: authenticateUrl,
-            data: {
-                AccessId: l.AccessId,
-                UserName: l.UserName,
-                Password: l.Password,
-                ForMobile: l.ForMobile
-            },
-            success: function () {
-                Csw.cookie.set(Csw.cookie.cookieNames.Username, l.UserName);
-                Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, l.LogoutPath);
-                if (Csw.isFunction(l.onAuthenticate)) {
-                    l.onAuthenticate(l.UserName);
-                }
-            },
-            onloginfail: function (txt) {
-                if (Csw.isFunction(l.onFail)) {
-                    l.onFail(txt);
-                }
-            },
-            error: function () {
-                if (Csw.isFunction(l.onFail)) {
-                    l.onFail('Webservice Error');
-                }
-            }
-        }); // ajax
-    } // _handleLogin()
+    
 
 } (jQuery));
 
