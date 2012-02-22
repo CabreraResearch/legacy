@@ -588,38 +588,32 @@ window.initMain = window.initMain || function (undefined) {
         });
     }
 
-    var onSelectTreeNode = (function () {
+    var onSelectTreeNode = function (options) {
         //if (debugOn()) Csw.log('Main.onSelectTreeNode()');
-        var runOnce = true;
-        return function (options) {
-            if (Csw.clientChanges.manuallyCheckChanges()) {
-                var o = {
-                    viewid: '',
-                    nodeid: '',
-                    nodename: '',
-                    iconurl: '',
-                    cswnbtnodekey: ''
-                };
-                if (options) {
-                    $.extend(o, options);
-                }
+        if (Csw.clientChanges.manuallyCheckChanges()) {
+            var o = {
+                viewid: '',
+                nodeid: '',
+                nodename: '',
+                iconurl: '',
+                cswnbtnodekey: ''
+            };
+            if (options) {
+                $.extend(o, options);
+            }
 
-                Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, o.nodeid);
-                Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, o.cswnbtnodekey);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeId, o.nodeid);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentNodeKey, o.cswnbtnodekey);
 
-                if (o.nodeid !== '' && o.nodeid !== 'root') {
-                    getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                    refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
-                } else {
-                    if (runOnce) {
-                        runOnce = false;
-                        showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
-                    }
-                    refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
-                }
+            if (o.nodeid !== '' && o.nodeid !== 'root') {
+                getTabs({ 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: o.nodeid, cswnbtnodekey: o.cswnbtnodekey });
+            } else {
+                showDefaultContentTree({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name });
+                refreshMainMenu({ viewid: o.viewid, viewmode: Csw.enums.viewMode.tree.name, nodeid: '', cswnbtnodekey: '' });
             }
         }
-    } ()); // onSelectTreeNode()
+    }; // onSelectTreeNode()
 
     function showDefaultContentTree(viewopts) {
         var v = {
@@ -630,7 +624,7 @@ window.initMain = window.initMain || function (undefined) {
             }
         };
         if (viewopts) $.extend(v, viewopts);
-        clear({ centerbottom: true });
+        clear({ right: true });
         $('#RightDiv').CswDefaultContent(v);
 
     } // showDefaultContentTree()
@@ -644,7 +638,7 @@ window.initMain = window.initMain || function (undefined) {
             }
         };
         if (viewopts) $.extend(v, viewopts);
-        clear({ centerbottom: true });
+        clear({ right: true });
         var $div = $('#CenterBottomDiv').CswDiv({ ID: 'deftbldiv' });
         $div.CswAttrDom('align', 'center');
         $div.css({ textAlign: 'center' });
