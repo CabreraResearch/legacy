@@ -239,7 +239,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( NbtViewRenderingMode ViewRenderingMode )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( NbtViewRenderingMode ViewRenderingMode )
         {
             return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false, false, ViewRenderingMode );
         }
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( bool IncludeEmptyViews )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( bool IncludeEmptyViews )
         {
             return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
         }
@@ -255,7 +255,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the provided user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews, CswCommaDelimitedString LimitToViews = null )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews, CswCommaDelimitedString LimitToViews = null )
         {
             return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any, LimitToViews );
         }
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( string OrderBy, bool IncludeEmptyViews )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, bool IncludeEmptyViews )
         {
             return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
         }
@@ -285,11 +285,11 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a Collection of all views visible to the current user
         /// </summary>
-        public Collection<CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, CswCommaDelimitedString LimitToViews = null )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, CswCommaDelimitedString LimitToViews = null )
         {
             CswTimer VisibleViewsTimer = new CswTimer();
 
-            Collection<CswNbtView> Ret = new Collection<CswNbtView>();
+            Dictionary<CswNbtViewId, CswNbtView> Ret = new Dictionary<CswNbtViewId, CswNbtView>();
             if( null == LimitToViews || LimitToViews.Count > 0 )
             {
                 DataTable ViewsTable = null;
@@ -346,7 +346,7 @@ namespace ChemSW.Nbt
                         ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
                         ( !SearchableOnly || ThisView.IsSearchable() ) )
                     {
-                        Ret.Add( ThisView );
+                        Ret.Add( ThisView.ViewId, ThisView );
                     }
                 } // foreach( DataRow Row in ViewsTable.Rows )
             }
