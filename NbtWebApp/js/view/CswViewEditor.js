@@ -943,6 +943,7 @@
             }
             if (!Csw.isNullOrEmpty($ret) && !skipchildoptions) {
                 var $filtUl = $('<ul></ul>');
+                /* Show existing read-only filters */
                 if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
                     var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
                     if (!Csw.isNullOrEmpty(filterJson)) {
@@ -959,6 +960,7 @@
                         }
                     }
                 }
+                /* Show add new filter */
                 if (stepno !== Csw.enums.wizardSteps_ViewEditor.tuning.step) {
                     var $filtBuilderLi = makeViewPropertyFilterHtml(null, stepno, types, arbid);
                     if (false === Csw.isNullOrEmpty($filtBuilderLi)) {
@@ -991,7 +993,7 @@
                         }
                     } else {
                         $ret.append(makeViewPropFilterStaticSpan(propArbId, itemJson, filtArbitraryId, rel));
-                        $ret.append(makeDeleteSpan(filtArbitraryId, stepno));
+                        makeDeleteSpan(filtArbitraryId, $ret);
                     }
                 } else {
                     $ret.append(makeViewPropFilterAddSpan(propArbId, rel));
@@ -1007,7 +1009,7 @@
                 $parent: $span,
                 'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl'
             });
-            table.css('display', 'inline-table');
+            table.css({ 'display': 'inline-table' });
 
             table.$.CswViewPropFilter('static', {
                 ID: o.ID + '_' + filtArbitraryId + '_propfilttbl',
@@ -1029,7 +1031,7 @@
                 $parent: $span,
                 'ID': o.ID + '_' + propArbId + '_propfilttbl'
             });
-            table.css('display', 'inline-table');
+            table.css({ 'display': 'inline-table' });
 
             table.$.CswViewPropFilter('init', {
                 viewJson: currentViewJson,
@@ -1042,7 +1044,7 @@
                 autoFocusInput: false
             });
 
-            table.cell(1, 5).$.CswButton('init', {
+            table.cell(1, 5).button({
                 ID: propArbId + '_addfiltbtn',
                 enabledText: 'Add',
                 disabledText: 'Adding'
@@ -1068,7 +1070,7 @@
                 ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                 AlternateText: 'Delete',
                 ID: arbid + '_delete'
-            });
+            }).css({ display: 'inline-block' });
             return td.$;
         }
 
