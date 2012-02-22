@@ -112,7 +112,6 @@
     <Content Include="csw.js\components\csw.layouttable.js" />
     <Content Include="js\main\controls\CswList.js" />
     <Content Include="csw.js\controls\csw.select.js" />
-    <Content Include="js\main\controls\CswSpan.js" />
     <Content Include="csw.js\components\csw.tristatecheckbox.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\main\fieldtypes\CswFieldTypeBarcode.js" />
