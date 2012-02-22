@@ -12,7 +12,7 @@
 /// <reference path="../../Scripts/jquery.cookie.js" />
 
 //#region Globals (yuck)
-var homeUrl = 'Main.html';
+var homeUrl = 'Mobile.html';
 //#endregion Globals (yuck)
 
 //#region Session Expiration
@@ -615,19 +615,8 @@ function initCheckChanges() {
     }
 }
 
-var checkAppMode = checkAppMode || (function() {
-    "use strict";     
-    if (CswAppMode.mode === 'full')
-    {
-        if (!isNullOrEmpty(window.onload))
-        {
-            window.onload = new Function('initCheckChanges(); var f=' + window.onload + '; return f();');
-        } else
-        {
-            window.onload = function() { initCheckChanges(); };
-        }
-    }    
-}());
+function checkAppMode() {
+};
 
 //#endregion Check Changes
 

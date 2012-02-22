@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -14,12 +14,13 @@
         <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="Scripts/jquery.cookie.min.js"></script>
         <script type="text/javascript" src="Scripts/jquery.mobile-1.0rc1.min.js"></script>
-        <script type="text/javascript" src="js/mobile/CswAllMobile.min.js"></script>
+        <!--#include file="_DevMobileIncludes.html" -->
+        <!-- <script type="text/javascript" src="js/mobile/CswAllMobile.min.js"></script> -->
     </head>
     <body>
         <script type="text/javascript">
 
-            (function(undefined) {
+            (function (undefined) {
                 try {
                     if (hasWebStorage()) {
 
@@ -28,17 +29,17 @@
                         window.debug = false;
                         // This causes case 22968!
                         //$(window).bind("orientationchange resize scrollstart", fixGeometry);
-
+                        debugger;
                         $('body').CswMobile({
-                                'Theme': 'b'
-                            });
+                            'Theme': 'b'
+                        });
 
                     }
                     else {
                         throw ('This browser does not support localStorage.');
                     }
                 }
-                catch(e) {
+                catch (e) {
                     //errorHandler(e);
                 }
             })();
