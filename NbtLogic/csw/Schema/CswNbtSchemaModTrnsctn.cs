@@ -931,9 +931,9 @@ namespace ChemSW.Nbt.Schema
             }
             else
             {
-                RelatedIdType RelatedIdType;
+                NbtViewRelatedIdType RelatedIdType;
                 Enum.TryParse( FkType, true, out RelatedIdType );
-                if( RelatedIdType != RelatedIdType.Unknown )
+                if( RelatedIdType != NbtViewRelatedIdType.Unknown )
                 {
                     RetIsValid = true;
                 }

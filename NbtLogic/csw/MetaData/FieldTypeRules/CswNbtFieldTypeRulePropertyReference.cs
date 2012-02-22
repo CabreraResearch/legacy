@@ -60,11 +60,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private bool _validateRelationship( string FkType, Int32 FkValue, Int32 inValuePropId )
         {
             bool RetIsInvalid = false;
-            RelatedIdType RelatedIdType;
+            NbtViewRelatedIdType RelatedIdType;
             Enum.TryParse( FkType, true, out RelatedIdType );
             switch( RelatedIdType )
             {
-                case RelatedIdType.NodeTypeId:
+                case NbtViewRelatedIdType.NodeTypeId:
                     CswNbtMetaDataNodeType FkRelationshipTargetNt = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeType( FkValue );
                     RetIsInvalid = ( null == FkRelationshipTargetNt );
                     if( false == RetIsInvalid )
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                          _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeFirstVersion( ValueNtp.NodeTypeId ) != FkRelationshipTargetNt.getFirstVersionNodeType() );
                     }
                     break;
-                case RelatedIdType.ObjectClassId:
+                case NbtViewRelatedIdType.ObjectClassId:
                     CswNbtMetaDataObjectClass FkRelationshipTargetOc = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( FkValue );
                     RetIsInvalid = ( null == FkRelationshipTargetOc );
 

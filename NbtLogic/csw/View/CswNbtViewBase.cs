@@ -179,7 +179,7 @@ namespace ChemSW.Nbt
         public static readonly NbtViewNodeType CswNbtViewRoot = new NbtViewNodeType( "CswNbtViewRoot" );
     }
 
-    public enum RelatedIdType { Unknown, NodeTypeId, ObjectClassId };
+    public enum NbtViewRelatedIdType { Unknown, NodeTypeId, ObjectClassId };
     public enum PropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
     public enum PropOwnerType { First, Second, Unknown };
 

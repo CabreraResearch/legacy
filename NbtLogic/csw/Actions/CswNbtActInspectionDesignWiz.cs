@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.Actions
 
             //Inspection Target has Inspection Target Group Relationship
             CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-            ItInspectionGroupNtp.SetFK( RelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
+            ItInspectionGroupNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
             ItInspectionGroupNtp.PropName = InspectionGroupName;
 
             //NodeTypeName Template
@@ -379,10 +379,10 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
             IdTargetNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             IdTargetNtp.IsRequired = true;
-            if( IdTargetNtp.FKType != RelatedIdType.ObjectClassId.ToString() &&
+            if( IdTargetNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() &&
                 IdTargetNtp.FKValue != InspectionTargetOc.ObjectClassId )
             {
-                IdTargetNtp.SetFK( RelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
+                IdTargetNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
             }
 
             //Inspection Design Generator is SI Inspection Schedule
@@ -390,10 +390,10 @@ namespace ChemSW.Nbt.Actions
             _validateInspectionScheduleNt( GeneratorNt );
 
             CswNbtMetaDataNodeTypeProp IdGeneratorNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.GeneratorPropertyName );
-            if( IdGeneratorNtp.FKType != RelatedIdType.NodeTypeId.ToString() &&
+            if( IdGeneratorNtp.FKType != NbtViewRelatedIdType.NodeTypeId.ToString() &&
                 IdGeneratorNtp.FKValue != GeneratorNt.NodeTypeId )
             {
-                IdGeneratorNtp.SetFK( RelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
+                IdGeneratorNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
                 IdGeneratorNtp.PropName = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
             }
 
@@ -425,11 +425,11 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeProp OwnerNtp = InspectionScheduleNt.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
             CswNbtMetaDataObjectClass GroupOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
 
-            if( OwnerNtp.FKType != RelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
+            if( OwnerNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
             {
-                OwnerNtp.SetFK( RelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                OwnerNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
                 // twice to set the view
-                OwnerNtp.SetFK( RelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                OwnerNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
             }
 
         }

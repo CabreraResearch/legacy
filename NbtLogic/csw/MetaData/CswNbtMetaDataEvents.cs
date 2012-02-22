@@ -170,9 +170,9 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
                     if( RelationshipProp != null )
                     {
-                        if( ( RelationshipProp.FKType == RelatedIdType.NodeTypeId.ToString() &&
+                        if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
                               RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
-                            ( RelationshipProp.FKType == RelatedIdType.ObjectClassId.ToString() &&
+                            ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                               RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) )
                         {
 

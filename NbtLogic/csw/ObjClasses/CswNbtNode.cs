@@ -662,10 +662,10 @@ namespace ChemSW.Nbt.ObjClasses
                 // BZ 8355 - Set relationships on children pointing to parents, not the other way
                 if( ViewRelationship.PropOwner == PropOwnerType.Second )
                 {
-                    if( ( ( ViewRelationship.SecondType == RelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
-                          ( ViewRelationship.SecondType == RelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&
-                        ( ( ViewRelationship.FirstType == RelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
-                          ( ViewRelationship.FirstType == RelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
+                    if( ( ( ViewRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
+                          ( ViewRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&
+                        ( ( ViewRelationship.FirstType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
+                          ( ViewRelationship.FirstType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
                     {
                         if( ViewRelationship.PropType == PropIdType.NodeTypePropId )
                             Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];

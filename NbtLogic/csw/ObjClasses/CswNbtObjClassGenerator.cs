@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             CswNbtMetaDataNodeTypeProp TargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
                             if( TargetGroupNtp.IsFK &&
-                                RelatedIdType.NodeTypeId.ToString() == TargetGroupNtp.FKType &&
+                                NbtViewRelatedIdType.NodeTypeId.ToString() == TargetGroupNtp.FKType &&
                                 Int32.MinValue != TargetGroupNtp.FKValue )
                             {
                                 CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( TargetGroupNtp.FKValue ).getNodeTypeLatestVersion();
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 foreach( CswNbtMetaDataNodeType MatchingInspectionTargetNt in MatchingInspectionTargetNts )
                                 {
                                     if( DesignTargetNtp.IsFK &&
-                                        RelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
+                                        NbtViewRelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
                                         Int32.MinValue != DesignTargetNtp.FKValue )
                                     {
                                         if( MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )

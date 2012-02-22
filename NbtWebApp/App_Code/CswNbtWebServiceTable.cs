@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 Order = -1000;
                 foreach( CswNbtViewRelationship ViewRel in _View.Root.ChildRelationships )
                 {
-                    if( ViewRel.SecondType == RelatedIdType.NodeTypeId )
+                    if( ViewRel.SecondType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
                         foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )

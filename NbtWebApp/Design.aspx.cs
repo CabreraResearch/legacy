@@ -803,7 +803,7 @@ namespace ChemSW.Nbt.WebPages
 
                     // For Relationship and MultiRelationship properties:
                     //bool NewIsFk = false;
-                    string NewFKType = RelatedIdType.Unknown.ToString();
+                    string NewFKType = NbtViewRelatedIdType.Unknown.ToString();
                     Int32 NewFKValue = Int32.MinValue;
                     if( PropToSave.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
@@ -814,12 +814,12 @@ namespace ChemSW.Nbt.WebPages
                             //NewIsFk = true;
                             if( TargetValue.Substring( 0, "nt_".Length ) == "nt_" )
                             {
-                                NewFKType = RelatedIdType.NodeTypeId.ToString();
+                                NewFKType = NbtViewRelatedIdType.NodeTypeId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "nt_".Length ) );
                             }
                             else
                             {
-                                NewFKType = RelatedIdType.ObjectClassId.ToString();
+                                NewFKType = NbtViewRelatedIdType.ObjectClassId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "oc_".Length ) );
                             }
                         }
@@ -2098,7 +2098,7 @@ namespace ChemSW.Nbt.WebPages
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropType );
 
                                 IEnumerable<ICswNbtMetaDataProp> RelatedProps = null;
-                                if( RelationshipProp.FKType == RelatedIdType.NodeTypeId.ToString() )
+                                if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                 {
                                     CswNbtMetaDataNodeType RelatedNodeType = Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue );
                                     if( RelatedNodeType != null )
@@ -2224,7 +2224,7 @@ namespace ChemSW.Nbt.WebPages
                             TargetValue.ID = "EditProp_TargetValue" + SelectedNodeTypeProp.PropId.ToString();
 
                             if( DerivesFromObjectClassProp &&
-                                ObjectClassProp.FKType == RelatedIdType.ObjectClassId.ToString() &&
+                                ObjectClassProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                                 ObjectClassProp.FKValue != Int32.MinValue )
                             {
                                 // BZ 8051 - Constrain options to this object class
@@ -2278,9 +2278,9 @@ namespace ChemSW.Nbt.WebPages
 
                             TargetValue.DataBind();
 
-                            if( SelectedNodeTypeProp.FKType == RelatedIdType.NodeTypeId.ToString() )
+                            if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                 TargetValue.SelectedNodeTypeFirstVersionId = SelectedNodeTypeProp.FKValue;
-                            else if( SelectedNodeTypeProp.FKType == RelatedIdType.ObjectClassId.ToString() )
+                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
                                 TargetValue.SelectedObjectClassId = SelectedNodeTypeProp.FKValue;
 
                             TargetRow.Cells[1].Controls.Add( TargetValue );

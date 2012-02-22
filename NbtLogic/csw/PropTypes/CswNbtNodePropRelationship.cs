@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
                 string ret = "nodes";
                 if( TargetId != Int32.MinValue )
                 {
-                    if( TargetType == RelatedIdType.NodeTypeId )
+                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
                         if( TargetNodeType != null )
@@ -138,14 +138,14 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// RelatedIdType of the TargetId
         /// </summary>
-        public RelatedIdType TargetType
+        public NbtViewRelatedIdType TargetType
         {
             get
             {
-                RelatedIdType ret = RelatedIdType.Unknown;
+                NbtViewRelatedIdType ret = NbtViewRelatedIdType.Unknown;
                 try
                 {
-                    ret = (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
+                    ret = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
                 }
                 catch( Exception ex )
                 {
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.PropTypes
 
             CswXmlDocument.AppendXmlNode( ParentNode, _NameSubField.ToXmlNodeName(), CachedNodeName );
 
-            if( TargetType == RelatedIdType.NodeTypeId )
+            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
             {
                 CswXmlDocument.AppendXmlNode( ParentNode, "nodetypeid", TargetId.ToString() );
             }
@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.PropTypes
                 RelatedNodeId.PrimaryKey.ToString() : string.Empty ),
                             new XElement( _NameSubField.ToXmlNodeName( true ), CachedNodeName ) );
 
-            if( TargetType == RelatedIdType.NodeTypeId )
+            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
             {
                 ParentNode.Add( new XElement( "nodetypeid", TargetId.ToString() ) );
             }
@@ -296,7 +296,7 @@ namespace ChemSW.Nbt.PropTypes
                                 RelatedNodeId.PrimaryKey.ToString() : string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
-            if( TargetType == RelatedIdType.NodeTypeId )
+            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }

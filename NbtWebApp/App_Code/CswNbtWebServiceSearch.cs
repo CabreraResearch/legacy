@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.WebServices
                                                         .Cast<JObject>()
                                                         .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        RelatedIdType PropType;
+                        NbtViewRelatedIdType PropType;
                         Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
 
                         Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["nodetypeorobjectclassid"] );
@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.WebServices
 
                         string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
-                        if( PropType == RelatedIdType.ObjectClassId &&
+                        if( PropType == NbtViewRelatedIdType.ObjectClassId &&
                             Int32.MinValue != NodeTypeProp.ObjectClassPropId )
                         {
                             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.WebServices
                                 _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                             }
                         }
-                        else if( PropType == RelatedIdType.NodeTypeId &&
+                        else if( PropType == NbtViewRelatedIdType.NodeTypeId &&
                             Int32.MinValue != NodeTypeProp.PropId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );

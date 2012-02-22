@@ -246,7 +246,7 @@ namespace ChemSW.Nbt
                                 where j.nodetypeid = t.firstversionid) )) ";
 
             // Nodetype/Object Class filter
-            if( Relationship.SecondType == RelatedIdType.NodeTypeId )
+            if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
                 Where += " and (t.firstversionid = " + Relationship.SecondId + ") ";
             else
                 Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";

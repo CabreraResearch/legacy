@@ -480,7 +480,7 @@ namespace ChemSW.Nbt.WebServices
             ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
             foreach( CswNbtViewRelationship Rel in Relationships )
             {
-                if( Rel.SecondType == RelatedIdType.NodeTypeId )
+                if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
                     if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )

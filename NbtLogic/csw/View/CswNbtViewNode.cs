@@ -280,13 +280,13 @@ namespace ChemSW.Nbt
                     ChildRelationship.NodeIdsToFilterIn.Count == 0 )  // BZ 8022
                 {
                     Collection<CswNbtMetaDataNodeType> PotentialNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                    if( ChildRelationship.SecondType == RelatedIdType.NodeTypeId )
+                    if( ChildRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( ChildRelationship.SecondId );
                         if( NodeType != null )
                             PotentialNodeTypes.Add( NodeType.getFirstVersionNodeType() );
                     }
-                    else if( ChildRelationship.SecondType == RelatedIdType.ObjectClassId )
+                    else if( ChildRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ChildRelationship.SecondId );
                         if( ObjectClass != null )
@@ -356,9 +356,9 @@ namespace ChemSW.Nbt
                 {
                     if(//((RelatedIdType.NodeTypeId == CurrentRelationship.FirstType) &&
                         // (CurrentRelationship.FirstId == NodeTypeID)) ||
-                        ( ( RelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
+                        ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
                          ( CurrentRelationship.SecondId == NodeTypeID ) ) ||
-                        ( ( RelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
+                        ( ( NbtViewRelatedIdType.ObjectClassId == CurrentRelationship.SecondType ) &&
                          ( CurrentRelationship.SecondId == _CswNbtResources.MetaData.getNodeType( NodeTypeID ).ObjectClassId ) ) )
                     {
                         ReturnVal = true;

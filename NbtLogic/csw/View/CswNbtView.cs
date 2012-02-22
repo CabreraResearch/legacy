@@ -578,7 +578,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    if( Relationship.SecondType == RelatedIdType.NodeTypeId )
+                    if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType NewNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeMap[Relationship.SecondId] );
                         Relationship.overrideSecond( NewNodeType );
@@ -809,7 +809,7 @@ namespace ChemSW.Nbt
             {
                 // Make sure this nodetype/object class is enabled
                 CswNbtViewRelationship ThisRelationship = ViewNode as CswNbtViewRelationship;
-                if( ThisRelationship.SecondType == RelatedIdType.NodeTypeId )
+                if( ThisRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisRelationship.SecondId );
                     ret = ret && ( ThisNodeType != null );
@@ -850,9 +850,9 @@ namespace ChemSW.Nbt
             bool ReturnVal = false;
             foreach( CswNbtViewRelationship CurrentRelationship in Relationships )
             {
-                if( ( ( RelatedIdType.NodeTypeId == CurrentRelationship.FirstType ) &&
+                if( ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.FirstType ) &&
                      ( CurrentRelationship.FirstId == NodeType.FirstVersionNodeTypeId ) ) ||
-                    ( ( RelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
+                    ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
                      ( CurrentRelationship.SecondId == NodeType.FirstVersionNodeTypeId ) ) )
                 {
                     ReturnVal = true;
