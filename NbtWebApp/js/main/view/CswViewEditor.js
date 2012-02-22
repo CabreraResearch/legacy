@@ -201,8 +201,8 @@
         table2.cell(4, 1).text('For Mobile:');
         var forMobileCheckBox = table2.cell(4, 2)
                                       .input({ ID: o.ID + '_formobile',
-            type: Csw.enums.inputTypes.checkbox
-        });
+                                          type: Csw.enums.inputTypes.checkbox
+                                      });
 
         table2.cell(5, 1).text('Display Mode:');
         var displayModeSpan = table2.cell(5, 2)
@@ -710,7 +710,7 @@
                     'FirstCellRightAlign': true
                 });
                 filterTable.cell(1, 1).text('Case Sensitive');
-                
+
                 filterTable.cell(1, 2)
                     .input({
                         ID: o.ID + '_casecb',

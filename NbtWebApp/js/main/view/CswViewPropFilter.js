@@ -128,7 +128,7 @@
                     .empty();
 
                 //Subfield default value (hidden)
-                $defaultSubField = subfieldCell.CswSpan('init', {
+                $defaultSubField = subfieldCell.span({
                     ID: defaultSubFieldId,
                     value: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
@@ -277,7 +277,7 @@
                         .css('padding', '2px');
 
                     var propCellId = makePropFilterId(propertyName, filtOpt);
-                    propSelectCell.CswSpan('init', { ID: propCellId, value: propertyName });
+                    propSelectCell.span({ ID: propCellId, value: propertyName });
                 }
 
                 var selectedSubfield = Csw.string(propsData.subfieldname, propsData.subfield);
@@ -303,21 +303,21 @@
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
 
                 //Subfield
-                subfieldCell.CswSpan('init', {
+                subfieldCell.span({
                     ID: defaultSubFieldId,
                     value: selectedSubfield,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 //Selected Filter
-                filtersCell.CswSpan('init', {
+                filtersCell.span({
                     ID: filtersOptionsId,
                     value: selectedFilterMode,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name
                 })
                     .css({ 'text-align': "center" });
                 //Filter Input
-                propFilterValueCell.CswSpan('init', {
+                propFilterValueCell.span({
                     ID: filtValInputId,
                     value: filterValue,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
