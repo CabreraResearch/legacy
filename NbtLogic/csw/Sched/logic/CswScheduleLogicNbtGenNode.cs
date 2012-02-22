@@ -68,6 +68,7 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
+                    _CompletionMessage = string.Empty; 
 
                     List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
 
