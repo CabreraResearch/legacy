@@ -1,0 +1,105 @@
+﻿using System;
+using System.Data;
+using System.Collections.Generic;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
+
+
+namespace ChemSW.Nbt.Schema
+{
+    /// <summary>
+    /// Updates the schema to version 01M-06
+    /// </summary>
+    public class CswUpdateSchemaTo01M07 : CswUpdateSchemaTo
+    {
+        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 07 ); } }
+        public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
+
+        public override void update()
+        {
+            #region case 24981
+            //Rebirth of vendor object class
+            CswTableUpdate ObjectClassUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "createnewvendorclass", "object_class" );
+            DataTable ObjectClasstable = ObjectClassUpdate.getEmptyTable();
+            DataRow NewObjectClassRow = ObjectClasstable.NewRow();
+            ObjectClasstable.Rows.Add( NewObjectClassRow );
+            NewObjectClassRow["objectclass"] = CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass.ToString();
+            ObjectClassUpdate.update( ObjectClasstable );
+
+
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Approval Status", CswNbtMetaDataFieldType.NbtFieldType.Logical );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Specific Gravity", CswNbtMetaDataFieldType.NbtFieldType.Scientific );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Physcial State", CswNbtMetaDataFieldType.NbtFieldType.List, false, false, false, string.Empty, Int32.MinValue, false, false, false, false, "solid, liquid, gas" );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "CAS No", CswNbtMetaDataFieldType.NbtFieldType.Text );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Regulatory Lists", CswNbtMetaDataFieldType.NbtFieldType.Static );
+
+
+            CswNbtMetaDataObjectClassProp PartNoOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Part Number", CswNbtMetaDataFieldType.NbtFieldType.Text );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PartNoOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.iscompoundunique, true );
+
+            CswNbtMetaDataObjectClassProp TradenameOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Tradename", CswNbtMetaDataFieldType.NbtFieldType.Text );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TradenameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.iscompoundunique, true );
+
+
+            CswNbtMetaDataObjectClassProp StorageClassOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Storage Capacity", CswNbtMetaDataFieldType.NbtFieldType.ImageList );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StorageClassOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.multi, false );
+
+            CswNbtMetaDataObjectClassProp SupplierOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Supplier", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false, false, true, CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.iscompoundunique, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ).ObjectClassId );
+
+            /*
+            bool AtLeastOneNodeTypeWasUpdated = false;
+            foreach( CswNbtMetaDataNodeType CurrentNodeType in _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ).getNodeTypes() )
+            {
+                AtLeastOneNodeTypeWasUpdated = true;
+                CurrentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName ).SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ).ObjectClassId );
+
+            }//iterate material node types
+
+            if( false == AtLeastOneNodeTypeWasUpdated )
+            {
+                CswNbtMetaDataNodeType MaterialNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), "Material", "Materials" );
+                CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
+                CswNbtMetaDataObjectClass VendorObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass );
+                SupplierNtp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), VendorObjClass.ObjectClassId );
+            }
+             */
+
+            #endregion case 24981
+
+
+            #region case 24457-ChemicalNodeType
+
+            /*
+            string ChemicalNodeTypeName = "Chemical";
+            string ChemicalCategory = "Materials";
+            CswNbtMetaDataNodeType ChemicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( ChemicalNodeTypeName );
+            if( null == ChemicalNodeType || ChemicalNodeType.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+            {
+                ChemicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), ChemicalNodeTypeName, ChemicalCategory );
+                CswNbtMetaDataNodeTypeTab IdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNodeType, "Identity", 0 );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "CAS", IdentityTab.TabId );
+
+            }//if else the Chemical node type does not already exist
+*/
+
+            /*
+  CAS (Text)
+Synonyms (Grid)
+Components (Grid)
+Expiration Interval (Quantity, limited to Unit Type==Time)
+ */
+
+            #endregion
+
+
+        }//Update()
+
+    }//class CswUpdateSchemaTo01M07
+
+}//namespace ChemSW.Nbt.Schema

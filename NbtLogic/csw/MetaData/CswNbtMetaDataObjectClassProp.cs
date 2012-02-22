@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.MetaData
             listoptions,
             viewxml,
             fktype,
+            fkvalue,
             multi,
             readOnly,
             display_col_add,
