@@ -185,11 +185,11 @@ namespace ChemSW.Nbt.PropTypes
             set { _User = value; }
         }
 
-        private Collection<CswNbtView> _Views = null;
+        private Dictionary<CswNbtViewId, CswNbtView> _Views = null;
         /// <summary>
         /// Collection of Views to select
         /// </summary>
-        public Collection<CswNbtView> Views
+        public Dictionary<CswNbtViewId, CswNbtView> Views
         {
             get
             {
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         // else 
                         // Creating a new user, don't pick a default view (BZ 7055)
-                        _Views = new Collection<CswNbtView>();
+                        _Views = new Dictionary<CswNbtViewId, CswNbtView>();
                     }
                 }
                 return _Views;
@@ -214,12 +214,12 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Collection of Views to select
         /// </summary>
-        public Collection<CswNbtView> SelectedViews
+        public Dictionary<CswNbtViewId, CswNbtView> SelectedViews
         {
             get
             {
 
-                Collection<CswNbtView> _SelectedViews = new Collection<CswNbtView>();
+                Dictionary<CswNbtViewId, CswNbtView> _SelectedViews = new Dictionary<CswNbtViewId, CswNbtView>();
                 if( NodeId != null )
                 {
                     // Use the User's visible, quicklaunch views
@@ -251,14 +251,14 @@ namespace ChemSW.Nbt.PropTypes
             //    _ViewsForCBA.Rows.Add( NoneRow );
             //}
 
-            foreach( CswNbtView ThisView in Views )
+            foreach( CswNbtView ThisView in Views.Values )
             {
                 DataRow NewViewRow = _ViewsForCBA.NewRow();
                 NewViewRow[NameColumn] = ThisView.ViewName;
                 NewViewRow[KeyColumn] = ThisView.ViewId.get();
                 //NewViewRow[ValueColumn] = ( searchstr.IndexOf( CswNbtNodePropViewPickList.delimiter.ToString() + ViewRow["nodeviewid"].ToString() + CswNbtNodePropViewPickList.delimiter.ToString() ) >= 0 );
                 NewViewRow[ValueColumn] = ( ( SelectedViewIds.Contains( ThisView.ViewId.get() ) ) ||
-                                          ( ( Views.First() == ThisView ) && Required && SelectedViewIds.Count == 0 ) );
+                                          ( ( Views.Values.First() == ThisView ) && Required && SelectedViewIds.Count == 0 ) );
                 _ViewsForCBA.Rows.Add( NewViewRow );
             }
             return _ViewsForCBA;

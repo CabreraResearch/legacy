@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
@@ -209,9 +210,9 @@ namespace ChemSW.NbtWebControls
 
                         // Views
 
-                        Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", false );
+                        Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", false );
 
-                        foreach( CswNbtView View in Views )
+                        foreach( CswNbtView View in Views.Values )
                         {
                             // BZ 10121
                             // This is a performance hit, but since this view list is cached, it's ok

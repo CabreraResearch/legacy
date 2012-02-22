@@ -58,9 +58,9 @@ namespace ChemSW.Nbt.WebServices
             JArray TreeData = new JArray();
 
             // Views
-            Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
+            Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
 
-            foreach( CswNbtView View in Views )
+            foreach( CswNbtView View in Views.Values )
             {
                 // BZ 10121
                 // This is a performance hit, but since this view list is cached, it's ok
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.WebServices
 
             bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
 
-            Collection<CswNbtView> Views = new Collection<CswNbtView>();
+            Dictionary<CswNbtViewId, CswNbtView> Views = new Dictionary<CswNbtViewId, CswNbtView>();
             DataTable ViewsTable = null;
             if( IsAdmin )
             {
@@ -257,7 +257,7 @@ namespace ChemSW.Nbt.WebServices
                 gd.makeJqColumn( null, "CATEGORY", JColumnNames, JColumnDefs, false, false );
                 gd.makeJqColumn( null, "ROLENAME", JColumnNames, JColumnDefs, false, false );
                 gd.makeJqColumn( null, "USERNAME", JColumnNames, JColumnDefs, false, false );
-                foreach( CswNbtView View in Views )
+                foreach( CswNbtView View in Views.Values )
                 {
                     string RoleName = string.Empty;
                     CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
