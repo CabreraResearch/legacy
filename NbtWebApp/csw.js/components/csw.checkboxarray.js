@@ -24,7 +24,8 @@
             nameCol: '',
             keyCol: '',
             valCol: '',
-            valColName: ''
+            valColName: '',
+            storeDataId: ''
         };
         var external = {
 
@@ -92,8 +93,8 @@
             if (opts) {
                 $.extend(_internal, opts);
             }
-            var storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix);
-            var data = Csw.clientDb.getItem(storeDataId);
+            
+            var data = Csw.clientDb.getItem(internal.storeDataId);
             return data;
         };
 
@@ -116,16 +117,15 @@
                 $.extend(internal, options);
             }
 
-            var storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix, false);
-            internal.cbaPrevSelected = Csw.controls.dom.makeId(storeDataId, internal.cbaPrevSelectedSuffix);
+            internal.storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix, '', '', false);
+            internal.cbaPrevSelected = Csw.controls.dom.makeId(internal.storeDataId, internal.cbaPrevSelectedSuffix, '', '', false);
 
-            Csw.clientDb.removeItem(storeDataId);
+            Csw.clientDb.removeItem(internal.storeDataId);
             Csw.clientDb.removeItem(internal.cbaPrevSelected);
 
             Csw.controls.factory(internal.$parent, external);
 
             var cbaData = internal.transmogrify({
-                storeDataId: storeDataId,
                 dataAry: internal.dataAry,
                 nameCol: internal.nameCol,
                 keyCol: internal.keyCol,
@@ -143,11 +143,11 @@
             }
 
             var outerDiv = external.div({
-                ID: storeDataId,
+                ID: internal.storeDataId,
                 height: (25 * internal.HeightInRows) + 'px'
             });
 
-            Csw.clientDb.setItem(storeDataId, { columns: internal.cols, data: internal.data });
+            Csw.clientDb.setItem(internal.storeDataId, { columns: internal.cols, data: internal.data });
 
             if (internal.ReadOnly) {
                 for (var r = 0; r < internal.data.length; r += 1) {
@@ -238,7 +238,7 @@
                     } else {
                         internal.checked += 1;
                     }
-                    var cache = Csw.clientDb.getItem(storeDataId);
+                    var cache = Csw.clientDb.getItem(internal.storeDataId);
                     cache.MultiIsUnchanged = false;
                     if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row], 'values')) {
                         cache.data[row].values[col] = cB.$.is(':checked');
@@ -252,7 +252,7 @@
                         }
                         Csw.clientDb.setItem(internal.cbaPrevSelected, { row: row, col: col });
                     }
-                    Csw.clientDb.setItem(storeDataId, cache);
+                    Csw.clientDb.setItem(internal.storeDataId, cache);
                 };
 
                 // Data
@@ -278,7 +278,7 @@
                         fCheck.propNonDom({ key: sRow.key, rowlabel: sRow.label, collabel: internal.cols[f], row: s, col: f });
                         var delChange = Csw.makeDelegate(onChange, fCheck);
                         fCheck.change(delChange);
-                        fCheck.data('thisRow', sRow);
+                        //fCheck.data('thisRow', sRow);
 
                         if (sRow.values[f]) {
                             if (internal.UseRadios) {
