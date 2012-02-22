@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ApprovalStatusPropertyName { get { return "Approval Status"; } }
         public static string PartNumberPropertyName { get { return "Part Number"; } }
         public static string SpecificGravityPropertyName { get { return "Specific Gravity"; } }
-        public static string PhysicalStatePropertyName { get { return "Physcial State"; } }
+        public static string PhysicalStatePropertyName { get { return "Physical State"; } }
         public static string CasNoPropertyName { get { return "CAS No"; } }
         public static string RegulatoryListsPropName { get { return "Regulatory Lists"; } }
         public static string TradenamePropName { get { return "Tradename"; } }

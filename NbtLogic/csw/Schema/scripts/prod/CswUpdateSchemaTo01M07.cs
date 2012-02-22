@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Approval Status", CswNbtMetaDataFieldType.NbtFieldType.Logical );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Specific Gravity", CswNbtMetaDataFieldType.NbtFieldType.Scientific );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Physcial State", CswNbtMetaDataFieldType.NbtFieldType.List, false, false, false, string.Empty, Int32.MinValue, false, false, false, false, "solid, liquid, gas" );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Physical State", CswNbtMetaDataFieldType.NbtFieldType.List, false, false, false, string.Empty, Int32.MinValue, false, false, false, false, "solid, liquid, gas" );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "CAS No", CswNbtMetaDataFieldType.NbtFieldType.Text );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Regulatory Lists", CswNbtMetaDataFieldType.NbtFieldType.Static );
 
