@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ); }
         }
 
         #region Inherited Events
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        // no props yet
+        // GENERIC SHOULD NOT HAVE ANY!!!
 
         #endregion
 
