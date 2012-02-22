@@ -638,7 +638,7 @@ window.initMain = window.initMain || function (undefined) {
             }
         };
         if (viewopts) $.extend(v, viewopts);
-        clear({ right: true });
+        clear({ bottomcenter: true });
         var $div = $('#CenterBottomDiv').CswDiv({ ID: 'deftbldiv' });
         $div.CswAttrDom('align', 'center');
         $div.css({ textAlign: 'center' });
