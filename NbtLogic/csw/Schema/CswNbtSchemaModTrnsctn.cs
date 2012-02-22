@@ -923,9 +923,9 @@ namespace ChemSW.Nbt.Schema
         {
             bool RetIsValid = false;
 
-            PropIdType PropIdType;
+            NbtViewPropIdType PropIdType;
             Enum.TryParse( FkType, true, out PropIdType );
-            if( PropIdType != PropIdType.Unknown )
+            if( PropIdType != NbtViewPropIdType.Unknown )
             {
                 RetIsValid = true;
             }

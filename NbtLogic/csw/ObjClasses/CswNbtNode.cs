@@ -667,9 +667,9 @@ namespace ChemSW.Nbt.ObjClasses
                         ( ( ViewRelationship.FirstType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
                           ( ViewRelationship.FirstType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
                     {
-                        if( ViewRelationship.PropType == PropIdType.NodeTypePropId )
+                        if( ViewRelationship.PropType == NbtViewPropIdType.NodeTypePropId )
                             Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
-                        else if( ViewRelationship.PropType == PropIdType.ObjectClassPropId )
+                        else if( ViewRelationship.PropType == NbtViewPropIdType.ObjectClassPropId )
                             Prop = this.Properties[_CswNbtResources.MetaData.getObjectClassProp( ViewRelationship.PropId ).PropName];
 
                         if( Prop != null )

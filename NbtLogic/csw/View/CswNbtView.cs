@@ -570,7 +570,7 @@ namespace ChemSW.Nbt
             {
                 if( Relationship.PropId != Int32.MinValue )
                 {
-                    if( Relationship.PropType == PropIdType.NodeTypePropId )
+                    if( Relationship.PropType == NbtViewPropIdType.NodeTypePropId )
                     {
                         CswNbtMetaDataNodeTypeProp NewProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropMap[Relationship.PropId] );
                         Relationship.overrideProp( Relationship.PropOwner, NewProp );

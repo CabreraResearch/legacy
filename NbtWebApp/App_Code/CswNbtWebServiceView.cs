@@ -518,7 +518,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtMetaDataNodeTypeProp ThisProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropRow["propid"] ) );
 
-                    if( ( PropRow["proptype"].ToString() == PropIdType.NodeTypePropId.ToString() &&
+                    if( ( PropRow["proptype"].ToString() == NbtViewPropIdType.NodeTypePropId.ToString() &&
                           PropRow["typeid"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) &&
                         ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.NodeTypeId.ToString() &&
                           PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) )
@@ -548,7 +548,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                     }
-                    else if( ( PropRow["proptype"].ToString() == PropIdType.NodeTypePropId.ToString() &&
+                    else if( ( PropRow["proptype"].ToString() == NbtViewPropIdType.NodeTypePropId.ToString() &&
                                PropRow["typeid"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) &&
                              ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                                PropRow["fkvalue"].ToString() == ObjectClass.ObjectClassId.ToString() ) )
@@ -578,7 +578,7 @@ namespace ChemSW.Nbt.WebServices
                     else
                     {
                         CswNbtViewRelationship R = null;
-                        if( PropRow["proptype"].ToString() == PropIdType.NodeTypePropId.ToString() &&
+                        if( PropRow["proptype"].ToString() == NbtViewPropIdType.NodeTypePropId.ToString() &&
                             PropRow["typeid"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() )
                         {
                             // my relation to something else
@@ -604,7 +604,7 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 // something else's relation to me or my object class
                                 R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );
-                                if( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() )
+                                if( PropRow["proptype"].ToString() == NbtViewPropIdType.ObjectClassPropId.ToString() )
                                     R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["typeid"] ) ) );
                                 else
                                     R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
@@ -653,7 +653,7 @@ namespace ChemSW.Nbt.WebServices
                 if( PropRow["fktype"].ToString() != String.Empty &&
                      PropRow["fkvalue"].ToString() != String.Empty )
                 {
-                    if( ( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() &&
+                    if( ( PropRow["proptype"].ToString() == NbtViewPropIdType.ObjectClassPropId.ToString() &&
                           PropRow["typeid"].ToString() == ObjectClassId.ToString() ) &&
                         ( PropRow["fktype"].ToString() == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                           PropRow["fkvalue"].ToString() == ObjectClassId.ToString() ) )
@@ -683,7 +683,7 @@ namespace ChemSW.Nbt.WebServices
                     else
                     {
                         CswNbtViewRelationship R = null;
-                        if( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() &&
+                        if( PropRow["proptype"].ToString() == NbtViewPropIdType.ObjectClassPropId.ToString() &&
                             PropRow["typeid"].ToString() == ObjectClassId.ToString() )
                         {
                             // my relation to something else
@@ -702,7 +702,7 @@ namespace ChemSW.Nbt.WebServices
                             if( !Restrict )
                             {
                                 // something else's relation to me
-                                if( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() )
+                                if( PropRow["proptype"].ToString() == NbtViewPropIdType.ObjectClassPropId.ToString() )
                                 {
                                     CswNbtMetaDataObjectClassProp ThisProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( PropRow["propid"] ) );
                                     R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );

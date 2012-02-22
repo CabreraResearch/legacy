@@ -2103,7 +2103,7 @@ namespace ChemSW.Nbt.WebPages
                                     CswNbtMetaDataNodeType RelatedNodeType = Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue );
                                     if( RelatedNodeType != null )
                                     {
-                                        RelatedPropType.Value = PropIdType.NodeTypePropId.ToString();
+                                        RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
                                         RelatedProps = RelatedNodeType.getNodeTypeProps();
                                     }
                                 }
@@ -2112,7 +2112,7 @@ namespace ChemSW.Nbt.WebPages
                                     CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
                                     if( RelatedObjectClass != null )
                                     {
-                                        RelatedPropType.Value = PropIdType.ObjectClassPropId.ToString();
+                                        RelatedPropType.Value = NbtViewPropIdType.ObjectClassPropId.ToString();
                                         RelatedProps = RelatedObjectClass.ObjectClassProps;
                                     }
                                 }

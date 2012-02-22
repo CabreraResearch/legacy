@@ -88,12 +88,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetIsInvalid;
         }
 
-        private bool _validateFkTarget( PropIdType NewFkPropIdType, Int32 inFKValue, Int32 inValuePropId )
+        private bool _validateFkTarget( NbtViewPropIdType NewFkPropIdType, Int32 inFKValue, Int32 inValuePropId )
         {
             bool RetClearPropVal = false;
             switch( NewFkPropIdType )
             {
-                case PropIdType.NodeTypePropId:
+                case NbtViewPropIdType.NodeTypePropId:
                     CswNbtMetaDataNodeTypeProp FkNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inFKValue );
                     RetClearPropVal = ( null == FkNtp );
                     if( false == RetClearPropVal )
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         RetClearPropVal = _validateRelationship( FkNtp.FKType, FkNtp.FKValue, inValuePropId );
                     }
                     break;
-                case PropIdType.ObjectClassPropId:
+                case NbtViewPropIdType.ObjectClassPropId:
                     CswNbtMetaDataObjectClassProp FkOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inFKValue );
                     RetClearPropVal = ( null == FkOcp );
                     if( false == RetClearPropVal )
@@ -121,17 +121,17 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Int32 OutValuePropId = inValuePropId;
 
             //New PropIdTypes
-            PropIdType NewFkPropIdType;
+            NbtViewPropIdType NewFkPropIdType;
             Enum.TryParse( inFKType, true, out NewFkPropIdType );
 
-            PropIdType NewPropTypePropIdType;
+            NbtViewPropIdType NewPropTypePropIdType;
             Enum.TryParse( inValuePropType, true, out NewPropTypePropIdType );
 
             //Current PropIdTypes
-            PropIdType CurrentFkPropIdType;
+            NbtViewPropIdType CurrentFkPropIdType;
             Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
 
-            PropIdType CurrentPropTypePropIdType;
+            NbtViewPropIdType CurrentPropTypePropIdType;
             Enum.TryParse( MetaDataProp.ValuePropType, true, out CurrentPropTypePropIdType );
 
             //We're changing the relationship
