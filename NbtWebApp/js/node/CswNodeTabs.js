@@ -261,7 +261,8 @@
                                 var propId = key; //key
                                 var subTable = layoutTable[propId + '_subproptable'];
                                 var parentCell = subTable.parent().parent();
-                                var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'), { propId: propId });
+                                var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                layoutTable.addCellSetAttributes(cellSet, {propId: propId});
                                 var propCell = _getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -411,10 +412,12 @@
         function handleProp(layoutTable, thisProp, tabContentDiv, tabid, configMode, savBtn, atLeastOne) {
             var propid = thisProp.id,
                 fieldtype = thisProp.fieldtype,
-                cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol, { propId: propid }),
+                cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol),
                 helpText = Csw.string(thisProp.helptext),
                 propName = Csw.string(thisProp.name),
                 labelCell = {};
+
+                layoutTable.addCellSetAttributes(cellSet, {propId: propid});
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
                  fieldtype !== Csw.enums.subFieldsMap.Image.name &&
@@ -702,7 +705,8 @@
                     cswnbtnodekey: o.cswnbtnodekey
                 };
 
-                var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol, { propId: thisProp.id });
+                var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
+                layoutTable.addCellSetAttributes(cellSet, {propId: thisProp.id});
                 propOpt.propCell = _getPropertyCell(cellSet);
                 propOpt.propDiv = propOpt.propCell.children('div').first();
 

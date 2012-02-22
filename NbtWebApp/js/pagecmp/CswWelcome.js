@@ -73,7 +73,8 @@
                         if (Csw.contains(data, welcomeId)) {
                             var thisItem = data[welcomeId];
                             if (false === Csw.isNullOrEmpty(thisItem)) {
-                                var cellSet = layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol, {welcomeid: welcomeId});
+                                var cellSet = layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
+                                layoutTable.addCellSetAttributes(cellSet, {welcomeid: welcomeId});
                                 var imageCell = cellSet[1][1].children('div');
                                 var textCell = cellSet[2][1].children('div');
                                 var link;
