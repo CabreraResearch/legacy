@@ -360,11 +360,11 @@ namespace ChemSW.Nbt.WebServices
                                     R.Parent = CurrentRelationship;
                                     string Label = String.Empty;
 
-                                    if( R.PropOwner == PropOwnerType.First )
+                                    if( R.PropOwner == NbtViewPropOwnerType.First )
                                     {
                                         Label = R.SecondName + " (by " + R.PropName + ")";
                                     }
-                                    else if( R.PropOwner == PropOwnerType.Second )
+                                    else if( R.PropOwner == NbtViewPropOwnerType.Second )
                                     {
                                         Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
                                     }
@@ -528,7 +528,7 @@ namespace ChemSW.Nbt.WebServices
                             // Special case -- relationship to my own type
                             // We need to create two relationships from this
 
-                            CswNbtViewRelationship R1 = View.AddViewRelationship( null, PropOwnerType.First, ThisProp, false );
+                            CswNbtViewRelationship R1 = View.AddViewRelationship( null, NbtViewPropOwnerType.First, ThisProp, false );
                             //CswNbtViewRelationship R1 = View.MakeEmptyViewRelationship();
                             //R1.setProp( PropOwnerType.First, ThisProp );
                             //R1.setFirst( FirstVersionNodeType );
@@ -542,7 +542,7 @@ namespace ChemSW.Nbt.WebServices
                                 // Copy it
                                 //CswNbtViewRelationship R2 = new CswNbtViewRelationship( _CswNbtResources, View, R1 );
                                 //R2.setProp( PropOwnerType.Second, ThisProp );
-                                CswNbtViewRelationship R2 = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );
+                                CswNbtViewRelationship R2 = View.AddViewRelationship( null, NbtViewPropOwnerType.Second, ThisProp, false );
                                 //Relationships.Add( R2 );
                                 _InsertRelationship( Relationships, R2 );
                             }
@@ -556,7 +556,7 @@ namespace ChemSW.Nbt.WebServices
                         // Special case -- relationship to my own class
                         // We need to create two relationships from this
 
-                        CswNbtViewRelationship R1 = View.AddViewRelationship( null, PropOwnerType.First, ThisProp, false );
+                        CswNbtViewRelationship R1 = View.AddViewRelationship( null, NbtViewPropOwnerType.First, ThisProp, false );
                         //R1.setProp( PropOwnerType.First, ThisProp );
                         R1.overrideFirst( FirstVersionNodeType );
                         R1.overrideSecond( ObjectClass );
@@ -568,7 +568,7 @@ namespace ChemSW.Nbt.WebServices
                             // Copy it
                             //CswNbtViewRelationship R2 = new CswNbtViewRelationship( _CswNbtResources, View, R1 );
                             //R2.setProp( PropOwnerType.Second, ThisProp );
-                            CswNbtViewRelationship R2 = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );
+                            CswNbtViewRelationship R2 = View.AddViewRelationship( null, NbtViewPropOwnerType.Second, ThisProp, false );
                             R2.overrideFirst( FirstVersionNodeType );
                             R2.overrideSecond( ObjectClass );
                             //Relationships.Add( R2 );
@@ -582,7 +582,7 @@ namespace ChemSW.Nbt.WebServices
                             PropRow["typeid"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() )
                         {
                             // my relation to something else
-                            R = View.AddViewRelationship( null, PropOwnerType.First, ThisProp, false );
+                            R = View.AddViewRelationship( null, NbtViewPropOwnerType.First, ThisProp, false );
                             if( PropRow["fktype"].ToString() == NbtViewRelatedIdType.ObjectClassId.ToString() )
                                 R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
                             else
@@ -603,7 +603,7 @@ namespace ChemSW.Nbt.WebServices
                             if( !Restrict )
                             {
                                 // something else's relation to me or my object class
-                                R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );
+                                R = View.AddViewRelationship( null, NbtViewPropOwnerType.Second, ThisProp, false );
                                 if( PropRow["proptype"].ToString() == NbtViewPropIdType.ObjectClassPropId.ToString() )
                                     R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["typeid"] ) ) );
                                 else
@@ -662,7 +662,7 @@ namespace ChemSW.Nbt.WebServices
 
                         // Special case -- relationship to my own class
                         // We need to create two relationships from this
-                        CswNbtViewRelationship R1 = View.AddViewRelationship( null, PropOwnerType.First, ThisProp, false );
+                        CswNbtViewRelationship R1 = View.AddViewRelationship( null, NbtViewPropOwnerType.First, ThisProp, false );
                         R1.overrideFirst( ObjectClass );
                         R1.overrideSecond( ObjectClass );
                         //Relationships.Add( R1 );
@@ -673,7 +673,7 @@ namespace ChemSW.Nbt.WebServices
                             // Copy it
                             //CswNbtViewRelationship R2 = new CswNbtViewRelationship( _CswNbtResources, View, R1 );
                             //R2.setProp( PropOwnerType.Second, ThisProp );
-                            CswNbtViewRelationship R2 = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );
+                            CswNbtViewRelationship R2 = View.AddViewRelationship( null, NbtViewPropOwnerType.Second, ThisProp, false );
                             R2.overrideFirst( ObjectClass );
                             R2.overrideSecond( ObjectClass );
                             //Relationships.Add( R2 );
@@ -688,7 +688,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             // my relation to something else
                             CswNbtMetaDataObjectClassProp ThisProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( PropRow["propid"] ) );
-                            R = View.AddViewRelationship( null, PropOwnerType.First, ThisProp, false );
+                            R = View.AddViewRelationship( null, NbtViewPropOwnerType.First, ThisProp, false );
                             if( PropRow["fktype"].ToString() == NbtViewRelatedIdType.ObjectClassId.ToString() )
                                 R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
                             else
@@ -705,13 +705,13 @@ namespace ChemSW.Nbt.WebServices
                                 if( PropRow["proptype"].ToString() == NbtViewPropIdType.ObjectClassPropId.ToString() )
                                 {
                                     CswNbtMetaDataObjectClassProp ThisProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( PropRow["propid"] ) );
-                                    R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );
+                                    R = View.AddViewRelationship( null, NbtViewPropOwnerType.Second, ThisProp, false );
                                     R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["typeid"] ) ) );
                                 }
                                 else
                                 {
                                     CswNbtMetaDataNodeTypeProp ThisProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropRow["propid"] ) );
-                                    R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp, false );
+                                    R = View.AddViewRelationship( null, NbtViewPropOwnerType.Second, ThisProp, false );
                                     R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
                                 }
                                 R.overrideFirst( ObjectClass );

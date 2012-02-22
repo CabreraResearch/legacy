@@ -239,7 +239,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by a nodetype property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, PropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -251,7 +251,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by an object class property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, PropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )

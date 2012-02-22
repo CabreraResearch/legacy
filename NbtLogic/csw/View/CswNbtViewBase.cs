@@ -181,7 +181,7 @@ namespace ChemSW.Nbt
 
     public enum NbtViewRelatedIdType { Unknown, NodeTypeId, ObjectClassId };
     public enum NbtViewPropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
-    public enum PropOwnerType { First, Second, Unknown };
+    public enum NbtViewPropOwnerType { First, Second, Unknown };
 
     public sealed class NbtViewPropType : CswEnum<NbtViewPropType>
     {

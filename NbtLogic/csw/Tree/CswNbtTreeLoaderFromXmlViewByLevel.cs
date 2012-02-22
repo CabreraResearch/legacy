@@ -262,7 +262,7 @@ namespace ChemSW.Nbt
 
                 Where += " and parent.parentnodeid in (" + _makeNodeSql( (CswNbtViewRelationship) Relationship.Parent, true ) + ")";
 
-                if( Relationship.PropOwner == PropOwnerType.First )
+                if( Relationship.PropOwner == NbtViewPropOwnerType.First )
                 {
                     From += @"            join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
                                                   from jct_nodes_props jnp

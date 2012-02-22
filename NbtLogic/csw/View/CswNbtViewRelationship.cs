@@ -27,7 +27,7 @@ namespace ChemSW.Nbt
 
         private Int32 _PropId = Int32.MinValue;
         private NbtViewPropIdType _PropType = NbtViewPropIdType.NodeTypePropId;
-        private PropOwnerType _PropOwner = PropOwnerType.First;
+        private NbtViewPropOwnerType _PropOwner = NbtViewPropOwnerType.First;
         private string _PropName = "";
         private Int32 _FirstId = Int32.MinValue;
         private string _FirstName = "";
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt
         private const string _PropertiesName = "properties";
 
         public NbtViewPropIdType PropType { get { return _PropType; } }
-        public PropOwnerType PropOwner { get { return _PropOwner; } }
+        public NbtViewPropOwnerType PropOwner { get { return _PropOwner; } }
         public Int32 PropId { get { return _PropId; } }
         public string PropName { get { return _PropName; } }
         public Int32 FirstId { get { return _FirstId; } }
@@ -119,12 +119,12 @@ namespace ChemSW.Nbt
             }
         }
 
-        public void overrideProp( PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
+        public void overrideProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
         {
             setProp( InOwnerType, Prop );
         }
 
-        private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
+        private void setProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
         {
             CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
             if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt
 
             setPropValue( InOwnerType, NbtViewPropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.getNodeTypePropLatestVersion().PropName );
 
-            if( InOwnerType == PropOwnerType.First )
+            if( InOwnerType == NbtViewPropOwnerType.First )
             {
                 overrideFirst( Prop.getNodeType() );
                 if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
@@ -143,7 +143,7 @@ namespace ChemSW.Nbt
                 else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
                     overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
             }
-            else if( InOwnerType == PropOwnerType.Second )
+            else if( InOwnerType == NbtViewPropOwnerType.Second )
             {
                 if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                     overrideFirst( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
@@ -157,7 +157,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop )
+        private void setProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop )
         {
             CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
             if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
@@ -168,12 +168,12 @@ namespace ChemSW.Nbt
 
             setPropValue( InOwnerType, NbtViewPropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
 
-            if( InOwnerType == PropOwnerType.First )
+            if( InOwnerType == NbtViewPropOwnerType.First )
             {
                 overrideFirst( Prop.getObjectClass() );
                 overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
             }
-            else if( InOwnerType == PropOwnerType.Second )
+            else if( InOwnerType == NbtViewPropOwnerType.Second )
             {
                 overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
                 overrideSecond( Prop.getObjectClass() );
@@ -184,7 +184,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        private void setPropValue( PropOwnerType InOwnerType, NbtViewPropIdType InPropType, Int32 InPropId, string InPropName )
+        private void setPropValue( NbtViewPropOwnerType InOwnerType, NbtViewPropIdType InPropType, Int32 InPropId, string InPropName )
         {
             _PropOwner = InOwnerType;
             _PropType = InPropType;
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// For a relationship below the root level, determined by a nodetype property
         /// </summary>
-        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
             : base( CswNbtResources, View )
         {
             setProp( InOwnerType, Prop );
@@ -346,7 +346,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// For a relationship below the root level, determined by an object class property
         /// </summary>
-        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, PropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, NbtViewPropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
             : base( CswNbtResources, View )
         {
             setProp( InOwnerType, Prop );
@@ -392,7 +392,7 @@ namespace ChemSW.Nbt
                 {
                     if( StringRelationship[1] != String.Empty )
                     {
-                        setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), StringRelationship[4], true ),
+                        setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), StringRelationship[4], true ),
                                       (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), StringRelationship[2], true ),
                                       CswConvert.ToInt32( StringRelationship[1] ),
                                       StringRelationship[3] );
@@ -465,7 +465,7 @@ namespace ChemSW.Nbt
             {
                 if( RelationshipNode.Attributes[PropIdAttrName] != null )
                 {
-                    setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), RelationshipNode.Attributes[PropOwnerAttrName].Value, true ),
+                    setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), RelationshipNode.Attributes[PropOwnerAttrName].Value, true ),
                                   (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), RelationshipNode.Attributes[PropTypeAttrName].Value, true ),
                                   CswConvert.ToInt32( RelationshipNode.Attributes[PropIdAttrName].Value ),
                                   RelationshipNode.Attributes[PropNameAttrName].Value );
@@ -578,7 +578,7 @@ namespace ChemSW.Nbt
                 string _PropNameAttrName = CswConvert.ToString( RelationshipObj[PropNameAttrName] );
                 if( !string.IsNullOrEmpty( _PropIdAttrName ) )
                 {
-                    setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), _PropOwnerAttrName, true ),
+                    setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), _PropOwnerAttrName, true ),
                                   (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _PropTypeAttrName, true ),
                                   CswConvert.ToInt32( _PropIdAttrName ),
                                   _PropNameAttrName );
@@ -1156,7 +1156,7 @@ namespace ChemSW.Nbt
                 string NodeText = SecondName;
                 if( PropName != String.Empty )
                 {
-                    if( PropOwner == PropOwnerType.First )
+                    if( PropOwner == NbtViewPropOwnerType.First )
                         NodeText += " (by " + FirstName + "'s " + PropName + ")";
                     else
                         NodeText += " (by " + PropName + ")";

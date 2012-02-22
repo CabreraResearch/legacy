@@ -518,7 +518,7 @@ namespace ChemSW.Nbt.Actions
                     */
 
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
-                    RetView.AddViewRelationship( IpGroupRelationship, PropOwnerType.Second, GnOwnerNtp, false );
+                    RetView.AddViewRelationship( IpGroupRelationship, NbtViewPropOwnerType.Second, GnOwnerNtp, false );
                     RetView.save();
                 }
                 catch( Exception ex )
@@ -568,7 +568,7 @@ namespace ChemSW.Nbt.Actions
                         [Target]
                     */
                     CswNbtViewRelationship IpGroupRelationship = RetView.AddViewRelationship( InspectionTargetGroupNt, false );
-                    RetView.AddViewRelationship( IpGroupRelationship, PropOwnerType.Second, ItTargetGroupNtp, false );
+                    RetView.AddViewRelationship( IpGroupRelationship, NbtViewPropOwnerType.Second, ItTargetGroupNtp, false );
                     //Only show unrelated targets at the root level
                     CswNbtViewRelationship DanglingTargetRel = RetView.AddViewRelationship( InspectionTargetNt, false );
                     CswNbtViewProperty GroupVp = RetView.AddViewProperty( DanglingTargetRel, ItTargetGroupNtp );
@@ -601,7 +601,7 @@ namespace ChemSW.Nbt.Actions
                 RetView.Category = Category;
 
                 CswNbtViewRelationship TargetVr = RetView.AddViewRelationship( InspectionsGridProp.getNodeType(), true );
-                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, PropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.OwnerPropertyName ), true );
+                CswNbtViewRelationship InspectionVr = RetView.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.OwnerPropertyName ), true );
                 CswNbtMetaDataNodeTypeProp DueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
                 CswNbtViewProperty DueDateVp = RetView.AddViewProperty( InspectionVr, DueDateNtp );
                 CswNbtMetaDataNodeTypeProp StatusNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName );
@@ -668,7 +668,7 @@ namespace ChemSW.Nbt.Actions
                     */
 
                     CswNbtViewRelationship TargetRelationship = RetView.AddViewRelationship( InspectionTargetNt, false );
-                    RetView.AddViewRelationship( TargetRelationship, PropOwnerType.Second, ItTargetNtp, false );
+                    RetView.AddViewRelationship( TargetRelationship, NbtViewPropOwnerType.Second, ItTargetNtp, false );
                     RetView.save();
                 }
                 catch( Exception ex )
@@ -695,7 +695,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtViewRelationship InspectionGroupVr = RetView.AddViewRelationship( InspectionGroupNt, true );
 
                 CswNbtMetaDataNodeTypeProp InspectionGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
-                CswNbtViewRelationship InspectionTargetVr = RetView.AddViewRelationship( InspectionGroupVr, PropOwnerType.Second, InspectionGroupNtp, true );
+                CswNbtViewRelationship InspectionTargetVr = RetView.AddViewRelationship( InspectionGroupVr, NbtViewPropOwnerType.Second, InspectionGroupNtp, true );
 
                 CswNbtMetaDataNodeTypeProp BarcodeNtp = InspectionTargetNt.getBarcodeProperty();
                 RetView.AddViewProperty( InspectionTargetVr, BarcodeNtp ).Order = 0;

@@ -660,7 +660,7 @@ namespace ChemSW.Nbt.ObjClasses
             foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
             {
                 // BZ 8355 - Set relationships on children pointing to parents, not the other way
-                if( ViewRelationship.PropOwner == PropOwnerType.Second )
+                if( ViewRelationship.PropOwner == NbtViewPropOwnerType.Second )
                 {
                     if( ( ( ViewRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
                           ( ViewRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&

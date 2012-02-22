@@ -133,9 +133,9 @@ namespace ChemSW.Nbt.PropTypes
                 ThisNodeRelationship.NodeIdsToFilterIn.Add( _CswNbtNodePropData.NodeId );
 
                 if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
-                    ReferenceView.AddViewRelationship( ThisNodeRelationship, PropOwnerType.First, _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId ), false );
+                    ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId ), false );
                 else
-                    ReferenceView.AddViewRelationship( ThisNodeRelationship, PropOwnerType.First, _CswNbtResources.MetaData.getObjectClassProp( RelationshipId ), false );
+                    ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, _CswNbtResources.MetaData.getObjectClassProp( RelationshipId ), false );
 
                 //ReferenceView.Root.NodeIdsToFilterIn.Add(_CswNbtNodePropData.NodeId);
                 //ReferenceView.Root.FilterInNodesRecursively = false;

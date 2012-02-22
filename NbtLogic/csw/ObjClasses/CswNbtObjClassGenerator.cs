@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
             View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
             CswNbtViewRelationship GeneratorRelationship = View.AddViewRelationship( GeneratorObjectClass, false );
             GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
-            CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, PropOwnerType.Second, GeneratorProp, false );
+            CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
             CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
             CswNbtViewPropertyFilter IsFutureYesFilter = View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True", false );
 
