@@ -1544,7 +1544,8 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( FKType != string.Empty )
                 {
-                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
 
                     if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {

@@ -145,7 +145,8 @@ namespace ChemSW.Nbt.PropTypes
                 NbtViewRelatedIdType ret = NbtViewRelatedIdType.Unknown;
                 try
                 {
-                    ret = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
+                    //ret = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
+                    ret = (NbtViewRelatedIdType) _CswNbtMetaDataNodeTypeProp.FKType;
                 }
                 catch( Exception ex )
                 {

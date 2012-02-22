@@ -108,24 +108,23 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     RetView.Root.ChildRelationships.Clear();
                 }
 
-                switch( RelatedIdType )
+                if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
                 {
-                    case NbtViewRelatedIdType.ObjectClassId:
-                        CswNbtMetaDataObjectClass TargetOc = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( inFKValue );
-                        if( null == TargetOc )
-                        {
-                            throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
-                        }
-                        RetView = TargetOc.CreateDefaultView();
-                        break;
-                    case NbtViewRelatedIdType.NodeTypeId:
-                        CswNbtMetaDataNodeType TargetNt = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeType( inFKValue );
-                        if( null == TargetNt )
-                        {
-                            throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
-                        }
-                        RetView = TargetNt.CreateDefaultView();
-                        break;
+                    CswNbtMetaDataObjectClass TargetOc = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( inFKValue );
+                    if( null == TargetOc )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
+                    }
+                    RetView = TargetOc.CreateDefaultView();
+                }
+                else if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
+                {
+                    CswNbtMetaDataNodeType TargetNt = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeType( inFKValue );
+                    if( null == TargetNt )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "Attempted to create a relationship to objectclassid: " + inFKValue + ", but the target is null." );
+                    }
+                    RetView = TargetNt.CreateDefaultView();
                 }
 
                 RetView.ViewId = MetaDataProp.ViewId;
@@ -145,12 +144,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Int32 OutValuePropId = inValuePropId;
 
             //New PropIdTypes
-            NbtViewRelatedIdType NewFkPropIdType;
-            Enum.TryParse( inFKType, true, out NewFkPropIdType );
+            NbtViewRelatedIdType NewFkPropIdType = (NbtViewRelatedIdType) inFKType;
+            //Enum.TryParse( inFKType, true, out NewFkPropIdType );
 
             //Current PropIdTypes
-            NbtViewRelatedIdType CurrentFkPropIdType;
-            Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
+            NbtViewRelatedIdType CurrentFkPropIdType = (NbtViewRelatedIdType) MetaDataProp.FKType;
+            //Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
 
             //We have valid values that are different that what is currently set
             if( ( false == string.IsNullOrEmpty( inFKType ) &&

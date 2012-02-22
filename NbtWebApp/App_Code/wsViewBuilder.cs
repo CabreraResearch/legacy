@@ -113,14 +113,13 @@ namespace ChemSW.Nbt.WebServices
                         Selected = false;
                     }
 
-                    switch( RelatedIdType )
+                    if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
                     {
-                        case NbtViewRelatedIdType.NodeTypeId:
-                            PropObj["properties"]["Specific Properties"][Prop.MetaDataPropName] = PropNodeObj;
-                            break;
-                        case NbtViewRelatedIdType.ObjectClassId:
-                            PropObj["properties"]["Generic Properties"][Prop.MetaDataPropName] = PropNodeObj;
-                            break;
+                        PropObj["properties"]["Specific Properties"][Prop.MetaDataPropName] = PropNodeObj;
+                    }
+                    else if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
+                    {
+                        PropObj["properties"]["Generic Properties"][Prop.MetaDataPropName] = PropNodeObj;
                     }
 
                     _getVbPropData( PropNodeObj, Prop );
@@ -140,22 +139,16 @@ namespace ChemSW.Nbt.WebServices
             if( Int32.MinValue != NodeTypeOrObjectClassId )
             {
                 IEnumerable<CswViewBuilderProp> ViewBuilderProperties = null;
-                switch( Relationship )
+                if( Relationship == NbtViewRelatedIdType.NodeTypeId )
                 {
-                    case NbtViewRelatedIdType.NodeTypeId:
-                        {
-                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
-                            Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
-                            ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
-                            break;
-                        }
-
-                    case NbtViewRelatedIdType.ObjectClassId:
-                        {
-                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
-                            ViewBuilderProperties = _getObjectClassProps( ObjectClass );
-                            break;
-                        }
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
+                    Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
+                    ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
+                }
+                else if( Relationship == NbtViewRelatedIdType.ObjectClassId )
+                {
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
+                    ViewBuilderProperties = _getObjectClassProps( ObjectClass );
                 }
                 ViewBuilderProps = _getVbProperties( ViewBuilderProperties, Relationship );
             }
@@ -328,7 +321,8 @@ namespace ChemSW.Nbt.WebServices
                 else if( false == string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
                 {
                     TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
-                    NbtViewRelatedIdType.TryParse( RelatedIdTypeStr, true, out Relationship );
+                    Relationship = (NbtViewRelatedIdType) RelatedIdTypeStr;
+                    //NbtViewRelatedIdType.TryParse( RelatedIdTypeStr, true, out Relationship );
                 }
                 ViewBuilderProps = _getVbProperties( Relationship, TypeOrObjectClassId );
             }

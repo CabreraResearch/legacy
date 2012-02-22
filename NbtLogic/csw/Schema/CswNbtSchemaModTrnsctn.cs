@@ -923,16 +923,16 @@ namespace ChemSW.Nbt.Schema
         {
             bool RetIsValid = false;
 
-            NbtViewPropIdType PropIdType;
-            Enum.TryParse( FkType, true, out PropIdType );
+            NbtViewPropIdType PropIdType = (NbtViewPropIdType) FkType;
+            //Enum.TryParse( FkType, true, out PropIdType );
             if( PropIdType != NbtViewPropIdType.Unknown )
             {
                 RetIsValid = true;
             }
             else
             {
-                NbtViewRelatedIdType RelatedIdType;
-                Enum.TryParse( FkType, true, out RelatedIdType );
+                NbtViewRelatedIdType RelatedIdType = (NbtViewRelatedIdType) FkType;
+                //Enum.TryParse( FkType, true, out RelatedIdType );
                 if( RelatedIdType != NbtViewRelatedIdType.Unknown )
                 {
                     RetIsValid = true;

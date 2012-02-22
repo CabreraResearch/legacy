@@ -88,10 +88,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
-                    return (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
-                else
-                    return NbtViewPropIdType.Unknown;
+                //if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
+                //    return (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
+                //else
+                //    return NbtViewPropIdType.Unknown;
+                return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.ValuePropType;
             }
             //set
             //{

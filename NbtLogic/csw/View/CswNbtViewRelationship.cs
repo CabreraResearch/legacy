@@ -392,20 +392,24 @@ namespace ChemSW.Nbt
                 {
                     if( StringRelationship[1] != String.Empty )
                     {
-                        setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), StringRelationship[4], true ),
-                                      (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), StringRelationship[2], true ),
+                        //setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), StringRelationship[4], true ),
+                        //              (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), StringRelationship[2], true ),
+                        setPropValue( (NbtViewPropOwnerType) StringRelationship[4],
+                                      (NbtViewPropIdType) StringRelationship[2],
                                       CswConvert.ToInt32( StringRelationship[1] ),
                                       StringRelationship[3] );
                     }
                     if( StringRelationship[5] != String.Empty )
                     {
-                        setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), StringRelationship[6], true ),
+                        //setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), StringRelationship[6], true ),
+                        setFirst( (NbtViewRelatedIdType) StringRelationship[6],
                                   CswConvert.ToInt32( StringRelationship[5] ),
                                   StringRelationship[7] );
                     }
                     if( StringRelationship[8] != String.Empty )
                     {
-                        setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), StringRelationship[9], true ),
+                        //setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), StringRelationship[9], true ),
+                        setSecond( (NbtViewRelatedIdType) StringRelationship[9],
                                    CswConvert.ToInt32( StringRelationship[8] ),
                                    StringRelationship[10],
                                    StringRelationship[11] );
@@ -437,7 +441,8 @@ namespace ChemSW.Nbt
                         ShowInTree = Convert.ToBoolean( StringRelationship[19] );
                     if( StringRelationship[20] != string.Empty )
                     {
-                        setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), StringRelationship[20], true ),
+                        //setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), StringRelationship[20], true ),
+                        setGroupByProp( (NbtViewPropIdType) StringRelationship[20],
                                         CswConvert.ToInt32( StringRelationship[21] ),
                                         StringRelationship[22] );
                     }
@@ -465,14 +470,17 @@ namespace ChemSW.Nbt
             {
                 if( RelationshipNode.Attributes[PropIdAttrName] != null )
                 {
-                    setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), RelationshipNode.Attributes[PropOwnerAttrName].Value, true ),
-                                  (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), RelationshipNode.Attributes[PropTypeAttrName].Value, true ),
+                    //setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), RelationshipNode.Attributes[PropOwnerAttrName].Value, true ),
+                    //              (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), RelationshipNode.Attributes[PropTypeAttrName].Value, true ),
+                    setPropValue( (NbtViewPropOwnerType) RelationshipNode.Attributes[PropOwnerAttrName].Value,
+                                  (NbtViewPropIdType) RelationshipNode.Attributes[PropTypeAttrName].Value,
                                   CswConvert.ToInt32( RelationshipNode.Attributes[PropIdAttrName].Value ),
                                   RelationshipNode.Attributes[PropNameAttrName].Value );
                 }
                 if( RelationshipNode.Attributes[FirstIdAttrName] != null )
                 {
-                    setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), RelationshipNode.Attributes[FirstTypeAttrName].Value, true ),
+                    //setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), RelationshipNode.Attributes[FirstTypeAttrName].Value, true ),
+                    setFirst( (NbtViewRelatedIdType) RelationshipNode.Attributes[FirstTypeAttrName].Value,
                               CswConvert.ToInt32( RelationshipNode.Attributes[FirstIdAttrName].Value ),
                               RelationshipNode.Attributes[FirstNameAttrName].Value );
                 }
@@ -482,7 +490,8 @@ namespace ChemSW.Nbt
                     if( RelationshipNode.Attributes[SecondIconFileNameAttrName] != null )
                         icon = RelationshipNode.Attributes[SecondIconFileNameAttrName].Value;
 
-                    setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), RelationshipNode.Attributes[SecondTypeAttrName].Value, true ),
+                    //setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), RelationshipNode.Attributes[SecondTypeAttrName].Value, true ),
+                    setSecond( (NbtViewRelatedIdType) RelationshipNode.Attributes[SecondTypeAttrName].Value,
                                CswConvert.ToInt32( RelationshipNode.Attributes[SecondIdAttrName].Value ),
                                RelationshipNode.Attributes[SecondNameAttrName].Value,
                                icon );
@@ -491,7 +500,8 @@ namespace ChemSW.Nbt
                 {
                     if( RelationshipNode.Attributes[GroupByPropTypeAttrName].Value != string.Empty )
                     {
-                        setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
+                        //setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
+                        setGroupByProp( (NbtViewPropIdType) RelationshipNode.Attributes[GroupByPropTypeAttrName].Value,
                                         CswConvert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
                                         RelationshipNode.Attributes[GroupByPropNameAttrName].Value );
                     }
@@ -514,7 +524,7 @@ namespace ChemSW.Nbt
                     //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), RelationshipNode.Attributes[AllowAddChildrenAttrName].Value, true );
                     AddChildren = (NbtViewAddChildrenSetting) RelationshipNode.Attributes[AllowAddChildrenAttrName].Value;
                 }
-                
+
                 if( RelationshipNode.Attributes[AllowViewAttrName] != null && RelationshipNode.Attributes[AllowViewAttrName].ToString() != string.Empty )
                     AllowView = Convert.ToBoolean( RelationshipNode.Attributes[AllowViewAttrName].Value );
                 if( RelationshipNode.Attributes[AllowEditAttrName] != null && RelationshipNode.Attributes[AllowEditAttrName].ToString() != string.Empty )
@@ -578,8 +588,10 @@ namespace ChemSW.Nbt
                 string _PropNameAttrName = CswConvert.ToString( RelationshipObj[PropNameAttrName] );
                 if( !string.IsNullOrEmpty( _PropIdAttrName ) )
                 {
-                    setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), _PropOwnerAttrName, true ),
-                                  (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _PropTypeAttrName, true ),
+                    //setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), _PropOwnerAttrName, true ),
+                    //              (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _PropTypeAttrName, true ),
+                    setPropValue( (NbtViewPropOwnerType) _PropOwnerAttrName,
+                                  (NbtViewPropIdType) _PropTypeAttrName,
                                   CswConvert.ToInt32( _PropIdAttrName ),
                                   _PropNameAttrName );
                 }
@@ -589,7 +601,8 @@ namespace ChemSW.Nbt
                 string _FirstIdAttrName = CswConvert.ToString( RelationshipObj[FirstIdAttrName] );
                 if( !string.IsNullOrEmpty( _FirstIdAttrName ) )
                 {
-                    setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _FirstTypeAttrName, true ),
+                    //setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _FirstTypeAttrName, true ),
+                    setFirst( (NbtViewRelatedIdType) _FirstTypeAttrName,
                               CswConvert.ToInt32( _FirstIdAttrName ),
                               _FirstNameAttrName );
                 }
@@ -606,7 +619,8 @@ namespace ChemSW.Nbt
                         icon = _SecondIconFileNameAttrName;
                     }
 
-                    setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _SecondTypeAttrName, true ),
+                    //setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _SecondTypeAttrName, true ),
+                    setSecond( (NbtViewRelatedIdType) _SecondTypeAttrName,
                                CswConvert.ToInt32( _SecondIdAttrName ),
                                _SecondNameAttrName,
                                icon );
@@ -619,7 +633,8 @@ namespace ChemSW.Nbt
                 {
                     if( !string.IsNullOrEmpty( _GroupByPropTypeAttrName ) )
                     {
-                        setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _GroupByPropTypeAttrName, true ),
+                        //setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _GroupByPropTypeAttrName, true ),
+                        setGroupByProp( (NbtViewPropIdType) _GroupByPropTypeAttrName,
                                         CswConvert.ToInt32( _GroupByPropIdAttrName ),
                                         _GroupByPropNameAttrName );
                     }

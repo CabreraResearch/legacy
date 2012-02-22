@@ -179,9 +179,50 @@ namespace ChemSW.Nbt
         public static readonly NbtViewNodeType CswNbtViewRoot = new NbtViewNodeType( "CswNbtViewRoot" );
     }
 
-    public enum NbtViewRelatedIdType { Unknown, NodeTypeId, ObjectClassId };
-    public enum NbtViewPropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
-    public enum NbtViewPropOwnerType { First, Second, Unknown };
+    public sealed class NbtViewRelatedIdType : CswEnum<NbtViewRelatedIdType>
+    {
+        private NbtViewRelatedIdType( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewRelatedIdType> _All { get { return CswEnum<NbtViewRelatedIdType>.All; } }
+        public static explicit operator NbtViewRelatedIdType( string str )
+        {
+            NbtViewRelatedIdType ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewRelatedIdType.Unknown;
+        }
+        public static readonly NbtViewRelatedIdType Unknown = new NbtViewRelatedIdType( "Unknown" );
+        
+        public static readonly NbtViewRelatedIdType NodeTypeId = new NbtViewRelatedIdType( "NodeTypeId" );
+        public static readonly NbtViewRelatedIdType ObjectClassId = new NbtViewRelatedIdType( "ObjectClassId" );
+    }
+
+    public sealed class NbtViewPropIdType : CswEnum<NbtViewPropIdType>
+    {
+        private NbtViewPropIdType( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewPropIdType> _All { get { return CswEnum<NbtViewPropIdType>.All; } }
+        public static explicit operator NbtViewPropIdType( string str )
+        {
+            NbtViewPropIdType ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewPropIdType.Unknown;
+        }
+        public static readonly NbtViewPropIdType Unknown = new NbtViewPropIdType( "Unknown" );
+        
+        public static readonly NbtViewPropIdType NodeTypePropId = new NbtViewPropIdType( "NodeTypePropId" );
+        public static readonly NbtViewPropIdType ObjectClassPropId = new NbtViewPropIdType( "ObjectClassPropId" );
+    }
+
+    public sealed class NbtViewPropOwnerType : CswEnum<NbtViewPropOwnerType>
+    {
+        private NbtViewPropOwnerType( string Name ) : base( Name ) { }
+        public static IEnumerable<NbtViewPropOwnerType> _All { get { return CswEnum<NbtViewPropOwnerType>.All; } }
+        public static explicit operator NbtViewPropOwnerType( string str )
+        {
+            NbtViewPropOwnerType ret = Parse( str );
+            return ( ret != null ) ? ret : NbtViewPropOwnerType.Unknown;
+        }
+        public static readonly NbtViewPropOwnerType Unknown = new NbtViewPropOwnerType( "Unknown" );
+
+        public static readonly NbtViewPropOwnerType First = new NbtViewPropOwnerType( "First" );
+        public static readonly NbtViewPropOwnerType Second = new NbtViewPropOwnerType( "Second" );
+    }
 
     public sealed class NbtViewPropType : CswEnum<NbtViewPropType>
     {

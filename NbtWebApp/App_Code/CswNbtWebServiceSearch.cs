@@ -295,8 +295,8 @@ namespace ChemSW.Nbt.WebServices
                                                         .Cast<JObject>()
                                                         .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        NbtViewRelatedIdType PropType;
-                        Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
+                        NbtViewRelatedIdType PropType = (NbtViewRelatedIdType) FilterProp["relatedidtype"].ToString();
+                        //Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
 
                         Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["nodetypeorobjectclassid"] );
                         Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
