@@ -143,29 +143,29 @@
                 });
         };
 
-        internal.onCreateCell = function (cell, row, column, isFillerCell) {
-            var realrow = Math.ceil(row / internal.cellSet.rows),
-                    realcolumn = Math.ceil(column / internal.cellSet.columns),
-                    cellsetrow = Csw.number(internal.cellSet.rows - realrow % internal.cellSet.rows),
-                    cellsetcolumn = Csw.number(internal.cellSet.columns - realcolumn % internal.cellSet.columns);
+        internal.onCreateCell = function (cell, realRow, realCol, isFillerCell) {
+            var thisRow = Math.ceil(realRow / internal.cellSet.rows),
+                    thisCol = Math.ceil(realCol / internal.cellSet.columns),
+                    cellsetrow = Csw.number(internal.cellSet.rows - realRow % internal.cellSet.rows),
+                    cellsetcolumn = Csw.number(internal.cellSet.columns - realCol % internal.cellSet.columns);
 
-            if (null === internal.firstRow || realrow < internal.firstRow) {
-                internal.firstRow = realrow;
+            if (null === internal.firstRow || thisRow < internal.firstRow) {
+                internal.firstRow = thisRow;
             }
 
-            if (null === internal.firstCol || realcolumn < internal.firstCol) {
-                internal.firstCol = realcolumn;
+            if (null === internal.firstCol || thisCol < internal.firstCol) {
+                internal.firstCol = thisCol;
             }
 
             cell.propNonDom({
-                row: realrow,
-                column: realcolumn,
+                row: thisRow,
+                column: thisCol,
                 cellsetrow: cellsetrow,
                 cellsetcolumn: cellsetcolumn
             });
 
             cell.bind('click', function (ev, dd) {
-                internal.onClick(ev, dd, realrow, realcolumn);
+                internal.onClick(ev, dd, thisRow, thisCol);
             });
             internal.enableDrop(cell);
             cell.div({ cssclass: 'CswLayoutTable_celldiv' });
@@ -229,10 +229,10 @@
         };
 
         internal.onDrop = function (ev, dd, $dropCell) {
-            var dragDiv, dragCell, dragCells, dropCells, opt;
+            var $dragDiv, dragCell, dragCells, dropCells, opt;
             if (external.isConfig(external.table)) {
-                dragDiv = dd.draggable;
-                dragCell = Csw.controls.factory(dragDiv.parent(), {});
+                $dragDiv = dd.draggable;
+                dragCell = Csw.controls.factory($dragDiv.parent(), {});
 
                 dragCells = external.cellSet(dragCell.propNonDom('row'), dragCell.propNonDom('column')); // .table.findCell('[row="' + Csw.number(dragCell.propNonDom('row')) + '"][column="' + Csw.number(dragCell.propNonDom('column')) + '"]');
                 dropCells = external.cellSet($dropCell.attr('row'), $dropCell.attr('column')); //table.findCell('[row="' + Csw.number($dropCell.attr('row')) + '"][column="' + Csw.number($dropCell.attr('column')) + '"]');
@@ -251,27 +251,30 @@
 
                 for (var r = 1; r <= internal.cellSet.rows; r += 1) {
                     for (var c = 1; c <= internal.cellSet.columns; c += 1) {
-                        var dragCell = dragCells[r][c];
-                        var dropCell = dropCells[r][c];
+                        var thisDragCell = dragCells[r][c];
+                        var thisDropCell = dropCells[r][c];
 
-                        dragCell.removeClass('CswLayoutTable_dragcell');
-                        var $dragCellDiv = dragCell.children('div').$;
-                        dropCell.removeClass('CswLayoutTable_dragcell');
-                        var $dropCellDiv = dropCell.children('div').$;
-                        /* Append does not work as expected here. html() will do, though. */
-                        var dragHtml = $dragCellDiv.html();
-                        var dropHtml = $dropCellDiv.html();
+                        thisDragCell.removeClass('CswLayoutTable_dragcell');
+                        var $dragCellDiv = thisDragCell.children('div').$;
+                        thisDropCell.removeClass('CswLayoutTable_dragcell');
+                        var $dropCellDiv = thisDropCell.children('div').$;
 
-                        dropCell.empty();
-                        dropCell.append(dragHtml);
+                        thisDropCell.$.append($dragCellDiv);
+                        thisDragCell.$.append($dropCellDiv);
 
-                        dragCell.empty();
-                        dragCell.append(dropHtml);
+                        $dragCellDiv.position({
+                            my: "left top",
+                            at: "left top",
+                            of: thisDropCell.$,
+                            offset: external.table.propNonDom('cellpadding')
+                        });
 
-                        /* This doesn't work, but it's a clue that something else needs to be done here. */
-                        internal.enableDrag(dragCell);
-                        internal.enableDrag(dropCell);
-                        /* Once swapped, the cells cannot be dragged again (until refresh). */
+                        $dropCellDiv.position({
+                            my: "left top",
+                            at: "left top",
+                            of: thisDragCell.$,
+                            offset: external.table.propNonDom('cellpadding')
+                        });
                     }
                 }
 
