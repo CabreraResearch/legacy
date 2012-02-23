@@ -274,8 +274,11 @@
                                         propid: propId,
                                         propDiv: propCell.children('div'),
                                         propData: thisProp,
-                                        onChange: function () { },
-                                        onReload: function () { getProps(tabContentDiv, tabid); },
+                                        onChange: function () {
+                                        },
+                                        onReload: function () {
+                                            getProps(tabContentDiv, tabid);
+                                        },
                                         EditMode: o.EditMode,
                                         Multi: o.Multi,
                                         cswnbtnodekey: Csw.tryParseObjByIdx(o.nodekeys, 0)
@@ -317,6 +320,12 @@
                     }); // validate()
 
                     if (Csw.bool(o.Config)) {
+                        if(false === atLeastOne.Property) {
+                            layoutTable.cellSet(1, 1);
+                            layoutTable.cellSet(1, 1);
+                            layoutTable.cellSet(2, 1);
+                            layoutTable.cellSet(2, 2);
+                        }
                         layoutTable.configOn();
                     }
                     else if (!o.Config &&
@@ -417,7 +426,7 @@
                 propName = Csw.string(thisProp.name),
                 labelCell = {};
 
-                layoutTable.addCellSetAttributes(cellSet, {propId: propid});
+            layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
                  fieldtype !== Csw.enums.subFieldsMap.Image.name &&
@@ -706,7 +715,7 @@
                 };
 
                 var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
-                layoutTable.addCellSetAttributes(cellSet, {propId: thisProp.id});
+                layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
                 propOpt.propCell = _getPropertyCell(cellSet);
                 propOpt.propDiv = propOpt.propCell.children('div').first();
 
