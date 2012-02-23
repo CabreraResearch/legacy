@@ -59,19 +59,28 @@ namespace ChemSW.Nbt.Schema
                 DataRow dr2 = qTable.NewRow();
                 dr2["SECTION"] = "";
                 dr2["QUESTION"] = "Is the item operable?";
-                dr2["ALLOWED_ANSWERS"] = "Yes,No,n/a";
-                dr2["COMPLIANT_ANSWERS"] = "Yes,n/a";
+                dr2["ALLOWED_ANSWERS"] = "Yes,No";
+                dr2["COMPLIANT_ANSWERS"] = "Yes";
                 dr2["HELP_TEXT"] = "Choose an answer.";
                 qTable.Rows.Add( dr2 );
 
                 // Section1: Q1.3 Item passes inspection?
                 DataRow dr3 = qTable.NewRow();
                 dr3["SECTION"] = "";
-                dr3["QUESTION"] = "Item passes inspection?";
-                dr3["ALLOWED_ANSWERS"] = "Yes,No";
-                dr3["COMPLIANT_ANSWERS"] = "Yes";
+                dr3["QUESTION"] = "Item has all parts?";
+                dr3["ALLOWED_ANSWERS"] = "Yes,No,n/a";
+                dr3["COMPLIANT_ANSWERS"] = "Yes,n/a";
                 dr3["HELP_TEXT"] = "Choose an answer.";
                 qTable.Rows.Add( dr3 );
+
+                // Section1: Q1.4 Item passes inspection?
+                DataRow dr4 = qTable.NewRow();
+                dr4["SECTION"] = "";
+                dr4["QUESTION"] = "Item passes inspection?";
+                dr4["ALLOWED_ANSWERS"] = "Yes,No";
+                dr4["COMPLIANT_ANSWERS"] = "Yes";
+                dr4["HELP_TEXT"] = "Choose an answer.";
+                qTable.Rows.Add( dr4 );
                 
                 JObject newObj = wiz.createInspectionDesignTabsAndProps( qTable, "SI_protocol", "SI_target", newCat );
 
