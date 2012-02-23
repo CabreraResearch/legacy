@@ -441,13 +441,13 @@ namespace ChemSW.Nbt.WebPages
         //        {
         //            SearchProperty = SearchView.AddViewProperty( SearchRelationship, CswNbtResources.MetaData.getNodeTypeProp( _CswPropertyFilter.SelectedPropLatestVersion.PropId ) );
         //            //SearchProperty.NodeTypePropId = _CswPropertyFilter.SelectedPropLatestVersion.PropId;
-        //            //SearchProperty.Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
+        //            //SearchProperty.Type = CswNbtPropType.NodeTypePropId;
         //        }
         //        else
         //        {
         //            SearchProperty = SearchView.AddViewProperty( SearchRelationship, CswNbtResources.MetaData.getObjectClassProp( _CswPropertyFilter.SelectedObjectClassPropId ) );
         //            //SearchProperty.ObjectClassPropId = _CswPropertyFilter.SelectedObjectClassPropId;
-        //            //SearchProperty.Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
+        //            //SearchProperty.Type = CswNbtPropType.ObjectClassPropId;
         //        }
         //        //SearchRelationship.addProperty( SearchProperty );
 

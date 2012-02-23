@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //CheckedSubField = new CswNbtSubField(CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Checked );
-            //CheckedSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+            //CheckedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals;
             //SubFields.add( CheckedSubField );
 
         }//ctor

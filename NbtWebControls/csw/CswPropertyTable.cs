@@ -447,23 +447,26 @@ namespace ChemSW.NbtWebControls
                                 throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldType().FieldType.ToString() );
                         } // switch( FilterMetaDataProp.FieldType.FieldType )
 
-                        switch( FilterMode )
+                        if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                         {
-                            case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                                FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
-                                break;
-                            case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                                FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
-                                break;
-                            case CswNbtPropFilterSql.PropertyFilterMode.Null:
-                                FilterMatches = ( ValueToCompare == string.Empty );
-                                break;
-                            case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
-                                FilterMatches = ( ValueToCompare != string.Empty );
-                                break;
-                            default:
-                                throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
-                        } // switch( FilterMode )
+                            FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
+                        }
+                        else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                        {
+                            FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
+                        }
+                        else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                        {
+                            FilterMatches = ( ValueToCompare == string.Empty );
+                        }
+                        else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+                        {
+                            FilterMatches = ( ValueToCompare != string.Empty );
+                        }
+                        else
+                        {
+                            throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
+                        }
 
                     } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
                 } // if( Node != null )

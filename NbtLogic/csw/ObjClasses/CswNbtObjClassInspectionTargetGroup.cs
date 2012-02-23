@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
             foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
             {
                 OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.OwnerPropertyName );
-                if( CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
+                if( NbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
                 {
                     OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
                     if( null != OwnerNT && OwnerNT == Node.getNodeType() )
@@ -61,8 +61,8 @@ namespace ChemSW.Nbt.ObjClasses
                             GeneratorNode.postChanges( true );
                         }
                     }
-                } //CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType
-                //else if( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() == OwnerNTP.FKType )
+                } //RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType
+                //else if( RelatedIdType.ObjectClassId.ToString() == OwnerNTP.FKType )
             }
 
             _CswNbtObjClassDefault.afterCreateNode();

@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             MolSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Mol );
             // BZ 8638
-            //MolSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.NotNull |
+            //MolSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull |
             //                          CswNbtPropFilterSql.PropertyFilterMode.Null;
             SubFields.add( MolSubField );
         }//ctor

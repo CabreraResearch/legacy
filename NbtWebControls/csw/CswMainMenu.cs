@@ -143,7 +143,8 @@ namespace ChemSW.NbtWebControls
                 NbtViewRenderingMode ReturnVal = NbtViewRenderingMode.Unknown;
                 if( null != ViewState["NbtViewRenderingMode"] )
                 {
-                    ReturnVal = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), ViewState["NbtViewRenderingMode"].ToString() );
+                    //ReturnVal = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), ViewState["NbtViewRenderingMode"].ToString() );
+                    ReturnVal = (NbtViewRenderingMode) ViewState["NbtViewRenderingMode"].ToString();
                 }
 
                 return ( ReturnVal );

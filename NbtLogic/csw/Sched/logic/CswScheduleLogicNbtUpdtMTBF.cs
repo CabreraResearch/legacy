@@ -63,6 +63,8 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
+                    _CompletionMessage = string.Empty; 
+
                     // BZ 6779
                     // Set all MTBF fields pendingupdate = 1
                     Int32 MTBFId = _CswNbtResources.MetaData.getFieldType( ChemSW.Nbt.MetaData.CswNbtMetaDataFieldType.NbtFieldType.MTBF ).FieldTypeId;

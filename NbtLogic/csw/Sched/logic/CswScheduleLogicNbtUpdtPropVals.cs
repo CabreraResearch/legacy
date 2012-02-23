@@ -64,6 +64,8 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
+                    _CompletionMessage = string.Empty; 
+
                     if( _CswNbtResources == null )
                         throw new CswDniException( "_CswNbtResources is null" );
 

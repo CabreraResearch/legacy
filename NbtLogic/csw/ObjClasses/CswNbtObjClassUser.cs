@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //View.ViewName = "CswNbtObjClassUser(" + Node.NodeId.ToString() + ")";
                 //CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
                 //UserRelationship.NodeIdsToFilterIn.Add( Node.NodeId );
-                //CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( UserRelationship, CswNbtViewRelationship.PropOwnerType.First, Role_ObjectClassProp, false );
+                //CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( UserRelationship, PropOwnerType.First, Role_ObjectClassProp, false );
 
                 //// generate the tree
                 //ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, true );

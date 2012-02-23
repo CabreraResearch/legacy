@@ -116,14 +116,14 @@
 //        }
 
 
-//        public CswNbtViewRelationship.RelatedIdType TargetType
+//        public RelatedIdType TargetType
 //        {
 //            get
 //            {
-//                CswNbtViewRelationship.RelatedIdType ret = CswNbtViewRelationship.RelatedIdType.Unknown;
+//                RelatedIdType ret = RelatedIdType.Unknown;
 //                try
 //                {
-//                    ret = (CswNbtViewRelationship.RelatedIdType) Enum.Parse( typeof( CswNbtViewRelationship.RelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
+//                    ret = (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), _CswNbtMetaDataNodeTypeProp.FKType, true );
 //                }
 //                catch( Exception ex )
 //                {

@@ -993,7 +993,7 @@
 //                        _GroupByDropDown.Items.Clear();
 //                        _GroupByDropDown.Items.Add( new ListItem( "None", string.Empty ) );
 //                        ArrayList Relationships = null;
-//                        if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+//                        if( CurrentRelationship.SecondType == RelatedIdType.ObjectClassId )
 //                        {
 //                            Relationships = getObjectClassRelatedNodeTypesAndObjectClasses( CurrentId, _View, CurrentLevel );
 //                            CswNbtMetaDataObjectClass ThisObjectClass = _CswNbtResources.MetaData.getObjectClass( CurrentId );
@@ -1004,7 +1004,7 @@
 //                            if( CurrentRelationship.GroupByPropId != Int32.MinValue )
 //                                _GroupByDropDown.SelectedValue = CurrentRelationship.GroupByPropId.ToString();
 //                        }
-//                        else if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//                        else if( CurrentRelationship.SecondType == RelatedIdType.NodeTypeId )
 //                        {
 //                            Relationships = getNodeTypeRelatedNodeTypesAndObjectClasses( CurrentId, _View, CurrentLevel );
 //                            CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( CurrentId );
@@ -1025,11 +1025,11 @@
 //                            {
 //                                string Label = String.Empty;
 
-//                                if( R.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+//                                if( R.PropOwner == PropOwnerType.First )
 //                                {
 //                                    Label = R.SecondName + " (by " + R.PropName + ")";
 //                                }
-//                                else if( R.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
+//                                else if( R.PropOwner == PropOwnerType.Second )
 //                                {
 //                                    Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
 //                                }
@@ -1195,7 +1195,7 @@
 //            _SortByDropDown = new DropDownList();
 //            _SortByDropDown.ID = "sortmethod";
 //            _SortByDropDown.CssClass = "selectinput";
-//            foreach( string method in Enum.GetNames( typeof( CswNbtViewProperty.PropertySortMethod ) ) )
+//            foreach( string method in Enum.GetNames( typeof( PropertySortMethod ) ) )
 //            {
 //                _SortByDropDown.Items.Add( new ListItem( method, method ) );
 //            }
@@ -1609,7 +1609,7 @@
 //                                CurrentRelationship.AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddDropDown.SelectedValue );
 //                                if( _GroupByDropDown.SelectedValue != string.Empty )
 //                                {
-//                                    if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//                                    if( CurrentRelationship.SecondType == RelatedIdType.NodeTypeId )
 //                                    {
 //                                        CswNbtMetaDataNodeType SecondNodeType = _CswNbtResources.MetaData.getNodeType( CurrentRelationship.SecondId );
 //                                        CurrentRelationship.setGroupByProp( SecondNodeType.getNodeTypeProp( CswConvert.ToInt32( _GroupByDropDown.SelectedValue ) ) );
@@ -1640,7 +1640,7 @@
 //                            {
 //                                CswNbtViewProperty PropViewNode = (CswNbtViewProperty) PropertiesSelectedViewNode;
 //                                PropViewNode.SortBy = _SortByCheckBox.Checked;
-//                                PropViewNode.SortMethod = (CswNbtViewProperty.PropertySortMethod) Enum.Parse( typeof( CswNbtViewProperty.PropertySortMethod ), _SortByDropDown.SelectedValue );
+//                                PropViewNode.SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), _SortByDropDown.SelectedValue );
 //                                if( CswTools.IsInteger( _GridOrderBox.Text ) )
 //                                    PropViewNode.Order = CswConvert.ToInt32( _GridOrderBox.Text );
 //                                if( CswTools.IsInteger( _GridColumnWidthBox.Text ) )
@@ -1873,9 +1873,9 @@
 //                {
 //                    CswNbtMetaDataNodeTypeProp ThisProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropRow["propid"] ) );
 
-//                    if( ( PropRow["proptype"].ToString() == CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString() &&
+//                    if( ( PropRow["proptype"].ToString() == PropIdType.NodeTypePropId.ToString() &&
 //                          PropRow["typeid"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) &&
-//                        ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+//                        ( PropRow["fktype"].ToString() == RelatedIdType.NodeTypeId.ToString() &&
 //                          PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) )
 //                    {
 //                        if( _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, FirstVersionNodeType.NodeTypeId, null, null ) )
@@ -1883,9 +1883,9 @@
 //                            // Special case -- relationship to my own type
 //                            // We need to create two relationships from this
 
-//                            CswNbtViewRelationship R1 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.First, ThisProp );
+//                            CswNbtViewRelationship R1 = View.AddViewRelationship( null, PropOwnerType.First, ThisProp );
 //                            //CswNbtViewRelationship R1 = View.MakeEmptyViewRelationship();
-//                            //R1.setProp( CswNbtViewRelationship.PropOwnerType.First, ThisProp );
+//                            //R1.setProp( PropOwnerType.First, ThisProp );
 //                            //R1.setFirst( FirstVersionNodeType );
 //                            //R1.setSecond( FirstVersionNodeType );
 //                            Relationships.Add( R1 );
@@ -1894,22 +1894,22 @@
 //                            {
 //                                // Copy it
 //                                //CswNbtViewRelationship R2 = new CswNbtViewRelationship( _CswNbtResources, View, R1 );
-//                                //R2.setProp( CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
-//                                CswNbtViewRelationship R2 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
+//                                //R2.setProp( PropOwnerType.Second, ThisProp );
+//                                CswNbtViewRelationship R2 = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp );
 //                                Relationships.Add( R2 );
 //                            }
 //                        }
 //                    }
-//                    else if( ( PropRow["proptype"].ToString() == CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString() &&
+//                    else if( ( PropRow["proptype"].ToString() == PropIdType.NodeTypePropId.ToString() &&
 //                               PropRow["typeid"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) &&
-//                             ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+//                             ( PropRow["fktype"].ToString() == RelatedIdType.ObjectClassId.ToString() &&
 //                               PropRow["fkvalue"].ToString() == ObjectClass.ObjectClassId.ToString() ) )
 //                    {
 //                        // Special case -- relationship to my own class
 //                        // We need to create two relationships from this
 
-//                        CswNbtViewRelationship R1 = _View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.First, ThisProp );
-//                        //R1.setProp( CswNbtViewRelationship.PropOwnerType.First, ThisProp );
+//                        CswNbtViewRelationship R1 = _View.AddViewRelationship( null, PropOwnerType.First, ThisProp );
+//                        //R1.setProp( PropOwnerType.First, ThisProp );
 //                        R1.overrideFirst( FirstVersionNodeType );
 //                        R1.overrideSecond( ObjectClass );
 //                        Relationships.Add( R1 );
@@ -1918,8 +1918,8 @@
 //                        {
 //                            // Copy it
 //                            //CswNbtViewRelationship R2 = new CswNbtViewRelationship( _CswNbtResources, View, R1 );
-//                            //R2.setProp( CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
-//                            CswNbtViewRelationship R2 = _View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
+//                            //R2.setProp( PropOwnerType.Second, ThisProp );
+//                            CswNbtViewRelationship R2 = _View.AddViewRelationship( null, PropOwnerType.Second, ThisProp );
 //                            R2.overrideFirst( FirstVersionNodeType );
 //                            R2.overrideSecond( ObjectClass );
 //                            Relationships.Add( R2 );
@@ -1928,37 +1928,37 @@
 //                    else
 //                    {
 //                        CswNbtViewRelationship R = null;
-//                        if( PropRow["proptype"].ToString() == CswNbtViewRelationship.PropIdType.NodeTypePropId.ToString() &&
+//                        if( PropRow["proptype"].ToString() == PropIdType.NodeTypePropId.ToString() &&
 //                            PropRow["typeid"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() )
 //                        {
 //                            // my relation to something else
-//                            R = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.First, ThisProp );
-//                            if( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+//                            R = View.AddViewRelationship( null, PropOwnerType.First, ThisProp );
+//                            if( PropRow["fktype"].ToString() == RelatedIdType.ObjectClassId.ToString() )
 //                                R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 //                            else
 //                                R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 
-//                            if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+//                            if( R.SecondType != RelatedIdType.NodeTypeId ||
 //                                _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
 //                            {
 //                                Relationships.Add( R );
 //                            }
 //                        }
-//                        else if( ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+//                        else if( ( PropRow["fktype"].ToString() == RelatedIdType.NodeTypeId.ToString() &&
 //                                   PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) ||
-//                                 ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+//                                 ( PropRow["fktype"].ToString() == RelatedIdType.ObjectClassId.ToString() &&
 //                                   PropRow["fkvalue"].ToString() == ObjectClass.ObjectClassId.ToString() ) )
 //                        {
 //                            if( !Restrict )
 //                            {
 //                                // something else's relation to me or my object class
-//                                R = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp ); 
-//                                if( PropRow["proptype"].ToString() == CswNbtViewRelationship.PropIdType.ObjectClassPropId.ToString() )
+//                                R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp ); 
+//                                if( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() )
 //                                    R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 //                                else
 //                                    R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 
-//                                if( R.SecondType != CswNbtViewRelationship.RelatedIdType.NodeTypeId ||
+//                                if( R.SecondType != RelatedIdType.NodeTypeId ||
 //                                    _CswNbtResources.CurrentNbtUser.CheckPermission( NodeTypePermission.View, R.SecondId, null, null ) )
 //                                {
 //                                    Relationships.Add( R );
@@ -2000,16 +2000,16 @@
 //                if( PropRow["fktype"].ToString() != String.Empty &&
 //                     PropRow["fkvalue"].ToString() != String.Empty )
 //                {
-//                    if( ( PropRow["proptype"].ToString() == CswNbtViewRelationship.PropIdType.ObjectClassPropId.ToString() &&
+//                    if( ( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() &&
 //                          PropRow["typeid"].ToString() == ObjectClassId.ToString() ) &&
-//                        ( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+//                        ( PropRow["fktype"].ToString() == RelatedIdType.ObjectClassId.ToString() &&
 //                          PropRow["fkvalue"].ToString() == ObjectClassId.ToString() ) )
 //                    {
 //                        CswNbtMetaDataObjectClassProp ThisProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( PropRow["propid"] ) );
 
 //                        // Special case -- relationship to my own class
 //                        // We need to create two relationships from this
-//                        CswNbtViewRelationship R1 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.First, ThisProp );
+//                        CswNbtViewRelationship R1 = View.AddViewRelationship( null, PropOwnerType.First, ThisProp );
 //                        R1.overrideFirst( ObjectClass );
 //                        R1.overrideSecond( ObjectClass );
 //                        Relationships.Add( R1 );
@@ -2018,8 +2018,8 @@
 //                        {
 //                            // Copy it
 //                            //CswNbtViewRelationship R2 = new CswNbtViewRelationship( _CswNbtResources, View, R1 );
-//                            //R2.setProp( CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
-//                            CswNbtViewRelationship R2 = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
+//                            //R2.setProp( PropOwnerType.Second, ThisProp );
+//                            CswNbtViewRelationship R2 = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp );
 //                            R2.overrideFirst( ObjectClass );
 //                            R2.overrideSecond( ObjectClass );
 //                            Relationships.Add( R2 );
@@ -2028,33 +2028,33 @@
 //                    else
 //                    {
 //                        CswNbtViewRelationship R = null;
-//                        if( PropRow["proptype"].ToString() == CswNbtViewRelationship.PropIdType.ObjectClassPropId.ToString() &&
+//                        if( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() &&
 //                            PropRow["typeid"].ToString() == ObjectClassId.ToString() )
 //                        {
 //                            // my relation to something else
 //                            CswNbtMetaDataObjectClassProp ThisProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( PropRow["propid"] ) );
-//                            R = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.First, ThisProp );
-//                            if( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+//                            R = View.AddViewRelationship( null, PropOwnerType.First, ThisProp );
+//                            if( PropRow["fktype"].ToString() == RelatedIdType.ObjectClassId.ToString() )
 //                                R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 //                            else
 //                                R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["fkvalue"] ) ) );
 //                            Relationships.Add( R );
 //                        }
-//                        else if( PropRow["fktype"].ToString() == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() && PropRow["fkvalue"].ToString() == ObjectClassId.ToString() )
+//                        else if( PropRow["fktype"].ToString() == RelatedIdType.ObjectClassId.ToString() && PropRow["fkvalue"].ToString() == ObjectClassId.ToString() )
 //                        {
 //                            if( !Restrict )
 //                            {
 //                                // something else's relation to me
-//                                if( PropRow["proptype"].ToString() == CswNbtViewRelationship.PropIdType.ObjectClassPropId.ToString() )
+//                                if( PropRow["proptype"].ToString() == PropIdType.ObjectClassPropId.ToString() )
 //                                {
 //                                    CswNbtMetaDataObjectClassProp ThisProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( PropRow["propid"] ) );
-//                                    R = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp );
+//                                    R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp );
 //                                    R.overrideSecond( _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 //                                }
 //                                else
 //                                {
 //                                    CswNbtMetaDataNodeTypeProp ThisProp = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropRow["propid"] ) );
-//                                    R = View.AddViewRelationship( null, CswNbtViewRelationship.PropOwnerType.Second, ThisProp ); 
+//                                    R = View.AddViewRelationship( null, PropOwnerType.Second, ThisProp ); 
 //                                    R.overrideSecond( _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( PropRow["typeid"] ) ) );
 //                                }
 //                                Relationships.Add( R );
@@ -2086,12 +2086,12 @@
 
 //                CswNbtViewRelationship CurrentRelationship = (CswNbtViewRelationship) PropertiesSelectedViewNode;
 //                ICollection PropsCollection = null;
-//                if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+//                if( CurrentRelationship.SecondType == RelatedIdType.ObjectClassId )
 //                {
 //                    PropsCollection = _getObjectClassPropsCollection( CurrentRelationship.SecondId );
 //                    //PropsCollection = _CswNbtResources.MetaData.getObjectClass( CurrentRelationship.SecondId ).ObjectClassProps;
 //                }
-//                else if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//                else if( CurrentRelationship.SecondType == RelatedIdType.NodeTypeId )
 //                {
 //                    PropsCollection = _getNodeTypePropsCollection( CurrentRelationship.SecondId );
 //                }
@@ -2107,9 +2107,9 @@
 //                    {
 //                        CswNbtViewProperty ViewProp = _View.AddViewProperty( null, (CswNbtMetaDataNodeTypeProp) ThisProp );
 //                        DataRow PropRow = _PropDataTable.NewRow();
-//                        ////if( CurrentRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//                        ////if( CurrentRelationship.SecondType == RelatedIdType.NodeTypeId )
 //                        ////{
-//                        //    ViewProp.Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
+//                        //    ViewProp.Type = CswNbtPropType.NodeTypePropId;
 //                        //    //                            ViewProp.NodeTypePropId = ThisProp.PropId;
 //                        //    //bz #8016: Not all versions of props were coming out in exported xml
 //                        //    ViewProp.NodeTypePropId = ( (CswNbtMetaDataNodeTypeProp) ThisProp ).FirstPropVersionId;
@@ -2119,7 +2119,7 @@
 //                        ////}
 //                        ////else
 //                        ////{
-//                        ////    ViewProp.Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
+//                        ////    ViewProp.Type = CswNbtPropType.ObjectClassPropId;
 //                        ////    ViewProp.ObjectClassPropId = ThisProp.PropId;
 //                        ////    ViewProp.Name = ThisProp.PropNameWithQuestionNo;
 //                        ////    ViewProp.ArbitraryId = PropertiesSelectedViewNode.ArbitraryId + "_prop" + ThisProp.PropId.ToString();
@@ -2189,7 +2189,7 @@
 //        public bool RestrictSelectable = false;
 //        private ArrayList _Selectables = new ArrayList();
 
-//        public void addSelectableId( CswNbtViewRelationship.RelatedIdType Type, Int32 Value )
+//        public void addSelectableId( RelatedIdType Type, Int32 Value )
 //        {
 //            addSelectable( new Selectable( Type, Value ) );
 //        }
@@ -2197,7 +2197,7 @@
 //        {
 //            _Selectables.Add( S );
 //        }
-//        public bool isSelectable( CswNbtViewRelationship.RelatedIdType Type, Int32 Value )
+//        public bool isSelectable( RelatedIdType Type, Int32 Value )
 //        {
 //            bool ret = true;
 //            if( RestrictSelectable )
@@ -2212,12 +2212,12 @@
 
 //        public class Selectable : IEquatable<Selectable>
 //        {
-//            public Selectable( CswNbtViewRelationship.RelatedIdType T, Int32 V )
+//            public Selectable( RelatedIdType T, Int32 V )
 //            {
 //                Type = T;
 //                Value = V;
 //            }
-//            CswNbtViewRelationship.RelatedIdType Type;
+//            RelatedIdType Type;
 //            Int32 Value;
 
 

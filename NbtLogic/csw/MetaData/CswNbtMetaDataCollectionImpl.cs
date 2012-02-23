@@ -39,7 +39,10 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void AddToCache(ICswNbtMetaDataObject NewObj)
         {
-            _Cache.Add( NewObj.UniqueId, NewObj );
+            if( false == _Cache.ContainsKey( NewObj.UniqueId ) )
+            {
+                _Cache.Add( NewObj.UniqueId, NewObj );
+            }
         }
 
         private Dictionary<Int32, ICswNbtMetaDataObject> _Cache = new Dictionary<Int32, ICswNbtMetaDataObject>();

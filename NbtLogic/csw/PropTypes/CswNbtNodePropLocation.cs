@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtViewRelationship PriorLocationLevel = LocationLevel1;
                     for( int i = 2; i <= MaxDepth; i++ )
                     {
-                        CswNbtViewRelationship LocationLevelX = _View.AddViewRelationship( PriorLocationLevel, CswNbtViewRelationship.PropOwnerType.Second, LocationClassProp, true );
+                        CswNbtViewRelationship LocationLevelX = _View.AddViewRelationship( PriorLocationLevel, NbtViewPropOwnerType.Second, LocationClassProp, true );
                         if( NodeId != null )
                             LocationLevelX.NodeIdsToFilterOut.Add( NodeId );
                         PriorLocationLevel = LocationLevelX;

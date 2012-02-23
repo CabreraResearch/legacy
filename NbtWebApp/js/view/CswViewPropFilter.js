@@ -273,8 +273,7 @@
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
                     var propSelectCell = propFilterTable.cell(filtOpt.propRow, filtOpt.firstColumn) //3
-                        .empty()
-                        .css('padding', '2px');
+                        .css({ 'padding': '2px' });
 
                     var propCellId = makePropFilterId(propertyName, filtOpt);
                     propSelectCell.span({ ID: propCellId, value: propertyName });
@@ -286,20 +285,17 @@
 
                 //Row propRow, Column 4: Subfield Cell
                 var subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
-                    .empty()
-                    .css('padding', '2px');
+                    .css({ 'padding': '2px' });
                 var defaultSubFieldId = makePropFilterId('default_filter', filtOpt);
 
                 //Row propRow, Column 5: Filters cell
                 var filtersCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 2)) //5
-                    .empty()
-                    .css('padding', '2px');
+                    .css({ 'padding': '2px' });
                 var filtersOptionsId = makePropFilterId('filter_select', filtOpt);
 
                 //Row propRow, Column 6: Input cell
                 var propFilterValueCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 3)) //6
-                    .empty()
-                    .css('padding', '2px');
+                    .css({ 'padding': '2px' });
                 var filtValInputId = makePropFilterId('propfilter_input', filtOpt);
 
                 //Subfield

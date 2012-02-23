@@ -165,11 +165,18 @@ namespace ChemSW.Nbt.ObjClasses
             return ((CswNbtObjClassUnitType)Node.ObjClass);
         }//AsUnitType
 
-        public static CswNbtObjClassUser AsUser(CswNbtNode Node)
+        public static CswNbtObjClassUser AsUser( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             return ( (CswNbtObjClassUser) Node.ObjClass );
         }//AsUser
+
+
+        public static CswNbtObjClassVendor AsVendor( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass );
+            return ( (CswNbtObjClassVendor) Node.ObjClass );
+        }//AsVendor
 
 
         public static ICswNbtPropertySetGeneratorTarget AsPropertySetGeneratorTarget( CswNbtNode Node )

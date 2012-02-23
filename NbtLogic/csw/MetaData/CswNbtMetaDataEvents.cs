@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
                     if( RelationshipProp != null )
                     {
-                        //if (RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString())
+                        //if (RelationshipProp.FKType == RelatedIdType.NodeTypeId.ToString())
                         //{
                         //CswNbtMetaDataNodeType AssemblyNodeType = this.getNodeType(RelationshipProp.FKValue);
                         //CswNbtMetaDataNodeTypeProp AssemblyNodeTypeProp = AssemblyNodeType.getNodeTypeProp(EditedProp.PropName);
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.MetaData
 
                         //}
                         //}
-                        //else if (RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString())
+                        //else if (RelationshipProp.FKType == RelatedIdType.ObjectClassId.ToString())
                         //{
                         //    CswNbtMetaDataObjectClass AssemblyObjectClass = this.getObjectClass(RelationshipProp.FKValue);
                         //    CswNbtMetaDataObjectClassProp AssemblyObjectClassProp = AssemblyObjectClass.getObjectClassProp(EditedProp.PropName);
@@ -170,9 +170,9 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
                     if( RelationshipProp != null )
                     {
-                        if( ( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+                        if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
                               RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
-                            ( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+                            ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                               RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) )
                         {
 
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.MetaData
                             NodesUpdate.update( NodesTable );
                             //}
                         }
-                        //else if( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+                        //else if( RelationshipProp.FKType == RelatedIdType.ObjectClassId.ToString() &&
                         //         RelationshipProp.FKValue == AssemblyNodeType.ObjectClass.ObjectClassId )
                         //{
                         //    // BZ 5528

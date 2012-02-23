@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        
+
 
         /// <summary>
         /// Collection of Object Class primary keys (Int32)
@@ -125,6 +125,14 @@ namespace ChemSW.Nbt.MetaData
         public Dictionary<CswNbtMetaDataObjectClass.NbtObjectClass, Int32> getObjectClassIds()
         {
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassIds();
+        }
+
+        /// <summary>
+        /// Collection of Object Class primary keys (Int32)
+        /// </summary>
+        public Int32 getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassId( ObjectClass );
         }
 
         /// <summary>
@@ -629,7 +637,7 @@ namespace ChemSW.Nbt.MetaData
                         {
                             //NTProp.FilterNodeTypePropId = TargetOfFilter.FirstPropVersionId;
                             CswNbtSubField SubField = null;
-                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
                             string FilterValue = string.Empty;
                             OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
                             // We don't have to worry about versioning in this function
@@ -913,6 +921,8 @@ namespace ChemSW.Nbt.MetaData
 
             _CswNbtMetaDataResources._PreventVersioning = OldPreventVersioning;
 
+
+            refreshAll();
 
             //will need to refresh auto-views
             _RefreshViewForNodetypeId.Add( NodeTypeId );

@@ -987,9 +987,11 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtMetaDataNodeTypeProp FilterNodeTypeProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
                 if( FilterNodeTypeProp != null )
                 {
-                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                    //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) filter[0];
                     SubField = FilterNodeTypeProp.getFieldTypeRule().SubFields[Column];
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
+                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) filter[1];
                     if( filter.GetUpperBound( 0 ) > 1 )
                         FilterValue = filter[2];
                 }
@@ -1024,14 +1026,13 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( SubField.Name == CswNbtSubField.SubFieldName.Checked )
                 {
-                    switch( FilterMode )
+                    if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                     {
-                        case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
-                            break;
+                        FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
+                    }
+                    else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    {
+                        FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
                     }
                 }
                 else
@@ -1055,22 +1056,25 @@ namespace ChemSW.Nbt.MetaData
                         throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldType().FieldType.ToString() );
                 } // switch( FilterMetaDataProp.FieldType.FieldType )
 
-                switch( FilterMode )
+                if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                 {
-                    case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                        FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                        FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.Null:
-                        FilterMatches = ( ValueToCompare == string.Empty );
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
-                        FilterMatches = ( ValueToCompare != string.Empty );
-                        break;
-                    default:
-                        throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
+                    FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
+                }
+                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                {
+                    FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
+                }
+                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                {
+                    FilterMatches = ( ValueToCompare == string.Empty );
+                }
+                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+                {
+                    FilterMatches = ( ValueToCompare != string.Empty );
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
                 } // switch( FilterMode )
 
             } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
@@ -1540,14 +1544,15 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( FKType != string.Empty )
                 {
-                    CswNbtViewRelationship.RelatedIdType TargetType = (CswNbtViewRelationship.RelatedIdType) Enum.Parse( typeof( CswNbtViewRelationship.RelatedIdType ), FKType, true );
+                    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
 
-                    if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
                         ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     }
-                    else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+                    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
                         ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );

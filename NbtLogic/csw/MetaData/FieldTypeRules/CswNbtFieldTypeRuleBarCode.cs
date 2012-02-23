@@ -20,27 +20,27 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Barcode );
-            BarcodeSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                          CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                          CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                          CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                          CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Null;
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( BarcodeSubField );
 
             SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources, SequenceNumberColumn, CswNbtSubField.SubFieldName.Number );
-            SequenceNumberSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                          CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                          CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                          CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                          CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Null;
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            SequenceNumberSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( SequenceNumberSubField );
         }//ctor
 
