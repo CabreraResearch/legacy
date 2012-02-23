@@ -437,7 +437,7 @@ namespace ChemSW.Nbt.WebServices
 
             // Results Table
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null );
-            ret["table"] = wsTable.makeTableFromTree( Tree );
+            ret["table"] = wsTable.makeTableFromTree( Tree, FilteredPropIds );
 
             // New Filters to offer
             JObject FiltersObj = new JObject();
