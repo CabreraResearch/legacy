@@ -16,10 +16,13 @@
             /// <param name="inputNum" type="Number"> String to parse to number </param>
             /// <param name="defaultNum" type="Number"> Default value if not a number </param>
             /// <returns type="Number" />
-            var ret = 0;
+            var ret = NaN;
 
             function makeNumber(value) {
-                var num = +value;
+                var num = NaN;
+                if (value) {
+                    num = +value;
+                }
                 if (isNaN(num)) {
                     num = parseInt(value, 0);
                 }
@@ -55,7 +58,7 @@
     Csw.register('isNumber', isNumber);
     Csw.isNumber = Csw.isNumber || isNumber;
 
-    var isNumeric = function(obj) {
+    var isNumeric = function (obj) {
         /// <summary> Returns true if the input can be parsed as a Number </summary>
         /// <param name="str" type="Object"> String or object to test </param>
         /// <returns type="Boolean" />
@@ -145,4 +148,4 @@
     Csw.register('getMaxValueForPrecision', getMaxValueForPrecision);
     Csw.getMaxValueForPrecision = Csw.getMaxValueForPrecision || getMaxValueForPrecision;
 
-}());
+} ());

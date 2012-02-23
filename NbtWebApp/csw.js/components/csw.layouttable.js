@@ -337,9 +337,10 @@
             if (internal.expandRowBtn) {
                 internal.expandRowBtn.hide();
             }
-            external.table.findCell('.CswLayoutTable_cell')
-                .removeClass('CswLayoutTable_configcell');
-
+            if (external.table.children().length() > 0) {
+                external.table.findCell('.CswLayoutTable_cell')
+                    .removeClass('CswLayoutTable_configcell');
+            }
             internal.disableDrag();
 
             internal.setConfigMode('false');
@@ -364,9 +365,10 @@
             }
             external.table.finish(null, internal.firstRow, internal.firstCol);
 
-            external.table.findCell('.CswLayoutTable_cell')
-                .addClass('CswLayoutTable_configcell');
-
+            if (external.table.children().length() > 0) {
+                external.table.findCell('.CswLayoutTable_cell')
+                    .addClass('CswLayoutTable_configcell');
+            }
             internal.enableDrag();
 
             internal.setConfigMode('true');
@@ -390,6 +392,8 @@
 
             internal.tableId = Csw.controls.dom.makeId(internal.ID, 'tbl');
             internal.buttonTableId = Csw.controls.dom.makeId(internal.ID, 'buttontbl');
+            internal.firstRow = 1;
+            internal.firstCol = 1;
 
             external.table = external.table({
                 ID: internal.tableId,
@@ -412,7 +416,7 @@
                 'cellset_columns': internal.cellSet.columns
             });
 
-            internal.setConfigMode(external.table, 'false');
+            internal.setConfigMode('false');
             external.table.bind(internal.ID + 'CswLayoutTable_onSwap', internal.onSwap);
             external.table.bind(internal.ID + 'CswLayoutTable_onRemove', internal.onRemove);
             external.table.bind(internal.ID + 'CswLayoutTable_onConfigOn', internal.onConfigOn);
