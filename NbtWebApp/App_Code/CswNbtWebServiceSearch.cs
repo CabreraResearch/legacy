@@ -487,7 +487,8 @@ namespace ChemSW.Nbt.WebServices
                     foreach( JObject Prop in Props )
                     {
                         Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
-                        if( false == FilteredPropIds.Contains( NodeTypePropId ) )
+                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), Prop["fieldtype"].ToString() ) );
+                        if( false == FilteredPropIds.Contains( NodeTypePropId ) && FieldType.Searchable )
                         {
                             string Gestalt = Prop["gestalt"].ToString();
                             if( Gestalt.Length > 50 )

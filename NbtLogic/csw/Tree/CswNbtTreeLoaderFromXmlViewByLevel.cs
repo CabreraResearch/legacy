@@ -154,7 +154,8 @@ namespace ChemSW.Nbt
                                                  CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                  NodesRow["propname"].ToString(),
                                                  NodesRow["gestalt"].ToString(),
-                                                 _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
+                                                 (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodesRow["fieldtype"].ToString() ) );
+
                     } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                     if( ParentNodeKey != null )
                     {
@@ -409,14 +410,15 @@ namespace ChemSW.Nbt
                     {
                         // Properties
                         // We match on propname because that's how the view editor works.
-                        Select += @" ,props.nodetypepropid, props.propname, props.fieldtypeid ";
+                        Select += @" ,props.nodetypepropid, props.propname, props.fieldtype ";
 
                         From += @"  left outer join ( ";
                         if( NTPropsInClause.Count > 0 )
                         {
-                            From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, p2.fieldtypeid
+                            From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, f.fieldtype
                                   from nodetype_props p1
                                   join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
+                                  join field_types f on f.fieldtypeid = p2.fieldtypeid
                                  where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
                             if( OCPropsInClause.Count > 0 )
                             {
@@ -425,9 +427,10 @@ namespace ChemSW.Nbt
                         }
                         if( OCPropsInClause.Count > 0 )
                         {
-                            From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, ntp.fieldtypeid
+                            From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, f.fieldtype
                                   from object_class_props op
                                   join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
+                                  join field_types f on f.fieldtypeid = ntp.fieldtypeid
                                  where op.objectclasspropid in (" + OCPropsInClause.ToString() + @")";
                         }
                         From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
