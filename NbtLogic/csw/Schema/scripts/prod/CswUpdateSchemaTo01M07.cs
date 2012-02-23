@@ -47,9 +47,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp StorageClassOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Storage Capacity", CswNbtMetaDataFieldType.NbtFieldType.ImageList );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StorageClassOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.multi, false );
 
-            CswNbtMetaDataObjectClassProp SupplierOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Supplier", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false, false, true, CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() );
+            CswNbtMetaDataObjectClassProp SupplierOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Supplier", CswNbtMetaDataFieldType.NbtFieldType.Relationship, false, false, true, NbtViewRelatedIdType.ObjectClassId.ToString() );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.iscompoundunique, true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SupplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ) );
 
 
