@@ -320,12 +320,6 @@
                     }); // validate()
 
                     if (Csw.bool(o.Config)) {
-                        if(false === atLeastOne.Property) {
-                            layoutTable.cellSet(1, 1);
-                            layoutTable.cellSet(1, 1);
-                            layoutTable.cellSet(2, 1);
-                            layoutTable.cellSet(2, 2);
-                        }
                         layoutTable.configOn();
                     }
                     else if (!o.Config &&
