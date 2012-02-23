@@ -55,6 +55,11 @@ namespace ChemSW.Nbt.Schema
         //    get { return ( _CswDdl.ManageConstraints ); }
         //}//ManageConstraints
 
+        public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
+        {
+            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global,null,true ) );
+        }
+
         #region TransactionManagement
         public void beginTransaction()
         {
@@ -918,17 +923,17 @@ namespace ChemSW.Nbt.Schema
         {
             bool RetIsValid = false;
 
-            CswNbtViewRelationship.PropIdType PropIdType;
-            Enum.TryParse( FkType, true, out PropIdType );
-            if( PropIdType != CswNbtViewRelationship.PropIdType.Unknown )
+            NbtViewPropIdType PropIdType = (NbtViewPropIdType) FkType;
+            //Enum.TryParse( FkType, true, out PropIdType );
+            if( PropIdType != NbtViewPropIdType.Unknown )
             {
                 RetIsValid = true;
             }
             else
             {
-                CswNbtViewRelationship.RelatedIdType RelatedIdType;
-                Enum.TryParse( FkType, true, out RelatedIdType );
-                if( RelatedIdType != CswNbtViewRelationship.RelatedIdType.Unknown )
+                NbtViewRelatedIdType RelatedIdType = (NbtViewRelatedIdType) FkType;
+                //Enum.TryParse( FkType, true, out RelatedIdType );
+                if( RelatedIdType != NbtViewRelatedIdType.Unknown )
                 {
                     RetIsValid = true;
                 }

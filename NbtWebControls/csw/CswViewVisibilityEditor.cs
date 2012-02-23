@@ -135,7 +135,8 @@ namespace ChemSW.NbtWebControls
             get
             {
                 EnsureChildControls();
-                return (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _NewViewVisibilityDropDown.SelectedValue );
+                //return (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _NewViewVisibilityDropDown.SelectedValue );
+                return (NbtViewVisibility) _NewViewVisibilityDropDown.SelectedValue;
             }
             set
             {

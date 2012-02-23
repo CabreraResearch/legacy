@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -163,7 +164,7 @@ namespace ChemSW.Nbt.WebServices
                     //{
                     //    Tab = Node.NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
                     //}
-                    Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
 
 
 
@@ -588,7 +589,7 @@ namespace ChemSW.Nbt.WebServices
                 //    Tab = NodeType.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
                 //}
 
-                Collection<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, CswConvert.ToInt32( TabId ), LayoutType );
+                IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, CswConvert.ToInt32( TabId ), LayoutType );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                 {
                     // case 24179

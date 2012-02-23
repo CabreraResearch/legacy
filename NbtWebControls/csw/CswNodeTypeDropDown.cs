@@ -98,22 +98,22 @@ namespace ChemSW.NbtWebControls
 
         #region Events
 
-        public delegate void SelectedNodeTypeChangedHandler( CswNbtViewRelationship.RelatedIdType SelectedType, Int32 SelectedValue );
+        public delegate void SelectedNodeTypeChangedHandler( NbtViewRelatedIdType SelectedType, Int32 SelectedValue );
         public event SelectedNodeTypeChangedHandler SelectedNodeTypeChanged = null;
 
         void CswNodeTypeSelect_SelectedIndexChanged( object sender, EventArgs e )
         {
-            CswNbtViewRelationship.RelatedIdType SelectedType = CswNbtViewRelationship.RelatedIdType.Unknown;
+            NbtViewRelatedIdType SelectedType = NbtViewRelatedIdType.Unknown;
             Int32 SelectedVal = Int32.MinValue;
 
             if( this.SelectedValue.StartsWith( _NodeTypePrefix ) )
             {
-                SelectedType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+                SelectedType = NbtViewRelatedIdType.NodeTypeId;
                 SelectedVal = Convert.ToInt32( this.SelectedValue.Substring( _NodeTypePrefix.Length ) );
             }
             else if( this.SelectedValue.StartsWith( _ObjectClassPrefix ) )
             {
-                SelectedType = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
+                SelectedType = NbtViewRelatedIdType.ObjectClassId;
                 SelectedVal = SelectedObjectClassId;
             }
 

@@ -171,9 +171,9 @@
 //                {
 //                    // Only increase the page if we haven't moved on to another relationship
 //                    if( IncludedKey == null || 
-//                        ( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+//                        ( Relationship.SecondType == RelatedIdType.ObjectClassId &&
 //                          _CswNbtResources.MetaData.getNodeType( IncludedKey.NodeTypeId).ObjectClass.ObjectClassId == Relationship.SecondId ) ||
-//                        ( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+//                        ( Relationship.SecondType == RelatedIdType.NodeTypeId &&
 //                          IncludedKey.NodeTypeId == Relationship.SecondId ) )
 //                    {
 //                        while( NodeCountUpperBoundInclusive < FindThisNodeCount )
@@ -214,7 +214,7 @@
 //                        {
 //                            NodeIsAllowed = false;
 //                            Collection<CswNbtNodeKey> ChildKeys = null;
-//                            if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//                            if( Relationship.SecondType == RelatedIdType.NodeTypeId )
 //                            {
 //                                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( CurrentRow["nodetypeid"] ) );
 //                                if( !RequireViewPermissions ||
@@ -307,7 +307,7 @@
 //            //string PropIds = String.Empty;
 //            //foreach( CswNbtViewProperty Prop in PropertyList )
 //            //{
-//            //    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+//            //    if( Prop.Type == CswNbtPropType.ObjectClassPropId )
 //            //    {
 //            //        if( PropIds != String.Empty ) PropIds += ",";
 //            //        PropIds += Prop.ObjectClassPropId;
@@ -331,7 +331,7 @@
 //            CswCommaDelimitedString PropsInClause = new CswCommaDelimitedString( 0, true ); 
 //            foreach( CswNbtViewProperty Prop in PropertyList )
 //            {
-//                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+//                if( Prop.Type == CswNbtPropType.NodeTypePropId )
 //                {
 //                    PropsInClause.Add( Prop.NodeTypePropId.ToString() );
 //                }
@@ -445,46 +445,46 @@
 //        //            }
 //        //        } // _getObjectClassProperties()
 
-//        private string _getTableForNodeType( CswNbtViewRelationship.RelatedIdType Type, Int32 Id )
+//        private string _getTableForNodeType( RelatedIdType Type, Int32 Id )
 //        {
 //            string TargetTable = "nodes";
-//            if( Type == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//            if( Type == RelatedIdType.NodeTypeId )
 //            {
 //                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Id );
 //                TargetTable = NodeType.TableName;
 //            }
-//            //else if( Type == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+//            //else if( Type == RelatedIdType.ObjectClassId )
 //            //{
 //            //    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Id );
 //            //    TargetTable = ObjectClass.TableName;
 //            //}
 //            return TargetTable;
 //        }
-//        private CswNbtSubField _getDefaultSubFieldForProperty( CswNbtViewRelationship.PropIdType Type, Int32 Id )
+//        private CswNbtSubField _getDefaultSubFieldForProperty( PropIdType Type, Int32 Id )
 //        {
 //            CswNbtSubField ret = null;
-//            if( Type == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+//            if( Type == PropIdType.NodeTypePropId )
 //            {
 //                CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
 //                ret = NodeTypeProp.FieldTypeRule.SubFields.Default;
 //            }
-//            else if( Type == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+//            else if( Type == PropIdType.ObjectClassPropId )
 //            {
 //                CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
 //                ret = ObjectClassProp.FieldTypeRule.SubFields.Default;
 //            }
 //            return ret;
 //        }
-//        private CswNbtSubField _getSubFieldForProperty( CswNbtViewRelationship.PropIdType Type, Int32 Id, CswNbtSubField.SubFieldName SubFieldName )
+//        private CswNbtSubField _getSubFieldForProperty( PropIdType Type, Int32 Id, CswNbtSubField.SubFieldName SubFieldName )
 //        {
 //            CswNbtSubField ret = null;
-//            if( Type == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+//            if( Type == PropIdType.NodeTypePropId )
 //            {
 //                CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
 //                if( NodeTypeProp != null )
 //                    ret = NodeTypeProp.FieldTypeRule.SubFields[SubFieldName];
 //            }
-//            else if( Type == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+//            else if( Type == PropIdType.ObjectClassPropId )
 //            {
 //                CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
 //                ret = ObjectClassProp.FieldTypeRule.SubFields[SubFieldName];
@@ -499,13 +499,13 @@
 //            bool AbortThis = false;
 
 //            string TargetTable = "nodes";
-//            if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//            if( Relationship.SecondType == RelatedIdType.NodeTypeId )
 //            {
 //                CswNbtMetaDataNodeType SecondNodeType = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
 //                if( SecondNodeType != null )
 //                    TargetTable = SecondNodeType.TableName;
 //            }
-//            //else if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+//            //else if( Relationship.SecondType == RelatedIdType.ObjectClassId )
 //            //{
 //            //    CswNbtMetaDataObjectClass SecondObjectClass = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
 //            //    TargetTable = SecondObjectClass.TableName;
@@ -535,7 +535,7 @@
 //                if( GroupBySubField.RelationalTable == string.Empty )
 //                {
 //                    Select += " ,g." + GroupBySubField.Column + " groupname";
-//                    if( Relationship.GroupByPropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+//                    if( Relationship.GroupByPropType == PropIdType.ObjectClassPropId )
 //                        From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
 //                                                      from jct_nodes_props j 
 //                                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid 
@@ -645,9 +645,9 @@
 //                {
 //                    if( RelationshipSubField.RelationalTable == string.Empty )
 //                    {
-//                        if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+//                        if( Relationship.PropOwner == PropOwnerType.First )
 //                        {
-//                            if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+//                            if( Relationship.PropType == PropIdType.NodeTypePropId )
 //                            {
 //                                Where += @"and n." + TargetPkColumnName + @" in (
 //                                        select jnp.field1_fk
@@ -672,7 +672,7 @@
 //                        }
 //                        else
 //                        {
-//                            if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+//                            if( Relationship.PropType == PropIdType.NodeTypePropId )
 //                            {
 //                                Where += @"and n." + TargetPkColumnName + @" in (
 //                                        select jnp.nodeid
@@ -695,7 +695,7 @@
 //                    }
 //                    else
 //                    {
-//                        if( Relationship.PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+//                        if( Relationship.PropOwner == PropOwnerType.First )
 //                        {
 //                            if( Key.NodeId.TableName != RelationshipSubField.RelationalTable )
 //                                throw new CswDniException( ErrorType.Error, "Invalid Key", "The Key's Table does not match the Relationship Property's Table" );
@@ -721,7 +721,7 @@
 //            else if( Key.NodeSpecies == NodeSpecies.Root )
 //            {
 //                // Adding at the Root
-//                if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+//                if( Relationship.SecondType == RelatedIdType.NodeTypeId )
 //                    Where += "and (t.firstversionid = " + Relationship.SecondId + ") ";
 //                else
 //                    Where += "and (o.objectclassid = " + Relationship.SecondId + ") ";
@@ -738,9 +738,9 @@
 //                foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
 //                {
 //                    ICswNbtFieldTypeRule FilterFieldTypeRule = null;
-//                    if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+//                    if( Prop.Type == CswNbtPropType.NodeTypePropId )
 //                        FilterFieldTypeRule = Prop.NodeTypeProp.FieldTypeRule;
-//                    else if( Prop.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+//                    else if( Prop.Type == CswNbtPropType.ObjectClassPropId )
 //                        FilterFieldTypeRule = Prop.ObjectClassProp.FieldTypeRule;
 
 //                    string FilterValue = FilterFieldTypeRule.renderViewPropFilter( _RunAsUser, Filter );
@@ -752,7 +752,7 @@
 //                        {
 //                            if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
 //                            {
-//                                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+//                                if( Prop.Type == CswNbtPropType.NodeTypePropId )
 //                                {
 //                                    Where += @" and (n." + TargetPkColumnName + @" not in (
 //                                            select jnp.nodeid
@@ -807,7 +807,7 @@
 //                            }
 //                            else if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
 //                            {
-//                                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+//                                if( Prop.Type == CswNbtPropType.NodeTypePropId )
 //                                {
 //                                    Where += @" and n." + TargetPkColumnName + @" in (select s." + TargetPkColumnName + @" 
 //                                                               from " + TargetTable + @" s
@@ -850,7 +850,7 @@
 //                            }
 //                            else if( Filter.Value != String.Empty )
 //                            {
-//                                if( Prop.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+//                                if( Prop.Type == CswNbtPropType.NodeTypePropId )
 //                                {
 //                                    Where += @" and n." + TargetPkColumnName + @" in (select s." + TargetPkColumnName + @"
 //                                                               from " + TargetTable + @" s

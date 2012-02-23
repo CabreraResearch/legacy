@@ -392,6 +392,11 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassPropName );
         }
+        public Int32 getNodeTypePropIdByObjectClassProp( string ObjectClassPropName )
+        {
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdByObjectClassProp( NodeTypeId, ObjectClassPropName );
+        }
+
 
         public Int32 GetMaximumTabOrder()
         {

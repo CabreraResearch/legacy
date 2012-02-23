@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 
-                if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                if( Relationship.SecondType == NbtViewRelatedIdType.ObjectClassId &&
                     Relationship.SecondId != Int32.MinValue )
                 {
                     CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstLevelNodeTypes.Add( NT );
                     }
                 }
-                else if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                else if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId &&
                          Relationship.SecondId != Int32.MinValue )
                 {
                     FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.SecondId ) );

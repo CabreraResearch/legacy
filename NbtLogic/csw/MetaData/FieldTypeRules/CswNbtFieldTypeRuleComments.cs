@@ -19,9 +19,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
 
             CommentSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Comments );   //bz # 6628: Gestalt instead of Field1
-            CommentSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                       CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Null;
+            CommentSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            CommentSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CommentSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( CommentSubField );
 
         }//ctor

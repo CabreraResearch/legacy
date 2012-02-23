@@ -18,8 +18,14 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "nodetypeid",
                                                           "nodetypename",
+                                                          _CswNbtMetaDataResources.NodeTypeTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypeTableUpdate,
                                                           makeNodeType );
+        }
+
+        public void AddToCache( CswNbtMetaDataNodeType NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()

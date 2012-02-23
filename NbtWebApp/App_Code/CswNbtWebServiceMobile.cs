@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -37,8 +38,8 @@ namespace ChemSW.Nbt.WebServices
         {
             // All Views
             JObject RetJson = new JObject();
-            Collection<CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
-            foreach( CswNbtView MobileView in MobileViews )
+            Dictionary<CswNbtViewId, CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
+            foreach( CswNbtView MobileView in MobileViews.Values )
             {
                 RetJson.Add( new JProperty( MobileView.ViewId.ToString(), MobileView.ViewName ) );
             }
