@@ -47,7 +47,7 @@
                         Csw.crawlObject(result, function (childObj) {
                             var cell2name = childObj.username;
                             var cell1 = table.cell(row, 1);
-                            cell1.$.CswImageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Fire,
+                            cell1.imageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Fire,
                                 AlternateText: 'Burn Session',
                                 ID: o.ID + '_burn_' + childObj.sessionid,
                                 onClick: Csw.makeDelegate(function (sessionid) { handleBurn(sessionid); }, childObj.sessionid)

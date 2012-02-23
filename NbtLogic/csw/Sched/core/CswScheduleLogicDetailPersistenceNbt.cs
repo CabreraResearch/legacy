@@ -112,9 +112,6 @@ namespace ChemSW.Nbt.Sched
                 ReturnVal.RunParams.Add( CurrentRow[NbtScheduledRuleParamsColumns.ParamName.ToString()].ToString(), CurrentRow[NbtScheduledRuleParamsColumns.ParamVal.ToString()] );
             }
 
-
-
-
             return ( ReturnVal );
 
         }//read
@@ -132,14 +129,19 @@ namespace ChemSW.Nbt.Sched
                     DataTable DataTableScheduledRules = CswTableUpdateScheduledRules.getTable( " where lower(rulename)='" + CswScheduleLogicDetail.RuleName.ToLower() + "'" );
                     DataRow DataRowScheduledRules = DataTableScheduledRules.Rows[0];
 
-                    DataRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = CswScheduleLogicDetail.MaxRunTimeMs;
+                    //These are really control parameters that should be set only from the configuratiion application (or directly
+                    //from the rules table). If we write these values here, we end up overwriting whatever changes are made to these
+                    //values while the schedule service is running. I can't imagine a situation in which a schedule rule or even
+                    //the schedule service infrastructure should be writing these values. 
+                    //DataRowScheduledRules[NbtScheduledRuleColumns.MaxRunTimeMs.ToString()] = CswScheduleLogicDetail.MaxRunTimeMs;
+                    //DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = CswScheduleLogicDetail.Recurrence.ToString();
+                    //DataRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = CswScheduleLogicDetail.Interval;
+                    //DataRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = CswScheduleLogicDetail.ReprobateThreshold;
+
                     DataRowScheduledRules[NbtScheduledRuleColumns.ThreadId.ToString()] = CswScheduleLogicDetail.ThreadId;
                     DataRowScheduledRules[NbtScheduledRuleColumns.Reprobate.ToString()] = CswConvert.ToDbVal( CswScheduleLogicDetail.Reprobate );
                     DataRowScheduledRules[NbtScheduledRuleColumns.TotalRogueCount.ToString()] = CswScheduleLogicDetail.TotalRogueCount;
                     DataRowScheduledRules[NbtScheduledRuleColumns.StatusMessage.ToString()] = CswScheduleLogicDetail.StatusMessage;
-                    DataRowScheduledRules[NbtScheduledRuleColumns.Recurrence.ToString()] = CswScheduleLogicDetail.Recurrence.ToString();
-                    DataRowScheduledRules[NbtScheduledRuleColumns.Interval.ToString()] = CswScheduleLogicDetail.Interval;
-                    DataRowScheduledRules[NbtScheduledRuleColumns.ReprobateThreshold.ToString()] = CswScheduleLogicDetail.ReprobateThreshold;
                     DataRowScheduledRules[NbtScheduledRuleColumns.RunStartTime.ToString()] = CswScheduleLogicDetail.RunStartTime;
                     DataRowScheduledRules[NbtScheduledRuleColumns.RunEndTime.ToString()] = CswScheduleLogicDetail.RunEndTime;
                     DataRowScheduledRules[NbtScheduledRuleColumns.FailedCount.ToString()] = CswScheduleLogicDetail.FailedCount;

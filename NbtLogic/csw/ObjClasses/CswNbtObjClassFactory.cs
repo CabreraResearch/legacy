@@ -176,9 +176,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassUser( CswNbtResources, Node );
                     break;
 
-                //case CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass:
-                //    ReturnVal = new CswNbtObjClassVendor( CswNbtResources, Node );
-                //    break;
+                case CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass:
+                    ReturnVal = new CswNbtObjClassVendor( CswNbtResources, Node );
+                    break;
 
 
                 default:
@@ -342,9 +342,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassUser( CswNbtResources );
                     break;
 
-                //case CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass:
-                //    ReturnVal = new CswNbtObjClassVendor( CswNbtResources );
-                //    break;
+                case CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass:
+                    ReturnVal = new CswNbtObjClassVendor( CswNbtResources );
+                    break;
 
 
                 default:

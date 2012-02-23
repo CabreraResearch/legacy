@@ -144,10 +144,12 @@
 
             var html = '<option ',
                 $option,
-                attr = Csw.controls.dom.attributes();
+                attr = Csw.controls.dom.attributes(),
+                display;
 
+            display = Csw.string(internal.display, internal.value);
             attr.add('value', internal.value);
-            attr.add('text', internal.display);
+            attr.add('text', display);
             if (internal.isSelected) {
                 attr.add('selected', 'selected');
             }
@@ -156,7 +158,7 @@
             }
             html += attr.get();
             html += '>';
-            html += internal.display;
+            html += display;
             html += '</option>';
             $option = $(html);
 
