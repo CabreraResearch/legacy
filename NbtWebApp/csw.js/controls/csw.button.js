@@ -74,28 +74,19 @@
                 $.extend(internal, options);
             }
             internal.type = Csw.enums.inputTypes.button;
+            $.extend(external, Csw.controls.input(internal));
+            
             var buttonOpt;
-            var internalOnClick = Csw.makeDelegate(internal.onClick);
 
             function onClick() {
-                var handle;
-                var doEnable = function () {
-                    external.enable();
-                    Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, handle);
-                };
-                if (internal.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
-                    external.disable();
-                    handle = Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
+                if (false === Csw.ajax.ajaxInProgress()) {
+                    if (internal.disableOnClick) {
+                        external.disable();
+                    }
                 }
-                Csw.tryExec(internalOnClick, arguments);
             }
-
-            internal.onClick = onClick;
-
-            $.extend(external, Csw.controls.input(internal));
-
-
-
+            external.bind('click', onClick);            
+            
             external.propNonDom({
                 enabledText: internal.enabledText,
                 disabledText: internal.disabledText
@@ -118,7 +109,7 @@
                 buttonOpt.label = internal.disabledText;
             }
             external.$.button(buttonOpt);
-
+            
         } ());
 
         return external;

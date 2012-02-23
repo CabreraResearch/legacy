@@ -46,13 +46,7 @@
             }
         };
         external.events = {
-            CswNodeDelete: 'CswNodeDelete',
-            ajax: {
-                ajaxStart: 'ajaxStart',
-                ajaxStop: 'ajaxStop',
-                globalAjaxStart: 'globalAjaxStart',
-                globalAjaxStop: 'globalAjaxStop'
-            }
+            CswNodeDelete: 'CswNodeDelete'
         };
         external.wizardSteps_InspectionDesign = {
             step1: {step: 1, description: 'Select an Inspection Target'},
