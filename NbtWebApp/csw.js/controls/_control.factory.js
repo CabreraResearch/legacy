@@ -86,7 +86,7 @@
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
             var ret = Csw.controls.dom.propDom($element, name, value);
-            if (arguments.length === 2) {
+            if (arguments.length === 2 || Csw.isPlainObject(name)) {
                 ret = external;
             }
             return ret;
@@ -97,7 +97,7 @@
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
             var ret = Csw.controls.dom.propNonDom($element, name, value);
-            if (arguments.length === 2) {
+            if (arguments.length === 2 || Csw.isPlainObject(name)) {
                 ret = external;
             }
             return ret;
