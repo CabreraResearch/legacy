@@ -80,7 +80,7 @@
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                         thumbnailCell.img({
                             src: nodeObj.thumbnailurl
-                        }).css('max-width', '90%');
+                        }).css({ maxWidth: '90%' });
                     }
                     thumbnailCell.br();
 
@@ -165,7 +165,7 @@
                     scrollingDiv = parent.div({
                         ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }),
                         height: o.maxheight + 'px',
-                        overflow: 'auto'
+                        styles: { overflow: 'auto' }
                     });
 
                     layoutTable = scrollingDiv.layoutTable({
