@@ -78,14 +78,13 @@
             var internalOnClick = Csw.makeDelegate(internal.onClick);
 
             function onClick() {
-                var handle;
                 var doEnable = function () {
                     external.enable();
-                    Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, handle);
+                    Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
                 };
                 if (internal.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
                     external.disable();
-                    handle = Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
+                    Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
                 }
                 Csw.tryExec(internalOnClick, arguments);
             }
