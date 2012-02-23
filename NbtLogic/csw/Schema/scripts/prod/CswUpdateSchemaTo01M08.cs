@@ -32,8 +32,6 @@ namespace ChemSW.Nbt.Schema
                 null == _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SI_Scheduler" ))
             {
                 //  implement nodetypes:                
-                
-                Int32 schedntid = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "GeneratorClass", "SI_Scheduler", newCat ).FirstVersionNodeTypeId;
 
                 // ExampleSiTargetItem
                 // ExampleSiTargetItem Group
@@ -83,7 +81,9 @@ namespace ChemSW.Nbt.Schema
                 qTable.Rows.Add( dr4 );
                 
                 JObject newObj = wiz.createInspectionDesignTabsAndProps( qTable, "SI_protocol", "SI_target", newCat );
-
+                //Int32 schedntid = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "GeneratorClass", "SI_Scheduler", newCat ).FirstVersionNodeTypeId;
+                CswNbtMetaDataNodeType schedNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
+                
                 //create nodes
 
                 //routeNode.NodeName = "Example_SI_Route";
@@ -94,14 +94,17 @@ namespace ChemSW.Nbt.Schema
                 groupNodeAsGroup.Name.Text = "Example Group";
                 groupNodeAsGroup.postChanges(true);
 
-                //ExampleMonthlyInspectionSchedule (disabled)
-                CswNbtNode schedNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( schedntid, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                CswNbtObjClassGenerator schedNodeAsGenerator = CswNbtNodeCaster.AsGenerator( schedNode );
-                schedNodeAsGenerator.Owner.RelatedNodeId = groupNode.NodeId;
-                schedNodeAsGenerator.TargetType.SelectedNodeTypeIds.Add( wiz.DesignNtId.ToString() );
-                schedNodeAsGenerator.ParentType.SelectedNodeTypeIds.Add( wiz.TargetNtId.ToString() );
-                schedNodeAsGenerator.Description.Text = "Example Schedule";
-                schedNodeAsGenerator.postChanges(true);
+                if( null != schedNT )
+                {
+                    //ExampleMonthlyInspectionSchedule (disabled)
+                    CswNbtNode schedNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( schedNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    CswNbtObjClassGenerator schedNodeAsGenerator = CswNbtNodeCaster.AsGenerator( schedNode );
+                    schedNodeAsGenerator.Owner.RelatedNodeId = groupNode.NodeId;
+                    schedNodeAsGenerator.TargetType.SelectedNodeTypeIds.Add( wiz.DesignNtId.ToString() );
+                    schedNodeAsGenerator.ParentType.SelectedNodeTypeIds.Add( wiz.TargetNtId.ToString() );
+                    schedNodeAsGenerator.Summary.Text = "Example Schedule";
+                    schedNodeAsGenerator.postChanges( true );
+                }
 
                 //ExampleItem
                 CswNbtNode itemNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( wiz.TargetNtId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
