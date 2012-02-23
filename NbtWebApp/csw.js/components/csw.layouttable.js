@@ -74,34 +74,29 @@
             }
         };
 
-        internal.addRow = function () {
+        internal.expandCellSet = function (expRow, expCol) {
             var tablemaxrows = external.table.maxrows(),
-                tablemaxcolumns = external.table.maxcolumns();
+                tablemaxcolumns = external.table.maxcolumns(),
+                requestRow = tablemaxrows + expRow,
+                requestCol = tablemaxcolumns + expCol;
 
             // add a row and column
-            internal.getCell((tablemaxrows / internal.cellSet.rows) + 1,
-                             (tablemaxcolumns / internal.cellSet.columns));
+            //internal.getCell(requestRow, requestCol);
+            external.table.cell(requestRow, requestCol, internal.ID);
             external.table.finish(null, internal.firstRow, internal.firstCol);
 
             if (external.isConfig()) {
                 external.table.findCell('.CswLayoutTable_cell')
                     .addClass('CswLayoutTable_configcell');
             }
+        };
+
+        internal.addRow = function () {
+            internal.expandCellSet(internal.cellSet.rows, 0);
         }; // _addRowAndColumn()
 
         internal.addColumn = function () {
-            var tablemaxrows = external.table.maxrows(),
-                tablemaxcolumns = external.table.maxcolumns();
-
-            // add a row and column
-            internal.getCell((tablemaxrows / internal.cellSet.rows),
-                             (tablemaxcolumns / internal.cellSet.columns) + 1);
-            external.table.finish(null, internal.firstRow, internal.firstCol);
-
-            if (external.isConfig()) {
-                external.table.findCell('.CswLayoutTable_cell')
-                    .addClass('CswLayoutTable_configcell');
-            }
+            internal.expandCellSet(0, internal.cellSet.columns);
         }; // internal.addColumn()
 
         internal.getCell = function (getRow, getColumn, cellsetrow, cellsetcolumn) {
@@ -114,8 +109,8 @@
             if (column < 1) {
                 column = 1;
             }
-            realrow = ((row - 1) * internal.cellSet.rows) + cellsetrow;
-            realcolumn = ((column - 1) * internal.cellSet.columns) + cellsetcolumn;
+            realrow = ((row - 1) * internal.cellSet.rows) + Csw.number(cellsetrow, 1);
+            realcolumn = ((column - 1) * internal.cellSet.columns) + Csw.number(cellsetcolumn, 1);
 
             cell = external.table.cell(realrow, realcolumn, internal.ID);
 
@@ -229,7 +224,7 @@
         };
 
         internal.onDrop = function (ev, dd, $dropCell) {
-            var $dragDiv, dragCell, dragCells, dropCells, opt;
+            var $dragDiv, dragCell, dragCells, dropCells;
             if (external.isConfig(external.table)) {
                 $dragDiv = dd.draggable;
                 dragCell = Csw.controls.factory($dragDiv.parent(), {});

@@ -80,8 +80,8 @@
             /// <param name="row" type="Number">Row number</param>
             /// <param name="col" type="Number">Column number</param>
             /// <returns type="Object">A Csw table cell object.</returns>
-            var thisRow, align, newCell, retCell = {}, html = '',
-                iterations = 0, thisCol,
+            var thisRow, align, newCell, retCell = {}, html,
+                thisCol,
                 attr = Csw.controls.dom.attributes();
 
             if (external.length() > 0 &&
@@ -174,11 +174,14 @@
         external.maxcolumns = function () {
             /// <summary>Get the maximum table column number</summary>
             /// <returns type="Number">Number of columns</returns>
-            var rows = external.children('tbody').children('tr'),
+            var body = external.children('tbody'),
+                maxrows = external.maxrows(),
                 maxcolumns = 0,
-                r, columns;
-            for (r = 0; r < rows.length(); r += 1) {
-                columns = rows.find('td:eq(' + r.toString() + ')');
+                r, c, columns, row;
+
+            for (r = 0; r < maxrows; r += 1) {
+                row = body.find('tr:eq(' + r + ')');
+                columns = row.children('td');
                 if (columns.length() > maxcolumns) {
                     maxcolumns = columns.length();
                 }
