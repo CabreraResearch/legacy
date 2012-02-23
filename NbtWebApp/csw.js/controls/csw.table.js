@@ -75,13 +75,13 @@
             }
         } ());
 
-        external.cell = function (row, col, id) {
+        external.cell = function (row, col) {
             /// <summary>Get a cell from the table</summary>
             /// <param name="row" type="Number">Row number</param>
             /// <param name="col" type="Number">Column number</param>
             /// <returns type="Object">A Csw table cell object.</returns>
             var thisRow, align, newCell, retCell = {}, html,
-                thisCol,
+                thisCol, id,
                 attr = Csw.controls.dom.attributes();
 
             if (external.length() > 0 &&
@@ -96,8 +96,8 @@
                     col = 1;
                 }
 
-                if (id) {
-                    retCell = external.find('#' + Csw.controls.dom.makeId(id, 'row_' + row, 'col_' + col, '', false));
+                if (internal.ID) {
+                    retCell = external.find('#' + Csw.controls.dom.makeId(internal.ID, 'row_' + row, 'col_' + col, '', false));
                 }
                 if (Csw.isNullOrEmpty(retCell)) {
                     retCell = external.children('tbody')
@@ -115,7 +115,7 @@
                     while (col > thisCol) {
                         html = '';
                         thisCol += 1;
-                        id = Csw.controls.dom.makeId(id, 'row_' + row, 'col_' + thisCol, '', false);
+                        id = Csw.controls.dom.makeId(internal.ID, 'row_' + row, 'col_' + thisCol, '', false);
                         align = external.propNonDom('cellalign');
                         if ((thisRow.children('td').length() === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
                             (thisRow.children('td').length() % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
@@ -140,8 +140,6 @@
                             retCell = newCell;
                         }
                     }
-                    //                    $cell = thisRow.children('td:eq(' + Csw.number(col - 1) + ')').$;
-                    //                    Csw.controls.factory($cell, retCell);
                 }
 
                 retCell.align = function (alignTo) {
@@ -180,7 +178,7 @@
                 r, c, columns, row;
 
             for (r = 0; r < maxrows; r += 1) {
-                row = body.find('tr:eq(' + r + ')');
+                row = body.children('tr:eq(' + r + ')');
                 columns = row.children('td');
                 if (columns.length() > maxcolumns) {
                     maxcolumns = columns.length();

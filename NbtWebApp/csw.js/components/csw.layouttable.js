@@ -82,7 +82,7 @@
 
             // add a row and column
             //internal.getCell(requestRow, requestCol);
-            external.table.cell(requestRow, requestCol, internal.ID);
+            external.table.cell(requestRow, requestCol);
             external.table.finish(null, internal.firstRow, internal.firstCol);
 
             if (external.isConfig()) {
@@ -112,7 +112,7 @@
             realrow = ((row - 1) * internal.cellSet.rows) + Csw.number(cellsetrow, 1);
             realcolumn = ((column - 1) * internal.cellSet.columns) + Csw.number(cellsetcolumn, 1);
 
-            cell = external.table.cell(realrow, realcolumn, internal.ID);
+            cell = external.table.cell(realrow, realcolumn);
 
             return cell;
         };
