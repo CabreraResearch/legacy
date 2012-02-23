@@ -10,16 +10,17 @@
             $searchbox_parent: null,
             $searchresults_parent: null,
             $searchfilters_parent: null,
-            width: '200px',
-            align: 'right',
             onBeforeSearch: null,
             onAfterSearch: null,
             onLoadView: null,
-            maxheight: '600',
+            searchresults_maxheight: '600',
+            searchbox_width: '200px',
+
             searchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
             saveurl: '/NbtWebApp/wsNBT.asmx/saveSearchAsView',
+            filters: {},
             searchterm: '',
-            filters: {}
+            filterHideThreshold: 5
         };
         if (params) $.extend(internal, params);
 
@@ -36,7 +37,7 @@
             internal.searchinput = cswtable.cell(1, 1).input({
                 ID: Csw.controls.dom.makeId(internal.ID, '', '_input'),
                 type: Csw.enums.inputTypes.text,
-                width: internal.width
+                width: internal.searchbox_width
             });
 
             internal.searchbutton = cswtable.cell(1, 2).button({
@@ -80,7 +81,7 @@
                             internal.$searchresults_parent.text('No Results Found');
                         },
                         tabledata: data.table,
-                        maxheight: internal.maxheight
+                        maxheight: internal.searchresults_maxheight
                     });
 
                     // Filter panel
@@ -90,12 +91,13 @@
                         $parent: internal.$searchfilters_parent
                     }).css({
                         paddingTop: '15px',
-                        height: internal.maxheight + 'px',
+                        height: internal.searchresults_maxheight + 'px',
                         overflow: 'auto'
                     });
 
                     fdiv.span({ text: 'Searched For: ' + internal.searchterm }).br();
                     ftable = fdiv.table({});
+
                     // Filters in use
                     var hasFilters = false;
                     var ftable_row = 1;
@@ -135,23 +137,62 @@
                     fdiv.br();
 
                     // Filters to add
-                    function makeFilterLink(thisFilter) {
-                        fdiv.link({
+                    function makeFilterLink(thisFilter, div, filterCount) {
+                        var flink = div.link({
                             ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
                             text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                             onClick: function () {
                                 internal.addFilter(thisFilter);
                                 return false;
                             }
-                        }).br();
+                        });
+                        div.br();
                     }
                     function makeFilterSet(thisFilterSet, Name) {
-                        fdiv.append('<b>' + Name + ':</b>');
-                        fdiv.br();
-                        Csw.each(thisFilterSet, makeFilterLink);
-                        fdiv.br();
-                        fdiv.br();
+
+                        var thisfilterdivid = Csw.controls.dom.makeId(filtersdivid, '', Name);
+                        var thisfilterdiv = fdiv.div({ ID: thisfilterdivid });
+                        var filterCount = 0;
+                        var hiddenfiltersdiv;
+
+                        thisfilterdiv.append('<b>' + Name + ':</b>');
+                        thisfilterdiv.br();
+                        Csw.each(thisFilterSet, function (thisFilter) {
+
+                            if (filterCount === internal.filterHideThreshold) {
+
+                                hiddenfiltersdiv = thisfilterdiv.div({ ID: Csw.controls.dom.makeId(thisfilterdivid, '', 'hidediv') });
+                                hiddenfiltersdiv.hide();
+
+                                var morelink = thisfilterdiv.link({
+                                    ID: Csw.controls.dom.makeId(thisfilterdivid, '', 'more'),
+                                    text: 'more...',
+                                    cssclass: 'filtermorelink',
+                                    onClick: function () {
+                                        if (morelink.toggleState === Csw.enums.toggleState.on) {
+                                            morelink.text('less...');
+                                            hiddenfiltersdiv.show();
+                                        } else {
+                                            morelink.text('more...');
+                                            hiddenfiltersdiv.hide();
+                                        }
+                                        return false;
+                                    } // onClick()
+                                }); // link()
+
+                            } //  if (filterCount === internal.filterHideThreshold) {
+
+                            if (filterCount >= internal.filterHideThreshold) {
+                                makeFilterLink(thisFilter, hiddenfiltersdiv, filterCount);
+                            } else {
+                                makeFilterLink(thisFilter, thisfilterdiv, filterCount);
+                            }
+                            filterCount++;
+                        });
+                        thisfilterdiv.br();
+                        thisfilterdiv.br();
                     }
+
                     Csw.each(data.filters, makeFilterSet);
 
                     Csw.tryExec(internal.onAfterSearch);

@@ -468,9 +468,15 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    foreach( Int32 NodeTypeId in NodeTypeIds.Keys )
+                    // Sort by count descending, then (unfortunately) by nodetypeid
+                    Dictionary<Int32, Int32> sortedDict = ( from entry
+                                                               in NodeTypeIds
+                                                             orderby entry.Value descending, entry.Key ascending
+                                                             select entry
+                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
+                    foreach( Int32 NodeTypeId in sortedDict.Keys )
                     {
-                        _addNodeTypeFilter( FiltersObj, NodeTypeId, NodeTypeIds[NodeTypeId] );
+                        _addNodeTypeFilter( FiltersObj, NodeTypeId, sortedDict[NodeTypeId] );
                     }
                 }
             } // if( false == SingleNodeType )
@@ -478,7 +484,7 @@ namespace ChemSW.Nbt.WebServices
             if( SingleNodeType )
             {
                 // Filter on property values in the results
-                Dictionary<Int32, SortedList<string, Int32>> PropCounts = new Dictionary<Int32, SortedList<string, Int32>>();
+                Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
                 Int32 ChildCnt = Tree.getChildNodeCount();
                 for( Int32 n = 0; n < ChildCnt; n++ )
                 {
@@ -498,7 +504,7 @@ namespace ChemSW.Nbt.WebServices
 
                             if( false == PropCounts.ContainsKey( NodeTypePropId ) )
                             {
-                                PropCounts[NodeTypePropId] = new SortedList<string, Int32>();
+                                PropCounts[NodeTypePropId] = new Dictionary<string, Int32>();
                             }
                             if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
                             {
@@ -512,9 +518,15 @@ namespace ChemSW.Nbt.WebServices
 
                 foreach( Int32 NodeTypePropId in PropCounts.Keys )
                 {
-                    foreach( string Value in PropCounts[NodeTypePropId].Keys )
+                    // Sort by count descending, then alphabetically by gestalt
+                    Dictionary<string, Int32> sortedDict = ( from entry 
+                                                               in PropCounts[NodeTypePropId] 
+                                                          orderby entry.Value descending, entry.Key ascending
+                                                           select entry 
+                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
+                    foreach( string Value in sortedDict.Keys )
                     {
-                        _addPropFilter( FiltersObj, NodeTypePropId, Value, PropCounts[NodeTypePropId][Value] );
+                        _addPropFilter( FiltersObj, NodeTypePropId, Value, sortedDict[Value] );
                     }
                 }
             } // if( SingleNodeType )

@@ -369,6 +369,11 @@
             none: {name: 'none'}
         };
 
+        external.toggleState = {
+            on: { name: 'on' },
+            off: { name: 'off' }
+        };
+
         return external;
     }());
     Csw.register('enum', enums);
