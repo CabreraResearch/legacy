@@ -340,9 +340,9 @@
             if (external.table.children().length() > 0) {
                 external.table.findCell('.CswLayoutTable_cell')
                     .removeClass('CswLayoutTable_configcell');
-            }
-            internal.disableDrag();
 
+                internal.disableDrag();
+            }
             internal.setConfigMode('false');
             external.table.trigger(internal.ID + 'CswLayoutTable_onConfigOff');
             //internal.toggleRemove();
@@ -368,9 +368,9 @@
             if (external.table.children().length() > 0) {
                 external.table.findCell('.CswLayoutTable_cell')
                     .addClass('CswLayoutTable_configcell');
-            }
-            internal.enableDrag();
 
+                internal.enableDrag();
+            }
             internal.setConfigMode('true');
             external.table.trigger(internal.ID + 'CswLayoutTable_onConfigOn');
         }; // external.configOn()
@@ -405,9 +405,9 @@
                 OddCellRightAlign: internal.OddCellRightAlign,
                 width: internal.width,
                 align: internal.align,
-                onCreateCell: function (ev, newCell, realrow, realcolumn, isFillerCell) {
+                onCreateCell: function (ev, newCell, realrow, realcolumn) {
                     if (false === Csw.isNullOrEmpty(newCell)) {
-                        internal.onCreateCell(newCell, realrow, realcolumn, isFillerCell);
+                        internal.onCreateCell(newCell, realrow, realcolumn);
                     }
                 }
             });
