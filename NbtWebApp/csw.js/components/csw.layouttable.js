@@ -74,7 +74,7 @@
             }
         };
 
-        internal.expandCellSet = function (expRow, expCol) {
+        internal.expandLayoutTable = function (expRow, expCol) {
             var tablemaxrows = external.table.maxrows(),
                 tablemaxcolumns = external.table.maxcolumns(),
                 requestRow = tablemaxrows + expRow,
@@ -92,11 +92,11 @@
         };
 
         internal.addRow = function () {
-            internal.expandCellSet(internal.cellSet.rows, 0);
+            internal.expandLayoutTable(internal.cellSet.rows, 0);
         }; // _addRowAndColumn()
 
         internal.addColumn = function () {
-            internal.expandCellSet(0, internal.cellSet.columns);
+            internal.expandLayoutTable(0, internal.cellSet.columns);
         }; // internal.addColumn()
 
         internal.getCell = function (getRow, getColumn, cellsetrow, cellsetcolumn) {
