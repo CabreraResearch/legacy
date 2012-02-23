@@ -922,8 +922,6 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources._PreventVersioning = OldPreventVersioning;
 
 
-            refreshAll();
-
             //will need to refresh auto-views
             _RefreshViewForNodetypeId.Add( NodeTypeId );
 
