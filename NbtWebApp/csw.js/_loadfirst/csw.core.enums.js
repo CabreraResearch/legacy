@@ -4,7 +4,7 @@
 (function _cswEnums() {
     'use strict';
     
-    var enums = (function _enums() {
+    var enums = (function () {
 
         var external = {
             constants: {unknownEnum: 'unknown'}
