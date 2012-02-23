@@ -17,8 +17,14 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "nodetypepropid",
                                                           "propname",
+                                                          _CswNbtMetaDataResources.NodeTypePropTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypePropTableUpdate,
                                                           makeNodeTypeProp );
+        }
+
+        public void AddToCache( CswNbtMetaDataNodeTypeProp NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()
@@ -98,6 +104,14 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
         }
+        public Int32 getNodeTypePropId( Int32 NodeTypeId, string PropName )
+        {
+            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + PropName.ToLower() + "'" );
+        }
+        public Int32 getNodeTypePropIdByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
+        {
+            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
+        }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropFirstVersion( Int32 NodeTypePropId )
         {
@@ -119,6 +133,32 @@ namespace ChemSW.Nbt.MetaData
                                                                                                      from nodetype_props 
                                                                                                     where firstpropversionid = " + NodeTypeProp.FirstPropVersionId.ToString() + ")" );
         }
+
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getLayoutProps( Int32 NodeTypeId, Int32 TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool PropsInLayout = true )
+        {
+            string WhereClause = "where nodetypepropid ";
+            if( PropsInLayout )
+            {
+                WhereClause += " in ";
+            }
+            else
+            {
+                WhereClause += " not in ";
+            }
+            WhereClause += @" (select nodetypepropid 
+                                 from nodetype_layout
+                                where layouttype = '" + LayoutType.ToString() + @"' 
+                                  and nodetypeid = " + NodeTypeId.ToString() + @" ";
+            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
+            {
+                WhereClause += "and nodetypetabsetid = " + TabId.ToString();
+            }
+            WhereClause += ")";
+
+            return _CollImpl.getWhere( WhereClause ).Cast<CswNbtMetaDataNodeTypeProp>();
+
+        } // getPropsInLayout()
+        
 
         //public void ClearKeys()
         //{

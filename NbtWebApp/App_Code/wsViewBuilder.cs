@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Fetches all props and all prop filters for a ViewProp collection
         /// </summary>
-        private JObject _getVbProperties( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, CswNbtViewRelationship.RelatedIdType RelatedIdType )
+        private JObject _getVbProperties( IEnumerable<CswViewBuilderProp> ViewBuilderProperties, NbtViewRelatedIdType RelatedIdType )
         {
             JObject PropObj = new JObject();
 
@@ -113,14 +113,13 @@ namespace ChemSW.Nbt.WebServices
                         Selected = false;
                     }
 
-                    switch( RelatedIdType )
+                    if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
                     {
-                        case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                            PropObj["properties"]["Specific Properties"][Prop.MetaDataPropName] = PropNodeObj;
-                            break;
-                        case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                            PropObj["properties"]["Generic Properties"][Prop.MetaDataPropName] = PropNodeObj;
-                            break;
+                        PropObj["properties"]["Specific Properties"][Prop.MetaDataPropName] = PropNodeObj;
+                    }
+                    else if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
+                    {
+                        PropObj["properties"]["Generic Properties"][Prop.MetaDataPropName] = PropNodeObj;
                     }
 
                     _getVbPropData( PropNodeObj, Prop );
@@ -133,29 +132,23 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Fetches all props and all prop filters for a NodeType
         /// </summary>
-        private JObject _getVbProperties( CswNbtViewRelationship.RelatedIdType Relationship, Int32 NodeTypeOrObjectClassId )
+        private JObject _getVbProperties( NbtViewRelatedIdType Relationship, Int32 NodeTypeOrObjectClassId )
         {
             JObject ViewBuilderProps = new JObject();
 
             if( Int32.MinValue != NodeTypeOrObjectClassId )
             {
                 IEnumerable<CswViewBuilderProp> ViewBuilderProperties = null;
-                switch( Relationship )
+                if( Relationship == NbtViewRelatedIdType.NodeTypeId )
                 {
-                    case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                        {
-                            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
-                            Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
-                            ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
-                            break;
-                        }
-
-                    case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                        {
-                            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
-                            ViewBuilderProperties = _getObjectClassProps( ObjectClass );
-                            break;
-                        }
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
+                    Dictionary<Int32, string> UniqueProps = new Dictionary<int, string>();
+                    ViewBuilderProperties = _getNodeTypeProps( NodeType, ref UniqueProps );
+                }
+                else if( Relationship == NbtViewRelatedIdType.ObjectClassId )
+                {
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
+                    ViewBuilderProperties = _getObjectClassProps( ObjectClass );
                 }
                 ViewBuilderProps = _getVbProperties( ViewBuilderProperties, Relationship );
             }
@@ -170,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != ViewBuilderProp && ViewBuilderProp.FieldTypeRule.SearchAllowed )
             {
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
-                
+
                 ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
                 ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId.ToString();
                 ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
@@ -247,7 +240,7 @@ namespace ChemSW.Nbt.WebServices
             string FiltId = Filter.ArbitraryId;
             ParentObj[FiltId] = new JObject();
             ParentObj[FiltId]["arbitraryid"] = Filter.ArbitraryId;
-            ParentObj[FiltId]["nodename"] = CswNbtViewXmlNodeName.Filter.ToString().ToLower();
+            ParentObj[FiltId]["nodename"] = NbtViewXmlNodeName.Filter.ToString().ToLower();
             ParentObj[FiltId]["subfield"] = Filter.SubfieldName.ToString();
             ParentObj[FiltId]["value"] = Filter.Value;
             ParentObj[FiltId]["filtermode"] = Filter.FilterMode.ToString();
@@ -290,9 +283,9 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
             if( null != VbProp )
             {
-                CswNbtViewRelationship.RelatedIdType Relationship = VbProp.RelatedIdType;
+                NbtViewRelatedIdType Relationship = VbProp.RelatedIdType;
                 Int32 NodeTypeOrObjectClassId = VbProp.MetaDataPropId;
-                if( Int32.MinValue != NodeTypeOrObjectClassId && CswNbtViewRelationship.RelatedIdType.Unknown != Relationship )
+                if( Int32.MinValue != NodeTypeOrObjectClassId && NbtViewRelatedIdType.Unknown != Relationship )
                 {
                     _getVbPropData( Ret, VbProp );
                 }
@@ -303,13 +296,13 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns all props and prop filters for a NodeType or ObjectClass
         /// </summary>
-        public JObject getVbProperties( string RelatedIdType, string NodeTypeOrObjectClassId, string NodeKey )
+        public JObject getVbProperties( string RelatedIdTypeStr, string NodeTypeOrObjectClassId, string NodeKey )
         {
             JObject ViewBuilderProps = new JObject();
-            if( ( !string.IsNullOrEmpty( RelatedIdType ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) ) || !string.IsNullOrEmpty( NodeKey ) )
+            if( ( !string.IsNullOrEmpty( RelatedIdTypeStr ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) ) || !string.IsNullOrEmpty( NodeKey ) )
             {
                 Int32 TypeOrObjectClassId = Int32.MinValue;
-                CswNbtViewRelationship.RelatedIdType Relationship = CswNbtViewRelationship.RelatedIdType.Unknown;
+                NbtViewRelatedIdType Relationship = NbtViewRelatedIdType.Unknown;
                 if( string.IsNullOrEmpty( NodeTypeOrObjectClassId ) && !string.IsNullOrEmpty( NodeKey ) )
                 {
                     CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
@@ -317,18 +310,19 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Node.getNodeType() )
                     {
                         TypeOrObjectClassId = Node.NodeTypeId;
-                        Relationship = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+                        Relationship = NbtViewRelatedIdType.NodeTypeId;
                     }
                     else if( null != Node.getObjectClass() )
                     {
                         TypeOrObjectClassId = Node.getObjectClassId();
-                        Relationship = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
+                        Relationship = NbtViewRelatedIdType.ObjectClassId;
                     }
                 }
                 else if( false == string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
                 {
                     TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
-                    CswNbtViewRelationship.RelatedIdType.TryParse( RelatedIdType, true, out Relationship );
+                    Relationship = (NbtViewRelatedIdType) RelatedIdTypeStr;
+                    //NbtViewRelatedIdType.TryParse( RelatedIdTypeStr, true, out Relationship );
                 }
                 ViewBuilderProps = _getVbProperties( Relationship, TypeOrObjectClassId );
             }
@@ -375,8 +369,9 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject Ret = new JObject();
 
-            var PropType = CswNbtViewProperty.CswNbtPropType.Unknown;
-            CswNbtViewProperty.CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+            //var PropType = CswNbtPropType.Unknown;
+            //CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
+            NbtViewPropType PropType = (NbtViewPropType) FilterProp["proptype"].ToString();
 
             string FiltArbitraryId = CswConvert.ToString( FilterProp["filtarbitraryid"] );
             string PropArbitraryId = CswConvert.ToString( FilterProp["proparbitraryid"] );
@@ -384,7 +379,7 @@ namespace ChemSW.Nbt.WebServices
             if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
 
             CswNbtViewPropertyFilter ViewPropFilt = null;
-            if( PropType != CswNbtViewProperty.CswNbtPropType.Unknown )
+            if( PropType != NbtViewPropType.Unknown )
             {
                 if( false == string.IsNullOrEmpty( PropArbitraryId ) )
                 {
@@ -396,7 +391,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Undefined, string.Empty, false );
+                        ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty, false );
                     }
 
                     //Case 23779, 23937, 24064
@@ -410,16 +405,16 @@ namespace ChemSW.Nbt.WebServices
 
             if( ViewPropFilt != null )
             {
-                CswNbtSubField.SubFieldName FieldName;
-                Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
+                CswNbtSubField.SubFieldName FieldName = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                //Enum.TryParse( CswConvert.ToString( FilterProp["subfield"] ), true, out FieldName );
 
-                CswNbtPropFilterSql.PropertyFilterMode FilterMode;
-                Enum.TryParse( CswConvert.ToString( FilterProp["filter"] ), true, out FilterMode );
+                CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
+                //Enum.TryParse( CswConvert.ToString( FilterProp["filter"] ), true, out FilterMode );
 
                 string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
                 if( FieldName != CswNbtSubField.SubFieldName.Unknown &&
-                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Undefined )
+                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Unknown )
                 {
                     ViewPropFilt.FilterMode = FilterMode;
                     ViewPropFilt.SubfieldName = FieldName;
@@ -441,7 +436,7 @@ namespace ChemSW.Nbt.WebServices
             IEnumerable<CswViewBuilderProp> ViewBuilderProps = _getNodeTypeProps( NodeType, ref UniqueProps );
             if( ViewBuilderProps != null && ViewBuilderProps.Count() > 0 )
             {
-                NodeTypeProps = _getVbProperties( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.NodeTypeId );
+                NodeTypeProps = _getVbProperties( ViewBuilderProps, NbtViewRelatedIdType.NodeTypeId );
             }
             return NodeTypeProps;
         }
@@ -456,7 +451,7 @@ namespace ChemSW.Nbt.WebServices
             IEnumerable<CswViewBuilderProp> ViewBuilderProps = _getObjectClassProps( ObjectClass );
             if( ViewBuilderProps != null && ViewBuilderProps.Count() > 0 )
             {
-                NodeTypeProps = _getVbProperties( ViewBuilderProps, CswNbtViewRelationship.RelatedIdType.ObjectClassId );
+                NodeTypeProps = _getVbProperties( ViewBuilderProps, NbtViewRelatedIdType.ObjectClassId );
             }
             return NodeTypeProps;
         }
@@ -478,11 +473,11 @@ namespace ChemSW.Nbt.WebServices
         public readonly CswNbtMetaDataFieldType.NbtFieldType FieldType;
         public readonly ICswNbtFieldTypeRule FieldTypeRule = null;
         public readonly CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
-        public readonly CswNbtViewProperty.CswNbtPropType Type = CswNbtViewProperty.CswNbtPropType.Unknown;
-        public readonly CswNbtViewRelationship.RelatedIdType RelatedIdType = CswNbtViewRelationship.RelatedIdType.Unknown;
+        public readonly NbtViewPropType Type = NbtViewPropType.Unknown;
+        public readonly NbtViewRelatedIdType RelatedIdType = NbtViewRelatedIdType.Unknown;
         public readonly ArrayList Filters = new ArrayList();
         public readonly bool SortBy = false;
-        public readonly CswNbtViewProperty.PropertySortMethod SortMethod = CswNbtViewProperty.PropertySortMethod.Ascending;
+        public readonly NbtViewPropertySortMethod SortMethod = NbtViewPropertySortMethod.Ascending;
         public readonly Int32 Width = Int32.MinValue;
         public readonly string PropName = string.Empty;
         public CswCommaDelimitedString AssociatedPropIds = new CswCommaDelimitedString();
@@ -503,13 +498,13 @@ namespace ChemSW.Nbt.WebServices
         {
             FieldType = NodeTypeProp.getFieldType().FieldType;
             ListOptions.FromString( NodeTypeProp.ListOptions );
-            RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+            RelatedIdType = NbtViewRelatedIdType.NodeTypeId;
             MetaDataPropNameWithQuestionNo = NodeTypeProp.PropNameWithQuestionNo;
             MetaDataPropId = NodeTypeProp.FirstPropVersionId;
             MetaDataPropName = NodeTypeProp.PropName;
             MetaDataTypeName = NodeTypeProp.getNodeType().NodeTypeName;
             FieldTypeRule = NodeTypeProp.getFieldTypeRule();
-            Type = CswNbtViewProperty.CswNbtPropType.NodeTypePropId;
+            Type = NbtViewPropType.NodeTypePropId;
             PropName = MetaDataPropName;
             AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
@@ -518,37 +513,37 @@ namespace ChemSW.Nbt.WebServices
         {
             FieldType = ObjectClassProp.getFieldType().FieldType;
             ListOptions.FromString( ObjectClassProp.ListOptions );
-            RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+            RelatedIdType = NbtViewRelatedIdType.NodeTypeId;
             MetaDataPropNameWithQuestionNo = ObjectClassProp.PropNameWithQuestionNo;
             MetaDataPropId = ObjectClassProp.ObjectClassPropId;
             MetaDataPropName = ObjectClassProp.PropName;
             MetaDataTypeName = ObjectClassProp.getObjectClass().ObjectClass.ToString();
             FieldTypeRule = ObjectClassProp.getFieldTypeRule();
-            Type = CswNbtViewProperty.CswNbtPropType.ObjectClassPropId;
+            Type = NbtViewPropType.ObjectClassPropId;
             PropName = MetaDataPropName;
             AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtViewProperty ViewProperty )
         {
-            if( ViewProperty.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId &&
+            if( ViewProperty.Type == NbtViewPropType.NodeTypePropId &&
                 null != ViewProperty.NodeTypeProp )
             {
                 FieldType = ViewProperty.NodeTypeProp.getFieldType().FieldType;
                 ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
-                RelatedIdType = CswNbtViewRelationship.RelatedIdType.NodeTypeId;
+                RelatedIdType = NbtViewRelatedIdType.NodeTypeId;
                 MetaDataPropNameWithQuestionNo = ViewProperty.NodeTypeProp.PropNameWithQuestionNo;
                 MetaDataPropId = ViewProperty.NodeTypeProp.FirstPropVersionId;
                 MetaDataPropName = ViewProperty.NodeTypeProp.PropName;
                 MetaDataTypeName = ViewProperty.NodeTypeProp.getNodeType().NodeTypeName;
                 FieldTypeRule = ViewProperty.NodeTypeProp.getFieldTypeRule();
             }
-            else if( ViewProperty.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId &&
+            else if( ViewProperty.Type == NbtViewPropType.ObjectClassPropId &&
                 null != ViewProperty.ObjectClassProp )
             {
                 FieldType = ViewProperty.ObjectClassProp.getFieldType().FieldType;
                 ListOptions.FromString( ViewProperty.ObjectClassProp.ListOptions );
-                RelatedIdType = CswNbtViewRelationship.RelatedIdType.ObjectClassId;
+                RelatedIdType = NbtViewRelatedIdType.ObjectClassId;
                 MetaDataPropNameWithQuestionNo = ViewProperty.ObjectClassProp.PropNameWithQuestionNo;
                 MetaDataPropId = ViewProperty.ObjectClassProp.ObjectClassPropId;
                 MetaDataPropName = ViewProperty.ObjectClassProp.PropName;

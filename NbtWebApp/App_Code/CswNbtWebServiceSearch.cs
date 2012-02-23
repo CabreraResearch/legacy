@@ -295,22 +295,22 @@ namespace ChemSW.Nbt.WebServices
                                                         .Cast<JObject>()
                                                         .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        CswNbtViewRelationship.RelatedIdType PropType;
-                        Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
+                        NbtViewRelatedIdType PropType = (NbtViewRelatedIdType) FilterProp["relatedidtype"].ToString();
+                        //Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
 
                         Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["nodetypeorobjectclassid"] );
                         Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
                         CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
 
-                        CswNbtSubField.SubFieldName SubField;
-                        Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
+                        CswNbtSubField.SubFieldName SubField = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                        //Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
 
-                        CswNbtPropFilterSql.PropertyFilterMode FilterMode;
-                        Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
+                        CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
+                        //Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
 
                         string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
-                        if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                        if( PropType == NbtViewRelatedIdType.ObjectClassId &&
                             Int32.MinValue != NodeTypeProp.ObjectClassPropId )
                         {
                             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.WebServices
                                 _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                             }
                         }
-                        else if( PropType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                        else if( PropType == NbtViewRelatedIdType.NodeTypeId &&
                             Int32.MinValue != NodeTypeProp.PropId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
@@ -579,7 +579,7 @@ namespace ChemSW.Nbt.WebServices
 
             // NodeType filter becomes Relationship
             Int32 NodeTypeId = Int32.MinValue;
-            CswNbtMetaDataNodeType NodeType= null;
+            CswNbtMetaDataNodeType NodeType = null;
             CswNbtViewRelationship ViewRel = null;
             foreach( JProperty FilterProp in Filters.Properties() )
             {

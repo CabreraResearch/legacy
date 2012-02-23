@@ -20,10 +20,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            SelectedNodeTypeIdsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.NodeType );
-            SelectedNodeTypeIdsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                                      CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                                      CswNbtPropFilterSql.PropertyFilterMode.Null;
+            SelectedNodeTypeIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.NodeType );
+            SelectedNodeTypeIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            SelectedNodeTypeIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            SelectedNodeTypeIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( SelectedNodeTypeIdsSubField );
 
         }//ctor
@@ -56,46 +56,49 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             string ReturnVal = "";
             string FullColumn = _FilterTableAlias + CswNbtSubField.Column.ToString();
-            switch( CswNbtViewPropertyFilterIn.FilterMode )
+
+            if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Contains )
             {
-                case CswNbtPropFilterSql.PropertyFilterMode.Contains:
-                    // BZ 7938
-                    // We store the nodetypes by ID, but users will search by name.  So we have to decode.
-                    Collection<CswNbtMetaDataNodeType> MatchingNodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                    foreach( CswNbtMetaDataNodeType NodeType in _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypes() )
+                // BZ 7938
+                // We store the nodetypes by ID, but users will search by name.  So we have to decode.
+                Collection<CswNbtMetaDataNodeType> MatchingNodeTypes = new Collection<CswNbtMetaDataNodeType>();
+                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypes() )
+                {
+                    if( NodeType.NodeTypeName.ToLower().IndexOf( CswNbtViewPropertyFilterIn.Value.ToLower() ) > -1 )
                     {
-                        if( NodeType.NodeTypeName.ToLower().IndexOf( CswNbtViewPropertyFilterIn.Value.ToLower() ) > -1 )
-                        {
-                            MatchingNodeTypes.Add( NodeType );
-                        }
+                        MatchingNodeTypes.Add( NodeType );
                     }
-                    if( MatchingNodeTypes.Count > 0 )
+                }
+                if( MatchingNodeTypes.Count > 0 )
+                {
+                    ReturnVal = "(";
+                    bool first = true;
+                    foreach( CswNbtMetaDataNodeType NodeType in MatchingNodeTypes )
                     {
-                        ReturnVal = "(";
-                        bool first = true;
-                        foreach( CswNbtMetaDataNodeType NodeType in MatchingNodeTypes )
-                        {
-                            if( !first )
-                                ReturnVal += " or ";
-                            ReturnVal += "'" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + NodeType.FirstVersionNodeTypeId.ToString() + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "%'";
-                            first = false;
-                        }
-                        ReturnVal += ")";
+                        if( !first )
+                            ReturnVal += " or ";
+                        ReturnVal += "'" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + NodeType.FirstVersionNodeTypeId.ToString() + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "%'";
+                        first = false;
                     }
-                    else
-                    {
-                        // We didn't find a match.  This is better than nothing.
-                        ReturnVal = "'" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + CswNbtViewPropertyFilterIn.Value + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "%'";
-                    }
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
-                    ReturnVal = FullColumn + " is not null";
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.Null:
-                    ReturnVal = FullColumn + " is null";
-                    break;
-                default:
-                    throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for NodeTypeSelect fields" ) );
+                    ReturnVal += ")";
+                }
+                else
+                {
+                    // We didn't find a match.  This is better than nothing.
+                    ReturnVal = "'" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + CswNbtViewPropertyFilterIn.Value + CswNbtNodePropNodeTypeSelect.delimiter.ToString() + "%'";
+                }
+            }
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+            {
+                ReturnVal = FullColumn + " is not null";
+            }
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+            {
+                ReturnVal = FullColumn + " is null";
+            }
+            else
+            {
+                throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for NodeTypeSelect fields" ) );
                 //break;
             }
 

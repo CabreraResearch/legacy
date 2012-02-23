@@ -376,16 +376,16 @@ namespace ChemSW.Nbt.WebServices
 
             if( ViewProperty.SortBy )
             {
-                switch( ViewProperty.SortMethod )
+                if( ViewProperty.SortMethod == NbtViewPropertySortMethod.Ascending )
                 {
-                    case CswNbtViewProperty.PropertySortMethod.Ascending:
-                        _SortBy = JqGridSortBy.asc;
-                        break;
-                    case CswNbtViewProperty.PropertySortMethod.Descending:
-                        _SortBy = JqGridSortBy.desc;
-                        break;
+                    _SortBy = JqGridSortBy.asc;
+                }
+                else if( ViewProperty.SortMethod == NbtViewPropertySortMethod.Descending )
+                {
+                    _SortBy = JqGridSortBy.desc;
                 }
             }
+            
 
             _LiteralColumnName = ViewProperty.PropName.ToLower();
             _UniqueColumnName = ( _LiteralColumnName + "_" + ViewProperty.MetaDataPropId ).Replace( " ", "_" );

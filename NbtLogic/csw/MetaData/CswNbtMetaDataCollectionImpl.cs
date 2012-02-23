@@ -10,6 +10,7 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtMetaDataCollectionImpl
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
+        private CswTableSelect _TableSelect;
         private CswTableUpdate _TableUpdate;
         private string _PkColumnName;
         private string _NameColumnName;
@@ -20,15 +21,66 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataCollectionImpl( CswNbtMetaDataResources CswNbtMetaDataResources,
                                              string PkColumnName,
                                              string NameColumnName,
+                                             CswTableSelect TableSelect,
                                              CswTableUpdate TableUpdate,
                                              MakeMetaDataObjectHandler MetaDataObjectMaker )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
+            _TableSelect = TableSelect;
             _TableUpdate = TableUpdate;
             _PkColumnName = PkColumnName;
             _NameColumnName = NameColumnName;
             _MetaDataObjectMaker = MetaDataObjectMaker;
         } // constructor
+
+        /// <summary>
+        ///  Add an ICswNbtMetaDataObject to the Cache 
+        ///  (for use by MetaData for newly created objects)
+        /// </summary>
+        public void AddToCache(ICswNbtMetaDataObject NewObj)
+        {
+            if( false == _Cache.ContainsKey( NewObj.UniqueId ) )
+            {
+                _Cache.Add( NewObj.UniqueId, NewObj );
+            }
+        }
+
+        private Dictionary<Int32, ICswNbtMetaDataObject> _Cache = new Dictionary<Int32, ICswNbtMetaDataObject>();
+        private ICswNbtMetaDataObject _makeObj( DataRow Row )
+        {
+            ICswNbtMetaDataObject ret = null;
+            Int32 PkValue = CswConvert.ToInt32( Row[_PkColumnName] );
+            if( _Cache.ContainsKey( PkValue ) )
+            {
+                // In order to guarantee only one reference per row, use the existing reference
+                // and, to prevent dirty writes, remove the row
+                ret = _Cache[PkValue];
+                Row.Table.Rows.Remove( Row );
+            }
+            else
+            {
+                ret = _MetaDataObjectMaker( _CswNbtMetaDataResources, Row );
+                _Cache[PkValue] = ret;
+            }
+            return ret;
+        }
+
+
+        private Collection<ICswNbtMetaDataObject> _makeObjs( DataTable Table )
+        {
+            Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
+            Collection<DataRow> RowsToIterate = new Collection<DataRow>();
+            // We have to iterate rows separately, because _makeObj() can remove a row
+            foreach( DataRow Row in Table.Rows )
+            {
+                RowsToIterate.Add( Row );
+            }
+            foreach( DataRow Row in RowsToIterate )
+            {
+                Coll.Add( _makeObj( Row ) );
+            }
+            return Coll;
+        } // _makeObjs()
 
         public void clearCache()
         {
@@ -37,6 +89,9 @@ namespace ChemSW.Nbt.MetaData
             _PksWhere = null;
             _ByPk = null;
             _getWhere = null;
+
+            // Don't clear this one
+            // _Cache = null;
         }
 
         private Collection<ICswNbtMetaDataObject> _All = null;
@@ -44,12 +99,8 @@ namespace ChemSW.Nbt.MetaData
         {
             if( _All == null )
             {
-                _All = new Collection<ICswNbtMetaDataObject>();
                 DataTable Table = _TableUpdate.getTable();
-                foreach( DataRow Row in Table.Rows )
-                {
-                    _All.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
-                }
+                _All = _makeObjs( Table );
             }
             return _All;
         } // getAll()
@@ -75,7 +126,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 CswCommaDelimitedString Select = new CswCommaDelimitedString();
                 Select.Add( _PkColumnName );
-                DataTable Table = _TableUpdate.getTable( Select, string.Empty, Int32.MinValue, Where, false );
+                DataTable Table = _TableSelect.getTable( Select, string.Empty, Int32.MinValue, Where, false );
 
                 Collection<Int32> Coll = new Collection<Int32>();
                 foreach( DataRow Row in Table.Rows )
@@ -97,6 +148,8 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         } // getPksFirst()
+
+
 
         private Dictionary<string, Int32> _PkDict = null;
         public Dictionary<string, Int32> getPkDict()
@@ -120,7 +173,7 @@ namespace ChemSW.Nbt.MetaData
                 CswCommaDelimitedString Select = new CswCommaDelimitedString();
                 Select.Add( _PkColumnName );
                 Select.Add( _NameColumnName );
-                DataTable Table = _TableUpdate.getTable( Select, string.Empty, Int32.MinValue, Where, false );
+                DataTable Table = _TableSelect.getTable( Select, string.Empty, Int32.MinValue, Where, false );
 
                 Dictionary<string, Int32> Coll = new Dictionary<string, Int32>();
                 foreach( DataRow Row in Table.Rows )
@@ -147,7 +200,7 @@ namespace ChemSW.Nbt.MetaData
                     DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
                     if( Table.Rows.Count > 0 )
                     {
-                        _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                        _ByPk[Pk] = _makeObj( Table.Rows[0] );
                     }
                     else
                     {
@@ -158,7 +211,7 @@ namespace ChemSW.Nbt.MetaData
             } // if( Pk != Int32.MinValue )
             return ret;
         } // getByPk()
-
+        
         private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;
         public Collection<ICswNbtMetaDataObject> getWhere( string WhereClause )
         {
@@ -168,13 +221,8 @@ namespace ChemSW.Nbt.MetaData
             }
             if( false == _getWhere.ContainsKey( WhereClause ) )
             {
-                Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
                 DataTable Table = _TableUpdate.getTable( WhereClause );
-                foreach( DataRow Row in Table.Rows )
-                {
-                    Coll.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
-                }
-                _getWhere[WhereClause] = Coll;
+                _getWhere[WhereClause] = _makeObjs( Table );
             }
             return _getWhere[WhereClause];
         } // getWhere()
@@ -189,6 +237,31 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         } // getWhereFirst()
+
+        private Dictionary<string, string> _getNameWhere = null;
+        public string getNameWhereFirst( string WhereClause )
+        {
+            if( _getNameWhere == null )
+            {
+                _getNameWhere = new Dictionary<string, string>();
+            }
+            if( false == _getNameWhere.ContainsKey( WhereClause ) )
+            {
+                CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+                SelectCols.Add( _NameColumnName );
+                DataTable Table = _TableSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
+                if( Table.Rows.Count > 0 )
+                {
+                    _getNameWhere[WhereClause] = Table.Rows[0][_NameColumnName].ToString();
+                }
+                else
+                {
+                    _getNameWhere[WhereClause] = string.Empty;
+                }
+            }
+            return _getNameWhere[WhereClause];
+        } // getNameWhereFirst()
+
 
     } // public class CswNbtMetaDataCollectionImpl
 } // namespace ChemSW.Nbt.MetaData

@@ -88,8 +88,8 @@ namespace ChemSW.Nbt.ObjClasses
             //{
             //    CswNbtMetaDataNodeType ParentNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] ) );
             //    // Only need a view if parent is defined and parent is different than owner
-            //    if( ParentNT != null && ( ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() && OwnerNTP.FKValue != ParentNT.NodeTypeId ) ||
-            //                              ( OwnerNTP.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() && OwnerNTP.FKValue != ParentNT.ObjectClass.ObjectClassId ) ) )
+            //    if( ParentNT != null && ( ( OwnerNTP.FKType == RelatedIdType.NodeTypeId.ToString() && OwnerNTP.FKValue != ParentNT.NodeTypeId ) ||
+            //                              ( OwnerNTP.FKType == RelatedIdType.ObjectClassId.ToString() && OwnerNTP.FKValue != ParentNT.ObjectClass.ObjectClassId ) ) )
             //    {
             //        // Default view:
             //        //    This Generator nodetype
@@ -115,8 +115,8 @@ namespace ChemSW.Nbt.ObjClasses
             //            if( ParentRelationNTP != null )
             //            {
             //                CswNbtViewRelationship GeneratorViewRel = PView.AddViewRelationship( ThisGeneratorNT, true );
-            //                CswNbtViewRelationship OwnerViewRel = PView.AddViewRelationship( GeneratorViewRel, CswNbtViewRelationship.PropOwnerType.First, OwnerNTP, true );
-            //                CswNbtViewRelationship ParentViewRel = PView.AddViewRelationship( OwnerViewRel, CswNbtViewRelationship.PropOwnerType.Second, ParentRelationNTP, true );
+            //                CswNbtViewRelationship OwnerViewRel = PView.AddViewRelationship( GeneratorViewRel, PropOwnerType.First, OwnerNTP, true );
+            //                CswNbtViewRelationship ParentViewRel = PView.AddViewRelationship( OwnerViewRel, PropOwnerType.Second, ParentRelationNTP, true );
             //                PView.save();
             //            }
 
@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             CswNbtMetaDataNodeTypeProp TargetGroupNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.InspectionTargetGroupPropertyName );
                             if( TargetGroupNtp.IsFK &&
-                                CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == TargetGroupNtp.FKType &&
+                                NbtViewRelatedIdType.NodeTypeId.ToString() == TargetGroupNtp.FKType &&
                                 Int32.MinValue != TargetGroupNtp.FKValue )
                             {
                                 CswNbtMetaDataNodeType InspectionTargetGroupNt = _CswNbtResources.MetaData.getNodeType( TargetGroupNtp.FKValue ).getNodeTypeLatestVersion();
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 foreach( CswNbtMetaDataNodeType MatchingInspectionTargetNt in MatchingInspectionTargetNts )
                                 {
                                     if( DesignTargetNtp.IsFK &&
-                                        CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
+                                        NbtViewRelatedIdType.NodeTypeId.ToString() == DesignTargetNtp.FKType &&
                                         Int32.MinValue != DesignTargetNtp.FKValue )
                                     {
                                         if( MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
             View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
             CswNbtViewRelationship GeneratorRelationship = View.AddViewRelationship( GeneratorObjectClass, false );
             GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
-            CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, CswNbtViewRelationship.PropOwnerType.Second, GeneratorProp, false );
+            CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
             CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
             CswNbtViewPropertyFilter IsFutureYesFilter = View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True", false );
 

@@ -71,19 +71,27 @@ namespace ChemSW.Nbt
             }
         } // IsQuickLaunch
 
-        public enum ViewType
+        public sealed class ViewType : CswEnum<ViewType>
         {
-            Unknown,
-            Root,
-            View,
-            //ViewCategory, 
-            Category,
-            Action,
-            Report,
-            //ReportCategory, 
-            Search,
-            RecentView
-        };
+            private ViewType( String Name ) : base( Name ) { }
+            public static IEnumerable<ViewType> _All { get { return CswEnum<ViewType>.All; } }
+            public static explicit operator ViewType( string str )
+            {
+                ViewType ret = Parse( str );
+                return ( ret != null ) ? ret : ViewType.Unknown;
+            }
+            public static readonly ViewType Unknown = new ViewType( "Unknown" );
+
+            public static readonly ViewType Root = new ViewType( "Root" );
+            public static readonly ViewType View = new ViewType( "View" );
+            //public static readonly ViewType ViewCategory  = new ViewType( "ViewCategory " );
+            public static readonly ViewType Category = new ViewType( "Category" );
+            public static readonly ViewType Action = new ViewType( "Action" );
+            public static readonly ViewType Report = new ViewType( "Report" );
+            //public static readonly ViewType ReportCategory = new ViewType( "ReportCategory" );
+            public static readonly ViewType Search = new ViewType( "Search" );
+            public static readonly ViewType RecentView = new ViewType( "RecentView" );
+        }
 
         /// <summary>
         /// Visibility permission setting
@@ -231,7 +239,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by a nodetype property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, CswNbtViewRelationship.PropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -243,7 +251,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by an object class property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, CswNbtViewRelationship.PropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -562,7 +570,7 @@ namespace ChemSW.Nbt
             {
                 if( Relationship.PropId != Int32.MinValue )
                 {
-                    if( Relationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                    if( Relationship.PropType == NbtViewPropIdType.NodeTypePropId )
                     {
                         CswNbtMetaDataNodeTypeProp NewProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropMap[Relationship.PropId] );
                         Relationship.overrideProp( Relationship.PropOwner, NewProp );
@@ -570,7 +578,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType NewNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeMap[Relationship.SecondId] );
                         Relationship.overrideSecond( NewNodeType );
@@ -579,7 +587,7 @@ namespace ChemSW.Nbt
             }
             foreach( CswNbtViewProperty Property in this.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) )
             {
-                if( Property.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                if( Property.Type == NbtViewPropType.NodeTypePropId )
                 {
                     if( NodeTypePropMap.ContainsKey( Property.NodeTypePropId ) )
                         Property.NodeTypePropId = NodeTypePropMap[Property.NodeTypePropId];
@@ -696,25 +704,25 @@ namespace ChemSW.Nbt
                 if( ViewId.get() > 0 )
                     WhereClause += " and nodeviewid <> " + ViewId.get().ToString();
 
-                switch( Visibility )
+                if( Visibility == NbtViewVisibility.User )
                 {
-                    case NbtViewVisibility.User:
-                        // Must be unique against other private views for this user
-                        // Must be unique against all role and global views 
-                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                        WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
-                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
-                        break;
-                    case NbtViewVisibility.Role:
-                        // Must be unique against other role views for the same role
-                        // Must be unique against all private and global views 
-                        WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
-                        WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
-                        WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
-                        break;
-                    case NbtViewVisibility.Global:
-                        // Must be globally unique 
-                        break;
+                    // Must be unique against other private views for this user
+                    // Must be unique against all role and global views 
+                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                    WhereClause += "       and userid = " + UserId.PrimaryKey.ToString() + ")";
+                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                }
+                else if( Visibility == NbtViewVisibility.Role )
+                {
+                    // Must be unique against other role views for the same role
+                    // Must be unique against all private and global views 
+                    WhereClause += " and ((visibility = '" + Visibility.ToString() + "'";
+                    WhereClause += "       and roleid = " + RoleId.PrimaryKey.ToString() + ")";
+                    WhereClause += "      or visibility <> '" + Visibility.ToString() + "')";
+                }
+                else if( Visibility == NbtViewVisibility.Global )
+                {
+                    // Must be globally unique 
                 }
                 // don't include Property views for uniqueness
                 WhereClause += " and visibility <> '" + NbtViewVisibility.Property.ToString() + "'";
@@ -801,7 +809,7 @@ namespace ChemSW.Nbt
             {
                 // Make sure this nodetype/object class is enabled
                 CswNbtViewRelationship ThisRelationship = ViewNode as CswNbtViewRelationship;
-                if( ThisRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                if( ThisRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisRelationship.SecondId );
                     ret = ret && ( ThisNodeType != null );
@@ -842,9 +850,9 @@ namespace ChemSW.Nbt
             bool ReturnVal = false;
             foreach( CswNbtViewRelationship CurrentRelationship in Relationships )
             {
-                if( ( ( CswNbtViewRelationship.RelatedIdType.NodeTypeId == CurrentRelationship.FirstType ) &&
+                if( ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.FirstType ) &&
                      ( CurrentRelationship.FirstId == NodeType.FirstVersionNodeTypeId ) ) ||
-                    ( ( CswNbtViewRelationship.RelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
+                    ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
                      ( CurrentRelationship.SecondId == NodeType.FirstVersionNodeTypeId ) ) )
                 {
                     ReturnVal = true;
@@ -874,7 +882,7 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewProperty CurrentProp in CurrentRelationship.Properties )
                 {
-                    if( CurrentProp.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId &&
+                    if( CurrentProp.Type == NbtViewPropType.NodeTypePropId &&
                         CurrentProp.NodeTypePropId == NodeTypeProp.FirstPropVersionId )
                     {
                         ReturnVal = true;
@@ -1161,7 +1169,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns the CswNbtViewProperty which corresponds to the property type and primary key provided
         /// </summary>
-        public CswNbtViewProperty findPropertyById( CswNbtViewProperty.CswNbtPropType PropType, Int32 PropId )
+        public CswNbtViewProperty findPropertyById( NbtViewPropType PropType, Int32 PropId )
         {
             CswNbtViewProperty ret = null;
             foreach( CswNbtViewRelationship Child in Root.ChildRelationships )
@@ -1172,13 +1180,13 @@ namespace ChemSW.Nbt
             }
             return ret;
         }
-        private static CswNbtViewProperty findPropertyByIdRecursive( CswNbtViewRelationship Relationship, CswNbtViewProperty.CswNbtPropType PropType, Int32 PropId )
+        private static CswNbtViewProperty findPropertyByIdRecursive( CswNbtViewRelationship Relationship, NbtViewPropType PropType, Int32 PropId )
         {
             CswNbtViewProperty ret = null;
             foreach( CswNbtViewProperty ChildProperty in Relationship.Properties )
             {
-                if( ( PropType == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId && ChildProperty.ObjectClassPropId == PropId ) ||
-                    ( PropType == CswNbtViewProperty.CswNbtPropType.NodeTypePropId && ChildProperty.NodeTypePropId == PropId ) )
+                if( ( PropType == NbtViewPropType.ObjectClassPropId && ChildProperty.ObjectClassPropId == PropId ) ||
+                    ( PropType == NbtViewPropType.NodeTypePropId && ChildProperty.NodeTypePropId == PropId ) )
                 {
                     ret = ChildProperty;
                     break;
@@ -1356,7 +1364,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the Property used to sort the View.  Only one property can have this setting.
         /// </summary>
-        public void setSortProperty( CswNbtViewProperty Property, CswNbtViewProperty.PropertySortMethod SortMethod )
+        public void setSortProperty( CswNbtViewProperty Property, NbtViewPropertySortMethod SortMethod )
         {
             clearSortProperty();
             Property.SortBy = true;

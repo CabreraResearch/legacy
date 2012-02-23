@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Data;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
@@ -444,8 +445,8 @@ namespace ChemSW.NbtWebControls
 			CswNbtViewId ProblemsOpenViewId = new CswNbtViewId();
 			CswNbtViewId FindEquipmentViewId = new CswNbtViewId();
 
-            Collection<CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( false );
-            foreach( CswNbtView View in Views )
+            Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( false );
+            foreach( CswNbtView View in Views.Values )
             {
                 if( View.ViewName == "All Equipment" )
                     EquipmentByTypeViewId = View.ViewId;

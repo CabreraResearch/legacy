@@ -16,10 +16,6 @@ namespace ChemSW.Nbt
     {
         public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewRelationship; } }
 
-        public enum RelatedIdType { Unknown, NodeTypeId, ObjectClassId };
-        public enum PropIdType { NodeTypePropId, ObjectClassPropId, Unknown };
-        public enum PropOwnerType { First, Second, Unknown };
-
         // For the Relationship
         public bool Selectable = true;
         //public bool ShowInGrid = true;
@@ -30,36 +26,36 @@ namespace ChemSW.Nbt
         public bool AllowDelete = true;
 
         private Int32 _PropId = Int32.MinValue;
-        private PropIdType _PropType = PropIdType.NodeTypePropId;
-        private PropOwnerType _PropOwner = PropOwnerType.First;
+        private NbtViewPropIdType _PropType = NbtViewPropIdType.NodeTypePropId;
+        private NbtViewPropOwnerType _PropOwner = NbtViewPropOwnerType.First;
         private string _PropName = "";
         private Int32 _FirstId = Int32.MinValue;
         private string _FirstName = "";
-        private RelatedIdType _FirstType = RelatedIdType.NodeTypeId;
+        private NbtViewRelatedIdType _FirstType = NbtViewRelatedIdType.NodeTypeId;
         private Int32 _SecondId = Int32.MinValue;
         private string _SecondName = "";
-        private RelatedIdType _SecondType = RelatedIdType.NodeTypeId;
+        private NbtViewRelatedIdType _SecondType = NbtViewRelatedIdType.NodeTypeId;
         private string _SecondIconFileName = "blank.gif";
         private Int32 _GroupByPropId = Int32.MinValue;
-        private PropIdType _GroupByPropType = PropIdType.NodeTypePropId;
+        private NbtViewPropIdType _GroupByPropType = NbtViewPropIdType.NodeTypePropId;
         private string _GroupByPropName = "";
 
         private const string _ChildRelationshipsName = "childrelationships";
         private const string _PropertiesName = "properties";
 
-        public PropIdType PropType { get { return _PropType; } }
-        public PropOwnerType PropOwner { get { return _PropOwner; } }
+        public NbtViewPropIdType PropType { get { return _PropType; } }
+        public NbtViewPropOwnerType PropOwner { get { return _PropOwner; } }
         public Int32 PropId { get { return _PropId; } }
         public string PropName { get { return _PropName; } }
         public Int32 FirstId { get { return _FirstId; } }
         public string FirstName { get { return _FirstName; } }
-        public RelatedIdType FirstType { get { return _FirstType; } }
+        public NbtViewRelatedIdType FirstType { get { return _FirstType; } }
         public Int32 SecondId { get { return _SecondId; } }
         public string SecondName { get { return _SecondName; } }
-        public RelatedIdType SecondType { get { return _SecondType; } }
+        public NbtViewRelatedIdType SecondType { get { return _SecondType; } }
         public string SecondIconFileName { get { return _SecondIconFileName; } }
         public Int32 GroupByPropId { get { return _GroupByPropId; } }
-        public PropIdType GroupByPropType { get { return _GroupByPropType; } }
+        public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
         public string GroupByPropName { get { return _GroupByPropName; } }
 
 
@@ -68,22 +64,22 @@ namespace ChemSW.Nbt
         public void overrideFirst( CswNbtMetaDataNodeType NodeType )
         {
             if( NodeType != null )
-                setFirst( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName );
+                setFirst( NbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName );
             else
-                setFirst( RelatedIdType.Unknown, Int32.MinValue, string.Empty );
+                setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
         }
         public void overrideFirst( CswNbtMetaDataObjectClass ObjectClass )
         {
             if( ObjectClass != null )
-                setFirst( RelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString() );
+                setFirst( NbtViewRelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString() );
             else
-                setFirst( RelatedIdType.Unknown, Int32.MinValue, string.Empty );
+                setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
         }
-        private void setFirst( RelatedIdType InFirstType, Int32 InFirstId, string InFirstName )
+        private void setFirst( NbtViewRelatedIdType InFirstType, Int32 InFirstId, string InFirstName )
         {
             _FirstType = InFirstType;
             _FirstId = InFirstId;
-            if( InFirstId > 0 && InFirstType == RelatedIdType.NodeTypeId )
+            if( InFirstId > 0 && InFirstType == NbtViewRelatedIdType.NodeTypeId )
             {
                 CswNbtMetaDataNodeType FirstNodeType = _CswNbtResources.MetaData.getNodeType( InFirstId );
                 if( FirstNodeType != null )
@@ -94,17 +90,17 @@ namespace ChemSW.Nbt
 
         public void overrideSecond( CswNbtMetaDataNodeType NodeType )
         {
-            setSecond( RelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
+            setSecond( NbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
         }
         public void overrideSecond( CswNbtMetaDataObjectClass ObjectClass )
         {
-            setSecond( RelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString(), ObjectClass.IconFileName );
+            setSecond( NbtViewRelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString(), ObjectClass.IconFileName );
         }
-        private void setSecond( RelatedIdType InSecondType, Int32 InSecondId, string InSecondName, string InIconFileName )
+        private void setSecond( NbtViewRelatedIdType InSecondType, Int32 InSecondId, string InSecondName, string InIconFileName )
         {
             _SecondType = InSecondType;
             _SecondId = InSecondId;
-            if( InSecondId > 0 && InSecondType == RelatedIdType.NodeTypeId )
+            if( InSecondId > 0 && InSecondType == NbtViewRelatedIdType.NodeTypeId )
             {
                 CswNbtMetaDataNodeType SecondNodeType = _CswNbtResources.MetaData.getNodeType( InSecondId );
                 if( SecondNodeType != null )
@@ -123,12 +119,12 @@ namespace ChemSW.Nbt
             }
         }
 
-        public void overrideProp( PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
+        public void overrideProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
         {
             setProp( InOwnerType, Prop );
         }
 
-        private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
+        private void setProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop )
         {
             CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
             if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
@@ -137,21 +133,21 @@ namespace ChemSW.Nbt
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
-            setPropValue( InOwnerType, PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.getNodeTypePropLatestVersion().PropName );
+            setPropValue( InOwnerType, NbtViewPropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.getNodeTypePropLatestVersion().PropName );
 
-            if( InOwnerType == PropOwnerType.First )
+            if( InOwnerType == NbtViewPropOwnerType.First )
             {
                 overrideFirst( Prop.getNodeType() );
-                if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                     overrideSecond( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
-                else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
                     overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
             }
-            else if( InOwnerType == PropOwnerType.Second )
+            else if( InOwnerType == NbtViewPropOwnerType.Second )
             {
-                if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() )
+                if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                     overrideFirst( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
-                else if( Prop.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() )
+                else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
                     overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
                 overrideSecond( Prop.getNodeType() );
             }
@@ -161,7 +157,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        private void setProp( PropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop )
+        private void setProp( NbtViewPropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop )
         {
             CswNbtMetaDataFieldType FieldType = Prop.getFieldType();
             if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
@@ -170,14 +166,14 @@ namespace ChemSW.Nbt
                 throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
-            setPropValue( InOwnerType, PropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
+            setPropValue( InOwnerType, NbtViewPropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
 
-            if( InOwnerType == PropOwnerType.First )
+            if( InOwnerType == NbtViewPropOwnerType.First )
             {
                 overrideFirst( Prop.getObjectClass() );
                 overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
             }
-            else if( InOwnerType == PropOwnerType.Second )
+            else if( InOwnerType == NbtViewPropOwnerType.Second )
             {
                 overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
                 overrideSecond( Prop.getObjectClass() );
@@ -188,7 +184,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        private void setPropValue( PropOwnerType InOwnerType, PropIdType InPropType, Int32 InPropId, string InPropName )
+        private void setPropValue( NbtViewPropOwnerType InOwnerType, NbtViewPropIdType InPropType, Int32 InPropId, string InPropName )
         {
             _PropOwner = InOwnerType;
             _PropType = InPropType;
@@ -203,13 +199,13 @@ namespace ChemSW.Nbt
 
         public void setGroupByProp( CswNbtMetaDataNodeTypeProp Prop )
         {
-            setGroupByProp( PropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.PropName );
+            setGroupByProp( NbtViewPropIdType.NodeTypePropId, Prop.FirstPropVersionId, Prop.PropName );
         }
         public void setGroupByProp( CswNbtMetaDataObjectClassProp Prop )
         {
-            setGroupByProp( PropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
+            setGroupByProp( NbtViewPropIdType.ObjectClassPropId, Prop.PropId, Prop.PropName );
         }
-        private void setGroupByProp( PropIdType InPropType, Int32 InPropId, string InPropName )
+        private void setGroupByProp( NbtViewPropIdType InPropType, Int32 InPropId, string InPropName )
         {
             _GroupByPropType = InPropType;
             _GroupByPropId = InPropId;
@@ -217,7 +213,7 @@ namespace ChemSW.Nbt
         }
         public void clearGroupBy()
         {
-            _GroupByPropType = PropIdType.Unknown;
+            _GroupByPropType = NbtViewPropIdType.Unknown;
             _GroupByPropId = Int32.MinValue;
             _GroupByPropName = string.Empty;
         }
@@ -265,9 +261,9 @@ namespace ChemSW.Nbt
                 string ArbId = string.Empty;
                 if( Parent != null )
                     ArbId += Parent.ArbitraryId + "_";
-                if( this.SecondType == RelatedIdType.NodeTypeId )
+                if( this.SecondType == NbtViewRelatedIdType.NodeTypeId )
                     ArbId += "NT_";
-                else if( this.SecondType == RelatedIdType.ObjectClassId )
+                else if( this.SecondType == NbtViewRelatedIdType.ObjectClassId )
                     ArbId += "OC_";
                 ArbId += SecondId;
                 return ArbId;
@@ -339,7 +335,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// For a relationship below the root level, determined by a nodetype property
         /// </summary>
-        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, PropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, NbtViewPropOwnerType InOwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
             : base( CswNbtResources, View )
         {
             setProp( InOwnerType, Prop );
@@ -350,7 +346,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// For a relationship below the root level, determined by an object class property
         /// </summary>
-        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, PropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship( CswNbtResources CswNbtResources, CswNbtView View, NbtViewPropOwnerType InOwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
             : base( CswNbtResources, View )
         {
             setProp( InOwnerType, Prop );
@@ -396,20 +392,24 @@ namespace ChemSW.Nbt
                 {
                     if( StringRelationship[1] != String.Empty )
                     {
-                        setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), StringRelationship[4], true ),
-                                      (PropIdType) Enum.Parse( typeof( PropIdType ), StringRelationship[2], true ),
+                        //setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), StringRelationship[4], true ),
+                        //              (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), StringRelationship[2], true ),
+                        setPropValue( (NbtViewPropOwnerType) StringRelationship[4],
+                                      (NbtViewPropIdType) StringRelationship[2],
                                       CswConvert.ToInt32( StringRelationship[1] ),
                                       StringRelationship[3] );
                     }
                     if( StringRelationship[5] != String.Empty )
                     {
-                        setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), StringRelationship[6], true ),
+                        //setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), StringRelationship[6], true ),
+                        setFirst( (NbtViewRelatedIdType) StringRelationship[6],
                                   CswConvert.ToInt32( StringRelationship[5] ),
                                   StringRelationship[7] );
                     }
                     if( StringRelationship[8] != String.Empty )
                     {
-                        setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), StringRelationship[9], true ),
+                        //setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), StringRelationship[9], true ),
+                        setSecond( (NbtViewRelatedIdType) StringRelationship[9],
                                    CswConvert.ToInt32( StringRelationship[8] ),
                                    StringRelationship[10],
                                    StringRelationship[11] );
@@ -421,7 +421,10 @@ namespace ChemSW.Nbt
                     //if( StringRelationship[14] != String.Empty )
                     //    ShowInGrid = Convert.ToBoolean( StringRelationship[14] );
                     if( StringRelationship[15] != String.Empty )
-                        AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), StringRelationship[15], true );
+                    {
+                        //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), StringRelationship[15], true );
+                        AddChildren = (NbtViewAddChildrenSetting) StringRelationship[15];
+                    }
                     if( StringRelationship[16] != String.Empty )
                         AllowDelete = Convert.ToBoolean( StringRelationship[16] );
                     if( StringRelationship[17] != String.Empty )
@@ -438,7 +441,8 @@ namespace ChemSW.Nbt
                         ShowInTree = Convert.ToBoolean( StringRelationship[19] );
                     if( StringRelationship[20] != string.Empty )
                     {
-                        setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), StringRelationship[20], true ),
+                        //setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), StringRelationship[20], true ),
+                        setGroupByProp( (NbtViewPropIdType) StringRelationship[20],
                                         CswConvert.ToInt32( StringRelationship[21] ),
                                         StringRelationship[22] );
                     }
@@ -466,14 +470,17 @@ namespace ChemSW.Nbt
             {
                 if( RelationshipNode.Attributes[PropIdAttrName] != null )
                 {
-                    setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), RelationshipNode.Attributes[PropOwnerAttrName].Value, true ),
-                                  (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[PropTypeAttrName].Value, true ),
+                    //setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), RelationshipNode.Attributes[PropOwnerAttrName].Value, true ),
+                    //              (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), RelationshipNode.Attributes[PropTypeAttrName].Value, true ),
+                    setPropValue( (NbtViewPropOwnerType) RelationshipNode.Attributes[PropOwnerAttrName].Value,
+                                  (NbtViewPropIdType) RelationshipNode.Attributes[PropTypeAttrName].Value,
                                   CswConvert.ToInt32( RelationshipNode.Attributes[PropIdAttrName].Value ),
                                   RelationshipNode.Attributes[PropNameAttrName].Value );
                 }
                 if( RelationshipNode.Attributes[FirstIdAttrName] != null )
                 {
-                    setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), RelationshipNode.Attributes[FirstTypeAttrName].Value, true ),
+                    //setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), RelationshipNode.Attributes[FirstTypeAttrName].Value, true ),
+                    setFirst( (NbtViewRelatedIdType) RelationshipNode.Attributes[FirstTypeAttrName].Value,
                               CswConvert.ToInt32( RelationshipNode.Attributes[FirstIdAttrName].Value ),
                               RelationshipNode.Attributes[FirstNameAttrName].Value );
                 }
@@ -483,7 +490,8 @@ namespace ChemSW.Nbt
                     if( RelationshipNode.Attributes[SecondIconFileNameAttrName] != null )
                         icon = RelationshipNode.Attributes[SecondIconFileNameAttrName].Value;
 
-                    setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), RelationshipNode.Attributes[SecondTypeAttrName].Value, true ),
+                    //setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), RelationshipNode.Attributes[SecondTypeAttrName].Value, true ),
+                    setSecond( (NbtViewRelatedIdType) RelationshipNode.Attributes[SecondTypeAttrName].Value,
                                CswConvert.ToInt32( RelationshipNode.Attributes[SecondIdAttrName].Value ),
                                RelationshipNode.Attributes[SecondNameAttrName].Value,
                                icon );
@@ -492,7 +500,8 @@ namespace ChemSW.Nbt
                 {
                     if( RelationshipNode.Attributes[GroupByPropTypeAttrName].Value != string.Empty )
                     {
-                        setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
+                        //setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), RelationshipNode.Attributes[GroupByPropTypeAttrName].Value, true ),
+                        setGroupByProp( (NbtViewPropIdType) RelationshipNode.Attributes[GroupByPropTypeAttrName].Value,
                                         CswConvert.ToInt32( RelationshipNode.Attributes[GroupByPropIdAttrName].Value ),
                                         RelationshipNode.Attributes[GroupByPropNameAttrName].Value );
                     }
@@ -511,8 +520,11 @@ namespace ChemSW.Nbt
                 if( RelationshipNode.Attributes[ShowInTreeAttrName] != null )
                     ShowInTree = Convert.ToBoolean( RelationshipNode.Attributes[ShowInTreeAttrName].Value );
                 if( RelationshipNode.Attributes[AllowAddChildrenAttrName] != null && RelationshipNode.Attributes[AllowAddChildrenAttrName].Value.ToString() != string.Empty )
-                    AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), RelationshipNode.Attributes[AllowAddChildrenAttrName].Value, true );
-                
+                {
+                    //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), RelationshipNode.Attributes[AllowAddChildrenAttrName].Value, true );
+                    AddChildren = (NbtViewAddChildrenSetting) RelationshipNode.Attributes[AllowAddChildrenAttrName].Value;
+                }
+
                 if( RelationshipNode.Attributes[AllowViewAttrName] != null && RelationshipNode.Attributes[AllowViewAttrName].ToString() != string.Empty )
                     AllowView = Convert.ToBoolean( RelationshipNode.Attributes[AllowViewAttrName].Value );
                 if( RelationshipNode.Attributes[AllowEditAttrName] != null && RelationshipNode.Attributes[AllowEditAttrName].ToString() != string.Empty )
@@ -542,12 +554,12 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in RelationshipNode.ChildNodes )
                 {
-                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Relationship.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == NbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationshipNode = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationshipNode );
                     }
-                    if( ChildNode.Name.ToLower() == CswNbtViewXmlNodeName.Property.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == NbtViewXmlNodeName.Property.ToString().ToLower() )
                     {
                         CswNbtViewProperty ChildProp = new CswNbtViewProperty( CswNbtResources, _View, ChildNode );
                         this.addProperty( ChildProp );
@@ -576,8 +588,10 @@ namespace ChemSW.Nbt
                 string _PropNameAttrName = CswConvert.ToString( RelationshipObj[PropNameAttrName] );
                 if( !string.IsNullOrEmpty( _PropIdAttrName ) )
                 {
-                    setPropValue( (PropOwnerType) Enum.Parse( typeof( PropOwnerType ), _PropOwnerAttrName, true ),
-                                  (PropIdType) Enum.Parse( typeof( PropIdType ), _PropTypeAttrName, true ),
+                    //setPropValue( (NbtViewPropOwnerType) Enum.Parse( typeof( NbtViewPropOwnerType ), _PropOwnerAttrName, true ),
+                    //              (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _PropTypeAttrName, true ),
+                    setPropValue( (NbtViewPropOwnerType) _PropOwnerAttrName,
+                                  (NbtViewPropIdType) _PropTypeAttrName,
                                   CswConvert.ToInt32( _PropIdAttrName ),
                                   _PropNameAttrName );
                 }
@@ -587,7 +601,8 @@ namespace ChemSW.Nbt
                 string _FirstIdAttrName = CswConvert.ToString( RelationshipObj[FirstIdAttrName] );
                 if( !string.IsNullOrEmpty( _FirstIdAttrName ) )
                 {
-                    setFirst( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), _FirstTypeAttrName, true ),
+                    //setFirst( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _FirstTypeAttrName, true ),
+                    setFirst( (NbtViewRelatedIdType) _FirstTypeAttrName,
                               CswConvert.ToInt32( _FirstIdAttrName ),
                               _FirstNameAttrName );
                 }
@@ -604,7 +619,8 @@ namespace ChemSW.Nbt
                         icon = _SecondIconFileNameAttrName;
                     }
 
-                    setSecond( (RelatedIdType) Enum.Parse( typeof( RelatedIdType ), _SecondTypeAttrName, true ),
+                    //setSecond( (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), _SecondTypeAttrName, true ),
+                    setSecond( (NbtViewRelatedIdType) _SecondTypeAttrName,
                                CswConvert.ToInt32( _SecondIdAttrName ),
                                _SecondNameAttrName,
                                icon );
@@ -617,7 +633,8 @@ namespace ChemSW.Nbt
                 {
                     if( !string.IsNullOrEmpty( _GroupByPropTypeAttrName ) )
                     {
-                        setGroupByProp( (PropIdType) Enum.Parse( typeof( PropIdType ), _GroupByPropTypeAttrName, true ),
+                        //setGroupByProp( (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _GroupByPropTypeAttrName, true ),
+                        setGroupByProp( (NbtViewPropIdType) _GroupByPropTypeAttrName,
                                         CswConvert.ToInt32( _GroupByPropIdAttrName ),
                                         _GroupByPropNameAttrName );
                     }
@@ -640,7 +657,8 @@ namespace ChemSW.Nbt
                 string _AllowAddChildrenAttrName = CswConvert.ToString( RelationshipObj[AllowAddChildrenAttrName] );
                 if( !string.IsNullOrEmpty( _AllowAddChildrenAttrName ) )
                 {
-                    AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddChildrenAttrName, true );
+                    //AddChildren = (NbtViewAddChildrenSetting) Enum.Parse( typeof( NbtViewAddChildrenSetting ), _AllowAddChildrenAttrName, true );
+                    AddChildren = (NbtViewAddChildrenSetting) _AllowAddChildrenAttrName;
                 }
 
                 if( RelationshipObj[AllowViewAttrName] != null )
@@ -687,7 +705,7 @@ namespace ChemSW.Nbt
                         select (JObject) Relationship.Value
                             into ChildRelationObj
                             let NodeName = CswConvert.ToString( ChildRelationObj["nodename"] )
-                            where NodeName == CswNbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            where NodeName == NbtViewXmlNodeName.Relationship.ToString().ToLower()
                             select new CswNbtViewRelationship( CswNbtResources, _View, ChildRelationObj ) )
                     {
                         this.addChildRelationship( ChildRelationship );
@@ -704,7 +722,7 @@ namespace ChemSW.Nbt
                         select (JObject) Property.Value
                             into PropObj
                             let NodeName = CswConvert.ToString( PropObj["nodename"] )
-                            where NodeName == CswNbtViewXmlNodeName.Property.ToString().ToLower()
+                            where NodeName == NbtViewXmlNodeName.Property.ToString().ToLower()
                             select new CswNbtViewProperty( CswNbtResources, _View, PropObj ) )
                     {
                         this.addProperty( ChildProp );
@@ -723,11 +741,11 @@ namespace ChemSW.Nbt
         private void _setDefaultFilters()
         {
             CswNbtMetaDataObjectClass DefaultFilterOC = null;
-            if( SecondType == RelatedIdType.ObjectClassId )
+            if( SecondType == NbtViewRelatedIdType.ObjectClassId )
             {
                 DefaultFilterOC = _CswNbtResources.MetaData.getObjectClass( SecondId );
             }
-            else if( SecondType == RelatedIdType.NodeTypeId )
+            else if( SecondType == NbtViewRelatedIdType.NodeTypeId )
             {
                 CswNbtMetaDataNodeType DefaultFilterNT = _CswNbtResources.MetaData.getNodeType( SecondId );
                 if( DefaultFilterNT != null )
@@ -854,7 +872,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode RelationshipNode = XmlDoc.CreateNode( XmlNodeType.Element, CswNbtViewXmlNodeName.Relationship.ToString(), "" );
+            XmlNode RelationshipNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.Relationship.ToString(), "" );
 
             if( PropId != Int32.MinValue )
             {
@@ -1007,7 +1025,7 @@ namespace ChemSW.Nbt
         {
             JObject RelationshipObj = new JObject();
 
-            RelationshipObj["nodename"] = CswNbtViewXmlNodeName.Relationship.ToString().ToLower();
+            RelationshipObj["nodename"] = NbtViewXmlNodeName.Relationship.ToString().ToLower();
 
             string RelationshipId = string.Empty;
             if( PropId != Int32.MinValue )
@@ -1096,7 +1114,7 @@ namespace ChemSW.Nbt
                 }
                 if( string.IsNullOrEmpty( RPropName ) )
                 {
-                    RPropName = CswNbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId; ;
+                    RPropName = NbtViewXmlNodeName.Relationship.ToString() + "_" + RelationshipId; ;
                 }
             }
             JProperty RelationshipProp = new JProperty( RPropName, RelationshipObj );
@@ -1153,7 +1171,7 @@ namespace ChemSW.Nbt
                 string NodeText = SecondName;
                 if( PropName != String.Empty )
                 {
-                    if( PropOwner == CswNbtViewRelationship.PropOwnerType.First )
+                    if( PropOwner == NbtViewPropOwnerType.First )
                         NodeText += " (by " + FirstName + "'s " + PropName + ")";
                     else
                         NodeText += " (by " + PropName + ")";

@@ -65,11 +65,11 @@ namespace ChemSW.Nbt.PropTypes
             //    _CswNbtMetaDataNodeTypeProp.FKValue = value;
             //}
         }
-        public CswNbtViewRelationship.PropIdType RelationshipType
+        public NbtViewPropIdType RelationshipType
         {
             get
             {
-                return CswNbtViewRelationship.PropIdType.NodeTypePropId;
+                return NbtViewPropIdType.NodeTypePropId;
             }
         }
 
@@ -84,14 +84,15 @@ namespace ChemSW.Nbt.PropTypes
             //    _CswNbtMetaDataNodeTypeProp.ValuePropId = value;
             //}
         }
-        public CswNbtViewRelationship.PropIdType RelatedPropType
+        public NbtViewPropIdType RelatedPropType
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
-                    return (CswNbtViewRelationship.PropIdType) Enum.Parse( typeof( CswNbtViewRelationship.PropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
-                else
-                    return CswNbtViewRelationship.PropIdType.Unknown;
+                //if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
+                //    return (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
+                //else
+                //    return NbtViewPropIdType.Unknown;
+                return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.ValuePropType;
             }
             //set
             //{
@@ -117,7 +118,7 @@ namespace ChemSW.Nbt.PropTypes
                     throw new CswDniException( "RecalculateReferenceValue(): RelationshipId is not valid:" + RelationshipId.ToString() );
 
                 ICswNbtMetaDataProp RelatedProp = null;
-                if( RelatedPropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
                     RelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
                 else
                     RelatedProp = _CswNbtResources.MetaData.getObjectClassProp( RelatedPropId );
@@ -132,10 +133,10 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtViewRelationship ThisNodeRelationship = ReferenceView.AddViewRelationship( _CswNbtMetaDataNodeTypeProp.getNodeType(), false );
                 ThisNodeRelationship.NodeIdsToFilterIn.Add( _CswNbtNodePropData.NodeId );
 
-                if( RelationshipType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-                    ReferenceView.AddViewRelationship( ThisNodeRelationship, CswNbtViewRelationship.PropOwnerType.First, _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId ), false );
+                if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
+                    ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId ), false );
                 else
-                    ReferenceView.AddViewRelationship( ThisNodeRelationship, CswNbtViewRelationship.PropOwnerType.First, _CswNbtResources.MetaData.getObjectClassProp( RelationshipId ), false );
+                    ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, _CswNbtResources.MetaData.getObjectClassProp( RelationshipId ), false );
 
                 //ReferenceView.Root.NodeIdsToFilterIn.Add(_CswNbtNodePropData.NodeId);
                 //ReferenceView.Root.FilterInNodesRecursively = false;
@@ -153,7 +154,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         ReferenceTree.goToNthChild( 0 );
                         CswNbtNode RelatedNode = ReferenceTree.getNodeForCurrentPosition();
-                        if( RelatedPropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                        if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
                         {
                             Value = ( (CswNbtNodePropWrapper) RelatedNode.Properties[_CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId )] ).Gestalt;
                         }

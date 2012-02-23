@@ -49,10 +49,12 @@
       <SubType>Designer</SubType>
     </None>
     <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M09.cs" />
+    <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M07.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M06.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M05.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M08.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M09.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActQuotas.cs" />

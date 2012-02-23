@@ -18,58 +18,58 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            NameSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
-            NameSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                       CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                       CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Null;
+            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( NameSubField, true );
 
-            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID,true );
-            NodeIdSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                         CswNbtPropFilterSql.PropertyFilterMode.Null;
+            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID, true );
+            NodeIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            NodeIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            NodeIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            NodeIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( NodeIdSubField );
 
-            RowSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Row );
-            RowSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                      CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                      CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                      CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                      CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                      CswNbtPropFilterSql.PropertyFilterMode.Null;
+            RowSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Row );
+            RowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            RowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            RowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            RowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            RowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            RowSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( RowSubField );
 
-            ColumnSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Column );
-            ColumnSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                         CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                         CswNbtPropFilterSql.PropertyFilterMode.Null;
+            ColumnSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.Column );
+            ColumnSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            ColumnSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            ColumnSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            ColumnSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            ColumnSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            ColumnSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( ColumnSubField );
 
-            PathSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.Path );
-            PathSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                       CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Null;
+            PathSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.Path );
+            PathSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            PathSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            PathSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( PathSubField );
 
 
-            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field5, CswNbtSubField.SubFieldName.Barcode );
-            BarcodeSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                          CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                          CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                          CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                          CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                          CswNbtPropFilterSql.PropertyFilterMode.Null;
+            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field5, CswNbtSubField.SubFieldName.Barcode );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            BarcodeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( BarcodeSubField );
 
 
@@ -127,7 +127,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             // Locations have fixed fk relationship fields:
             Int32 LocationObjectClassId = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ).ObjectClassId;
-            NodeTypeProp.SetFK( CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString(), LocationObjectClassId, string.Empty, Int32.MinValue );
+            NodeTypeProp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), LocationObjectClassId, string.Empty, Int32.MinValue );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
@@ -92,7 +93,7 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
                     if( RelationshipProp != null )
                     {
-                        //if (RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString())
+                        //if (RelationshipProp.FKType == RelatedIdType.NodeTypeId.ToString())
                         //{
                         //CswNbtMetaDataNodeType AssemblyNodeType = this.getNodeType(RelationshipProp.FKValue);
                         //CswNbtMetaDataNodeTypeProp AssemblyNodeTypeProp = AssemblyNodeType.getNodeTypeProp(EditedProp.PropName);
@@ -131,7 +132,7 @@ namespace ChemSW.Nbt.MetaData
 
                         //}
                         //}
-                        //else if (RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString())
+                        //else if (RelationshipProp.FKType == RelatedIdType.ObjectClassId.ToString())
                         //{
                         //    CswNbtMetaDataObjectClass AssemblyObjectClass = this.getObjectClass(RelationshipProp.FKValue);
                         //    CswNbtMetaDataObjectClassProp AssemblyObjectClassProp = AssemblyObjectClass.getObjectClassProp(EditedProp.PropName);
@@ -169,9 +170,9 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.AssemblyPropertyName );
                     if( RelationshipProp != null )
                     {
-                        if( ( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.NodeTypeId.ToString() &&
+                        if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
                               RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
-                            ( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+                            ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
                               RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) )
                         {
 
@@ -190,7 +191,7 @@ namespace ChemSW.Nbt.MetaData
                             NodesUpdate.update( NodesTable );
                             //}
                         }
-                        //else if( RelationshipProp.FKType == CswNbtViewRelationship.RelatedIdType.ObjectClassId.ToString() &&
+                        //else if( RelationshipProp.FKType == RelatedIdType.ObjectClassId.ToString() &&
                         //         RelationshipProp.FKValue == AssemblyNodeType.ObjectClass.ObjectClassId )
                         //{
                         //    // BZ 5528
@@ -219,7 +220,7 @@ namespace ChemSW.Nbt.MetaData
 		public void OnMakeNewInspectionDesignNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
             CswNbtMetaDataNodeTypeProp NameProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.NamePropertyName );
-            CswNbtMetaDataNodeTypeProp DateProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
+            Int32 DatePropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
 
             // Set 'Name' default value = nodetypename
             NameProp.DefaultValue.AsText.Text = NewNodeType.NodeTypeName;
@@ -228,7 +229,8 @@ namespace ChemSW.Nbt.MetaData
 			if( NewNodeType.VersionNo == 1 && !IsCopy )
 			{
 				// Set nametemplate = Name + Date
-                NewNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( NameProp.PropName.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName.ToString() ) );
+                //NewNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( NameProp.PropName.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName.ToString() ) );
+                NewNodeType.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( NameProp.FirstPropVersionId.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DatePropId.ToString() );
 
 				// Set first tab to be "Details"
 				CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getFirstNodeTypeTab();
@@ -243,23 +245,17 @@ namespace ChemSW.Nbt.MetaData
 					ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
 				}
 
-				CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
-				//FinishedProp.NodeTypeTab = ActionTab;
-				//FinishedProp.DisplayRow = 1;
-				//FinishedProp.DisplayColumn = 1;
-				FinishedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 1, 1 );
+				Int32 FinishedPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
+                //FinishedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 1, 1 );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, FinishedPropId, ActionTab.TabId, 1, 1 ); 
 
-				CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-				//CancelledProp.NodeTypeTab = ActionTab;
-				//CancelledProp.DisplayRow = 2;
-				//CancelledProp.DisplayColumn = 1;
-				CancelledProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 2, 1 );
+				Int32 CancelledPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
+				//CancelledProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 2, 1 );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelledPropId, ActionTab.TabId, 2, 1 ); 
 
-				CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
-				//CancelReasonProp.NodeTypeTab = ActionTab;
-				//CancelReasonProp.DisplayRow = 3;  // even though webapp interprets this independently, Mobile needs this to be 3
-				//CancelReasonProp.DisplayColumn = 1;
-				CancelReasonProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 3, 1 );
+				Int32 CancelReasonPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
+				//CancelReasonProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 3, 1 );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonPropId, ActionTab.TabId, 3, 1 ); 
 
 
 				// Add a "Section 1" tab

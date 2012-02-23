@@ -72,14 +72,14 @@
                 type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
-            var $displaymodeselect = $('<select id="' + o.ID + '_dmsel" />');
+            var displayModeSelect;
             if (Csw.isNullOrEmpty(o.viewmode)) {
                 table.cell(2, 1).text('Display Mode:');
-                $displaymodeselect.append('<option value="Grid">Grid</option>');
-                $displaymodeselect.append('<option value="List" selected>List</option>');
-                $displaymodeselect.append('<option value="Table">Table</option>');
-                $displaymodeselect.append('<option value="Tree">Tree</option>');
-                table.cell(2, 2).text($displaymodeselect);
+                displayModeSelect = table.cell(2, 2).select({ ID: o.ID + '_dmsel' });
+                displayModeSelect.option({ value: 'Grid' });
+                displayModeSelect.option({ value: 'List' });
+                displayModeSelect.option({ value: 'Table' });
+                displayModeSelect.option({ value: 'Tree', isSelected: true });
             }
 
             var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
@@ -93,7 +93,7 @@
                     createData.ViewName = nameTextBox.val();
                     createData.ViewId = o.viewid;
                     if (Csw.isNullOrEmpty(o.viewmode)) {
-                        createData.ViewMode = $displaymodeselect.val();
+                        createData.ViewMode = displayModeSelect.val();
                     } else {
                         createData.ViewMode = o.viewmode;
                     }
@@ -284,7 +284,7 @@
                 }
             });
 
-            cell11.br({number: 2});
+            cell11.br({ number: 2 });
             cell11.append('Add: ');
             var addSelect = cell11.select({
                 ID: 'EditLayoutDialog_addselect',
@@ -562,7 +562,7 @@
                     for (var comp in components) {
                         if (Csw.contains(components, comp)) {
                             var thisComp = components[comp];
-                            
+
                             table.cell(row, 1).text(thisComp.name).css('padding', '2px 5px 2px 5px');
                             table.cell(row, 2).text(thisComp.version).css('padding', '2px 5px 2px 5px');
                             table.cell(row, 3).text(thisComp.copyright).css('padding', '2px 5px 2px 5px');

@@ -10,17 +10,17 @@
         'init': function (options) {
 
             function expandAll() {
-                treeDiv.jstree('open_all', rootnode);
+                treeDiv.$.jstree('open_all', rootnode);
 
                 toggleLink.text('Collapse All')
                            .unbind('click')
                            .click(collapseAll);
             }
             function collapseAll() {
-                treeDiv.jstree('close_all', rootnode);
+                treeDiv.$.jstree('close_all', rootnode);
 
                 // show first level
-                treeDiv.jstree('open_node', rootnode);
+                treeDiv.$.jstree('open_node', rootnode);
 
                 toggleLink.text('Expand All')
                            .unbind('click')

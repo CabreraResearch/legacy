@@ -18,13 +18,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            TextSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Gestalt, CswNbtSubField.SubFieldName.Text );   //bz # 6628: Gestalt instead of Field1
-            TextSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                       CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                       CswNbtPropFilterSql.PropertyFilterMode.Null;
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Gestalt, CswNbtSubField.SubFieldName.Text );   //bz # 6628: Gestalt instead of Field1
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( TextSubField );
 
         }//ctor
