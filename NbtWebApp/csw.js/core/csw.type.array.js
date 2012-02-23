@@ -20,9 +20,9 @@
             retArray = Array.prototype.slice.call(arguments, 0);
         }
 
-        retArray.contains = retArray.contains || function(value) {
-            return retArray.indexOf(value) !== -1;
-        };
+//        retArray.contains = retArray.contains || function(value) {
+//            return retArray.indexOf(value) !== -1;
+//        };
 
         return retArray;
     }

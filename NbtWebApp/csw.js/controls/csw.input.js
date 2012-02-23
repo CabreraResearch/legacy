@@ -54,6 +54,7 @@
             attr.add('type', internal.type.name);
             attr.add('placeholder', internal.placeholder);
             attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));
+            style.add('width', Csw.string(internal.width, internal.type.defaultwidth));
             attr.add('maxlength', internal.maxlength);
             attr.add('value', internal.value);
             

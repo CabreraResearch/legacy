@@ -21,7 +21,8 @@
             $parent: '',
             ID: '',
             cssclass: '',
-            text: ''
+            text: '',
+            value: ''
         };
         var external = {};
 
@@ -34,12 +35,12 @@
             html += '<span ';
             if (options) {
                 $.extend(internal, options);
-                attr.add('id', internal.ID);
-                attr.add('class', internal.cssclass);
-                spanText = Csw.string(internal.text);
-            } else {
-                spanText = Csw.string(options);
-            }
+            } 
+            
+            attr.add('id', internal.ID);
+            attr.add('class', internal.cssclass);
+            spanText = Csw.string(internal.text, internal.value);
+
             html += attr.get();
             html += '>';
             html += spanText;
@@ -47,7 +48,9 @@
             $span = $(html);
             Csw.controls.factory($span, external);
 
-            internal.$parent.append(external.$);
+            if (Csw.isJQuery(internal.$parent)) {
+                internal.$parent.append(external.$);
+            }
         } ());
 
         return external;
