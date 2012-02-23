@@ -10,7 +10,7 @@
             $searchbox_parent: null,
             $searchresults_parent: null,
             $searchfilters_parent: null,
-            width: '100px',
+            width: '200px',
             align: 'right',
             onBeforeSearch: null,
             onAfterSearch: null,
