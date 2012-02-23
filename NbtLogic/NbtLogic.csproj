@@ -49,6 +49,7 @@
       <SubType>Designer</SubType>
     </None>
     <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M09.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M07.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M06.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M05.cs" />
