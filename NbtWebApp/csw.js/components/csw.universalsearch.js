@@ -64,12 +64,12 @@
                     Filters: JSON.stringify(internal.filters)
                 },
                 success: function (data) {
-                    var fdiv, filtersdivid;
+                    var fdiv, ftable, filtersdivid;
 
                     // Search results
                     internal.$searchresults_parent
                         .css({ paddingTop: '15px' })
-                        .append('<b>Search Results:</b>');
+                        .append('<b>Search Results: (' + data.table.results + ')</b>');
 
                     internal.$searchresults_parent.CswNodeTable({
                         ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
@@ -95,15 +95,20 @@
                     });
 
                     fdiv.span({ text: 'Searched For: ' + internal.searchterm }).br();
-
+                    ftable = fdiv.table({});
                     // Filters in use
                     var hasFilters = false;
+                    var ftable_row = 1;
                     function showFilter(thisFilter) {
-                        fdiv.span({
-                            //ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
-                            text: thisFilter.filtername + ': ' + thisFilter.filtervalue
+                        var cell1 = ftable.cell(ftable_row, 1);
+                        cell1.propDom('align', 'right');
+                        cell1.span({
+                            text: thisFilter.filtername + ':&nbsp;'
                         });
-                        fdiv.imageButton({
+                        ftable.cell(ftable_row, 2).span({
+                            text: thisFilter.filtervalue
+                        });
+                        ftable.cell(ftable_row, 3).imageButton({
                             ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
                             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                             AlternateText: 'Remove Filter',
@@ -112,7 +117,7 @@
                                 return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
-                        fdiv.br();
+                        ftable_row++;
                         hasFilters = true;
                     }
                     Csw.each(internal.filters, showFilter);
