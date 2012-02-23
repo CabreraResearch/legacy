@@ -404,13 +404,14 @@
                 _internal = Csw.clientDb.getItem('control_data_' + internal.id) || {};
             switch (arguments.length) {
                 case 0:
-                    ret = _internal;
+                    ret = _internal || $element.data();
                     break;
                 case 1:
-                    ret = _internal[prop];
+                    ret = _internal[prop] || $element.data(prop);
                     break;
                 case 2:
                     _internal[prop] = val;
+                    $element.data(prop, val);
                     Csw.clientDb.setItem('control_data_' + internal.id, _internal);
                     ret = external;
                     break;
