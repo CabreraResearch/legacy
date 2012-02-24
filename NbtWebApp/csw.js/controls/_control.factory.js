@@ -31,6 +31,7 @@
             opts.parent = function () {
                 return external;
             };
+            
             return opts;
         };
 
@@ -38,6 +39,7 @@
             var ret,
                 _options = {
                     parent: function () { return external; },
+                    first: function () { return external; },
                     root: external.root,
                     length: function () {
                         return 0;

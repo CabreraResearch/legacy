@@ -701,7 +701,6 @@
                 var propOpt = {
                     propData: thisProp,
                     propDiv: '',
-                    $propCell: '',
                     fieldtype: thisProp.fieldtype,
                     nodeid: Csw.tryParseObjByIdx(o.nodeids, 0),
                     Multi: o.Multi,
