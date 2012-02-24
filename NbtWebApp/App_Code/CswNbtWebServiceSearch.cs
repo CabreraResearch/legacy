@@ -470,9 +470,9 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // Sort by count descending, then (unfortunately) by nodetypeid
                     Dictionary<Int32, Int32> sortedDict = ( from entry
-                                                               in NodeTypeIds
-                                                             orderby entry.Value descending, entry.Key ascending
-                                                             select entry
+                                                              in NodeTypeIds
+                                                         orderby entry.Value descending, entry.Key ascending
+                                                          select entry
                                                            ).ToDictionary( pair => pair.Key, pair => pair.Value );
                     foreach( Int32 NodeTypeId in sortedDict.Keys )
                     {
@@ -519,10 +519,10 @@ namespace ChemSW.Nbt.WebServices
                 foreach( Int32 NodeTypePropId in PropCounts.Keys )
                 {
                     // Sort by count descending, then alphabetically by gestalt
-                    Dictionary<string, Int32> sortedDict = ( from entry 
-                                                               in PropCounts[NodeTypePropId] 
+                    Dictionary<string, Int32> sortedDict = ( from entry
+                                                               in PropCounts[NodeTypePropId]
                                                           orderby entry.Value descending, entry.Key ascending
-                                                           select entry 
+                                                           select entry
                                                            ).ToDictionary( pair => pair.Key, pair => pair.Value );
                     foreach( string Value in sortedDict.Keys )
                     {
@@ -618,21 +618,28 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtViewProperty ViewProp = View.AddViewProperty( ViewRel, NodeTypeProp );
 
                         string FilterValue = Filter["filtervalue"].ToString();
+                        CswNbtSubField DefaultSubField = NodeTypeProp.getFieldTypeRule().SubFields.Default;
                         if( FilterValue == "[blank]" )
                         {
-                            View.AddViewPropertyFilter( ViewProp,
-                                                        NodeTypeProp.getFieldTypeRule().SubFields.Default.Name,
-                                                        CswNbtPropFilterSql.PropertyFilterMode.Null,
-                                                        string.Empty,
-                                                        false );
+                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Null ) )
+                            {
+                                View.AddViewPropertyFilter( ViewProp,
+                                                            DefaultSubField.Name,
+                                                            CswNbtPropFilterSql.PropertyFilterMode.Null,
+                                                            string.Empty,
+                                                            false );
+                            }
                         }
                         else
                         {
-                            View.AddViewPropertyFilter( ViewProp,
-                                                        NodeTypeProp.getFieldTypeRule().SubFields.Default.Name,
-                                                        CswNbtPropFilterSql.PropertyFilterMode.Begins,
-                                                        FilterValue,
-                                                        false );
+                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Equals ) )
+                            {
+                                View.AddViewPropertyFilter( ViewProp,
+                                                            DefaultSubField.Name,
+                                                            CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                            FilterValue,
+                                                            false );
+                            }
                         }
                     }
                 } // foreach( JProperty FilterProp in Filters.Properties() )
