@@ -80,7 +80,7 @@
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                         thumbnailCell.img({
                             src: nodeObj.thumbnailurl
-                        }).css({ maxWidth: '90%' });
+                        }).css({ width: '40%' });
                     }
                     thumbnailCell.br();
 
