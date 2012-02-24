@@ -34,50 +34,6 @@
             Csw.clientDb.setItem(internal.ID + '_rateIntervalSave', external.rateInterval);
         };
 
-        internal.toggleIntervalDiv = function (interval, inpWeeklyRadio, inpMonthlyRadio, inpYearlyRadio) {
-
-            if (window.abandonHope) {
-                inpWeeklyRadio.propDom('checked', false);
-                inpMonthlyRadio.propDom('checked', false);
-                inpYearlyRadio.propDom('checked', false);
-            }
-            if (false === Csw.isNullOrEmpty(internal.divWeekly, true)) {
-                internal.divWeekly.hide();
-            }
-            if (false === Csw.isNullOrEmpty(internal.divMonthly, true)) {
-                internal.divMonthly.hide();
-            }
-            if (false === Csw.isNullOrEmpty(internal.divYearly, true)) {
-                internal.divYearly.hide();
-            }
-            switch (interval) {
-                case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                    internal.divWeekly.show();
-                    if (window.abandonHope) {
-                        inpWeeklyRadio.propDom('checked', true);
-                    }
-                    break;
-                case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                    internal.divMonthly.show();
-                    if (window.abandonHope) {
-                        inpMonthlyRadio.propDom('checked', true);
-                    }
-                    break;
-                case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                    internal.divMonthly.show();
-                    if (window.abandonHope) {
-                        inpMonthlyRadio.propDom('checked', true);
-                    }
-                    break;
-                case Csw.enums.rateIntervalTypes.YearlyByDate:
-                    internal.divYearly.show();
-                    if (window.abandonHope) {
-                        inpYearlyRadio.propDom('checked', true);
-                    }
-                    break;
-            }
-        };
-
         internal.weekDayDef = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
         internal.makeWeekDayPicker = function (thisRateType) {
@@ -502,62 +458,98 @@
 
         internal.makeRateType = function (table) {
 
-            var subTable = table.cell(2, 1).table();
-            var inpWeeklyRadio = subTable.cell(1, 1).input({
-                ID: Csw.controls.dom.makeId(internal.ID, 'type', 'weekly'),
-                name: Csw.controls.dom.makeId(internal.ID, 'type'),
-                type: Csw.enums.inputTypes.radio,
-                value: 'weekly',
-                checked: internal.rateType === Csw.enums.rateIntervalTypes.WeeklyByDay
-            });
-
-            var inpMonthlyRadio = subTable.cell(2, 1).input({
-                ID: Csw.controls.dom.makeId(internal.ID, 'type', 'monthly'),
-                name: Csw.controls.dom.makeId(internal.ID, 'type'),
-                type: Csw.enums.inputTypes.radio,
-                value: 'monthly',
-                checked: internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay
-            });
-
-            var inpYearlyRadio = subTable.cell(3, 1).input({
-                ID: Csw.controls.dom.makeId(internal.ID, 'type', 'yearly'),
-                name: Csw.controls.dom.makeId(internal.ID, 'type'),
-                type: Csw.enums.inputTypes.radio,
-                value: 'yearly',
-                checked: internal.rateType === Csw.enums.rateIntervalTypes.YearlyByDate
-            });
-
-            function onChange() {
+            function onChange(newRateType) {
                 Csw.tryExec(internal.onChange);
-                internal.toggleIntervalDiv(internal.rateType, inpWeeklyRadio, inpMonthlyRadio, inpYearlyRadio);
+                internal.rateType = newRateType;
+                external.rateInterval.ratetype = internal.rateType;
+                subTable.trigger('toggleRadio');
+                if (false === Csw.isNullOrEmpty(internal.divWeekly, true)) {
+                    internal.divWeekly.hide();
+                }
+                if (false === Csw.isNullOrEmpty(internal.divMonthly, true)) {
+                    internal.divMonthly.hide();
+                }
+                if (false === Csw.isNullOrEmpty(internal.divYearly, true)) {
+                    internal.divYearly.hide();
+                }
+
+                switch (newRateType) {
+                    case Csw.enums.rateIntervalTypes.WeeklyByDay:
+                        if (internal.divWeekly) {
+                            internal.divWeekly.show();
+                        }
+                        break;
+                    case Csw.enums.rateIntervalTypes.MonthlyByDate:
+                        if (internal.divMonthly) {
+                            internal.divMonthly.show();
+                        }
+                        break;
+                    case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
+                        if (internal.divMonthly) {
+                            internal.divMonthly.show();
+                        }
+                        break;
+                    case Csw.enums.rateIntervalTypes.YearlyByDate:
+                        if (internal.divYearly) {
+                            internal.divYearly.show();
+                        }
+                        break;
+                }
+
                 internal.saveRateInterval();
             }
 
+            var subTable = table.cell(2, 1).table();
+
             //Weekly
             subTable.cell(1, 2).span({ text: '&nbsp;Weekly' });
-            inpWeeklyRadio.bind('click', function () {
-                internal.rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
-                external.rateInterval.ratetype = internal.rateType;
-                internal.divWeekly = internal.divWeekly || internal.weeklyWeekPicker(internal.onChange, false);
-                onChange();
+            var inpWeeklyRadio = subTable.cell(1, 1).input({
+                ID: Csw.controls.dom.makeId(internal.ID, 'type', 'weekly'),
+                name: Csw.controls.dom.makeId(internal.ID, 'type', '', '', false),
+                type: Csw.enums.inputTypes.radio,
+                value: 'weekly',
+                checked: internal.rateType === Csw.enums.rateIntervalTypes.WeeklyByDay,
+                onClick: function () {
+                    onChange(Csw.enums.rateIntervalTypes.WeeklyByDay);
+                    internal.divWeekly = internal.divWeekly || internal.weeklyWeekPicker(internal.onChange, false);
+                }
+            });
+            inpWeeklyRadio.bind('toggleRadio', function (selectedRateType) {
+                inpWeeklyRadio.checked(selectedRateType === Csw.enums.rateIntervalTypes.WeeklyByDay);
             });
 
             //Monthly
             subTable.cell(2, 2).span({ text: '&nbsp;Monthly' });
-            inpMonthlyRadio.bind('click', function () {
-                internal.rateType = Csw.enums.rateIntervalTypes.MonthlyByDate;
-                external.rateInterval.ratetype = internal.rateType;
-                internal.divMonthly = internal.divMonthly || internal.makeMonthlyPicker();
-                onChange();
+            var inpMonthlyRadio = subTable.cell(2, 1).input({
+                ID: Csw.controls.dom.makeId(internal.ID, 'type', 'monthly'),
+                name: Csw.controls.dom.makeId(internal.ID, 'type', '', '', false),
+                type: Csw.enums.inputTypes.radio,
+                value: 'monthly',
+                checked: internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByDate || internal.rateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay,
+                onClick: function () {
+                    onChange(Csw.enums.rateIntervalTypes.MonthlyByDate);
+                    internal.divMonthly = internal.divMonthly || internal.makeMonthlyPicker();
+                }
+            });
+            inpMonthlyRadio.bind('toggleRadio', function (selectedRateType) {
+                inpMonthlyRadio.checked(selectedRateType === Csw.enums.rateIntervalTypes.MonthlyByDate || selectedRateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay);
             });
 
             //Yearly
             subTable.cell(3, 2).span({ text: '&nbsp;Yearly' });
-            inpYearlyRadio.bind('click', function () {
-                internal.rateType = Csw.enums.rateIntervalTypes.YearlyByDate;
-                external.rateInterval.ratetype = internal.rateType;
-                internal.divYearly = internal.divYearly || internal.makeYearlyDatePicker();
-                onChange();
+            var inpYearlyRadio = subTable.cell(3, 1).input({
+                ID: Csw.controls.dom.makeId(internal.ID, 'type', 'yearly'),
+                name: Csw.controls.dom.makeId(internal.ID, 'type', '', '', false),
+                type: Csw.enums.inputTypes.radio,
+                value: 'yearly',
+                checked: internal.rateType === Csw.enums.rateIntervalTypes.YearlyByDate,
+                onClick: function () {
+                    onChange(Csw.enums.rateIntervalTypes.YearlyByDate);
+                    internal.divYearly = internal.divYearly || internal.makeYearlyDatePicker();
+                }
+            });
+            inpYearlyRadio.bind('toggleRadio', function (selectedRateType) {
+                inpYearlyRadio.checked(selectedRateType === Csw.enums.rateIntervalTypes.YearlyByDate);
             });
         };
 
