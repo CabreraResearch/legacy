@@ -262,8 +262,7 @@
             var _external = {};
 
             _external.add = function (key, value) {
-                if (false === Csw.isNullOrEmpty(key) &&
-                        false === Csw.isNullOrEmpty(value)) {
+                if (false === Csw.isNullOrEmpty(key)) {
                     _internal.attributes[Csw.string(key)] = Csw.string(value);
                 }
             };
@@ -272,7 +271,10 @@
                 var ret = '';
 
                 function buildStyle(val, key) {
-                    ret += ' ' + key + '="' + val + '" ';
+                    if(false === Csw.isNullOrEmpty(val) &&
+                        false === Csw.isNullOrEmpty(key) ) {
+                        ret += ' ' + key + '="' + val + '" ';
+                    }
                 }
 
                 Csw.each(_internal.attributes, buildStyle);

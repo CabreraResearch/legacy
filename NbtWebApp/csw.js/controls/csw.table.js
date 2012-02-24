@@ -27,7 +27,7 @@
             cellspacing: 0,
             align: '',
             width: '',
-            cellalign: 'top',
+            cellalign: 'left',
             cellvalign: 'top',
             onCreateCell: function () { },
             FirstCellRightAlign: false,
@@ -129,6 +129,14 @@
                         attr.add('realcol', thisCol);
                         attr.add('class', external.propNonDom('cellcssclass'));
                         attr.add('align', align);
+
+
+                        if (internal.ID.indexOf('nodetabs_props_tbl') !== -1) {
+                            Csw.log(JSON.stringify({row: row, col: thisCol, align: align}));
+                        }
+
+
+
                         attr.add('valign', external.propNonDom('cellvalign'));
                         html += attr.get();
                         html += '>';
@@ -143,6 +151,10 @@
                 }
 
                 retCell.align = function (alignTo) {
+//                    if (internal.ID.indexOf('nodetabs_props_tbl') !== -1) {
+//                        Csw.log(JSON.stringify({row: retCell.propNonDom('realrow'), col: retCell.propNonDom('realcol'), align: alignTo}));
+//                    }
+//                    
                     retCell.css('text-align', alignTo);
                     retCell.propDom('align', alignTo);
                     return retCell;
