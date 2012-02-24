@@ -60,11 +60,11 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab PhysicalTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNodeType, "Physical Tab", 2 );
 
                 //Object Class based props
-                CswNbtMetaDataNodeTypeProp SpecificGravityProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ChemicalNodeType.NodeTypeId, CswNbtObjClassMaterial.SpecificGravityPropertyName );
-                SpecificGravityProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, PhysicalTab.TabId );
+                CswNbtMetaDataNodeTypeProp SpecificGravityProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ChemicalNodeType.NodeTypeId, CswNbtObjClassMaterial.SpecificGravityPropertyName );
+                SpecificGravityProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, PhysicalTab.TabId );
 
-                CswNbtMetaDataNodeTypeProp PhysicalStateProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ChemicalNodeType.NodeTypeId, CswNbtObjClassMaterial.PhysicalStatePropertyName );
-                PhysicalStateProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, PhysicalTab.TabId );
+                CswNbtMetaDataNodeTypeProp PhysicalStateProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ChemicalNodeType.NodeTypeId, CswNbtObjClassMaterial.PhysicalStatePropertyName );
+                PhysicalStateProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, PhysicalTab.TabId );
                 PhysicalStateProp.ListOptions = "Solid, Liquid, Gas";
 
                 //nu props
@@ -92,26 +92,26 @@ namespace ChemSW.Nbt.Schema
 
             string SupplyNodeTypeName = "Supply";
             CswNbtMetaDataNodeType SupplyNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( SupplyNodeTypeName );
-            if( null == SupplyNodeTypeName || SupplyNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
+            if( null == SupplyNodeType || SupplyNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
             {
-                SupplyNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), ChemicalNodeTypeName, MaterialsCategory );
+                SupplyNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), SupplyNodeTypeName, MaterialsCategory );
                 CswNbtMetaDataNodeTypeTab SupplyIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( SupplyNodeType, "Identity", 0 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( SupplyNodeType, CswNbtMetaDataFieldType.NbtFieldType.Memo, "Description", SupplyIdentityTab.TabId );
 
-                CswNbtMetaDataNodeTypeTab PictureTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( SupplyNodeType, "Identity", 0 );
+                CswNbtMetaDataNodeTypeTab PictureTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( SupplyNodeType, "Picture", 0 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( SupplyNodeType, CswNbtMetaDataFieldType.NbtFieldType.ImageList, "Picture", PictureTab.TabId );
 
             }//if else the Supply nodetype already exists
-
+             
             #endregion
 
             #region case 24457-BiologicalNodeType
 
             string BiologicalNodeTypeName = "Biological";
             CswNbtMetaDataNodeType BiologicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( BiologicalNodeTypeName );
-            if( null == BiologicalNodeTypeName || BiologicalNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
+            if( null == BiologicalNodeType || BiologicalNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
             {
-                BiologicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), ChemicalNodeTypeName, MaterialsCategory );
+                BiologicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), BiologicalNodeTypeName, MaterialsCategory );
                 CswNbtMetaDataNodeTypeTab BiologicalIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( BiologicalNodeType, "Identity", 0 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.List, "Reference Type", BiologicalIdentityTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "Reference Number", BiologicalIdentityTab.TabId );
@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "Species Origin", BiologicalIdentityTab.TabId );
 
 
-                CswNbtMetaDataNodeTypeTab BiosafetyTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( BiologicalNodeType, "Identity", 0 );
+                CswNbtMetaDataNodeTypeTab BiosafetyTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( BiologicalNodeType, "Biosafety", 0 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.List, "Biosafety Level", BiosafetyTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "Vectors", BiosafetyTab.TabId );
 
