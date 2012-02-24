@@ -39,7 +39,7 @@
             var html = '',
                 attr = Csw.controls.dom.attributes(),
                 style = Csw.controls.dom.style(),
-                divText = Csw.string(internal.text);
+                divText = Csw.string(internal.text, internal.value);
             var $div;
 
             attr.add('id', internal.ID);
