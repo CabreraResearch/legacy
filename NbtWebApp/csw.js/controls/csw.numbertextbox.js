@@ -21,15 +21,15 @@
             width: '',
             ceilingVal: 999999999.999999
         };
-
-//        external.val = function (newValue) {
-//            var $Div = $(this);
-//            var $TextBox = $Div.find('input[id="' + id + '"]');
-//            if (newValue !== undefined) {
-//                $TextBox.val(newValue);
-//            }
-//            return $TextBox.val();
-//        };
+        var external = {};
+        //        external.val = function (newValue) {
+        //            var $Div = $(this);
+        //            var $TextBox = $Div.find('input[id="' + id + '"]');
+        //            if (newValue !== undefined) {
+        //                $TextBox.val(newValue);
+        //            }
+        //            return $TextBox.val();
+        //        };
 
         (function () {
             if (options) {
@@ -50,7 +50,7 @@
                 if (maxLength <= 0 ||
                     maxValue === 0 ||
                     maxLength > 9) {
-                    
+
                     maxLength = 9;
                 }
                 if (precision > 0) {
