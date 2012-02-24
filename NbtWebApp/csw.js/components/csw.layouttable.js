@@ -75,28 +75,40 @@
         };
 
         internal.expandLayoutTable = function (expRow, expCol) {
+            /// <summary>Expand the layout table by an additional cellSet row or column or both.</summary>
+            /// <param name="expRow" type="Boolean">True to expand by a cellSet row.</param>
+            /// <param name="expCol" type="Boolean">True to expand by a cellSet column.</param>
+            /// <returns type="undefined"></returns>
             var tablemaxrows = external.table.maxrows(),
                 tablemaxcolumns = external.table.maxcolumns(),
-                requestRow = tablemaxrows + expRow,
-                requestCol = tablemaxcolumns + expCol;
+                rowCount = 0, colCount = 0,
+                requestRow, requestCol;
+            if (expRow) {
+                rowCount = internal.cellSet.rows;
+            }
+            if (expCol) {
+                colCount = internal.cellSet.columns;
+            }
+            if (rowCount > 0 || colCount > 0) {
+                requestRow = tablemaxrows + rowCount,
+                requestCol = tablemaxcolumns + colCount;
 
-            // add a row and column
-            //internal.getCell(requestRow, requestCol);
-            external.table.cell(requestRow, requestCol);
-            external.table.finish(null, internal.firstRow, internal.firstCol);
+                external.table.cell(requestRow, requestCol);
+                external.table.finish(null, internal.firstRow, internal.firstCol);
 
-            if (external.isConfig()) {
-                external.table.findCell('.CswLayoutTable_cell')
-                    .addClass('CswLayoutTable_configcell');
+                if (external.isConfig()) {
+                    external.table.findCell('.CswLayoutTable_cell')
+                        .addClass('CswLayoutTable_configcell');
+                }
             }
         };
 
         internal.addRow = function () {
-            internal.expandLayoutTable(internal.cellSet.rows, 0);
+            internal.expandLayoutTable(true, false);
         }; // _addRowAndColumn()
 
         internal.addColumn = function () {
-            internal.expandLayoutTable(0, internal.cellSet.columns);
+            internal.expandLayoutTable(false, true);
         }; // internal.addColumn()
 
         internal.getCell = function (getRow, getColumn, cellsetrow, cellsetcolumn) {
