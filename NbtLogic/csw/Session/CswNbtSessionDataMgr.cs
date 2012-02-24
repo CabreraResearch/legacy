@@ -138,6 +138,30 @@ namespace ChemSW.Nbt
         } // saveSessionData(Action)
 
         /// <summary>
+        /// Save a search to the session data collection.
+        /// </summary>
+        public CswNbtSessionDataId saveSessionData( CswNbtSearch Search, bool IncludeInQuickLaunch, bool KeepInQuickLaunch = false )
+        {
+            CswTableUpdate SessionViewsUpdate = _CswNbtResources.makeCswTableUpdate( "saveSessionView_update", SessionDataTableName );
+            DataTable SessionViewTable = null;
+            if( Search.SessionDataId != null )
+            {
+                SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_PrimaryKey, Search.SessionDataId.get(), "where sessionid = '" + SessionId + "'", false );
+            }
+            else
+            {
+                SessionViewTable = SessionViewsUpdate.getEmptyTable();
+            }
+            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Search.Name, CswNbtSessionDataItem.SessionDataType.Search, IncludeInQuickLaunch, KeepInQuickLaunch );
+            //SessionViewRow[SessionDataColumn_SearchId] = CswConvert.ToDbVal( Search.SearchId );
+            SessionViewRow[SessionDataColumn_ViewXml] = Search.ToString();
+            SessionViewsUpdate.update( SessionViewTable );
+
+            return new CswNbtSessionDataId( CswConvert.ToInt32( SessionViewRow[SessionDataColumn_PrimaryKey] ) );
+
+        } // saveSessionData(Search)
+
+        /// <summary>
         /// Save a view to the session data collection.  Sets the SessionViewId on the view.
         /// </summary>
         public CswNbtSessionDataId saveSessionData( CswNbtView View, bool IncludeInQuickLaunch, bool ForceNewSessionId = false, bool KeepInQuickLaunch = false )

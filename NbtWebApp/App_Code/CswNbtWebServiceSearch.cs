@@ -378,284 +378,64 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
+        #region UniversalSearch
 
-        #region Universal Search
-
-        public JObject doUniversalSearch( string SearchTerm, JObject Filters )
+        public JObject doUniversalSearch( string SearchTerm )
+        {
+            CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
+            return _finishUniversalSearch( Search );
+        }
+        public JObject FilterUniversalSearch( CswNbtSessionDataId SessionDataId, JObject Filter, string Action )
         {
             JObject ret = new JObject();
-
-            // Filters to apply
-            string WhereClause = string.Empty;
-            bool SingleNodeType = false;
-            Collection<Int32> FilteredPropIds = new Collection<Int32>();
-            foreach( JProperty FilterProp in Filters.Properties() )
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
             {
-                JObject Filter = (JObject) FilterProp.Value;
-
-                if( Filter["filtertype"].ToString() == "nodetype" )
+                CswNbtSearch Search = SessionDataItem.Search;
+                if( Action == "add" )
                 {
-                    // NodeType filter
-                    Int32 NodeTypeFirstVersionId = CswConvert.ToInt32( Filter["firstversionid"] );
-                    if( NodeTypeFirstVersionId != Int32.MinValue )
-                    {
-                        WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where firstversionid = " + NodeTypeFirstVersionId.ToString() + @") ";
-                        SingleNodeType = true;
-                    }
-                }
-                else if( Filter["filtertype"].ToString() == "propval" )
-                {
-                    // Property Filter
-                    // Someday we may need to do this in a view instead
-                    Int32 NodeTypePropFirstVersionId = CswConvert.ToInt32( Filter["firstpropversionid"] );
-                    string FilterStr = Filter["filtervalue"].ToString();
-                    if( FilterStr == "[blank]" )
-                    {
-                        FilterStr = "gestalt is null";
-                    }
-                    else
-                    {
-                        FilterStr = "gestalt like '" + FilterStr + "%'";
-                    }
-                    if( NodeTypePropFirstVersionId != Int32.MinValue )
-                    {
-                        WhereClause += @" and n.nodeid in (select nodeid 
-                                                             from jct_nodes_props 
-                                                            where nodetypepropid in (select nodetypepropid 
-                                                                                       from nodetype_props 
-                                                                                      where firstpropversionid = (select firstpropversionid 
-                                                                                                                    from nodetype_props 
-                                                                                                                   where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
-                                                              and " + FilterStr + @") ";
-                        FilteredPropIds.Add( NodeTypePropFirstVersionId );
-                        SingleNodeType = true;
-                    }
-                }
-            } // foreach(JObject Filter in Filters.Properties)
-
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, false );
-
-            // Results Table
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null );
-            ret["table"] = wsTable.makeTableFromTree( Tree, FilteredPropIds );
-
-            // New Filters to offer
-            JObject FiltersObj = new JObject();
-            Tree.goToRoot();
-            if( false == SingleNodeType )
-            {
-                // Filter on NodeTypes only
-                Dictionary<Int32, Int32> NodeTypeIds = new Dictionary<Int32, Int32>();
-                Int32 ChildCnt = Tree.getChildNodeCount();
-                for( Int32 n = 0; n < ChildCnt; n++ )
-                {
-                    Tree.goToNthChild( n );
-                    CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
-                    if( NodeKey != null )
-                    {
-                        if( false == NodeTypeIds.ContainsKey( NodeKey.NodeTypeId ) )
-                        {
-                            NodeTypeIds[NodeKey.NodeTypeId] = 0;
-                        }
-                        NodeTypeIds[NodeKey.NodeTypeId] += 1;
-                    }
-                    Tree.goToParentNode();
-                } // for( Int32 n = 0; n < ChildCnt; n++ )
-
-                if( NodeTypeIds.Keys.Count == 1 )
-                {
-                    SingleNodeType = true;
+                    Search.addFilter( Filter );
                 }
                 else
                 {
-                    // Sort by count descending, then (unfortunately) by nodetypeid
-                    Dictionary<Int32, Int32> sortedDict = ( from entry
-                                                              in NodeTypeIds
-                                                         orderby entry.Value descending, entry.Key ascending
-                                                          select entry
-                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
-                    foreach( Int32 NodeTypeId in sortedDict.Keys )
-                    {
-                        _addNodeTypeFilter( FiltersObj, NodeTypeId, sortedDict[NodeTypeId] );
-                    }
+                    Search.removeFilter( Filter );
                 }
-            } // if( false == SingleNodeType )
-
-            if( SingleNodeType )
-            {
-                // Filter on property values in the results
-                Dictionary<Int32, Dictionary<string, Int32>> PropCounts = new Dictionary<Int32, Dictionary<string, Int32>>();
-                Int32 ChildCnt = Tree.getChildNodeCount();
-                for( Int32 n = 0; n < ChildCnt; n++ )
-                {
-                    Tree.goToNthChild( n );
-                    JArray Props = Tree.getChildNodePropsOfNode();
-                    foreach( JObject Prop in Props )
-                    {
-                        Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
-                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), Prop["fieldtype"].ToString() ) );
-                        if( false == FilteredPropIds.Contains( NodeTypePropId ) && FieldType.Searchable )
-                        {
-                            string Gestalt = Prop["gestalt"].ToString();
-                            if( Gestalt.Length > 50 )
-                            {
-                                Gestalt = Gestalt.Substring( 0, 50 );
-                            }
-
-                            if( false == PropCounts.ContainsKey( NodeTypePropId ) )
-                            {
-                                PropCounts[NodeTypePropId] = new Dictionary<string, Int32>();
-                            }
-                            if( false == PropCounts[NodeTypePropId].ContainsKey( Gestalt ) )
-                            {
-                                PropCounts[NodeTypePropId][Gestalt] = 0;
-                            }
-                            PropCounts[NodeTypePropId][Gestalt] += 1;
-                        }
-                    }
-                    Tree.goToParentNode();
-                } // for( Int32 n = 0; n < ChildCnt; n++ )
-
-                foreach( Int32 NodeTypePropId in PropCounts.Keys )
-                {
-                    // Sort by count descending, then alphabetically by gestalt
-                    Dictionary<string, Int32> sortedDict = ( from entry
-                                                               in PropCounts[NodeTypePropId]
-                                                          orderby entry.Value descending, entry.Key ascending
-                                                           select entry
-                                                           ).ToDictionary( pair => pair.Key, pair => pair.Value );
-                    foreach( string Value in sortedDict.Keys )
-                    {
-                        _addPropFilter( FiltersObj, NodeTypePropId, Value, sortedDict[Value] );
-                    }
-                }
-            } // if( SingleNodeType )
-
-            ret["filters"] = FiltersObj;
+                ret = _finishUniversalSearch( Search );
+            }
             return ret;
-        } // doUniversalSearch()
-
-        private void _addNodeTypeFilter( JObject FiltersObj, Int32 NodeTypeId, Int32 Count )
+        }
+        private JObject _finishUniversalSearch( CswNbtSearch Search )
         {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            string FilterName = "Filter To";
+            ICswNbtTree Tree = Search.Results();
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null );
 
-            JObject ThisFilterObj = _makeFilter( FilterName, "nodetype", "NT_" + NodeType.NodeTypeId.ToString(), NodeType.NodeTypeName, Count, NodeType.IconFileName );
-            ThisFilterObj["firstversionid"] = NodeType.FirstVersionNodeTypeId.ToString();
-
-            if( FiltersObj[FilterName] == null )
-            {
-                FiltersObj[FilterName] = new JObject();
-            }
-            FiltersObj[FilterName][NodeType.NodeTypeName.ToLower()] = ThisFilterObj;
-        } // _addNodeTypeFilter()
-
-        private void _addPropFilter( JObject FiltersObj, Int32 NodeTypePropId, string Value, Int32 Count )
-        {
-            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypePropLatestVersion( NodeTypePropId );
-            string FilterName = NodeTypeProp.PropName;
-
-            JObject ThisFilterObj = _makeFilter( FilterName, "propval", NodeTypePropId.ToString() + "_" + Value, Value, Count, string.Empty );
-            ThisFilterObj["firstpropversionid"] = NodeTypeProp.FirstPropVersionId.ToString();
-
-            if( FiltersObj[FilterName] == null )
-            {
-                FiltersObj[FilterName] = new JObject();
-            }
-            FiltersObj[FilterName][Value] = ThisFilterObj;
-        } // _addPropFilter()
-
-        private JObject _makeFilter( string FilterName, string Type, string FilterId, string FilterValue, Int32 Count, string Icon )
-        {
-            JObject ThisFilterObj = new JObject();
-            ThisFilterObj["filtertype"] = Type;
-            ThisFilterObj["filterid"] = FilterId;
-            ThisFilterObj["filtername"] = FilterName;
-            if( FilterValue != string.Empty )
-            {
-                ThisFilterObj["filtervalue"] = FilterValue;
-            }
-            else
-            {
-                ThisFilterObj["filtervalue"] = "[blank]";
-            }
-            ThisFilterObj["count"] = Count.ToString();
-            ThisFilterObj["icon"] = Icon;
-            return ThisFilterObj;
+            JObject ret = new JObject();
+            ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
+            ret["filters"] = Search.FilterOptions( Tree );
+            ret["filtersapplied"] = Search.FiltersApplied;
+            Search.SaveToCache( true );
+            ret["sessiondataid"] = Search.SessionDataId.ToString();
+            return ret;
         }
 
-        public JObject saveSearchAsView( CswNbtView View, string SearchTerm, JObject Filters )
+        public JObject saveSearchAsView( CswNbtSessionDataId SessionDataId, CswNbtView View )
         {
             JObject ret = new JObject();
-            //CswNbtView SearchView = new CswNbtView( _CswNbtResources );
-            View.Root.ChildRelationships.Clear();
-
-            // NodeType filter becomes Relationship
-            Int32 NodeTypeId = Int32.MinValue;
-            CswNbtMetaDataNodeType NodeType = null;
-            CswNbtViewRelationship ViewRel = null;
-            foreach( JProperty FilterProp in Filters.Properties() )
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
             {
-                JObject Filter = (JObject) FilterProp.Value;
-                if( Filter["filtertype"].ToString() == "nodetype" )
-                {
-                    NodeTypeId = CswConvert.ToInt32( Filter["firstversionid"] );
-                    NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                    ViewRel = View.AddViewRelationship( NodeType, false );
-                    break;
-                }
-            } // foreach( JProperty FilterProp in Filters.Properties() )
-
-            if( ViewRel != null )
-            {
-                // Add property filters
-                foreach( JProperty FilterProp in Filters.Properties() )
-                {
-                    JObject Filter = (JObject) FilterProp.Value;
-                    if( Filter["filtertype"].ToString() == "propval" )
-                    {
-                        CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByFirstVersionId( CswConvert.ToInt32( Filter["firstpropversionid"] ) );
-                        CswNbtViewProperty ViewProp = View.AddViewProperty( ViewRel, NodeTypeProp );
-
-                        string FilterValue = Filter["filtervalue"].ToString();
-                        CswNbtSubField DefaultSubField = NodeTypeProp.getFieldTypeRule().SubFields.Default;
-                        if( FilterValue == "[blank]" )
-                        {
-                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Null ) )
-                            {
-                                View.AddViewPropertyFilter( ViewProp,
-                                                            DefaultSubField.Name,
-                                                            CswNbtPropFilterSql.PropertyFilterMode.Null,
-                                                            string.Empty,
-                                                            false );
-                            }
-                        }
-                        else
-                        {
-                            if( DefaultSubField.SupportedFilterModes.Contains( CswNbtPropFilterSql.PropertyFilterMode.Equals ) )
-                            {
-                                View.AddViewPropertyFilter( ViewProp,
-                                                            DefaultSubField.Name,
-                                                            CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                            FilterValue,
-                                                            false );
-                            }
-                        }
-                    }
-                } // foreach( JProperty FilterProp in Filters.Properties() )
-
-                View.save();
-                View.SaveToCache( true );
-                ret["result"] = "true";
-            } // if(ViewRel != null)
+                CswNbtSearch Search = SessionDataItem.Search;
+                ret["result"] = Search.saveSearchAsView( View );
+            }
             else
             {
-                ret["result"] = "false";
+                ret["result"] = false;
             }
             return ret;
-        } // saveSearchAsView()
+        }
 
-        #endregion Universal Search
+        #endregion UniversalSearch
+
 
     } // class CswNbtWebServiceSearch
 
