@@ -87,8 +87,8 @@ namespace ChemSW.Nbt.PropTypes
                         UpdateDateAnswered = DateTime.MinValue;
                     }
                     DateAnswered = UpdateDateAnswered;
-                    //IsCompliant = _IsCompliant;
                     _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
+                    IsCompliant = IsCompliant;
 
                     _synchGestalt( AnswerVal );
                 }
@@ -112,10 +112,10 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         UpdateDateCorrected = DateTime.Today;
                     }
-                    
+
                     DateCorrected = UpdateDateCorrected;
-                    //IsCompliant = _IsCompliant;
                     _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
+                    IsCompliant = IsCompliant;
                 }
             }
         }
@@ -126,6 +126,13 @@ namespace ChemSW.Nbt.PropTypes
         public bool IsCompliant
         {
             get { return ( CompliantAnswers.Contains( Answer, true ) || string.Empty != CorrectiveAction ); }
+            set
+            {
+                if( value != _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) )
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+                }
+            }
         }
 
         /// <summary>
