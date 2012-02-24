@@ -219,7 +219,7 @@
         internal.saveAsView = function () {
             $.CswDialog('AddViewDialog', {
                 ID: Csw.controls.dom.makeId(internal.ID, '', 'addviewdialog'),
-                viewmode: 'table',
+                //viewmode: 'table',
                 onAddView: function (newviewid, viewmode) {
 
                     Csw.ajax.post({
