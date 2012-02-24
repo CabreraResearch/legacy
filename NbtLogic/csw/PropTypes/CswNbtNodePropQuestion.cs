@@ -133,10 +133,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return CswConvert.ToBoolean(_CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column )); }
             set
             {
-                if( value != CswConvert.ToBoolean(_CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column )) )
-                {
                     _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
-                }
             }
         }
 
