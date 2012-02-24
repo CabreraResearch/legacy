@@ -1,5 +1,6 @@
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -24,6 +25,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ); }
         }
+
+
+        public static string MaterialPropertyName { get { return "Material"; } }
+        public static string NamePropertyName { get { return "Name"; } }
+
 
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
@@ -75,6 +81,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
+        public CswNbtNodePropRelationship Material
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[MaterialPropertyName].AsRelationship );
+            }
+        }
+
+
+        public CswNbtNodePropText Text
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
+            }
+        }
 
         //public CswNbtNodePropRelationship Assembly
         //{

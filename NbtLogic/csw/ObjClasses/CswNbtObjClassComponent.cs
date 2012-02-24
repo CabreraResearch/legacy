@@ -2,19 +2,20 @@ using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.PropTypes;
 
+
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassGeneric : CswNbtObjClass
+    public class CswNbtObjClassComponent : CswNbtObjClass
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassGeneric( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassComponent( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassGeneric( CswNbtResources CswNbtResources )
+        public CswNbtObjClassComponent( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
@@ -22,8 +23,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass ); }
         }
+
+        public static string PercentagePropertyName { get { return "Percentage"; } }
 
         #region Inherited Events
 
@@ -76,11 +79,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        // GENERIC SHOULD NOT HAVE ANY!!!
+        public CswNbtNodePropNumber Percentage
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PercentagePropertyName].AsNumber );
+            }
+        }
 
         #endregion
 
 
-    }//CswNbtObjClassGeneric
+    }//CswNbtObjClassComponent
 
 }//namespace ChemSW.Nbt.ObjClasses

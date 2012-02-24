@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.MetaData
             Unknown,
             AliquotClass,
             BiologicalClass,
+            ComponentClass,
             ContainerClass,
             CustomerClass,
             EquipmentAssemblyClass,

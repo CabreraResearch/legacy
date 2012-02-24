@@ -21,11 +21,50 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
+            string MaterialsCategory = "Materials";
+
+            #region case 24459
+            CswTableUpdate ObjectClassUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "createcomponentobjectclass", "object_class" );
+            DataTable ObjectClasstable = ObjectClassUpdate.getEmptyTable();
+            DataRow NewObjectClassRow = ObjectClasstable.NewRow();
+            ObjectClasstable.Rows.Add( NewObjectClassRow );
+            NewObjectClassRow["objectclass"] = CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass.ToString();
+            ObjectClassUpdate.update( ObjectClasstable );
+
+
+
+            CswNbtMetaDataObjectClassProp ComponentNumberProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass, CswNbtObjClassComponent.PercentagePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number );
+
+            string ComponentNodeTypeName = "Component";
+            CswNbtMetaDataNodeType ComponentNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), ComponentNodeTypeName, MaterialsCategory );
+            CswNbtView ComponentView = _CswNbtSchemaModTrnsctn.makeView();
+            ComponentView.makeNew( "Chemicals", NbtViewVisibility.Global, null, null, null );
+            CswNbtViewRelationship ComponentRelationship = ComponentView.AddViewRelationship( ComponentNodeType, false );
+            ComponentView.Category = MaterialsCategory;
+            ComponentView.save();
+
+
+            #endregion
+
+
+            #region case 24981
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( _CswNbtSchemaModTrnsctn.getModuleId( CswNbtResources.CswNbtModule.CISPro ), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ).ObjectClassId );
+            CswNbtMetaDataObjectClassProp SynonymnMaterialObjCProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass, CswNbtObjClassMaterialSynonym.MaterialPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship );
+
+
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SynonymnMaterialObjCProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SynonymnMaterialObjCProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ) );
+
+
+            CswNbtMetaDataNodeType MaterialSynonymnType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( SynonymnMaterialObjCProp.ObjectClassId, "Material Synonymn", MaterialsCategory );
+            #endregion
+
+
             #region case 24457-ChemicalNodeType
 
             CswNbtMetaDataObjectClass MaterialObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             string ChemicalNodeTypeName = "Chemical";
-            string MaterialsCategory = "Materials";
             CswNbtMetaDataNodeType ChemicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( ChemicalNodeTypeName );
             if( null == ChemicalNodeType || ChemicalNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
             {
@@ -33,15 +72,50 @@ namespace ChemSW.Nbt.Schema
                 //Identity Tab
                 ChemicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), ChemicalNodeTypeName, MaterialsCategory );
                 CswNbtMetaDataNodeTypeTab ChemicalIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNodeType, "Identity", 0 );
+                //CswNbtView ChemicalView = ChemicalNodeType.CreateDefaultView();// this causes an exception when you try to save the view, to the effect of: "You must call makeNewView() before saving"
+                CswNbtView ChemicalView = _CswNbtSchemaModTrnsctn.makeView();
+                ChemicalView.makeNew( "Chemicals", NbtViewVisibility.Global, null, null, null );
+                CswNbtViewRelationship ChemicalRelationship = ChemicalView.AddViewRelationship( ChemicalNodeType, false );
+                ChemicalView.Category = MaterialsCategory;
+                ChemicalView.save();
+
+
+
 
 
                 //Object Class based props first
-                CswNbtMetaDataNodeTypeProp CasNoProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( ChemicalNodeType.NodeTypeId, CswNbtObjClassMaterial.CasNoPropertyName );
-                CasNoProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ChemicalIdentityTab.TabId );
+                CswNbtMetaDataNodeTypeProp CasNoProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( ChemicalNodeType.NodeTypeId, CswNbtObjClassMaterial.CasNoPropertyName );
+                //CasNoProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ChemicalIdentityTab.TabId );
 
                 //nu props
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Synonymns", ChemicalIdentityTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Components", ChemicalIdentityTab.TabId );
+                CswNbtMetaDataNodeTypeProp SynonymsProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Synonyms", ChemicalIdentityTab.TabId );
+                CswNbtView SynView = _CswNbtSchemaModTrnsctn.restoreView( SynonymsProp.ViewId );
+                CswNbtViewRelationship ChemRel = SynView.AddViewRelationship( ChemicalNodeType, true );
+                CswNbtMetaDataNodeTypeProp SynToMaterialProp = MaterialSynonymnType.getNodeTypePropByObjectClassProp( SynonymnMaterialObjCProp.PropName );
+                //CswNbtViewRelationship SynRel = SynView.AddViewRelationship( ChemRel, false ); 
+
+
+                CswNbtMetaDataNodeTypeProp CompProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Components", ChemicalIdentityTab.TabId );
+                /*
+                CswNbtView CompView = _CswNbtSchemaModTrnsctn.restoreView( CompProp.ViewId );
+                CswNbtViewRelationship ChemRel = CompView.AddViewRelationship( ChemicalNodeType, true );
+                CswNbtViewRelationship CompRel = CompView.AddViewRelationship( ChemRel, NbtViewPropOwnerType.Second, ComponentNodeType.get);
+                 */
+                //COmponent has relationship to chemical
+                //
+
+
+                /*
+                 Pseudo:
+                 *  Get isntance fo synonymn node type
+                 *  view rel prop gets synview.addviewrel
+                 *  call addviewre again, adding: (result of line 69), whether owner of relationsip is first or second nt, nodetypeprop that specifies the relationship, 
+                 *  get synonymn name nodetype prop
+                 *  add cswnbtviewproperty
+                 *  it will take a relationshiop and a nodetype prop syn name, syn nodetypprop
+                 */
+
+
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Quantity, "Expiration Interval", ChemicalIdentityTab.TabId );
 
                 //**********************************************************************
@@ -102,7 +176,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( SupplyNodeType, CswNbtMetaDataFieldType.NbtFieldType.ImageList, "Picture", PictureTab.TabId );
 
             }//if else the Supply nodetype already exists
-             
+
             #endregion
 
             #region case 24457-BiologicalNodeType
@@ -126,6 +200,10 @@ namespace ChemSW.Nbt.Schema
             }//if else the Supply nodetype already exists
 
             #endregion
+
+
+
+
 
         }//Update()
 
