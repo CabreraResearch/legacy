@@ -462,7 +462,7 @@
                 Csw.tryExec(internal.onChange);
                 internal.rateType = newRateType;
                 external.rateInterval.ratetype = internal.rateType;
-                subTable.trigger('toggleRadio');
+
                 if (false === Csw.isNullOrEmpty(internal.divWeekly, true)) {
                     internal.divWeekly.hide();
                 }
@@ -514,9 +514,6 @@
                     internal.divWeekly = internal.divWeekly || internal.weeklyWeekPicker(internal.onChange, false);
                 }
             });
-            inpWeeklyRadio.bind('toggleRadio', function (selectedRateType) {
-                inpWeeklyRadio.checked(selectedRateType === Csw.enums.rateIntervalTypes.WeeklyByDay);
-            });
 
             //Monthly
             subTable.cell(2, 2).span({ text: '&nbsp;Monthly' });
@@ -531,9 +528,6 @@
                     internal.divMonthly = internal.divMonthly || internal.makeMonthlyPicker();
                 }
             });
-            inpMonthlyRadio.bind('toggleRadio', function (selectedRateType) {
-                inpMonthlyRadio.checked(selectedRateType === Csw.enums.rateIntervalTypes.MonthlyByDate || selectedRateType === Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay);
-            });
 
             //Yearly
             subTable.cell(3, 2).span({ text: '&nbsp;Yearly' });
@@ -547,9 +541,6 @@
                     onChange(Csw.enums.rateIntervalTypes.YearlyByDate);
                     internal.divYearly = internal.divYearly || internal.makeYearlyDatePicker();
                 }
-            });
-            inpYearlyRadio.bind('toggleRadio', function (selectedRateType) {
-                inpYearlyRadio.checked(selectedRateType === Csw.enums.rateIntervalTypes.YearlyByDate);
             });
         };
 
