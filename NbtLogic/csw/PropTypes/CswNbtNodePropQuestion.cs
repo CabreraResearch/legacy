@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     DateAnswered = UpdateDateAnswered;
                     _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
-                    IsCompliant = IsCompliant;
+                    IsCompliant = TestIsCompliant();
 
                     _synchGestalt( AnswerVal );
                 }
@@ -115,9 +115,14 @@ namespace ChemSW.Nbt.PropTypes
 
                     DateCorrected = UpdateDateCorrected;
                     _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
-                    IsCompliant = IsCompliant;
+                    IsCompliant = TestIsCompliant();
                 }
             }
+        }
+
+        private bool TestIsCompliant()
+        {
+            return ( CompliantAnswers.Contains( Answer, true ) || string.Empty != CorrectiveAction );
         }
 
         /// <summary>
@@ -125,10 +130,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool IsCompliant
         {
-            get { return ( CompliantAnswers.Contains( Answer, true ) || string.Empty != CorrectiveAction ); }
+            get { return CswConvert.ToBoolean(_CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column )); }
             set
             {
-                if( value != _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) )
+                if( value != CswConvert.ToBoolean(_CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column )) )
                 {
                     _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
                 }
