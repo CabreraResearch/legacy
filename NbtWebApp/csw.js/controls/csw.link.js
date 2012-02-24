@@ -26,7 +26,7 @@
             title: '',
             rel: '',
             media: '',
-            target: '_blank',
+            target: '',
             onClick: null //function () {}
         };
         var external = {};
@@ -81,7 +81,9 @@
 
         external.click = function (func) {
             if (Csw.isFunction(func)) {
-                external.bind('click', func);
+                return external.bind('click', func);
+            } else {
+                return external;
             }
         };
 
