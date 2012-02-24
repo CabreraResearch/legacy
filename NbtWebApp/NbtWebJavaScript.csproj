@@ -42,6 +42,7 @@
     <Content Include="ConnectTest.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />
+    <Content Include="csw.js\controls\csw.p.js" />
     <Content Include="csw.js\controls\csw.textarea.js" />
     <Content Include="csw.js\controls\csw.tabdiv.js" />
     <Content Include="csw.js\controls\csw.li.js" />

@@ -48,7 +48,7 @@
             $span = $(html);
             Csw.controls.factory($span, external);
 
-            if (Csw.isJQuery(internal.$parent)) {
+            if (internal.$parent) {
                 internal.$parent.append(external.$);
             }
         } ());

@@ -253,6 +253,14 @@
             return Csw.controls.option(opts);
         };
 
+        external.p = function (opts) {
+            /// <summary> Creates a Csw.p on this element</summary>
+            /// <param name="opts" type="Object">Options to define the p.</param>
+            /// <returns type="Object">A Csw.p</returns>
+            opts = internal.prepControl(opts, 'p');
+            return Csw.controls.p(opts);
+        };
+
         external.select = function (opts) {
             /// <summary> Creates a Csw.select on this element</summary>
             /// <param name="opts" type="Object">Options to define the select.</param>
