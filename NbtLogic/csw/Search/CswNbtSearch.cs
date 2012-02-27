@@ -11,7 +11,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt
+namespace ChemSW.Nbt.Search
 {
     /// <summary>
     /// Represents a Universal Search
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt
         private JObject _SearchObj;
 
         public JArray FiltersApplied { get { return (JArray) _SearchObj["filters"]; } }
-        private string _SearchTerm { get { return _SearchObj["searchterm"].ToString(); } }
+        public string SearchTerm { get { return _SearchObj["searchterm"].ToString(); } }
 
         /// <summary>
         /// A display name for the search
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                return "Search for: " + _SearchTerm;
+                return "Search for: " + SearchTerm;
             }
         }
 
@@ -101,17 +101,38 @@ namespace ChemSW.Nbt
 
         #region Search Functions
 
-        public void addFilter( JObject Filter )
+        public void addFilter( JObject FilterObj )
         {
-            FiltersApplied.Add( Filter );
+            FiltersApplied.Add( FilterObj );
             _FilteredPropIds = null;
-        }
+        } // addFilter()
 
-        public void removeFilter( JObject Filter )
+        public void removeFilter( JObject FilterObj )
         {
-            FiltersApplied.Remove( Filter );
+            CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
+            if( Filter.Type == CswNbtSearchFilterType.nodetype )
+            {
+                // Clear all filters
+                FiltersApplied.Clear();
+            }
+            else
+            {
+                Collection<JObject> FiltersToRemove = new Collection<JObject>();
+                foreach( JObject MatchingFilterObj in ( from JObject AppliedFilterObj in FiltersApplied
+                                                      select new CswNbtSearchFilterWrapper( AppliedFilterObj ) into AppliedFilter
+                                                       where AppliedFilter == Filter
+                                                      select AppliedFilter.ToJObject() ) )
+                {
+                    FiltersToRemove.Add( MatchingFilterObj );
+                }
+
+                foreach( JObject DoomedFilterObj in FiltersToRemove )
+                {
+                    FiltersApplied.Remove( DoomedFilterObj );
+                }
+            }
             _FilteredPropIds = null;
-        }
+        } // removeFilter()
 
         public ICswNbtTree Results()
         {
@@ -163,7 +184,7 @@ namespace ChemSW.Nbt
                 }
             } // foreach(JObject FilterObj in FiltersApplied)
 
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( _SearchTerm, WhereClause, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromSearch( SearchTerm, WhereClause, false );
             return Tree;
         }
 
@@ -359,114 +380,6 @@ namespace ChemSW.Nbt
         } // saveSearchAsView()
 
         #endregion Search Functions
-
-        #region Filter Wrapper
-
-        private sealed class CswNbtSearchFilterType : CswEnum<CswNbtSearchFilterType>
-        {
-            private CswNbtSearchFilterType( string Name ) : base( Name ) { }
-            public static IEnumerable<CswNbtSearchFilterType> _All { get { return CswEnum<CswNbtSearchFilterType>.All; } }
-            public static explicit operator CswNbtSearchFilterType( string str )
-            {
-                CswNbtSearchFilterType ret = Parse( str );
-                return ( ret != null ) ? ret : CswNbtSearchFilterType.Unknown;
-            }
-            public static readonly CswNbtSearchFilterType Unknown = new CswNbtSearchFilterType( "Unknown" );
-
-            public static readonly CswNbtSearchFilterType nodetype = new CswNbtSearchFilterType( "nodetype" );
-            public static readonly CswNbtSearchFilterType propval = new CswNbtSearchFilterType( "propval" );
-        }
-
-        private class CswNbtSearchFilterWrapper
-        {
-            private JObject _FilterObj;
-            public const string BlankValue = "[blank]";
-
-            public CswNbtSearchFilterWrapper( JObject FilterObj )
-            {
-                _FilterObj = FilterObj;
-            }
-            public CswNbtSearchFilterWrapper( string inFilterName, CswNbtSearchFilterType inType, string inFilterId, string inFilterValue, Int32 inCount, string inIcon )
-            {
-                _FilterObj = new JObject();
-
-                FilterName = inFilterName;
-                Type = inType;
-                FilterId = inFilterId;
-                FilterValue = inFilterValue;
-                Count = inCount;
-                Icon = inIcon;
-            }
-
-            public JObject ToJObject()
-            {
-                return _FilterObj;
-            }
-
-            public string FilterName
-            {
-                get { return _FilterObj["filtername"].ToString(); }
-                set { _FilterObj["filtername"] = value; }
-            }
-            public CswNbtSearchFilterType Type
-            {
-                get { return (CswNbtSearchFilterType) _FilterObj["filtertype"].ToString(); }
-                set { _FilterObj["filtertype"] = value.ToString(); }
-            }
-            public string FilterId
-            {
-                get { return _FilterObj["filterid"].ToString(); }
-                set { _FilterObj["filterid"] = value; }
-            }
-            public Int32 Count
-            {
-                get { return CswConvert.ToInt32( _FilterObj["count"] ); }
-                set { _FilterObj["count"] = value.ToString(); }
-            }
-            public string Icon
-            {
-                get { return _FilterObj["icon"].ToString(); }
-                set { _FilterObj["icon"] = value; }
-            }
-            public string FilterValue
-            {
-                get { return _FilterObj["filtervalue"].ToString(); }
-                set
-                {
-                    if( value != string.Empty )
-                    {
-                        _FilterObj["filtervalue"] = value;
-                    }
-                    else
-                    {
-                        _FilterObj["filtervalue"] = BlankValue;
-                    }
-                }
-            } // FilterValue
-
-            #region for NodeType Filters
-
-            public Int32 FirstVersionId
-            {
-                get { return CswConvert.ToInt32( _FilterObj["firstversionid"] ); }
-                set { _FilterObj["firstversionid"] = value.ToString(); }
-            }
-
-            #endregion for NodeType Filters
-
-            #region for PropVal Filters
-
-            public Int32 FirstPropVersionId
-            {
-                get { return CswConvert.ToInt32( _FilterObj["firstpropversionid"] ); }
-                set { _FilterObj["firstpropversionid"] = value.ToString(); }
-            }
-
-            #endregion for PropVal Filters
-
-        } // CswNbtSearchFilterWrapper
-
-        #endregion Filter Wrapper
 
 
         #region Session Cache functions
