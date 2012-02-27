@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.WebServices
         private bool _CanEdit = true;
         private bool _CanDelete = true;
         private Collection<CswViewBuilderProp> _PropsInGrid = null;
+        private string _FirstPropInGrid = string.Empty;
         public enum GridReturnType
         {
             Xml,
@@ -214,8 +215,8 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject RetObj = new JObject();
             JArray GridRows = new JArray();
-
             Int32 NodeCount = Tree.getChildNodeCount();
+            bool IsTruncated = false;
             if( NodeCount > 0 )
             {
                 for( Int32 C = StartingNode; ( C < EndingNode || IsReport ) && C < NodeCount; C += 1 )
@@ -224,8 +225,16 @@ namespace ChemSW.Nbt.WebServices
 
                     GridRows.Add( _getGridRow( Tree, _PropsInGrid ) );
 
+                    IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
+
                     Tree.goToParentNode();
                 }
+
+                if( IsTruncated )
+                {
+                    GridRows.Add( _getTruncatedGridRow( _PropsInGrid.First() ) );
+                }
+
             }
 
             Int32 PageCount;
@@ -237,10 +246,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 PageCount = ( ( NodeCount + PageSize - 1 ) / PageSize );
             }
+
             RetObj["total"] = PageCount;
             RetObj["page"] = PageNumber + 1;
             RetObj["records"] = NodeCount;
             RetObj["rows"] = GridRows;
+            RetObj["wastruncated"] = IsTruncated;
             return RetObj;
         }
 
@@ -313,7 +324,6 @@ namespace ChemSW.Nbt.WebServices
 
             ThisNodeObj["jqgridid"] = ThisNodeId;
             ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
-            ThisNodeObj["nodename"] = ThisNodeName;
             string Icon = "<img src=\'";
             if( ThisNodeLocked )
             {
@@ -325,6 +335,7 @@ namespace ChemSW.Nbt.WebServices
             }
             Icon += "\'/>";
             ThisNodeObj["Icon"] = Icon;
+            ThisNodeObj["nodename"] = ThisNodeName;
 
             foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
             {
@@ -335,12 +346,37 @@ namespace ChemSW.Nbt.WebServices
 
         } // _treeNodeJObject()
 
+        private JObject _getTruncatedGridRow( CswViewBuilderProp FirstPropInGrid )
+        {
+            JObject ThisNodeObj = new JObject();
+
+            string ThisNodeName = "Truncated";
+
+            ThisNodeObj["jqgridid"] = "-1";
+            ThisNodeObj["cswnbtnodekey"] = string.Empty;
+            string Icon = "<img src=\'";
+            Icon += "Images/icons/truncated.gif";
+            Icon += "\'/>";
+            ThisNodeObj["Icon"] = Icon;
+            ThisNodeObj["nodename"] = ThisNodeName;
+
+            if( string.IsNullOrEmpty( _FirstPropInGrid ) )
+            {
+                _FirstPropInGrid = FirstPropInGrid.PropName + "_" + FirstPropInGrid.MetaDataPropId;
+            }
+
+            ThisNodeObj[_FirstPropInGrid] = "Results Truncated Here.";
+
+            return ThisNodeObj;
+
+        } // _treeNodeJObject()
+
 
         /// <summary>
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private static void _addSafeCellContent( CswNbtResources CswNbtResources, JObject DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
+        private void _addSafeCellContent( CswNbtResources CswNbtResources, JObject DirtyElement, JObject ParentObj, IEnumerable<CswViewBuilderProp> PropsInGrid )
         {
             if( null != DirtyElement )
             {
@@ -368,7 +404,10 @@ namespace ChemSW.Nbt.WebServices
                         CleanPropName += "_" + VbProp.MetaDataPropId;
                     }
                 }
-
+                if( string.IsNullOrEmpty( _FirstPropInGrid ) )
+                {
+                    _FirstPropInGrid = CleanPropName;
+                }
                 ParentObj[CleanPropName] = CleanValue;
             }
         }
