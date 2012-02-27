@@ -705,6 +705,12 @@
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="ExternalLogin.aspx" />
     <Content Include="ExternalLogin.html" />
+    <Content Include="Images\icons\flag.gif" />
+    <Content Include="Images\quota\bad.gif" />
+    <Content Include="Images\quota\good.gif" />
+    <Content Include="Images\quota\half.gif" />
+    <Content Include="Images\quota\lock.gif" />
+    <Content Include="Images\view\viewtable.gif" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.js" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.min.js" />
