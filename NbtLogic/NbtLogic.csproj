@@ -187,6 +187,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassTestGroup.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassUnitOfMeasure.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassUser.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
     <Compile Include="csw\ObjClasses\ICswNbtObjClassFactory.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />

@@ -895,6 +895,19 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, InsertedRow );
             _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
             NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
+            refreshAll();
+
+ 
+            if( InsertAfterProp != null )
+            {
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp, InsertAfterProp );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp );
+            }
+            else //if( NodeTypeTabs.Rows.Count > 0 )
+            {
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+            }
 
             NewProp.getFieldTypeRule().afterCreateNodeTypeProp( NewProp );
 
@@ -908,19 +921,6 @@ namespace ChemSW.Nbt.MetaData
 
             _CswNbtMetaDataResources._PreventVersioning = OldPreventVersioning;
 
-
-            if( InsertAfterProp != null )
-            {
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp, InsertAfterProp );
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp );
-            }
-            else //if( NodeTypeTabs.Rows.Count > 0 )
-            {
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
-            }
-
-            refreshAll();
 
             //will need to refresh auto-views
             _RefreshViewForNodetypeId.Add( NodeTypeId );

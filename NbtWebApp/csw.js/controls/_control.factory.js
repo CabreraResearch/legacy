@@ -86,7 +86,7 @@
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
             var ret = Csw.controls.dom.propDom($element, name, value);
-            if (arguments.length === 2) {
+            if (arguments.length === 2 || Csw.isPlainObject(name)) {
                 ret = external;
             }
             return ret;
@@ -97,7 +97,7 @@
             /// <param name="value" type="String">The value of the attribute</param>
             /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
             var ret = Csw.controls.dom.propNonDom($element, name, value);
-            if (arguments.length === 2) {
+            if (arguments.length === 2 || Csw.isPlainObject(name)) {
                 ret = external;
             }
             return ret;
@@ -404,13 +404,14 @@
                 _internal = Csw.clientDb.getItem('control_data_' + internal.id) || {};
             switch (arguments.length) {
                 case 0:
-                    ret = _internal;
+                    ret = _internal || $element.data();
                     break;
                 case 1:
-                    ret = _internal[prop];
+                    ret = _internal[prop] || $element.data(prop);
                     break;
                 case 2:
                     _internal[prop] = val;
+                    $element.data(prop, val);
                     Csw.clientDb.setItem('control_data_' + internal.id, _internal);
                     ret = external;
                     break;

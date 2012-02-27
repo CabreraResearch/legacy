@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getPks( "where nodetypetabsetid = " + TabId.ToString() );
         }
-        
+
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByObjectClassProp( Int32 ObjectClassPropId )
         {
             return _CollImpl.getWhere( "where objectclasspropid = " + ObjectClassPropId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
@@ -136,7 +136,9 @@ namespace ChemSW.Nbt.MetaData
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getLayoutProps( Int32 NodeTypeId, Int32 TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool PropsInLayout = true )
         {
-            string WhereClause = "where nodetypepropid ";
+            string NodeTypeIdStr = NodeTypeId.ToString();
+            string WhereClause = "where nodetypeid = '" + NodeTypeIdStr + "' ";
+            WhereClause += " and nodetypepropid ";
             if( PropsInLayout )
             {
                 WhereClause += " in ";
@@ -148,7 +150,7 @@ namespace ChemSW.Nbt.MetaData
             WhereClause += @" (select nodetypepropid 
                                  from nodetype_layout
                                 where layouttype = '" + LayoutType.ToString() + @"' 
-                                  and nodetypeid = " + NodeTypeId.ToString() + @" ";
+                                  and nodetypeid = " + NodeTypeIdStr + @" ";
             if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
             {
                 WhereClause += "and nodetypetabsetid = " + TabId.ToString();
@@ -158,7 +160,7 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getWhere( WhereClause ).Cast<CswNbtMetaDataNodeTypeProp>();
 
         } // getPropsInLayout()
-        
+
 
         //public void ClearKeys()
         //{

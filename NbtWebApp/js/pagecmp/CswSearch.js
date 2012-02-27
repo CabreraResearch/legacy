@@ -55,15 +55,17 @@
         if (options) $.extend(o, options);
 
         var $parent = $(this);
-        o.searchTable = Csw.controls.table({
-            $parent: $('div />').appendTo($parent),
-            ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+        var parent = Csw.controls.factory($parent);
+
+        o.searchTable = parent.table({
+            ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+            align: 'center'
         });
 
-        var $topspan = o.searchTable.append('<span />');
+        var topSpan = o.searchTable.span();
 
-        var topspandivid = Csw.controls.dom.makeId({ ID: 'search_criteria_div', prefix: o.ID });
-        var $topspandiv = $topspan.CswDiv('init', { ID: topspandivid })
+        var topSpanDivId = Csw.controls.dom.makeId({ ID: 'search_criteria_div', prefix: o.ID });
+        var topSpanDiv = topSpan.div({ ID: topSpanDivId })
                             .addClass('CswSearch_Div');
 
         init();
@@ -102,9 +104,9 @@
             while (andRow <= o.propsCount) { //eventually this will be configurable: and/or, or, and/not, etc
                 //Row i, Column 1: and
                 o.searchTable.cell(andRow, 1)
-                    .propDom({align: 'right'})
-                    .css({'text-align': 'right'})
-                    .span({text: '&nbsp;and&nbsp;'});
+                    .propDom({ align: 'right' })
+                    .css({ 'text-align': 'right' })
+                    .span({ text: '&nbsp;and&nbsp;' });
 
                 andRow += 1;
             }
@@ -114,7 +116,7 @@
                     thisProp = properties[prop];
                     nodeTypeId = Csw.controls.dom.makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
                     o.searchTable.cell(propRow, 2)
-                        .span({ ID: nodeTypeId, cssclass: Csw.enums.cssClasses_ViewBuilder.metadatatype_static.name,  text: thisProp.metadatatypename })
+                        .span({ ID: nodeTypeId, cssclass: Csw.enums.cssClasses_ViewBuilder.metadatatype_static.name, text: thisProp.metadatatypename })
                         .propNonDom('relatedidtype', thisProp.relatedidtype);
                     o.selectedSubfieldVal = '';
                     o.selectedFilterVal = '';
@@ -302,7 +304,7 @@
             //Row i, Column 1 (1/1): clear button
             var clearButtonCell = clearPositionTable.cell(cellRow, clearCellNumber);
             //clear btn
-            clearButtonCell.$.CswButton({
+            clearButtonCell.button({
                 ID: Csw.controls.dom.makeId(o.ID, 'clear_button'),
                 enabledText: 'Reset', //case 22756: this is more accurate name-to-behavior.
                 disabledText: 'Reset',
@@ -328,13 +330,13 @@
             var searchButtonCell = o.searchTable.cell(o.bottomRow, o.searchBtnCell)
                                     .propDom({ align: 'right' })
                                     .css({ 'text-align': 'right' });
-            var $searchButton = searchButtonCell.$.CswButton({
+            var searchButton = searchButtonCell.button({
                 ID: Csw.controls.dom.makeId(o.ID, 'search_button'),
                 enabledText: 'Search',
                 disabledText: 'Searching',
                 onClick: function () { doSearch(); }
             });
-            $searchButton.CswViewPropFilter('bindToButton');
+            searchButton.$.CswViewPropFilter('bindToButton');
         } // renderSearchButtons()
 
         function init() {
@@ -350,11 +352,10 @@
                 'url': o.getClientSearchXmlUrl,
                 'data': jsonData,
                 'success': function (data) {
-                    $topspandiv.empty();
+                    topSpanDiv.empty();
                     o.searchtype = data.searchtype;
                     var searchTableId = Csw.controls.dom.makeId({ prefix: o.ID, ID: 'search_tbl' });
-                    o.searchTable = Csw.controls.table({
-                        $parent: $topspandiv,
+                    o.searchTable = topSpanDiv.table({
                         ID: searchTableId,
                         cellpadding: 1,
                         cellspacing: 1,

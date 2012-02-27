@@ -106,12 +106,13 @@
                     filtValAry = [],
                     filtSelected = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {},
                     placeholder = '',
-                    subfieldCell, filterModesCell, propFilterValueCell, $defaultSubField,
+                    subfieldCell, filterModesCell, propFilterValueCell, defaultSubField,
                     field, thisField, filtermodes, mode, thisMode, subfieldsList, filterModesList, filt, filtInput;
 
                 if (filtOpt.includePropertyName) {
                     //Row propRow, Column 3: property
                     propFilterTable.cell(filtOpt.propRow, filtOpt.firstColumn)
+                        .empty()
                         .span({ text: propertyName, ID: makePropFilterId(propertyName, filtOpt) }) //3
                 }
 
@@ -128,14 +129,14 @@
                     .empty();
 
                 //Subfield default value (hidden)
-                $defaultSubField = subfieldCell.span({
+                defaultSubField = subfieldCell.span({
                     ID: defaultSubFieldId,
                     value: defaultSubfieldVal,
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
                 if (false === filtOpt.advancedIsHidden) {
-                    $defaultSubField.hide();
+                    defaultSubField.hide();
                 }
 
                 //Generate subfields and filters picklist arrays
