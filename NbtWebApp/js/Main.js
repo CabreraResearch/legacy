@@ -10,7 +10,7 @@ window.initMain = window.initMain || function (undefined) {
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
-    
+
     var universalsearch;
 
     Csw.ajax.onBeforeAjax = function (watchGlobal) {
@@ -53,8 +53,15 @@ window.initMain = window.initMain || function (undefined) {
                     $searchbox_parent: $('#SearchDiv'),
                     $searchresults_parent: $('#RightDiv'),
                     $searchfilters_parent: $('#LeftDiv'),
-                    onBeforeSearch: function () { clear({ all: true }); },
-                    onAfterSearch: function () { refreshMainMenu(); },
+                    onBeforeSearch: function () {
+                        clear({ all: true });
+                    },
+                    onAfterSearch: function () {
+                        refreshMainMenu();
+                    },
+                    onAfterNewSearch: function (searchid) {
+                        Csw.clientState.setCurrentSearch(searchid);
+                    },
                     onLoadView: function (viewid, viewmode) {
                         handleItemSelect({
                             'type': 'view',
@@ -97,6 +104,11 @@ window.initMain = window.initMain || function (undefined) {
                     handleItemSelect({
                         'type': 'report',
                         'reportid': current.reportid
+                    });
+                } else if (false === Csw.isNullOrEmpty(current.searchid)) {
+                    handleItemSelect({
+                        'type': 'search',
+                        'searchid': current.searchid
                     });
                 } else {
                     refreshWelcome();
@@ -210,10 +222,10 @@ window.initMain = window.initMain || function (undefined) {
         var type = Csw.string(o.type).toLowerCase();
 
         function itemIsSupported() {
-            var ret = (linkType === 'search' || 
+            var ret = (linkType === 'search' ||
                        false === Csw.isNullOrEmpty(o.viewid) ||
-                       type === 'action' || 
-                       type === 'search' || 
+                       type === 'action' ||
+                       type === 'search' ||
                        type === 'report');
             return ret;
         }
@@ -256,7 +268,7 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     case 'search':
-                        universalsearch.restoreSearch( o.searchid );
+                        universalsearch.restoreSearch(o.searchid);
                         break;
                     case 'report':
                         window.location = "Report.aspx?reportid=" + o.reportid;
@@ -873,11 +885,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                   
-            //				break;                                   
-            //			case 'Assign_Tests':                                   
-            //				break;                                   
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                   
+            //			case 'Assign_Inspection':                                     
+            //				break;                                     
+            //			case 'Assign_Tests':                                     
+            //				break;                                     
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                     
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -911,8 +923,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':                                   
-            //				break;                                   
+            //			case 'Design':                                     
+            //				break;                                     
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -939,14 +951,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                   
-            //				break;                                   
-            //			case 'Future_Scheduling':                                   
-            //				break;                                   
-            //			case 'Import_Fire_Extinguisher_Data':                                   
-            //				break;                                   
-            //			case 'Inspection_Design':                                   
-            //				break;                                   
+            //			case 'Enter_Results':                                     
+            //				break;                                     
+            //			case 'Future_Scheduling':                                     
+            //				break;                                     
+            //			case 'Import_Fire_Extinguisher_Data':                                     
+            //				break;                                     
+            //			case 'Inspection_Design':                                     
+            //				break;                                     
             case 'OOC_Inspections':
                 setupOocInspections();
 
@@ -980,14 +992,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':                                   
-            //				break;                                   
-            //			case 'Receiving':                                   
-            //				break;                                   
-            //			case 'Split_Samples':                                   
-            //				break;                                   
-            //			case 'View_By_Location':                                   
-            //				break;                                   
+            //			case 'Load_Mobile_Data':                                     
+            //				break;                                     
+            //			case 'Receiving':                                     
+            //				break;                                     
+            //			case 'Split_Samples':                                     
+            //				break;                                     
+            //			case 'View_By_Location':                                     
+            //				break;                                     
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;

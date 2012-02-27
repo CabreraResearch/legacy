@@ -8,7 +8,9 @@
         /// <summary> Instance a Csw State object.</summary>
         /// <returns type="Object">Collection of methods to manage state.</returns>
 
-        function clearCurrent() {
+        var external = {};
+
+        external.clearCurrent = function () {
             /// <summary> Clear all current state cookies  </summary>
             /// <returns type="Boolean">Always true</returns>
             Csw.cookie.set(Csw.cookie.cookieNames.LastViewId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId));
@@ -16,49 +18,60 @@
             Csw.cookie.set(Csw.cookie.cookieNames.LastActionName, Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionName));
             Csw.cookie.set(Csw.cookie.cookieNames.LastActionUrl, Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionUrl));
             Csw.cookie.set(Csw.cookie.cookieNames.LastReportId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentReportId));
+            Csw.cookie.set(Csw.cookie.cookieNames.LastSearchId, Csw.cookie.get(Csw.cookie.cookieNames.CurrentSearchId));
 
             Csw.cookie.clear(Csw.cookie.cookieNames.CurrentViewId);
             Csw.cookie.clear(Csw.cookie.cookieNames.CurrentViewMode);
             Csw.cookie.clear(Csw.cookie.cookieNames.CurrentActionName);
             Csw.cookie.clear(Csw.cookie.cookieNames.CurrentActionUrl);
             Csw.cookie.clear(Csw.cookie.cookieNames.CurrentReportId);
+            Csw.cookie.clear(Csw.cookie.cookieNames.CurrentSearchId);
             return true;
-        }
+        };
 
-        function setCurrentView(viewid, viewmode) {
+        external.setCurrentView = function (viewid, viewmode) {
             /// <summary> Store the current view in a cookie.</summary>
             /// <param name="viewid" type="String">An Nbt ViewId</param>
             /// <param name="viewmode" type="String">An Nbt ViewId</param>
             /// <returns type="Boolean">Always true</returns>
-            clearCurrent();
+            external.clearCurrent();
             if (false === Csw.isNullOrEmpty(viewid) && false === Csw.isNullOrEmpty(viewmode)) {
                 Csw.cookie.set(Csw.cookie.cookieNames.CurrentViewId, viewid);
                 Csw.cookie.set(Csw.cookie.cookieNames.CurrentViewMode, viewmode);
             }
             return true;
-        }
+        };
 
-        function setCurrentAction(actionname, actionurl) {
+        external.setCurrentAction = function (actionname, actionurl) {
             /// <summary> Store the current action in a cookie.</summary>
             /// <param name="actionname" type="String">An Nbt Action name</param>
             /// <param name="actionurl" type="String">An Nbt Action url</param>
             /// <returns type="Boolean">Always true</returns>
-            clearCurrent();
+            external.clearCurrent();
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentActionName, actionname);
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentActionUrl, actionurl);
             return true;
-        }
+        };
 
-        function setCurrentReport(reportid) {
+        external.setCurrentReport = function (reportid) {
             /// <summary> Store the current report in a cookie.</summary>
             /// <param name="reportid" type="String">An Nbt ReportId</param>
             /// <returns type="Boolean">Always true</returns>
-            clearCurrent();
+            external.clearCurrent();
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentReportId, reportid);
             return true;
-        }
+        };
 
-        function getCurrent() {
+        external.setCurrentSearch = function (searchid) {
+            /// <summary> Store the current report in a cookie.</summary>
+            /// <param name="reportid" type="String">An Nbt ReportId</param>
+            /// <returns type="Boolean">Always true</returns>
+            external.clearCurrent();
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentSearchId, searchid);
+            return true;
+        };
+
+        external.getCurrent = function () {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Object">Views, actions and reports</returns>
             return {
@@ -66,11 +79,12 @@
                 viewmode: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode),
                 actionname: Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionName),
                 actionurl: Csw.cookie.get(Csw.cookie.cookieNames.CurrentActionUrl),
-                reportid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentReportId)
+                reportid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentReportId),
+                searchid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentSearchId)
             };
-        }
+        };
 
-        function getLast() {
+        external.getLast = function () {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Object">Views, actions and reports</returns>
             return {
@@ -78,34 +92,28 @@
                 viewmode: Csw.cookie.get(Csw.cookie.cookieNames.LastViewMode),
                 actionname: Csw.cookie.get(Csw.cookie.cookieNames.LastActionName),
                 actionurl: Csw.cookie.get(Csw.cookie.cookieNames.LastActionUrl),
-                reportid: Csw.cookie.get(Csw.cookie.cookieNames.LastReportId)
+                reportid: Csw.cookie.get(Csw.cookie.cookieNames.LastReportId),
+                searchid: Csw.cookie.get(Csw.cookie.cookieNames.LastSearchId)
             };
         }
 
-        function setCurrent(json) {
+        external.setCurrent = function (json) {
             /// <summary> Get all current state data from the cookie.</summary>
             /// <returns type="Boolean">Always true.</returns>
-            clearCurrent();
+            external.clearCurrent();
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentViewId, json.viewid);
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentViewMode, json.viewmode);
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentActionName, json.actionname);
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentActionUrl, json.actionurl);
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentReportId, json.reportid);
+            Csw.cookie.set(Csw.cookie.cookieNames.CurrentSearchId, json.searchid);
             return true;
         }
 
-        return {
-            clearCurrent: clearCurrent,
-            setCurrentView: setCurrentView,
-            setCurrentAction: setCurrentAction,
-            setCurrentReport: setCurrentReport,
-            getCurrent: getCurrent,
-            getLast: getLast,
-            setCurrent: setCurrent
-        };
-
-    }());
+        return external;
+        
+    } ());
     Csw.register('clientState', clientState);
     Csw.clientState = Csw.clientState || clientState;
 
-}());
+} ());

@@ -12,6 +12,7 @@
             $searchfilters_parent: null,
             onBeforeSearch: null,
             onAfterSearch: null,
+            onAfterNewSearch: null,
             onLoadView: null,
             searchresults_maxheight: '600',
             searchbox_width: '200px',
@@ -64,7 +65,10 @@
             Csw.ajax.post({
                 url: internal.newsearchurl,
                 data: { SearchTerm: internal.searchterm },
-                success: internal.handleResults
+                success: function (data) {
+                    internal.handleResults(data);
+                    Csw.tryExec(internal.onAfterNewSearch, internal.sessiondataid);
+                }
             });
         }; // search()
 
@@ -82,7 +86,7 @@
                 ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
                 onEditNode: null,
                 onDeleteNode: null,
-                onSuccess: internal.onAfterSearch,
+                //onSuccess: internal.onAfterSearch,
                 onNoResults: function () {
                     internal.$searchresults_parent.text('No Results Found');
                 },
@@ -213,22 +217,12 @@
                 url: internal.filtersearchurl,
                 data: {
                     SessionDataId: internal.sessiondataid,
-                    Filter: JSON.stringify( thisFilter ),
+                    Filter: JSON.stringify(thisFilter),
                     Action: action
                 },
                 success: internal.handleResults
             });
         }; // filter()
-
-//        internal.removeFilter = function (thisFilter) {
-//            if (thisFilter.filtertype === "nodetype") {
-//                //remove all filters
-//                internal.filters = {};
-//            } else {
-//                delete internal.filters[thisFilter.filterid];
-//            }
-//            internal.search();
-//        } // removeFilter()
 
         internal.saveAsView = function () {
             $.CswDialog('AddViewDialog', {
@@ -241,8 +235,8 @@
                         data: {
                             SessionDataId: internal.sessiondataid,
                             ViewId: newviewid//,
-//                            SearchTerm: internal.searchterm,
-//                            Filters: JSON.stringify(internal.filters)
+                            //                            SearchTerm: internal.searchterm,
+                            //                            Filters: JSON.stringify(internal.filters)
                         },
                         success: function (data) {
                             Csw.tryExec(internal.onLoadView, newviewid, viewmode);
@@ -253,7 +247,7 @@
             }); // CswDialog
         }; // saveAsView()
 
-        external.restoreSearch = function(searchid) {
+        external.restoreSearch = function (searchid) {
 
             internal.sessiondataid = searchid;
 
@@ -263,7 +257,10 @@
                 data: {
                     SessionDataId: internal.sessiondataid
                 },
-                success: internal.handleResults
+                success: function (data) {
+                    internal.handleResults(data);
+                    Csw.tryExec(internal.onAfterNewSearch, internal.sessiondataid);
+                }
             });
         }; // restoreSearch()
 
