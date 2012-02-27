@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -187,7 +187,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassTestGroup.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassUnitOfMeasure.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassUser.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
     <Compile Include="csw\ObjClasses\ICswNbtObjClassFactory.cs" />
     <Compile Include="csw\PropertySets\ICswNbtPropertySetInspectionParent.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetSchedulerImpl.cs" />
