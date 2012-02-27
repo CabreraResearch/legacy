@@ -746,8 +746,7 @@
                             navigationText: 'Please select from the following views. Click OK to continue.',
                             values: values,
                             onOkClick: function (selectedView) {
-                                var $selectedView = $(selectedView),
-                                        viewId = $selectedView.val();
+                                var viewId = selectedView.val();
                                 if (Csw.isFunction(o.onFinish)) {
                                     o.onFinish(viewId);
                                 }
