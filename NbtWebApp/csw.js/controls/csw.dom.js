@@ -310,7 +310,7 @@
             return $el.bind(eventName, event);
         };
 
-        external.unbind = function ($el, eventName) {
+        external.unbind = function ($el, eventName, event) {
             /// <summary>Unbind an action from a jQuery element's event.</summary>
             /// <param name="$el" type="jQuery">A jQuery element</param>
             /// <param name="eventName" type="String">The name of the event</param>
