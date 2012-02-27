@@ -11,6 +11,8 @@ window.initMain = window.initMain || function (undefined) {
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
 
+    var universalsearch;
+
     function startSpinner() {
         $('#ajaxSpacer').hide();
         $('#ajaxImage').show();
@@ -48,12 +50,19 @@ window.initMain = window.initMain || function (undefined) {
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
-                Csw.controls.universalSearch({
+                universalsearch = Csw.controls.universalSearch({
                     $searchbox_parent: $('#SearchDiv'),
                     $searchresults_parent: $('#RightDiv'),
                     $searchfilters_parent: $('#LeftDiv'),
-                    onBeforeSearch: function () { clear({ all: true }); },
-                    onAfterSearch: function () { refreshMainMenu(); },
+                    onBeforeSearch: function () {
+                        clear({ all: true });
+                    },
+                    onAfterSearch: function () {
+                        refreshMainMenu();
+                    },
+                    onAfterNewSearch: function (searchid) {
+                        Csw.clientState.setCurrentSearch(searchid);
+                    },
                     onLoadView: function (viewid, viewmode) {
                         handleItemSelect({
                             'type': 'view',
@@ -97,6 +106,11 @@ window.initMain = window.initMain || function (undefined) {
                         'type': 'report',
                         'reportid': current.reportid
                     });
+                } else if (false === Csw.isNullOrEmpty(current.searchid)) {
+                    handleItemSelect({
+                        'type': 'search',
+                        'searchid': current.searchid
+                    });
                 } else {
                     refreshWelcome();
                 }
@@ -119,7 +133,8 @@ window.initMain = window.initMain || function (undefined) {
 
         $('#QuickLaunch').CswQuickLaunch({
             'onViewClick': function (viewid, viewmode) { handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode }); },
-            'onActionClick': function (actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); }
+            'onActionClick': function (actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); },
+            'onSearchClick': function (searchid) { handleItemSelect({ 'type': 'search', 'searchid': searchid }); }
         }); // CswQuickLaunch
     }
 
@@ -188,13 +203,14 @@ window.initMain = window.initMain || function (undefined) {
     function handleItemSelect(options) {
         //if (debugOn()) Csw.log('Main.handleItemSelect()');
         var o = {
-            type: 'view', // Action, Report, View
+            type: 'view', // Action, Report, View, Search
             viewmode: 'tree', // Grid, Tree, List
             linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
             viewid: '',
             actionname: '',
             actionurl: '',
             reportid: '',
+            searchid: '',
             nodeid: '',
             cswnbtnodekey: ''
         };
@@ -207,8 +223,11 @@ window.initMain = window.initMain || function (undefined) {
         var type = Csw.string(o.type).toLowerCase();
 
         function itemIsSupported() {
-            var ret = (linkType === 'search' || false === Csw.isNullOrEmpty(o.viewid) ||
-                 type === 'action' || type === 'report');
+            var ret = (linkType === 'search' ||
+                       false === Csw.isNullOrEmpty(o.viewid) ||
+                       type === 'action' ||
+                       type === 'search' ||
+                       type === 'report');
             return ret;
         }
 
@@ -248,6 +267,9 @@ window.initMain = window.initMain || function (undefined) {
                             'actionname': o.actionname,
                             'actionurl': o.actionurl
                         });
+                        break;
+                    case 'search':
+                        universalsearch.restoreSearch(o.searchid);
                         break;
                     case 'report':
                         window.location = "Report.aspx?reportid=" + o.reportid;

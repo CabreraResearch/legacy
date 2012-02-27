@@ -235,7 +235,7 @@ namespace ChemSW.Nbt
                                       Int32 JctNodePropId,
                                       string PropName,
                                       string Gestalt,
-                                      CswNbtMetaDataFieldType FieldType )
+                                      CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             //XmlNode NewXmlNode = _XmlDoc.CreateElement( _ElemName_NodeProp );
             //_CurrentNode.AppendChild( NewXmlNode );
@@ -271,7 +271,7 @@ namespace ChemSW.Nbt
             NewProp[_AttrName_JctNodePropId] = JctNodePropId.ToString();
             NewProp[_AttrName_NodePropName] = PropName.ToString();
             NewProp[_AttrName_NodePropGestalt] = PropValue.ToString();
-            NewProp[_AttrName_NodePropFieldType] = FieldType.FieldType.ToString();
+            NewProp[_AttrName_NodePropFieldType] = FieldType.ToString();
             ( (JArray) NodeObj[_AttrName_ChildProps] ).Add( NewProp );
 
         }//_makePropJObject()
@@ -1246,7 +1246,7 @@ namespace ChemSW.Nbt
             return _getChildProps();
         }
 
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             _checkCurrentNode();
             //if( null == _CurrentNode )

@@ -99,7 +99,8 @@ namespace ChemSW.Nbt
                                                          CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                          NodesRow["propname"].ToString(),
                                                          NodesRow["gestalt"].ToString(),
-                                                         _CswNbtResources.MetaData.getFieldType( CswConvert.ToInt32( NodesRow["fieldtypeid"] ) ) );
+                                                         (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodesRow["fieldtype"].ToString() ) );
+
                             } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         } // if( ThisNTPId != Int32.MinValue )
                         _CswNbtTree.goToRoot();
@@ -315,18 +316,18 @@ namespace ChemSW.Nbt
                 //if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
                 //{
                     // Properties
-                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtypeid, propval.jctnodepropid, propval.gestalt  ";
+                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt  ";
 
-                    From += @" left outer join (select p.nodetypeid, p.nodetypepropid, p.propname, p.fieldtypeid, nl.nodetypelayoutid, nl.display_row
+                    From += @" left outer join (select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row
                                                   from nodetype_props p
                                                   join field_types f on p.fieldtypeid = f.fieldtypeid
                                                   left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
-                                                 where f.searchable = '1' 
-                                                   and (nl.nodetypelayoutid is not null 
+                                                 where (nl.nodetypelayoutid is not null 
                                                         or f.fieldtype in ('Image', 'MOL')
-                                                        or p.nodetypepropid in (select nodetypepropid 
+                                                        or (f.searchable = '1' 
+                                                            and p.nodetypepropid in (select nodetypepropid 
                                                                                   from jct_nodes_props j 
-                                                                                 where (lower(j.gestalt) like '%" + _SearchTerm.ToLower() + @"%')))
+                                                                                 where (lower(j.gestalt) like '%" + _SearchTerm.ToLower() + @"%'))))
                                                ) props on (props.nodetypeid = t.nodetypeid)
                                left outer join jct_nodes_props propvaljoin on (    props.nodetypepropid = propvaljoin.nodetypepropid 
                                                                                and propvaljoin.nodeid = n.nodeid)

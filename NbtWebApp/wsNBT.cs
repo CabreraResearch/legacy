@@ -2526,7 +2526,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm, string Filters )
+        public string doUniversalSearch( string SearchTerm )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2538,7 +2538,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm, JObject.Parse( Filters ) );
+                    ReturnVal = ws.doUniversalSearch( SearchTerm );
                 }
                 _deInitResources();
             }
@@ -2554,7 +2554,65 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveSearchAsView( string ViewId, string SearchTerm, string Filters )
+        public string restoreUniversalSearch( string SessionDataId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
+                    ReturnVal = ws.restoreUniversalSearch( RealSessionDataId );
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // restoreUniversalSearch()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string filterUniversalSearch( string SessionDataId, string Filter, string Action )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
+                    ReturnVal = ws.filterUniversalSearch( RealSessionDataId, JObject.Parse( Filter ), Action );
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // filterUniversalSearch()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveSearchAsView( string SessionDataId, string ViewId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2567,7 +2625,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtView View = _getView( ViewId );
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
-                    ReturnVal = ws.saveSearchAsView( View, SearchTerm, JObject.Parse( Filters ) );
+                    CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
+                    ReturnVal = ws.saveSearchAsView( RealSessionDataId, View );
                 }
                 _deInitResources();
             }

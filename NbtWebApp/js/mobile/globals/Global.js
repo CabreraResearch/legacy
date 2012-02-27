@@ -91,6 +91,12 @@ function setCurrentReport(reportid) {
     $.CswCookie('set', CswCookieName.CurrentReportId, reportid);
 }
 
+function setCurrentSearch(searchid) {
+    "use strict"; 
+    clearCurrent();
+    $.CswCookie('set', CswCookieName.CurrentSearchId, searchid);
+}
+
 function clearCurrent() {
     "use strict"; 
     $.CswCookie('set', CswCookieName.LastViewId, $.CswCookie('get', CswCookieName.CurrentViewId));
@@ -98,12 +104,14 @@ function clearCurrent() {
     $.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
     $.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
     $.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
+    $.CswCookie('set', CswCookieName.LastSearchId, $.CswCookie('get', CswCookieName.CurrentSearchId));
 
     $.CswCookie('clear', CswCookieName.CurrentViewId);
     $.CswCookie('clear', CswCookieName.CurrentViewMode);
     $.CswCookie('clear', CswCookieName.CurrentActionName);
     $.CswCookie('clear', CswCookieName.CurrentActionUrl);
     $.CswCookie('clear', CswCookieName.CurrentReportId);
+    $.CswCookie('clear', CswCookieName.CurrentSearchId);
 }
 
 function getCurrent() {
@@ -113,7 +121,8 @@ function getCurrent() {
         viewmode: $.CswCookie('get', CswCookieName.CurrentViewMode),
         actionname: $.CswCookie('get', CswCookieName.CurrentActionName),
         actionurl: $.CswCookie('get', CswCookieName.CurrentActionUrl),
-        reportid: $.CswCookie('get', CswCookieName.CurrentReportId)
+        reportid: $.CswCookie('get', CswCookieName.CurrentReportId),
+        searchid: $.CswCookie('get', CswCookieName.CurrentSearchId)
     };
 }
 function getLast() {
@@ -123,7 +132,8 @@ function getLast() {
         viewmode: $.CswCookie('get', CswCookieName.LastViewMode),
         actionname: $.CswCookie('get', CswCookieName.LastActionName),
         actionurl: $.CswCookie('get', CswCookieName.LastActionUrl),
-        reportid: $.CswCookie('get', CswCookieName.LastReportId)
+        reportid: $.CswCookie('get', CswCookieName.LastReportId),
+        searchid: $.CswCookie('get', CswCookieName.LastSearchId)
     };
 }
 function setCurrent(json) {
@@ -134,6 +144,7 @@ function setCurrent(json) {
     $.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
     $.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
     $.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
+    $.CswCookie('set', CswCookieName.CurrentSearchId, json.searchid);
 }
 
 //#endregion Current State
