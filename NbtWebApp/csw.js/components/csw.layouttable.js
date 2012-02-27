@@ -74,34 +74,41 @@
             }
         };
 
-        internal.addRow = function () {
+        internal.expandLayoutTable = function (expRow, expCol) {
+            /// <summary>Expand the layout table by an additional cellSet row or column or both.</summary>
+            /// <param name="expRow" type="Boolean">True to expand by a cellSet row.</param>
+            /// <param name="expCol" type="Boolean">True to expand by a cellSet column.</param>
+            /// <returns type="undefined"></returns>
             var tablemaxrows = external.table.maxrows(),
-                tablemaxcolumns = external.table.maxcolumns();
-
-            // add a row and column
-            internal.getCell((tablemaxrows / internal.cellSet.rows) + 1,
-                             (tablemaxcolumns / internal.cellSet.columns));
-            external.table.finish(null, internal.firstRow, internal.firstCol);
-
-            if (external.isConfig()) {
-                external.table.findCell('.CswLayoutTable_cell')
-                    .addClass('CswLayoutTable_configcell');
+                tablemaxcolumns = external.table.maxcolumns(),
+                rowCount = 0, colCount = 0,
+                requestRow, requestCol;
+            if (expRow) {
+                rowCount = internal.cellSet.rows;
             }
+            if (expCol) {
+                colCount = internal.cellSet.columns;
+            }
+            if (rowCount > 0 || colCount > 0) {
+                requestRow = tablemaxrows + rowCount,
+                requestCol = tablemaxcolumns + colCount;
+
+                external.table.cell(requestRow, requestCol);
+                external.table.finish(null, internal.firstRow, internal.firstCol);
+
+                if (external.isConfig()) {
+                    external.table.findCell('.CswLayoutTable_cell')
+                        .addClass('CswLayoutTable_configcell');
+                }
+            }
+        };
+
+        internal.addRow = function () {
+            internal.expandLayoutTable(true, false);
         }; // _addRowAndColumn()
 
         internal.addColumn = function () {
-            var tablemaxrows = external.table.maxrows(),
-                tablemaxcolumns = external.table.maxcolumns();
-
-            // add a row and column
-            internal.getCell((tablemaxrows / internal.cellSet.rows),
-                             (tablemaxcolumns / internal.cellSet.columns) + 1);
-            external.table.finish(null, internal.firstRow, internal.firstCol);
-
-            if (external.isConfig()) {
-                external.table.findCell('.CswLayoutTable_cell')
-                    .addClass('CswLayoutTable_configcell');
-            }
+            internal.expandLayoutTable(false, true);
         }; // internal.addColumn()
 
         internal.getCell = function (getRow, getColumn, cellsetrow, cellsetcolumn) {
@@ -114,10 +121,10 @@
             if (column < 1) {
                 column = 1;
             }
-            realrow = ((row - 1) * internal.cellSet.rows) + cellsetrow;
-            realcolumn = ((column - 1) * internal.cellSet.columns) + cellsetcolumn;
+            realrow = ((row - 1) * internal.cellSet.rows) + Csw.number(cellsetrow, 1);
+            realcolumn = ((column - 1) * internal.cellSet.columns) + Csw.number(cellsetcolumn, 1);
 
-            cell = external.table.cell(realrow, realcolumn, internal.ID);
+            cell = external.table.cell(realrow, realcolumn);
 
             return cell;
         };
@@ -229,7 +236,7 @@
         };
 
         internal.onDrop = function (ev, dd, $dropCell) {
-            var $dragDiv, dragCell, dragCells, dropCells, opt;
+            var $dragDiv, dragCell, dragCells, dropCells;
             if (external.isConfig(external.table)) {
                 $dragDiv = dd.draggable;
                 dragCell = Csw.controls.factory($dragDiv.parent(), {});
@@ -342,11 +349,12 @@
             if (internal.expandRowBtn) {
                 internal.expandRowBtn.hide();
             }
-            external.table.findCell('.CswLayoutTable_cell')
-                .removeClass('CswLayoutTable_configcell');
+            if (external.table.children().length() > 0) {
+                external.table.findCell('.CswLayoutTable_cell')
+                    .removeClass('CswLayoutTable_configcell');
 
-            internal.disableDrag();
-
+                internal.disableDrag();
+            }
             internal.setConfigMode('false');
             external.table.trigger(internal.ID + 'CswLayoutTable_onConfigOff');
             //internal.toggleRemove();
@@ -369,11 +377,12 @@
             }
             external.table.finish(null, internal.firstRow, internal.firstCol);
 
-            external.table.findCell('.CswLayoutTable_cell')
-                .addClass('CswLayoutTable_configcell');
+            if (external.table.children().length() > 0) {
+                external.table.findCell('.CswLayoutTable_cell')
+                    .addClass('CswLayoutTable_configcell');
 
-            internal.enableDrag();
-
+                internal.enableDrag();
+            }
             internal.setConfigMode('true');
             external.table.trigger(internal.ID + 'CswLayoutTable_onConfigOn');
         }; // external.configOn()
@@ -395,6 +404,8 @@
 
             internal.tableId = Csw.controls.dom.makeId(internal.ID, 'tbl');
             internal.buttonTableId = Csw.controls.dom.makeId(internal.ID, 'buttontbl');
+            internal.firstRow = 1;
+            internal.firstCol = 1;
 
             external.table = external.table({
                 ID: internal.tableId,
@@ -406,9 +417,9 @@
                 OddCellRightAlign: internal.OddCellRightAlign,
                 width: internal.width,
                 align: internal.align,
-                onCreateCell: function (ev, newCell, realrow, realcolumn, isFillerCell) {
+                onCreateCell: function (ev, newCell, realrow, realcolumn) {
                     if (false === Csw.isNullOrEmpty(newCell)) {
-                        internal.onCreateCell(newCell, realrow, realcolumn, isFillerCell);
+                        internal.onCreateCell(newCell, realrow, realcolumn);
                     }
                 }
             });
@@ -417,7 +428,7 @@
                 'cellset_columns': internal.cellSet.columns
             });
 
-            internal.setConfigMode(external.table, 'false');
+            internal.setConfigMode('false');
             external.table.bind(internal.ID + 'CswLayoutTable_onSwap', internal.onSwap);
             external.table.bind(internal.ID + 'CswLayoutTable_onRemove', internal.onRemove);
             external.table.bind(internal.ID + 'CswLayoutTable_onConfigOn', internal.onConfigOn);

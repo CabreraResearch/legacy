@@ -576,16 +576,9 @@
                                                     var propData;
 
                                                     if (false === Csw.isNullOrEmpty(selval)) {
-                                                        if (selval === 'none') {
-                                                            viewnodejson.groupbypropid = '';
-                                                            viewnodejson.groupbyproptype = '';
-                                                            viewnodejson.groupbypropname = '';
-                                                        } else {
-                                                            propData = selected.data('thisPropData');
-                                                            viewnodejson.groupbypropid = Csw.string(propData.propid);
-                                                            viewnodejson.groupbyproptype = Csw.string(propData.proptype);
-                                                            viewnodejson.groupbypropname = Csw.string(propData.propname);
-                                                        }
+                                                        viewnodejson.groupbypropid = Csw.string(selected.val());
+                                                        viewnodejson.groupbyproptype = Csw.string(selected.propNonDom('propType'));
+                                                        viewnodejson.groupbypropname = Csw.string(selected.text());
                                                     } // if (false === Csw.isNullOrEmpty(selval)) {
                                                 } // onChange
                                             }); // CswSelect
@@ -600,24 +593,22 @@
                     data: jsonData,
                     success: function (data) {
                         groupBySelect.empty();
-                        var groupOpts = [{ value: 'none', display: '[None]'}];
-                        var groupSel = 'none';
+                        groupBySelect.option({value: 'None'});
                         for (var propKey in data) {
-                            if (data.hasOwnProperty(propKey)) {
+                            if (Csw.contains(data, propKey)) {
                                 var thisProp = data[propKey];
-                                groupOpts.push({ value: thisProp.propid,
+                                var isSelected = (viewnodejson.groupbypropid === thisProp.propid &&
+                                                  viewnodejson.groupbyproptype === thisProp.proptype &&
+                                                  viewnodejson.groupbypropname === thisProp.propname);
+                                groupBySelect.option({
+                                    value: thisProp.propid,
                                     display: thisProp.propname,
-                                    data: thisProp,
-                                    dataName: 'thisPropData'
+                                    isSelected: isSelected
+                                }).propNonDom({
+                                    propType: thisProp.proptype
                                 });
-                                if (viewnodejson.groupbypropid === thisProp.propid &&
-                                        viewnodejson.groupbyproptype === thisProp.proptype &&
-                                        viewnodejson.groupbypropname === thisProp.propname) {
-                                    groupSel = thisProp.propid;
-                                }
                             }
                         } // each
-                        groupBySelect.setoptions(groupOpts, groupSel);
                     } // success
                 }); // ajax
 
@@ -1117,15 +1108,16 @@
                                 var thisOpt = data[optionName];
                                 var dataOpt = {};
                                 dataOpt[optionName] = thisOpt;
-                                var $option = $('<option value="' + thisOpt.arbitraryid + '">' + optionName + '</option>')
+                                $('<option value="' + thisOpt.arbitraryid + '">' + optionName + '</option>')
                                         .appendTo($successSelect);
-                                $option.data('thisViewJson', dataOpt);
+                                $wizard.data(thisOpt.arbitraryid + '_thisViewJson', dataOpt);
                             }
                         }
 
                         $successSelect.change(function () {
                             var $this = $(this);
-                            var childJson = $this.find('option:selected').data('thisViewJson');
+                            var $selected = $this.find('option:selected');
+                            var childJson = $wizard.data($selected.val() + '_thisViewJson');
                             if (arbid === "root") {
                                 $.extend(currentViewJson.childrelationships, childJson);
                             } else {

@@ -76,7 +76,7 @@
     <Content Include="csw.js\core\csw.core.clientstate.js" />
     <Content Include="csw.js\core\csw.type.date.js" />
     <Content Include="csw.js\core\csw.core.debug.js" />
-    <Content Include="csw.js\core\csw.core.enums.js" />
+    <Content Include="csw.js\_loadfirst\csw.core.enums.js" />
     <Content Include="csw.js\core\csw.core.error.js" />
     <Content Include="csw.js\core\csw.core.events.js" />
     <Content Include="csw.js\core\csw.type.function.js" />
@@ -175,7 +175,7 @@
     <Content Include="csw.css\CswWizard.css" />
     <Content Include="js\pagecmp\CswWizard.js" />
     <Content Include="js\tools\CswAttr.js" />
-    <Content Include="csw.js\tools\csw.pubsub.js" />
+    <Content Include="csw.js\_loadfirst\csw.tools.pubsub.js" />
     <Content Include="js\tools\CswQueryString.js" />
     <Content Include="js\tools\CswTools.js" />
     <Content Include="js\view\CswViewContentTree.js" />

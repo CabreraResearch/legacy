@@ -26,7 +26,7 @@
             title: '',
             rel: '',
             media: '',
-            target: '_blank',
+            target: '',
             onClick: null //function () {}
         };
         var external = {};
@@ -99,11 +99,14 @@
 
         external.toggleState = Csw.enums.toggleState.off;
 
-//        external.click = function (func) {
-//            if (Csw.isFunction(func)) {
-//                external.bind('click', func);
-//            }
-//        };
+        external.click = function (func) {
+            if (Csw.isFunction(func)) {
+                return external.bind('click', func);
+            } else {
+                return external;
+            }
+        };
+
 
         return external;
     }
