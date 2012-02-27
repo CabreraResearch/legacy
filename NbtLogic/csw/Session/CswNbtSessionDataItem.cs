@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Search;
 
 namespace ChemSW.Nbt
 {

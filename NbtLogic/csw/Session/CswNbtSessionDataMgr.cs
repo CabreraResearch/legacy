@@ -4,6 +4,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Search;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
@@ -93,33 +94,51 @@ namespace ChemSW.Nbt
             JObject QlObj = new JObject();
             ParentObj["item_" + ItemId] = QlObj;
 
-            Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
-            if( ActionId != Int32.MinValue )
-            {
-                _addQuickLaunchAction( QlObj, Row[SessionDataColumn_SessionDataType], Row[SessionDataColumn_Name], _CswNbtResources.Actions[ActionId].Name, ItemId, _CswNbtResources.Actions[ActionId].Url );
-            }
-            else
-            {
-                _addQuickLaunchView( QlObj, Row[SessionDataColumn_SessionDataType], Row[SessionDataColumn_Name], Row[SessionDataColumn_ViewMode], ItemId );
-            }
-        }
+            CswNbtSessionDataItem.SessionDataType SessionType = (CswNbtSessionDataItem.SessionDataType) Enum.Parse( typeof( CswNbtSessionDataItem.SessionDataType ), Row[SessionDataColumn_SessionDataType].ToString() );
+            string Name = Row[SessionDataColumn_Name].ToString();
+            CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( ItemId );
 
-        private void _addQuickLaunchView( JObject ParentObj, object LaunchType, object Text, object ViewMode, Int32 ItemId )
+            if( SessionType == CswNbtSessionDataItem.SessionDataType.Action )
+            {
+                Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
+                _addQuickLaunchAction( QlObj, SessionType, Name, SessionDataId, _CswNbtResources.Actions[ActionId].Name, _CswNbtResources.Actions[ActionId].Url );
+            }
+            else if( SessionType == CswNbtSessionDataItem.SessionDataType.View )
+            {
+                //Int32 ViewId = CswConvert.ToInt32( Row[SessionDataColumn_ViewId] );
+                _addQuickLaunchView( QlObj, SessionType, Name, SessionDataId, Row[SessionDataColumn_ViewMode].ToString() );
+            }
+            else if( SessionType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                _addQuickLaunchSearch( QlObj, SessionType, Name, SessionDataId );
+            }
+        } // _addQuickLaunchProp()
+
+        private void _addQuickLaunchView( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId, string ViewMode )
         {
             ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
-            ParentObj["text"] = CswConvert.ToString( Text );
-            ParentObj["viewmode"] = CswConvert.ToString( ViewMode );
-            ParentObj["itemid"] = new CswNbtSessionDataId( ItemId ).ToString();
+            ParentObj["text"] = Text;
+            ParentObj["itemid"] = SessionDataId.ToString();
+            ParentObj["viewmode"] = ViewMode;
         }
 
-		private void _addQuickLaunchAction( JObject ParentObj, object LaunchType, object Text, object ActionName, Int32 ItemId, object ActionUrl )
+        private void _addQuickLaunchAction( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId, CswNbtActionName ActionName, string ActionUrl )
         {
             ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
-            ParentObj["text"] = CswConvert.ToString( Text );
-			ParentObj["itemid"] = new CswNbtSessionDataId( ItemId ).ToString();
+            ParentObj["text"] = Text;
+            ParentObj["itemid"] = SessionDataId.ToString();
             ParentObj["actionname"] = CswConvert.ToString( ActionName );
             ParentObj["actionurl"] = CswConvert.ToString( ActionUrl );
         }
+
+        private void _addQuickLaunchSearch( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId )
+        {
+            ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
+            ParentObj["text"] = Text;
+            ParentObj["itemid"] = SessionDataId.ToString();
+        }
+
+
         /// <summary>
         /// Save an action to the session data collection.
         /// </summary>
@@ -201,11 +220,11 @@ namespace ChemSW.Nbt
             SessionViewRow[SessionDataColumn_Name] = CswConvert.ToString( Name );
             SessionViewRow[SessionDataColumn_SessionId] = SessionId;
             SessionViewRow[SessionDataColumn_SessionDataType] = DataType.ToString();
-			if( CswConvert.ToBoolean( SessionViewRow[SessionDataColumn_QuickLaunch] ) == false )
-			{
-				// Only set false to true, not true to false.  See case 23999.
-				SessionViewRow[SessionDataColumn_QuickLaunch] = CswConvert.ToDbVal( IncludeInQuickLaunch );
-			}
+            if( CswConvert.ToBoolean( SessionViewRow[SessionDataColumn_QuickLaunch] ) == false )
+            {
+                // Only set false to true, not true to false.  See case 23999.
+                SessionViewRow[SessionDataColumn_QuickLaunch] = CswConvert.ToDbVal( IncludeInQuickLaunch );
+            }
             SessionViewRow[SessionDataColumn_KeepInQuickLaunch] = CswConvert.ToDbVal( KeepInQuickLaunch );
 
             return SessionViewRow;

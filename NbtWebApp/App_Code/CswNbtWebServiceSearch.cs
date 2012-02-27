@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
+using ChemSW.Nbt.Search;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -385,7 +386,20 @@ namespace ChemSW.Nbt.WebServices
             CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
             return _finishUniversalSearch( Search );
         }
-        public JObject FilterUniversalSearch( CswNbtSessionDataId SessionDataId, JObject Filter, string Action )
+        
+        public JObject restoreUniversalSearch( CswNbtSessionDataId SessionDataId )
+        {
+            JObject ret = new JObject();
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                CswNbtSearch Search = SessionDataItem.Search;
+                ret = _finishUniversalSearch( Search );
+            }
+            return ret;
+        } // restoreUniversalSearch()
+
+        public JObject filterUniversalSearch( CswNbtSessionDataId SessionDataId, JObject Filter, string Action )
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
@@ -412,6 +426,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ret = new JObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
             ret["filters"] = Search.FilterOptions( Tree );
+            ret["searchterm"] = Search.SearchTerm;
             ret["filtersapplied"] = Search.FiltersApplied;
             Search.SaveToCache( true );
             ret["sessiondataid"] = Search.SessionDataId.ToString();

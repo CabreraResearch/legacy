@@ -10,6 +10,8 @@ window.initMain = window.initMain || function (undefined) {
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
+    
+    var universalsearch;
 
     Csw.ajax.onBeforeAjax = function (watchGlobal) {
         if (watchGlobal) {
@@ -47,7 +49,7 @@ window.initMain = window.initMain || function (undefined) {
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
-                Csw.controls.universalSearch({
+                universalsearch = Csw.controls.universalSearch({
                     $searchbox_parent: $('#SearchDiv'),
                     $searchresults_parent: $('#RightDiv'),
                     $searchfilters_parent: $('#LeftDiv'),
@@ -118,7 +120,8 @@ window.initMain = window.initMain || function (undefined) {
 
         $('#QuickLaunch').CswQuickLaunch({
             'onViewClick': function (viewid, viewmode) { handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode }); },
-            'onActionClick': function (actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); }
+            'onActionClick': function (actionname, actionurl) { handleItemSelect({ 'type': 'action', 'actionname': actionname, 'actionurl': actionurl }); },
+            'onSearchClick': function (searchid) { handleItemSelect({ 'type': 'search', 'searchid': searchid }); }
         }); // CswQuickLaunch
     }
 
@@ -187,13 +190,14 @@ window.initMain = window.initMain || function (undefined) {
     function handleItemSelect(options) {
         //if (debugOn()) Csw.log('Main.handleItemSelect()');
         var o = {
-            type: 'view', // Action, Report, View
+            type: 'view', // Action, Report, View, Search
             viewmode: 'tree', // Grid, Tree, List
             linktype: 'link', // WelcomeComponentType: Link, Search, Text, Add
             viewid: '',
             actionname: '',
             actionurl: '',
             reportid: '',
+            searchid: '',
             nodeid: '',
             cswnbtnodekey: ''
         };
@@ -206,8 +210,11 @@ window.initMain = window.initMain || function (undefined) {
         var type = Csw.string(o.type).toLowerCase();
 
         function itemIsSupported() {
-            var ret = (linkType === 'search' || false === Csw.isNullOrEmpty(o.viewid) ||
-                 type === 'action' || type === 'report');
+            var ret = (linkType === 'search' || 
+                       false === Csw.isNullOrEmpty(o.viewid) ||
+                       type === 'action' || 
+                       type === 'search' || 
+                       type === 'report');
             return ret;
         }
 
@@ -247,6 +254,9 @@ window.initMain = window.initMain || function (undefined) {
                             'actionname': o.actionname,
                             'actionurl': o.actionurl
                         });
+                        break;
+                    case 'search':
+                        universalsearch.restoreSearch( o.searchid );
                         break;
                     case 'report':
                         window.location = "Report.aspx?reportid=" + o.reportid;

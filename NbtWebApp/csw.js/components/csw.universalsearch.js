@@ -18,6 +18,7 @@
 
             newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
             filtersearchurl: '/NbtWebApp/wsNBT.asmx/filterUniversalSearch',
+            restoresearchurl: '/NbtWebApp/wsNBT.asmx/restoreUniversalSearch',
             saveurl: '/NbtWebApp/wsNBT.asmx/saveSearchAsView',
             //filters: {},
             sessiondataid: '',
@@ -65,7 +66,7 @@
                 data: { SearchTerm: internal.searchterm },
                 success: internal.handleResults
             });
-        } // search()
+        }; // search()
 
         internal.handleResults = function (data) {
             var fdiv, ftable, filtersdivid;
@@ -100,7 +101,7 @@
                 overflow: 'auto'
             });
 
-            fdiv.span({ text: 'Searched For: ' + internal.searchterm }).br();
+            fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
             ftable = fdiv.table({});
 
             // Filters in use
@@ -217,7 +218,7 @@
                 },
                 success: internal.handleResults
             });
-        } // filter()
+        }; // filter()
 
 //        internal.removeFilter = function (thisFilter) {
 //            if (thisFilter.filtertype === "nodetype") {
@@ -250,7 +251,21 @@
 
                 } // onAddView()
             }); // CswDialog
-        } // saveAsView()
+        }; // saveAsView()
+
+        external.restoreSearch = function(searchid) {
+
+            internal.sessiondataid = searchid;
+
+            Csw.tryExec(internal.onBeforeSearch);
+            Csw.ajax.post({
+                url: internal.restoresearchurl,
+                data: {
+                    SessionDataId: internal.sessiondataid
+                },
+                success: internal.handleResults
+            });
+        }; // restoreSearch()
 
         return external;
     };

@@ -2554,6 +2554,35 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string restoreUniversalSearch( string SessionDataId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
+                    ReturnVal = ws.restoreUniversalSearch( RealSessionDataId );
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // restoreUniversalSearch()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string filterUniversalSearch( string SessionDataId, string Filter, string Action )
         {
             JObject ReturnVal = new JObject();
@@ -2567,7 +2596,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
-                    ReturnVal = ws.FilterUniversalSearch( RealSessionDataId, JObject.Parse( Filter ), Action );
+                    ReturnVal = ws.filterUniversalSearch( RealSessionDataId, JObject.Parse( Filter ), Action );
                 }
                 _deInitResources();
             }
@@ -2579,7 +2608,7 @@ namespace ChemSW.Nbt.WebServices
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // doUniversalSearch()
+        } // filterUniversalSearch()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
