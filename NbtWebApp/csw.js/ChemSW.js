@@ -122,6 +122,9 @@ window.abandonHope = false;
 
         external.controls = $.extend({}, external);
         external.register('controls', external.controls);
+
+        external.actions = $.extend({}, external);
+        external.register('actions', external.actions);
         
         return external;
 

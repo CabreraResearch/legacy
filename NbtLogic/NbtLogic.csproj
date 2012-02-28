@@ -49,6 +49,9 @@
       <SubType>Designer</SubType>
     </None>
     <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M10.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M11.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M12.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M09.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M07.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M06.cs" />
