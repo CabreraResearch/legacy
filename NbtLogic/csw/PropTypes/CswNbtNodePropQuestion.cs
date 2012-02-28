@@ -4,7 +4,6 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
@@ -130,10 +129,13 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool IsCompliant
         {
-            get { return CswConvert.ToBoolean(_CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column )); }
+            get
+            {
+                return TestIsCompliant();
+            }
             set
             {
-                    _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+                _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
             }
         }
 
@@ -397,17 +399,17 @@ namespace ChemSW.Nbt.PropTypes
                 DateCorrected = CswDateCorrected.ToDateTime();
             }
 
-            if( null != JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_AnswerSubField.ToXmlNodeName( true )] )
             {
-                Answer = (string) JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ).Value;
+                Answer = JObject[_AnswerSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject.Property( _CommentsSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_CommentsSubField.ToXmlNodeName( true )] )
             {
-                Comments = (string) JObject.Property( _CommentsSubField.ToXmlNodeName( true ) ).Value;
+                Comments = JObject[_CommentsSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject.Property( _CorrectiveActionSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_CorrectiveActionSubField.ToXmlNodeName( true )] )
             {
-                CorrectiveAction = (string) JObject.Property( _CorrectiveActionSubField.ToXmlNodeName( true ) ).Value;
+                CorrectiveAction = JObject[_CorrectiveActionSubField.ToXmlNodeName( true )].ToString();
             }
         }
     }//CswNbtNodePropQuestion
