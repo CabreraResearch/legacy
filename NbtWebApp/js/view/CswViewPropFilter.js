@@ -363,7 +363,7 @@
 
                 retJson = {
                     nodetypeorobjectclassid: nodetypeorobjectclassid,
-                    proptype: Csw.string(o.filtJson.type, o.relatedidtype),
+                    proptype: Csw.string(o.proptype, o.relatedidtype),
                     viewbuilderpropid: o.viewbuilderpropid,
                     filtarbitraryid: o.filtarbitraryid,
                     proparbitraryid: o.proparbitraryid,
