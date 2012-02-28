@@ -146,9 +146,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _ValueSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
             {
-                Value = CswConvert.ToDouble( JObject.Property( _ValueSubField.ToXmlNodeName( true ) ).Value );
+                Value = CswConvert.ToDouble( JObject[_ValueSubField.ToXmlNodeName( true )] );
             }
         }
     }//CswNbtNodeProp

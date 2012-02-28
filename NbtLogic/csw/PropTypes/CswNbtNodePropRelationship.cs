@@ -395,7 +395,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _NodeIDSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_NodeIDSubField.ToXmlNodeName( true )] )
             {
                 Int32 NodeId = CswConvert.ToInt32( JObject[_NodeIDSubField.ToXmlNodeName( true )] );
                 if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )

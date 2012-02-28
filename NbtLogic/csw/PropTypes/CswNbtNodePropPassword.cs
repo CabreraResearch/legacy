@@ -173,17 +173,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] )
             {
-                EncryptedPassword = (string) JObject.Property( _EncryptedPasswordSubField.ToXmlNodeName( true ) ).Value;
+                EncryptedPassword = JObject[_EncryptedPasswordSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject.Property( "newpassword" ) )
+            if( null != JObject["newpassword"] )
             {
-                _saveProp( (string) JObject.Property( "newpassword" ).Value );
+                _saveProp( JObject["newpassword"].ToString() );
             }
-            if( null != JObject.Property( "isexpired" ) )
+            if( null != JObject["isexpired"] )
             {
-                bool inIsExpired = CswConvert.ToBoolean( JObject.Property( "isexpired" ).Value );
+                bool inIsExpired = CswConvert.ToBoolean( JObject["isexpired"].ToString() );
                 if( inIsExpired && !IsExpired )
                 {
                     ChangedDate = DateTime.MinValue;
