@@ -56,7 +56,7 @@
                             if (childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
                                 cell2name += "&nbsp;(you)";
                             } 
-                            table.cell(row, 2).text(cell2name);
+                            table.cell(row, 2).append(cell2name);
                             table.cell(row, 3).text(childObj.logindate);
                             table.cell(row, 4).text(childObj.timeoutdate);
                             table.cell(row, 5).text(childObj.accessid);

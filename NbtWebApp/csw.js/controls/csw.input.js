@@ -29,6 +29,7 @@
             autofocus: false,
             autocomplete: 'on',
             checked: false,
+            canCheck: false, /* if this is a radio or checkbox */
             onChange: null,
             onClick: null
         };
@@ -57,23 +58,24 @@
             style.add('width', Csw.string(internal.width, internal.type.defaultwidth));
             attr.add('maxlength', internal.maxlength);
             attr.add('value', internal.value);
-            
+
             if (Csw.bool(internal.autofocus)) {
                 attr.add('autofocus', internal.autofocus);
             }
             if (internal.type.autocomplete === true && internal.autocomplete === 'on') {
                 attr.add('autocomplete', 'on');
             }
-            if (internal.type === Csw.enums.inputTypes.checkbox || internal.type === Csw.enums.inputTypes.radio) {
+            internal.canCheck = internal.type === Csw.enums.inputTypes.checkbox || internal.type === Csw.enums.inputTypes.radio
+            if (internal.canCheck) {
                 if (Csw.bool(internal.checked) || internal.checked === 'checked') {
                     attr.add('checked', true);
                 }
             }
-            
+
             html += attr.get();
             html += style.get();
             html += ' />';
-            
+
             $input = $(html);
             Csw.controls.factory($input, external);
             internal.$parent.append(external.$);
@@ -93,7 +95,7 @@
                 external.trigger('change');
             }
         };
-        
+
         external.click = function (func) {
             if (Csw.isFunction(func)) {
                 external.bind('click', func);
@@ -101,6 +103,25 @@
                 external.trigger('click');
             }
         };
+
+        external.checked = function (value) {
+            var ret = external;
+            if (internal.canCheck) {
+                if (internal.type == arguments.length === 1) {
+                    if (value) {
+                        external.propDom({ 'checked': true });
+                    } else {
+                        if(window.abandonHope) {
+                            external.$.removeAttr('checked');    
+                        }
+                    }
+                } else {
+                    ret = external.$.is(':checked');
+                }
+            }
+            return ret;
+        };
+
         return external;
     }
     Csw.controls.register('input', input);

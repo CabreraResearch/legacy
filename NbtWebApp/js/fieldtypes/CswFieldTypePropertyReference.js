@@ -20,7 +20,7 @@
                 propDiv.div({
                     ID: o.ID,
                     cssclass: 'staticvalue',
-                    value: text
+                    text: text
                 });
             }
         },

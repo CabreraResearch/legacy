@@ -16,9 +16,13 @@ namespace ChemSW.Nbt.WebPages
             {
                 logoutpath = Request.Form["logoutpath"];
             }
-            else
+            else if( null != Request.UrlReferrer )
             {
                 logoutpath = Request.UrlReferrer.ToString();
+            }
+            else
+            {
+                logoutpath = Request.Path;
             }
 
             if( false == String.IsNullOrEmpty( username ) &&

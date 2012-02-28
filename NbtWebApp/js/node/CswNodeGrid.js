@@ -6,39 +6,43 @@
     var pluginName = 'CswNodeGrid';
 
     function deleteRows(rowid, grid, func) {
-        var delOpt = {
-            cswnbtnodekey: [],
-            nodename: []
-        };
-        var delFunc = function (opts) {
-            opts.onDeleteNode = func;
-            opts.publishDeleteEvent = false;
-            Csw.renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
-            Csw.renameProperty(opts, 'nodename', 'nodenames');
-            $.CswDialog('DeleteNodeDialog', opts);
-        };
-        var emptyFunc = function () {
-            $.CswDialog('AlertDialog', 'Please select a row to delete');
-        };
-        return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
+        if (Csw.number(rowid) !== -1) { /* Case 24678 */
+            var delOpt = {
+                cswnbtnodekey: [],
+                nodename: []
+            };
+            var delFunc = function (opts) {
+                opts.onDeleteNode = func;
+                opts.publishDeleteEvent = false;
+                Csw.renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
+                Csw.renameProperty(opts, 'nodename', 'nodenames');
+                $.CswDialog('DeleteNodeDialog', opts);
+            };
+            var emptyFunc = function () {
+                $.CswDialog('AlertDialog', 'Please select a row to delete');
+            };
+            return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
+        }
     }
 
     function editRows(rowid, grid, func, editViewFunc) {
-        var editOpt = {
-            cswnbtnodekey: [],
-            nodename: []
-        };
-        var editFunc = function (opts) {
-            opts.onEditNode = func;
-            opts.onEditView = editViewFunc;
-            Csw.renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
-            Csw.renameProperty(opts, 'nodename', 'nodenames');
-            $.CswDialog('EditNodeDialog', opts);
-        };
-        var emptyFunc = function () {
-            $.CswDialog('AlertDialog', 'Please select a row to edit');
-        };
-        return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
+        if (Csw.number(rowid) !== -1) { /* Case 24678 */
+            var editOpt = {
+                cswnbtnodekey: [],
+                nodename: []
+            };
+            var editFunc = function (opts) {
+                opts.onEditNode = func;
+                opts.onEditView = editViewFunc;
+                Csw.renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
+                Csw.renameProperty(opts, 'nodename', 'nodenames');
+                $.CswDialog('EditNodeDialog', opts);
+            };
+            var emptyFunc = function () {
+                $.CswDialog('AlertDialog', 'Please select a row to edit');
+            };
+            return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
+        }
     }
 
     var methods = {
@@ -103,7 +107,7 @@
 
                     var makeGrid = function (pagerMode, data) {
                         var jqGridOpt = gridJson.jqGridOpt;
-
+                        var wasTruncated = Csw.bool(data.wastruncated);
                         var cswGridOpts = {
                             ID: o.ID,
                             canEdit: (Csw.bool(jqGridOpt.CanEdit) && false === forReporting),
@@ -183,6 +187,10 @@
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
+
+                        if (wasTruncated) {
+                            $parent.append('<p>Results were truncated.</p>');
+                        }
                     };
 
                     if (false === doPaging) {
@@ -195,6 +203,7 @@
                             },
                             success: function (data) {
                                 makeGrid('local', data);
+
                             }
                         });
                     } else {

@@ -64,8 +64,12 @@
             $link = $(html);
 
             Csw.controls.factory($link, external);
+            
+            // Click binding
+
             if (Csw.isFunction(internal.onClick)) {
                 external.bind('click', function (event, ui) {
+                    internal.click();
                     var retval = Csw.tryExec(internal.onClick, event, ui);
                     if (internal.href === '#') {
                         return false;
@@ -73,11 +77,27 @@
                         return retval;
                     }
                 });
+            } else {
+                external.bind('click', internal.click);
             }
 
             internal.$parent.append(external.$);
-
         } ());
+
+        internal.click = function() {
+            internal.toggle();
+        }
+
+        internal.toggle = function() {
+            if(external.toggleState === Csw.enums.toggleState.on) {
+                external.toggleState = Csw.enums.toggleState.off;
+            }
+            else if(external.toggleState === Csw.enums.toggleState.off) {
+                external.toggleState = Csw.enums.toggleState.on;
+            }
+        }
+
+        external.toggleState = Csw.enums.toggleState.off;
 
         external.click = function (func) {
             if (Csw.isFunction(func)) {
@@ -86,6 +106,7 @@
                 return external;
             }
         };
+
 
         return external;
     }

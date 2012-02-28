@@ -823,23 +823,26 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div id="' + o.ID + '"><p>' + o.navigationText + '</p></div>'),
-                $select = $div.CswSelect('init', {
-                    ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
-                    values: o.values
-                });
+            var div = Csw.controls.div({
+                ID: o.ID
+            });
+            div.p({text: o.navigationText});
+            var select = div.select({
+                ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
+                values: o.values
+            });
 
-            $div.CswButton({
+            div.button({
                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
                 enabledText: 'OK',
                 onClick: function () {
                     if (Csw.isFunction(o.onOkClick)) {
-                        o.onOkClick($select.find(':selected'));
+                        o.onOkClick(select.find(':selected'));
                     }
-                    $div.dialog('close');
+                    div.$.dialog('close');
                 }
             });
-            openDialog($div, 600, 150, null, o.title);
+            openDialog(div.$, 600, 150, null, o.title);
         },
         //#endregion Specialized
 

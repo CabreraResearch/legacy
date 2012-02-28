@@ -38,6 +38,9 @@
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="GoogleClosure">
+      <HintPath>..\packages\GoogleClosure.1.2\lib\net40\GoogleClosure.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.4.0.7\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -705,6 +708,13 @@
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="ExternalLogin.aspx" />
     <Content Include="ExternalLogin.html" />
+    <Content Include="Images\icons\flag.gif" />
+    <Content Include="Images\icons\truncated.gif" />
+    <Content Include="Images\quota\bad.gif" />
+    <Content Include="Images\quota\good.gif" />
+    <Content Include="Images\quota\half.gif" />
+    <Content Include="Images\quota\lock.gif" />
+    <Content Include="Images\view\viewtable.gif" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.css" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.js" />
     <Content Include="js\thirdparty\jquery\plugins\multiselect\jquery.multiselect.filter.min.js" />

@@ -31,6 +31,7 @@
             opts.parent = function () {
                 return external;
             };
+            
             return opts;
         };
 
@@ -38,6 +39,7 @@
             var ret,
                 _options = {
                     parent: function () { return external; },
+                    first: function () { return external; },
                     root: external.root,
                     length: function () {
                         return 0;
@@ -249,6 +251,14 @@
             /// <returns type="Object">A Csw.option</returns>
             opts = internal.prepControl(opts, 'option');
             return Csw.controls.option(opts);
+        };
+
+        external.p = function (opts) {
+            /// <summary> Creates a Csw.p on this element</summary>
+            /// <param name="opts" type="Object">Options to define the p.</param>
+            /// <returns type="Object">A Csw.p</returns>
+            opts = internal.prepControl(opts, 'p');
+            return Csw.controls.p(opts);
         };
 
         external.select = function (opts) {

@@ -94,7 +94,7 @@
                 IncludeNodeId: Csw.string(o.nodeid),
                 // ShowEmpty: o.showempty,
                 // ForSearch: o.forsearch,
-                // NodePk: Csw.string(o.nodeid),
+                NodePk: Csw.string(o.nodeid),
                 IncludeInQuickLaunch: o.IncludeInQuickLaunch,
                 DefaultSelect: o.DefaultSelect
             };

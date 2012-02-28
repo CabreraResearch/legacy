@@ -172,7 +172,6 @@ namespace ChemSW.Nbt.WebServices
             Assemblies.Add( "CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
             Assemblies.Add( "CswCommon" );
             Assemblies.Add( "CswWebControls" );
-            Assemblies.Add( "FarPoint.Web.Spread" );
             Assemblies.Add( "NbtConfig" );
             Assemblies.Add( "NbtLogic" );
             Assemblies.Add( "NbtWebControls" );

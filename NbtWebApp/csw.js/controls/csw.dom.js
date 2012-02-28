@@ -262,8 +262,7 @@
             var _external = {};
 
             _external.add = function (key, value) {
-                if (false === Csw.isNullOrEmpty(key) &&
-                        false === Csw.isNullOrEmpty(value)) {
+                if (false === Csw.isNullOrEmpty(key)) {
                     _internal.attributes[Csw.string(key)] = Csw.string(value);
                 }
             };
@@ -272,7 +271,10 @@
                 var ret = '';
 
                 function buildStyle(val, key) {
-                    ret += ' ' + key + '="' + val + '" ';
+                    if(false === Csw.isNullOrEmpty(val) &&
+                        false === Csw.isNullOrEmpty(key) ) {
+                        ret += ' ' + key + '="' + val + '" ';
+                    }
                 }
 
                 Csw.each(_internal.attributes, buildStyle);
@@ -308,7 +310,7 @@
             return $el.bind(eventName, event);
         };
 
-        external.unbind = function ($el, eventName) {
+        external.unbind = function ($el, eventName, event) {
             /// <summary>Unbind an action from a jQuery element's event.</summary>
             /// <param name="$el" type="jQuery">A jQuery element</param>
             /// <param name="eventName" type="String">The name of the event</param>

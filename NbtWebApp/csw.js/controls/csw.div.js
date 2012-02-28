@@ -65,8 +65,9 @@
             if (Csw.isFunction(internal.onClick)) {
                 external.bind('click', internal.onClick);
             }
-
-            internal.$parent.append(external.$);
+            if(internal.$parent) {
+                internal.$parent.append(external.$);
+            }
         } ());
 
         return external;

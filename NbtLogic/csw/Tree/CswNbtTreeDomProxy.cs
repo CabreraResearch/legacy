@@ -789,7 +789,7 @@ namespace ChemSW.Nbt
         /// <param name="Name">Name of Property</param>
         /// <param name="Gestalt">Text representation of the value of the property</param>
         /// <param name="FieldType">FieldType of the property</param>
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType FieldType )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             _CswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType );
         }//addProperty
