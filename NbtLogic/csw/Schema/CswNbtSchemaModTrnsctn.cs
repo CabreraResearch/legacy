@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
 
         public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
         {
-            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global,null,true ) );
+            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
         }
 
         #region TransactionManagement
@@ -801,6 +801,28 @@ namespace ChemSW.Nbt.Schema
             Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
             ObjectClassTableUpdate.update( NewObjectClassTable );
             return NewObjectClassId;
+        }
+
+        /// <summary>
+        /// Convenience function for getting Object Class ID by name (usually for the purpose of deleting because the Enum has been removed)
+        /// </summary>
+        public Int32 getObjectClassId( string ObjectClassName )
+        {
+            Int32 Ret = Int32.MinValue;
+            string OcName = ObjectClassName.ToLower();
+            if( false == OcName.EndsWith( "class" ) )
+            {
+                OcName += "class";
+            }
+
+            CswTableSelect ObjectClassTableSelect = makeCswTableSelect( "SchemaModTrnsctn_ObjectClassUpdate", "object_class" );
+            DataTable ObjectClassTable = ObjectClassTableSelect.getTable( "where lower(objectclass)='" + OcName + "'", true );
+            if( ObjectClassTable.Rows.Count == 1 )
+            {
+                Ret = CswConvert.ToInt32( ObjectClassTable.Rows[0]["objectclassid"] );
+            }
+
+            return Ret;
         }
 
         public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,

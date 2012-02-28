@@ -33,8 +33,6 @@ namespace ChemSW.Nbt.MetaData
             InspectionTargetClass,
             InspectionTargetGroupClass,
             NotificationClass,
-            PackageClass,
-            PackDetailClass,
             ParameterClass,
             PrintLabelClass,
             ProblemClass,
