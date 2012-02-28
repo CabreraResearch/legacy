@@ -326,14 +326,12 @@
                     data: ajaxdata,
                     success: function (data) {
                         var propOpts = [{ value: '', display: 'Select...'}];
-                        for (var p in data) {
-                            if (data.hasOwnProperty(p)) {
+                        Csw.each(data.add, function(p) {
                                 propOpts.push({
-                                    value: data[p].propid,
-                                    display: data[p].propname
+                                    value: p.propid,
+                                    display: p.propname
                                 });
-                            }
-                        }
+                        });
                         addSelect.setOptions(propOpts, '', true);
                     } // success
                 });  // Csw.ajax

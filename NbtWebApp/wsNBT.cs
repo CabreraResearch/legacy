@@ -2296,7 +2296,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
                     Enum.TryParse<CswNbtMetaDataNodeTypeLayoutMgr.LayoutType>( LayoutType, out RealLayoutType );
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                    ReturnVal = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, RealLayoutType );
+                    ReturnVal["add"] = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, RealLayoutType );
                 }
 
                 _deInitResources();
