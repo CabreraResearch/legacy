@@ -41,6 +41,27 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packages" );
+            }
+            catch( Exception ) { }
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packages_audit" );
+            }
+            catch( Exception ) { }
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packdetail" );
+            }
+            catch( Exception ) { }
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packdetail_audit" );
+            }
+            catch( Exception ) { }
+
             #endregion case 24462
 
         }//Update()
