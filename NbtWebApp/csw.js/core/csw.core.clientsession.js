@@ -15,7 +15,6 @@
             logoutpath: '',
             authenticateUrl: '/NbtWebApp/wsNBT.asmx/authenticate',
             DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
-            onDeauthenticate: '',
             expiretimeInterval: '',
             expiretime: '',
             expiredInterval: ''
@@ -70,10 +69,9 @@
                 data: {},
                 success: function () {
                     external.finishLogout();
-                    internal.onDeauthenticate();
                 }
             });
-        }
+        };
 
         internal.checkExpired = function () {
             var now = new Date();
