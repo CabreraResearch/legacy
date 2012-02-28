@@ -129,7 +129,7 @@ create or replace function OraColLen(aprefix in varchar2,inputStr in varchar2,as
   maxlen number(3);
 begin
   --dbms_output.put_line(aprefix || inputstr || asuffix);
-  maxlen := 30- nvl(length(aprefix),0) - nvl(length(asuffix),0);
+  maxlen := 28- nvl(length(aprefix),0) - nvl(length(asuffix),0);
   --dbms_output.put_line(maxlen);
   Result := aprefix || substr(trim(inputStr),1,maxlen) || asuffix; 
   --dbms_output.put_line(Result);
@@ -249,7 +249,7 @@ begin
   end loop;
 
   if(pcount>1) then
-    var_line := ' from nodes n';
+    var_line := ' from nodes n where n.nodetypeid=' || to_char(ntid);
     --dbms_output.put_line(var_line);
     var_sql := var_sql || var_line;
     execute immediate (var_sql);
@@ -291,7 +291,7 @@ begin
   end loop;
   
   if(pcount>1) then 
-    aline:= ' from nodes n';
+    aline:= ' from nodes n join nodetypes nt on nt.nodetypeid=n.nodetypeid and nt.objectclassid=' || to_char(objid);
       --dbms_output.put_line(aline);
       var_sql:=var_sql || aline;
     execute immediate (var_sql);
