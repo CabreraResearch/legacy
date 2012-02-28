@@ -51,8 +51,11 @@
                                 $('<a href="#' + text + '_' + launchtype + '_' + viewmode + '_' + itemid + '">' + text + '</a>')
                                     .appendTo($li)
                                 //.click(function () { o.onViewClick(viewid, viewmode); return false; });
-                                    .click(Csw.makeDelegate(function (x) { o.onViewClick(x.itemid, x.viewmode); return false; },
-                                                        { viewid: itemid, viewmode: viewmode }));
+                                    .click(Csw.makeDelegate(function (x) {
+                                             o.onViewClick(x.viewid, x.viewmode); return false;
+                                        },
+                                        { viewid: itemid, viewmode: viewmode })
+                                    );
                                 break;
                             case 'action':
                                 text = text.replace('_', ' ');
