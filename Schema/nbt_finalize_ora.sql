@@ -115,7 +115,9 @@ create or replace function alnumOnly(inputStr in varchar2, replaceWith in varcha
   Result varchar2(1000);
 begin
   
-  Result := regexp_replace(trim(inputStr), '[^a-zA-Z0-9_]', replaceWith ); 
+  Result := regexp_replace(inputStr,'[[:space:]]', null );
+
+  Result := regexp_replace(trim(Result), '[^a-zA-Z0-9_]', replaceWith ); 
   
   return(Result);
 end alnumOnly;
@@ -138,7 +140,7 @@ commit;
 
 
 create or replace view vwAutoViewColNames as 
-select n.nodetypename,p.propname,'NT' || upper(n.nodetypename) viewname, 
+select n.nodetypename,p.propname,'NT' || upper(alnumonly(n.nodetypename,'')) viewname, 
 case
  when s.subfieldname is null then 'P' || to_char(p.firstpropversionid) 
  when s.subfieldname is not null and fktype='ObjectClassId' then 'P' || to_char(p.firstpropversionid) || '_' || alnumonly(ocfk.objectclass,'') || '_OCFK'

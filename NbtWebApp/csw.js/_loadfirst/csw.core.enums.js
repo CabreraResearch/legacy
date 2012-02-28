@@ -76,7 +76,8 @@
             reauthenticate: 'reauthenticate',
             home: 'home',
             refresh: 'refresh',
-            url: 'url'
+            url: 'url',
+            popup: 'popup'
         };
         external.inputTypes = {
             button: {id: 0, name: 'button', placeholder: false, autocomplete: false, value: {required: false, allowed: true}, defaultwidth: ''},

@@ -7,6 +7,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
 
 namespace ChemSW.Nbt.WebServices
 {

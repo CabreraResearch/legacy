@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Act_FutureScheduling.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceReport.cs" />
     <Compile Include="App_Code\wsTreeOfView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -1501,7 +1502,7 @@
     <Compile Include="MainLayout.master.designer.cs">
       <DependentUpon>MainLayout.master</DependentUpon>
     </Compile>
-    <Compile Include="App_Code\CswGridData.cs" />
+    <None Include="App_Code\CswGridData.cs.obsolete" />
     <Compile Include="App_Code\CswNbtWebServiceGrid.cs" />
     <Compile Include="App_Code\CswNbtWebServiceHeader.cs" />
     <Compile Include="App_Code\CswNbtWebServiceMainMenu.cs" />
@@ -1520,9 +1521,9 @@
     <Compile Include="App_Code\wsTools.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="App_Code\wsViewBuilder.cs">
+    <None Include="App_Code\wsViewBuilder.cs.obsolete">
       <SubType>Component</SubType>
-    </Compile>
+    </None>
     <Compile Include="Base.master.cs">
       <DependentUpon>Base.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

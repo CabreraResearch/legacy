@@ -1,10 +1,12 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function _cswDiv() {
+(function _cswDiv()
+{
     'use strict';
 
-    function div(options) {
+    function div(options)
+    {
         /// <summary> Create or extend an HTML <div /> and return a Csw.divobject
         ///     &#10;1 - div(options)
         ///</summary>
@@ -32,8 +34,10 @@
         };
         var external = {};
 
-        (function () {
-            if (options) {
+        (function ()
+        {
+            if (options)
+            {
                 $.extend(internal, options);
             }
             var html = '',
@@ -62,10 +66,12 @@
             $div = $(html);
             Csw.controls.factory($div, external);
 
-            if (Csw.isFunction(internal.onClick)) {
+            if (Csw.isFunction(internal.onClick))
+            {
                 external.bind('click', internal.onClick);
             }
-            if(internal.$parent) {
+            if (false === Csw.isNullOrEmpty(internal.$parent))
+            {
                 internal.$parent.append(external.$);
             }
         } ());

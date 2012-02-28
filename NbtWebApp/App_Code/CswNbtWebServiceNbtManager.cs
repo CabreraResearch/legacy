@@ -10,6 +10,8 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
+
 
 namespace ChemSW.Nbt.WebServices
 {
