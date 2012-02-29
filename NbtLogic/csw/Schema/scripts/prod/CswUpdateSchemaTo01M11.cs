@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.Schema
 
             string SupplyNodeTypeName = "Supply";
             CswNbtMetaDataNodeType SupplyNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( SupplyNodeTypeName );
-            if( null == SupplyNodeType || SupplyNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
+            if( null == SupplyNodeType )
             {
                 SupplyNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), SupplyNodeTypeName, MaterialsCategory );
                 CswNbtMetaDataNodeTypeTab SupplyIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( SupplyNodeType, "Identity", 0 );
@@ -187,11 +187,12 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+
             #region case 24457-BiologicalNodeType
 
             string BiologicalNodeTypeName = "Biological";
             CswNbtMetaDataNodeType BiologicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( BiologicalNodeTypeName );
-            if( null == BiologicalNodeType || BiologicalNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
+            if( null == BiologicalNodeType )
             {
                 BiologicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), BiologicalNodeTypeName, MaterialsCategory );
                 CswNbtMetaDataNodeTypeTab BiologicalIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( BiologicalNodeType, "Identity", 0 );
