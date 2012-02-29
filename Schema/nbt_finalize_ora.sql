@@ -159,8 +159,8 @@ order by n.nodetypename,p.propname,s.subfieldname;
 commit;
 
 create or replace view vwntpropdefs as
-select ntp.nodetypeid,ntp.propname,ntp.firstpropversionid nodetypepropid,ft.fieldtype,ft.fieldtypeid,ntp.fktype,ntp.fkvalue,
-  nt.nodetypename,oc.objectclass 
+select ntp.nodetypeid,ntp.questionno,ntp.propname,ntp.firstpropversionid nodetypepropid,ft.fieldtype,ft.fieldtypeid,ntp.fktype,ntp.fkvalue,
+  nt.nodetypename,oc.objectclass
  from nodetype_props ntp
  join field_types ft on ft.fieldtypeid=ntp.fieldtypeid and ft.deleted='0'
  left outer join nodetypes nt on nt.nodetypeid=ntp.fkvalue and ntp.fktype='NodeTypeId'
@@ -182,12 +182,6 @@ select j.nodeid nid,to_char(j.gestalt) gestalt,field1_fk,j.nodetypepropid ntpid,
 /
 commit;
 
-create or replace view vwobjprops as
-select distinct ntp.propname,'gestalt' subfieldname,nt.objectclassid,'' subfieldalias
- from nodetype_props ntp
- join nodetypes nt on nt.nodetypeid=ntp.nodetypeid
-/
-commit;
 
 
 
@@ -248,7 +242,7 @@ begin
       end if;
   end loop;
 
-  if(pcount>1) then
+  if(pcount>0) then
     var_line := ' from nodes n where n.nodetypeid=' || to_char(ntid);
     --dbms_output.put_line(var_line);
     var_sql := var_sql || var_line;
@@ -263,6 +257,14 @@ end createNTview;
 
 commit;
 
+
+create or replace view vwobjprops as
+select distinct ntp.propname,'gestalt' subfieldname,nt.objectclassid,'' subfieldalias,ft.fieldtype
+ from nodetype_props ntp
+ join nodetypes nt on nt.nodetypeid=ntp.nodetypeid
+ join field_types ft on ft.fieldtypeid=ntp.fieldtypeid
+/
+commit;
 
 
 create or replace procedure createOCview(objid in number) is
@@ -285,12 +287,22 @@ begin
   for rec in props loop
       pcount:=pcount+1;
       pname:=alnumOnly(rec.propname,'');
-      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' || trim(to_char(pcount,'00')) || '_',alnumonly(upper(pname),''),'');  
+      
+      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' || trim
+
+(to_char(pcount,'00')) || '_',alnumonly(upper(pname),''),'');  
       --dbms_output.put_line(aline);
       var_sql:=var_sql || aline;
+      
+      if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
+        aline:=',(select field1_fk from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' || trim
+        (to_char(pcount,'00')) || '_',alnumonly(upper(pname),''),'_FK');        
+        var_sql:=var_sql || aline;
+      end if;
+      
   end loop;
   
-  if(pcount>1) then 
+  if(pcount>0) then 
     aline:= ' from nodes n join nodetypes nt on nt.nodetypeid=n.nodetypeid and nt.objectclassid=' || to_char(objid);
       --dbms_output.put_line(aline);
       var_sql:=var_sql || aline;
@@ -302,6 +314,7 @@ end createOCview;
 /
 
 commit;
+
 
 create or replace procedure CreateAllNtViews is
   cursor nts is
