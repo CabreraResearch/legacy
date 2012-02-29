@@ -26,34 +26,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            #region case 24975
-
-
-            CswNbtMetaDataObjectClass ReportOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
-
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( ReportOc.ObjectClass,CswNbtObjClassReport.SqlPropertyName,CswNbtMetaDataFieldType.NbtFieldType.Memo);
-
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( ReportOc.ObjectClass,
-                                                                       CswNbtObjClassReport.btnRunPropertyName,
-                                                                       CswNbtMetaDataFieldType.NbtFieldType.Button,
-                                                                       false, true, false, string.Empty, Int32.MinValue, false, false, false, true, string.Empty, Int32.MinValue, Int32.MinValue,
-                                                                       CswNbtNodePropButton.ButtonMode.button.ToString(),
-                                                                       false,
-                                                                       AuditLevel.NoAudit,
-                                                                       "Run");
-
-            CswNbtMetaDataNodeType rptNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType("Report");
-
-            if( null != rptNT )
-            {
-                CswNbtNode rptNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( rptNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                CswNbtObjClassReport rptNodeAsReport = CswNbtNodeCaster.AsReport( rptNode );
-                rptNodeAsReport.ReportName.Text = "SQL Report View Dictionary";
-                rptNodeAsReport.SQL.Text = "select * from vwAutoViewColNames";                
-                rptNodeAsReport.postChanges(true);                
-            }
-            #endregion case 24975
-
+            
         }//Update()
 
     }//class CswUpdateSchemaTo01M10
