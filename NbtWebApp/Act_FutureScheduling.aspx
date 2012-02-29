@@ -1,3 +1,4 @@
+<%--
 <%@ Page Language="C#" AutoEventWireup="true"
     Inherits="ChemSW.Nbt.WebPages.Act_FutureScheduling" MasterPageFile="~/MainLayout.master" Codebehind="Act_FutureScheduling.aspx.cs" %>
 
@@ -25,3 +26,4 @@
         </WizardSteps>
     </Csw:CswWizard>
 </asp:Content>
+--%>
