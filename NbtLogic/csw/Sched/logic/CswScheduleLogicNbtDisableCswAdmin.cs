@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    _CompletionMessage = string.Empty; 
+                    _CompletionMessage = string.Empty;
                     CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
                     CswNbtObjClassUser CswAdminAsUser = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode );
                     if( false == _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.NBTManager ) )
@@ -71,6 +71,11 @@ namespace ChemSW.Nbt.Sched
                     {
                         CswAdminAsUser.AccountLocked.Checked = Tristate.False;
                         CswAdminAsUser.FailedLoginCount.Value = 0;
+                        if( DateTime.Now.Day == 1 )
+                        {
+                            /* Expire the Csw Admin password on the 1st of each month */
+                            CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
+                        }
                     }
                     ChemSWAdminUserNode.postChanges( true );
 

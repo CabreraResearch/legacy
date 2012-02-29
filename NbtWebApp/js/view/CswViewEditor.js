@@ -99,7 +99,7 @@
             }
         });
 
-        var $copyviewbtn = div1BtnTblCell11.$.CswButton({
+        var copyViewBtn = div1BtnTblCell11.button({
             'ID': o.ID + '_copyview',
             'enabledText': 'Copy View',
             'disableOnClick': true,
@@ -117,15 +117,15 @@
                             _getViewsGrid(gridJson.copyviewid);
                         },
                         error: function () {
-                            $copyviewbtn.CswButton('enable');
+                            copyViewBtn.enable();
                         }
                     });
                 } // if(viewid !== '' && viewid !== undefined)
             } // onClick
         }); // copy button
-        $copyviewbtn.CswButton('disable');
+        copyViewBtn.disable();
 
-        var $deleteviewbtn = div1BtnTblCell11.$.CswButton({
+        var deleteViewBtn = div1BtnTblCell11.button({
             ID: o.ID + '_deleteview',
             enabledText: 'Delete View',
             disableOnClick: true,
@@ -143,19 +143,19 @@
                             data: dataJson,
                             success: function () {
                                 _getViewsGrid();
-                                $copyviewbtn.CswButton('disable');
+                                copyViewBtn.disable();
                             },
                             error: function () {
-                                $deleteviewbtn.CswButton('enable');
+                                deleteViewBtn.enable();
                             }
                         });
                     }
                 }
             } // onClick
         }); // delete button
-        $deleteviewbtn.CswButton('disable');
+        deleteViewBtn.disable();
 
-        var $newviewbtn = div1BtnTblCell11.$.CswButton({
+        var newViewBtn = div1BtnTblCell11.button({
             'ID': o.ID + '_newview',
             'enabledText': 'Create New View',
             'disableOnClick': false,
@@ -165,7 +165,7 @@
                         _getViewsGrid(newviewid);
                     },
                     onClose: function () {
-                        $newviewbtn.CswButton('enable');
+                        newViewBtn.enable();
                     }
                 }); // CswDialog
             } // onClick
@@ -395,7 +395,7 @@
             return ret;
         }
 
-        function _handleFinish($finishWizard) {
+        function _handleFinish(finishWizard) {
             var viewid = _getSelectedViewId();
             var processView = true;
 
@@ -406,7 +406,9 @@
 
                 if (currentViewJson.mode === 'Grid' && false === gridHasOneProp()) {
                     processView = confirm('You are attempting to create a Grid without properties. This will not display any information. Do you want to continue?');
-                    if (false === processView) $finishWizard.CswWizard('button', 'finish', 'enable');
+                    if (false === processView) {
+                        finishWizard.$.CswWizard('button', 'finish', 'enable');
+                    }
                 }
             }
 
@@ -458,13 +460,13 @@
                                 onSelectRow: function (id, selected) {
                                     rowid = id;
                                     if (selected) {
-                                        $copyviewbtn.CswButton('enable');
-                                        $deleteviewbtn.CswButton('enable');
+                                        copyViewBtn.enable();
+                                        deleteViewBtn.enable();
                                         $selview_span.text(_getSelectedViewName(id));
                                         $wizard.CswWizard('button', 'next', 'enable');
                                     } else {
-                                        $copyviewbtn.CswButton('disable');
-                                        $deleteviewbtn.CswButton('disable');
+                                        copyViewBtn.disable();
+                                        deleteViewBtn.disable();
                                         $selview_span.text("");
                                         $wizard.CswWizard('button', 'next', 'disable');
                                     }
@@ -593,7 +595,7 @@
                     data: jsonData,
                     success: function (data) {
                         groupBySelect.empty();
-                        groupBySelect.option({value: 'None'});
+                        groupBySelect.option({ value: 'None' });
                         for (var propKey in data) {
                             if (Csw.contains(data, propKey)) {
                                 var thisProp = data[propKey];

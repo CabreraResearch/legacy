@@ -205,10 +205,10 @@ namespace ChemSW.Nbt.PropTypes
         }
         public override void ToJSON( JObject ParentObject )
         {
-			//ParentObject[_StartDateTimeSubField.ToXmlNodeName( true )] = ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty;
-			CswDateTime CswDate = new CswDateTime( _CswNbtResources, StartDateTime );
-			ParentObject.Add( new JProperty( _StartDateTimeSubField.ToXmlNodeName( true ), CswDate.ToClientAsDateTimeJObject() ) );
-			
+            //ParentObject[_StartDateTimeSubField.ToXmlNodeName( true )] = ( StartDateTime != DateTime.MinValue ) ? StartDateTime.ToShortDateString() : string.Empty;
+            CswDateTime CswDate = new CswDateTime( _CswNbtResources, StartDateTime );
+            ParentObject.Add( new JProperty( _StartDateTimeSubField.ToXmlNodeName( true ), CswDate.ToClientAsDateTimeJObject() ) );
+
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = CachedValue.ToString();
             ParentObject[_UnitsSubField.ToXmlNodeName( true )] = Units;
         }
@@ -246,16 +246,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _StartDateTimeSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_StartDateTimeSubField.ToXmlNodeName( true )] )
             {
-				//StartDateTime = CswConvert.ToDateTime( JObject.Property( _StartDateTimeSubField.ToXmlNodeName( true ) ).Value );
-				CswDateTime CswDate = new CswDateTime( _CswNbtResources );
-				CswDate.FromClientDateTimeJObject( (JObject) JObject[_StartDateTimeSubField.ToXmlNodeName( true )] );
-				StartDateTime = CswDate.ToDateTime();
+                //StartDateTime = CswConvert.ToDateTime( JObject.Property( _StartDateTimeSubField.ToXmlNodeName( true ) ).Value );
+                CswDateTime CswDate = new CswDateTime( _CswNbtResources );
+                CswDate.FromClientDateTimeJObject( (JObject) JObject[_StartDateTimeSubField.ToXmlNodeName( true )] );
+                StartDateTime = CswDate.ToDateTime();
             }
-            if( null != JObject.Property( _UnitsSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_UnitsSubField.ToXmlNodeName( true )] )
             {
-                Units = (string) JObject.Property( _UnitsSubField.ToXmlNodeName( true ) ).Value;
+                Units = JObject[_UnitsSubField.ToXmlNodeName( true )].ToString();
             }
             //PendingUpdate = true;
             RefreshCachedValue();

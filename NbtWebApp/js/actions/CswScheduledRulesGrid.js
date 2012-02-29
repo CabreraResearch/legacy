@@ -85,7 +85,8 @@
                             .select({
                                 ID: Csw.controls.dom.makeSafeId('customerIdSelect'),
                                 selected: '',
-                                values: [{value: '', display: ''}],
+                                values: [{ value: '', display: ''}],
+                                width: '100px',
                                 onChange: function () {
                                     var $selected = customerIdSelect.find(':selected');
                                     selectedCustomerId = $selected.val();

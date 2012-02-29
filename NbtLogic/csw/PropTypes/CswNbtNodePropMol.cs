@@ -89,9 +89,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _MolSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_MolSubField.ToXmlNodeName( true )] )
             {
-                Mol = (string) JObject.Property( _MolSubField.ToXmlNodeName( true ) ).Value;
+                Mol = JObject[_MolSubField.ToXmlNodeName( true )].ToString();
             }
         }
     }//CswNbtNodePropMol

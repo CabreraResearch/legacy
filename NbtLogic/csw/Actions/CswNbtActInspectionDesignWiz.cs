@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.OleDb;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.Actions;
 using Newtonsoft.Json.Linq;
 
 
@@ -28,7 +26,7 @@ namespace ChemSW.Nbt.Actions
         private NbtViewVisibility _newViewVis;
         private Int32 _VisId = Int32.MinValue;
 
-        public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources, NbtViewVisibility newViewVis, ICswNbtUser newViewUser, bool isSchemaUpdater)
+        public CswNbtActInspectionDesignWiz( CswNbtResources CswNbtResources, NbtViewVisibility newViewVis, ICswNbtUser newViewUser, bool isSchemaUpdater )
         {
             _CswNbtResources = CswNbtResources;
             _IsSchemaUpdater = isSchemaUpdater;
@@ -94,6 +92,20 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
+        private string _buildString( string Padding, string StringToAdd )
+        {
+            string Ret = "";
+            if( false == string.IsNullOrEmpty( Padding ) )
+            {
+                Ret += Padding;
+            }
+            if( false == string.IsNullOrEmpty( StringToAdd ) )
+            {
+                Ret += StringToAdd;
+            }
+            return Ret;
+        }
+
         private string _guaranteeCategoryName( string Category, CswNbtMetaDataNodeType InspectionTargetNt, CswNbtMetaDataNodeType InspectionDesignNt, string InspectionTargetName )
         {
             string CategoryName = Category;
@@ -106,11 +118,11 @@ namespace ChemSW.Nbt.Actions
 
                 if( null != InspectionTargetNt )
                 {
-                    CategoryName += ": " + InspectionTargetNt.Category;
+                    CategoryName += _buildString( ": ", InspectionTargetNt.Category );
                 }
                 else
                 {
-                    CategoryName += ": " + InspectionTargetName;
+                    CategoryName += _buildString( ": ", InspectionTargetName );
                 }
 
             }
@@ -183,7 +195,7 @@ namespace ChemSW.Nbt.Actions
                         if( null == ThisTab )
                         {
                             ++qtab_order;
-//                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
+                            //                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
                             ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, qtab_order );
                         }
                         RetDict.Add( TabName, ThisTab );
@@ -246,7 +258,7 @@ namespace ChemSW.Nbt.Actions
                                 ThisQuestion.ListOptions = AllowedAnswers;
                                 ThisQuestion.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                                 RetCount += 1;
-                            }                         
+                            }
                         }
                         else
                         {
