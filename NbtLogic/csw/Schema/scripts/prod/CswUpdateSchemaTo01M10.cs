@@ -120,15 +120,18 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Quantity, "Expiration Interval", ChemicalIdentityTab.TabId );
 
                 //**********************************************************************
-                //Hazards Tab
+                //Hazards Tab 
                 CswNbtMetaDataNodeTypeTab HazardsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNodeType, "Hazards", 1 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.NFPA, "NFPA", HazardsTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "GHS", HazardsTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "EU R&S", HazardsTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "EU Picto", HazardsTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "PPE", HazardsTab.TabId ).ListOptions = "Goggles,Gloves,Clothing,Fume Hood";
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Logical, "Hazardous", HazardsTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.ImageList, "Storage Type", HazardsTab.TabId );
+
+                /*For these properties, see case 25291
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "GHS", HazardsTab.TabId );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "EU R&S", HazardsTab.TabId );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "EU Picto", HazardsTab.TabId );
+                 */
 
                 //**********************************************************************
                 //Physical Tab
