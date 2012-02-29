@@ -33,6 +33,36 @@
 
         var external = {};
 
+        
+        internal.handleNext = function ($wizard, SelectedStep) {
+            var checkedNodeKeys = '';
+            
+            Csw.each(internal.generatorTree.$.CswNodeTree('checkedNodes'), function(thisObj) {
+                if(checkedNodeKeys !== '') checkedNodeKeys += ',';
+                checkedNodeKeys += thisObj.cswnbtnodekey;
+            });
+        
+            Csw.ajax.post({
+                url: internal.futureurl,
+                data: {
+                    SelectedGeneratorNodeKeys: checkedNodeKeys,
+                    EndDate: internal.endDatePicker.val().date
+                },
+                success: function (data) {
+
+                    internal.resultscell.$.CswNodeTree('makeTree', data.treedata, {
+                        ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree')
+                    }); // makeTree
+
+                } // success
+            }); // ajax
+        };
+
+        internal.handlePrevious = function () {
+
+        };
+
+
         // Init
         (function () {
             var div = Csw.controls.div({
@@ -79,7 +109,8 @@
 
             internal.endDatePicker = step1table.cell(1, 2).dateTimePicker({
                 ID: Csw.controls.dom.makeId(internal.ID, '', 'date'),
-                DisplayMode: 'Date'
+                DisplayMode: 'Date',
+                Date: Csw.date().addDays(90).toString()
             });
 
             step1table.cell(2, 1).append('&nbsp;');
@@ -112,35 +143,6 @@
             internal.resultscell = step2table.cell(2, 1);
 
         })(); // init
-
-
-        internal.handleNext = function () {
-
-            var checkedNodeKeys = '';
-            Csw.each(internal.generatorTree.$.CswNodeTree('checkedNodes'), function(thisObj) {
-                if(checkedNodeKeys !== '') checkedNodeKeys += ',';
-                checkedNodeKeys += thisObj.cswnbtnodekey;
-            });
-        
-            Csw.ajax.post({
-                url: internal.futureurl,
-                data: {
-                    SelectedGeneratorNodeKeys: checkedNodeKeys,
-                    EndDate: internal.endDatePicker.val()
-                },
-                success: function (data) {
-
-                    internal.resultscell.$.CswNodeTree('makeTree', data, {
-                        ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree')
-                    }); // makeTree
-
-                } // success
-            }); // ajax
-        };
-
-        internal.handlePrevious = function () {
-
-        };
 
         return external;
     };

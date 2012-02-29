@@ -46,7 +46,9 @@
                 stringify: false,
                 success: function (data) {
 
-                    makeTree(o, parent, data, url, treeDiv, rootnode);
+                    ret = makeTree(o, parent, data, url);
+                    rootnode = ret.rootnode;
+                    treeDiv = ret.treeDiv;
 
                 } // success
             }); // ajax
@@ -80,7 +82,8 @@
 
             var o = parseOptions(options);
 
-            makeTree(parseOptions(options), parent, treeData);
+            var ret = makeTree(parseOptions(options), parent, treeData);
+            return ret.treeDiv;
         },
 
         'checkedNodes': function () {
@@ -161,9 +164,11 @@
         return o;
     }
 
-    function makeTree(o, parent, data, url, treeDiv, rootnode) {
+    function makeTree(o, parent, data, url) {
 
         var toggleLink;
+        var rootnode;
+
         if (o.ShowToggleLink) {
             toggleLink = parent.link({
                 ID: o.ID + '_toggle',
@@ -174,7 +179,7 @@
         }
 
         var idPrefix = o.ID + '_';
-        treeDiv = parent.div({ ID: idPrefix });
+        var treeDiv = parent.div({ ID: idPrefix });
         if (o.UseScrollbars) {
             treeDiv.addClass('treediv');
         } else {
@@ -272,7 +277,7 @@
             toggleLink.show();
         }
 
-        return rootnode;
+        return { rootnode: rootnode, treeDiv: treeDiv };
     } // makeTree()
 
     function firstSelectNode(myoptions) {
