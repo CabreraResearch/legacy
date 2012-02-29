@@ -331,9 +331,10 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'Category Name&nbsp' });
 
-                        categoryNameInput = categoryNameInput || inspectionTable.cell(6, 2);
-                        categoryNameInput.$.css({ 'padding': '1px', 'vertical-align': 'middle' })
-                                            .CswInput('init', {
+                        categoryNameInput = categoryNameInput || 
+                            inspectionTable.cell(6, 2)
+                                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                                            .input({
                                                 ID: o.ID + '_newDesignCategory',
                                                 type: Csw.enums.inputTypes.text,
                                                 value: tempCategoryName,
@@ -747,9 +748,7 @@
                             values: values,
                             onOkClick: function (selectedView) {
                                 var viewId = selectedView.val();
-                                if (Csw.isFunction(o.onFinish)) {
-                                    o.onFinish(viewId);
-                                }
+                                Csw.tryExec(o.onFinish, viewId);
                             }
                         });
 

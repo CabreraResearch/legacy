@@ -202,13 +202,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _ContentTypeSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_ContentTypeSubField.ToXmlNodeName( true )] )
             {
-                ContentType = (string) JObject.Property( _ContentTypeSubField.ToXmlNodeName( true ) ).Value;
+                ContentType = JObject[_ContentTypeSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject.Property( _FileNameSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_FileNameSubField.ToXmlNodeName( true )] )
             {
-                FileName = (string) JObject.Property( _FileNameSubField.ToXmlNodeName( true ) ).Value;
+                FileName = JObject[_FileNameSubField.ToXmlNodeName( true )].ToString();
             }
         }
     }

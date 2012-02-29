@@ -247,42 +247,55 @@ namespace ChemSW.Nbt.ObjClasses
         private void _deleteFutureNodes()
         {
             // BZ 6754 - Delete all future nodes
-            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass );
-            CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] ) );
-            CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.getObjectClass();
+            CswNbtMetaDataObjectClass GeneratorObjectClass = ObjectClass;
 
-            CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
-            if( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
-                throw new CswDniException( "CswNbtObjClassGenerator.beforeDeleteNode() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
-            ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) TargetObjClass;
-
-            CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
-            CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
-
-            CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
-            CswNbtViewRelationship GeneratorRelationship = View.AddViewRelationship( GeneratorObjectClass, false );
-            GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
-            CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
-            CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
-            CswNbtViewPropertyFilter IsFutureYesFilter = View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True", false );
-
-            ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-
-            TargetTree.goToRoot();
-            if( TargetTree.getChildNodeCount() > 0 )  // should always be the case
+            if( TargetType.SelectedNodeTypeIds.Count == 1 )
             {
-                TargetTree.goToNthChild( 0 );
-                if( TargetTree.getChildNodeCount() > 0 )   // might not always be the case
+                Int32 SelectedTargetNtId = CswConvert.ToInt32( TargetType.SelectedNodeTypeIds[0] );
+                if( Int32.MinValue != SelectedTargetNtId )
                 {
-                    for( int i = 0; i < TargetTree.getChildNodeCount(); i++ )
+                    CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( SelectedTargetNtId );
+                    if( null != TargetNodeType )
                     {
-                        TargetTree.goToNthChild( i );
+                        CswNbtMetaDataObjectClass TargetObjectClass = TargetNodeType.getObjectClass();
 
-                        CswNbtNode TargetNode = TargetTree.getNodeForCurrentPosition();
-                        TargetNode.delete();
+                        CswNbtObjClass TargetObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, TargetObjectClass );
+                        if( !( TargetObjClass is ICswNbtPropertySetGeneratorTarget ) )
+                        {
+                            throw new CswDniException( "CswNbtObjClassGenerator.beforeDeleteNode() got an invalid object class: " + TargetObjectClass.ObjectClass.ToString() );
+                        }
+                        ICswNbtPropertySetGeneratorTarget GeneratorTarget = (ICswNbtPropertySetGeneratorTarget) TargetObjClass;
 
-                        TargetTree.goToParentNode();
+                        CswNbtMetaDataNodeTypeProp GeneratorProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName );
+                        CswNbtMetaDataNodeTypeProp IsFutureProp = TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
+
+                        CswNbtView View = new CswNbtView( _CswNbtResources );
+                        View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
+                        CswNbtViewRelationship GeneratorRelationship = View.AddViewRelationship( GeneratorObjectClass, false );
+                        GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
+                        CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
+                        CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
+                        View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True", false );
+
+                        ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+
+                        TargetTree.goToRoot();
+                        if( TargetTree.getChildNodeCount() > 0 ) // should always be the case
+                        {
+                            TargetTree.goToNthChild( 0 );
+                            if( TargetTree.getChildNodeCount() > 0 ) // might not always be the case
+                            {
+                                for( int i = 0; i < TargetTree.getChildNodeCount(); i += 1 )
+                                {
+                                    TargetTree.goToNthChild( i );
+
+                                    CswNbtNode TargetNode = TargetTree.getNodeForCurrentPosition();
+                                    TargetNode.delete();
+
+                                    TargetTree.goToParentNode();
+                                }
+                            }
+                        }
                     }
                 }
             }

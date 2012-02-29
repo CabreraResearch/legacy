@@ -11,6 +11,7 @@
             values: [],
             cssclass: '',
             multiple: false,
+            width: '',
             onChange: null //function () {}
         };
         var external = {};
@@ -81,7 +82,8 @@
 
         (function () {
             var html = '',
-                attr = Csw.controls.dom.attributes();
+                attr = Csw.controls.dom.attributes(),
+                style = Csw.controls.dom.style();
             var $select;
 
             if (options) {
@@ -93,17 +95,22 @@
             attr.add('id', internal.ID);
             attr.add('class', internal.cssclass);
             attr.add('name', internal.name);
-
+            style.add('width', internal.width);
+            
             html += '<select ';
 
             html += attr.get();
-
+            html += style.get();
+            
             html += '>';
             html += '</select>';
             $select = $(html);
 
             Csw.controls.factory($select, external);
-            internal.$parent.append(external.$);
+
+            if (false === Csw.isNullOrEmpty(internal.$parent)) {
+                internal.$parent.append(external.$);
+            }
 
             if (Csw.isFunction(internal.onChange)) {
                 external.change(internal.onChange);

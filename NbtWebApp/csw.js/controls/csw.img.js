@@ -25,7 +25,7 @@
             height: '',
             ismap: '',
             usemap: '',
-            border: '',
+            border: 0,
             width: '',
             onClick: null //function () {}
         };
@@ -53,6 +53,7 @@
             attr.add('ismap', internal.ismap);
             attr.add('usemap', internal.usemap);
             attr.add('width', internal.width);
+            
             style.add('border', internal.border);
 
             html += attr.get();

@@ -85,7 +85,7 @@
             });
 
             /* Previous Button */
-            bCell11.$.CswButton('init', { 'ID': o.ID + '_prev',
+            bCell11.button({ 'ID': o.ID + '_prev',
                 'enabledText': '< Previous',
                 'disableOnClick': false,
                 'onClick': function () {
@@ -97,7 +97,7 @@
                 }
             });
             /* Next Button */
-            bCell11.$.CswButton('init', { 'ID': o.ID + '_next',
+            bCell11.button({ 'ID': o.ID + '_next',
                 'enabledText': 'Next >',
                 'disableOnClick': false,
                 'onClick': function () {
@@ -109,12 +109,12 @@
                 }
             });
             /* Finish Button */
-            bCell11.$.CswButton('init', { 'ID': o.ID + '_finish',
+            bCell11.button({ 'ID': o.ID + '_finish',
                 'enabledText': o.FinishText,
                 'onClick': function () { Csw.tryExec(o.onFinish, table); }
             });
             /* Cancel Button */
-            bCell12.$.CswButton('init', { 'ID': o.ID + '_cancel',
+            bCell12.button({ 'ID': o.ID + '_cancel',
                 'enabledText': 'Cancel',
                 'onClick': function () { Csw.tryExec(o.onCancel, table); }
             });
