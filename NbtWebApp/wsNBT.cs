@@ -3222,6 +3222,68 @@ namespace ChemSW.Nbt.WebServices
 
         } // getInspectionStatusGrid()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getGeneratorsTree()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceGenerators ws = new CswNbtWebServiceGenerators( _CswNbtResources );
+                    ReturnVal = ws.getGeneratorsTree();
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getGeneratorsTree()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string futureScheduling( string SelectedGeneratorNodeKeys, string EndDate )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswCommaDelimitedString RealSelectedGeneratorNodeKeys = new CswCommaDelimitedString();
+                    RealSelectedGeneratorNodeKeys.FromString( SelectedGeneratorNodeKeys );
+
+                    DateTime RealEndDate = CswConvert.ToDateTime( EndDate );
+
+                    CswNbtWebServiceGenerators ws = new CswNbtWebServiceGenerators( _CswNbtResources );
+                    ReturnVal = ws.futureScheduling( RealSelectedGeneratorNodeKeys, RealEndDate );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // futureScheduling()
+
+
         #endregion Actions
 
         #region Mobile
@@ -3424,7 +3486,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                
+
                 CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId );
                 ReturnVal["success"] = ws.updateAllScheduledRules( Action );
 

@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Act_FutureScheduling.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceGenerators.cs" />
     <Compile Include="App_Code\wsTreeOfView.cs">
       <SubType>Component</SubType>
     </Compile>
