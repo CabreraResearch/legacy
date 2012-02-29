@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        public CswNbtNodePropText Text
+        public CswNbtNodePropText Name
         {
             get
             {

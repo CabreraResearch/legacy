@@ -52,19 +52,23 @@ namespace ChemSW.Nbt.Schema
             #region case 24981
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( _CswNbtSchemaModTrnsctn.getModuleId( CswNbtResources.CswNbtModule.CISPro ), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ).ObjectClassId );
 
-            CswNbtMetaDataObjectClassProp SynonymnMaterialObjClassProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass, CswNbtObjClassMaterialSynonym.MaterialPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SynonymnMaterialObjClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SynonymnMaterialObjClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ) );
+            CswNbtMetaDataObjectClassProp SynonymMaterialObjClassProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass, CswNbtObjClassMaterialSynonym.MaterialPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SynonymMaterialObjClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( SynonymMaterialObjClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ) );
 
-            CswNbtMetaDataObjectClassProp SynonymnNameObjClassProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass, CswNbtObjClassMaterialSynonym.NamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text );
+            CswNbtMetaDataObjectClassProp SynonymNameObjClassProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass, CswNbtObjClassMaterialSynonym.NamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text );
 
-            CswNbtMetaDataNodeType MaterialSynonymnNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( SynonymnMaterialObjClassProp.ObjectClassId, "Material Synonymn", MaterialsCategory );
 
-            CswNbtView SynonymnView = _CswNbtSchemaModTrnsctn.makeView();
-            SynonymnView.makeNew( "Synonymns", NbtViewVisibility.Global, null, null, null );
-            CswNbtViewRelationship SynonymnTypeRelationship = SynonymnView.AddViewRelationship( MaterialSynonymnNodeType, false );
-            SynonymnView.Category = MaterialsCategory;
-            SynonymnView.save();
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( _CswNbtSchemaModTrnsctn.getModuleId( CswNbtResources.CswNbtModule.CISPro ), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ).ObjectClassId );
+
+
+            CswNbtMetaDataNodeType MaterialSynonymNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( SynonymMaterialObjClassProp.ObjectClassId, "Material Synonym", MaterialsCategory );
+
+            CswNbtView SynonymView = _CswNbtSchemaModTrnsctn.makeView();
+            SynonymView.makeNew( "Synonyms", NbtViewVisibility.Global, null, null, null );
+            CswNbtViewRelationship SynonymTypeRelationship = SynonymView.AddViewRelationship( MaterialSynonymNodeType, false );
+            SynonymView.Category = MaterialsCategory;
+            SynonymView.save();
             #endregion
 
 
@@ -73,14 +77,14 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass MaterialObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             string ChemicalNodeTypeName = "Chemical";
             CswNbtMetaDataNodeType ChemicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( ChemicalNodeTypeName );
-            if( null == ChemicalNodeType || ChemicalNodeType.getObjectClass().ObjectClass != MaterialObjectClass.ObjectClass )
+            if( null == ChemicalNodeType )
             {
                 //**********************************************************************
                 //Identity Tab
                 ChemicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), ChemicalNodeTypeName, MaterialsCategory );
                 CswNbtMetaDataNodeTypeTab ChemicalIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( ChemicalNodeType, "Identity", 0 );
 
-                
+
                 //CswNbtView ChemicalView = ChemicalNodeType.CreateDefaultView();// this causes an exception when you try to save the view, to the effect of: "You must call makeNewView() before saving"
                 CswNbtView ChemicalView = _CswNbtSchemaModTrnsctn.makeView();
                 ChemicalView.makeNew( "Chemicals", NbtViewVisibility.Global, null, null, null );
@@ -96,22 +100,21 @@ namespace ChemSW.Nbt.Schema
 
                 //Case 25253 is assigned to deal with the fact that with this property, you cannot actually instance a Chemical node
                 CswNbtMetaDataNodeTypeProp SynonymsProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Synonyms", ChemicalIdentityTab.TabId );
-                CswNbtView SynonymnGridPropView = _CswNbtSchemaModTrnsctn.restoreView( SynonymsProp.ViewId ); //Create view id on the SynonymnGridProp
-                SynonymnGridPropView.makeNew( "SynonymnGridProp", NbtViewVisibility.Global, null, null, Int32.MinValue );
-                SynonymnGridPropView.ViewMode = NbtViewRenderingMode.Grid;
-                CswNbtViewRelationship ChemRel = SynonymnGridPropView.AddViewRelationship( ChemicalNodeType, true );
+                CswNbtView SynonymGridPropView = _CswNbtSchemaModTrnsctn.restoreView( SynonymsProp.ViewId ); //Create view id on the SynonymGridProp
+                SynonymGridPropView.ViewMode = NbtViewRenderingMode.Grid;
+                CswNbtViewRelationship ChemRel = SynonymGridPropView.AddViewRelationship( ChemicalNodeType, true );
 
-                CswNbtMetaDataNodeTypeProp SynToMaterialProp = MaterialSynonymnNodeType.getNodeTypePropByObjectClassProp( SynonymnMaterialObjClassProp.PropName );
-                CswNbtViewRelationship SynRel = SynonymnGridPropView.AddViewRelationship( ChemRel, NbtViewPropOwnerType.Second, SynToMaterialProp, false ); //"First": relationshiop from parent view relationship to the child; "Second": the child is defining the relationship to the parent
-                CswNbtMetaDataNodeTypeProp SynonymnNameProp = MaterialSynonymnNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterialSynonym.NamePropertyName );
-                CswNbtViewProperty NameViewProp = SynonymnGridPropView.AddViewProperty( SynRel, SynonymnNameProp );
-                SynonymnGridPropView.save();
-                SynonymsProp.ViewId = SynonymnGridPropView.ViewId;
+                CswNbtMetaDataNodeTypeProp SynToMaterialProp = MaterialSynonymNodeType.getNodeTypePropByObjectClassProp( SynonymMaterialObjClassProp.PropName );
+                CswNbtViewRelationship SynRel = SynonymGridPropView.AddViewRelationship( ChemRel, NbtViewPropOwnerType.Second, SynToMaterialProp, false ); //"First": relationshiop from parent view relationship to the child; "Second": the child is defining the relationship to the parent
+                CswNbtMetaDataNodeTypeProp SynonymnNameProp = MaterialSynonymNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterialSynonym.NamePropertyName );
+                CswNbtViewProperty NameViewProp = SynonymGridPropView.AddViewProperty( SynRel, SynonymnNameProp );
+                SynonymGridPropView.save();
+                SynonymsProp.ViewId = SynonymGridPropView.ViewId;
                 SynonymsProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
-                 /* 
-                 * When this is is working, we'll also need to create the composite property
-                 */
+                /* 
+                * When this is is working, we'll also need to create the composite property
+                */
 
 
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Quantity, "Expiration Interval", ChemicalIdentityTab.TabId );
@@ -123,7 +126,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "GHS", HazardsTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "EU R&S", HazardsTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "EU Picto", HazardsTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "PPE", HazardsTab.TabId );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "PPE", HazardsTab.TabId ).ListOptions = "Goggles,Gloves,Clothing,Fume Hood";
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Logical, "Hazardous", HazardsTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ChemicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.ImageList, "Storage Type", HazardsTab.TabId );
 
@@ -167,7 +170,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab SupplyIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( SupplyNodeType, "Identity", 0 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( SupplyNodeType, CswNbtMetaDataFieldType.NbtFieldType.Memo, "Description", SupplyIdentityTab.TabId );
 
-                CswNbtMetaDataNodeTypeTab PictureTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( SupplyNodeType, "Picture", 0 );
+                CswNbtMetaDataNodeTypeTab PictureTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( SupplyNodeType, "Picture", 1 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( SupplyNodeType, CswNbtMetaDataFieldType.NbtFieldType.ImageList, "Picture", PictureTab.TabId );
 
                 CswNbtView SupplyView = _CswNbtSchemaModTrnsctn.makeView();
@@ -189,13 +192,13 @@ namespace ChemSW.Nbt.Schema
             {
                 BiologicalNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), BiologicalNodeTypeName, MaterialsCategory );
                 CswNbtMetaDataNodeTypeTab BiologicalIdentityTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( BiologicalNodeType, "Identity", 0 );
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.List, "Reference Type", BiologicalIdentityTab.TabId );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.List, "Reference Type", BiologicalIdentityTab.TabId ).ListOptions = "ATCC,NIH,CDC";
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "Reference Number", BiologicalIdentityTab.TabId );
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.List, "Type", BiologicalIdentityTab.TabId );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.List, "Type", BiologicalIdentityTab.TabId ).ListOptions = "DNA,RNA,Protein,Organism";
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "Species Origin", BiologicalIdentityTab.TabId );
 
 
-                CswNbtMetaDataNodeTypeTab BiosafetyTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( BiologicalNodeType, "Biosafety", 0 );
+                CswNbtMetaDataNodeTypeTab BiosafetyTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( BiologicalNodeType, "Biosafety", 1 );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.List, "Biosafety Level", BiosafetyTab.TabId );
                 _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( BiologicalNodeType, CswNbtMetaDataFieldType.NbtFieldType.MultiList, "Vectors", BiosafetyTab.TabId );
 
