@@ -490,14 +490,17 @@
             var $div = $('<div><span>Are you sure you want to delete:&nbsp;</span></div>');
 
             if (o.Multi) {
-                var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+
                 if (false === Csw.isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
                     var n = 0;
-                    $nodechecks.each(function () {
-                        var $nodecheck = $(this);
-                        o.nodeids[n] = $nodecheck.CswAttrNonDom('nodeid');
-                        o.cswnbtnodekeys[n] = $nodecheck.CswAttrNonDom('cswnbtnodekey');
-                        $div.append('<br/><span style="padding-left: 10px;">' + $nodecheck.CswAttrNonDom('nodename') + '</span>');
+                    //$nodechecks.each(function () {
+                    Csw.each(nodechecked, function(thisObj) {
+                        //var $nodecheck = $(this);
+                        o.nodeids[n] = thisObj.nodeid; //$nodecheck.CswAttrNonDom('nodeid');
+                        o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey; //$nodecheck.CswAttrNonDom('cswnbtnodekey');
+                        $div.append('<br/><span style="padding-left: 10px;">' + thisObj.nodename + '</span>'); //$nodecheck.CswAttrNonDom('nodename') + '</span>');
                         n++;
                     });
                 } else {
