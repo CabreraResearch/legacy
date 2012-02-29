@@ -1,23 +1,12 @@
 ﻿using System;
-using System.Data;
-using System.Collections.Generic;
-using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Sched;
-using ChemSW.Audit;
-using ChemSW.Nbt.PropTypes;
 
 
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01M-10
+    /// Updates the schema to version 01M10
     /// </summary>
     public class CswUpdateSchemaTo01M10 : CswUpdateSchemaTo
     {
@@ -26,9 +15,57 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            
+            #region case 24462
+
+            Int32 PackageOcId = _CswNbtSchemaModTrnsctn.getObjectClassId( "Package" );
+            if( Int32.MinValue != PackageOcId )
+            {
+                CswNbtMetaDataObjectClass PackageOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( PackageOcId );
+                if( null != PackageOc )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( PackageOc );
+                }
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+
+            Int32 PackDetailOcId = _CswNbtSchemaModTrnsctn.getObjectClassId( "PackDetail" );
+            if( Int32.MinValue != PackDetailOcId )
+            {
+                CswNbtMetaDataObjectClass PackDetailOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( PackDetailOcId );
+                if( null != PackDetailOc )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( PackDetailOc );
+                }
+            }
+
+            _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
+
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packages" );
+            }
+            catch( Exception ) { }
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packages_audit" );
+            }
+            catch( Exception ) { }
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packdetail" );
+            }
+            catch( Exception ) { }
+            try
+            {
+                _CswNbtSchemaModTrnsctn.dropTable( "packdetail_audit" );
+            }
+            catch( Exception ) { }
+
+            #endregion case 24462
+
         }//Update()
 
-    }//class CswUpdateSchemaTo01M10
+    }//class CswUpdateSchemaTo01M09
 
 }//namespace ChemSW.Nbt.Schema

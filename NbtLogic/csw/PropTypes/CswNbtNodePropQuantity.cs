@@ -5,7 +5,6 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -235,13 +234,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _QuantitySubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_QuantitySubField.ToXmlNodeName( true )] )
             {
-                Quantity = CswConvert.ToDouble( JObject.Property( _QuantitySubField.ToXmlNodeName( true ) ).Value );
+                Quantity = CswConvert.ToDouble( JObject[_QuantitySubField.ToXmlNodeName( true )].ToString() );
             }
-            if( null != JObject.Property( _UnitsSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_UnitsSubField.ToXmlNodeName( true )] )
             {
-                Units = (string) JObject.Property( _UnitsSubField.ToXmlNodeName( true ) ).Value;
+                Units = JObject[_UnitsSubField.ToXmlNodeName( true )].ToString();
             }
         }
     }//CswNbtNodePropQuantity

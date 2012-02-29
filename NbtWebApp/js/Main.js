@@ -911,11 +911,11 @@ window.initMain = window.initMain || function (undefined) {
                             viewmode: 'tree',
                             viewid: viewid
                         });
-                        handleItemSelect({
-                            type: 'view',
-                            viewmode: 'tree',
-                            viewid: viewid
-                        });
+//                        handleItemSelect({
+//                            type: 'view',
+//                            viewmode: 'tree',
+//                            viewid: viewid
+//                        });
                     },
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected

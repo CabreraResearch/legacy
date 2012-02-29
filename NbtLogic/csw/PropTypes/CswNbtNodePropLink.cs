@@ -112,13 +112,13 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _HrefSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_HrefSubField.ToXmlNodeName( true )] )
             {
-                Href = (string) JObject.Property( _HrefSubField.ToXmlNodeName( true ) ).Value;
+                Href = JObject[_HrefSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject.Property( _TextSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_TextSubField.ToXmlNodeName( true )] )
             {
-                Text = (string) JObject.Property( _TextSubField.ToXmlNodeName( true ) ).Value;
+                Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
         }
     }//CswNbtNodeProp

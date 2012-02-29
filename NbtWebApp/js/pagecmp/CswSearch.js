@@ -409,6 +409,7 @@
                                                 .CswViewPropFilter('getFilterJson', {
                                                     nodetypeorobjectclassid: o.nodetypeorobjectclassid,
                                                     relatedidtype: propsData.relatedidtype,
+                                                    proptype: propsData.proptype,
                                                     filtJson: { fieldtype: propsData.fieldtype },
                                                     ID: o.ID,
                                                     $parent: o.searchTable.$,

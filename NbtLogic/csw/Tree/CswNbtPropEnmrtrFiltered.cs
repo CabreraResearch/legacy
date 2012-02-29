@@ -7,7 +7,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtPropEnmrtrFiltered : IEnumerator
     {
-		CswNbtMetaDataFieldType.NbtFieldType _FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+        CswNbtMetaDataFieldType.NbtFieldType _FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
         private ArrayList _PropList;
         int _Position = -1;
 
@@ -15,10 +15,10 @@ namespace ChemSW.Nbt
         public IEnumerator GetEnumerator()
         {
             //return new CswNbtPropEnmrtrGeneric( _Props );
-            return( this );
+            return ( this );
         }
 
-        public CswNbtPropEnmrtrFiltered(ArrayList PropList, CswNbtMetaDataFieldType.NbtFieldType FieldType)
+        public CswNbtPropEnmrtrFiltered( ArrayList PropList, CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             _FieldType = FieldType;
             _PropList = PropList;
@@ -28,17 +28,17 @@ namespace ChemSW.Nbt
         {
             bool ReachedEnd = false;
             bool FoundProp = false;
-            while( ! ReachedEnd && ! FoundProp )
+            while( !ReachedEnd && !FoundProp )
             {
                 _Position++;
 
-                if( _Position >= ( _PropList.Count - 1 )  )
+                if( _Position >= ( _PropList.Count - 1 ) )
                 {
                     ReachedEnd = true;
                 }
                 else
                 {
-                    CswNbtMetaDataFieldType CurrentFieldType = ((CswNbtNodePropWrapper)_PropList[_Position]).getFieldType();
+                    CswNbtMetaDataFieldType CurrentFieldType = ( (CswNbtNodePropWrapper) _PropList[_Position] ).getFieldType();
                     if( CurrentFieldType.FieldType == _FieldType )
                     {
                         FoundProp = true;
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt
                 }
             }
 
-            return ( ! ReachedEnd );
+            return ( !ReachedEnd );
 
         }//MoveNext()
 
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt
             {
                 try
                 {
-                    return _PropList[ _Position ];
+                    return _PropList[_Position];
                 }
                 catch( IndexOutOfRangeException )
                 {

@@ -4,7 +4,6 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
@@ -105,7 +104,7 @@ namespace ChemSW.Nbt.PropTypes
             return Succeeded;
         }
 
-		override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
+        override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Barcode )
             //{
@@ -116,7 +115,7 @@ namespace ChemSW.Nbt.PropTypes
             // Automatically generate a value.  This will not overwrite existing values.
             setBarcodeValue();
 
-			base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+            base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )
@@ -174,9 +173,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_BarcodeSubField.ToXmlNodeName( true )] )
             {
-                _setPropVals( (string) JObject.Property( _BarcodeSubField.ToXmlNodeName( true ) ).Value );
+                _setPropVals( JObject[_BarcodeSubField.ToXmlNodeName( true )].ToString() );
             }
         }
 

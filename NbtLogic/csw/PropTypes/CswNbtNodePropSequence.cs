@@ -4,7 +4,6 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
@@ -101,7 +100,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-		override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
+        override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
             //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Sequence )
             //{
@@ -112,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
             // Automatically generate a value.  This will not overwrite existing values.
             setSequenceValue();
 
-			base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+            base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )
@@ -163,9 +162,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _SequenceSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_SequenceSubField.ToXmlNodeName( true )] )
             {
-                _saveProp( (string) JObject.Property( _SequenceSubField.ToXmlNodeName( true ) ).Value );
+                _saveProp( JObject[_SequenceSubField.ToXmlNodeName( true )].ToString() );
             }
         }
 
