@@ -91,9 +91,17 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public Int32 RowLimit
+        public Int32 MaxRows
         {
-            get { return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
+            get
+            {
+                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                if( Int32.MinValue == Ret )
+                {
+                    Ret = 10;
+                }
+                return Ret;
+            }
         }
 
         public override void ToXml( XmlNode ParentNode )
@@ -114,6 +122,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject["viewname"] = View.ViewName;
             ParentObject["gridmode"] = GridMode.ToString();
+            ParentObject["maxrows"] = MaxRows;
             ParentObject["viewid"] = View.ViewId.ToString();
             ParentObject["width"] = Width.ToString();
         }

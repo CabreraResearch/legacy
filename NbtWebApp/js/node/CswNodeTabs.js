@@ -414,7 +414,6 @@
 
         function handleProp(layoutTable, thisProp, tabContentDiv, tabid, configMode, savBtn, atLeastOne) {
             var propid = thisProp.id,
-                fieldtype = thisProp.fieldtype,
                 cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol),
                 helpText = Csw.string(thisProp.helptext),
                 propName = Csw.string(thisProp.name),
@@ -423,9 +422,7 @@
             layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
-                 fieldtype !== Csw.enums.subFieldsMap.Image.name &&
-                 fieldtype !== Csw.enums.subFieldsMap.Grid.name &&
-                 fieldtype !== Csw.enums.subFieldsMap.Button.name &&
+                 Csw.bool(thisProp.showpropertyname) &&
                  (o.filterToPropId === '' || o.filterToPropId === propid)) {
 
                 labelCell = _getLabelCell(cellSet);

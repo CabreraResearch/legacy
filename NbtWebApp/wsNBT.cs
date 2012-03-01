@@ -736,6 +736,42 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getThinGrid( string ViewId, string IncludeNodeKey, string MaxRows )
+        {
+            UseCompression();
+            JObject ReturnVal = new JObject();
+            bool IsQuickLaunch = false;
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtNodeKey RealNodeKey = null;
+                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
+                Int32 RowLimit = CswConvert.ToInt32( MaxRows );
+                if( null != View )
+                {
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
+                    ReturnVal["rows"] = ws.getThinGridRows( RowLimit );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getGrid()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string runGrid( string ViewId, string IncludeNodeKey, string IncludeInQuickLaunch )
         {
             UseCompression();
