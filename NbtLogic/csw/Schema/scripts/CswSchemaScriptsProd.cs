@@ -37,6 +37,7 @@ namespace ChemSW.Nbt.Schema
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M08() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M09() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -164,8 +165,13 @@ namespace ChemSW.Nbt.Schema
 
         }//addReleaseDdlDriver() 
 
-        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver, CswSchemaVersion CswSchemaVersion = null )
         {
+            if( null != CswSchemaVersion )
+            {
+                //CswSchemaUpdateDriver.SchemaVersion = CswSchemaVersion; <== must wait for tedious refactoring of all CswUpdateSchemaTo derivatives to uncomment this. 
+            }
+
             if( ( 99 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
                   ( 0 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
                   ( "A" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
