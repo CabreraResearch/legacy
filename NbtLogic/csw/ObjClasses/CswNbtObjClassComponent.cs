@@ -5,17 +5,17 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMaterialSynonym : CswNbtObjClass
+    public class CswNbtObjClassComponent : CswNbtObjClass
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassMaterialSynonym( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassComponent( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassMaterialSynonym( CswNbtResources CswNbtResources )
+        public CswNbtObjClassComponent( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
@@ -23,15 +23,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass ); }
         }
 
-
-        public static string MaterialPropertyName { get { return "Material"; } }
-        public static string NamePropertyName { get { return "Name"; } }
-
+        public static string PercentagePropertyName { get { return "Percentage"; } }
 
         #region Inherited Events
+
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
@@ -81,48 +79,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Material
+        public CswNbtNodePropNumber Percentage
         {
             get
             {
-                return ( _CswNbtNode.Properties[MaterialPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[PercentagePropertyName].AsNumber );
             }
         }
-
-
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
-            }
-        }
-
-        //public CswNbtNodePropRelationship Assembly
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.AssemblyPropertyName].AsRelationship );
-        //    }
-        //}
-        //public CswNbtNodePropRelationship Type
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.TypePropertyName].AsRelationship );
-        //    }
-        //}
-        //public CswNbtNodePropLogicalSet Parts
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.PartsPropertyName].AsLogicalSet );
-        //    }
-        //}
-
 
         #endregion
 
-    }//CswNbtObjClassMaterialSynonym
+
+    }//CswNbtObjClassComponent
 
 }//namespace ChemSW.Nbt.ObjClasses

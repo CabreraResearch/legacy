@@ -30,11 +30,11 @@ namespace ChemSW.Nbt.Schema
             ObjectClassUpdate.update( ObjectClasstable );
 
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Approval Status", CswNbtMetaDataFieldType.NbtFieldType.Logical );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Specific Gravity", CswNbtMetaDataFieldType.NbtFieldType.Scientific );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Physical State", CswNbtMetaDataFieldType.NbtFieldType.List, false, false, false, string.Empty, Int32.MinValue, false, false, false, false, "solid, liquid, gas" );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "CAS No", CswNbtMetaDataFieldType.NbtFieldType.Text );
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Regulatory Lists", CswNbtMetaDataFieldType.NbtFieldType.Static );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, CswNbtObjClassMaterial.ApprovalStatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Logical );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, CswNbtObjClassMaterial.SpecificGravityPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Scientific );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, CswNbtObjClassMaterial.PhysicalStatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, false, false, false, string.Empty, Int32.MinValue, false, false, false, false, "solid, liquid, gas" );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, CswNbtObjClassMaterial.CasNoPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Text );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, CswNbtObjClassMaterial.RegulatoryListsPropName, CswNbtMetaDataFieldType.NbtFieldType.Static );
 
 
             CswNbtMetaDataObjectClassProp PartNoOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass, "Part Number", CswNbtMetaDataFieldType.NbtFieldType.Text );
