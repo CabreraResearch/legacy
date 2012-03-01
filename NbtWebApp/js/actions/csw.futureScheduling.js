@@ -152,7 +152,7 @@
         return external;
     };
 
-    Csw.register('futureScheduling', futureScheduling);
+    Csw.actions.register('futureScheduling', futureScheduling);
     Csw.actions.futureScheduling = Csw.actions.futureScheduling || futureScheduling;
 
 })();
