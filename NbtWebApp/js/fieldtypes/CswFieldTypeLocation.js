@@ -42,7 +42,7 @@
                         width: '290px'
                     });
 
-                    var $locationtree = comboBox.pickList.$
+                    var locationTree = comboBox.pickList.$
                         .CswNodeTree('init', {
                             ID: o.ID,
                             viewid: viewId,
@@ -68,7 +68,7 @@
                         return function () {
                             // only do this once
                             if (first) {
-                                $locationtree.CswNodeTree('expandAll');
+                                locationTree.$.CswNodeTree('expandAll');
                                 first = false;
                             }
                         };

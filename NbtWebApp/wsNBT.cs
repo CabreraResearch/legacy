@@ -668,6 +668,45 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getDefaultContent()
 
+        /// <summary>
+        /// Get the display mode for a view
+        /// </summary>
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getViewMode( string ViewId )
+        {
+            JObject ReturnVal = new JObject();
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtView View = _getView( ViewId );
+                if( null != View )
+                {
+                    ReturnVal["viewmode"] = View.ViewMode.ToString();
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "The ViewId provided does not match a known view.", "ViewId: " + ViewId + " does not exist." );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // runTree()
+
+
         #region Grid Views
 
         private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey )
