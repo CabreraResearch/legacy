@@ -25,13 +25,13 @@
                 propDiv.append('[Grid display disabled]');
             } else {
 
-                var makeFullGrid = function () {
+                var makeFullGrid = function (newDiv) {
                     'use strict';
-                    var menuDiv = propDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_menu') });
-                    propDiv.br();
-                    var searchDiv = propDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_search') });
-                    propDiv.br();
-                    var gridDiv = propDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype') });
+                    var menuDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_menu') });
+                    newDiv.br();
+                    var searchDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_search') });
+                    newDiv.br();
+                    var gridDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype') });
 
 
                     var gridOpts = {
@@ -68,7 +68,13 @@
                             propDiv.thinGrid({
                                 rows: data.rows,
                                 onLinkClick: function () {
-                                    /* CswDialog.open makeeFullGrid */
+                                    $.CswDialog('OpenEmptyDialog', {
+                                            title: o.nodename + ' ' + o.propData.name,
+                                            onOpen: function (dialogDiv) {
+                                                makeFullGrid(dialogDiv);
+                                            }
+                                        }
+                                    );
                                 }
                             });
                         }
@@ -80,7 +86,7 @@
                         makeSmallGrid();
                         break;
                     default:
-                        makeFullGrid();
+                        makeFullGrid(propDiv);
                         break;
                 }
 

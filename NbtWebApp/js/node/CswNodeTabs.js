@@ -126,6 +126,7 @@
                         var selectedtabno = 0;
                         var tabno = 0;
                         var tabDiv, tabUl;
+                        o.nodename = data.nodename;
                         var tabFunc = function (thisTab) {
                             var thisTabId = thisTab.id;
 
@@ -262,7 +263,7 @@
                                 var subTable = layoutTable[propId + '_subproptable'];
                                 var parentCell = subTable.parent().parent();
                                 var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
-                                layoutTable.addCellSetAttributes(cellSet, {propId: propId});
+                                layoutTable.addCellSetAttributes(cellSet, { propId: propId });
                                 var propCell = _getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -499,6 +500,7 @@
                 var fieldOpt = {
                     fieldtype: propData.fieldtype,
                     nodeid: Csw.tryParseObjByIdx(o.nodeids, 0),
+                    nodename: o.nodename,
                     relatednodeid: o.relatednodeid,
                     relatednodetypeid: o.relatednodetypeid,
                     propid: propId,
@@ -658,7 +660,7 @@
 
                             if (nodechecks.length > 0 && $propchecks.length > 0) {
                                 //$nodechecks.each(function () {
-                                Csw.each(nodechecks, function(thisObj) {
+                                Csw.each(nodechecks, function (thisObj) {
                                     //var nodeid = $(this).attr('nodeid');
                                     dataJson.CopyNodeIds.push(thisObj.nodeid);
                                 });

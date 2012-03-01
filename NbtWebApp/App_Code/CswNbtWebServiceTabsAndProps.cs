@@ -94,6 +94,7 @@ namespace ChemSW.Nbt.WebServices
                             _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
                     }
+                    Ret["nodename"] = Node.NodeName;
 
                 } // if( Node != null )
                 //        break;
