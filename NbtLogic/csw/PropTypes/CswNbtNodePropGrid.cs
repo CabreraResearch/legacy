@@ -80,7 +80,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public GridPropMode GridMode
         {
-            get { return (GridPropMode) _CswNbtMetaDataNodeTypeProp.Extended; }
+            get
+            {
+                GridPropMode Ret = (GridPropMode) _CswNbtMetaDataNodeTypeProp.Extended;
+                if( Ret == GridPropMode.Unknown )
+                {
+                    Ret = GridPropMode.Full;
+                }
+                return Ret;
+            }
         }
 
         public Int32 RowLimit
@@ -105,6 +113,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject["viewname"] = View.ViewName;
+            ParentObject["gridmode"] = GridMode.ToString();
             ParentObject["viewid"] = View.ViewId.ToString();
             ParentObject["width"] = Width.ToString();
         }
