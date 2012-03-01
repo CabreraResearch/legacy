@@ -21,7 +21,7 @@
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl')
             });
 
-            var table = outerTable.cell(1, 1).table(Csw.controls.dom.makeId(o.ID, 'tbl1'))
+            var table = outerTable.cell(1, 1).table({ID: Csw.controls.dom.makeId(o.ID, 'tbl1')})
                                    .addClass('CswFieldTypeNFPA_table');
 
             var redDiv = table.cell(1, 1)
