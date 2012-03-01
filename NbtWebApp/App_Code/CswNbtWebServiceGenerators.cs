@@ -56,9 +56,9 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources, NodesView );
                 ret["treedata"] = ws.runTree( null, null, false, true, string.Empty );
 
-                //NodesView.SaveToCache( true );
-                //CswNbtSessionDataId SessionViewId = NodesView.SessionViewId;
-                //Master.setSessionViewId( SessionViewId, true );
+                NodesView.SaveToCache( true );
+                ret["sessionviewid"] = NodesView.SessionViewId.ToString();
+                ret["viewmode"] = NodesView.ViewMode.ToString();
             }
 
             return ret;

@@ -959,8 +959,12 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ 'all': true });
                 Csw.actions.futureScheduling({
                     $parent: $('#CenterTopDiv'),
-                    onCancel: function() { },
-                    onFinish: function() { }
+                    onCancel: function() { 
+                        refreshSelected();
+                    },
+                    onFinish: function(viewid, viewmode) {
+                        handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+                    }
                 });
             	break;                                      
 

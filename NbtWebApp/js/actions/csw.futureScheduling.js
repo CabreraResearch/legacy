@@ -10,7 +10,7 @@
             ID: 'CswFutureScheduling',
             $parent: null,
             onCancel: null, //function ($wizard) {},
-            onFinish: null, //function ($wizard) {},
+            onFinish: null, //function (viewid, viewmode) {},
 
             treeurl: '/NbtWebApp/wsNBT.asmx/getGeneratorsTree',
             futureurl: '/NbtWebApp/wsNBT.asmx/futureScheduling',
@@ -21,7 +21,9 @@
             step2div: null,
             resultscell: null,
             generatorTree: null,
-            endDatePicker: null
+            endDatePicker: null,
+            resultsviewid: '',
+            resultsviewmode: ''
             //            buttons = {
             //                next: 'next',
             //                prev: 'previous',
@@ -35,8 +37,15 @@
 
         
         internal.handleNext = function ($wizard, SelectedStep) {
+
+            // Disable all buttons until Ajax finishes
+            internal.$wizard.CswWizard('button', 'previous', 'disable');
+            internal.$wizard.CswWizard('button', 'next', 'disable');
+            internal.$wizard.CswWizard('button', 'finish', 'disable');
+            internal.$wizard.CswWizard('button', 'cancel', 'disable');
+
             var checkedNodeKeys = '';
-            
+
             Csw.each(internal.generatorTree.$.CswNodeTree('checkedNodes'), function(thisObj) {
                 if(checkedNodeKeys !== '') checkedNodeKeys += ',';
                 checkedNodeKeys += thisObj.cswnbtnodekey;
@@ -51,9 +60,15 @@
                 success: function (data) {
 
                     internal.resultscell.$.CswNodeTree('makeTree', data.treedata, {
-                        ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree')
+                        ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree'),
+                        height: '250px'
                     }); // makeTree
 
+                    internal.resultsviewid = data.sessionviewid;
+                    internal.resultsviewmode = data.viewmode;
+
+                    // Only Finish for step 2
+                    internal.$wizard.CswWizard('button', 'finish', 'enable');
                 } // success
             }); // ajax
         };
@@ -84,9 +99,18 @@
                 onNext: internal.handleNext,
                 onPrevious: internal.handlePrevious,
                 onCancel: internal.onCancel,
-                onFinish: internal.onFinish,
+                onFinish: function() {
+                    Csw.tryExec( internal.onFinish, internal.resultsviewid, internal.resultsviewmode );
+                },
                 doNextOnInit: false
             });
+
+            // Only Next and Cancel for step 1
+            internal.$wizard.CswWizard('button', 'previous', 'disable');
+            internal.$wizard.CswWizard('button', 'next', 'enable');
+            internal.$wizard.CswWizard('button', 'finish', 'disable');
+            internal.$wizard.CswWizard('button', 'cancel', 'enable');
+
 
             var $divstep1 = $(internal.$wizard.CswWizard('div', Csw.enums.wizardSteps_FutureScheduling.step1.step));
             internal.step1div = Csw.controls.factory($divstep1, {});
@@ -94,7 +118,8 @@
             var step1table = internal.step1div.table({ 
                 ID: Csw.controls.dom.makeId(internal.ID, '', 'table1'), 
                 FirstCellRightAlign: true,
-                width: '100%' 
+                width: '100%',
+                cellpadding: 2 
             });
 
             /*
@@ -128,6 +153,7 @@
 
                     internal.generatorTree = cell42.$.CswNodeTree('makeTree', data, {
                         ID: Csw.controls.dom.makeId(internal.ID, '', 'gentree'),
+                        height: '250px',
                         ShowCheckboxes: true,
                         ValidateCheckboxes: false
                     }); // makeTree

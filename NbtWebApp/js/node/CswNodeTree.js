@@ -46,7 +46,7 @@
                 stringify: false,
                 success: function (data) {
 
-                    ret = makeTree(o, parent, data, url);
+                    var ret = makeTree(o, parent, data, url);
                     rootnode = ret.rootnode;
                     treeDiv = ret.treeDiv;
 
@@ -89,8 +89,7 @@
         'checkedNodes': function () {
             var $treediv = $(this);
             var idPrefix = $treediv.CswAttrDom('id');
-
-            var $nodechecks = $('.' + idPrefix + '_check:checked');
+            var $nodechecks = $('.' + idPrefix + 'check:checked');
             var ret = [];
 
             if (false === Csw.isNullOrEmpty($nodechecks, true)) {
@@ -154,7 +153,8 @@
             ShowToggleLink: true,
             IncludeInQuickLaunch: true,
             //Delay: 250,
-            DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name
+            DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name,
+            height: ''
         };
         if (options) $.extend(o, options);
 
@@ -184,6 +184,10 @@
             treeDiv.addClass('treediv');
         } else {
             treeDiv.addClass('treediv_noscroll');
+        }
+        if(false === Csw.isNullOrEmpty(o.height))
+        {
+            treeDiv.css({ height: o.height });
         }
 
         var treePlugins = ["themes", "ui", "types", "crrm", "json_data"];
@@ -258,14 +262,15 @@
             treeDiv.$.find('li').each(function () {
                 var $childObj = $(this);
                 var thisid = Csw.string($childObj.CswAttrDom('id'));
+                var thiskey = Csw.string($childObj.CswAttrDom('cswnbtnodekey'));
                 var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
                 var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
                 var altName = Csw.string($childObj.find('a').first().text());
                 var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
 
-                var $cb = $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>');
+                var $cb = $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '" cswnbtnodekey="' + thiskey + '"></input>');
                 $cb.prependTo($childObj);
-                if(o.ValidateCheckboxes) {
+                if (o.ValidateCheckboxes) {
                     $cb.click(function () { return validateCheck(treeDiv.$, $cb); });
                 }
             });
