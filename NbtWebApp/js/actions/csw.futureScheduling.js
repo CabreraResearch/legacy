@@ -24,12 +24,6 @@
             endDatePicker: null,
             resultsviewid: '',
             resultsviewmode: ''
-            //            buttons = {
-            //                next: 'next',
-            //                prev: 'previous',
-            //                finish: 'finish',
-            //                cancel: 'cancel'
-            //            },
         };
         if (options) $.extend(internal, options);
 
@@ -73,10 +67,6 @@
             }); // ajax
         };
 
-        internal.handlePrevious = function () {
-
-        };
-
 
         // Init
         (function () {
@@ -97,7 +87,6 @@
                 StartingStep: internal.startingStep,
                 FinishText: 'Finish',
                 onNext: internal.handleNext,
-                onPrevious: internal.handlePrevious,
                 onCancel: internal.onCancel,
                 onFinish: function() {
                     Csw.tryExec( internal.onFinish, internal.resultsviewid, internal.resultsviewmode );
@@ -122,14 +111,6 @@
                 cellpadding: 2 
             });
 
-            /*
-            _NoGeneratorsWarning = new Label();
-            _NoGeneratorsWarning.Text = "The currently loaded view contains no Generator nodes";
-            _NoGeneratorsWarning.Style.Add( HtmlTextWriterStyle.FontWeight, "bold" );
-            _NoGeneratorsWarning.Visible = false;
-            _StepOneCswAutoTable.addControl( 0, 1, _NoGeneratorsWarning );
-            */
-
             step1table.cell(1, 1).span({ text: 'Select future date:' });
 
             internal.endDatePicker = step1table.cell(1, 2).dateTimePicker({
@@ -141,8 +122,6 @@
             step1table.cell(2, 1).append('&nbsp;');
 
             step1table.cell(3, 1).span({ text: 'Select Generators:' });
-            //            step1table.cell(3, 3).link({ ID: Csw.controls.dom.makeId(internal.ID, '', 'selectall') });
-            //            step1table.cell(3, 4).link({ ID: Csw.controls.dom.makeId(internal.ID, '', 'deselectall') });
 
             var cell42 = step1table.cell(4, 2);
 

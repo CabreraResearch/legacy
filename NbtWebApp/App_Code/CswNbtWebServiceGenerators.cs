@@ -36,8 +36,6 @@ namespace ChemSW.Nbt.WebServices
 
             Int32 TotalNodes = 0;
             Collection<CswNbtNode> SelectedGeneratorNodes = new Collection<CswNbtNode>();
-            //foreach( CswNbtNodeKey CurrentNodeKey in ( from NodeIdStr in SelectedGeneratorNodeKeys
-            //                                           select new CswNbtNodeKey( _CswNbtResources, NodeIdStr ) ) )
             foreach( string NodeKeyStr in SelectedGeneratorNodeKeys )
             {
                 CswNbtNodeKey CurrentNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKeyStr );
