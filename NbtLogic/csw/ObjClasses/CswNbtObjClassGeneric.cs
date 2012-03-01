@@ -1,5 +1,6 @@
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -80,6 +81,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
 
-    }//CswNbtObjClassLocation
+    }//CswNbtObjClassGeneric
 
 }//namespace ChemSW.Nbt.ObjClasses

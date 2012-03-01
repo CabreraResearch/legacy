@@ -78,6 +78,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
 
-    }//CswNbtObjClassLocation
+    }//CswNbtObjClassVendor
 
 }//namespace ChemSW.Nbt.ObjClasses
