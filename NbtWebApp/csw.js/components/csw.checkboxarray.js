@@ -100,16 +100,17 @@
 
         external.toggleCheckAll = function () {
             var checkBoxes = external.find('.CBACheckBox_' + internal.ID);
-            if (internal.checked <= 0) {
-                internal.checked = internal.data.length;
-                checkBoxes.$.removeAttr('checked');
-                internal.checkAllLink.text('Uncheck all');
+            if(internal.checkAllLink.text() === 'Uncheck All') {
+            //if (internal.checked <= 0) {
+            //    internal.checked = internal.data.length;
+                checkBoxes.propDom('checked', 'checked');  // Yes, this checks.  But click below unchecks again.
+                internal.checkAllLink.text('Check All');
             } else {
-                internal.checked = 0;
-                checkBoxes.propDom('checked', 'checked');
-                internal.checkAllLink.text('Check all');
+            //    internal.checked = 0;
+                checkBoxes.$.removeAttr('checked');    // Yes, this unchecks.  But click below checks again.
+                internal.checkAllLink.text('Uncheck All');
             }
-            checkBoxes.trigger('click');
+            checkBoxes.trigger('click');        // this toggles again
         }; // ToggleCheckAll()
 
         (function () {
@@ -231,13 +232,13 @@
                     var col = cB.propNonDom('col');
                     var row = cB.propNonDom('row');
                     var isChecked = Csw.bool(cB.propDom('checked'));
-                    if (false === isChecked) {
-                        if (internal.checked > 0) {
-                            internal.checked -= 1;
-                        }
-                    } else {
-                        internal.checked += 1;
-                    }
+//                    if (false === isChecked) {
+//                        if (internal.checked > 0) {
+//                            internal.checked -= 1;
+//                        }
+//                    } else {
+//                        internal.checked += 1;
+//                    }
                     var cache = Csw.clientDb.getItem(internal.storeDataId);
                     cache.MultiIsUnchanged = false;
                     if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row], 'values')) {
