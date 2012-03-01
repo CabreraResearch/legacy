@@ -183,7 +183,16 @@ select j.nodeid nid,to_char(j.gestalt) gestalt,field1_fk,j.nodetypepropid ntpid,
 commit;
 
 
-
+create or replace view vwQuestionDetail as
+select jnp.nodeid,ntp.propname question,jnp.field1 answer,jnp.field2 correctiveaction,jnp.field3 iscompliant,
+ to_char(jnp.clobdata) comments,jnp.field1_date dateanswered,jnp.field2_date datecorrected,
+ ntp.questionno
+  from jct_nodes_props jnp
+ join nodetype_props ntp on ntp.nodetypepropid=jnp.nodetypepropid
+ join field_types ft on ft.fieldtypeid=ntp.fieldtypeid and ft.fieldtype='Question';
+/
+commit; 
+ 
 
 create or replace procedure createNTview(ntid in number) is
   cursor props is

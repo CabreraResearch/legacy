@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtNode rptNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( rptNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 CswNbtObjClassReport rptNodeAsReport = CswNbtNodeCaster.AsReport( rptNode );
-                rptNodeAsReport.Category = "System";
+                rptNodeAsReport.Category.Text = "System";
                 rptNodeAsReport.ReportName.Text = "SQL Report View Dictionary";
                 rptNodeAsReport.SQL.Text = "select * from vwAutoViewColNames";                
                 rptNodeAsReport.postChanges(true);
@@ -56,17 +56,17 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtNode rptNode2 = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( rptNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                 CswNbtObjClassReport rptNodeAsReport2 = CswNbtNodeCaster.AsReport( rptNode2 );
-                rptNodeAsReport2.Category = "SI_Example";
+                rptNodeAsReport2.Category.Text = "SI_Example";
                 rptNodeAsReport2.ReportName.Text = "OOC Issues last 30 days";
                 rptNodeAsReport2.SQL.Text = @"select dept.P17 dept,bldg.P24 bldg,targ.P05_LOCATION,targ.nodeid ip_nodeid, targ.P01_BARCODE ip_barcode,
                                                  targ.P02_DESCRIPTION ip_desc,
                                                  targ.P10_STATUS ip_status,
                                                  targ.P04_LASTINSPECTIONDATE ip_lastinspected,
-                                                 p4391 prot_descr,q.questionno,q.propname question,q.iscompliant,
+                                                 p4391 prot_descr,q.questionno,q.question,q.iscompliant,
                                                  q.answer,q.correctiveaction,q.comments 
                                                 from ntsi_protocol pr
                                                  join ocinspectiontargetclass targ on targ.nodeid=pr.P4390INSPECTIONTARGETCL_OCFK
-                                                 join vwquestioncompliance q on q.nodeid=pr.nodeid
+                                                 join vwquestiondetail q on q.nodeid=pr.nodeid
                                                  join ntroom room on room.nodeid=targ.P05_Location_fk
                                                  join ntbuilding bldg on bldg.nodeid=room.P2339LOCATIONCLASS_OCFK
                                                  left outer join ntdepartment dept on dept.nodeid=bldg.P25_DEPARTMENT_NTFK
