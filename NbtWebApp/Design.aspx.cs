@@ -1724,6 +1724,34 @@ namespace ChemSW.Nbt.WebPages
                             //    GridView.makeNew( SelectedNodeTypeProp.PropName, NbtViewVisibility.Property, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                             //    setPropertyViewId( CswConvert.ToInt32( SelectedNodeTypeProp.PropId.ToString() ), GridView.ViewId );
                             //}
+                            CswNbtNodePropGrid.GridPropMode GridMode = (CswNbtNodePropGrid.GridPropMode) SelectedNodeTypeProp.Extended;
+                            if( GridMode == CswNbtNodePropGrid.GridPropMode.Unknown )
+                            {
+                                GridMode = CswNbtNodePropGrid.GridPropMode.Full;
+                            }
+
+                            TableRow GridModeRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) GridModeRow.Cells[0].Controls[0] ).Text = "Display Mode:";
+                            DropDownList GridModeValue = new DropDownList();
+                            GridModeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            GridModeValue.Items.Add( new ListItem( CswNbtNodePropGrid.GridPropMode.Full.ToString(), CswNbtNodePropGrid.GridPropMode.Full.ToString() ) );
+                            GridModeValue.Items.Add( new ListItem( CswNbtNodePropGrid.GridPropMode.Small.ToString(), CswNbtNodePropGrid.GridPropMode.Small.ToString() ) );
+                            GridModeValue.SelectedValue = GridMode.ToString();
+                            GridModeRow.Cells[1].Controls.Add( GridModeValue );
+
+                            if( GridMode == CswNbtNodePropGrid.GridPropMode.Small )
+                            {
+                                TableRow MaxRowCount = makeEditPropTableRow( EditPropPlaceHolder );
+                                ( (Literal) MaxRowCount.Cells[0].Controls[0] ).Text = "Maximum Number of Rows to Display:";
+                                TextBox MaxRows = new TextBox();
+                                MaxRows.CssClass = "textinput";
+                                MaxRows.ID = "EditProp_MaxValue" + SelectedNodeTypeProp.PropId.ToString();
+                                if( !Double.IsNaN( SelectedNodeTypeProp.MaxValue ) )
+                                {
+                                    MaxRows.Text = SelectedNodeTypeProp.MaxValue.ToString();
+                                }
+                                MaxRowCount.Cells[1].Controls.Add( MaxRows );
+                            }
 
                             CswViewStructureTree GridViewTree = new CswViewStructureTree( Master.CswNbtResources );
                             GridViewTree.ID = "GridViewTree";

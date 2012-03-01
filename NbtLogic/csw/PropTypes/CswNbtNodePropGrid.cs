@@ -13,6 +13,24 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropGrid : CswNbtNodeProp
     {
 
+        /// <summary>
+        /// Indicates the mode of grid to render
+        /// </summary>
+        public sealed class GridPropMode : CswEnum<GridPropMode>
+        {
+            private GridPropMode( String Name ) : base( Name ) { }
+            public static IEnumerable<GridPropMode> all { get { return All; } }
+            public static explicit operator GridPropMode( string Str )
+            {
+                GridPropMode Ret = Parse( Str );
+                return Ret ?? Unknown;
+            }
+            public static readonly GridPropMode Unknown = new GridPropMode( "Unknown" );
+            public static readonly GridPropMode Full = new GridPropMode( "Full" );
+            public static readonly GridPropMode Small = new GridPropMode( "Small" );
+        }
+
+
         public CswNbtNodePropGrid( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
@@ -58,6 +76,16 @@ namespace ChemSW.Nbt.PropTypes
             //{
             //    _CswNbtMetaDataNodeTypeProp.TextAreaRows = value;
             //}
+        }
+
+        public GridPropMode GridMode
+        {
+            get { return (GridPropMode) _CswNbtMetaDataNodeTypeProp.Extended; }
+        }
+
+        public Int32 RowLimit
+        {
+            get { return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
         }
 
         public override void ToXml( XmlNode ParentNode )
