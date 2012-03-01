@@ -301,6 +301,14 @@
             return Csw.controls.textArea(opts);
         };
 
+        external.thinGrid = function (opts) {
+            /// <summary> Creates a Csw.thinGrid on this element</summary>
+            /// <param name="opts" type="Object">Options to define the thinGrid.</param>
+            /// <returns type="Object">A Csw.thinGrid</returns>
+            opts = internal.prepControl(opts, 'thinGrid');
+            return Csw.controls.thinGrid(opts);
+        };
+
         external.timeInterval = function (opts) {
             /// <summary> Creates a Csw.timeInterval on this element</summary>
             /// <param name="opts" type="Object">Options to define the timeInterval.</param>
