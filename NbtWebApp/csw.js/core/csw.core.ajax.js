@@ -57,6 +57,7 @@
             $.ajax({
                 type: 'POST',
                 async: o.async,
+                urlPrefix: Csw.enums.ajaxUrlPrefix,
                 url: o.url,
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
@@ -121,6 +122,7 @@
             ///     &#10;4 - options.error: function () {}
             /// </param>
             var o = {
+                urlPrefix: Csw.enums.ajaxUrlPrefix,
                 url: '',
                 data: {},
                 onloginfail: function () {
@@ -186,6 +188,7 @@
             /// </param>
 
             var o = {
+                urlPrefix: Csw.enums.ajaxUrlPrefix,
                 url: '',
                 data: {},
                 stringify: false, /* in case we need to conditionally apply $.param() instead of JSON.stringify() (or both) */
