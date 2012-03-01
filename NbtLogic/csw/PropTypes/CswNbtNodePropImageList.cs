@@ -25,11 +25,18 @@ namespace ChemSW.Nbt.PropTypes
             //}
             _FieldTypeRule = (CswNbtFieldTypeRuleImageList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _ValueSubField = _FieldTypeRule.ValueSubField;
-
         }//generic
 
         private CswNbtFieldTypeRuleImageList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
+
+        public bool AllowMultiple
+        {
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Extended );
+            }
+        }
 
         override public bool Empty
         {
@@ -154,9 +161,12 @@ namespace ChemSW.Nbt.PropTypes
         private void _setGestalt()
         {
             CswDelimitedString NewGestalt = new CswDelimitedString( _delimiter );
-            foreach( string Key in this.Value )
+            foreach( string Key in Value )
             {
-                NewGestalt.Add( Options[Key] );
+                if( Options.ContainsKey( Key ) )
+                {
+                    NewGestalt.Add( Options[Key] );
+                }
             }
             _CswNbtNodePropData.Gestalt = NewGestalt.ToString();
         } // _setGestalt()
@@ -193,17 +203,21 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
             ParentObject["width"] = Width.ToString();
             ParentObject["height"] = Height.ToString();
+            ParentObject["allowmultiple"] = AllowMultiple.ToString();
 
             JObject OptionsObj = new JObject();
             ParentObject["options"] = OptionsObj;
-
-            foreach( string Key in this.Options.Keys )
+            foreach( string Key in Options.Keys )
             {
                 OptionsObj[Key] = new JObject();
                 OptionsObj[Key]["text"] = Options[Key];
                 OptionsObj[Key]["value"] = Key;
-                OptionsObj[Key]["selected"] = Value.Contains( Key ).ToString().ToLower();
+                if( Value.Contains( Key ) )
+                {
+                    OptionsObj[Key]["selected"] = true;
+                }
             }
+
         } // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -234,6 +248,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswDelimitedString NewValue = new CswDelimitedString( _delimiter );
                 NewValue.FromString( JObject[_ValueSubField.ToXmlNodeName( true )].ToString() );
+                if( false == AllowMultiple )
+                {
+                    string SingleValue = NewValue[0];
+                    NewValue.Clear();
+                    NewValue.Add( SingleValue );
+                }
                 Value = NewValue;
             }
         }

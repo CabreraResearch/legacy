@@ -275,7 +275,7 @@ namespace ChemSW.Nbt.WebServices
                         HasSubProps = true;
                         CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp );
                         JProperty JPFilterProp = makePropJson( EditMode, Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout.DisplayRow, FilterPropLayout.DisplayColumn );
-                        SubPropsObj.Add( JPFilterProp);
+                        SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;
 
                         // Hide those for whom the filter doesn't match
@@ -566,9 +566,9 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // copyPropValues()
 
-        public JObject getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
         {
-            JObject ret = new JObject();
+            JArray ret = new JArray();
 
             CswNbtMetaDataNodeType NodeType = null;
             if( NodeTypeId != string.Empty )
@@ -590,16 +590,19 @@ namespace ChemSW.Nbt.WebServices
                 //}
 
                 IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( NodeType, CswConvert.ToInt32( TabId ), LayoutType );
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in from Prop in Props
+                                                            orderby Prop.PropNameWithQuestionNo
+                                                            select Prop )
                 {
                     // case 24179
                     if( Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ||
                         ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview &&
                           LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
                     {
-                        ret["prop_" + Prop.PropId.ToString()] = new JObject();
-                        ret["prop_" + Prop.PropId.ToString()]["propid"] = Prop.PropId.ToString();
-                        ret["prop_" + Prop.PropId.ToString()]["propname"] = Prop.PropNameWithQuestionNo.ToString();
+                        JObject ThisPropObj = new JObject();
+                        ThisPropObj["propid"] = Prop.PropId.ToString();
+                        ThisPropObj["propname"] = Prop.PropNameWithQuestionNo.ToString();
+                        ret.Add( ThisPropObj );
                     }
                 }
             } // if( NodeType != null )
@@ -749,7 +752,7 @@ namespace ChemSW.Nbt.WebServices
             return ( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }
 
-        
+
         /// <summary>
         /// Default content to display when no node is selected, or the tree is empty
         /// </summary>

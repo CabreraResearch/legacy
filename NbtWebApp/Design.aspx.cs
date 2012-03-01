@@ -1778,6 +1778,13 @@ namespace ChemSW.Nbt.WebPages
                                 ILWidthValue.Text = SelectedNodeTypeProp.TextAreaColumns.ToString();
                             ILWidthRow.Cells[1].Controls.Add( ILWidthValue );
 
+                            TableRow ILMultipleRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) ILMultipleRow.Cells[0].Controls[0] ).Text = "Allow Multiple Values:";
+                            CheckBox ILMultipleValue = new CheckBox();
+                            ILMultipleValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            ILMultipleValue.Checked = CswConvert.ToBoolean( SelectedNodeTypeProp.Extended );
+                            ILMultipleRow.Cells[1].Controls.Add( ILMultipleValue );
+
                             TableRow ILNameOptionsRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ILNameOptionsRow.Cells[0].Controls[0] ).Text = "Image Names, separated by newlines:";
                             TextBox ILNameOptionsValue = new TextBox();

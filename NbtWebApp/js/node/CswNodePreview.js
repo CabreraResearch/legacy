@@ -15,7 +15,7 @@
                     nodeid: '',
                     cswnbtnodekey: '',
                     eventArg: {},
-                    delay: 500
+                    delay: 750
                 };
                 if(options) $.extend(o, options);
 

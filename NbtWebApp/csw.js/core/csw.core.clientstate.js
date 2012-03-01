@@ -95,7 +95,7 @@
                 reportid: Csw.cookie.get(Csw.cookie.cookieNames.LastReportId),
                 searchid: Csw.cookie.get(Csw.cookie.cookieNames.LastSearchId)
             };
-        }
+        };
 
         external.setCurrent = function (json) {
             /// <summary> Get all current state data from the cookie.</summary>
@@ -108,10 +108,10 @@
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentReportId, json.reportid);
             Csw.cookie.set(Csw.cookie.cookieNames.CurrentSearchId, json.searchid);
             return true;
-        }
+        };
 
         return external;
-        
+
     } ());
     Csw.register('clientState', clientState);
     Csw.clientState = Csw.clientState || clientState;

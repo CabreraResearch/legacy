@@ -16,11 +16,12 @@
             var options = propVals.options;
             var width = Csw.string(propVals.width);
             var height = Csw.string(propVals.height);
+            var allowMultiple = Csw.bool(propVals.allowmultiple);
             var table = propDiv.table({
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl')
             });
             var currCol = 1;
-
+            var selectedValues = [];
 
             if (false === o.ReadOnly) {
                 var select = propDiv.select({ id: o.ID });
@@ -31,19 +32,18 @@
                 var hiddenValue = propDiv.textArea({
                     ID: o.ID + '_value',
                     value: value
-                }).css('display', 'none');
+                }).hide();
 
                 select.bind('change', function () {
-                    var $selected = select.children(':selected');
-                    addImage($selected.text(), $selected.CswAttrDom('value'), true);
-                    addValue($selected.CswAttrDom('value'));
-                    $selected.remove();
+                    var selected = select.children(':selected');
+                    changeImage(selected.text(), selected.val(), true, selected);
                     o.onChange();
                 });
 
                 Csw.crawlObject(options,
                     function (thisOpt) {
                         if (Csw.bool(thisOpt.selected)) {
+                            selectedValues.push(thisOpt.value);
                             addImage(thisOpt.text, thisOpt.value, false);
                         } else {
                             if (false === o.ReadOnly) {
@@ -52,6 +52,18 @@
                         }
                     },
                     false);
+            }
+
+            function changeImage(name, href, doAnimation, selected) {
+                if (false === allowMultiple) {
+                    table.empty();
+                    select.children(':not(:selected)').show();
+                    selected.hide();
+                } else if (selected) {
+                    selected.remove();
+                }
+                changeValue(selected.val());
+                addImage(name, href, doAnimation);
             }
 
             function addImage(name, href, doAnimation) {
@@ -106,26 +118,30 @@
                     imageCell.$.fadeIn('fast');
                     nameCell.$.fadeIn('fast');
                 }
-
             } // addImage()
 
+            function changeValue(valueToChange) {
+                if (false === allowMultiple) {
+                    hiddenValue.text(valueToChange);
+                } else {
+                    addValue(valueToChange);
+                }
+            }
+
             function addValue(valueToAdd) {
-                var currentvalue = hiddenValue.val();
-                if (false === Csw.isNullOrEmpty(currentvalue)) currentvalue += '\n';
-                hiddenValue.text(currentvalue + valueToAdd);
+                if (false === Csw.contains(selectedValues, valueToAdd) &&
+                    false === Csw.isNullOrEmpty(valueToAdd)) {
+                    selectedValues.push(valueToAdd);
+                }
+                hiddenValue.text(selectedValues.join('\n'));
             }
 
             function removeValue(valueToRemove) {
-                var currentvalue = hiddenValue.val();
-                var splitvalue = currentvalue.split('\n');
-                var newvalue = '';
-                for (var i = 0; i < splitvalue.length; i++) {
-                    if (splitvalue[i] != valueToRemove) {
-                        if (false === Csw.isNullOrEmpty(newvalue)) newvalue += '\n';
-                        newvalue += splitvalue[i];
-                    }
+                var idx = selectedValues.indexOf(valueToRemove);
+                if (idx !== -1) {
+                    selectedValues.splice(idx, 1);
                 }
-                hiddenValue.text(newvalue);
+                hiddenValue.text(selectedValues.join('\n'));
             }
 
         },
