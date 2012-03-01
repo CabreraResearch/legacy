@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Exceptions;
+using ChemSW.Core;
 
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
@@ -38,6 +39,7 @@ namespace ChemSW.Nbt.Schema
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M09() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -165,13 +167,35 @@ namespace ChemSW.Nbt.Schema
 
         }//addReleaseDdlDriver() 
 
-        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver, CswSchemaVersion CswSchemaVersion = null )
+
+        CswSchemaVersion _makeNextSchemaVersion()
         {
-            if( null != CswSchemaVersion )
+            int SuperCycle = _MinimumVersion.CycleIteration;
+            char ReleaseIdentifier = _MinimumVersion.ReleaseIdentifier;
+            if( 'Z' != ReleaseIdentifier )
             {
-                //CswSchemaUpdateDriver.SchemaVersion = CswSchemaVersion; <== must wait for tedious refactoring of all CswUpdateSchemaTo derivatives to uncomment this. 
+                char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+                List<char> Chars = new List<char>( alpha );
+                int ReleaseIdInt = Chars.IndexOf( ReleaseIdentifier );
+                ReleaseIdInt++;
+                ReleaseIdentifier = Chars[ReleaseIdInt];
+            }
+            else
+            {
+                SuperCycle = _MinimumVersion.CycleIteration + 1;
+                ReleaseIdentifier = 'A';
             }
 
+
+            return ( new CswSchemaVersion( SuperCycle, ReleaseIdentifier, _UpdateDrivers.Keys.Count + 1 ) );
+
+        }//_makeNextSchemaVersion()
+
+        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+
+
+            /*
             if( ( 99 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
                   ( 0 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
                   ( "A" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
@@ -181,7 +205,10 @@ namespace ChemSW.Nbt.Schema
             {
                 throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a release-specific dml script; it's version must be: CycleIteration > 0 and < 99; ReleaseIdentifier > A and < Z; ReleaseIteration > 0" ) );
             }
+             */
 
+            CswSchemaUpdateDriver.SchemaVersion = _makeNextSchemaVersion();
+            CswSchemaUpdateDriver.Description = "Update to schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
             _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
 
         }//addReleaseDmlDriver() 

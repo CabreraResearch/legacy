@@ -123,13 +123,12 @@ namespace ChemSW.Nbt.Actions
             if( DueDate == DateTime.MinValue )
             {
                 DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
-                DateFilter = DueDate.ToShortDateString() + " " + DueDate.ToLongTimeString();
             }
-            if( DueDate == DateTime.MinValue || string.IsNullOrEmpty( DateFilter ) )
+            if( DueDate == DateTime.MinValue )
             {
                 DueDate = GeneratorNodeAsGenerator.DueDateInterval.getStartDate();
-                DateFilter = DueDate.ToShortDateString();
             }
+            DateFilter = DueDate.ToShortDateString();
 
             bool GeneratorBaseIsProperlyConfigured = ( null != GeneratorNodeAsGenerator.Owner &&
                                                    null != GeneratorNodeAsGenerator.Owner.RelatedNodeId &&

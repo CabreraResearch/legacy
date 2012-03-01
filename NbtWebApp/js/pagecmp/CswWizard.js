@@ -104,7 +104,7 @@
                     var currentStepNo = _getCurrentStepNo(table);
                     if (o.onBeforeNext(currentStepNo)) {
                         _selectStep(table, currentStepNo + 1);
-                        o.onNext(table, currentStepNo + 1);
+                        Csw.tryExec(o.onNext, table, currentStepNo + 1);
                     }
                 }
             });

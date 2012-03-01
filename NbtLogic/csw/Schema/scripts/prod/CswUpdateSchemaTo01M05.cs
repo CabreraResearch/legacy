@@ -14,8 +14,8 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchemaTo01M05 : CswUpdateSchemaTo
     {
-        public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 05 ); } }
-        public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
+//        //public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 05 ); } }
+//        public override string Description { set { ; } get { return "Update to schema version " + SchemaVersion.ToString(); } }
 
         public override void update()
         {

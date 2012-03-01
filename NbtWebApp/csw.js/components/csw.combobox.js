@@ -11,16 +11,29 @@
             topContent: '',
             selectContent: 'This ComboBox Is Empty!',
             width: '180px',
-            onClick: null,
-            topTable: {}
+            onClick: function() { return true; },
+            topTable: {},
+
+            hideTo: null
         };
         var external = {};
+
+        internal.hoverIn = function () {
+            clearTimeout(internal.hideTo);
+        };
+
+        internal.hoverOut = function () {
+            internal.hideTo = setTimeout(external.pickList.hide, 300);
+        };
+
 
         (function () {
 
             function handleClick() {
-                Csw.tryExec(internal.onClick);
-                external.toggle();
+                if(Csw.tryExec(internal.onClick))
+                {
+                    external.toggle();
+                }
             }
 
             if (options) {
@@ -60,13 +73,7 @@
                 styles: { width: internal.width }
             }).bind('click', handleClick);
 
-            var hideTo;
-            external.pickList.$.hover(function () {
-                clearTimeout(hideTo);
-            }, function () {
-                hideTo = setTimeout(external.pickList.hide, 300);
-            });
-
+            external.pickList.$.hover(internal.hoverIn, internal.hoverOut);
         } ());
 
         external.topContent = function (content, itemid) {
@@ -79,11 +86,14 @@
         external.toggle = function () {
             internal.topDiv.$.toggleClass('CswComboBox_TopDiv_click');
             external.pickList.$.toggle();
-            setTimeout(external.close, 5000);
         };
         external.close = function () {
             internal.topDiv.$.removeClass('CswComboBox_TopDiv_click');
             external.pickList.hide();
+        };
+        external.open = function () {
+            internal.topDiv.$.addClass('CswComboBox_TopDiv_click');
+            external.pickList.show();
         };
 
         external.val = function (value) {

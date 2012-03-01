@@ -9,8 +9,12 @@ namespace ChemSW.Nbt.Schema
             set { _CswNbtSchemaModTrnsctn = value; }
         }
 
-        public abstract CswSchemaVersion SchemaVersion { get; }
-        public abstract string Description { get; }
+        //        public abstract CswSchemaVersion SchemaVersion { get; }
+        //public abstract string Description { set; get; }
+
+        private string _Description = string.Empty;
+        public virtual string Description { set { _Description = value; } get { return ( _Description ); } }
+
         public abstract void update();
     }
 }

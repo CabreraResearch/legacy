@@ -985,12 +985,25 @@ window.initMain = window.initMain || function (undefined) {
                 break;
             //			case 'Enter_Results':                                              
             //				break;                                              
-            //			case 'Future_Scheduling':                                              
-            //				break;                                              
+
+            case 'Future_Scheduling':                                      
+                clear({ 'all': true });
+                Csw.actions.futureScheduling({
+                    $parent: $('#CenterTopDiv'),
+                    onCancel: function() { 
+                        refreshSelected();
+                    },
+                    onFinish: function(viewid, viewmode) {
+                        handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+                    }
+                });
+            	break;                                      
+
             //			case 'Import_Fire_Extinguisher_Data':                                              
             //				break;                                              
             //			case 'Inspection_Design':                                              
             //				break;                                              
+
             case 'OOC_Inspections':
                 setupOocInspections();
 

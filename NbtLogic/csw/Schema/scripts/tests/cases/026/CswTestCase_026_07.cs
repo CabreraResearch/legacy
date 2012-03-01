@@ -4,13 +4,13 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_026_07 : CswUpdateSchemaTo
     {
-        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_026.Purpose, "verify test data was cleaned up" ) ); } }
+        public override string Description { set { ; } get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_026.Purpose, "verify test data was cleaned up" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_026 _CswTstCaseRsrc_026 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        //public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
         public CswTestCase_026_07( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;

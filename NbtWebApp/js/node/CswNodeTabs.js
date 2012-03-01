@@ -652,13 +652,15 @@
                         }
                         if (o.ShowCheckboxes) {
                             // apply the newly saved checked property values on this node to the checked nodes
-                            var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                            //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                            var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
                             var $propchecks = $('.' + o.ID + '_check:checked');
 
-                            if ($nodechecks.length > 0 && $propchecks.length > 0) {
-                                $nodechecks.each(function () {
-                                    var nodeid = $(this).attr('nodeid');
-                                    dataJson.CopyNodeIds.push(nodeid);
+                            if (nodechecks.length > 0 && $propchecks.length > 0) {
+                                //$nodechecks.each(function () {
+                                Csw.each(nodechecks, function(thisObj) {
+                                    //var nodeid = $(this).attr('nodeid');
+                                    dataJson.CopyNodeIds.push(thisObj.nodeid);
                                 });
 
                                 $propchecks.each(function () {

@@ -70,6 +70,11 @@
             step2: { step: 2, description: 'Review the Scheduled Rules' },
             stepcount: 2
         };
+        external.wizardSteps_FutureScheduling = {
+            step1: {step: 1, description: 'Specify Schedules'},
+            step2: {step: 2, description: 'Review'},
+            stepcount: 2
+        };
         external.dialogButtons = {
             1: 'ok',
             2: 'ok/cancel',

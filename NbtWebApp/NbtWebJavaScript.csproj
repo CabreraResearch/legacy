@@ -95,6 +95,7 @@
     <Content Include="csw.js\tools\csw.clientdb.js" />
     <Content Include="csw.js\tools\csw.cookie.js" />
     <Content Include="csw.js\tools\csw.newwindow.js" />
+    <Content Include="js\actions\csw.futureScheduling.js" />
     <Content Include="js\actions\CswAuditHistoryGrid.js" />
     <Content Include="js\actions\CswInspectionDesign.js" />
     <Content Include="js\actions\CswInspectionStatus.js" />

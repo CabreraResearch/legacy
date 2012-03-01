@@ -33,18 +33,26 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaUpdateDriver( CswUpdateSchemaTo CswUpdateSchemaTo )
         {
             //_CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+
             _CswUpdateSchemaTo = CswUpdateSchemaTo;
         }//ctor
 
         public string Description
         {
+            set
+            {
+                _CswUpdateSchemaTo.Description = value; 
+            }
+
+
             get
             {
                 return ( _CswUpdateSchemaTo.Description );
             }
         }
 
-        public CswSchemaVersion SchemaVersion { get { return ( _CswUpdateSchemaTo.SchemaVersion ); } }
+        CswSchemaVersion _CswSchemaVersion = null;
+        public CswSchemaVersion SchemaVersion { set { _CswSchemaVersion = value; } get { return ( _CswSchemaVersion ); } }
 
         public void update()
         {
@@ -59,7 +67,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.commitTransaction();
             }
 
-            catch( CswDniExceptionIgnoreDeliberately  )
+            catch( CswDniExceptionIgnoreDeliberately )
             {
                 _UpdateSucceeded = true;
                 try
