@@ -75,7 +75,7 @@
                 toggleLink.hide();
             }
 
-            var treeDiv = parent.div({ID: idPrefix});
+            var treeDiv = parent.div({ ID: idPrefix });
             if (o.UseScrollbars) {
                 treeDiv.addClass('treediv');
             } else {
@@ -109,108 +109,113 @@
                 stringify: false,
                 success: function (data) {
 
-                    var treePlugins = ["themes", "ui", "types", "crrm", "json_data"];
-                    var jsonTypes = data.types;
+                    if (Csw.isNullOrEmpty(data)) {
+                        Csw.error.showError(Csw.enums.errorType.error.name, 'The requested view cannot be rendered as a Tree.', 'View with ViewId: ' + o.viewid + ' does not exists or is not a Tree view.');
+                    } else {
+                        var treePlugins = ["themes", "ui", "types", "crrm", "json_data"];
+                        var jsonTypes = data.types;
 
-                    var newviewid = data.newviewid;
-                    if (false === Csw.isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
-                        o.viewid = newviewid;
-                        if (Csw.isFunction(o.onViewChange)) {
-                            o.onViewChange(o.viewid, o.viewmode);
+                        var newviewid = data.newviewid;
+                        if (false === Csw.isNullOrEmpty(newviewid) && o.viewid !== newviewid) {
+                            o.viewid = newviewid;
+                            if (Csw.isFunction(o.onViewChange)) {
+                                o.onViewChange(o.viewid, o.viewmode);
+                            }
                         }
-                    }
 
-                    var treeThemes = { "dots": true };
-                    if (o.viewmode === Csw.enums.viewMode.list.name) {
-                        treeThemes = { "dots": false };
-                    }
+                        var treeThemes = { "dots": true };
+                        if (o.viewmode === Csw.enums.viewMode.list.name) {
+                            treeThemes = { "dots": false };
+                        }
 
-                    treeDiv.$.jstree({
-                        "json_data": {
-                            "data": data.root
-                        },
-                        "core": {
-                            "open_parents": true
-                        },
-                        "ui": {
-                            "select_limit": 1,
-                            "selected_parent_close": false,
-                            "selected_parent_open": true
-                        },
-                        "themes": treeThemes,
-                        "types": {
-                            "types": jsonTypes,
-                            "max_children": -2,
-                            "max_depth": -2
-                        },
-                        "plugins": treePlugins
-                    }); // jstree()
+                        treeDiv.$.jstree({
+                            "json_data": {
+                                "data": data.root
+                            },
+                            "core": {
+                                "open_parents": true
+                            },
+                            "ui": {
+                                "select_limit": 1,
+                                "selected_parent_close": false,
+                                "selected_parent_open": true
+                            },
+                            "themes": treeThemes,
+                            "types": {
+                                "types": jsonTypes,
+                                "max_children": -2,
+                                "max_depth": -2
+                            },
+                            "plugins": treePlugins
+                        }); // jstree()
 
-                    treeDiv.bind('select_node.jstree', function (e, newData) {
-                        return firstSelectNode({
-                            e: e,
-                            data: newData,
-                            url: url,
-                            $treediv: treeDiv.$,
-                            IdPrefix: idPrefix,
-                            onSelectNode: o.onSelectNode,
-                            onInitialSelectNode: o.onInitialSelectNode,
-                            viewid: o.viewid,
-                            //UsePaging: o.UsePaging,
-                            forsearch: o.forsearch
+                        treeDiv.bind('select_node.jstree', function (e, newData) {
+                            return firstSelectNode({
+                                e: e,
+                                data: newData,
+                                url: url,
+                                $treediv: treeDiv.$,
+                                IdPrefix: idPrefix,
+                                onSelectNode: o.onSelectNode,
+                                onInitialSelectNode: o.onInitialSelectNode,
+                                viewid: o.viewid,
+                                //UsePaging: o.UsePaging,
+                                forsearch: o.forsearch
+                            });
+
+                        }).bind('hover_node.jstree', function (e, bindData) {
+                            var $hoverLI = $(bindData.rslt.obj[0]);
+                            //var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
+                            var nodeid = $hoverLI.CswAttrNonDom('nodeid');
+                            var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
+                            Csw.nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
+
+                        }).bind('dehover_node.jstree', function () {
+                            Csw.jsTreeGetSelected(treeDiv.$);
+                            Csw.nodeHoverOut();
                         });
 
-                    }).bind('hover_node.jstree', function (e, bindData) {
-                        var $hoverLI = $(bindData.rslt.obj[0]);
-                        //var nodeid = $hoverLI.CswAttrDom('id').substring(idPrefix.length);
-                        var nodeid = $hoverLI.CswAttrNonDom('nodeid');
-                        var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
-                        Csw.nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
+                        treeDiv.$.jstree('select_node', Csw.controls.dom.tryParseElement(data.selectid));
+                        //setTimeout(function () { Csw.log('select: #' + data.selectid);  }, 1000);
+                        rootnode = treeDiv.find('li').first();
 
-                    }).bind('dehover_node.jstree', function () {
-                        Csw.jsTreeGetSelected(treeDiv.$);
-                        Csw.nodeHoverOut();
-                    });
+                        if (Csw.bool(o.ShowCheckboxes)) {
 
-                    treeDiv.$.jstree('select_node', Csw.controls.dom.tryParseElement(data.selectid));
-                    //setTimeout(function () { Csw.log('select: #' + data.selectid);  }, 1000);
-                    rootnode = treeDiv.find('li').first();
+                            treeDiv.$.find('li').each(function () {
+                                var $childObj = $(this);
+                                var thisid = Csw.string($childObj.CswAttrDom('id'));
+                                var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
+                                var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
+                                var altName = Csw.string($childObj.find('a').first().text());
+                                var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
+                                $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>')
+                                    .prependTo($childObj)
+                                    .click(function () {
+                                        return handleCheck(treeDiv.$, $(this));
+                                    });
 
-                    if (Csw.bool(o.ShowCheckboxes)) {
-
-                        treeDiv.$.find('li').each(function () {
-                            var $childObj = $(this);
-                            var thisid = Csw.string($childObj.CswAttrDom('id'));
-                            var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(idPrefix.length));
-                            var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
-                            var altName = Csw.string($childObj.find('a').first().text());
-                            var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
-                            $('<input type="checkbox" class="' + idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '"></input>')
-                                .prependTo($childObj)
-                                .click(function () { return handleCheck(treeDiv.$, $(this)); });
-
-                        });
+                            });
 
 
+                        }
+
+                        if (o.ShowToggleLink && toggleLink) {
+                            toggleLink.show();
+                        }
+                        // DO NOT define an onSuccess() function here that interacts with the tree.
+                        // The tree has initalization events that appear to happen asynchronously,
+                        // and thus having an onSuccess() function that changes the selected node will
+                        // cause a race condition.
+
+                        //                    rootnode = addNodeToTree($treediv, 1, false, data.root);
+                        //                    if (Csw.bool(data.result)) {
+                        //                        getFirstLevel($treediv, data.pagesize, 0);
+                        //                    } else {
+                        //                        addNodeToTree($treediv, 1, rootnode, { data: { title: "No Results" }, attr: { id: idPrefix + 'noresults'} });
+                        //                    }
+
+                        //                    removeNodeFromTree($treediv, $('.jstree-loading'));
                     }
-
-                    if (o.ShowToggleLink && toggleLink) {
-                        toggleLink.show();
-                    }
-                    // DO NOT define an onSuccess() function here that interacts with the tree.
-                    // The tree has initalization events that appear to happen asynchronously,
-                    // and thus having an onSuccess() function that changes the selected node will
-                    // cause a race condition.
-
-                    //                    rootnode = addNodeToTree($treediv, 1, false, data.root);
-                    //                    if (Csw.bool(data.result)) {
-                    //                        getFirstLevel($treediv, data.pagesize, 0);
-                    //                    } else {
-                    //                        addNodeToTree($treediv, 1, rootnode, { data: { title: "No Results" }, attr: { id: idPrefix + 'noresults'} });
-                    //                    }
-
-                    //                    removeNodeFromTree($treediv, $('.jstree-loading'));
-
                 } // success
             }); // ajax
 
