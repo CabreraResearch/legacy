@@ -7,13 +7,13 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_012_04 : CswUpdateSchemaTo
     {
-        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_012.Purpose, "Roll back row 2 value" ) ); } }
+        public override string Description { set { ; } get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_012.Purpose, "Roll back row 2 value" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_012 _CswTstCaseRsrc_012 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
-        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        //public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
         public CswTestCase_012_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
