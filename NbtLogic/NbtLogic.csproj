@@ -253,7 +253,6 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M03.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M02.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M01.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M10.cs" />
     <Compile Include="csw\Search\CswNbtSearchFilterWrapper.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\View\CswNbtViewBuilder.cs" />
