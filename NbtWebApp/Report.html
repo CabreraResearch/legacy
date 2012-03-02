@@ -16,7 +16,12 @@
 
 
         $(document).ready(function () {
-            $('#spinner').hide();
+
+            function stopSpinner() {
+                $('#spinner').hide();
+            }
+
+            Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
             var qs = $.CswQueryString();
             if (false == Csw.isNullOrEmpty(qs.reportid)) {
@@ -31,8 +36,13 @@
             }
         });
 
+
+
         function runReport(reportid, rformat) {
 
+            function startSpinner() {
+                $('#spinner').show();
+            }
 
 
             if ('csv' == rformat.toLowerCase()) {
@@ -40,27 +50,29 @@
             }
             else {
 
-                $('#spinner').show();
+                Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
                 Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/report',
                     data: { reportid: reportid, rformat: 'grid' },
+                    overrideerror: true,
                     success: function (data) {
                         //jobject data from the ws call
                         var gridOptions = {
                             ID: Csw.controls.dom.makeId('reportGrid'),
                             $parent: $('#rptDiv'),
-                            gridOpts: {
-                        }
-                    };
-                    $.extend(gridOptions.gridOpts, data.griddata);
-                    gridOptions.gridOpts.autowidth = true;
-                    gridOptions.gridOpts.rowNum = 100000;
-                    gridOptions.gridOpts.rowList = [100000];
+                            gridOpts: { }
+                        };
+                        $.extend(gridOptions.gridOpts, data.griddata);
+                        gridOptions.gridOpts.autowidth = true;
+                        gridOptions.gridOpts.rowNum = 100000;
+                        gridOptions.gridOpts.rowList = [100000];
+                        var grid = Csw.controls.grid(gridOptions);
+                    }
+                    });
 
-                    var grid = Csw.controls.grid(gridOptions);
-                    $('#spinner').hide();
-                }
-            });
+
+                    //$('#spinner').hide();
+
             }
         }
 
@@ -72,9 +84,10 @@
         <input type="button" value="View As Grid" id="btnGrid" />
         <input type="button" value="Save As CSV" id="btnCsv" />
     </div>
-    <div id="spinner" width="100%" style="text-align: center;">
+    <div id="spinner" width="100%" style="text-align: center; display: none;">
         <img src="images/ajax/progress.gif" /></div>
     <div id="rptDiv">
     </div>
+    <div id="DialogErrorDiv"></div>
 </body>
 </html>
