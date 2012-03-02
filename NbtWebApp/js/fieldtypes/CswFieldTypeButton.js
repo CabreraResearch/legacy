@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswFieldTypeButton';
 
@@ -42,6 +42,9 @@
                             case Csw.enums.onObjectClassClick.refresh:
                                 o.onReload();
                                 break;
+                            case Csw.enums.onObjectClassClick.popup:
+                                Csw.openPopup(data.url,800,600);
+                                break;
                             default:
                                 /* Nada */
                                 break;
@@ -56,7 +59,7 @@
     };
 
     var methods = {
-        init: function (o) { 
+        init: function (o) {
 
             var propDiv = o.propDiv;
             propDiv.empty();
@@ -65,7 +68,7 @@
                 value = Csw.string(propVals.text, o.propData.name),
                 mode = Csw.string(propVals.mode, 'button'),
                 button;
-            
+
             function onClick() {
                 onButtonClick(o.propid, button, o);
             }

@@ -10,6 +10,8 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.DB;
 using ChemSW.Nbt.Search;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
+
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -19,7 +21,7 @@ namespace ChemSW.Nbt.WebServices
         //private readonly Int32 _ConstrainToObjectClassId = Int32.MinValue;
         private const string _NodeTypePrefix = "nt_";
         private const string _ObjectClassPrefix = "oc_";
-        private wsViewBuilder _ViewBuilder;
+        private CswNbtViewBuilder _ViewBuilder;
 
         /// <summary>
         /// Searching against these field types is not yet supported
@@ -45,7 +47,7 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes );
+            _ViewBuilder = new CswNbtViewBuilder( _CswNbtResources, _ProhibittedFieldTypes );
             //wsViewBuilder.CswViewBuilderProp 
         }//ctor
 

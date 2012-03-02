@@ -391,6 +391,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             _CswNbtObjClassDefault.afterPopulateProps();
+            this.Status.ReadOnly = ( true != _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

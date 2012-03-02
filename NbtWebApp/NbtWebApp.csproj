@@ -61,6 +61,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Code\CswNbtWebServiceGenerators.cs" />
+    <Compile Include="App_Code\CswNbtWebServiceReport.cs" />
     <Compile Include="App_Code\wsTreeOfView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -743,6 +744,7 @@
     <Content Include="js\thirdparty\jquery\themes\theme-aristo\css\Aristo\Aristo.css" />
     <Content Include="NodeTypeTreeService.asmx" />
     <Content Include="Report.aspx" />
+    <Content Include="Report.html" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
     <Content Include="Scripts\ES5.js" />
@@ -1494,7 +1496,6 @@
     <Compile Include="MainLayout.master.designer.cs">
       <DependentUpon>MainLayout.master</DependentUpon>
     </Compile>
-    <Compile Include="App_Code\CswGridData.cs" />
     <Compile Include="App_Code\CswNbtWebServiceGrid.cs" />
     <Compile Include="App_Code\CswNbtWebServiceHeader.cs" />
     <Compile Include="App_Code\CswNbtWebServiceMainMenu.cs" />
@@ -1511,9 +1512,6 @@
     <Compile Include="App_Code\CswPropIdAttr.cs" />
     <Compile Include="App_Code\TimingModule.cs" />
     <Compile Include="App_Code\wsTools.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="App_Code\wsViewBuilder.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Base.master.cs">
