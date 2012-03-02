@@ -627,6 +627,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
             ID: mainTableId,
+            Multi: multi,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
