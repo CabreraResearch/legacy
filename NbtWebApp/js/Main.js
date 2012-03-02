@@ -6,7 +6,7 @@ window.initMain = window.initMain || function (undefined) {
 
     "use strict";
 
-    var mainTreeId = 'main';
+    var mainTree;
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
     var mainSearchId = 'CswSearchForm';
@@ -406,7 +406,7 @@ window.initMain = window.initMain || function (undefined) {
                 handleItemSelect({ 'viewid': newviewid, 'viewmode': Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode) });
             },
             'Multi': multi,
-            'NodeCheckTreeId': mainTreeId
+            nodeTreeCheck: mainTree
         });
     }
 
@@ -746,7 +746,7 @@ window.initMain = window.initMain || function (undefined) {
                 });
             },
             ShowCheckboxes: multi,
-            NodeCheckTreeId: mainTreeId
+            nodeTreeCheck: mainTree
         });
     }
 
@@ -862,28 +862,31 @@ window.initMain = window.initMain || function (undefined) {
 
         clear({ left: true });
 
-        $('#LeftDiv').CswNodeTree('init', {
-            'ID': mainTreeId,
-            'viewid': o.viewid,
-            'viewmode': o.viewmode,
-            'nodeid': o.nodeid,
-            'cswnbtnodekey': o.cswnbtnodekey,
-            'nodename': o.nodename,
-            'showempty': getEmptyTree,
-            'forsearch': o.forsearch,
-            'IncludeNodeRequired': o.IncludeNodeRequired,
-            'onViewChange': function (newviewid, newviewmode) {
-                Csw.clientState.setCurrentView(newviewid, newviewmode);
-            },
-            'onSelectNode': function (optSelect) {
+        mainTree = Csw.nbt.nodeTree({
+            ID: 'main',
+            parent: Csw.controls.factory($('#LeftDiv')),
+            forsearch: o.forsearch,
+            //showempty: getEmptyTree,
+            onSelectNode: function (optSelect) {
                 onSelectTreeNode({
-                    'viewid': optSelect.viewid,
-                    'nodeid': optSelect.nodeid,
-                    'cswnbtnodekey': optSelect.cswnbtnodekey
+                    viewid: optSelect.viewid,
+                    nodeid: optSelect.nodeid,
+                    cswnbtnodekey: optSelect.cswnbtnodekey
                 });
             },
-            'ShowCheckboxes': multi
-        }); // CswNodesTree
+            ShowCheckboxes: multi
+        });
+        mainTree.init({
+            viewid: o.viewid,
+            viewmode: o.viewmode,
+            nodeid: o.nodeid,
+            cswnbtnodekey: o.cswnbtnodekey,
+            //nodename: o.nodename,
+            IncludeNodeRequired: o.IncludeNodeRequired,
+            onViewChange: function (newviewid, newviewmode) {
+                Csw.clientState.setCurrentView(newviewid, newviewmode);
+            }
+        });
     }
 
     // refreshNodesTree()

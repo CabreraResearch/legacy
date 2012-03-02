@@ -479,7 +479,7 @@
                 cswnbtnodekeys: [],
                 onDeleteNode: null, //function (nodeid, nodekey) { },
                 Multi: false,
-                NodeCheckTreeId: '',
+                nodeTreeCheck: null,
                 publishDeleteEvent: true
             };
 
@@ -491,12 +491,13 @@
 
             if (o.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                var nodechecks = o.nodeTreeCheck.checkedNodes();
 
-                if (false === Csw.isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
+                if (false === Csw.isNullOrEmpty(nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
                     var n = 0;
                     //$nodechecks.each(function () {
-                    Csw.each(nodechecked, function (thisObj) {
+                    Csw.each(nodechecks, function (thisObj) {
                         //var $nodecheck = $(this);
                         o.nodeids[n] = thisObj.nodeid; //$nodecheck.CswAttrNonDom('nodeid');
                         o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey; //$nodecheck.CswAttrNonDom('cswnbtnodekey');

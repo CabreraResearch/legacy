@@ -151,6 +151,7 @@ namespace ChemSW.Nbt.WebServices
                         _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeId );
                         _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                         ReturnObj["newviewid"] = _View.SessionViewId.ToString();
+                        ReturnObj["newviewmode"] = _View.ViewMode.ToString();
                         Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
                     }
                 }
@@ -162,6 +163,7 @@ namespace ChemSW.Nbt.WebServices
                     _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
                     _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                     ReturnObj["newviewid"] = _View.SessionViewId.ToString();
+                    ReturnObj["newviewmode"] = _View.ViewMode.ToString();
                     Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
                 }
 
