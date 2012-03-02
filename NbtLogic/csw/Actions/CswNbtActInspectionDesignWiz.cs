@@ -399,10 +399,10 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtMetaDataObjectClassProp IdLocationOcp = InspectionTargetOc.getObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
             CswNbtMetaDataNodeTypeProp IdLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
-            if(IdLocationNtp.FKType !=  NbtViewPropIdType.ObjectClassPropId.ToString() ||
-               IdLocationNtp.FKValue != IdLocationOcp.ObjectClassPropId )
+            if( IdLocationNtp.FKType != NbtViewPropIdType.NodeTypePropId.ToString() ||
+               IdLocationNtp.FKValue != IdTargetNtp.PropId )
             {
-                IdLocationNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId, NbtViewPropIdType.ObjectClassPropId.ToString(), IdLocationOcp.ObjectClassPropId );
+                IdLocationNtp.SetFK( NbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), IdLocationOcp.ObjectClassPropId );
             }
 
             //Inspection Design Generator is SI Inspection Schedule
