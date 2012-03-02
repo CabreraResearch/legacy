@@ -35,14 +35,25 @@
                         value: nodeId
                     });
 
-                    comboBox = selectDiv.comboBox({ 
+                    comboBox = selectDiv.comboBox({
                         ID: o.ID + '_combo',
                         topContent: name,
                         selectContent: '',
-                        width: '290px'
+                        width: '290px',
+                        onClick: (function () {
+                            var first = true;
+                            return function () {
+                                if (first) {      // only do this once
+                                    locationTree.$.CswNodeTree('expandAll');
+                                    first = false;
+                                }
+                                comboBox.open(); // ensure we're open on click
+                                return false;    // but only close when onTreeSelect fires, below
+                            };
+                        })()
                     });
 
-                    var $locationtree = comboBox.pickList.$
+                    var locationTree = comboBox.pickList.$
                         .CswNodeTree('init', {
                             ID: o.ID,
                             viewid: viewId,
@@ -52,8 +63,7 @@
                                 onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
                             },
                             onInitialSelectNode: function (optSelect) {
-                                onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () {
-                                });
+                                onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
                             },
                             //SelectFirstChild: false,
                             //UsePaging: false,
@@ -63,16 +73,6 @@
                             DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                         });
 
-                    comboBox.bind('click', (function () {
-                        var first = true;
-                        return function () {
-                            // only do this once
-                            if (first) {
-                                $locationtree.CswNodeTree('expandAll');
-                                first = false;
-                            }
-                        };
-                    }()));
                     propDiv.$.hover(function (event) {
                         Csw.nodeHoverIn(event, selectDiv.val());
                     }, Csw.nodeHoverOut);

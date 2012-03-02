@@ -30,8 +30,22 @@ window.initMain = window.initMain || function (undefined) {
     // handle querystring arguments
     var qs = $.CswQueryString();
     if (false == Csw.isNullOrEmpty(qs.viewid)) {
-        Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode, 'tree'));
-        window.location = "Main.html";
+        var setView = function () {
+            Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode));
+            window.location = "Main.html";
+        };
+        if (Csw.isNullOrEmpty(qs.viewmode)) {
+            Csw.ajax.post({
+                url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
+                data: { ViewId: qs.viewid },
+                success: function (data) {
+                    qs.viewmode = Csw.string(data.viewmode, 'tree');
+                    setView();
+                }
+            });
+        } else {
+            setView();
+        }
     } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
         Csw.clientState.setCurrentReport(qs.reportid);
         window.location = "Main.html";
@@ -235,31 +249,48 @@ window.initMain = window.initMain || function (undefined) {
             clear({ all: true });
 
             if (false === Csw.isNullOrEmpty(o.viewid)) {
-                Csw.clientState.setCurrentView(o.viewid, o.viewmode);
+                var renderView = function () {
 
-                var linkOpt = {
-                    showempty: false,
-                    forsearch: false
+                    Csw.clientState.setCurrentView(o.viewid, o.viewmode);
+
+                    var linkOpt = {
+                        showempty: false,
+                        forsearch: false
+                    };
+
+                    switch (linkType) {
+                        case 'search':
+                            linkOpt.showempty = true;
+                            linkOpt.forsearch = true;
+                            break;
+                    }
+                    var viewMode = Csw.string(o.viewmode).toLowerCase();
+                    switch (viewMode) {
+                        case 'grid':
+                            getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+                            break;
+                        case 'table':
+                            getViewTable({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
+                            break;
+                        default:
+                            refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
+                            break;
+                    }
                 };
 
-                switch (linkType) {
-                    case 'search':
-                        linkOpt.showempty = true;
-                        linkOpt.forsearch = true;
-                        break;
+                if (Csw.isNullOrEmpty(o.viewmode)) {
+                    Csw.ajax.post({
+                        url: Csw.enums.ajaxUrlPrefix + 'getViewMode',
+                        data: { ViewId: o.viewid },
+                        success: function (data) {
+                            o.viewmode = Csw.string(data.viewmode, 'tree');
+                            renderView();
+                        }
+                    });
+                } else {
+                    renderView();
                 }
-                var viewMode = Csw.string(o.viewmode).toLowerCase();
-                switch (viewMode) {
-                    case 'grid':
-                        getViewGrid({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey, 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
-                        break;
-                    case 'table':
-                        getViewTable({ 'viewid': o.viewid, 'nodeid': o.nodeid, 'cswnbtnodekey': o.cswnbtnodekey });
-                        break;
-                    default:
-                        refreshNodesTree({ 'viewid': o.viewid, 'viewmode': o.viewmode, 'nodeid': '', 'cswnbtnodekey': '', 'showempty': linkOpt.showempty, 'forsearch': linkOpt.forsearch });
-                        break;
-                }
+
             } else if (false === Csw.isNullOrEmpty(type)) {
                 switch (type) {
                     case 'action':
@@ -886,11 +917,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                      
-            //				break;                                      
-            //			case 'Assign_Tests':                                      
-            //				break;                                      
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                      
+            //			case 'Assign_Inspection':                                              
+            //				break;                                              
+            //			case 'Assign_Tests':                                              
+            //				break;                                              
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                              
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -911,11 +942,11 @@ window.initMain = window.initMain || function (undefined) {
                             viewmode: 'tree',
                             viewid: viewid
                         });
-//                        handleItemSelect({
-//                            type: 'view',
-//                            viewmode: 'tree',
-//                            viewid: viewid
-//                        });
+                        //                        handleItemSelect({
+                        //                            type: 'view',
+                        //                            viewmode: 'tree',
+                        //                            viewid: viewid
+                        //                        });
                     },
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected
@@ -924,8 +955,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':                                      
-            //				break;                                      
+            //			case 'Design':                                              
+            //				break;                                              
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -952,14 +983,27 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                      
-            //				break;                                      
-            //			case 'Future_Scheduling':                                      
-            //				break;                                      
-            //			case 'Import_Fire_Extinguisher_Data':                                      
-            //				break;                                      
-            //			case 'Inspection_Design':                                      
-            //				break;                                      
+            //			case 'Enter_Results':                                              
+            //				break;                                              
+
+            case 'Future_Scheduling':                                      
+                clear({ 'all': true });
+                Csw.actions.futureScheduling({
+                    $parent: $('#CenterTopDiv'),
+                    onCancel: function() { 
+                        refreshSelected();
+                    },
+                    onFinish: function(viewid, viewmode) {
+                        handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
+                    }
+                });
+            	break;                                      
+
+            //			case 'Import_Fire_Extinguisher_Data':                                              
+            //				break;                                              
+            //			case 'Inspection_Design':                                              
+            //				break;                                              
+
             case 'OOC_Inspections':
                 setupOocInspections();
 
@@ -993,14 +1037,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':                                      
-            //				break;                                      
-            //			case 'Receiving':                                      
-            //				break;                                      
-            //			case 'Split_Samples':                                      
-            //				break;                                      
-            //			case 'View_By_Location':                                      
-            //				break;                                      
+            //			case 'Load_Mobile_Data':                                              
+            //				break;                                              
+            //			case 'Receiving':                                              
+            //				break;                                              
+            //			case 'Split_Samples':                                              
+            //				break;                                              
+            //			case 'View_By_Location':                                              
+            //				break;                                              
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;

@@ -60,7 +60,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Act_FutureScheduling.aspx" />
+    <Compile Include="App_Code\CswNbtWebServiceGenerators.cs" />
     <Compile Include="App_Code\CswNbtWebServiceReport.cs" />
     <Compile Include="App_Code\wsTreeOfView.cs">
       <SubType>Component</SubType>
@@ -1465,13 +1465,6 @@
     <Content Include="_Version.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Act_FutureScheduling.aspx.cs">
-      <DependentUpon>Act_FutureScheduling.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Act_FutureScheduling.aspx.designer.cs">
-      <DependentUpon>Act_FutureScheduling.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Base.master.designer.cs">
       <DependentUpon>Base.master</DependentUpon>
     </Compile>

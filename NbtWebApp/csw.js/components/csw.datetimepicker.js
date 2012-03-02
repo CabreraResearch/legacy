@@ -9,7 +9,7 @@
             ID: '',
             Date: '',
             Time: '',
-            DateFormat: '',
+            DateFormat: 'mm/dd/yyyy',
             TimeFormat: '',
             DisplayMode: 'Date',    // Date, Time, DateTime
             ReadOnly: false,

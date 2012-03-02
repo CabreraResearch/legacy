@@ -1,7 +1,7 @@
 ﻿/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function() {
+(function () {
     'use strict';
 
     var error = (function errorP() {
@@ -19,18 +19,22 @@
             };
         }
 
-        function showError(errorJson) {
+        function showError(errorJson, friendlyMsg, esotericMsg) {
             /// <summary>Displays an error message.</summary>
-            /// <param name="errorJson" type="Object"> An error object. Should contain type, message and detail properties.</param>
-            /// <returns type="Boolean">True</returns>
+            /// <param name="errorJson" type="Object/String"> An error object or a String for errorType. If object, should contain type, message and detail properties.</param>
+            /// <param name="friendlyMsg" type="String"> A friendly message to display.</param>
+            /// <param name="esotericMsg" type="String"> A verbose message for developers.</param>
+            ///<returns type="Boolean">True</returns>
             var e = {
                 'type': '',
-                'message': '',
-                'detail': '',
+                'message': friendlyMsg,
+                'detail': esotericMsg,
                 'display': true
             };
-            if (errorJson) {
+            if (Csw.isPlainObject(errorJson)) {
                 $.extend(e, errorJson);
+            } else {
+                e.type = errorJson;
             }
 
             var $errorsdiv = $('#DialogErrorDiv');
@@ -39,7 +43,7 @@
             }
 
             if ($errorsdiv.length > 0 && Csw.bool(e.display)) {
-                $errorsdiv.CswErrorMessage({'type': e.type, 'message': e.message, 'detail': e.detail});
+                $errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
             } else {
                 Csw.log(e.message + '; ' + e.detail);
             }
@@ -63,8 +67,8 @@
             errorHandler: errorHandler
         };
 
-    }());
+    } ());
     Csw.register('error', error);
     Csw.error = Csw.error || error;
 
-}());
+} ());

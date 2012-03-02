@@ -43,6 +43,7 @@
     <Content Include="Report.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />
+    <Content Include="csw.js\controls\csw.thingrid.js" />
     <Content Include="csw.js\controls\csw.p.js" />
     <Content Include="csw.js\controls\csw.textarea.js" />
     <Content Include="csw.js\controls\csw.tabdiv.js" />
@@ -95,6 +96,7 @@
     <Content Include="csw.js\tools\csw.clientdb.js" />
     <Content Include="csw.js\tools\csw.cookie.js" />
     <Content Include="csw.js\tools\csw.newwindow.js" />
+    <Content Include="js\actions\csw.futureScheduling.js" />
     <Content Include="js\actions\CswAuditHistoryGrid.js" />
     <Content Include="js\actions\CswInspectionDesign.js" />
     <Content Include="js\actions\CswInspectionStatus.js" />
@@ -102,6 +104,7 @@
     <Content Include="js\actions\CswQuotas.js" />
     <Content Include="js\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\actions\CswSessions.js" />
+    <Content Include="js\ChemSW.min.js" />
     <Content Include="js\controls\CswComboBox.js" />
     <Content Include="js\controls\CswImageButton.js" />
     <Content Include="js\controls\CswNodeTypeSelect.js" />
@@ -115,6 +118,7 @@
     <Content Include="js\controls\CswList.js" />
     <Content Include="csw.js\controls\csw.select.js" />
     <Content Include="csw.js\components\csw.tristatecheckbox.js" />
+    <Content Include="js\CswAll.min.js" />
     <Content Include="js\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\fieldtypes\CswFieldTypeButton.js" />

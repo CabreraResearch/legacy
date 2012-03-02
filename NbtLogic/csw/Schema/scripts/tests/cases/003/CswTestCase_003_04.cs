@@ -10,13 +10,13 @@ namespace ChemSW.Nbt.Schema
 
     public class CswTestCase_003_04 : CswUpdateSchemaTo
     {
-        public override string Description { get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_003.Purpose, "verify restoration of dropped column and its data" ) ); } }
+        public override string Description { set { ; } get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_003.Purpose, "verify restoration of dropped column and its data" ) ); } }
 
         private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_003 _CswTstCaseRsrc_003 = null;
  
         private CswSchemaVersion _CswSchemaVersion = null;
-        public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
+        //public override CswSchemaVersion SchemaVersion { get { return ( _CswSchemaVersion ); } }
         public CswTestCase_003_04( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;

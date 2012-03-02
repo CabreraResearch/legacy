@@ -186,6 +186,47 @@ namespace ChemSW.Nbt.WebServices
         } // getGridOuterJson()
 
         /// <summary>
+        /// Returns a thin JArray of grid row values
+        /// </summary>
+        public JArray getThinGridRows( Int32 MaxRows )
+        {
+            JArray RetRows = new JArray();
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            Int32 StartingNode = 0;
+            if( _View.Visibility == NbtViewVisibility.Property )
+            {
+                Tree.goToNthChild( 0 );
+            }
+
+            Int32 NodeCount = Tree.getChildNodeCount();
+            bool IsTruncated = false;
+            if( NodeCount > 0 )
+            {
+                for( Int32 C = StartingNode; C < MaxRows && C < NodeCount; C += 1 )
+                {
+                    Tree.goToNthChild( C );
+
+                    JArray ThisRow = new JArray();
+                    RetRows.Add( ThisRow );
+                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    {
+                        ThisRow.Add( Prop["gestalt"] );
+                    }
+
+                    IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
+
+                    Tree.goToParentNode();
+                }
+
+                if( IsTruncated )
+                {
+                    RetRows.Add( new JArray( "Results Truncated" ) );
+                }
+            }
+            return RetRows;
+        } // getGridOuterJson()
+
+        /// <summary>
         /// Returns a JSON Object of all Grid Rows
         /// </summary>
         public JObject getAllGridRows( bool IsReport )
@@ -412,6 +453,7 @@ namespace ChemSW.Nbt.WebServices
                 ParentObj[CleanPropName] = CleanValue;
             }
         }
+
     } // class CswNbtWebServiceGrid
 
 } // namespace ChemSW.Nbt.WebServices

@@ -126,6 +126,7 @@
                         var selectedtabno = 0;
                         var tabno = 0;
                         var tabDiv, tabUl;
+                        o.nodename = data.nodename;
                         var tabFunc = function (thisTab) {
                             var thisTabId = thisTab.id;
 
@@ -262,7 +263,7 @@
                                 var subTable = layoutTable[propId + '_subproptable'];
                                 var parentCell = subTable.parent().parent();
                                 var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
-                                layoutTable.addCellSetAttributes(cellSet, {propId: propId});
+                                layoutTable.addCellSetAttributes(cellSet, { propId: propId });
                                 var propCell = _getPropertyCell(cellSet);
 
                                 if (subTable.length > 0) {
@@ -414,7 +415,6 @@
 
         function handleProp(layoutTable, thisProp, tabContentDiv, tabid, configMode, savBtn, atLeastOne) {
             var propid = thisProp.id,
-                fieldtype = thisProp.fieldtype,
                 cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol),
                 helpText = Csw.string(thisProp.helptext),
                 propName = Csw.string(thisProp.name),
@@ -423,9 +423,7 @@
             layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
             if ((Csw.bool(thisProp.display, true) || configMode) &&
-                 fieldtype !== Csw.enums.subFieldsMap.Image.name &&
-                 fieldtype !== Csw.enums.subFieldsMap.Grid.name &&
-                 fieldtype !== Csw.enums.subFieldsMap.Button.name &&
+                 Csw.bool(thisProp.showpropertyname) &&
                  (o.filterToPropId === '' || o.filterToPropId === propid)) {
 
                 labelCell = _getLabelCell(cellSet);
@@ -502,6 +500,7 @@
                 var fieldOpt = {
                     fieldtype: propData.fieldtype,
                     nodeid: Csw.tryParseObjByIdx(o.nodeids, 0),
+                    nodename: o.nodename,
                     relatednodeid: o.relatednodeid,
                     relatednodetypeid: o.relatednodetypeid,
                     propid: propId,
@@ -655,13 +654,15 @@
                         }
                         if (o.ShowCheckboxes) {
                             // apply the newly saved checked property values on this node to the checked nodes
-                            var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                            //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                            var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
                             var $propchecks = $('.' + o.ID + '_check:checked');
 
-                            if ($nodechecks.length > 0 && $propchecks.length > 0) {
-                                $nodechecks.each(function () {
-                                    var nodeid = $(this).attr('nodeid');
-                                    dataJson.CopyNodeIds.push(nodeid);
+                            if (nodechecks.length > 0 && $propchecks.length > 0) {
+                                //$nodechecks.each(function () {
+                                Csw.each(nodechecks, function (thisObj) {
+                                    //var nodeid = $(this).attr('nodeid');
+                                    dataJson.CopyNodeIds.push(thisObj.nodeid);
                                 });
 
                                 $propchecks.each(function () {

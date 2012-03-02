@@ -8,7 +8,9 @@
     var methods = {
         init: function (o) {
 
-            var propDiv = $(this);
+            var propDiv = o.propDiv;
+            propDiv.empty();
+
             var propVals = o.propData.values;
             var red = (false === o.Multi) ? propVals.flammability : Csw.enums.multiEditDefaultValue;
             var yellow = (false === o.Multi) ? propVals.reactivity : Csw.enums.multiEditDefaultValue;

@@ -17,36 +17,78 @@
             propDiv.empty();
 
             var propVals = o.propData.values;
+            var gridMode = Csw.string(propVals.gridmode);
+            var maxRows = Csw.string(propVals.maxrows);
+            var viewid = Csw.string(propVals.viewid).trim();
+
             if (o.EditMode === Csw.enums.editMode.AuditHistoryInPopup || o.Multi) {
                 propDiv.append('[Grid display disabled]');
             } else {
 
-                var menuDiv = propDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_menu') });
-                propDiv.br();
-                var searchDiv = propDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_search') });
-                propDiv.br();
-                var gridDiv = propDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype') });
+                var makeFullGrid = function (newDiv) {
+                    'use strict';
+                    var menuDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_menu') });
+                    newDiv.br();
+                    var searchDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_search') });
+                    newDiv.br();
+                    var gridDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype') });
 
-                var viewid = Csw.string(propVals.viewid).trim();
-                var gridOpts = {
-                    ID: o.ID + '_fieldtypegrid',
-                    viewid: viewid,
-                    nodeid: o.nodeid,
-                    cswnbtnodekey: o.cswnbtnodekey,
-                    readonly: o.ReadOnly,
-                    reinit: false,
-                    EditMode: o.EditMode,
-                    onEditNode: function () {
-                        o.onReload();
-                    },
-                    onDeleteNode: function () {
-                        o.onReload();
-                    },
-                    onSuccess: function (grid) {
-                        makeGridMenu(menuDiv, o, gridOpts, grid, viewid, searchDiv);
-                    }
+
+                    var gridOpts = {
+                        ID: o.ID + '_fieldtypegrid',
+                        viewid: viewid,
+                        nodeid: o.nodeid,
+                        cswnbtnodekey: o.cswnbtnodekey,
+                        readonly: o.ReadOnly,
+                        reinit: false,
+                        EditMode: o.EditMode,
+                        onEditNode: function () {
+                            o.onReload();
+                        },
+                        onDeleteNode: function () {
+                            o.onReload();
+                        },
+                        onSuccess: function (grid) {
+                            makeGridMenu(menuDiv, o, gridOpts, grid, viewid, searchDiv);
+                        }
+                    };
+                    gridDiv.$.CswNodeGrid('init', gridOpts);
                 };
-                gridDiv.$.CswNodeGrid('init', gridOpts);
+
+                var makeSmallGrid = function () {
+                    'use strict';
+                    Csw.ajax.post({
+                        url: Csw.enums.ajaxUrlPrefix + 'getThinGrid',
+                        data: {
+                            ViewId: viewid,
+                            IncludeNodeKey: o.cswnbtnodekey,
+                            MaxRows: maxRows
+                        },
+                        success: function (data) {
+                            propDiv.thinGrid({
+                                rows: data.rows,
+                                onLinkClick: function () {
+                                    $.CswDialog('OpenEmptyDialog', {
+                                            title: o.nodename + ' ' + o.propData.name,
+                                            onOpen: function (dialogDiv) {
+                                                makeFullGrid(dialogDiv);
+                                            }
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                    });
+                };
+
+                switch (gridMode.toLowerCase()) {
+                    case 'small':
+                        makeSmallGrid();
+                        break;
+                    default:
+                        makeFullGrid(propDiv);
+                        break;
+                }
 
             } // if(o.EditMode !== Csw.enums.editMode.AuditHistoryInPopup)
         },
