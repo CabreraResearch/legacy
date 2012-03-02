@@ -493,7 +493,7 @@
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
 
-                if (false === Csw.isNullOrEmpty(nodechecked, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
+                if (false === Csw.isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
                     var n = 0;
                     //$nodechecks.each(function () {
                     Csw.each(nodechecked, function (thisObj) {

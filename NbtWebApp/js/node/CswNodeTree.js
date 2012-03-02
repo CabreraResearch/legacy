@@ -18,7 +18,7 @@
             var $parent = $(this);
             var parent = Csw.controls.factory($parent);
 
-            var treeDiv = parent.div({ ID: o.ID });
+            var treeDiv = parent.div({ ID: idPrefix });
 
             var url = o.RunTreeUrl;
             var dataParam = {
@@ -89,8 +89,8 @@
 
         'checkedNodes': function () {
             var $treediv = $(this);
-            var id = $treediv.CswAttrDom('id');
-            var $nodechecks = $('.' + id + '_check:checked');
+            var idPrefix = $treediv.CswAttrDom('id');
+            var $nodechecks = $('.' + idPrefix + 'check:checked');
             var ret = [];
 
             if (false === Csw.isNullOrEmpty($nodechecks, true)) {

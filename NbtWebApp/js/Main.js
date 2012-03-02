@@ -720,7 +720,6 @@ window.initMain = window.initMain || function (undefined) {
                 // case 24304
                 // refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
             },
-            Multi: multi,
             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
             onBeforeTabSelect: function () {
                 return Csw.clientChanges.manuallyCheckChanges();
@@ -864,27 +863,26 @@ window.initMain = window.initMain || function (undefined) {
         clear({ left: true });
 
         $('#LeftDiv').CswNodeTree('init', {
-            ID: mainTreeId,
-            viewid: o.viewid,
-            viewmode: o.viewmode,
-            nodeid: o.nodeid,
-            cswnbtnodekey: o.cswnbtnodekey,
-            nodename: o.nodename,
-            Multi: multi,
-            showempty: getEmptyTree,
-            forsearch: o.forsearch,
-            IncludeNodeRequired: o.IncludeNodeRequired,
-            onViewChange: function (newviewid, newviewmode) {
+            'ID': mainTreeId,
+            'viewid': o.viewid,
+            'viewmode': o.viewmode,
+            'nodeid': o.nodeid,
+            'cswnbtnodekey': o.cswnbtnodekey,
+            'nodename': o.nodename,
+            'showempty': getEmptyTree,
+            'forsearch': o.forsearch,
+            'IncludeNodeRequired': o.IncludeNodeRequired,
+            'onViewChange': function (newviewid, newviewmode) {
                 Csw.clientState.setCurrentView(newviewid, newviewmode);
             },
-            onSelectNode: function (optSelect) {
+            'onSelectNode': function (optSelect) {
                 onSelectTreeNode({
-                    viewid: optSelect.viewid,
-                    nodeid: optSelect.nodeid,
-                    cswnbtnodekey: optSelect.cswnbtnodekey
+                    'viewid': optSelect.viewid,
+                    'nodeid': optSelect.nodeid,
+                    'cswnbtnodekey': optSelect.cswnbtnodekey
                 });
             },
-            ShowCheckboxes: multi
+            'ShowCheckboxes': multi
         }); // CswNodesTree
     }
 
