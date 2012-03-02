@@ -127,6 +127,7 @@
                         var tabno = 0;
                         var tabDiv, tabUl;
                         o.nodename = data.nodename;
+                        delete data.nodename;
                         var tabFunc = function (thisTab) {
                             var thisTabId = thisTab.id;
 

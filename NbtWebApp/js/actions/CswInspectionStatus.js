@@ -34,7 +34,8 @@
                         autowidth: true,
                         rowNum: 10
                     },
-                    pagermode: 'none',
+                    canEdit: true,
+                    pagermode: 'default',
                     optNav: {
                         add: false,
                         view: false,
@@ -42,7 +43,9 @@
                         refresh: false,
                         edit: true,
                         edittext: "",
-                        edittitle: "Edit row",
+                        edittitle: "Edit row"
+                    },
+                    optNavEdit: {
                         editfunc: function (rowid) {
                             var editOpt = {
                                 nodeids: [],
