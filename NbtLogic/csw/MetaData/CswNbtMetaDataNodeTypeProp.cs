@@ -585,7 +585,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public bool ReadOnly
         {
-            get { return CswConvert.ToBoolean( _NodeTypePropRow["readonly"] ); }
+            get { return ( CswConvert.ToBoolean( _NodeTypePropRow["readonly"] ) || ServerManaged ); }
             set { _setAttribute( "readonly", value, false ); }
         }
         public Int32 TextAreaRows
