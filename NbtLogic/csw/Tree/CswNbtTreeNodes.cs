@@ -779,7 +779,14 @@ namespace ChemSW.Nbt
 
         public void makeNodeCurrent( CswNbtNodeKey NodeKey )
         {
-            _CurrentNode = _getJSONNodeFromKey( NodeKey );
+            if( NodeKey.TreeKey == this._CswNbtTreeKey )
+            {
+                _CurrentNode = _getJSONNodeFromKey( NodeKey );
+            }
+            else
+            {
+                _CurrentNode = null;
+            }
         }
 
         public CswNbtNode getCurrentNode()
