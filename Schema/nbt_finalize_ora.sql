@@ -213,7 +213,7 @@ begin
  select count(*) into ntcount from nodetypes where nodetypeid=ntid;
   
  if(ntcount>0) then
-  select nodetypename,objectclassid into viewname,objid from nodetypes where nodetypeid=ntid;
+  select substr(nodetypename,1,29),objectclassid into viewname,objid from nodetypes where nodetypeid=ntid;
 
   var_line:='create or replace view ' || OraColLen('NT',alnumonly(viewname,''),'') || ' as select n.nodeid ';
   --dbms_output.put_line(var_line);
@@ -287,7 +287,7 @@ create or replace procedure createOCview(objid in number) is
   viewname varchar(30);
 begin
   --dbms_output.enable(21000);
-  select objectclass into viewname from object_class where objectclassid=objid;  
+  select substr(objectclass,1,29) into viewname from object_class where objectclassid=objid;  
 
   var_sql:='create or replace view ' || OraColLen('OC',alnumonly(viewname,''),'') || ' as select n.nodeid ';
   --dbms_output.put_line(var_sql);
