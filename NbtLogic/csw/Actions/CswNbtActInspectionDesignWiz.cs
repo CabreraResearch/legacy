@@ -397,6 +397,14 @@ namespace ChemSW.Nbt.Actions
                 IdTargetNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
             }
 
+            CswNbtMetaDataObjectClassProp IdLocationOcp = InspectionTargetOc.getObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp IdLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
+            if(IdLocationNtp.FKType !=  NbtViewPropIdType.ObjectClassPropId.ToString() ||
+               IdLocationNtp.FKValue != IdLocationOcp.ObjectClassPropId )
+            {
+                IdLocationNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId, NbtViewPropIdType.ObjectClassPropId.ToString(), IdLocationOcp.ObjectClassPropId );
+            }
+
             //Inspection Design Generator is SI Inspection Schedule
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
             _validateInspectionScheduleNt( GeneratorNt );
