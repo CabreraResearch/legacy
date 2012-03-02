@@ -23,7 +23,9 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataNodeTypeLayoutMgr NodeTypeLayout;
 
         protected bool _ExcludeDisabledModules = true;
-        public Collection <Int32> _RefreshViewForNodetypeId = new Collection<Int32>();
+        public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
+
+        public Collection<Int32> _RefreshViewForNodetypeId = new Collection<Int32>();
         protected bool _ResetAllViews = false;
 
         #region Initialization

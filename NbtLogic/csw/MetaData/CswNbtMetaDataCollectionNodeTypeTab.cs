@@ -19,7 +19,8 @@ namespace ChemSW.Nbt.MetaData
                                                           "tabname",
                                                           _CswNbtMetaDataResources.NodeTypeTabTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypeTabTableUpdate,
-                                                          makeNodeTypeTab );
+                                                          makeNodeTypeTab,
+                                                          _makeModuleWhereClause);
         }
 
         public void AddToCache( CswNbtMetaDataNodeTypeTab NewObj )
@@ -60,6 +61,28 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataNodeTypeTab> getNodeTypeTabs( Int32 NodeTypeId )
         {
             return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString() ).Cast<CswNbtMetaDataNodeTypeTab>();
+        }
+
+        private string _makeModuleWhereClause()
+        {
+            return @" ( ( exists (select j.jctmoduleobjectclassid
+                                    from jct_modules_objectclass j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmoduleobjectclassid
+                                           from jct_modules_objectclass j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)) )
+                    and ( exists (select j.jctmodulenodetypeid
+                                    from jct_modules_nodetypes j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.nodetypeid = nodetype_tabset.nodetypeid
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmodulenodetypeid
+                                           from jct_modules_nodetypes j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.nodetypeid = nodetype_tabset.nodetypeid) ) )";
         }
 
         //public void ClearKeys()
