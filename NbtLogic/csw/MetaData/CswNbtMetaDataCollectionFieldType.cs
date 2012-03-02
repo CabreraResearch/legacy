@@ -19,7 +19,8 @@ namespace ChemSW.Nbt.MetaData
                                                           "fieldtype",
                                                           _CswNbtMetaDataResources.FieldTypeTableSelect,
                                                           _CswNbtMetaDataResources.FieldTypeTableUpdate,
-                                                          makeFieldType );
+                                                          makeFieldType,
+                                                          _makeModuleWhereClause );
         }
 
         public void AddToCache( CswNbtMetaDataFieldType NewObj )
@@ -31,6 +32,8 @@ namespace ChemSW.Nbt.MetaData
         {
             _CollImpl.clearCache();
         }
+
+
 
         public CswNbtMetaDataFieldType makeFieldType( CswNbtMetaDataResources Resources, DataRow Row )
         {
@@ -91,6 +94,10 @@ namespace ChemSW.Nbt.MetaData
         } // getFieldTypeValueForObjectClassPropId()
 
 
+        private string _makeModuleWhereClause()
+        {
+            return string.Empty;
+        }
 
     } // class CswNbtMetaDataCollectionFieldType
 } // namespace ChemSW.Nbt.MetaData

@@ -19,7 +19,8 @@ namespace ChemSW.Nbt.MetaData
                                                           "objectclass",
                                                           _CswNbtMetaDataResources.ObjectClassTableSelect,
                                                           _CswNbtMetaDataResources.ObjectClassTableUpdate,
-                                                          makeObjectClass );
+                                                          makeObjectClass,
+                                                          _makeModuleWhereClause );
         }
 
         public void AddToCache( CswNbtMetaDataObjectClass NewObj )
@@ -73,6 +74,19 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataObjectClass getObjectClassByNodeTypeId( Int32 NodeTypeId )
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclassid in (select objectclassid from nodetypes where nodetypeid = " + NodeTypeId.ToString() + ")" );
+        }
+
+        private string _makeModuleWhereClause()
+        {
+            return @" (exists (select j.jctmoduleobjectclassid
+                                 from jct_modules_objectclass j
+                                 join modules m on j.moduleid = m.moduleid
+                                where j.objectclassid = object_class.objectclassid
+                                  and m.enabled = '1')
+                       or not exists (select j.jctmoduleobjectclassid
+                                        from jct_modules_objectclass j
+                                        join modules m on j.moduleid = m.moduleid
+                                       where j.objectclassid = object_class.objectclassid))";
         }
 
         //public void ClearKeys()
