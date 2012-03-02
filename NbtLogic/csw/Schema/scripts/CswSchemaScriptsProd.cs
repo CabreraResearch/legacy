@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Exceptions;
-using ChemSW.Core;
 
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
@@ -40,6 +39,7 @@ namespace ChemSW.Nbt.Schema
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo24988() ) );
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
