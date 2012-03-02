@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.Schema
         }//stampSchemaVersion()
 
 
-        public void addUniversalPreProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
+        public void addScriptToRunBeforeEveryExecutionOfUpdater( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
         public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
         public void addReleaseDdlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
         public void addUniversalPostProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }

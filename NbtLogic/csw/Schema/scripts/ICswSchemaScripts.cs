@@ -20,11 +20,8 @@ namespace ChemSW.Nbt.Schema
         void stampSchemaVersion( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver );
         Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get; }
 
-        void addUniversalPreProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
+        void addScriptToRunBeforeEveryExecutionOfUpdater( CswSchemaUpdateDriver CswSchemaUpdateDriver );
         void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
-        void addReleaseDdlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
-        void addUniversalPostProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver );
-
 
     }//CswScriptCollections
 
