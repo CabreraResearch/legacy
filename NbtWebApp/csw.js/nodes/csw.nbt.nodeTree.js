@@ -93,7 +93,7 @@
 
             if (Csw.bool(internal.ShowCheckboxes)) {
 
-                external.treeDiv.$.find('li').each(function () {
+                external.treeDiv.find('li').each(function () {
                     var $childObj = $(this);
                     var thisid = Csw.string($childObj.CswAttrDom('id'));
                     var thiskey = Csw.string($childObj.CswAttrDom('cswnbtnodekey'));
@@ -139,8 +139,8 @@
             internal.handleSelectNode(m2);
 
             // rebind event for next select
-            external.treeDiv.$.unbind('select_node.jstree');
-            external.treeDiv.$.bind('select_node.jstree', function (e, data) { 
+            external.treeDiv.unbind('select_node.jstree');
+            external.treeDiv.bind('select_node.jstree', function (e, data) { 
                 return internal.handleSelectNode({
                     e: e,
                     data: data,
