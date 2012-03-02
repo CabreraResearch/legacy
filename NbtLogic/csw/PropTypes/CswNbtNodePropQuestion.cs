@@ -70,10 +70,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ) )
                 {
-                    string AnswerVal = value;
+                    string AnswerVal = value.Trim();
 
                     DateTime UpdateDateAnswered = DateAnswered;
-                    if( !string.IsNullOrEmpty( AnswerVal ) )
+                    if( false == string.IsNullOrEmpty( AnswerVal ) )
                     {
                         if( _IsValidNode &&
                             UpdateDateAnswered == DateTime.MinValue )  // case 21056
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     DateTime UpdateDateCorrected = DateTime.MinValue;
 
-                    string val = value;
+                    string val = value.Trim();
                     if( _IsValidNode && false == string.IsNullOrEmpty( val ) )
                     {
                         UpdateDateCorrected = DateTime.Today;
