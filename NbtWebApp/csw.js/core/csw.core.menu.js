@@ -29,7 +29,7 @@
             onQuotas: null, // function () { },
             onSessions: null, // function () { },
             Multi: false,
-            NodeCheckTreeId: ''
+            nodeTreeCheck: null
         };
         if (options) {
             $.extend(o, options);
@@ -80,7 +80,7 @@
                             nodenames: [nodename],
                             nodeids: [nodeid],
                             onDeleteNode: o.onAlterNode,
-                            NodeCheckTreeId: o.NodeCheckTreeId,
+                            nodeTreeCheck: o.nodeTreeCheck,
                             Multi: o.Multi
                         });
 

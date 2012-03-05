@@ -836,7 +836,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
         onQuotas: null, // function () { },
         onSessions: null, // function () { },
         Multi: false,
-        NodeCheckTreeId: ''
+        nodeTreeCheck: ''
     };
     if (options)
     {
@@ -892,7 +892,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
                         nodenames: [ nodename ],
                         nodeids: [ nodeid ],
                         onDeleteNode: o.onAlterNode,
-                        NodeCheckTreeId: o.NodeCheckTreeId,
+                        nodeTreeCheck: o.nodeTreeCheck,
                         Multi: o.Multi
                     });
                     

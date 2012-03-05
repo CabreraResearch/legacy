@@ -79,6 +79,7 @@
     <Content Include="csw.js\core\csw.core.clientstate.js" />
     <Content Include="csw.js\core\csw.type.date.js" />
     <Content Include="csw.js\core\csw.core.debug.js" />
+    <Content Include="csw.js\nodes\csw.nbt.nodeTree.js" />
     <Content Include="csw.js\_loadfirst\csw.core.enums.js" />
     <Content Include="csw.js\core\csw.core.error.js" />
     <Content Include="csw.js\core\csw.core.events.js" />

@@ -44,7 +44,7 @@
                             var first = true;
                             return function () {
                                 if (first) {      // only do this once
-                                    locationTree.$.CswNodeTree('expandAll');
+                                    locationTree.expandAll();
                                     first = false;
                                 }
                                 comboBox.open(); // ensure we're open on click
@@ -53,25 +53,26 @@
                         })()
                     });
 
-                    var locationTree = comboBox.pickList.$
-                        .CswNodeTree('init', {
-                            ID: o.ID,
-                            viewid: viewId,
-                            nodeid: nodeId,
-                            cswnbtnodekey: nodeKey,
-                            onSelectNode: function (optSelect) {
-                                onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
-                            },
-                            onInitialSelectNode: function (optSelect) {
-                                onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
-                            },
-                            //SelectFirstChild: false,
-                            //UsePaging: false,
-                            UseScrollbars: false,
-                            IncludeInQuickLaunch: false,
-                            ShowToggleLink: false,
-                            DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
-                        });
+                    var locationTree = Csw.nbt.nodeTree({
+                        ID: o.ID,
+                        parent: comboBox.pickList,
+                        onInitialSelectNode: function (optSelect) {
+                            onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
+                        },
+                        onSelectNode: function (optSelect) {
+                            onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
+                        },
+                        UseScrollbars: false,
+                        IncludeInQuickLaunch: false,
+                        ShowToggleLink: false
+                    });
+                    
+                    locationTree.init({
+                        viewid: viewId,
+                        nodeid: nodeId,
+                        cswnbtnodekey: nodeKey,
+                        DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
+                    });
 
                     propDiv.$.hover(function (event) {
                         Csw.nodeHoverIn(event, selectDiv.val());

@@ -29,7 +29,15 @@
 
         var external = {};
 
-        
+        internal.onBeforeNext = function ($wizard, stepno) {
+            if (internal.generatorTree.checkedNodes().length === 0) {
+                alert('You must select at least one Generator to continue.');
+                return false;
+            } else {
+                return true;
+            }
+        };
+
         internal.handleNext = function ($wizard, SelectedStep) {
 
             // Disable all buttons until Ajax finishes
@@ -40,11 +48,11 @@
 
             var checkedNodeKeys = '';
 
-            Csw.each(internal.generatorTree.$.CswNodeTree('checkedNodes'), function(thisObj) {
-                if(checkedNodeKeys !== '') checkedNodeKeys += ',';
+            Csw.each(internal.generatorTree.checkedNodes(), function (thisObj) {
+                if (checkedNodeKeys !== '') checkedNodeKeys += ',';
                 checkedNodeKeys += thisObj.cswnbtnodekey;
             });
-        
+
             Csw.ajax.post({
                 url: internal.futureurl,
                 data: {
@@ -53,10 +61,13 @@
                 },
                 success: function (data) {
 
-                    internal.resultscell.$.CswNodeTree('makeTree', data.treedata, {
+                    var resultstree = Csw.nbt.nodeTree({
                         ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree'),
-                        height: '250px'
-                    }); // makeTree
+                        height: '250px',
+                        width: '500px',
+                        parent: internal.resultscell
+                    });
+                    resultstree.makeTree(data.treedata);
 
                     internal.resultsviewid = data.sessionviewid;
                     internal.resultsviewmode = data.viewmode;
@@ -64,7 +75,7 @@
                     // Only Finish for step 2
                     internal.$wizard.CswWizard('button', 'finish', 'enable');
                 } // success
-            }); // ajax
+            }); // ajax 
         };
 
 
@@ -86,10 +97,11 @@
                 Steps: wizardSteps,
                 StartingStep: internal.startingStep,
                 FinishText: 'Finish',
+                onBeforeNext: internal.onBeforeNext,
                 onNext: internal.handleNext,
                 onCancel: internal.onCancel,
-                onFinish: function() {
-                    Csw.tryExec( internal.onFinish, internal.resultsviewid, internal.resultsviewmode );
+                onFinish: function () {
+                    Csw.tryExec(internal.onFinish, internal.resultsviewid, internal.resultsviewmode);
                 },
                 doNextOnInit: false
             });
@@ -104,11 +116,11 @@
             var $divstep1 = $(internal.$wizard.CswWizard('div', Csw.enums.wizardSteps_FutureScheduling.step1.step));
             internal.step1div = Csw.controls.factory($divstep1, {});
 
-            var step1table = internal.step1div.table({ 
-                ID: Csw.controls.dom.makeId(internal.ID, '', 'table1'), 
+            var step1table = internal.step1div.table({
+                ID: Csw.controls.dom.makeId(internal.ID, '', 'table1'),
                 FirstCellRightAlign: true,
                 width: '100%',
-                cellpadding: 2 
+                cellpadding: 2
             });
 
             step1table.cell(1, 1).span({ text: 'Select future date:' });
@@ -130,12 +142,15 @@
                 data: {},
                 success: function (data) {
 
-                    internal.generatorTree = cell42.$.CswNodeTree('makeTree', data, {
+                    internal.generatorTree = Csw.nbt.nodeTree({
                         ID: Csw.controls.dom.makeId(internal.ID, '', 'gentree'),
-                        height: '250px',
+                        height: '225px',
+                        width: '500px',
+                        parent: cell42,
                         ShowCheckboxes: true,
                         ValidateCheckboxes: false
-                    }); // makeTree
+                    });
+                    internal.generatorTree.makeTree(data);
 
                 } // success
             }); // ajax

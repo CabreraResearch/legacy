@@ -779,7 +779,14 @@ namespace ChemSW.Nbt
 
         public void makeNodeCurrent( CswNbtNodeKey NodeKey )
         {
-            _CurrentNode = _getJSONNodeFromKey( NodeKey );
+            if( NodeKey.TreeKey == this._CswNbtTreeKey )
+            {
+                _CurrentNode = _getJSONNodeFromKey( NodeKey );
+            }
+            else
+            {
+                _CurrentNode = null;
+            }
         }
 
         public CswNbtNode getCurrentNode()
@@ -1188,11 +1195,12 @@ namespace ChemSW.Nbt
         }
         public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )
         {
-            Collection<CswNbtNodeKey> Ret;
-            NodesById.TryGetValue( NodeId, out Ret );
-
+            Collection<CswNbtNodeKey> Ret = new Collection<CswNbtNodeKey>();
+            if( NodeId != null )
+            {
+                NodesById.TryGetValue( NodeId, out Ret );
+            }
             return Ret;
-           
         }
 
         //public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )

@@ -39,7 +39,7 @@
             ShowCheckboxes: false,
             ShowAsReport: true,
             AjaxWatchGlobal: true,
-            NodeCheckTreeId: '',
+            nodeTreeCheck: null,
             onEditView: null,
             Config: false
         };
@@ -302,7 +302,10 @@
                         });
                     }
                     var atLeastOne = _handleProperties(layoutTable, data, tabContentDiv, tabid, false, saveBtn);
-
+                    if (false === Csw.isNullOrEmpty(layoutTable.cellSet(1, 1)) &&
+                        false === Csw.isNullOrEmpty(layoutTable.cellSet(1, 1)[1][2])) {
+                        layoutTable.cellSet(1, 1)[1][2].trigger('focus');
+                    }
                     // Validation
                     form.$.validate({
                         highlight: function (element) {
@@ -656,7 +659,8 @@
                         if (o.ShowCheckboxes) {
                             // apply the newly saved checked property values on this node to the checked nodes
                             //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                            var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                            //var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                            var nodechecks = o.nodeTreeCheck.checkedNodes();
                             var $propchecks = $('.' + o.ID + '_check:checked');
 
                             if (nodechecks.length > 0 && $propchecks.length > 0) {

@@ -125,6 +125,9 @@ window.abandonHope = false;
 
         external.actions = $.extend({}, external);
         external.register('actions', external.actions);
+
+        external.nbt = $.extend({}, external);
+        external.register('nbt', external.nbt);
         
         return external;
 
