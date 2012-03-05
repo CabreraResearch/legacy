@@ -154,6 +154,12 @@
                 ret.CswButton(action);
             }
             return ret;
+        },
+
+        setStep: function(stepno) {
+            var $table = $(this);
+            var table = Csw.controls.factory($table, {});
+            _selectStep(table, stepno);
         }
     };
 
