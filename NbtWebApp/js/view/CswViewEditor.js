@@ -253,8 +253,8 @@
             return (stepno !== Csw.enums.wizardSteps_ViewEditor.attributes.step || confirm("You will lose any changes made to the current view if you continue.  Are you sure?"));
         }
 
-        function _handleNext(table, newstepno) {
-            var $nextWizard = table.$;
+        function _handleNext($nextWizard, newstepno) {
+            //var $nextWizard = table.$;
             CurrentStep = newstepno;
             switch (newstepno) {
                 case Csw.enums.wizardSteps_ViewEditor.viewselect.step:
@@ -356,12 +356,10 @@
         }
 
         function _handlePrevious($wizard, newstepno) {
-            if (newstepno === 1)
-                $wizard.CswWizard('button', 'finish', 'disable');
-
             CurrentStep = newstepno;
             switch (newstepno) {
                 case Csw.enums.wizardSteps_ViewEditor.viewselect.step:
+                    $wizard.CswWizard('button', 'finish', 'disable');
                     break;
                 case Csw.enums.wizardSteps_ViewEditor.attributes.step:
                     break;
