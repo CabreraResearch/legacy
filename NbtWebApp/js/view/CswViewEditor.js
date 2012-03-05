@@ -144,12 +144,17 @@
                             success: function () {
                                 _getViewsGrid();
                                 copyViewBtn.disable();
+                                deleteViewBtn.disable();  // button reenables itself, so need to disable it again
                             },
                             error: function () {
                                 deleteViewBtn.enable();
                             }
                         });
+                    } else {
+                        deleteViewBtn.enable();
                     }
+                } else {
+                    deleteViewBtn.enable();
                 }
             } // onClick
         }); // delete button
