@@ -29,9 +29,17 @@
 
         var external = {};
 
+        internal.onBeforeNext = function ($wizard, stepno) {
+            if (internal.generatorTree.checkedNodes().length === 0) {
+                alert('You must select at least one Generator to continue.');
+                return false;
+            } else {
+                return true;
+            }
+        };
 
         internal.handleNext = function ($wizard, SelectedStep) {
-            
+
             // Disable all buttons until Ajax finishes
             internal.$wizard.CswWizard('button', 'previous', 'disable');
             internal.$wizard.CswWizard('button', 'next', 'disable');
@@ -44,37 +52,30 @@
                 if (checkedNodeKeys !== '') checkedNodeKeys += ',';
                 checkedNodeKeys += thisObj.cswnbtnodekey;
             });
-            if (checkedNodeKeys === '') {
-            
-                alert('You must select at least one Generator to continue.');    
-                internal.$wizard.CswWizard('setStep', 1);
 
-            } else {
+            Csw.ajax.post({
+                url: internal.futureurl,
+                data: {
+                    SelectedGeneratorNodeKeys: checkedNodeKeys,
+                    EndDate: internal.endDatePicker.val().date
+                },
+                success: function (data) {
 
-                Csw.ajax.post({
-                    url: internal.futureurl,
-                    data: {
-                        SelectedGeneratorNodeKeys: checkedNodeKeys,
-                        EndDate: internal.endDatePicker.val().date
-                    },
-                    success: function (data) {
+                    var resultstree = Csw.nbt.nodeTree({
+                        ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree'),
+                        height: '250px',
+                        width: '500px',
+                        parent: internal.resultscell
+                    });
+                    resultstree.makeTree(data.treedata);
 
-                        var resultstree = Csw.nbt.nodeTree({
-                            ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree'),
-                            height: '250px',
-                            width: '500px',
-                            parent: internal.resultscell
-                        });
-                        resultstree.makeTree(data.treedata);
+                    internal.resultsviewid = data.sessionviewid;
+                    internal.resultsviewmode = data.viewmode;
 
-                        internal.resultsviewid = data.sessionviewid;
-                        internal.resultsviewmode = data.viewmode;
-
-                        // Only Finish for step 2
-                        internal.$wizard.CswWizard('button', 'finish', 'enable');
-                    } // success
-                }); // ajax 
-            }
+                    // Only Finish for step 2
+                    internal.$wizard.CswWizard('button', 'finish', 'enable');
+                } // success
+            }); // ajax 
         };
 
 
@@ -96,6 +97,7 @@
                 Steps: wizardSteps,
                 StartingStep: internal.startingStep,
                 FinishText: 'Finish',
+                onBeforeNext: internal.onBeforeNext,
                 onNext: internal.handleNext,
                 onCancel: internal.onCancel,
                 onFinish: function () {
