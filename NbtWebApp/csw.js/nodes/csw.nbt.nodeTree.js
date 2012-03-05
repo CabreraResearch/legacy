@@ -93,7 +93,7 @@
 
             if (Csw.bool(internal.ShowCheckboxes)) {
 
-                external.treeDiv.find('li').each(function () {
+                external.treeDiv.find('li').$.each(function () {
                     var $childObj = $(this);
                     var thisid = Csw.string($childObj.CswAttrDom('id'));
                     var thiskey = Csw.string($childObj.CswAttrDom('cswnbtnodekey'));
