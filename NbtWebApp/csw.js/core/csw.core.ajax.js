@@ -103,7 +103,7 @@
                 error: function (xmlHttpRequest, textStatus) {
                     Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
                     Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
-                    Csw.tryExec(o.error);
+                    Csw.tryExec(o.error,textStatus);
                     Csw.tryExec(external.onAfterAjax, false);
                 }
             }); /* $.ajax({ */

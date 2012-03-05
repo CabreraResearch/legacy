@@ -21,6 +21,7 @@ using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -1568,7 +1569,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new wsViewBuilder( _CswNbtResources );
+                    var ws = new CswNbtViewBuilder( _CswNbtResources );
                     ReturnVal = ws.getVbProp( ViewJson, PropArbitraryId );
                 }
 
@@ -1598,7 +1599,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    var ws = new wsViewBuilder( _CswNbtResources );
+                    var ws = new CswNbtViewBuilder( _CswNbtResources );
                     ReturnVal = ws.makeViewPropFilter( ViewJson, PropFiltJson );
                 }
 
@@ -1968,6 +1969,38 @@ namespace ChemSW.Nbt.WebServices
         #endregion MetaData
 
         #region Misc
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string report( string reportid, string rformat )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
+                    CswNbtWebServiceReport ws = new CswNbtWebServiceReport(_CswNbtResources,rpt );
+                    ReturnVal = ws.runReport( rformat,Context );
+                    
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+
+        } // report
+
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

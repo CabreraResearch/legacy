@@ -8,21 +8,21 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.WebServices
+namespace ChemSW.Nbt.Logic
 {
-    #region wsViewBuilder
-    public class wsViewBuilder : System.Web.Services.WebService
+    #region CswNbtViewBuilder
+    public class CswNbtViewBuilder //: System.Web.Services.WebService
     {
         private readonly CswNbtResources _CswNbtResources;
         private readonly ArrayList _ProhibittedFieldTypes;
 
-        public wsViewBuilder( CswNbtResources CswNbtResources, ArrayList ProhibittedFieldTypes )
+        public CswNbtViewBuilder( CswNbtResources CswNbtResources, ArrayList ProhibittedFieldTypes )
         {
             _CswNbtResources = CswNbtResources;
             _ProhibittedFieldTypes = ProhibittedFieldTypes;
         } //ctor
 
-        public wsViewBuilder( CswNbtResources CswNbtResources )
+        public CswNbtViewBuilder( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _ProhibittedFieldTypes = new ArrayList();
@@ -459,7 +459,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Public Methods
     }
-    #endregion wsViewBuilder
+    #endregion CswNbtViewBuilder
 
     #region CswViewBuilderProp Class
     public class CswViewBuilderProp

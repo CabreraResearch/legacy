@@ -5,6 +5,8 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
+
 
 namespace ChemSW.Nbt.WebServices
 {
