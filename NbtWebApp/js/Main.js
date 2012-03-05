@@ -627,6 +627,7 @@ window.initMain = window.initMain || function (undefined) {
             nodeid: o.nodeid,
             cswnbtnodekey: o.cswnbtnodekey,
             ID: mainTableId,
+            Multi: multi,
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
@@ -917,11 +918,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                              
-            //				break;                                              
-            //			case 'Assign_Tests':                                              
-            //				break;                                              
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                              
+            //			case 'Assign_Inspection':                                                
+            //				break;                                                
+            //			case 'Assign_Tests':                                                
+            //				break;                                                
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -935,18 +936,13 @@ window.initMain = window.initMain || function (undefined) {
                         refreshSelected();
                     },
                     onFinish: function (viewid) {
-                        clear({ 'all': true });
+                        clear({'all': true});
                         refreshViewSelect();
-                        refreshSelected({
+                        handleItemSelect({
                             type: 'view',
                             viewmode: 'tree',
                             viewid: viewid
                         });
-                        //                        handleItemSelect({
-                        //                            type: 'view',
-                        //                            viewmode: 'tree',
-                        //                            viewid: viewid
-                        //                        });
                     },
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected
@@ -955,8 +951,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':                                              
-            //				break;                                              
+            //			case 'Design':                                                
+            //				break;                                                
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -983,26 +979,26 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                              
-            //				break;                                              
+            //			case 'Enter_Results':                                                
+            //				break;                                                
 
-            case 'Future_Scheduling':                                      
+            case 'Future_Scheduling':
                 clear({ 'all': true });
                 Csw.actions.futureScheduling({
                     $parent: $('#CenterTopDiv'),
-                    onCancel: function() { 
+                    onCancel: function () {
                         refreshSelected();
                     },
-                    onFinish: function(viewid, viewmode) {
+                    onFinish: function (viewid, viewmode) {
                         handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
                     }
                 });
-            	break;                                      
+                break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                              
-            //				break;                                              
-            //			case 'Inspection_Design':                                              
-            //				break;                                              
+            //			case 'Import_Fire_Extinguisher_Data':                                                
+            //				break;                                                
+            //			case 'Inspection_Design':                                                
+            //				break;                                                
 
             case 'OOC_Inspections':
                 setupOocInspections();
@@ -1037,14 +1033,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':                                              
-            //				break;                                              
-            //			case 'Receiving':                                              
-            //				break;                                              
-            //			case 'Split_Samples':                                              
-            //				break;                                              
-            //			case 'View_By_Location':                                              
-            //				break;                                              
+            //			case 'Load_Mobile_Data':                                                
+            //				break;                                                
+            //			case 'Receiving':                                                
+            //				break;                                                
+            //			case 'Split_Samples':                                                
+            //				break;                                                
+            //			case 'View_By_Location':                                                
+            //				break;                                                
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;

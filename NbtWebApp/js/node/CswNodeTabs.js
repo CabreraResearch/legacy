@@ -127,6 +127,7 @@
                         var tabno = 0;
                         var tabDiv, tabUl;
                         o.nodename = data.nodename;
+                        delete data.nodename;
                         var tabFunc = function (thisTab) {
                             var thisTabId = thisTab.id;
 
@@ -301,7 +302,10 @@
                         });
                     }
                     var atLeastOne = _handleProperties(layoutTable, data, tabContentDiv, tabid, false, saveBtn);
-
+                    if (false === Csw.isNullOrEmpty(layoutTable.cellSet(1, 1)) &&
+                        false === Csw.isNullOrEmpty(layoutTable.cellSet(1, 1)[1][2])) {
+                        layoutTable.cellSet(1, 1)[1][2].trigger('focus');
+                    }
                     // Validation
                     form.$.validate({
                         highlight: function (element) {

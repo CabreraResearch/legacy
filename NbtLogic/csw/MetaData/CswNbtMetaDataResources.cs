@@ -37,6 +37,8 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataCollectionNodeTypeProp NodeTypePropsCollection;
         public CswNbtMetaDataCollectionNodeTypeTab NodeTypeTabsCollection;
 
+        private bool _ExcludeDisabledModules;
+        public bool ExcludeDisabledModules { get { return CswNbtMetaData.ExcludeDisabledModules; } }
 
         //CswNbtMetaDataTableCache _CswNbtMetaDataTableCache = null;
         public CswNbtMetaDataResources( CswNbtResources Resources, CswNbtMetaData MetaData )
@@ -44,6 +46,8 @@ namespace ChemSW.Nbt.MetaData
             CswNbtResources = Resources;
             CswNbtMetaData = MetaData;
             CswNbtFieldResources = new CswNbtFieldResources( Resources );
+            
+            _ExcludeDisabledModules = ExcludeDisabledModules;
 
             ObjectClassTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_ObjectClass_Select", "object_class" );
             ObjectClassPropTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_ObjectClassProp_Select", "object_class_props" );

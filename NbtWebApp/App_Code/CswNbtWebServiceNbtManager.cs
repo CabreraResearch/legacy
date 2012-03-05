@@ -10,6 +10,8 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
+
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -226,6 +228,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Row["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
                         Row["REPROBATE"] = CswConvert.ToDbVal( 0 );
+                        Row["STATUSMESSAGE"] = DBNull.Value;
                     }
 
                     RetSuccess = RulesUpdate.update( RulesTable );

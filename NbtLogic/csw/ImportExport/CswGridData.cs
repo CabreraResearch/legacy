@@ -9,7 +9,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.WebServices
+namespace ChemSW.Nbt.Logic
 {
     public class CswGridData
     {
@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.WebServices
                     _SortBy = JqGridSortBy.desc;
                 }
             }
-
+            
 
             _LiteralColumnName = ViewProperty.PropName.ToLower();
             _UniqueColumnName = ( _LiteralColumnName + "_" + ViewProperty.MetaDataPropId ).Replace( " ", "_" );
@@ -478,7 +478,7 @@ namespace ChemSW.Nbt.WebServices
                 switch( _JqFieldType )
                 {
                     case JqFieldType.date:
-                        ReturnProp = new JProperty( "datefmt", "mm/dd/yyyy" );
+                        ReturnProp = new JProperty( "datefmt", "m/d/Y" );
                         break;
                     case JqFieldType.time:
                         ReturnProp = new JProperty( "datefmt", "h:i A" );
@@ -643,7 +643,7 @@ namespace ChemSW.Nbt.WebServices
                     case JqFieldType.date:
                         ReturnProp = new JProperty( "formatoptions",
                                             new JObject(
-                                                new JProperty( "srcformat", "m/d/Y" ),
+                                                new JProperty( "srcformat", "Y-m-d" ),
                                                 new JProperty( "newformat", "m/d/Y" ) )
                                         );
                         break;
