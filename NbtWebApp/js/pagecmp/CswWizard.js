@@ -79,7 +79,7 @@
                 'width': '65%'
             });
             var bCell12 = buttonTable.cell(1, 2);
-            bCell11.propDom({
+            bCell12.propDom({
                 'align': 'right',
                 'width': '35%'
             });
