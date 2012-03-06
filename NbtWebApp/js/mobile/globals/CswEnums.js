@@ -68,7 +68,7 @@ var CswCookieName = {
     LastActionName: 'csw_lastactionname',
     LastActionUrl: 'csw_lastactionurl',
     LastViewId: 'csw_lastviewid',
-    LastViewMode: 'csw_lastviewmode',
+    LastViewMode: 'csw_lastviewmode'
     //LastReportId: 'csw_lastreportid'
 };
 
