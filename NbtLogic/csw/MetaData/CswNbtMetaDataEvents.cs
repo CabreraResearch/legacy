@@ -245,13 +245,20 @@ namespace ChemSW.Nbt.MetaData
 					ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
 				}
 
-				Int32 FinishedPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
-                //FinishedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 1, 1 );
-                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, FinishedPropId, ActionTab.TabId, 1, 1 ); 
+                //Int32 FinishedPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
+                ////FinishedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 1, 1 );
+                //_CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, FinishedPropId, ActionTab.TabId, 1, 1 ); 
 
-				Int32 CancelledPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-				//CancelledProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 2, 1 );
+                //Int32 CancelledPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
+                ////CancelledProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 2, 1 );
+                //_CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelledPropId, ActionTab.TabId, 2, 1 ); 
+
+                Int32 FinishedPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.FinishPropertyName );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, FinishedPropId, ActionTab.TabId, 1, 1 );
+
+                Int32 CancelledPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelPropertyName );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewNodeType.NodeTypeId, CancelledPropId, ActionTab.TabId, 2, 1 ); 
+
 
 				Int32 CancelReasonPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelReasonPropertyName );
 				//CancelReasonProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, ActionTab.TabId, 3, 1 );
