@@ -374,12 +374,16 @@ namespace ChemSW.Nbt.WebServices
                     //Case 20964. Client needs to know whether the inspection is complete.
                     if( false == Ret && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                     {
-                        CswNbtMetaDataObjectClassProp Finished = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishedPropertyName );
-                        CswNbtMetaDataObjectClassProp Cancelled = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelledPropertyName );
-                        if( MetaDataProp.getObjectClassProp() == Finished ||
-                            MetaDataProp.getObjectClassProp() == Cancelled )
+                        CswNbtMetaDataObjectClassProp Finish = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishPropertyName );
+                        CswNbtMetaDataObjectClassProp Cancel = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelPropertyName );
+                        if( MetaDataProp.getObjectClassProp() == Finish ||
+                            MetaDataProp.getObjectClassProp() == Cancel )
                         {
-                            Ret = Ret || Node.Properties[MetaDataProp].AsLogical.Checked == Tristate.True;
+                            //Ret = Ret || Node.Properties[MetaDataProp].AsButton.Checked == Tristate.True;
+                            CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
+                            string Message = string.Empty;
+                            string ActionData = string.Empty;
+                            ( CswNbtNodeCaster.AsInspectionDesign( Node ) ).onButtonClick( MetaDataProp, out ButtonAction, out ActionData, out Message );
                         }
                     }
 

@@ -89,8 +89,16 @@ namespace ChemSW.Nbt.WebServices
             }
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
-            NbtObjClass.onButtonClick( NodeTypeProp, RetObj );
-            RetObj["success"] = true;
+
+            CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
+            string ActionData;
+            string Message;
+            bool Success = NbtObjClass.onButtonClick( NodeTypeProp, out ButtonAction, out ActionData, out Message );
+
+            RetObj["action"] = ButtonAction.ToString();
+            RetObj["actiondata"] = ActionData;  //e.g. popup url
+            RetObj["message"] = Message; 
+            RetObj["success"] = Success.ToString().ToLower();
 
             return RetObj;
         }
