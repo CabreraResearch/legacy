@@ -63,12 +63,6 @@ var ChemSW = ChemSW || (function(undefined) {
                 1: 'ok',
                 2: 'ok/cancel',
                 3: 'yes/no'
-            },
-            CswOnObjectClassClick: {
-                reauthenticate: 'reauthenticate',
-                home: 'home',
-                refresh: 'refresh',
-                url: 'url'
             }
         },
         ajax: {

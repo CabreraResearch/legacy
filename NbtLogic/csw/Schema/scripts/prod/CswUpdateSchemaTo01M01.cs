@@ -22,6 +22,15 @@ namespace ChemSW.Nbt.Schema
 
             #endregion case 24481
 
+            #region case 25322
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "usenumbering" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class_props", "usenumbering", "Whether the property should be numbered", false, false );
+            }
+
+            #endregion case 25322
+
 
         }//Update()
 

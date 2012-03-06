@@ -253,13 +253,13 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
-            //CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
-            //if( null != NodeTypeProp && null != OCP )
-            //{
-
-            //}
+            Message = string.Empty;
+            ActionData = string.Empty;
+            ButtonAction = NbtButtonAction.Unknown;
+            if( null != NodeTypeProp ) { /*Do Something*/ }
+            return true;
         }
         #endregion
 
