@@ -80,11 +80,10 @@
             2: 'ok/cancel',
             3: 'yes/no'
         };
-        external.onObjectClassClick = {
+        external.nbtButtonAction = {
             reauthenticate: 'reauthenticate',
-            home: 'home',
+            //home: 'home',
             refresh: 'refresh',
-            url: 'url',
             popup: 'popup'
         };
         external.inputTypes = {
