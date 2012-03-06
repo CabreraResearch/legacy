@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswNbtNode cswAdminNode = _CswNbtSchemaModTrnsctn.Nodes.makeUserNodeFromUsername( "chemsw_admin" );
+            CswNbtNode cswAdminNode = _CswNbtSchemaModTrnsctn.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
             if( null != cswAdminNode )
             {
                 CswNbtObjClassUser cswAdminAsUser = CswNbtNodeCaster.AsUser( cswAdminNode );
