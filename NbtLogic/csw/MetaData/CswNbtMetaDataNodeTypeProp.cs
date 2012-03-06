@@ -308,13 +308,7 @@ namespace ChemSW.Nbt.MetaData
                 string name = string.Empty;
                 if( UseNumbering && QuestionNo != Int32.MinValue )
                 {
-                    name += "Q";
-                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
-                    if( Tab.SectionNo != Int32.MinValue )
-                        name += Tab.SectionNo.ToString() + ".";
-                    name += QuestionNo.ToString();
-                    if( SubQuestionNo != Int32.MinValue )
-                        name += "." + SubQuestionNo.ToString();
+                    name += FullQuestionNo;
                     name += " ";
                 }
                 name += PropName.ToString();
@@ -838,6 +832,25 @@ namespace ChemSW.Nbt.MetaData
         //            _CswNbtMetaDataResources.RecalculateQuestionNumbers( NodeType );
         //    }
         //}
+
+        public string FullQuestionNo
+        {
+            get
+            {
+                string ret = "Q";
+                CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                if( Tab.SectionNo != Int32.MinValue )
+                {
+                    ret += Tab.SectionNo.ToString() + ".";
+                }
+                ret += QuestionNo.ToString();
+                if( SubQuestionNo != Int32.MinValue )
+                {
+                    ret += "." + SubQuestionNo.ToString();
+                }
+                return ret;
+            }
+        }
 
         // This should not trigger versioning
         public Int32 QuestionNo
