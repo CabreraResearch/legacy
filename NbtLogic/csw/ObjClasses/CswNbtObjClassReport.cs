@@ -44,35 +44,21 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void AfterModifyReportEventHandler();
         public static string AfterModifyReportEventName = "AfterModifyReport";
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
-            
+            Message = string.Empty;
+            ActionData = string.Empty;
+            ButtonAction = NbtButtonAction.Unknown;
             CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
             if( null != NodeTypeProp && null != OCP )
             {
                 if( btnRunPropertyName == OCP.PropName )
                 {
-                    ActionObj["action"] = "popup";
-                    ActionObj["url"] = "report.html?reportid=" + Node.NodeId.ToString();
-                    /*//if we are not RPT, then just run the SQL
-                    if( Node.Properties[RPTFilePropertyName].AsBlob.Empty )
-                    {
-                        if(string.Empty != Node.Properties[SqlPropertyName].AsMemo.Text){
-                                CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", Node.Properties[SqlPropertyName].AsMemo.Text );
-                                DataTable rptDataTbl = cswRptSql.getTable();
-                                ActionObj["action"] = "reportgrid";
-                                CswGridData cg = new CswGridData( _CswNbtResources );
-                                ActionObj["data"] = cg.DataTableToJSON( rptDataTbl );
-                        }
-                        else throw ( new CswDniException( "Report has no SQL to run!") );
-                    }
-                    else
-                    {
-                        //we are CRPE, run as such...
-                        throw ( new CswDniException( "CRPE report not implemented yet." ) );
-                    }*/
+                    ButtonAction = NbtButtonAction.popup;
+                    ActionData = "report.html?reportid=" + Node.NodeId.ToString();
                 }
             }
+            return true;
         }
 
         #endregion Object class specific Events
