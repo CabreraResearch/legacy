@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.MetaData
             statictext,
             filter,
             filterpropid,
+            usenumbering,
             valueoptions,
             propname,
             isglobalunique,
