@@ -14,61 +14,67 @@
             Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
             button.enable();
         } else {
-            params = {
-                NodeTypePropAttr: propAttr
-            };
+            // case 25371 - Save the tab first
+            o.doSave({
+                onSuccess: function () {
 
-            Csw.ajax.post({
-                url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
-                data: params,
-                success: function (data) {
-                    button.enable();
-                    if (Csw.bool(data.success)) {
+                    params = {
+                        NodeTypePropAttr: propAttr
+                    };
 
-                        if (false === Csw.isNullOrEmpty(data.message)) {
-                            messagediv.text(data.message);
-                        }
+                    Csw.ajax.post({
+                        url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
+                        data: params,
+                        success: function (data) {
+                            button.enable();
+                            if (Csw.bool(data.success)) {
 
-                        switch (data.action) {
-                            case Csw.enums.nbtButtonAction.reauthenticate:
-                                if (Csw.clientChanges.manuallyCheckChanges()) {
-                                    /* case 24669 */
-                                    Csw.cookie.clearAll();
-                                    Csw.ajax.post({
-                                        url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
-                                        data: { PropId: propAttr },
-                                        success: function () {
-                                            Csw.clientChanges.unsetChanged();
-                                            window.location = "Main.html";
-                                        }
-                                    });
-                                }
-                                break;
-
-                            case Csw.enums.nbtButtonAction.refresh:
                                 if (false === Csw.isNullOrEmpty(data.message)) {
-                                    var MessageHandler = function(event, newmessagediv) {
-                                        $(newmessagediv).text(data.message);
-                                        Csw.unsubscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
-                                    };
-                                    Csw.subscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                    messagediv.text(data.message);
                                 }
-                                o.onReload();
-                                break;
-                            case Csw.enums.nbtButtonAction.popup:
-                                Csw.openPopup(data.actiondata, 800, 600);
-                                break;
-                            default:
-                                break;
+
+                                switch (data.action) {
+                                    case Csw.enums.nbtButtonAction.reauthenticate:
+                                        if (Csw.clientChanges.manuallyCheckChanges()) {
+                                            /* case 24669 */
+                                            Csw.cookie.clearAll();
+                                            Csw.ajax.post({
+                                                url: '/NbtWebApp/wsNBT.asmx/reauthenticate',
+                                                data: { PropId: propAttr },
+                                                success: function () {
+                                                    Csw.clientChanges.unsetChanged();
+                                                    window.location = "Main.html";
+                                                }
+                                            });
+                                        }
+                                        break;
+
+                                    case Csw.enums.nbtButtonAction.refresh:
+                                        if (false === Csw.isNullOrEmpty(data.message)) {
+                                            var MessageHandler = function (event, newmessagediv) {
+                                                $(newmessagediv).text(data.message);
+                                                Csw.unsubscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                            };
+                                            Csw.subscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                        }
+                                        o.onReload();
+                                        break;
+                                    case Csw.enums.nbtButtonAction.popup:
+                                        Csw.openPopup(data.actiondata, 800, 600);
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                        }, // ajax success()
+                        error: function () {
+                            button.enable();
                         }
-                    }
-                },
-                error: function () {
-                    button.enable();
-                }
-            });
-        }
-    };
+                    }); // ajax.post()
+                } // doSave.onSuccess()
+            }); // doSave()
+        }// if-else (Csw.isNullOrEmpty(propAttr)) {
+    }; // onButtonClick()
 
     var methods = {
         init: function (o) {
@@ -108,8 +114,7 @@
                 });
             }
 
-            if(o.ReadOnly)
-            {
+            if (o.ReadOnly) {
                 button.disable();
             }
 
