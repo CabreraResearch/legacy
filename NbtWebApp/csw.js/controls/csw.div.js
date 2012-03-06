@@ -29,6 +29,7 @@
             title: '',
             align: '',
             height: '',
+            width: '',
             styles: {},
             onClick: null
         };
@@ -53,6 +54,7 @@
             attr.add('align', internal.align);
             internal.styles.align = internal.align;
             internal.styles.height = internal.height;
+            internal.styles.width = internal.width;
             style.set(internal.styles);
 
             html += '<div ';
