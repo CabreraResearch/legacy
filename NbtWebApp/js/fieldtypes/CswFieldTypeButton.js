@@ -5,7 +5,7 @@
     "use strict";
     var pluginName = 'CswFieldTypeButton';
 
-    var onButtonClick = function (propid, button, o) {
+    var onButtonClick = function (propid, button, messagediv, o) {
         var propAttr = Csw.string(propid),
             params;
 
@@ -24,8 +24,13 @@
                 success: function (data) {
                     button.enable();
                     if (Csw.bool(data.success)) {
+
+                        if (false === Csw.isNullOrEmpty(data.message)) {
+                            messagediv.text(data.message);
+                        }
+
                         switch (data.action) {
-                            case Csw.enums.onObjectClassClick.reauthenticate:
+                            case Csw.enums.nbtButtonAction.reauthenticate:
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     /* case 24669 */
                                     Csw.cookie.clearAll();
@@ -39,14 +44,21 @@
                                     });
                                 }
                                 break;
-                            case Csw.enums.onObjectClassClick.refresh:
+
+                            case Csw.enums.nbtButtonAction.refresh:
+                                if (false === Csw.isNullOrEmpty(data.message)) {
+                                    var MessageHandler = function(event, newmessagediv) {
+                                        $(newmessagediv).text(data.message);
+                                        Csw.unsubscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                    };
+                                    Csw.subscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                }
                                 o.onReload();
                                 break;
-                            case Csw.enums.onObjectClassClick.popup:
-                                Csw.openPopup(data.url,800,600);
+                            case Csw.enums.nbtButtonAction.popup:
+                                Csw.openPopup(data.actiondata, 800, 600);
                                 break;
                             default:
-                                /* Nada */
                                 break;
                         }
                     }
@@ -67,14 +79,20 @@
             var propVals = o.propData.values,
                 value = Csw.string(propVals.text, o.propData.name),
                 mode = Csw.string(propVals.mode, 'button'),
+                messagediv,
+                table,
                 button;
 
             function onClick() {
-                onButtonClick(o.propid, button, o);
+                onButtonClick(o.propid, button, messagediv, o);
             }
 
+            table = propDiv.table({
+                ID: Csw.controls.dom.makeId(o.ID, '', 'tbl')
+            });
+
             if (mode === 'button') {
-                button = propDiv.button({
+                button = table.cell(1, 1).button({
                     ID: o.ID,
                     enabledText: value,
                     disabledText: value,
@@ -83,16 +101,29 @@
                 });
             }
             else {
-                button = propDiv.link({
+                button = table.cell(1, 1).link({
                     ID: o.ID,
                     value: value,
                     onClick: onClick
                 });
             }
 
+            if(o.ReadOnly)
+            {
+                button.disable();
+            }
+
+            messagediv = table.cell(1, 2).div({
+                ID: Csw.controls.dom.makeId(o.ID, '', 'msg'),
+                cssclass: 'buttonmessage'
+            });
+
             if (o.Required) {
                 button.addClass('required');
             }
+
+            Csw.publish(o.ID + 'CswFieldTypeButton_MessageHandler', messagediv.$);
+
         },
         save: function (o) {
             Csw.preparePropJsonForSave(o.propData);
