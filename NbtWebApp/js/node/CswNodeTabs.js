@@ -298,7 +298,7 @@
                         saveBtn = formTblCell11.button({ ID: 'SaveTab',
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
-                            onClick: function () { save(form, layoutTable, data, saveBtn, tabid); }
+                            onClick: function () { save(form, layoutTable, data, saveBtn, tabContentDiv, tabid); }
                         });
                     }
                     var atLeastOne = _handleProperties(form, layoutTable, data, tabContentDiv, tabid, false, saveBtn);
@@ -360,7 +360,7 @@
 
                     /* case 8494 */
                     if (!o.Config && !atLeastOne.Saveable && o.EditMode === Csw.enums.editMode.Add) {
-                        save(form, layoutTable, data, saveBtn, tabid);
+                        save(form, layoutTable, data, saveBtn, tabContentDiv, tabid);
                     }
                     else if (Csw.isFunction(o.onInitFinish)) {
                         o.onInitFinish(atLeastOne.Property);
@@ -518,7 +518,7 @@
                             onSuccess: null 
                         };
                         if(saveopts) $.extend(s, saveopts);
-                        save(form, layoutTable, propsData, saveBtn, tabid, s.onSuccess); 
+                        save(form, layoutTable, propsData, saveBtn, tabContentDiv, tabid, s.onSuccess); 
                     },
                     cswnbtnodekey: Csw.tryParseObjByIdx(o.nodekeys, 0),
                     EditMode: o.EditMode,
@@ -626,7 +626,7 @@
             }, 150);
         } // _updateSubProps()
 
-        function save(form, layoutTable, propsData, saveBtn, tabid, onSuccess) {
+        function save(form, layoutTable, propsData, saveBtn, tabContentDiv, tabid, onSuccess) {
             if (form.$.valid()) {
                 var propIds = _updatePropJsonFromForm(layoutTable, propsData);
                 var data = {
@@ -693,12 +693,18 @@
                             dataJson.PropIds = propIds;
                             copyNodeProps(function () { window.location.reload(); });
                         }
-                        if (doSave) {
-                            Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
-                        }
+
                         saveBtn.enable();
 
-                        Csw.tryExec(onSuccess);
+                        if (doSave) {
+
+                            // reload tab
+                            getProps(tabContentDiv, tabid);
+
+                            // external events
+                            Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
+                            Csw.tryExec(onSuccess);
+                        }
 
                     }, // success
                     error: function () {
