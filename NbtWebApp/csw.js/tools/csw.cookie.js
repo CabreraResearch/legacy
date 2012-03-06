@@ -17,13 +17,13 @@
             CurrentActionUrl: 'csw_currentactionurl',
             CurrentViewId: 'csw_currentviewid',
             CurrentViewMode: 'csw_currentviewmode',
-            CurrentReportId: 'csw_currentreportid',
+            //CurrentReportId: 'csw_currentreportid',
             CurrentSearchId: 'csw_currentsearchid',
             LastActionName: 'csw_lastactionname',
             LastActionUrl: 'csw_lastactionurl',
             LastViewId: 'csw_lastviewid',
             LastViewMode: 'csw_lastviewmode',
-            LastReportId: 'csw_lastreportid',
+            //LastReportId: 'csw_lastreportid',
             LastSearchId: 'csw_lastsearchid'
         };
 
