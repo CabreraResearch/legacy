@@ -3981,12 +3981,15 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            foreach( string NodeKey in NodeKeys )
+            if( 0 == RetCol.Count )
             {
-                CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-                if( null != NbtNodeKey )
+                foreach( string NodeKey in NodeKeys )
                 {
-                    RetCol.Add( NbtNodeKey.NodeId );
+                    CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
+                    if( null != NbtNodeKey )
+                    {
+                        RetCol.Add( NbtNodeKey.NodeId );
+                    }
                 }
             }
 

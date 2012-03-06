@@ -52,8 +52,11 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
     <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25322.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo24515.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo24988.cs" />
     <Compile Include="csw\ImportExport\CswGridData.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25226.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24914.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M11.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M13.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M10.cs" />
