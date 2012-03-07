@@ -63,7 +63,6 @@
                             onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
                         },
                         UseScrollbars: false,
-                        IncludeInQuickLaunch: false,
                         ShowToggleLink: false
                     });
                     
@@ -71,6 +70,7 @@
                         viewid: viewId,
                         nodeid: nodeId,
                         cswnbtnodekey: nodeKey,
+                        IncludeInQuickLaunch: false,
                         DefaultSelect: Csw.enums.nodeTree_DefaultSelect.root.name
                     });
 
