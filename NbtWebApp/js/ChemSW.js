@@ -18,6 +18,11 @@
 
         var external = {};
 
+        /* 
+        * We are deliberately not assigning this method to the 'global' internal or external collection 
+        * We don't want to inadvertantly allow for cross-polination among namespaces. 
+        * makeNameSpace's only tie to the Csw closure is against internal for default values.
+        */
         function makeNameSpace(externalCollection, internalCollection) {
             internalCollection = internalCollection || {
                 document: internal.document,
@@ -128,7 +133,8 @@
                     var methods = internalCollection.methods.slice(0);
                     return methods;
                 });
-
+            externalCollection.makeNameSpace = externalCollection.makeNameSpace ||
+                externalCollection.register('makeNameSpace', makeNameSpace);
             return externalCollection;
         }
 

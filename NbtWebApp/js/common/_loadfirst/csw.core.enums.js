@@ -1,17 +1,20 @@
-﻿/// <reference path="~/js/ChemSW-vsdoc.js" />
-/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
 (function _cswEnums() {
     'use strict';
 
-    var enums = (function () {
+    Csw.enums = Csw.enums ||
+        Csw.register('enums', Csw.makeNameSpace());
 
-        var external = {
-            constants: { unknownEnum: 'unknown' }
-        };
-        external.tryParse = function (cswEnum, enumMember, caseSensitive) {
+    Csw.enums.constants = Csw.enums.constants ||
+        Csw.enums.register('constants', { unknownEnum: 'unknown' });
+
+    Csw.enums.tryParse = Csw.enums.tryParse ||
+        Csw.enums.register('tryParse', function (cswEnum, enumMember, caseSensitive) {
+            'use strict';
             /// <summary>   Try to fetch an enum based on a string value. </summary>
-            var ret = external.constants.unknownEnum;
+            var ret = Csw.enums.constants.unknownEnum;
             if (Csw.contains(cswEnum, enumMember)) {
                 ret = cswEnum[enumMember];
             } else if (false === caseSensitive) {
@@ -23,8 +26,10 @@
                 });
             }
             return ret;
-        };
-        external.editMode = {
+        });
+
+    Csw.enums.editMode = Csw.enums.editMode ||
+        Csw.enums.register('editMode', {
             Edit: 'Edit',
             Add: 'Add',
             EditInPopup: 'EditInPopup',
@@ -34,8 +39,10 @@
             AuditHistoryInPopup: 'AuditHistoryInPopup',
             Preview: 'Preview',
             Table: 'Table'
-        };
-        external.errorType = {
+        });
+
+    Csw.enums.errorType = Csw.enums.errorType ||
+        Csw.enums.register('errorType', {
             warning: {
                 name: 'warning',
                 cssclass: 'CswErrorMessage_Warning'
@@ -44,11 +51,13 @@
                 name: 'error',
                 cssclass: 'CswErrorMessage_Error'
             }
-        };
+        });
 
-        external.ajaxUrlPrefix = '/NbtWebApp/wsNBT.asmx/';
+    Csw.enums.ajaxUrlPrefix = Csw.enums.ajaxUrlPrefix ||
+        Csw.enums.register('ajaxUrlPrefix', '/NbtWebApp/wsNBT.asmx/');
 
-        external.events = {
+    Csw.enums.events = Csw.enums.events ||
+        Csw.enums.register('events', {
             CswNodeDelete: 'CswNodeDelete',
             ajax: {
                 ajaxStart: 'ajaxStart',
@@ -56,38 +65,50 @@
                 globalAjaxStart: 'globalAjaxStart',
                 globalAjaxStop: 'globalAjaxStop'
             }
-        };
-        external.wizardSteps_InspectionDesign = {
+        });
+
+    Csw.enums.wizardSteps_InspectionDesign = Csw.enums.wizardSteps_InspectionDesign ||
+        Csw.enums.register('wizardSteps_InspectionDesign', {
             step1: { step: 1, description: 'Select an Inspection Target' },
             step2: { step: 2, description: 'Select an Inspection Design' },
             step3: { step: 3, description: 'Upload Template' },
             step4: { step: 4, description: 'Review Inspection Design' },
             step5: { step: 5, description: 'Finish' },
             stepcount: 5
-        };
-        external.wizardSteps_ScheduleRulesGrid = {
+        });
+
+    Csw.enums.wizardSteps_ScheduleRulesGrid = Csw.enums.wizardSteps_ScheduleRulesGrid ||
+        Csw.enums.register('wizardSteps_ScheduleRulesGrid', {
             step1: { step: 1, description: 'Select a Customer ID' },
             step2: { step: 2, description: 'Review the Scheduled Rules' },
             stepcount: 2
-        };
-        external.wizardSteps_FutureScheduling = {
-            step1: {step: 1, description: 'Specify Schedules'},
-            step2: {step: 2, description: 'Review'},
+        });
+
+    Csw.enums.wizardSteps_FutureScheduling = Csw.enums.wizardSteps_FutureScheduling ||
+        Csw.enums.register('wizardSteps_FutureScheduling', {
+            step1: { step: 1, description: 'Specify Schedules' },
+            step2: { step: 2, description: 'Review' },
             stepcount: 2
-        };
-        external.dialogButtons = {
+        });
+
+    Csw.enums.dialogButtons = Csw.enums.dialogButtons ||
+        Csw.enums.register('dialogButtons', {
             1: 'ok',
             2: 'ok/cancel',
             3: 'yes/no'
-        };
-        external.onObjectClassClick = {
+        });
+
+    Csw.enums.onObjectClassClick = Csw.enums.onObjectClassClick ||
+        Csw.enums.register('onObjectClassClick', {
             reauthenticate: 'reauthenticate',
             home: 'home',
             refresh: 'refresh',
             url: 'url',
             popup: 'popup'
-        };
-        external.inputTypes = {
+        });
+
+    Csw.enums.inputTypes = Csw.enums.inputTypes ||
+        Csw.enums.register('inputTypes', {
             button: { id: 0, name: 'button', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' },
             checkbox: { id: 1, name: 'checkbox', placeholder: false, autocomplete: false, value: { required: true, allowed: true }, defaultwidth: '' },
             color: { id: 2, name: 'color', placeholder: false, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '' },
@@ -111,22 +132,29 @@
             time: { id: 20, name: 'time', placeholder: false, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
             url: { id: 21, name: 'url', placeholder: true, autocomplete: true, value: { required: false, allowed: true }, defaultwidth: '200px' },
             week: { id: 22, name: 'week', placeholder: false, autocomplete: false, value: { required: false, allowed: true }, defaultwidth: '' }
-        };
-        external.viewMode = {
+        });
+
+    Csw.enums.viewMode = Csw.enums.viewMode ||
+        Csw.enums.register('viewMode', {
             grid: { name: 'Grid' },
             tree: { name: 'Tree' },
             list: { name: 'List' },
             table: { name: 'Table' }
-        };
-        external.rateIntervalTypes = {
+        });
+
+    Csw.enums.rateIntervalTypes = Csw.enums.rateIntervalTypes ||
+        Csw.enums.register('rateIntervalTypes', {
             WeeklyByDay: 'WeeklyByDay',
             MonthlyByDate: 'MonthlyByDate',
             MonthlyByWeekAndDay: 'MonthlyByWeekAndDay',
             YearlyByDate: 'YearlyByDate'
-        };
-        external.multiEditDefaultValue = '[Unchanged]';
+        });
 
-        external.imageButton_ButtonType = {
+    Csw.enums.multiEditDefaultValue = Csw.enums.multiEditDefaultValue ||
+        Csw.enums.register('multiEditDefaultValue', '[Unchanged]');
+
+    Csw.enums.imageButton_ButtonType = Csw.enums.imageButton_ButtonType ||
+        Csw.enums.register('imageButton_ButtonType', {
             None: -1,
             Add: 27,
             ArrowNorth: 28,
@@ -157,52 +185,60 @@
             ToggleActive: 1,
             ToggleInactive: 0,
             View: 8
-        };
+        });
 
-        external.searchCssClasses = {
+    Csw.enums.searchCssClasses = Csw.enums.searchCssClasses ||
+        Csw.enums.register('searchCssClasses', {
             nodetype_select: { name: 'csw_search_nodetype_select' },
             property_select: { name: 'csw_search_property_select' }
-        };
+        });
 
-        external.appMode = {
+    Csw.enums.appMode = Csw.enums.appMode ||
+        Csw.enums.register('appMode', {
             mode: 'full'
-        };
+        });
 
-        external.wizardSteps_ViewEditor = {
+    Csw.enums.wizardSteps_ViewEditor = Csw.enums.wizardSteps_ViewEditor ||
+        Csw.enums.register('wizardSteps_ViewEditor', {
             viewselect: { step: 1, description: 'Choose a View', divId: 'step1_viewselect' },
             attributes: { step: 2, description: 'Edit View Attributes', divId: 'step2_attributes' },
             relationships: { step: 3, description: 'Add Relationships', divId: 'step3_relationships' },
             properties: { step: 4, description: 'Select Properties', divId: 'step4_properties' },
             filters: { step: 5, description: 'Set Filters', divId: 'step5_filters' },
             tuning: { step: 6, description: 'Fine Tuning', divId: 'step6_tuning' }
-        };
+        });
 
-        external.cssClasses_ViewBuilder = {
+    Csw.enums.cssClasses_ViewBuilder = Csw.enums.cssClasses_ViewBuilder ||
+        Csw.enums.register('cssClasses_ViewBuilder', {
             subfield_select: { name: 'csw_viewbuilder_subfield_select' },
             filter_select: { name: 'csw_viewbuilder_filter_select' },
             default_filter: { name: 'csw_viewbuilder_default_filter' },
             filter_value: { name: 'csw_viewbuilder_filter_value' },
             metadatatype_static: { name: 'csw_viewbuilder_metadatatype_static' }
-        };
+        });
 
-        external.domElementEvent = {
+    Csw.enums.domElementEvent = Csw.enums.domElementEvent ||
+        Csw.enums.register('domElementEvent', {
             click: { name: 'click' },
             change: { name: 'change' },
             vclick: { name: 'vclick' },
             tap: { name: 'tap' }
-        };
+        });
 
-        external.objectClasses = {
+    Csw.enums.objectClasses = Csw.enums.objectClasses ||
+        Csw.enums.register('objectClasses', {
             GenericClass: 'GenericClass',
             InspectionDesignClass: 'InspectionDesignClass'
-        };
+        });
 
-        external.nodeSpecies = {
+    Csw.enums.nodeSpecies = Csw.enums.nodeSpecies ||
+        Csw.enums.register('nodeSpecies', {
             Plain: 'Plain',
             More: 'More'
-        };
+        });
 
-        external.subFieldNames = {
+    Csw.enums.subFieldNames = Csw.enums.subFieldNames ||
+        Csw.enums.register('subFieldNames', {
             Unknown: { name: 'unknown' },
             AllowedAnswers: { name: 'allowedanswers' },
             Answer: { name: 'answer' },
@@ -238,21 +274,22 @@
             ChangedDate: { name: 'changeddate' },
             Base: { name: 'base' },
             Exponent: { name: 'exponent' }
-        };
+        });
 
-        external.subFieldsMap = {
+    Csw.enums.subFieldsMap = Csw.enums.subFieldsMap ||
+        Csw.enums.register('subFieldsMap', {
             AuditHistoryGrid: { name: 'AuditHistoryGrid', subfields: {} },
             Barcode: {
                 name: 'Barcode',
                 subfields: {
-                    Barcode: external.subFieldNames.Barcode,
-                    Sequence: external.subFieldNames.Number
+                    Barcode: Csw.enums.subFieldNames.Barcode,
+                    Sequence: Csw.enums.subFieldNames.Number
                 }
             },
             Button: {
                 name: 'Button',
                 subfields: {
-                    Text: external.subFieldNames.Text
+                    Text: Csw.enums.subFieldNames.Text
                 }
             },
             Composite: { name: 'Composite', subfields: {} },
@@ -278,14 +315,14 @@
             Link: {
                 name: 'Link',
                 subfields: {
-                    Text: external.subFieldNames.Text,
-                    Href: external.subFieldNames.Href
+                    Text: Csw.enums.subFieldNames.Text,
+                    Href: Csw.enums.subFieldNames.Href
                 }
             },
             List: {
                 name: 'List',
                 subfields: {
-                    Value: external.subFieldNames.Value
+                    Value: Csw.enums.subFieldNames.Value
                 }
             },
             Location: { name: 'Location', subfields: {} },
@@ -293,14 +330,14 @@
             Logical: {
                 name: 'Logical',
                 subfields: {
-                    Checked: external.subFieldNames.Checked
+                    Checked: Csw.enums.subFieldNames.Checked
                 }
             },
             LogicalSet: { name: 'LogicalSet', subfields: {} },
             Memo: {
                 name: 'Memo',
                 subfields: {
-                    Text: external.subFieldNames.Text
+                    Text: Csw.enums.subFieldNames.Text
                 }
             },
             MTBF: { name: 'MTBF', subfields: {} },
@@ -309,33 +346,33 @@
             Number: {
                 name: 'Number',
                 subfields: {
-                    Value: external.subFieldNames.Value
+                    Value: Csw.enums.subFieldNames.Value
                 }
             },
             Password: {
                 name: 'Password',
                 subfields: {
-                    Password: external.subFieldNames.Password,
-                    ChangedDate: external.subFieldNames.ChangedDate
+                    Password: Csw.enums.subFieldNames.Password,
+                    ChangedDate: Csw.enums.subFieldNames.ChangedDate
                 }
             },
             PropertyReference: { name: 'PropertyReference', subfields: {} },
             Quantity: {
                 name: 'Quantity',
                 subfields: {
-                    Value: external.subFieldNames.Value,
-                    Units: external.subFieldNames.Number
+                    Value: Csw.enums.subFieldNames.Value,
+                    Units: Csw.enums.subFieldNames.Number
                 }
             },
             Question: {
                 name: 'Question',
                 subfields: {
-                    Answer: external.subFieldNames.Answer,
-                    CorrectiveAction: external.subFieldNames.CorrectiveAction,
-                    IsCompliant: external.subFieldNames.IsCompliant,
-                    Comments: external.subFieldNames.Comments,
-                    DateAnswered: external.subFieldNames.DateAnswered,
-                    DateCorrected: external.subFieldNames.DateCorrected
+                    Answer: Csw.enums.subFieldNames.Answer,
+                    CorrectiveAction: Csw.enums.subFieldNames.CorrectiveAction,
+                    IsCompliant: Csw.enums.subFieldNames.IsCompliant,
+                    Comments: Csw.enums.subFieldNames.Comments,
+                    DateAnswered: Csw.enums.subFieldNames.DateAnswered,
+                    DateCorrected: Csw.enums.subFieldNames.DateCorrected
                 }
             },
             Relationship: { name: 'Relationship', subfields: {} },
@@ -344,22 +381,23 @@
             Static: {
                 name: 'Static',
                 subfields: {
-                    Text: external.subFieldNames.Text
+                    Text: Csw.enums.subFieldNames.Text
                 }
             },
             Text: {
                 name: 'Text',
                 subfields: {
-                    Text: external.subFieldNames.Text
+                    Text: Csw.enums.subFieldNames.Text
                 }
             },
             TimeInterval: { name: 'TimeInterval', subfields: {} },
             UserSelect: { name: 'UserSelect', subfields: {} },
             ViewPickList: { name: 'ViewPickList', subfields: {} },
             ViewReference: { name: 'ViewReference', subfields: {} }
-        };
+        });
 
-        external.cssClasses_ViewEdit = {
+    Csw.enums.cssClasses_ViewEdit = Csw.enums.cssClasses_ViewEdit ||
+        Csw.enums.register('cssClasses_ViewEdit', {
             vieweditor_viewrootlink: { name: 'vieweditor_viewrootlink' },
             vieweditor_viewrellink: { name: 'vieweditor_viewrellink' },
             vieweditor_viewproplink: { name: 'vieweditor_viewproplink' },
@@ -367,30 +405,29 @@
             vieweditor_addfilter: { name: 'vieweditor_addfilter' },
             vieweditor_deletespan: { name: 'vieweditor_deletespan' },
             vieweditor_childselect: { name: 'vieweditor_childselect' }
-        };
+        });
 
-        external.viewChildPropNames = {
+    Csw.enums.viewChildPropNames = Csw.enums.viewChildPropNames ||
+        Csw.enums.register('viewChildPropNames', {
             root: { name: 'root' },
             childrelationships: { name: 'childrelationships' },
             properties: { name: 'properties' },
             filters: { name: 'filters' },
             propfilters: { name: 'filters' },
             filtermodes: { name: 'filtermodes' }
-        };
+        });
 
-        external.nodeTree_DefaultSelect = {
+    Csw.enums.nodeTree_DefaultSelect = Csw.enums.nodeTree_DefaultSelect ||
+        Csw.enums.register('nodeTree_DefaultSelect', {
             root: { name: 'root' },
             firstchild: { name: 'firstchild' },
             none: { name: 'none' }
-        };
+        });
 
-        external.toggleState = {
-            on: { name: 'on' },
-            off: { name: 'off' }
-        };
+    Csw.enums.toggleState = Csw.enums.toggleState ||
+        Csw.enums.register('toggleState', {
+            on: {name: 'on'},
+            off: {name: 'off'}
+        });
 
-        return external;
-    } ());
-    Csw.register('enum', enums);
-    Csw.enums = Csw.enums || enums;
 } ());
