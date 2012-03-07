@@ -54,8 +54,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( btnRunPropertyName == OCP.PropName )
                 {
+                    string have_rpt = "0";
+                    if( RPTFile.FileName.ToString().Length > 0 ) have_rpt = "1";
                     ButtonAction = NbtButtonAction.popup;
-                    ActionData = "report.html?reportid=" + Node.NodeId.ToString();
+                    ActionData = "report.html?reportid=" + Node.NodeId.ToString(); // +"&have_rpt=" + have_rpt;
                 }
             }
             return true;
