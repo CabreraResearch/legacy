@@ -1138,6 +1138,14 @@ namespace ChemSW.Nbt.MetaData
                 }
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
 
+                // case 25389
+                // Kind of a kludge here.  But something we may need to do when creating any new metadata object.
+                // CopyPropToNewNodeTypePropRow below instances the NodeTypeProp, but since its not yet in the cache, 
+                // it fetches a new empty row instead of using NewPropRow.
+                // So we need to associate NewPropRow with the CswNbtMetaDataNodeTypeProp in the cache.
+                CswNbtMetaDataNodeTypeProp NewMetaDataProp = _CswNbtMetaDataResources.NodeTypePropsCollection.makeNodeTypeProp( _CswNbtMetaDataResources, NewPropRow );
+                _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewMetaDataProp );
+
                 // BZ 10242 forces this to happen after the row is inserted, so we'll have to update it twice
                 NodeTypeProp.CopyPropToNewNodeTypePropRow( NewPropRow );
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NewPropsTable );
