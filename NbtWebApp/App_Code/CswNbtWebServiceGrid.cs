@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.WebServices
         {
             if( Position >= Array.Count )
             {
-                while( Position >= Array.Count )
+                for( Int32 I = Array.Count; I <= Position; I += 1 )
                 {
                     Array.Add( "" );
                 }
