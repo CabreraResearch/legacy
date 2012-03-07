@@ -136,10 +136,10 @@ window.abandonHope = false;
 
         makeNameSpace(external, internal);
 
-        external.controls = external.controls || external.register('controls', makeNameSpace());
-
         external.actions = external.actions || external.register('actions', makeNameSpace());
-
+        external.controls = external.controls || external.register('controls', makeNameSpace());
+        external.nbt = external.nbt || external.register('nbt', makeNameSpace());
+        
         return external;
 
     }());
