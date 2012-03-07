@@ -374,16 +374,20 @@ namespace ChemSW.Nbt.WebServices
                     //Case 20964. Client needs to know whether the inspection is complete.
                     if( false == Ret && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                     {
-                        CswNbtMetaDataObjectClassProp Finish = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishPropertyName );
-                        CswNbtMetaDataObjectClassProp Cancel = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelPropertyName );
-                        if( MetaDataProp.getObjectClassProp() == Finish ||
-                            MetaDataProp.getObjectClassProp() == Cancel )
+                        CswNbtMetaDataObjectClassProp MetaDataOCP = MetaDataProp.getObjectClassProp();
+                        if( MetaDataOCP != null )
                         {
-                            //Ret = Ret || Node.Properties[MetaDataProp].AsButton.Checked == Tristate.True;
-                            CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
-                            string Message = string.Empty;
-                            string ActionData = string.Empty;
-                            ( CswNbtNodeCaster.AsInspectionDesign( Node ) ).onButtonClick( MetaDataProp, out ButtonAction, out ActionData, out Message );
+                            CswNbtMetaDataObjectClassProp Finish = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishPropertyName );
+                            CswNbtMetaDataObjectClassProp Cancel = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelPropertyName );
+                            if( MetaDataOCP == Finish ||
+                                MetaDataOCP == Cancel )
+                            {
+                                //Ret = Ret || Node.Properties[MetaDataProp].AsButton.Checked == Tristate.True;
+                                CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
+                                string Message = string.Empty;
+                                string ActionData = string.Empty;
+                                ( CswNbtNodeCaster.AsInspectionDesign( Node ) ).onButtonClick( MetaDataProp, out ButtonAction, out ActionData, out Message );
+                            }
                         }
                     }
 

@@ -47,8 +47,9 @@ window.initMain = window.initMain || function (undefined) {
             setView();
         }
     } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
-        Csw.clientState.setCurrentReport(qs.reportid);
-        window.location = "Main.html";
+        //Csw.clientState.setCurrentReport(qs.reportid);
+        //window.location = "Main.html";
+        handleReport(qs.reportid);
     } else if (false == Csw.isNullOrEmpty(qs.clear)) {
         Csw.clientState.clearCurrent();
         window.location = "Main.html";
@@ -246,9 +247,9 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         if (Csw.clientChanges.manuallyCheckChanges() && itemIsSupported()) {
-            clear({ all: true });
 
             if (false === Csw.isNullOrEmpty(o.viewid)) {
+                clear({ all: true });
                 var renderView = function () {
 
                     Csw.clientState.setCurrentView(o.viewid, o.viewmode);
@@ -294,16 +295,18 @@ window.initMain = window.initMain || function (undefined) {
             } else if (false === Csw.isNullOrEmpty(type)) {
                 switch (type) {
                     case 'action':
+                        clear({ all: true });
                         handleAction({
                             'actionname': o.actionname,
                             'actionurl': o.actionurl
                         });
                         break;
                     case 'search':
+                        clear({ all: true });
                         universalsearch.restoreSearch(o.searchid);
                         break;
                     case 'report':
-                        window.location = "Report.aspx?reportid=" + o.reportid;
+                        handleReport(o.reportid);
                         break;
                 }
             }
@@ -314,7 +317,11 @@ window.initMain = window.initMain || function (undefined) {
         }
     }
 
-    // handleItemSelect()
+
+    function handleReport(reportid)
+    {
+        Csw.openPopup("Report.html?reportid=" + reportid, 600, 800);
+    }
 
     function refreshMainMenu(options) {
         //if (debugOn()) Csw.log('Main.refreshMainMenu()');

@@ -60,7 +60,7 @@
                                         o.onReload();
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:
-                                        Csw.openPopup(data.actiondata, 800, 600);
+                                        Csw.openPopup(data.actiondata, 600, 800);
                                         break;
                                     default:
                                         break;
