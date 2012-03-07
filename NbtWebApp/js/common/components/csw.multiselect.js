@@ -1,5 +1,5 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
 //See http://www.erichynds.com/examples/jquery-ui-multiselect-widget/demos for fancy options
 
