@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;

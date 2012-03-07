@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;

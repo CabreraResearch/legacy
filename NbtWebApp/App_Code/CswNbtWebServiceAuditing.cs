@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;

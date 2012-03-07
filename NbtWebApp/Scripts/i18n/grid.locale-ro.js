@@ -10,37 +10,37 @@
 $.jgrid = {
 	defaults : {
 		recordtext: "Vizualizare {0} - {1} din {2}",
-		emptyrecords: "Nu există înregistrări de vizualizat",
-		loadtext: "Încărcare...",
+		emptyrecords: "Nu existÄƒ Ã®nregistrÄƒri de vizualizat",
+		loadtext: "ÃŽncÄƒrcare...",
 		pgtext : "Pagina {0} din {1}"
 	},
 	search : {
-		caption: "Caută...",
-		Find: "Caută",
+		caption: "CautÄƒ...",
+		Find: "CautÄƒ",
 		Reset: "Resetare",
-		odata : ['egal', 'diferit', 'mai mic', 'mai mic sau egal','mai mare','mai mare sau egal', 'începe cu','nu începe cu','se găsește în','nu se găsește în','se termină cu','nu se termină cu','conține',''],
+		odata : ['egal', 'diferit', 'mai mic', 'mai mic sau egal','mai mare','mai mare sau egal', 'Ã®ncepe cu','nu Ã®ncepe cu','se gÄƒseÈ™te Ã®n','nu se gÄƒseÈ™te Ã®n','se terminÄƒ cu','nu se terminÄƒ cu','conÈ›ine',''],
 		groupOps: [	{ op: "AND", text: "toate" },	{ op: "OR",  text: "oricare" }	],
-		matchText: " găsite",
+		matchText: " gÄƒsite",
 		rulesText: " reguli"
 	},
 	edit : {
-		addCaption: "Adăugare înregistrare",
-		editCaption: "Modificare înregistrare",
-		bSubmit: "Salvează",
+		addCaption: "AdÄƒugare Ã®nregistrare",
+		editCaption: "Modificare Ã®nregistrare",
+		bSubmit: "SalveazÄƒ",
 		bCancel: "Anulare",
-		bClose: "Închide",
-		saveData: "Informațiile au fost modificate! Salvați modificările?",
+		bClose: "ÃŽnchide",
+		saveData: "InformaÈ›iile au fost modificate! SalvaÈ›i modificÄƒrile?",
 		bYes : "Da",
 		bNo : "Nu",
 		bExit : "Anulare",
 		msg: {
-			required:"Câmpul este obligatoriu",
-			number:"Vă rugăm introduceți un număr valid",
-			minValue:"valoarea trebuie sa fie mai mare sau egală cu",
-			maxValue:"valoarea trebuie sa fie mai mică sau egală cu",
-			email: "nu este o adresă de e-mail validă",
-			integer: "Vă rugăm introduceți un număr valid",
-			date: "Vă rugăm să introduceți o dată validă",
+			required:"CÃ¢mpul este obligatoriu",
+			number:"VÄƒ rugÄƒm introduceÈ›i un numÄƒr valid",
+			minValue:"valoarea trebuie sa fie mai mare sau egalÄƒ cu",
+			maxValue:"valoarea trebuie sa fie mai micÄƒ sau egalÄƒ cu",
+			email: "nu este o adresÄƒ de e-mail validÄƒ",
+			integer: "VÄƒ rugÄƒm introduceÈ›i un numÄƒr valid",
+			date: "VÄƒ rugÄƒm sÄƒ introduceÈ›i o datÄƒ validÄƒ",
 			url: "Nu este un URL valid. Prefixul  este necesar('http://' or 'https://')",
 			nodefined : " is not defined!",
 			novalue : " return value is required!",
@@ -49,40 +49,40 @@ $.jgrid = {
 		}
 	},
 	view : {
-		caption: "Vizualizare înregistrare",
-		bClose: "Închidere"
+		caption: "Vizualizare Ã®nregistrare",
+		bClose: "ÃŽnchidere"
 	},
 	del : {
-		caption: "Ștegere",
-		msg: "Ștergeți înregistrarea (înregistrările) selectate?",
-		bSubmit: "Șterge",
+		caption: "È˜tegere",
+		msg: "È˜tergeÈ›i Ã®nregistrarea (Ã®nregistrÄƒrile) selectate?",
+		bSubmit: "È˜terge",
 		bCancel: "Anulare"
 	},
 	nav : {
 		edittext: "",
-		edittitle: "Modifică rândul selectat",
+		edittitle: "ModificÄƒ rÃ¢ndul selectat",
 		addtext:"",
-		addtitle: "Adaugă rând nou",
+		addtitle: "AdaugÄƒ rÃ¢nd nou",
 		deltext: "",
-		deltitle: "Șterge rândul selectat",
+		deltitle: "È˜terge rÃ¢ndul selectat",
 		searchtext: "",
-		searchtitle: "Căutare înregistrări",
+		searchtitle: "CÄƒutare Ã®nregistrÄƒri",
 		refreshtext: "",
-		refreshtitle: "Reîncarcare Grid",
+		refreshtitle: "ReÃ®ncarcare Grid",
 		alertcap: "Avertisment",
-		alerttext: "Vă rugăm să selectați un rând",
+		alerttext: "VÄƒ rugÄƒm sÄƒ selectaÈ›i un rÃ¢nd",
 		viewtext: "",
-		viewtitle: "Vizualizează rândul selectat"
+		viewtitle: "VizualizeazÄƒ rÃ¢ndul selectat"
 	},
 	col : {
-		caption: "Arată/Ascunde coloanele",
-		bSubmit: "Salvează",
+		caption: "AratÄƒ/Ascunde coloanele",
+		bSubmit: "SalveazÄƒ",
 		bCancel: "Anulare"
 	},
 	errors : {
 		errcap : "Eroare",
 		nourl : "Niciun url nu este setat",
-		norecords: "Nu sunt înregistrări de procesat",
+		norecords: "Nu sunt Ã®nregistrÄƒri de procesat",
 		model : "Lungimea colNames <> colModel!"
 	},
 	formatter : {
@@ -91,8 +91,8 @@ $.jgrid = {
 		currency : {decimalSeparator:",", thousandsSeparator: " ", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0,00'},
 		date : {
 			dayNames:   [
-				"Dum", "Lun", "Mar", "Mie", "Joi", "Vin", "Sâm",
-				"Duminică", "Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă"
+				"Dum", "Lun", "Mar", "Mie", "Joi", "Vin", "SÃ¢m",
+				"DuminicÄƒ", "Luni", "MarÈ›i", "Miercuri", "Joi", "Vineri", "SÃ¢mbÄƒtÄƒ"
 			],
 			monthNames: [
 				"Ian", "Feb", "Mar", "Apr", "Mai", "Iun", "Iul", "Aug", "Sep", "Oct", "Noi", "Dec",
@@ -107,8 +107,8 @@ $.jgrid = {
 			 3rd = Al treilea / A treia 
 			 4th = Al patrulea/ A patra
 			 5th = Al cincilea / A cincea 
-			 6th = Al șaselea / A șasea
-			 7th = Al șaptelea / A șaptea
+			 6th = Al È™aselea / A È™asea
+			 7th = Al È™aptelea / A È™aptea
 			 .... 
 			 */
 			S: function (j) {return j < 11 || j > 13 ? ['st', 'nd', 'rd', 'th'][Math.min((j - 1) % 10, 3)] : 'th'},

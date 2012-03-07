@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.Design_Layout"  MasterPageFile="~/MainLayout.master" Title="Design Layout" Codebehind="Design_Layout.aspx.cs" %>
+<%@ Page Language="C#" AutoEventWireup="true" Inherits="ChemSW.Nbt.WebPages.Design_Layout"  MasterPageFile="~/MainLayout.master" Title="Design Layout" Codebehind="Design_Layout.aspx.cs" %>
 
 <%@ MasterType VirtualPath="~/MainLayout.master" %>
 

@@ -38,4 +38,4 @@ sub extract
     return $filelist;
 }
 
-printf("Finished compiling javascript\n");
+printf("Finished compiling CswAllMobile.min.js javascript\n");
