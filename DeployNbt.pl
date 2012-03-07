@@ -272,6 +272,7 @@ my $masterpassword = $schemata{$masterschema};
 
 &runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
 
+&runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_finalize_ora.sql" );
 
 #---------------------------------------------------------------------------------
 # 8. start schedule service
