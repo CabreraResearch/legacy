@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Web.Script.Serialization;
 using System.Collections.ObjectModel;
