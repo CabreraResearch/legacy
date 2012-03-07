@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Logic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -185,6 +185,17 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         } // getGridOuterJson()
 
+        private void _ensureIndex( JArray Array, Int32 Position )
+        {
+            if( Position >= Array.Count )
+            {
+                while( Position >= Array.Count )
+                {
+                    Array.Add( "" );
+                }
+            }
+        }
+
         /// <summary>
         /// Returns a thin JArray of grid row values
         /// </summary>
@@ -202,6 +213,15 @@ namespace ChemSW.Nbt.WebServices
             bool IsTruncated = false;
             if( NodeCount > 0 )
             {
+                JArray HeaderRow = new JArray();
+                CswCommaDelimitedString HeaderCols = new CswCommaDelimitedString();
+                RetRows.Add( HeaderRow );
+                foreach( CswViewBuilderProp VbProp in _PropsInGrid )
+                {
+                    HeaderRow.Add( VbProp.PropName );
+                    HeaderCols.Add( VbProp.PropName );
+                }
+
                 for( Int32 C = StartingNode; C < MaxRows && C < NodeCount; C += 1 )
                 {
                     Tree.goToNthChild( C );
@@ -210,7 +230,12 @@ namespace ChemSW.Nbt.WebServices
                     RetRows.Add( ThisRow );
                     foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
                     {
-                        ThisRow.Add( Prop["gestalt"] );
+                        Int32 ColumnIdx = HeaderCols.IndexOf( Prop["propname"].ToString() );
+                        if( ColumnIdx >= 0 )
+                        {
+                            _ensureIndex( ThisRow, ColumnIdx );
+                            ThisRow[ColumnIdx] = Prop["gestalt"];
+                        }
                     }
 
                     IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
