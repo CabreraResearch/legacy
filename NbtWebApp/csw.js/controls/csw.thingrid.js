@@ -29,24 +29,32 @@
             rows: [],
             width: '',
             height: '',
+            cellpadding: 2,
             linkText: 'More...',
             onLinkClick: null
         };
         var external = {};
 
         (function () {
-            var row = 1, col;
+            var row = 1,
+                col;
             if (options) {
                 $.extend(internal, options);
             }
 
             $.extend(external, Csw.controls.table(internal));
 
+            /* Ignore the header row for now */
+            if (internal.rows.length > 0) {
+                internal.rows.splice(0, 1);
+            }
+
             Csw.each(internal.rows, function (value) {
                 col = 1;
                 if (Csw.isArray(value)) {
                     Csw.each(value, function (subVal) {
-                        external.cell(row, col).append(subVal);
+                        var valString = Csw.string(subVal, '&nbsp;');
+                        external.cell(row, col).append(valString);
                         col += 1;
                     });
                 } else {
