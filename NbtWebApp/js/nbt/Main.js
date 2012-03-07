@@ -1,5 +1,5 @@
 ﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 /// <reference path="../globals/CswEnums.js" />
 
 window.initMain = window.initMain || function (undefined) {

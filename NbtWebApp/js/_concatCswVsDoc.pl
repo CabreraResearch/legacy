@@ -49,14 +49,14 @@ sub extractFile
     open(JSFILE, "$filename") or die("Cannot open js file: $filename ; $!");
     while((my $line = <JSFILE>)) 
     {
-        if($line !~ m/-vsdoc\.js/ &&
-           $line !~ m/"[^"\r\n]*module.*CswModule.*";/ )
+        if($line !~ m/-vsdoc\.js/ )
         {
             $ret .= $line;         
         }
     }
+    printf("Assembled $filename into ChemSW-vsdoc.js\n");
     close(JSFILE);
     return $ret;
 }
 
-printf("Finished compiling javascript\n");
+printf("Finished generating ChemSW-vsdoc.js\n");

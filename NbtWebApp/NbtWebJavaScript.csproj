@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -41,7 +41,9 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="css\ChemSW.min.css" />
+    <Content Include="css\csw.table.layout.css" />
     <Content Include="js\ChemSW-vsdoc.js" />
+    <Content Include="js\nbt\Main.js" />
     <Content Include="js\_first-vsdoc.js" />
     <Content Include="js\_last-vsdoc.js" />
     <Content Include="js\nbt\actions\csw.futureScheduling.js" />
@@ -52,7 +54,6 @@
     <Content Include="js\nbt\actions\CswQuotas.js" />
     <Content Include="js\nbt\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\nbt\actions\CswSessions.js" />
-    <Content Include="ChemSW.min.css" />
     <Content Include="ChemSW.min.js" />
     <Content Include="js\nbt\controls\CswButton.js" />
     <Content Include="js\nbt\controls\CswComboBox.js" />
@@ -63,7 +64,6 @@
     <Content Include="js\nbt\controls\CswNodeTypeSelect.js" />
     <Content Include="js\nbt\controls\CswSelect.js" />
     <Content Include="js\nbt\controls\CswTristateCheckBox.js" />
-    <Content Include="CswAll.min.css" />
     <Content Include="CswAll.min.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeBarcode.js" />
@@ -242,7 +242,6 @@
     <Content Include="js\common\tools\csw.cookie.js" />
     <Content Include="js\common\tools\csw.newwindow.js" />
     <Content Include="css\csw.combobox.css" />
-    <Content Include="css\csw.tablelayout.css" />
     <Content Include="js\common\components\csw.layouttable.js" />
     <Content Include="js\common\controls\csw.select.js" />
     <Content Include="js\common\components\csw.tristatecheckbox.js" />
@@ -261,17 +260,15 @@
     <Content Include="NodeReport.html" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="_DevIncludes.html" />
-    <Content Include="_DevIncludesShep.html" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="css\_compressor.pl" />
+    <None Include="js\_compileCommon.pl" />
     <None Include="js\_concatCswVsDoc.pl" />
-    <None Include="js\make_vsdoc.bat" />
     <None Include="js\_compileNbt.pl" />
-    <None Include="js\_compileCsw.pl" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
@@ -303,7 +300,7 @@
   <PropertyGroup>
     <PreBuildEvent>call $(ProjectDir)css\_compressor.pl $(ProjectDir)
 call $(ProjectDir)js\_concatCswVsDoc.pl $(ProjectDir)
-call $(ProjectDir)js\_compileCsw.pl $(ProjectDir)
+call $(ProjectDir)js\_compileCommon.pl $(ProjectDir)
 call $(ProjectDir)js\_compileNbt.pl $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>

@@ -1,7 +1,7 @@
 use strict;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\ChemSW.min.js";
+my $destfile = "$dir\\CswCommon.min.js";
 
 unlink($destfile);
 
@@ -10,4 +10,4 @@ $param .= "--js $dir\\js\\ChemSW-vsdoc.js ";
 
 `java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 
-printf("Finished compiling csw.js javascript\n");
+printf("Finished compiling CswCommon.min.js javascript\n");

@@ -1,7 +1,7 @@
 use strict;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\CswAll.min.js";
+my $destfile = "$dir\\CswNbt.min.js";
 
 unlink($destfile);
 
@@ -38,4 +38,4 @@ sub extract
     return $filelist;
 }
 
-printf("Finished compiling javascript\n");
+printf("Finished compiling CswNbt.min.js javascript\n");
