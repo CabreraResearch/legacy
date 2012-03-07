@@ -43,6 +43,8 @@
     <Content Include="css\ChemSW.min.css" />
     <Content Include="css\csw.table.layout.css" />
     <Content Include="js\ChemSW-vsdoc.js" />
+    <Content Include="CswCommon.min.js" />
+    <Content Include="CswNbt.min.js" />
     <Content Include="js\nbt\Main.js" />
     <Content Include="js\_first-vsdoc.js" />
     <Content Include="js\_last-vsdoc.js" />
@@ -54,7 +56,6 @@
     <Content Include="js\nbt\actions\CswQuotas.js" />
     <Content Include="js\nbt\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\nbt\actions\CswSessions.js" />
-    <Content Include="ChemSW.min.js" />
     <Content Include="js\nbt\controls\CswButton.js" />
     <Content Include="js\nbt\controls\CswComboBox.js" />
     <Content Include="js\nbt\controls\CswDiv.js" />
@@ -64,7 +65,6 @@
     <Content Include="js\nbt\controls\CswNodeTypeSelect.js" />
     <Content Include="js\nbt\controls\CswSelect.js" />
     <Content Include="js\nbt\controls\CswTristateCheckBox.js" />
-    <Content Include="CswAll.min.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeButton.js" />
