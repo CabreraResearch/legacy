@@ -96,7 +96,10 @@ namespace ChemSW.Nbt.PropTypes
 
             foreach( string aval in Value )
             {
-                if( false != Options.ContainsKey( aval ) ) newVals.Add( aval );
+                if( Options.ContainsKey( aval ) )
+                {
+                    newVals.Add( aval );
+                }
             }
             Value = newVals;
 

@@ -289,6 +289,7 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
+/*
         /// <summary>
         /// Checks to be sure all values assigned are valid against possible options
         /// </summary>
@@ -311,25 +312,8 @@ namespace ChemSW.Nbt.PropTypes
                 LogicalSetXmlDoc.ChildNodes[0].RemoveChild( DoomedNode );
             }
 
-            // X values
-            XmlNodeList XValueNodes = LogicalSetXmlDoc.ChildNodes[0].SelectNodes( "XValue" );
-            Collection<XmlNode> DoomedNodesX = new Collection<XmlNode>();
-            foreach( XmlNode XValueNode in XValueNodes )
-            {
-                string ThisXValue = XValueNode.Attributes["x"].Value;
-                if( false == XValues.Contains( ThisXValue ) )
-                {
-                    DoomedNodesX.Add( XValueNode );
-                }
-            }
-
-            foreach( XmlNode DoomedNodeX in DoomedNodesX )
-            {
-                LogicalSetXmlDoc.ChildNodes[0].RemoveChild( DoomedNodeX );
-            }
-
         } // ValidateValues() 
-
+*/
 
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
         private string _ElemName_LogicalSetJson = "logicalsetjson";
