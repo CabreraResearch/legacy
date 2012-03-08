@@ -91,13 +91,11 @@
                         ForMobile: o.formobile
                     });
                 }
-                Csw.tryExec(external.onAfterAjax, true);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus) {
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
                 Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
                 Csw.tryExec(o.error, textStatus);
-                Csw.tryExec(external.onAfterAjax, false);
             }
         }); /* $.ajax({ */
     }; /* internal.jsonPost */
@@ -156,13 +154,11 @@
                 } else {
                     Csw.tryExec(o.success, result);
                 }
-                Csw.tryExec(external.onAfterAjax, true);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus) {
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
                 Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
                 Csw.tryExec(o.error);
-                Csw.tryExec(external.onAfterAjax, false);
             }
         }); /* $.ajax({ */
     }; /* internal.jsonGet() */
@@ -257,37 +253,38 @@
         } /* if(o.url != '') */
     }; /* internal.xmlPost() */
 
-    internal.bindAjaxEvents = function () {
-
+    internal.bindAjaxEvents = (function () {
         if (false === internal.ajaxBindingsHaveRun) {
-
-            function ajaxStart(eventObj, watchGlobal) {
-                Csw.tryExec(external.onBeforeAjax, watchGlobal);
-                if (watchGlobal) {
-                    internal.ajaxCount += 1;
-                    if (internal.ajaxCount === 1) {
-                        Csw.publish(Csw.enums.events.ajax.globalAjaxStart);
+            return function () {
+                function ajaxStart(eventObj, watchGlobal) {
+                    if (watchGlobal) {
+                        internal.ajaxCount += 1;
+                        if (internal.ajaxCount === 1) {
+                            Csw.publish(Csw.enums.events.ajax.globalAjaxStart);
+                        }
                     }
                 }
-            }
 
-            Csw.subscribe(Csw.enums.events.ajax.ajaxStart, ajaxStart);
+                Csw.subscribe(Csw.enums.events.ajax.ajaxStart, ajaxStart);
 
-            function ajaxStop(eventObj, watchGlobal) {
-                if (watchGlobal) {
-                    internal.ajaxCount -= 1;
-                    if (internal.ajaxCount < 0) {
-                        internal.ajaxCount = 0;
+                function ajaxStop(eventObj, watchGlobal) {
+                    if (watchGlobal) {
+                        internal.ajaxCount -= 1;
+                        if (internal.ajaxCount < 0) {
+                            internal.ajaxCount = 0;
+                        }
+                    }
+                    if (internal.ajaxCount <= 0) {
+                        Csw.publish(Csw.enums.events.ajax.globalAjaxStop);
                     }
                 }
-                if (internal.ajaxCount <= 0) {
-                    Csw.publish(Csw.enums.events.ajax.globalAjaxStop);
-                }
-            }
 
-            Csw.subscribe(Csw.enums.events.ajax.ajaxStop, ajaxStop);
+                Csw.subscribe(Csw.enums.events.ajax.ajaxStop, ajaxStop);
+            };
+        } else {
+            return null;
         }
-    };
+    } ());
 
     Csw.ajax = Csw.ajax ||
         Csw.register('ajax', Csw.makeNameSpace(null, internal));
@@ -318,7 +315,7 @@
                 ajaxType = Csw.string(type);
             if (false === internal.ajaxBindingsHaveRun) {
                 Csw.tryExec(internal.bindAjaxEvents);
-            } 
+            }
             if (ajaxType.toLowerCase() !== internal.enums.dataType.xml) {
                 ret = internal.jsonGet(options);
             }
@@ -351,7 +348,7 @@
             return ret;
         });
 
-    Csw.ajax.dataType = Csw.ajax.dataType || 
+    Csw.ajax.dataType = Csw.ajax.dataType ||
         Csw.ajax.register('dataType', internal.enums.dataType);
 
 } ());

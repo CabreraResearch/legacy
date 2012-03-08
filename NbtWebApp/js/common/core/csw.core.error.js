@@ -1,12 +1,15 @@
-﻿/// <reference path="~/js/ChemSW-vsdoc.js" />
-/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
 (function () {
     'use strict';
 
-    var error = (function errorP() {
+    Csw.error = Csw.error ||
+        Csw.register('error', Csw.makeNameSpace());
 
-        function makeErrorObj(errorType, friendlyMsg, esotericMsg) {
+    Csw.error.makeErrorObj = Csw.error.makeErrorObj ||
+        Csw.error.register('makeErrorObj', function (errorType, friendlyMsg, esotericMsg) {
+            'use strict';
             /// <summary>Generates a Csw Error object suitable for displaying a client-side error.</summary>
             /// <param name="errorType" type="Enum"> Error type: Error or Warning </param>
             /// <param name="friendlyMsg" type="String"> Friendly message. </param>
@@ -17,9 +20,11 @@
                 message: Csw.string(friendlyMsg),
                 detail: Csw.string(esotericMsg)
             };
-        }
+        });
 
-        function showError(errorJson, friendlyMsg, esotericMsg) {
+    Csw.error.showError = Csw.error.showError ||
+        Csw.error.register('showError', function (errorJson, friendlyMsg, esotericMsg) {
+            'use strict';
             /// <summary>Displays an error message.</summary>
             /// <param name="errorJson" type="Object/String"> An error object or a String for errorType. If object, should contain type, message and detail properties.</param>
             /// <param name="friendlyMsg" type="String"> A friendly message to display.</param>
@@ -48,9 +53,11 @@
                 Csw.log(e.message + '; ' + e.detail);
             }
             return true;
-        }
+        });
 
-        function errorHandler(errorMsg, includeCallStack, includeLocalStorage, doAlert) {
+    Csw.error.errorHandler = Csw.error.errorHandler ||
+        Csw.error.register('errorHandler', function (errorMsg, includeCallStack, includeLocalStorage, doAlert) {
+            'use strict';
             if (Csw.hasWebStorage() && includeLocalStorage) {
                 Csw.log(window.localStorage);
             }
@@ -59,16 +66,6 @@
             } else {
                 Csw.log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
             }
-        }
-
-        return {
-            makeErrorObj: makeErrorObj,
-            showError: showError,
-            errorHandler: errorHandler
-        };
-
-    } ());
-    Csw.register('error', error);
-    Csw.error = Csw.error || error;
+        });
 
 } ());
