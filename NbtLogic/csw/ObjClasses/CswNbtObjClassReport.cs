@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string RPTFilePropertyName { get { return "RPT File"; } }
         public static string ReportNamePropertyName { get { return "Report Name"; } }
         public static string CategoryPropertyName { get { return "Category"; } }
-        public static string ViewPropertyName { get { return "View"; } }
+        //public static string ViewPropertyName { get { return "View"; } }
         public static string SqlPropertyName { get { return "SQL"; } }
         public static string btnRunPropertyName { get { return "Run"; } }
 
@@ -160,13 +160,13 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropViewReference View
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ViewPropertyName].AsViewReference );
-            }
-        }
+        //public CswNbtNodePropViewReference View
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNode.Properties[ViewPropertyName].AsViewReference );
+        //    }
+        //}
 
         #endregion
 

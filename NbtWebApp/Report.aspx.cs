@@ -89,22 +89,26 @@ namespace ChemSW.Nbt.WebPages
                 CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( Node );
 
                 // Get the Report Data
-				CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( ReportNode.View.ViewId );
-                if( View == null )
-					throw new CswDniException( ErrorType.Warning, "Report has invalid View", "Report received a null view" );
+                //CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( ReportNode.View.ViewId );
+                //if( View == null )
+                //    throw new CswDniException( ErrorType.Warning, "Report has invalid View", "Report received a null view" );
 
-                ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                Tree.goToRoot();
-                //Tree.goToNthChild( 0 );
-                if( Tree.getChildNodeCount() > 0 )
-                {
+                //ICswNbtTree Tree = Master.CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+                //Tree.goToRoot();
+                ////Tree.goToNthChild( 0 );
+                //if( Tree.getChildNodeCount() > 0 )
+                //{
                     // BROKEN BY case 24709
                     //Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
                     //string TransformedXml = Tree.getTreeAsXml();
                     //StringReader XmlReader = new StringReader( TransformedXml );
-                    DataSet ReportData = new DataSet();
+                    //DataSet ReportData = new DataSet();
                     //ReportData.ReadXml( XmlReader );
 
+                CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportNode.SQL.Text );
+                DataTable ReportTable = ReportSelect.getTable();
+                if(ReportTable.Rows.Count > 0) 
+                {
                     // Get the Report Layout File
                     Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
                     if( JctNodePropId > 0 )
@@ -139,11 +143,11 @@ namespace ChemSW.Nbt.WebPages
                             // Render the Report
                             ReportDocument Report = new ReportDocument();
                             Report.FileName = ReportTempFileName;
-                            Report.SetDataSource( ReportData );
+                            Report.SetDataSource( ReportTable );
                             _CrystalReportViewer.ReportSource = Report;
                         }
-                    }
-                }
+                    } // if( JctNodePropId > 0 )
+                } // if(ReportTable.Rows.Count > 0) 
                 else
                 {
                     Label NoResultsLabel = new Label();
