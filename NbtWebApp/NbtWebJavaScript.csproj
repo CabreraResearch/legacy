@@ -45,6 +45,7 @@
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
+    <Content Include="js\nbt\nodes\csw.node.tree.js" />
     <Content Include="js\nbt\Main.js" />
     <Content Include="js\_first-vsdoc.js" />
     <Content Include="js\_last-vsdoc.js" />
@@ -103,69 +104,12 @@
     <Content Include="js\nbt\fieldtypes\CswFieldTypeViewReference.js" />
     <Content Include="js\nbt\fieldtypes\_CswFieldTypeFactory.js" />
     <Content Include="js\nbt\Main.js" />
-    <Content Include="js\nbt\mobile\clientdb\CswMobileClientDb.js" />
-    <Content Include="js\nbt\mobile\clientdb\CswMobileClientDbResources.js" />
-    <Content Include="js\nbt\mobile\controls\CswButton.js" />
-    <Content Include="js\nbt\mobile\controls\CswDiv.js" />
-    <Content Include="js\nbt\mobile\controls\CswInput.js" />
-    <Content Include="js\nbt\mobile\controls\CswLink.js" />
-    <Content Include="js\nbt\mobile\controls\CswList.js" />
-    <Content Include="js\nbt\mobile\controls\CswMobileListView.js" />
-    <Content Include="js\nbt\mobile\controls\CswMobileMenuButton.js" />
-    <Content Include="js\nbt\mobile\controls\CswMobilePageFooter.js" />
-    <Content Include="js\nbt\mobile\controls\CswMobilePageHeader.js" />
-    <Content Include="js\nbt\mobile\controls\CswSelect.js" />
-    <Content Include="js\nbt\mobile\controls\CswSpan.js" />
-    <Content Include="js\nbt\mobile\controls\CswTable.js" />
-    <Content Include="js\nbt\mobile\controls\ICswMobileWebControls.js" />
-    <Content Include="js\nbt\mobile\CswAllMobile.min.js" />
-    <Content Include="js\nbt\mobile\CswMobile.css" />
-    <Content Include="js\nbt\mobile\CswMobile.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeDateTime.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeLink.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeList.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeLogical.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeMemo.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeNumber.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypePassword.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeQuantity.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeQuestion.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeStatic.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobileFieldTypeText.js" />
-    <Content Include="js\nbt\mobile\fieldtypes\CswMobilePropFactory.js" />
-    <Content Include="js\nbt\mobile\globals\CswEnums.js" />
-    <Content Include="js\nbt\mobile\globals\CswGlobalTools.js" />
-    <Content Include="js\nbt\mobile\globals\CswMobileEnums.js" />
-    <Content Include="js\nbt\mobile\globals\CswMobileTools.js" />
-    <Content Include="js\nbt\mobile\globals\CswPrototypeExtensions.js" />
-    <Content Include="js\nbt\mobile\globals\Global.js" />
-    <Content Include="js\nbt\mobile\objectclasses\CswMobileGenericClass.js" />
-    <Content Include="js\nbt\mobile\objectclasses\CswMobileInspectionDesignClass.js" />
-    <Content Include="js\nbt\mobile\objectclasses\CswMobileNodesFactory.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageFactory.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageHelp.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageLogin.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageNodes.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageOffline.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageOnline.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageProps.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageSearch.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageTabs.js" />
-    <Content Include="js\nbt\mobile\pages\CswMobilePageViews.js" />
-    <Content Include="js\nbt\mobile\sync\CswMobileBackgroundTask.js" />
-    <Content Include="js\nbt\mobile\sync\CswMobileSync.js" />
-    <Content Include="js\nbt\mobile\tools\CswAttr.js" />
-    <Content Include="js\nbt\mobile\tools\CswClientDb.js" />
-    <Content Include="js\nbt\mobile\tools\CswCookie.js" />
-    <Content Include="js\nbt\mobile\tools\CswString.js" />
-    <Content Include="js\nbt\mobile\tools\CswTools.js" />
-    <Content Include="js\nbt\node\CswNodeGrid.js" />
-    <Content Include="js\nbt\node\CswNodePreview.js" />
-    <Content Include="js\nbt\node\CswNodeSelect.js" />
-    <Content Include="js\nbt\node\CswNodeTable.js" />
-    <Content Include="js\nbt\node\CswNodeTabs.js" />
-    <Content Include="js\nbt\node\CswNodeTree.js" />
+    <Content Include="js\nbt\nodes\CswNodeGrid.js" />
+    <Content Include="js\nbt\nodes\CswNodePreview.js" />
+    <Content Include="js\nbt\nodes\CswNodeSelect.js" />
+    <Content Include="js\nbt\nodes\CswNodeTable.js" />
+    <Content Include="js\nbt\nodes\CswNodeTabs.js" />
+    <Content Include="js\nbt\nodes\CswNodeTree.js" />
     <Content Include="js\nbt\pagecmp\CswDashboard.js" />
     <Content Include="js\nbt\pagecmp\CswDefaultContent.js" />
     <Content Include="js\nbt\pagecmp\CswDialog.js" />
@@ -224,8 +168,7 @@
     <Content Include="js\common\core\csw.core.clientstate.js" />
     <Content Include="js\common\core\csw.type.date.js" />
     <Content Include="js\common\core\csw.core.debug.js" />
-    <Content Include="js\common\_loadfirst\csw.core.enums.js" />
-    <Content Include="csw.js\nodes\csw.nbt.nodeTree.js" />
+    <Content Include="js\common\core\csw.core.enums.js" />
     <Content Include="js\common\core\csw.core.error.js" />
     <Content Include="js\common\core\csw.core.events.js" />
     <Content Include="js\common\core\csw.type.function.js" />
@@ -236,9 +179,9 @@
     <Content Include="js\common\core\csw.core.tbd.js" />
     <Content Include="js\common\core\csw.core.tools.js" />
     <Content Include="js\common\core\csw.type.window.js" />
-    <Content Include="js\common\nodes\csw.interaction.js" />
-    <Content Include="js\common\nodes\csw.preview.js" />
-    <Content Include="js\common\props\csw.props.js" />
+    <Content Include="js\nbt\nodes\csw.node.interaction.js" />
+    <Content Include="js\nbt\nodes\csw.node.preview.js" />
+    <Content Include="js\nbt\props\csw.props.js" />
     <Content Include="js\common\tools\csw.clientdb.js" />
     <Content Include="js\common\tools\csw.cookie.js" />
     <Content Include="js\common\tools\csw.newwindow.js" />
@@ -267,6 +210,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="css\_compressor.pl" />
+    <None Include="js\_concatNbtVsDoc.pl" />
     <None Include="js\_compileCommon.pl" />
     <None Include="js\_concatCswVsDoc.pl" />
     <None Include="js\_compileNbt.pl" />
@@ -274,10 +218,7 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="js\nbt\mobile\ChemSW Live_files\" />
-    <Folder Include="js\nbt\mobile\local_files\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Reference Include="CombineAndMinify">
       <HintPath>..\packages\CombineAndMinify.1.8\lib\CombineAndMinify.dll</HintPath>
@@ -301,6 +242,7 @@
   <PropertyGroup>
     <PreBuildEvent>call $(ProjectDir)css\_compressor.pl $(ProjectDir)
 call $(ProjectDir)js\_concatCswVsDoc.pl $(ProjectDir)
+call $(ProjectDir)js\_concatNbtVsDoc.pl $(ProjectDir)
 call $(ProjectDir)js\_compileCommon.pl $(ProjectDir)
 call $(ProjectDir)js\_compileNbt.pl $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>

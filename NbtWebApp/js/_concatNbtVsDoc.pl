@@ -1,18 +1,21 @@
 use strict;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\js\\ChemSW-vsdoc.js";
+my $destfile = "$dir\\js\\CswNbt-vsdoc.js";
 
 unlink($destfile);
 
 my $js = "";
 $js .= extractFile("$dir\\js\\_first-vsdoc.js");
-$js .= extractFile("$dir\\js\\ChemSW.js");
-$js .= extract("$dir\\js\\common\\_loadfirst");
-$js .= extract("$dir\\js\\common\\components");
-$js .= extract("$dir\\js\\common\\controls");
-$js .= extract("$dir\\js\\common\\core");
-$js .= extract("$dir\\js\\common\\tools");
+$js .= extractFile("$dir\\js\\nbt\\Main.js");
+$js .= extract("$dir\\js\\nbt\\actions");
+$js .= extract("$dir\\js\\nbt\\controls");
+$js .= extract("$dir\\js\\nbt\\fieldtypes");
+$js .= extract("$dir\\js\\nbt\\nodes");
+$js .= extract("$dir\\js\\nbt\\pagecmp");
+$js .= extract("$dir\\js\\nbt\\props");
+$js .= extract("$dir\\js\\nbt\\tools");
+$js .= extract("$dir\\js\\nbt\\view");
 $js .= extractFile("$dir\\js\\_last-vsdoc.js");
 
 open(VSDOC, "> $destfile") or die("Cannot open vsdoc file: $destfile ; $!");
@@ -52,9 +55,9 @@ sub extractFile
             $ret .= $line;         
         }
     }
-    printf("Assembled $filename into ChemSW-vsdoc.js\n");
+    printf("Assembled $filename into CswNbt-vsdoc.js\n");
     close(JSFILE);
     return $ret;
 }
 
-printf("Finished generating ChemSW-vsdoc.js\n");
+printf("Finished generating CswNbt-vsdoc.js\n");
