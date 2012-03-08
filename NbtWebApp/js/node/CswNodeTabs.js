@@ -30,6 +30,7 @@
             Multi: false,
             ReadOnly: false,
             onSave: null,
+            ReloadTabOnSave: true,
             Refresh: null,
             onBeforeTabSelect: null,
             onTabSelect: null,
@@ -362,8 +363,9 @@
                     if (!o.Config && !atLeastOne.Saveable && o.EditMode === Csw.enums.editMode.Add) {
                         save(form, layoutTable, data, saveBtn, tabContentDiv, tabid);
                     }
-                    else if (Csw.isFunction(o.onInitFinish)) {
-                        o.onInitFinish(atLeastOne.Property);
+                    else 
+                    {
+                        Csw.tryExec(o.onInitFinish, atLeastOne.Property);
                     }
                 } // success{}
             }); // ajax
@@ -657,9 +659,7 @@
                                 url: o.CopyPropValuesUrl,
                                 data: dataJson,
                                 success: function (copy) {
-                                    if (Csw.isFunction(onSuccess)) {
-                                        onSuccess(copy);
-                                    }
+                                    Csw.tryExec(onSuccess, copy);
                                 }
                             }); // ajax						        
                         }
@@ -699,7 +699,9 @@
                         if (doSave) {
 
                             // reload tab
-                            getProps(tabContentDiv, tabid);
+                            if(o.ReloadTabOnSave) {
+                                getProps(tabContentDiv, tabid);
+                            }
 
                             // external events
                             Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
