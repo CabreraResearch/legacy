@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.Logic
                     _SortBy = JqGridSortBy.desc;
                 }
             }
-            
+
 
             _LiteralColumnName = ViewProperty.PropName.ToLower();
             _UniqueColumnName = ( _LiteralColumnName + "_" + ViewProperty.MetaDataPropId ).Replace( " ", "_" );
@@ -475,19 +475,19 @@ namespace ChemSW.Nbt.Logic
             get
             {
                 JProperty ReturnProp = null;
-                switch( _JqFieldType )
-                {
-                    case JqFieldType.date:
-                        ReturnProp = new JProperty( "datefmt", "m/d/Y" );
-                        break;
-                    case JqFieldType.time:
-                        ReturnProp = new JProperty( "datefmt", "h:i A" );
-                        break;
-                    //case JqFieldType.datetime:
-                    //    //this fieldtype is not yet implemented
-                    //    ReturnProp = new JProperty( "datefmt", "m/d/Y h:i A" );
-                    //    break;
-                }
+                //switch( _JqFieldType )
+                //{
+                //    case JqFieldType.date:
+                //        ReturnProp = new JProperty( "datefmt", "m/d/Y" );
+                //        break;
+                //    case JqFieldType.time:
+                //        ReturnProp = new JProperty( "datefmt", "h:i A" );
+                //        break;
+                //    //case JqFieldType.datetime:
+                //    //    //this fieldtype is not yet implemented
+                //    //    ReturnProp = new JProperty( "datefmt", "m/d/Y h:i A" );
+                //    //    break;
+                //}
                 return ReturnProp;
             }
         }
@@ -605,12 +605,12 @@ namespace ChemSW.Nbt.Logic
                 {
                     // jqGrid handles all date/time formats as the same type == date; 
                     // we must specify a datefmt to define the display template
-                    case JqFieldType.date:
-                        ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
-                        break;
-                    case JqFieldType.time:
-                        ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
-                        break;
+                    //case JqFieldType.date:
+                    //    ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
+                    //    break;
+                    //case JqFieldType.time:
+                    //    ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
+                    //    break;
                     //case JqFieldType.datetime:
                     //    //not implemented
                     //    ReturnProp = new JProperty( "formatter", JqFieldType.date.ToString() );
@@ -640,20 +640,20 @@ namespace ChemSW.Nbt.Logic
                 {
                     // jqGrid handles all date/time formats as the same type == date; 
                     // we must specify a datefmt to define the display template
-                    case JqFieldType.date:
-                        ReturnProp = new JProperty( "formatoptions",
-                                            new JObject(
-                                                new JProperty( "srcformat", "Y-m-d" ),
-                                                new JProperty( "newformat", "m/d/Y" ) )
-                                        );
-                        break;
-                    case JqFieldType.time:
-                        ReturnProp = new JProperty( "formatoptions",
-                                            new JObject(
-                                                new JProperty( "srcformat", "H:i:s" ),
-                                                new JProperty( "newformat", "H:i:s" ) )
-                                        );
-                        break;
+                    //case JqFieldType.date:
+                    //    ReturnProp = new JProperty( "formatoptions",
+                    //                        new JObject(
+                    //                            new JProperty( "srcformat", "Y-m-d" ),
+                    //                            new JProperty( "newformat", "m/d/Y" ) )
+                    //                    );
+                    //    break;
+                    //case JqFieldType.time:
+                    //    ReturnProp = new JProperty( "formatoptions",
+                    //                        new JObject(
+                    //                            new JProperty( "srcformat", "H:i:s" ),
+                    //                            new JProperty( "newformat", "H:i:s" ) )
+                    //                    );
+                    //    break;
                     //case JqFieldType.datetime:
                     //    //not implemented yet
                     //    ReturnProp = new JProperty ( "formatoptions",
