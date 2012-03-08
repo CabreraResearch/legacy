@@ -86,6 +86,22 @@ namespace ChemSW.Nbt.PropTypes
             return Value.Contains( ValueToCheck );
         }
 
+
+        /// <summary>
+        /// Checks to be sure all values assigned are valid against possible options
+        /// </summary>
+        public void ValidateValues()
+        {
+            CswCommaDelimitedString newVals = new CswCommaDelimitedString();
+
+            foreach( string aval in Value )
+            {
+                if( false != Options.ContainsKey( aval ) ) newVals.Add( aval );
+            }
+            Value = newVals;
+
+        } // ValidateValues() 
+
         /// <summary>
         /// Remove a value from the set of selected values
         /// </summary>

@@ -8,6 +8,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
+using System.Collections.ObjectModel;
 
 
 namespace ChemSW.Nbt.PropTypes
@@ -287,6 +288,47 @@ namespace ChemSW.Nbt.PropTypes
             }
             return ret;
         }
+
+        /// <summary>
+        /// Checks to be sure all values assigned are valid against possible options
+        /// </summary>
+        public void ValidateValues()
+        {
+            // Y values
+            XmlNodeList YValueNodes = LogicalSetXmlDoc.ChildNodes[0].SelectNodes( "YValue" );
+            Collection<XmlNode> DoomedNodes = new Collection<XmlNode>();
+            foreach( XmlNode YValueNode in YValueNodes )
+            {
+                string ThisYValue = YValueNode.Attributes["y"].Value;
+                if( false == YValues.Contains( ThisYValue ) )
+                {
+                    DoomedNodes.Add( YValueNode );
+                }
+            }
+
+            foreach( XmlNode DoomedNode in DoomedNodes )
+            {
+                LogicalSetXmlDoc.ChildNodes[0].RemoveChild( DoomedNode );
+            }
+
+            // X values
+            XmlNodeList XValueNodes = LogicalSetXmlDoc.ChildNodes[0].SelectNodes( "XValue" );
+            Collection<XmlNode> DoomedNodesX = new Collection<XmlNode>();
+            foreach( XmlNode XValueNode in XValueNodes )
+            {
+                string ThisXValue = XValueNode.Attributes["x"].Value;
+                if( false == XValues.Contains( ThisXValue ) )
+                {
+                    DoomedNodesX.Add( XValueNode );
+                }
+            }
+
+            foreach( XmlNode DoomedNodeX in DoomedNodesX )
+            {
+                LogicalSetXmlDoc.ChildNodes[0].RemoveChild( DoomedNodeX );
+            }
+
+        } // ValidateValues() 
 
 
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
