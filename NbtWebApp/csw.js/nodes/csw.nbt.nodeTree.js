@@ -34,7 +34,7 @@
         };
 
 
-        internal.make = function(data, viewid, viewmode, url) {
+        internal.make = function (data, viewid, viewmode, url) {
 
             var treeThemes = { "dots": true };
             if (viewmode === Csw.enums.viewMode.list.name) {
@@ -72,7 +72,7 @@
             }
             external.treeDiv.bind('select_node.jstree', selectNode);
 
-            function hoverNode (e, bindData) {
+            function hoverNode(e, bindData) {
                 var $hoverLI = $(bindData.rslt.obj[0]);
                 //var nodeid = $hoverLI.CswAttrDom('id').substring(internal.idPrefix.length);
                 var nodeid = $hoverLI.CswAttrNonDom('nodeid');
@@ -88,7 +88,7 @@
             external.treeDiv.bind('dehover_node.jstree', deHoverNode);
 
             external.treeDiv.$.jstree('select_node', Csw.controls.dom.tryParseElement(data.selectid));
-            
+
             internal.rootnode = external.treeDiv.find('li').first();
 
             if (Csw.bool(internal.ShowCheckboxes)) {
@@ -121,7 +121,7 @@
 
         }; // internal.make()
 
-        internal.firstSelectNode = function(myoptions) {
+        internal.firstSelectNode = function (myoptions) {
             var m = {
                 e: '',
                 data: '',
@@ -140,7 +140,7 @@
 
             // rebind event for next select
             external.treeDiv.unbind('select_node.jstree');
-            external.treeDiv.bind('select_node.jstree', function (e, data) { 
+            external.treeDiv.bind('select_node.jstree', function (e, data) {
                 return internal.handleSelectNode({
                     e: e,
                     data: data,
@@ -175,7 +175,7 @@
             Csw.tryExec(m.onSelectNode, optSelect);
         }; // internal.handleSelectNode()
 
-        internal.validateCheck = function($checkbox) {
+        internal.validateCheck = function ($checkbox) {
             var $selected = Csw.jsTreeGetSelected(external.treeDiv.$);
             return ($selected.$item.CswAttrNonDom('rel') === $checkbox.CswAttrNonDom('rel'));
         };
@@ -186,7 +186,7 @@
 
 
         // Typical mechanism for fetching tree data and making a tree
-        external.init = function(options) {
+        external.init = function (options) {
             var o = {
                 viewid: '',       // loads an arbitrary view
                 viewmode: '',
@@ -197,7 +197,7 @@
                 onViewChange: null, // function (newviewid, newviewmode) {},    // if the server returns a different view than what we asked for (e.g. case 21262)
                 DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name
             };
-            if(options) $.extend(o, options);
+            if (options) $.extend(o, options);
 
             var url = internal.RunTreeUrl;
             var dataParam = {
@@ -222,8 +222,8 @@
                 success: function (data) {
 
                     if (Csw.isNullOrEmpty(data)) {
-                        Csw.error.showError(Csw.enums.errorType.error.name, 
-                                            'The requested view cannot be rendered as a Tree.', 
+                        Csw.error.showError(Csw.enums.errorType.error.name,
+                                            'The requested view cannot be rendered as a Tree.',
                                             'View with ViewId: ' + o.viewid + ' does not exists or is not a Tree view.');
                     } else {
 
@@ -242,9 +242,9 @@
             }); // ajax
 
         }; // external.init()
-        
+
         // For making a tree without using the regular mechanism for fetching tree data
-        external.makeTree = function (treeData) { 
+        external.makeTree = function (treeData) {
             internal.make(treeData, '', 'tree', '');
         };
 
@@ -262,14 +262,18 @@
 
 
         external.expandAll = function () {
-            external.treeDiv.$.jstree('open_all', internal.rootnode.$);
+            if(external.treeDiv) {
+                external.treeDiv.$.jstree('open_all', internal.rootnode.$);
+            }
 
-            internal.toggleLink.text('Collapse All')
-                .unbind('click')
-                .click(function () { 
-                    external.collapseAll(); 
-                    return false; 
-                });
+            if (internal.toggleLink) {
+                internal.toggleLink.text('Collapse All')
+                    .unbind('click')
+                    .click(function () {
+                        external.collapseAll();
+                        return false;
+                    });
+            }
         };
 
         external.collapseAll = function () {
@@ -280,9 +284,9 @@
 
             internal.toggleLink.text('Expand All')
                 .unbind('click')
-                .click(function () { 
-                    external.expandAll(); 
-                    return false; 
+                .click(function () {
+                    external.expandAll();
+                    return false;
                 });
         };
 
@@ -305,7 +309,7 @@
             return ret;
         };
 
-        
+
         (function constructor() {
 
             if (false === Csw.isFunction(internal.onInitialSelectNode)) {
