@@ -5,7 +5,7 @@
 
     window.ChemSW = window.Csw = (function () {
 
-       var internal = {
+        var internal = {
             document: window.document,
             navigator: window.navigator,
             location: window.location,
@@ -23,8 +23,8 @@
         * We don't want to inadvertantly allow for cross-polination among namespaces. 
         * makeNameSpace's only tie to the Csw closure is against internal for default values.
         */
-        function makeNameSpace(externalCollection, internalCollection) {
-            internalCollection = internalCollection || {
+        function makeNameSpace(externalCollection, anInternalCollection) {
+            var internalCollection = {
                 document: internal.document,
                 navigator: internal.navigator,
                 location: internal.location,
@@ -34,6 +34,11 @@
                 uniqueIdCount: 0,
                 protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp']
             };
+            /* If supplied, expose the internalCollection to the namespace */
+            if (anInternalCollection) {
+                $.extend(anInternalCollection, internalCollection);
+            }
+
             externalCollection = externalCollection || {};
 
             externalCollection.register = externalCollection.register ||
