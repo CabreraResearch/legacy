@@ -14,22 +14,26 @@ ul.topnav li {
 	padding: 5px 7px 5px 7px;
 	position: relative; /*--Declare X and Y axis base for sub navigation--*/
 	display: block;
-	color: #6b94cf;
+	color: #3e73be;
 	cursor: pointer;
 }
 ul.topnav li:hover
 {
-	background-color: #ffffff;
+	color: #6b94cf;
+}    
+ul.topnav li:hover a
+{
+	color: #6b94cf;
 }    
 ul.topnav li a{
 	text-decoration: none;
-	color: #6b94cf;
+	color: #3e73be;
 }
 ul.topnav li ul.subnav {
 	list-style: none;
 	position: absolute; /*--Important - Keeps subnav from affecting main navigation flow--*/
 	left: 0; top: 22px;
-	background: #ebebeb;
+	background: #d8e9fa;
 	margin: 0; padding: 0;
 	display: none;
 	float: left;
@@ -39,7 +43,7 @@ ul.topnav li ul.subnav {
 }
 ul.topnav li ul.subnav li{
 	margin: 0; padding: 5px;
-	border-bottom: 1px solid #6b94cf;
+	border-bottom: 1px solid #3e73be;
 	clear: both;
 	width: 160px;
 }
