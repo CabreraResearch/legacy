@@ -48,6 +48,17 @@ namespace ChemSW.Nbt.Schema
                 DoomedNode.delete();
             }
 
+            // Set File gestalt to filename
+            string Sql = @"update jct_nodes_props 
+                              set gestalt = field1 
+                            where gestalt is null 
+                              and field1 is not null
+                              and nodetypepropid in (select nodetypepropid 
+                                                       from nodetype_props 
+                                                      where fieldtypeid in (select fieldtypeid 
+                                                                              from field_types 
+                                                                             where fieldtype = 'File'))";
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( Sql );
 
         }//Update()
 
