@@ -491,6 +491,15 @@ namespace ChemSW.Nbt.WebServices
                     ret["result"] = ErrString;
                 } //else
             } //if( null != NodeType && null != NodeTypeTab )
+
+            // Good opportunity to force an update on the node
+            if( Node != null )
+            {
+                CswNbtActUpdatePropertyValue ActUpdatePropVal = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                ActUpdatePropVal.UpdateNode( Node, true );
+                Node.postChanges( false );
+            }
+
             return ret;
         } // saveProps()
 

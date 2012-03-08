@@ -174,8 +174,8 @@ namespace ChemSW.Nbt.PropTypes
                 }
             } // if (RelationshipId > 0 && RelatedPropId > 0)
 
-            _CswNbtNodePropData.Field1 = Value;
-            _CswNbtNodePropData.Gestalt = Value;
+            _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
             _CswNbtNodePropData.PendingUpdate = false;
 
             return Value;
