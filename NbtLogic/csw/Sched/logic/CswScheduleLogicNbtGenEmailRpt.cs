@@ -72,12 +72,11 @@ namespace ChemSW.Nbt.Sched
             ret += ViewId.ToString();
             return ret;
         }
-        private string makeReportUrl( CswPrimaryKey ReportNodeId )
+        private string makeReportUrl( CswNbtObjClassReport ReportObjClass )
         {
             string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
             if( !ret.EndsWith( "/" ) ) ret += "/";
-            ret += "Main.html?reportid=";
-            ret += ReportNodeId.PrimaryKey.ToString();
+            ret += ReportObjClass.ReportUrl;
             return ret;
         }
 
@@ -176,7 +175,7 @@ namespace ChemSW.Nbt.Sched
                                                                 CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportObjClass.SQL.Text );
                                                                 DataTable ReportTable = ReportSelect.getTable();
 
-                                                                ReportLink = makeReportUrl( ReportNode.NodeId );
+                                                                ReportLink = makeReportUrl( ReportObjClass );
                                                                 ContinueWithReport = true;
 
                                                                 Subject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
