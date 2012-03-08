@@ -2112,7 +2112,7 @@ namespace ChemSW.Nbt.WebPages
                             foreach( CswNbtMetaDataNodeTypeProp OtherProp in SelectedNodeTypeProp.getOtherNodeTypeProps() )
                             {
                                 if( OtherProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
-                                    RelationshipValue.Items.Add( new ListItem( OtherProp.PropName, OtherProp.PropId.ToString() ) );
+                                    RelationshipValue.Items.Add( new ListItem( OtherProp.PropName, OtherProp.FirstPropVersionId.ToString() ) );
                             }
                             RelationshipValue.CssClass = "selectinput";
                             RelationshipValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
@@ -2128,18 +2128,26 @@ namespace ChemSW.Nbt.WebPages
                                 ( (Literal) RelatedPropRow.Cells[0].Controls[0] ).Text = "Related " + LabelNodeTypeProp + ":";
                                 DropDownList RelatedPropValue = new DropDownList();
 
+                                RelatedPropValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
+
                                 HiddenField RelatedPropType = new HiddenField();
                                 RelatedPropType.ID = "EditProp_RelatedPropType" + SelectedNodeTypeProp.PropId.ToString();
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropType );
 
-                                IEnumerable<ICswNbtMetaDataProp> RelatedProps = null;
                                 if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                 {
                                     CswNbtMetaDataNodeType RelatedNodeType = Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue );
                                     if( RelatedNodeType != null )
                                     {
                                         RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
-                                        RelatedProps = RelatedNodeType.getNodeTypeProps();
+                                        IEnumerable<CswNbtMetaDataNodeTypeProp> RelatedProps = RelatedNodeType.getNodeTypeProps();
+                                        if( RelatedProps != null )
+                                        {
+                                            foreach( CswNbtMetaDataNodeTypeProp RelatedProp in RelatedProps )
+                                            {
+                                                RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.FirstPropVersionId.ToString() ) );
+                                            }
+                                        }
                                     }
                                 }
                                 else
@@ -2148,14 +2156,15 @@ namespace ChemSW.Nbt.WebPages
                                     if( RelatedObjectClass != null )
                                     {
                                         RelatedPropType.Value = NbtViewPropIdType.ObjectClassPropId.ToString();
-                                        RelatedProps = RelatedObjectClass.ObjectClassProps;
+                                        IEnumerable<CswNbtMetaDataObjectClassProp> RelatedProps = RelatedObjectClass.ObjectClassProps;
+                                        if( RelatedProps != null )
+                                        {
+                                            foreach( CswNbtMetaDataObjectClassProp RelatedProp in RelatedProps )
+                                            {
+                                                RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.PropId.ToString() ) );
+                                            }
+                                        }
                                     }
-                                }
-                                RelatedPropValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
-                                if( RelatedProps != null )
-                                {
-                                    foreach( ICswNbtMetaDataProp RelatedProp in RelatedProps )
-                                        RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.PropId.ToString() ) );
                                 }
                                 RelatedPropValue.CssClass = "selectinput";
                                 RelatedPropValue.ID = "EditProp_RelatedPropValue" + SelectedNodeTypeProp.PropId.ToString();

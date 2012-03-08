@@ -17,7 +17,7 @@
             <div class="StandardMasterContentDiv">
                 <asp:ScriptManager ID="ScriptManager1" runat="server" EnablePartialRendering="true">
                     <Services>
-                        <asp:ServiceReference Path="TreeViewService.asmx" />
+ <%--                       <asp:ServiceReference Path="TreeViewService.asmx" />--%>
                     </Services>
                 </asp:ScriptManager>
 
