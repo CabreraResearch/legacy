@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInspectionTarget : CswNbtObjClass, ICswNbtPropertySetInspectionParent
     {
-        public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
+        //public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
         public static string LocationPropertyName { get { return "Location"; } }
         public static string DescriptionPropertyName { get { return "Description"; } }
@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
-        public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
+        //public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Object class specific properties
-
+/*
         /// <summary>
         /// Date of last Inspection
         /// </summary>
@@ -157,6 +157,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[LastInspectionDatePropertyName].AsDateTime );
             }
         }
+        */
 
         /// <summary>
         /// Inspection Target Inspection Status (OK, OOC)
