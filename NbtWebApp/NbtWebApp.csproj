@@ -1679,6 +1679,9 @@
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>OpenProblems.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Reports\SqlRptViewDict.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Include="Reports\TaskWorkOrder.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>TaskWorkOrder.cs</LastGenOutput>

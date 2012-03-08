@@ -26,7 +26,7 @@
             var qs = $.CswQueryString();
             if (false == Csw.isNullOrEmpty(qs.reportid)) {
                 if (false == Csw.isNullOrEmpty(qs.have_rpt)) {
-                    $('#btnCrystal').style = '';
+                    $('#btnCrystal').css('display','');
                 }
                 if (false == Csw.isNullOrEmpty(qs.rformat)) {
                     runReport(qs.reportid, qs.rformat);
