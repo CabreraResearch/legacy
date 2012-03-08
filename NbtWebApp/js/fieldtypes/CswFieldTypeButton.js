@@ -114,7 +114,7 @@
                 });
             }
 
-            if (o.ReadOnly) {
+            if (Csw.bool(o.ReadOnly)) {
                 button.disable();
             }
 
