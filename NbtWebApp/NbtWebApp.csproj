@@ -1620,6 +1620,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SqlRptViewDict.rpt</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Reports\TaskWorkOrder.cs">
       <AutoGen>True</AutoGen>
