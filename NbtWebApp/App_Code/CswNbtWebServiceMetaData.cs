@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;

@@ -93,7 +93,7 @@ _PM="PM"
 _closeDialog="Chiudi finestra"
 
 _lstMoveUpLab="Sposta su"
-_lstMoveDownLab="Sposta giù"
+_lstMoveDownLab="Sposta giÃ¹"
 _lstMoveLeftLab="Sposta a sinistra" 
 _lstMoveRightLab="Sposta a destra"
 _lstNewNodeLab="Aggiungi un filtro nidificato"

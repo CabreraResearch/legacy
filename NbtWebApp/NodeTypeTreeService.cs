@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;   // supports IDictionary
+using System.Collections.Generic;   // supports IDictionary
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;          // supports WebMethod attribute
 using ChemSW.Config;
