@@ -1891,7 +1891,7 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // copyPropValue()	
+        } // getBlob()	
 
 
 
