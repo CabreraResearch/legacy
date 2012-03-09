@@ -40,6 +40,7 @@ namespace ChemSW.Nbt
                 CswNbtNode.NodeTypeId = CswConvert.ToInt32( NodesTable.Rows[0]["nodetypeid"] );
                 CswNbtNode.NodeName = NodesTable.Rows[0]["nodename"].ToString();
                 CswNbtNode.ReadOnly = CswConvert.ToBoolean( NodesTable.Rows[0]["readonly"] );
+                CswNbtNode.IsDemo = CswConvert.ToBoolean( NodesTable.Rows[0]["isdemo"] );
                 CswNbtNode.Locked = CswConvert.ToBoolean( NodesTable.Rows[0]["locked"] );
                 CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
                 ReturnVal = true;
