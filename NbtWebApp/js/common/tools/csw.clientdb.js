@@ -1,91 +1,101 @@
-/// <reference path="~/js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
-(function _cswClientDb () {
+(function () {
     'use strict';
-    var clientDb = (function () {
+    /// <summary>
+    ///   Client db class to encapsulate get/set/update and delete methods against the localStorage object.
+    /// </summary>
+    /// <returns type="CswClientDb">Instance of itself. Must instance with 'new' keyword.</returns>
+
+    var internal = {
+        keys: [],
+        deserialize: $.parseJSON,
+        serializer: JSON,
+        hasLocalStorage: (window.Modernizr.localstorage && false === Csw.isNullOrEmpty(window.localStorage)),
+        hasSessionStorage: (window.Modernizr.sessionstorage && false === Csw.isNullOrEmpty(window.sessionStorage))
+    };
+    internal.serialize = internal.serializer.stringify;
+
+    internal.closureStorage = (function () {
+        var storage = {},
+            keys = [],
+            length = 0;
+        var clientDbP = {};
+        clientDbP.getItem = function (sKey) {
+            var ret = null;
+            if (sKey && storage.hasOwnProperty(sKey)) {
+                ret = storage[sKey];
+            }
+            return ret;
+        };
+        clientDbP.key = function (nKeyId) {
+            var ret = null;
+            if (keys.hasOwnProperty(nKeyId)) {
+                ret = keys[nKeyId];
+            }
+            return ret;
+        };
+        clientDbP.setItem = function (sKey, sValue) {
+            var ret = null;
+            if (sKey) {
+                if (false === storage.hasOwnProperty(sKey)) {
+                    keys.push(sKey);
+                    length += 1;
+                }
+                storage[sKey] = sValue;
+            }
+            return ret;
+        };
+        clientDbP.length = length;
+        clientDbP.removeItem = function (sKey) {
+            var ret = false;
+            if (sKey && storage.hasOwnProperty(sKey)) {
+                keys.splice(sKey, 1);
+                length -= 1;
+                delete storage[sKey];
+                ret = true;
+            }
+            return ret;
+        };
+        clientDbP.clear = function () {
+            storage = {};
+            keys = [];
+            length = 0;
+            return true;
+        };
+        clientDbP.hasOwnProperty = function (sKey) {
+            return storage.hasOwnProperty(sKey);
+        };
+
+        return clientDbP;
+    } ());
+
+    Csw.hasWebStorage = Csw.hasWebStorage ||
+        Csw.register('hasWebStorage', function () {
+            var ret = (window.Modernizr.localstorage || window.Modernizr.sessionstorage);
+            return ret;
+        });
+
+    Csw.clientDb = Csw.clientDb ||
+        Csw.register('clientDb', Csw.makeNameSpace());
 
 
-        /// <summary>
-        ///   Client db class to encapsulate get/set/update and delete methods against the localStorage object.
-        /// </summary>
-        /// <returns type="CswClientDb">Instance of itself. Must instance with 'new' keyword.</returns>
-    
-        //private
-        var memoryStorage = (function storageClosure() {
-            var storage = { },
-                keys = [],
-                length = 0;
-            var externalP = {};
-            externalP.getItem = function (sKey) {
-                var ret = null;
-                if (sKey && storage.hasOwnProperty(sKey)) {
-                    ret = storage[sKey];
-                }
-                return ret;
-            };
-            externalP.key = function (nKeyId) {
-                var ret = null;
-                if (keys.hasOwnProperty(nKeyId)) {
-                    ret = keys[nKeyId];
-                }
-                return ret;
-            };
-            externalP.setItem = function (sKey, sValue) {
-                var ret = null;
-                if (sKey) {
-                    if (false === storage.hasOwnProperty(sKey)) {
-                        keys.push(sKey);
-                        length += 1;
-                    }
-                    storage[sKey] = sValue;
-                }
-                return ret;
-            };
-            externalP.length = length;
-            externalP.removeItem = function (sKey) {
-                var ret = false;
-                if (sKey && storage.hasOwnProperty(sKey)) {
-                    keys.splice(sKey, 1);
-                    length -= 1;
-                    delete storage[sKey];
-                    ret = true;
-                }
-                return ret;
-            };
-            externalP.clear = function () {
-                storage = {};
-                keys = [];
-                length = 0;
-                return true;
-            };
-            externalP.hasOwnProperty = function (sKey) {
-                return storage.hasOwnProperty(sKey);
-            };
-            
-            return externalP;
-        }());
-
-        var keys = [],
-            serializer = JSON,
-            serialize = serializer.stringify,
-            deserialize = $.parseJSON,
-            hasLocalStorage = (window.Modernizr.localstorage && false === Csw.isNullOrEmpty(window.localStorage)),
-            hasSessionStorage = (window.Modernizr.sessionstorage && false === Csw.isNullOrEmpty(window.sessionStorage));
-
-        var external = {};
-        external.clear = function () {
+    Csw.clientDb.clear = Csw.clientDb.clear ||
+        Csw.clientDb.register('clear', function () {
             //nuke the entire storage collection
-            if (hasLocalStorage) {
+            if (internal.hasLocalStorage) {
                 window.localStorage.clear();
             }
-            if (hasSessionStorage) {
+            if (internal.hasSessionStorage) {
                 window.sessionStorage.clear();
             }
-            memoryStorage.clear();
+            internal.closureStorage.clear();
             return this;
-        };
-        external.getItem = function (key) {
+        });
+
+    Csw.clientDb.getItem = Csw.clientDb.getItem ||
+        Csw.clientDb.register('getItem', function (key) {
             var ret = '';
             if (false === Csw.isNullOrEmpty(key)) {
                 var value = Csw.string(window.localStorage.getItem(key));
@@ -93,48 +103,56 @@
                     value = Csw.string(window.sessionStorage.getItem(key));
                 }
                 if (Csw.isNullOrEmpty(value) || value === 'undefined') {
-                    value = Csw.string(memoryStorage.getItem(key));
+                    value = Csw.string(internal.closureStorage.getItem(key));
                 }
                 if (!Csw.isNullOrEmpty(value) && value !== 'undefined') {
                     try {
-                        ret = deserialize(value);
+                        ret = internal.deserialize(value);
                     } catch (e) {
                         ret = value;
                     }
                 }
             }
             return ret;
-        };
-        external.getKeys = function () {
+        });
+
+    Csw.clientDb.getKeys = Csw.clientDb.getKeys ||
+        Csw.clientDb.register('getKeys', function () {
             var locKey, sesKey, memKey;
-            if (Csw.isNullOrEmpty(keys) && window.localStorage.length > 0) {
+            if (Csw.isNullOrEmpty(internal.keys) && window.localStorage.length > 0) {
                 for (locKey in window.localStorage) {
-                    keys.push(locKey);
+                    internal.keys.push(locKey);
                 }
                 if (window.sessionStorage.length > 0) {
                     for (sesKey in window.sessionStorage) {
-                        keys.push(sesKey);
+                        internal.keys.push(sesKey);
                     }
                 }
-                if (memoryStorage.length > 0) {
-                    for (memKey in memoryStorage.keys) {
-                        keys.push(memKey);
+                if (internal.closureStorage.length > 0) {
+                    for (memKey in internal.closureStorage.keys) {
+                        internal.keys.push(memKey);
                     }
                 }
             }
-            return keys;
-        };
-        external.hasKey = function (key) {
+            return internal.keys;
+        });
+
+    Csw.clientDb.hasKey = Csw.clientDb.hasKey ||
+        Csw.clientDb.register('hasKey', function (key) {
             var ret = Csw.contains(this.getKeys(), key);
             return ret;
-        };
-        external.removeItem = function (key) {
+        });
+
+    Csw.clientDb.removeItem = Csw.clientDb.removeItem ||
+        Csw.clientDb.register('removeItem', function (key) {
             window.localStorage.removeItem(key);
             window.sessionStorage.removeItem(key);
-            memoryStorage.removeItem(key);
-            delete keys[key];
-        };
-        external.setItem = function (key, value) {
+            internal.closureStorage.removeItem(key);
+            delete internal.keys[key];
+        });
+
+    Csw.clientDb.setItem = Csw.clientDb.setItem ||
+        Csw.clientDb.register('setItem', function (key, value) {
             /// <summary>
             ///   Stores a key/value pair in localStorage. 
             ///   If localStorage is full, use sessionStorage. 
@@ -146,9 +164,9 @@
             var ret = true;
             if (false === Csw.isNullOrEmpty(key)) {
                 if (false === this.hasKey(key)) {
-                    keys.push(key);
+                    internal.keys.push(key);
                 }
-                var val = (typeof value === 'object') ? serialize(value) : value;
+                var val = (typeof value === 'object') ? internal.serialize(value) : value;
 
                 // if localStorage is full, we should fail gracefully into sessionStorage, then memory
                 try {
@@ -160,7 +178,7 @@
                     } catch (ssnErr) {
                         try {
                             window.sessionStorage.removeItem(key);
-                            memoryStorage.setItem(key, value);
+                            internal.closureStorage.setItem(key, value);
                         } catch (memErr) {
                             ret = false;
                         }
@@ -168,12 +186,7 @@
                 }
             }
             return ret;
-        };
+        });
 
-        return external;
 
-    }());
-    Csw.register('clientDb', clientDb);
-    Csw.clientDb = Csw.clientDb || clientDb;
-    
-}());
+} ());
