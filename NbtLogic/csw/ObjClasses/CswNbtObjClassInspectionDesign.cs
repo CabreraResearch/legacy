@@ -362,9 +362,11 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonAction = NbtButtonAction.refresh;
                             this.Status.Value = StatusValue;
                         }
-                        this.InspectionDate.DateTimeValue = DateTime.Now;
-                        this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
-
+                        if( true == this.InspectionDate.Empty )
+                        {
+                            this.InspectionDate.DateTimeValue = DateTime.Now;
+                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
+                        }
                         CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
                         if( ParentNode != null )
                         {
