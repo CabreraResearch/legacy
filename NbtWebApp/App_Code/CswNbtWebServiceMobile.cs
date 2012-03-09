@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.WebServices
                         NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionTarget.LocationPropertyName].Gestalt;
                         NodeProps["description"] = Node.Properties[CswNbtObjClassInspectionTarget.DescriptionPropertyName].Gestalt;
                         NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionTarget.StatusPropertyName].Gestalt;
-                        NodeProps["lastinspectiondate"] = Node.Properties[CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName].Gestalt;
+                        //NodeProps["lastinspectiondate"] = Node.Properties[CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName].Gestalt;
                         break;
                     }
 

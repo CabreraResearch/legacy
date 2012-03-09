@@ -832,7 +832,7 @@ namespace ChemSW.Nbt.MetaData
 
             //InsertedRow["nodetypetabsetid"] = CswConvert.ToDbVal(Tab.TabId);
             if( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass &&
-                FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Static )
+                FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
             {
                 InsertedRow["usenumbering"] = CswConvert.ToDbVal( true );
             }
