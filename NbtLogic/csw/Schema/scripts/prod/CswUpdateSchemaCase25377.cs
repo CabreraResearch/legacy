@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema to case 25377
     /// </summary>
-    public class CswUpdateSchemaTo25377 : CswUpdateSchemaTo
+    public class CswUpdateSchemaCase25377 : CswUpdateSchemaTo
     {
         //public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 12 ); } }
         //public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
@@ -33,6 +33,6 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-    }//class CswUpdateSchemaTo25377
+    }//class CswUpdateSchemaCase25377
 
 }//namespace ChemSW.Nbt.Schema
