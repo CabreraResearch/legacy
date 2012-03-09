@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string RPTFilePropertyName { get { return "RPT File"; } }
         public static string ReportNamePropertyName { get { return "Report Name"; } }
         public static string CategoryPropertyName { get { return "Category"; } }
-        public static string ViewPropertyName { get { return "View"; } }
+        //public static string ViewPropertyName { get { return "View"; } }
         public static string SqlPropertyName { get { return "SQL"; } }
         public static string btnRunPropertyName { get { return "Run"; } }
 
@@ -54,13 +54,19 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( btnRunPropertyName == OCP.PropName )
                 {
-                    string have_rpt = "0";
-                    if( RPTFile.FileName.ToString().Length > 0 ) have_rpt = "1";
                     ButtonAction = NbtButtonAction.popup;
-                    ActionData = "report.html?reportid=" + Node.NodeId.ToString() + "&have_rpt=" + have_rpt;
+                    ActionData = ReportUrl;
                 }
             }
             return true;
+        }
+
+        public string ReportUrl
+        {
+            get
+            {
+                return "Report.html?reportid=" + NodeId.ToString();
+            }
         }
 
         #endregion Object class specific Events
@@ -160,13 +166,13 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropViewReference View
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ViewPropertyName].AsViewReference );
-            }
-        }
+        //public CswNbtNodePropViewReference View
+        //{
+        //    get
+        //    {
+        //        return ( _CswNbtNode.Properties[ViewPropertyName].AsViewReference );
+        //    }
+        //}
 
         #endregion
 

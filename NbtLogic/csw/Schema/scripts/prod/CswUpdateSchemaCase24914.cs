@@ -19,9 +19,9 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version case24914
+    /// Updates the schema for case 24914
     /// </summary>
-    public class CswUpdateSchemaToCase24914 : CswUpdateSchemaTo
+    public class CswUpdateSchemaCase24914 : CswUpdateSchemaTo
     {
 
         public override void update()
@@ -40,6 +40,6 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-    }//class CswUpdateSchemaTo01M13
+    }//class CswUpdateSchemaCase24914
 
 }//namespace ChemSW.Nbt.Schema

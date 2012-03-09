@@ -2001,6 +2001,36 @@ namespace ChemSW.Nbt.WebServices
 
         } // report
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string doesReportSupportCrystal( string reportid )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
+                    CswNbtObjClassReport rptAsReport = CswNbtNodeCaster.AsReport( rpt );
+                    ReturnVal["result"] = ( false == rptAsReport.RPTFile.Empty ).ToString().ToLower();
+
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+
+        } // doesReportSupportCrystal()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

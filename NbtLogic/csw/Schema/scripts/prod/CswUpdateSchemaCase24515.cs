@@ -5,9 +5,9 @@
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to case 24515
+    /// Updates the schema for case 24515
     /// </summary>
-    public class CswUpdateSchemaToCase24515 : CswUpdateSchemaTo
+    public class CswUpdateSchemaCase24515 : CswUpdateSchemaTo
     {
 
         public override void update()
@@ -15,6 +15,6 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( MetaData.CswNbtMetaDataFieldType.NbtFieldType.Comments, MetaData.CswNbtMetaDataFieldType.DataType.XML );
         }//Update()
 
-    }//class CswUpdateSchemaTo24515
+    }//class CswUpdateSchemaCase24515
 
 }//namespace ChemSW.Nbt.Schema

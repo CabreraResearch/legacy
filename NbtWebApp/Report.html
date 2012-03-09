@@ -21,13 +21,24 @@
                 $('#spinner').hide();
             }
 
+            function showCrystal(reportid)
+            {
+                Csw.ajax.post({
+                    url: '/NbtWebApp/wsNBT.asmx/doesReportSupportCrystal',
+                    data: { reportid: reportid },
+                    success: function(data){
+                        if(Csw.bool(data.result)) {
+                            $('#btnCrystal').css('display','');
+                        }
+                    }
+                });
+            }
+
             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
             var qs = $.CswQueryString();
             if (false == Csw.isNullOrEmpty(qs.reportid)) {
-                if (false == Csw.isNullOrEmpty(qs.have_rpt)) {
-                    $('#btnCrystal').css('display','');
-                }
+                showCrystal(qs.reportid);
                 if (false == Csw.isNullOrEmpty(qs.rformat)) {
                     runReport(qs.reportid, qs.rformat);
                 }
@@ -36,7 +47,6 @@
                     $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
                     $('#btnCrystal').click(function () { window.location = 'report.aspx?reportid=' + qs.reportid; });
                 }
-
             }
         });
 
