@@ -8,11 +8,11 @@ unlink($destfile);
 my $js = "";
 $js .= extractFile("$dir\\js\\_first-vsdoc.js");
 $js .= extractFile("$dir\\js\\ChemSW.js");
-$js .= extract("$dir\\js\\common\\_loadfirst");
 $js .= extract("$dir\\js\\common\\components");
 $js .= extract("$dir\\js\\common\\controls");
 $js .= extract("$dir\\js\\common\\core");
 $js .= extract("$dir\\js\\common\\tools");
+$js .= extract("$dir\\js\\common\\types");
 $js .= extractFile("$dir\\js\\_last-vsdoc.js");
 
 open(VSDOC, "> $destfile") or die("Cannot open vsdoc file: $destfile ; $!");

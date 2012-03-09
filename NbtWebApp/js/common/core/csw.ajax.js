@@ -161,7 +161,7 @@
                 Csw.tryExec(o.error);
             }
         }); /* $.ajax({ */
-    }; /* internal.jsonGet() */
+    };
 
     internal.xmlPost = function (options) {
         /// <summary>

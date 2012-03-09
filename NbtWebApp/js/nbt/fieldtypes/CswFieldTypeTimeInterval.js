@@ -100,7 +100,7 @@
 
                 Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             } catch (e) {
-                if (Csw.debugOn()) {
+                if (Csw.debug) {
                     Csw.log('Error updating propData: ' + e);
                 }
             }

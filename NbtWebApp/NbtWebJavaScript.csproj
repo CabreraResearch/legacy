@@ -11,7 +11,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
-    <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js</JSLintSkip>
+    <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js|\CswNbt.min.js|\CswCommon.min.js</JSLintSkip>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,6 +45,7 @@
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
+    <Content Include="js\common\components\csw.tree.js" />
     <Content Include="js\nbt\nodes\csw.node.tree.js" />
     <Content Include="js\nbt\Main.js" />
     <Content Include="js\_first-vsdoc.js" />
@@ -160,25 +161,23 @@
     <Content Include="js\common\components\csw.multiselect.js" />
     <Content Include="js\common\components\csw.nodetypeselect.js" />
     <Content Include="js\common\controls\csw.numbertextbox.js" />
-    <Content Include="js\common\core\csw.core.ajax.js" />
-    <Content Include="js\common\core\csw.type.array.js" />
-    <Content Include="js\common\core\csw.type.boolean.js" />
-    <Content Include="js\common\core\csw.core.clientchanges.js" />
-    <Content Include="js\common\core\csw.core.clientsession.js" />
-    <Content Include="js\common\core\csw.core.clientstate.js" />
-    <Content Include="js\common\core\csw.type.date.js" />
-    <Content Include="js\common\core\csw.core.debug.js" />
-    <Content Include="js\common\core\csw.core.enums.js" />
-    <Content Include="js\common\core\csw.core.error.js" />
-    <Content Include="js\common\core\csw.core.events.js" />
-    <Content Include="js\common\core\csw.type.function.js" />
-    <Content Include="js\common\core\csw.core.menu.js" />
-    <Content Include="js\common\core\csw.type.number.js" />
-    <Content Include="js\common\core\csw.type.object.js" />
-    <Content Include="js\common\core\csw.type.string.js" />
-    <Content Include="js\common\core\csw.core.tbd.js" />
-    <Content Include="js\common\core\csw.core.tools.js" />
-    <Content Include="js\common\core\csw.type.window.js" />
+    <Content Include="js\common\core\csw.ajax.js" />
+    <Content Include="js\common\types\csw.array.js" />
+    <Content Include="js\common\types\csw.boolean.js" />
+    <Content Include="js\common\core\csw.clientchanges.js" />
+    <Content Include="js\common\core\csw.clientsession.js" />
+    <Content Include="js\common\core\csw.clientstate.js" />
+    <Content Include="js\common\types\csw.date.js" />
+    <Content Include="js\common\core\csw.debug.js" />
+    <Content Include="js\common\core\csw.enums.js" />
+    <Content Include="js\common\core\csw.error.js" />
+    <Content Include="js\common\core\csw.events.js" />
+    <Content Include="js\common\types\csw.function.js" />
+    <Content Include="js\common\core\csw.menu.js" />
+    <Content Include="js\common\types\csw.number.js" />
+    <Content Include="js\common\types\csw.object.js" />
+    <Content Include="js\common\types\csw.string.js" />
+    <Content Include="js\common\types\csw.window.js" />
     <Content Include="js\nbt\nodes\csw.node.interaction.js" />
     <Content Include="js\nbt\nodes\csw.node.preview.js" />
     <Content Include="js\nbt\props\csw.props.js" />
@@ -194,7 +193,7 @@
     <Content Include="css\csw.menu.css" />
     <Content Include="css\csw.search.css" />
     <Content Include="css\csw.wizard.css" />
-    <Content Include="js\common\_loadfirst\csw.tools.pubsub.js" />
+    <Content Include="js\common\tools\csw.pubsub.js" />
     <Content Include="css\csw.vieweditor.css" />
     <Content Include="css\_style.css" />
     <Content Include="Main.html" />

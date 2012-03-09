@@ -4,114 +4,113 @@
 (function () {
     'use strict';
 
-    function comboBox(options) {
-        var internal = {
-            $parent: '',
-            ID: '',
-            topContent: '',
-            selectContent: 'This ComboBox Is Empty!',
-            width: '180px',
-            onClick: function() { return true; },
-            topTable: {},
+    Csw.controls.comboBox = Csw.controls.comboBox ||
+        Csw.controls.register('comboBox', function (options) {
+            var internal = {
+                $parent: '',
+                ID: '',
+                topContent: '',
+                selectContent: 'This ComboBox Is Empty!',
+                width: '180px',
+                onClick: function () {
+                    return true;
+                },
+                topTable: {},
 
-            hideTo: null
-        };
-        var external = {};
+                hideTo: null
+            };
+            var external = {};
 
-        internal.hoverIn = function () {
-            clearTimeout(internal.hideTo);
-        };
+            internal.hoverIn = function () {
+                clearTimeout(internal.hideTo);
+            };
 
-        internal.hoverOut = function () {
-            internal.hideTo = setTimeout(external.pickList.hide, 300);
-        };
+            internal.hoverOut = function () {
+                internal.hideTo = setTimeout(external.pickList.hide, 300);
+            };
 
 
-        (function () {
+            (function () {
 
-            function handleClick() {
-                if(Csw.tryExec(internal.onClick))
-                {
-                    external.toggle();
+                function handleClick () {
+                    if (Csw.tryExec(internal.onClick)) {
+                        external.toggle();
+                    }
                 }
-            }
 
-            if (options) {
-                $.extend(internal, options);
-            }
+                if (options) {
+                    $.extend(internal, options);
+                }
 
-            $.extend(external, Csw.controls.div(internal));
+                $.extend(external, Csw.controls.div(internal));
 
-            internal.topDiv = external.div({
-                ID: internal.ID + '_top',
-                cssclass: 'CswComboBox_TopDiv',
-                styles: { width: internal.width }
-            });
-
-            internal.topTable = internal.topDiv.table({
-                ID: Csw.controls.dom.makeId(internal.ID, 'tbl'),
-                width: '100%'
-            });
-
-            internal.topTable.cell(1, 1).text(internal.topContent)
-                .propDom('width', '100%')
-                .bind('click', handleClick);
-
-            internal.topTable.cell(1, 2)
-                .addClass('CswComboBox_ImageCell')
-                .imageButton({
-                    'ButtonType': Csw.enums.imageButton_ButtonType.Select,
-                    ID: internal.ID + '_top_img',
-                    AlternateText: '',
-                    onClick: handleClick
+                internal.topDiv = external.div({
+                    ID: internal.ID + '_top',
+                    cssclass: 'CswComboBox_TopDiv',
+                    styles: {width: internal.width}
                 });
 
-            external.pickList = external.div({
-                ID: internal.ID + '_child',
-                cssclass: 'CswComboBox_ChildDiv',
-                text: internal.selectContent,
-                styles: { width: internal.width }
-            }).bind('click', handleClick);
+                internal.topTable = internal.topDiv.table({
+                    ID: Csw.controls.dom.makeId(internal.ID, 'tbl'),
+                    width: '100%'
+                });
 
-            external.pickList.$.hover(internal.hoverIn, internal.hoverOut);
-        } ());
+                internal.topTable.cell(1, 1).text(internal.topContent)
+                    .propDom('width', '100%')
+                    .bind('click', handleClick);
 
-        external.topContent = function (content, itemid) {
-            var cell1 = internal.topTable.cell(1, 1);
-            cell1.text('');
-            cell1.empty();
-            cell1.append(content);
-            external.val(itemid);
-        };
-        external.toggle = function () {
-            internal.topDiv.$.toggleClass('CswComboBox_TopDiv_click');
-            external.pickList.$.toggle();
-        };
-        external.close = function () {
-            internal.topDiv.$.removeClass('CswComboBox_TopDiv_click');
-            external.pickList.hide();
-        };
-        external.open = function () {
-            internal.topDiv.$.addClass('CswComboBox_TopDiv_click');
-            external.pickList.show();
-        };
+                internal.topTable.cell(1, 2)
+                    .addClass('CswComboBox_ImageCell')
+                    .imageButton({
+                        'ButtonType': Csw.enums.imageButton_ButtonType.Select,
+                        ID: internal.ID + '_top_img',
+                        AlternateText: '',
+                        onClick: handleClick
+                    });
 
-        external.val = function (value) {
-            var ret;
-            if (Csw.isNullOrEmpty(value)) {
-                ret = internal.value;
-            } else {
-                ret = external;
-                external.propNonDom('value', value);
-                internal.value = value;
-            }
-            return ret;
-        };
+                external.pickList = external.div({
+                    ID: internal.ID + '_child',
+                    cssclass: 'CswComboBox_ChildDiv',
+                    text: internal.selectContent,
+                    styles: {width: internal.width}
+                }).bind('click', handleClick);
 
-        return external;
-    }
+                external.pickList.$.hover(internal.hoverIn, internal.hoverOut);
+            }());
 
-    Csw.controls.register('comboBox', comboBox);
-    Csw.controls.comboBox = Csw.controls.comboBox || comboBox;
+            external.topContent = function (content, itemid) {
+                var cell1 = internal.topTable.cell(1, 1);
+                cell1.text('');
+                cell1.empty();
+                cell1.append(content);
+                external.val(itemid);
+            };
+            external.toggle = function () {
+                internal.topDiv.$.toggleClass('CswComboBox_TopDiv_click');
+                external.pickList.$.toggle();
+            };
+            external.close = function () {
+                internal.topDiv.$.removeClass('CswComboBox_TopDiv_click');
+                external.pickList.hide();
+            };
+            external.open = function () {
+                internal.topDiv.$.addClass('CswComboBox_TopDiv_click');
+                external.pickList.show();
+            };
+
+            external.val = function (value) {
+                var ret;
+                if (Csw.isNullOrEmpty(value)) {
+                    ret = internal.value;
+                } else {
+                    ret = external;
+                    external.propNonDom('value', value);
+                    internal.value = value;
+                }
+                return ret;
+            };
+
+            return external;
+        });
 
 } ());
