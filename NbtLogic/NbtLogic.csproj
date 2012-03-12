@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -91,13 +91,10 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24914.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M11.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M13.cs" />
-      <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M10.cs" />
-  <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M10.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_01.cs" />
-
-
-
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M12.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M09.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M07.cs" />
@@ -303,6 +300,7 @@
     <Compile Include="csw\Search\CswNbtSearchFilterWrapper.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Search\CswNbtSearch.cs" />
+    <Compile Include="csw\View\CswNbtViewBuilder.cs" />
     <Compile Include="csw\Welcome\CswNbtWelcomeTable.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsProd.cs" />
     <Compile Include="csw\Schema\scripts\CswSchemaScriptsTest.cs" />

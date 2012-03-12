@@ -28,29 +28,29 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 1, 'L', 21 );
 
             // This is where you add new versions.
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M01() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M02() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M03() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M04() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M05() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M06() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M07() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M08() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M09() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );      //14
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );      //15
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );      //16
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );      //17
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );      //18
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );      //19
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );      //20
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );      //21
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );      //22
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );      //23
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M01() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M02() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M03() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M04() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M05() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M06() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M07() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M08() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M09() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );      //14
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );      //15
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );      //16
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );      //17
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );      //18
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );      //19
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );      //20
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );      //21
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );      //22
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );      //23
 
 
             // This automatically detects the latest version
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Schema
             CswSchemaUpdateDriver.Description = "Update to schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
             _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
 
-        }//addReleaseDmlDriver() 
+        }//_addVersionedScript() 
 
 
         #endregion
