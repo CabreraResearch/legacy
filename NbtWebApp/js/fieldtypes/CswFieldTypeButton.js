@@ -29,8 +29,13 @@
                             button.enable();
                             if (Csw.bool(data.success)) {
 
+                                // Button calls saveProps and saveProps calls getProps, so we'll need to display this on refresh
                                 if (false === Csw.isNullOrEmpty(data.message)) {
-                                    messagediv.text(data.message);
+                                    var MessageHandler = function (event, newmessagediv) {
+                                        $(newmessagediv).text(data.message);
+                                        Csw.unsubscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                    };
+                                    Csw.subscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
                                 }
 
                                 switch (data.action) {
@@ -50,13 +55,6 @@
                                         break;
 
                                     case Csw.enums.nbtButtonAction.refresh:
-                                        if (false === Csw.isNullOrEmpty(data.message)) {
-                                            var MessageHandler = function (event, newmessagediv) {
-                                                $(newmessagediv).text(data.message);
-                                                Csw.unsubscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
-                                            };
-                                            Csw.subscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
-                                        }
                                         o.onReload();
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:

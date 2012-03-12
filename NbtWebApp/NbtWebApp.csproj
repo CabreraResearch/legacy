@@ -1647,6 +1647,12 @@
       <DependentUpon>OpenProblems.rpt</DependentUpon>
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Reports\SqlRptViewDict.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SqlRptViewDict.rpt</DependentUpon>
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Reports\TaskWorkOrder.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -1709,6 +1715,10 @@
     <EmbeddedResource Include="Reports\OpenProblems.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>OpenProblems.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Reports\SqlRptViewDict.rpt">
+      <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
+      <LastGenOutput>SqlRptViewDict.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Reports\TaskWorkOrder.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>

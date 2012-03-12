@@ -151,6 +151,7 @@
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
                 EditMode: Csw.enums.editMode.Add,
+                ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey) {
                     $div.dialog('close');
                     Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey);
@@ -397,6 +398,7 @@
                     //title: o.title,
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     date: date,
+                    ReloadTabOnSave: false,
                     onEditView: function (viewid) {
                         if (Csw.isFunction(o.onEditView)) {
                             $div.dialog('close');

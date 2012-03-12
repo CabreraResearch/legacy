@@ -41,12 +41,17 @@ namespace ChemSW.Nbt.Schema
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
             addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo24988() ) );      //14
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );    //15
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaToCase24914() ) );  //16
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaToCase25226() ) );  //17
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaToCase24515() ) );  //18
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );    //19
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );      //14
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );      //15
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );      //16
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );      //17
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );      //18
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );      //19
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );      //20
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );      //21
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );      //22
+            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );      //23
+
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

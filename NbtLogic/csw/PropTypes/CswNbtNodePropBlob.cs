@@ -63,6 +63,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
+                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, value );
             }
         }
         public string ContentType

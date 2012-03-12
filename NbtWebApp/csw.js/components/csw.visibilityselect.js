@@ -1,5 +1,5 @@
-/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 
 (function _makeViewVisibilitySelect() {
     'use strict';
@@ -21,7 +21,7 @@
             $visroleselect: '',
             $visuserselect: ''
         };
-
+        
         Csw.clientSession.isAdministrator({
             'Yes': function () {
 

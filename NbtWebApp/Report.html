@@ -21,18 +21,32 @@
                 $('#spinner').hide();
             }
 
+            function showCrystal(reportid)
+            {
+                Csw.ajax.post({
+                    url: '/NbtWebApp/wsNBT.asmx/doesReportSupportCrystal',
+                    data: { reportid: reportid },
+                    success: function(data){
+                        if(Csw.bool(data.result)) {
+                            $('#btnCrystal').css('display','');
+                        }
+                    }
+                });
+            }
+
             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
             var qs = $.CswQueryString();
             if (false == Csw.isNullOrEmpty(qs.reportid)) {
+                showCrystal(qs.reportid);
                 if (false == Csw.isNullOrEmpty(qs.rformat)) {
                     runReport(qs.reportid, qs.rformat);
                 }
                 else {
                     $('#btnGrid').click(function () { runReport(qs.reportid, 'grid'); });
                     $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
+                    $('#btnCrystal').click(function () { window.location = 'report.aspx?reportid=' + qs.reportid; });
                 }
-
             }
         });
 
@@ -83,6 +97,7 @@
     <div id="formatChooser">
         <input type="button" value="View As Grid" id="btnGrid" />
         <input type="button" value="Save As CSV" id="btnCsv" />
+        <input type="button" value="View Using Crystal Reports" id="btnCrystal" style="display: none;" />
     </div>
     <div id="spinner" width="100%" style="text-align: center; display: none;">
         <img src="images/ajax/progress.gif" /></div>

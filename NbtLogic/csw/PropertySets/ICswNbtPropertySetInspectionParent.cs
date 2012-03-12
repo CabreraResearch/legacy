@@ -9,10 +9,10 @@ namespace ChemSW.Nbt.PropertySets
     public interface ICswNbtPropertySetInspectionParent
     {
         string InspectionParentStatusPropertyName { get; }
-        string InspectionParentLastInspectionDatePropertyName { get; }
+        //string InspectionParentLastInspectionDatePropertyName { get; }
 
         CswNbtNodePropList Status { get; }
-        CswNbtNodePropDateTime LastInspectionDate { get; }
+        //CswNbtNodePropDateTime LastInspectionDate { get; }
 
     }//ICswNbtPropertySetInspectionParent
 

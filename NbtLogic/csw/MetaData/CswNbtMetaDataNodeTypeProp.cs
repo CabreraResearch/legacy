@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.MetaData
             statictext,
             multi,
             nodeviewid,
-            read_only,
+            readOnly,
             //display_col_add,
             //display_row_add,
             //setvalonadd,

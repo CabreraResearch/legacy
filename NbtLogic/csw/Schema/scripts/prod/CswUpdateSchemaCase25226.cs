@@ -19,9 +19,9 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version case25226
+    /// Updates the schema for case 25226
     /// </summary>
-    public class CswUpdateSchemaToCase25226 : CswUpdateSchemaTo
+    public class CswUpdateSchemaCase25226 : CswUpdateSchemaTo
     {
 
         public override void update()
@@ -33,10 +33,11 @@ namespace ChemSW.Nbt.Schema
                 CswNbtObjClassUser cswAdminAsUser = CswNbtNodeCaster.AsUser( cswAdminNode );
                 DateTime adate = new DateTime( 2204, 1, 1 );
                 cswAdminAsUser.PasswordProperty.ChangedDate = adate;
+                cswAdminAsUser.postChanges( true );
             }
 
         }//Update()
 
-    }//class CswUpdateSchemaTo01M13
+    }//class CswUpdateSchemaCase25226
 
 }//namespace ChemSW.Nbt.Schema
