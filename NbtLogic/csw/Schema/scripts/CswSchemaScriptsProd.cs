@@ -28,18 +28,18 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 1, 'L', 21 );
 
             // This is where you add new versions.
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M01() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M02() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M03() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M04() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M05() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M06() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M07() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M08() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M09() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
-            addReleaseDmlDriver( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M01() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M02() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M03() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M04() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M05() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M06() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M07() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M08() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M09() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -50,6 +50,14 @@ namespace ChemSW.Nbt.Schema
             {
                 _LatestVersion = Version;
             }
+
+
+
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01() ), "Arbitrary DML" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), "Shell-out script" );
+
+            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), "Arbitrary DML" );
+            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), "Shell-out script" );
 
         }//ctor
 
@@ -134,39 +142,7 @@ namespace ChemSW.Nbt.Schema
 
 
 
-        #region #script order control
-        //These methods enable us to implemetn the Schema Updater Reform Act of 2011 (case 23787) 
-        //whilst allowing all the script iteration mechanisms to work business as usual
-        public void addUniversalPreProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
-        {
-            if( ( 0 != CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
-                ( "A" != CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) )
-            {
-                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a universal preprocess script; it's version must be in format 00-A-xx" ) );
-            }
-
-            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
-
-        }//addPreProcessDriver
-
-
-        public void addReleaseDdlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
-        {
-            if( ( 99 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
-                  ( 0 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
-                  ( "A" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
-                  ( "Z" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
-                  ( 0 != CswSchemaUpdateDriver.SchemaVersion.ReleaseIteration )
-                )
-            {
-                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a release-specific ddl script; it's version must be: CycleIteration > 0 and < 99; ReleaseIdentifier > A and < Z; ReleaseIteration == 0" ) );
-            }
-
-            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
-
-
-        }//addReleaseDdlDriver() 
-
+        #region Versioned scripts
 
         CswSchemaVersion _makeNextSchemaVersion()
         {
@@ -191,22 +167,9 @@ namespace ChemSW.Nbt.Schema
 
         }//_makeNextSchemaVersion()
 
-        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+
+        private void _addVersionedScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
-
-
-            /*
-            if( ( 99 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
-                  ( 0 == CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
-                  ( "A" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
-                  ( "Z" == CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) ||
-                  ( 0 == CswSchemaUpdateDriver.SchemaVersion.ReleaseIteration )
-                )
-            {
-                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a release-specific dml script; it's version must be: CycleIteration > 0 and < 99; ReleaseIdentifier > A and < Z; ReleaseIteration > 0" ) );
-            }
-             */
-
             CswSchemaUpdateDriver.SchemaVersion = _makeNextSchemaVersion();
             CswSchemaUpdateDriver.Description = "Update to schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
             _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
@@ -214,69 +177,53 @@ namespace ChemSW.Nbt.Schema
         }//addReleaseDmlDriver() 
 
 
-        public void addUniversalPostProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver )
-        {
-            if( ( 99 != CswSchemaUpdateDriver.SchemaVersion.CycleIteration ) ||
-                ( "Z" != CswSchemaUpdateDriver.SchemaVersion.ReleaseIdentifier.ToString().ToUpper() ) )
-            {
-                throw ( new CswDniException( "Schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + " cannot be a universal post-process script; it's version must be in format 99-Z-xx" ) );
-            }
-
-            _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
-
-        }//addPreProcessDriver        
         #endregion
 
+        #region Run-always scripts
+
+        //Run before
+        private List<CswSchemaUpdateDriver> _RunBeforeScripts = new List<CswSchemaUpdateDriver>();
+        public List<CswSchemaUpdateDriver> RunBeforeScripts
+        {
+            get
+            {
+                return ( _RunBeforeScripts );
+            }
+        }//RunBeforeScripts
 
 
-        //#region IEnumerable
-        //public IEnumerator<CswSchemaUpdateDriver> GetEnumerator()
-        //{
-        //    return ( new CswSchemaScriptsProdEnumerator( this ) );
-        //}
+        private void _addRunBeforeScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
+        {
+            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
+            CswSchemaUpdateDriver.Description = "Run before script: " + Description;
+            if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
+            {
+                _RunBeforeScripts.Add( CswSchemaUpdateDriver );
+            }
+        }//
 
-        //IEnumerator IEnumerable.GetEnumerator()
-        //{
-        //    return ( new CswSchemaScriptsProdEnumerator( this ) );
-        //}
 
+        //Run after
+        private List<CswSchemaUpdateDriver> _RunAfterScripts = new List<CswSchemaUpdateDriver>();
+        public List<CswSchemaUpdateDriver> RunAfterScripts
+        {
+            get
+            {
+                return ( _RunAfterScripts );
+            }
 
-        //private class CswSchemaScriptsProdEnumerator : IEnumerator<CswSchemaUpdateDriver>
-        //{
-        //    private CswSchemaScriptsProd _CswSchemaScriptsProd = null;
-        //    public CswSchemaScriptsProdEnumerator( CswSchemaScriptsProd CswSchemaScriptsProd )
-        //    {
-        //        _CswSchemaScriptsProd = CswSchemaScriptsProd;
-        //    }
+        }//RunBeforeScripts
+        private void _addRunAfterScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
+        {
+            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunAfterScripts.Count );
+            CswSchemaUpdateDriver.Description = "Run after script: " + Description;
+            if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
+            {
+                _RunAfterScripts.Add( CswSchemaUpdateDriver );
+            }
 
-        //    public CswSchemaUpdateDriver Current
-        //    {
-        //        get { throw new NotImplementedException(); }
-        //    }
-
-        //    public void Dispose()
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-
-        //    object IEnumerator.Current
-        //    {
-        //        get { throw new NotImplementedException(); }
-        //    }
-
-        //    public bool MoveNext()
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-
-        //    public void Reset()
-        //    {
-        //        throw new NotImplementedException();
-        //    }
-        //}//CswSchemaScriptsProdEnumerator
-
-        //#endregion
-
+        }//
+        #endregion
 
 
     }//CswScriptCollections

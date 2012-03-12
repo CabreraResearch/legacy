@@ -83,17 +83,11 @@ namespace ChemSW.Nbt.Schema
             return ( _CswSchemaScripts[CswSchemaVersion] );
         }//getDriver()
 
-        /// <summary>
-        /// Update the schema to the next version
-        /// </summary>
-        public bool Update( bool TakeADump = true )
+
+        private bool _runScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, bool StampVersion )
         {
 
-
-            //if( TakeADump )
-            //{
-            //    _CswSchemaScripts.addUniversalPreProcessDriver( new CswSchemaUpdateDriver( new CswUpdateSchema_Infr_TakeDump() ) );
-            //}
+            bool ReturnVal = true;
 
             CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
             CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
@@ -101,47 +95,113 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
             DataTable _UpdateHistoryTable = _UpdateHistoryTableUpdate.getTable();
 
+            CswSchemaUpdateDriver.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+            CswSchemaUpdateDriver.update();
+            ReturnVal = CswSchemaUpdateDriver.UpdateSucceeded;
+
+            if( false == ReturnVal )
+            {
+                // Belt and suspenders.
+                CswNbtResources.logError( new CswDniException( "Schema Updater encountered a problem: " + CswSchemaUpdateDriver.Message ) );
+                _ErrorMessage = "Error updating to schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString() + ": " + CswSchemaUpdateDriver.Message;
+            }
+            else if( StampVersion )
+            {
+                _CswSchemaScripts.stampSchemaVersion( CswNbtResources, CswSchemaUpdateDriver );
+            }
+
+            DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
+            NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
+            NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+            if( ReturnVal )
+            {
+                NewUpdateHistoryRow["log"] = CswSchemaUpdateDriver.Message;
+
+            }
+            else if( CswSchemaUpdateDriver.RollbackSucceeded )
+            {
+                NewUpdateHistoryRow["log"] = "Schema rolled back to previous version due to failure: " + CswSchemaUpdateDriver.Message;
+            }
+            else
+            {
+                NewUpdateHistoryRow["log"] = "Schema rollback failed; current schema state undefined: " + CswSchemaUpdateDriver.Message;
+            }
+
+            _UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );
+            _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
+
+            CswNbtResources.finalize();
+            CswNbtResources.release();
+
+            return ( ReturnVal );
+
+        }//_runScript()
+
+
+
+        public bool runArbitraryScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
+        {
+            return ( _runScript( CswSchemaUpdateDriver, false ) );
+        }//UpdateArbitraryScript
+
+
+        /// <summary>
+        /// Update the schema to the next version
+        /// </summary>
+        public bool runNextVersionedScript()
+        {
+
+
+            //CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+            //CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
+
+            //CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
+            //DataTable _UpdateHistoryTable = _UpdateHistoryTableUpdate.getTable();
+            CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+
             CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
-                CurrentUpdateDriver.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
-                CurrentUpdateDriver.update();
-                UpdateSuccessful = CurrentUpdateDriver.UpdateSucceeded;
 
-                if( !UpdateSuccessful )
-                {
-                    // Belt and suspenders.
-                    CswNbtResources.logError( new CswDniException( "Schema Updater encountered a problem: " + CurrentUpdateDriver.Message ) );
-                    _ErrorMessage = "Error updating to schema version " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Message;
-                }
-                else
-                {
-                    _CswSchemaScripts.stampSchemaVersion( CswNbtResources, CurrentUpdateDriver );
-                }
+                UpdateSuccessful = _runScript( CurrentUpdateDriver, true );
+                //CurrentUpdateDriver.CswNbtSchemaModTrnsctn = CswNbtSchemaModTrnsctn;
+                //CurrentUpdateDriver.update();
+                //UpdateSuccessful = CurrentUpdateDriver.UpdateSucceeded;
 
-                DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
-                NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
-                NewUpdateHistoryRow["version"] = CurrentUpdateDriver.SchemaVersion.ToString();
-                if( UpdateSuccessful )
-                {
-                    NewUpdateHistoryRow["log"] = CurrentUpdateDriver.Message;
+                //if( !UpdateSuccessful )
+                //{
+                //    // Belt and suspenders.
+                //    CswNbtResources.logError( new CswDniException( "Schema Updater encountered a problem: " + CurrentUpdateDriver.Message ) );
+                //    _ErrorMessage = "Error updating to schema version " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Message;
+                //}
+                //else
+                //{
+                //    _CswSchemaScripts.stampSchemaVersion( CswNbtResources, CurrentUpdateDriver );
+                //}
 
-                }
-                else if( CurrentUpdateDriver.RollbackSucceeded )
-                {
-                    NewUpdateHistoryRow["log"] = "Schema rolled back to previous version due to failure: " + CurrentUpdateDriver.Message;
-                }
-                else
-                {
-                    NewUpdateHistoryRow["log"] = "Schema rollback failed; current schema state undefined: " + CurrentUpdateDriver.Message;
-                }
+                //DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
+                //NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
+                //NewUpdateHistoryRow["version"] = CurrentUpdateDriver.SchemaVersion.ToString();
+                //if( UpdateSuccessful )
+                //{
+                //    NewUpdateHistoryRow["log"] = CurrentUpdateDriver.Message;
 
-                _UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );
-                _UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
+                //}
+                //else if( CurrentUpdateDriver.RollbackSucceeded )
+                //{
+                //    NewUpdateHistoryRow["log"] = "Schema rolled back to previous version due to failure: " + CurrentUpdateDriver.Message;
+                //}
+                //else
+                //{
+                //    NewUpdateHistoryRow["log"] = "Schema rollback failed; current schema state undefined: " + CurrentUpdateDriver.Message;
+                //}
 
-                CswNbtResources.finalize();
-                CswNbtResources.release();
+                //_UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );
+                //_UpdateHistoryTableUpdate.update( _UpdateHistoryTable );
+
+                //CswNbtResources.finalize();
+                //CswNbtResources.release();
 
             } // if update is valid
 
