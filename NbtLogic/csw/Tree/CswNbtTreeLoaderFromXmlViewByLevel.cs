@@ -498,7 +498,7 @@ namespace ChemSW.Nbt
                                     Where += @" and (";
                                 }
 
-                                Where += @" n.nodeid in (select s.nodeid from nodes s ";
+                                Where += @" n.nodeid in (select jnp.nodeid from jct_nodes_props jnp ";
 
                                 if( Prop.Type == NbtViewPropType.NodeTypePropId )
                                 {
@@ -510,9 +510,7 @@ namespace ChemSW.Nbt
                                              join nodetype_props p on (p.objectclasspropid = op.objectclasspropid  ";
                                 }
 
-                                Where += @"                                         and p.nodetypeid = s.nodetypeid) 
-                                                         left outer join jct_nodes_props jnp
-                                                          ON (jnp.nodeid = s.nodeid and jnp.nodetypepropid = p.nodetypepropid)
+                                Where += @"                and jnp.nodetypepropid = p.nodetypepropid) 
                                              where " + FilterValue + @"))";
 
 
