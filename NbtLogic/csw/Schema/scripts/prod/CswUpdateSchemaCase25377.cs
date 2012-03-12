@@ -7,13 +7,10 @@ using ChemSW.Nbt.MetaData;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to case 25377
+    /// Updates the schema for case 25377
     /// </summary>
     public class CswUpdateSchemaCase25377 : CswUpdateSchemaTo
     {
-        //public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 12 ); } }
-        //public override string Description { get { return "Update to schema version " + SchemaVersion.ToString(); } }
-
         public override void update()
         {
 
