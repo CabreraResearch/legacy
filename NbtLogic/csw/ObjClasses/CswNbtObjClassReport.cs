@@ -1,7 +1,12 @@
 ﻿using System.Collections.ObjectModel;
+using System.Data;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
+using ChemSW.DB;
+using ChemSW.Nbt;
+using ChemSW.Nbt.Logic;
+using ChemSW.Exceptions;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -12,6 +17,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ReportNamePropertyName { get { return "Report Name"; } }
         public static string CategoryPropertyName { get { return "Category"; } }
         public static string ViewPropertyName { get { return "View"; } }
+        public static string SqlPropertyName { get { return "SQL"; } }
+        public static string btnRunPropertyName { get { return "Run"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -36,6 +43,23 @@ namespace ChemSW.Nbt.ObjClasses
 
         public delegate void AfterModifyReportEventHandler();
         public static string AfterModifyReportEventName = "AfterModifyReport";
+
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
+        {
+            Message = string.Empty;
+            ActionData = string.Empty;
+            ButtonAction = NbtButtonAction.Unknown;
+            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            if( null != NodeTypeProp && null != OCP )
+            {
+                if( btnRunPropertyName == OCP.PropName )
+                {
+                    ButtonAction = NbtButtonAction.popup;
+                    ActionData = "report.html?reportid=" + Node.NodeId.ToString();
+                }
+            }
+            return true;
+        }
 
         #endregion Object class specific Events
 
@@ -90,13 +114,25 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
-        {
-            if( null != NodeTypeProp ) { /*Do Something*/ }
-        }
         #endregion
 
         #region Object class specific properties
+
+        public CswNbtNodePropMemo SQL
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[SqlPropertyName].AsMemo );
+            }
+        }
+
+        public CswNbtNodePropButton Run
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[btnRunPropertyName].AsButton );
+            }
+        }
 
         public CswNbtNodePropBlob RPTFile
         {

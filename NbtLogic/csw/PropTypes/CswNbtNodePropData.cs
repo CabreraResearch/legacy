@@ -46,7 +46,16 @@ namespace ChemSW.Nbt.PropTypes
         public bool SetPropRowValue( CswNbtSubField.PropColumn column, object value )
         {
             bool ret = false;
-            object dbval = CswConvert.ToDbVal( value );
+            object dbval;
+
+            if( value is string )
+            {
+                dbval = CswConvert.ToDbVal( CswConvert.ToString( value ).Trim() );
+            }
+            else
+            {
+                dbval = CswConvert.ToDbVal( value );
+            }
 
             if( _PropRow == null ) //&& dbval != DBNull.Value )  case 22591
             {

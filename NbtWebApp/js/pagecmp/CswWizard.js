@@ -34,6 +34,7 @@
             if (options) {
                 $.extend(o, options);
             }
+
             if (o.StartingStep > o.SelectedStep) {
                 o.SelectedStep = o.StartingStep;
             }
@@ -79,7 +80,7 @@
                 'width': '65%'
             });
             var bCell12 = buttonTable.cell(1, 2);
-            bCell11.propDom({
+            bCell12.propDom({
                 'align': 'right',
                 'width': '35%'
             });
@@ -90,9 +91,9 @@
                 'disableOnClick': false,
                 'onClick': function () {
                     var currentStepNo = _getCurrentStepNo(table);
-                    if (o.onBeforePrevious(table, currentStepNo)) {
+                    if (Csw.tryExec(o.onBeforePrevious, table.$, currentStepNo)) {
                         _selectStep(table, currentStepNo - 1);
-                        o.onPrevious(currentStepNo - 1);
+                        Csw.tryExec(o.onPrevious, table.$, currentStepNo - 1);
                     }
                 }
             });
@@ -102,9 +103,9 @@
                 'disableOnClick': false,
                 'onClick': function () {
                     var currentStepNo = _getCurrentStepNo(table);
-                    if (o.onBeforeNext(currentStepNo)) {
+                    if (Csw.tryExec(o.onBeforeNext, table.$, currentStepNo)) {
                         _selectStep(table, currentStepNo + 1);
-                        Csw.tryExec(o.onNext, table, currentStepNo + 1);
+                        Csw.tryExec(o.onNext, table.$, currentStepNo + 1);
                     }
                 }
             });
@@ -154,6 +155,12 @@
                 ret.CswButton(action);
             }
             return ret;
+        },
+
+        setStep: function(stepno) {
+            var $table = $(this);
+            var table = Csw.controls.factory($table, {});
+            _selectStep(table, stepno);
         }
     };
 

@@ -8,7 +8,9 @@
     var methods = {
         init: function (o) {
 
-            var propDiv = $(this);
+            var propDiv = o.propDiv;
+            propDiv.empty();
+
             var propVals = o.propData.values;
             var red = (false === o.Multi) ? propVals.flammability : Csw.enums.multiEditDefaultValue;
             var yellow = (false === o.Multi) ? propVals.reactivity : Csw.enums.multiEditDefaultValue;
@@ -19,7 +21,7 @@
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl')
             });
 
-            var table = outerTable.cell(1, 1).table(Csw.controls.dom.makeId(o.ID, 'tbl1'))
+            var table = outerTable.cell(1, 1).table({ID: Csw.controls.dom.makeId(o.ID, 'tbl1')})
                                    .addClass('CswFieldTypeNFPA_table');
 
             var redDiv = table.cell(1, 1)

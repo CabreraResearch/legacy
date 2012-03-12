@@ -21,6 +21,7 @@ using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -733,6 +734,42 @@ namespace ChemSW.Nbt.WebServices
             }
             return RetView;
         }
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getThinGrid( string ViewId, string IncludeNodeKey, string MaxRows )
+        {
+            UseCompression();
+            JObject ReturnVal = new JObject();
+            bool IsQuickLaunch = false;
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtNodeKey RealNodeKey = null;
+                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
+                Int32 RowLimit = CswConvert.ToInt32( MaxRows );
+                if( null != View )
+                {
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
+                    ReturnVal["rows"] = ws.getThinGridRows( RowLimit );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getGrid()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -1532,7 +1569,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new wsViewBuilder( _CswNbtResources );
+                    var ws = new CswNbtViewBuilder( _CswNbtResources );
                     ReturnVal = ws.getVbProp( ViewJson, PropArbitraryId );
                 }
 
@@ -1562,7 +1599,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    var ws = new wsViewBuilder( _CswNbtResources );
+                    var ws = new CswNbtViewBuilder( _CswNbtResources );
                     ReturnVal = ws.makeViewPropFilter( ViewJson, PropFiltJson );
                 }
 
@@ -1932,6 +1969,38 @@ namespace ChemSW.Nbt.WebServices
         #endregion MetaData
 
         #region Misc
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string report( string reportid, string rformat )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
+                    CswNbtWebServiceReport ws = new CswNbtWebServiceReport(_CswNbtResources,rpt );
+                    ReturnVal = ws.runReport( rformat,Context );
+                    
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+
+        } // report
+
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3912,12 +3981,15 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            foreach( string NodeKey in NodeKeys )
+            if( 0 == RetCol.Count )
             {
-                CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-                if( null != NbtNodeKey )
+                foreach( string NodeKey in NodeKeys )
                 {
-                    RetCol.Add( NbtNodeKey.NodeId );
+                    CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
+                    if( null != NbtNodeKey )
+                    {
+                        RetCol.Add( NbtNodeKey.NodeId );
+                    }
                 }
             }
 

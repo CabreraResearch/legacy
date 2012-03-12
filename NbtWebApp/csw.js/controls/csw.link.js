@@ -107,6 +107,12 @@
             }
         };
 
+        external.disable = function() {
+            external.addClass('disabled');
+        }
+        external.enable = function() {
+            external.removeClass('disabled');
+        }
 
         return external;
     }

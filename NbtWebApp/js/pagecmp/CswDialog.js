@@ -326,11 +326,11 @@
                     data: ajaxdata,
                     success: function (data) {
                         var propOpts = [{ value: '', display: 'Select...'}];
-                        Csw.each(data.add, function(p) {
-                                propOpts.push({
-                                    value: p.propid,
-                                    display: p.propname
-                                });
+                        Csw.each(data.add, function (p) {
+                            propOpts.push({
+                                value: p.propid,
+                                display: p.propname
+                            });
                         });
                         addSelect.setOptions(propOpts, '', true);
                     } // success
@@ -479,7 +479,7 @@
                 cswnbtnodekeys: [],
                 onDeleteNode: null, //function (nodeid, nodekey) { },
                 Multi: false,
-                NodeCheckTreeId: '',
+                nodeTreeCheck: null,
                 publishDeleteEvent: true
             };
 
@@ -491,12 +491,13 @@
 
             if (o.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                var nodechecks = o.nodeTreeCheck.checkedNodes();
 
-                if (false === Csw.isNullOrEmpty($nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
+                if (false === Csw.isNullOrEmpty(nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
                     var n = 0;
                     //$nodechecks.each(function () {
-                    Csw.each(nodechecked, function(thisObj) {
+                    Csw.each(nodechecks, function (thisObj) {
                         //var $nodecheck = $(this);
                         o.nodeids[n] = thisObj.nodeid; //$nodecheck.CswAttrNonDom('nodeid');
                         o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey; //$nodecheck.CswAttrNonDom('cswnbtnodekey');
@@ -827,7 +828,7 @@
             var div = Csw.controls.div({
                 ID: o.ID
             });
-            div.p({text: o.navigationText});
+            div.p({ text: o.navigationText });
             var select = div.select({
                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
                 values: o.values
@@ -860,6 +861,22 @@
                             function () {
                                 openDialog($dialogdiv, 600, 400);
                             });
+        },
+        OpenEmptyDialog: function (options) {
+            var o = {
+                ID: '',
+                title: '',
+                width: 900,
+                height: 600,
+                onOpen: null,
+                onClose: null
+            };
+            if (options) {
+                $.extend(o, options);
+            }
+            var div = Csw.controls.div(o.ID);
+            Csw.tryExec(o.onOpen, div);
+            openDialog(div.$, o.width, o.height, o.onClose, o.title);
         },
         CloseDialog: function (id) {
             $('#' + id)

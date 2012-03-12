@@ -53,11 +53,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Finished or submitted
         /// </summary>
-        public static string FinishedPropertyName { get { return "Finished"; } }
+        public static string FinishPropertyName { get { return "Finish"; } }
         /// <summary>
         /// Marked cancelled
         /// </summary>
-        public static string CancelledPropertyName { get { return "Cancelled"; } }
+        public static string CancelPropertyName { get { return "Cancel"; } }
         /// <summary>
         /// Reason for cancel
         /// </summary>
@@ -266,92 +266,19 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             _CswNbtObjClassDefault.afterCreateNode();
-
-            //Case 20941. Not anymore.
-
-            /* 
-             * Make sure the nodetype is locked
-             * CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( _CswNbtNode.NodeTypeId );
-             * NodeType.IsLocked = true; 
-             */
         } // afterCreateNode()
 
-        /// <summary>
-        /// True if user checks Finished
-        /// </summary>
-        private bool _Finished = false;
-        /// <summary>
-        /// True if user checks Cancelled
-        /// </summary>
-        private bool _Cancelled = false;
-        /// <summary>
-        /// True if user checks Finished and any answer is OOC
-        /// </summary>
-        private bool _OOC = false;
-        /// <summary>
-        /// True if user checks Finished and all questions have answers
-        /// </summary>
-        private bool _allAnswered = true;
-        /// <summary>
-        /// True if user checks Finished, all questions are answered, and all answer dates are before Missed Date
-        /// </summary>
-        private bool _allAnsweredinTime = true;
 
         /// <summary>
         /// Determine Inspection Status and set read-only
         /// </summary>
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
-            _Finished = ( Tristate.True == this.Finished.Checked );
-            _Cancelled = ( Tristate.True == this.Cancelled.Checked );
-            bool FinishedCheck = false;
-
-            if( _Cancelled )
-            {
-                this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
-            }
-            else if( _Finished )
-            {
-                QuestionsFlt.Reset();
-                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-                {
-                    CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-                    _OOC = ( _OOC || !QuestionProp.IsCompliant );
-                    _allAnswered = ( _allAnswered && QuestionProp.Answer != string.Empty );
-                    _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
-                }
-
-                if( _allAnswered )
-                {
-                    if( _OOC )
-                    {
-                        this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
-                    }
-                    else
-                    {
-                        this.Status.Value = InspectionStatusAsString( _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.Completed_Late );
-                        FinishedCheck = true;
-                    }
-                }
-            }//else if ( _Finished )
-
-            this.Finished.Checked = CswConvert.ToTristate( FinishedCheck );
-
             if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
                 this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
             {
-                //QuestionsFlt.Reset();
-                //foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-                //{
-                //    Prop.ReadOnly = true;
-                //}
-                //CswNbtNodePropWrapper FinishedProp = this.Node.Properties[FinishedPropertyName];
-                //FinishedProp.AsLogical.ReadOnly = true;
-                //CswNbtNodePropWrapper CancelledProp = this.Node.Properties[CancelledPropertyName];
-                //CancelledProp.AsLogical.ReadOnly = true;
                 _CswNbtNode.ReadOnly = true;
             }
 
@@ -363,17 +290,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void afterWriteNode()
         {
-            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            if( ParentNode != null )
-            {
-                ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-                if( _allAnswered && _Finished )
-                {
-                    Parent.Status.Value = _OOC ? "OOC" : "OK";
-                    Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
-                    ParentNode.postChanges( false );
-                }
-            }
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -391,6 +307,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             _CswNbtObjClassDefault.afterPopulateProps();
+            this.Status.ReadOnly = ( true != _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -398,10 +315,79 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
-            if( null != NodeTypeProp ) { /*Do Something*/ }
-        }
+            Message = string.Empty;
+            ActionData = string.Empty;
+            ButtonAction = NbtButtonAction.Unknown;
+            if( null != NodeTypeProp )
+            {
+                CswNbtMetaDataObjectClassProp ButtonOCP = NodeTypeProp.getObjectClassProp();
+                if( ButtonOCP.PropName == FinishPropertyName )
+                {
+                    
+                    bool _OOC = false;
+                    bool _allAnswered = true;
+                    bool _allAnsweredinTime = true;
+
+                    CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                    QuestionsFlt.Reset();
+                    CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
+                    foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                    {
+                        CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
+                        _OOC = ( _OOC || !QuestionProp.IsCompliant );
+                        if( QuestionProp.Answer.Trim() == string.Empty )
+                        {
+
+                            UnansweredQuestions.Add( Prop.NodeTypeProp.FullQuestionNo );
+                            _allAnswered = false;
+                        }
+                        _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
+                    }
+
+                    if( _allAnswered )
+                    {
+                        if( _OOC )
+                        {
+                            Message = "Inspection is out of compliance and requires further action.";
+                            this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
+                        }
+                        else
+                        {
+                            string StatusValue = InspectionStatusAsString( _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.Completed_Late );
+                            Message = "Inspection marked " + StatusValue + ".";
+                            ButtonAction = NbtButtonAction.refresh;
+                            this.Status.Value = StatusValue;
+                        }
+
+                        CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+                        if( ParentNode != null )
+                        {
+                            ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
+                            Parent.Status.Value = _OOC ? "OOC" : "OK";
+                            Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                            ParentNode.postChanges( false );
+                        }
+
+                    } // if( _allAnswered )
+                    else
+                    {
+                        Message = "Inspection can not be finished until all questions are answered.  Questions remaining: " + UnansweredQuestions.ToString();
+                    }
+                } // if( ButtonOCP.PropName == FinishPropertyName )
+                
+                else if( ButtonOCP.PropName == CancelPropertyName )
+                {
+                    Message = "Inspection has been cancelled.";
+                    ButtonAction = NbtButtonAction.refresh;
+                    this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
+                }
+                
+                this.postChanges( false );
+            } // if( null != NodeTypeProp )
+            return true;
+        } // onButtonClick()
         #endregion
 
         #region Object class specific properties
@@ -524,27 +510,25 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[StatusPropertyName].AsList );
             }
         }
-
         /// <summary>
-        /// Temporary bool: if all questions have been answered, Finished == true
-        /// If any answer is OOC, Finished = false and Inspection status = Action_Required
+        /// Finish button
         /// </summary>
-        public CswNbtNodePropLogical Finished
+        public CswNbtNodePropButton Finish
         {
             get
             {
-                return ( _CswNbtNode.Properties[FinishedPropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[FinishPropertyName].AsButton );
             }
         }
 
         /// <summary>
-        /// True if user has cancelled the inspection
+        /// Cancel button
         /// </summary>
-        public CswNbtNodePropLogical Cancelled
+        public CswNbtNodePropButton Cancel
         {
             get
             {
-                return ( _CswNbtNode.Properties[CancelledPropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[CancelPropertyName].AsButton );
             }
         }
 

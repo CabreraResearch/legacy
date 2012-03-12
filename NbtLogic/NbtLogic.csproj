@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -30,6 +30,34 @@
   <PropertyGroup>
     <RootNamespace>ChemSW.Nbt</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\NbtLogic.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=4.0.7.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -51,11 +79,22 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassComponent.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
     <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
-    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25381.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25322.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo24515.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo24988.cs" />
+    <Compile Include="csw\ImportExport\CswGridData.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25226.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24914.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M11.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M13.cs" />
+      <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M10.cs" />
+  <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_01.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M10.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M11.cs" />
+
+
+
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M12.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M09.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaTo01M07.cs" />

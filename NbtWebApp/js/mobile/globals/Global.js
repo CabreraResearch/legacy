@@ -85,11 +85,11 @@ function setCurrentAction(actionname, actionurl) {
     $.CswCookie('set', CswCookieName.CurrentActionUrl, actionurl);
 }
 
-function setCurrentReport(reportid) {
-    "use strict"; 
-    clearCurrent();
-    $.CswCookie('set', CswCookieName.CurrentReportId, reportid);
-}
+//function setCurrentReport(reportid) {
+//    "use strict"; 
+//    clearCurrent();
+//    $.CswCookie('set', CswCookieName.CurrentReportId, reportid);
+//}
 
 function setCurrentSearch(searchid) {
     "use strict"; 
@@ -103,14 +103,14 @@ function clearCurrent() {
     $.CswCookie('set', CswCookieName.LastViewMode, $.CswCookie('get', CswCookieName.CurrentViewMode));
     $.CswCookie('set', CswCookieName.LastActionName, $.CswCookie('get', CswCookieName.CurrentActionName));
     $.CswCookie('set', CswCookieName.LastActionUrl, $.CswCookie('get', CswCookieName.CurrentActionUrl));
-    $.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
+    //$.CswCookie('set', CswCookieName.LastReportId, $.CswCookie('get', CswCookieName.CurrentReportId));
     $.CswCookie('set', CswCookieName.LastSearchId, $.CswCookie('get', CswCookieName.CurrentSearchId));
 
     $.CswCookie('clear', CswCookieName.CurrentViewId);
     $.CswCookie('clear', CswCookieName.CurrentViewMode);
     $.CswCookie('clear', CswCookieName.CurrentActionName);
     $.CswCookie('clear', CswCookieName.CurrentActionUrl);
-    $.CswCookie('clear', CswCookieName.CurrentReportId);
+    //$.CswCookie('clear', CswCookieName.CurrentReportId);
     $.CswCookie('clear', CswCookieName.CurrentSearchId);
 }
 
@@ -121,7 +121,7 @@ function getCurrent() {
         viewmode: $.CswCookie('get', CswCookieName.CurrentViewMode),
         actionname: $.CswCookie('get', CswCookieName.CurrentActionName),
         actionurl: $.CswCookie('get', CswCookieName.CurrentActionUrl),
-        reportid: $.CswCookie('get', CswCookieName.CurrentReportId),
+        //reportid: $.CswCookie('get', CswCookieName.CurrentReportId),
         searchid: $.CswCookie('get', CswCookieName.CurrentSearchId)
     };
 }
@@ -132,7 +132,7 @@ function getLast() {
         viewmode: $.CswCookie('get', CswCookieName.LastViewMode),
         actionname: $.CswCookie('get', CswCookieName.LastActionName),
         actionurl: $.CswCookie('get', CswCookieName.LastActionUrl),
-        reportid: $.CswCookie('get', CswCookieName.LastReportId),
+        //reportid: $.CswCookie('get', CswCookieName.LastReportId),
         searchid: $.CswCookie('get', CswCookieName.LastSearchId)
     };
 }
@@ -143,7 +143,7 @@ function setCurrent(json) {
     $.CswCookie('set', CswCookieName.CurrentViewMode, json.viewmode);
     $.CswCookie('set', CswCookieName.CurrentActionName, json.actionname);
     $.CswCookie('set', CswCookieName.CurrentActionUrl, json.actionurl);
-    $.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
+    //$.CswCookie('set', CswCookieName.CurrentReportId, json.reportid);
     $.CswCookie('set', CswCookieName.CurrentSearchId, json.searchid);
 }
 
@@ -836,7 +836,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
         onQuotas: null, // function () { },
         onSessions: null, // function () { },
         Multi: false,
-        NodeCheckTreeId: ''
+        nodeTreeCheck: ''
     };
     if (options)
     {
@@ -892,7 +892,7 @@ function HandleMenuItem(options) { /// <param name="$" type="jQuery" />
                         nodenames: [ nodename ],
                         nodeids: [ nodeid ],
                         onDeleteNode: o.onAlterNode,
-                        NodeCheckTreeId: o.NodeCheckTreeId,
+                        nodeTreeCheck: o.nodeTreeCheck,
                         Multi: o.Multi
                     });
                     

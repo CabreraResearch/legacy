@@ -38,10 +38,43 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\NbtJavaScript.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\NbtJavaScript.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="Report.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />
+    <Content Include="csw.js\controls\csw.thingrid.js" />
     <Content Include="csw.js\controls\csw.p.js" />
     <Content Include="csw.js\controls\csw.textarea.js" />
     <Content Include="csw.js\controls\csw.tabdiv.js" />
@@ -77,6 +110,7 @@
     <Content Include="csw.js\core\csw.core.clientstate.js" />
     <Content Include="csw.js\core\csw.type.date.js" />
     <Content Include="csw.js\core\csw.core.debug.js" />
+    <Content Include="csw.js\nodes\csw.nbt.nodeTree.js" />
     <Content Include="csw.js\_loadfirst\csw.core.enums.js" />
     <Content Include="csw.js\core\csw.core.error.js" />
     <Content Include="csw.js\core\csw.core.events.js" />
@@ -102,6 +136,7 @@
     <Content Include="js\actions\CswQuotas.js" />
     <Content Include="js\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\actions\CswSessions.js" />
+    <Content Include="js\ChemSW.min.js" />
     <Content Include="js\controls\CswComboBox.js" />
     <Content Include="js\controls\CswImageButton.js" />
     <Content Include="js\controls\CswNodeTypeSelect.js" />
@@ -115,6 +150,7 @@
     <Content Include="js\controls\CswList.js" />
     <Content Include="csw.js\controls\csw.select.js" />
     <Content Include="csw.js\components\csw.tristatecheckbox.js" />
+    <Content Include="js\CswAll.min.js" />
     <Content Include="js\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\fieldtypes\CswFieldTypeButton.js" />

@@ -94,6 +94,7 @@ namespace ChemSW.Nbt.WebServices
                             _makeTab( Ret, Int32.MaxValue, HistoryTabPrefix + NodeId, "History", false );
                         }
                     }
+                    Ret["nodename"] = Node.NodeName;
 
                 } // if( Node != null )
                 //        break;
@@ -298,11 +299,11 @@ namespace ChemSW.Nbt.WebServices
             JObject PropObj = new JObject();
             //ParentObj["prop_" + PropIdAttr] = PropObj;
             JProperty ret = new JProperty( "prop_" + PropIdAttr, PropObj );
-
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop.getFieldType().FieldType;
             PropObj["id"] = PropIdAttr.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
             PropObj["helptext"] = Prop.HelpText;
-            PropObj["fieldtype"] = Prop.getFieldType().FieldType.ToString();
+            PropObj["fieldtype"] = FieldType.ToString();
             CswNbtMetaDataObjectClassProp OCP = Prop.getObjectClassProp();
             if( OCP != null )
             {
@@ -312,6 +313,12 @@ namespace ChemSW.Nbt.WebServices
             PropObj["displaycol"] = Column.ToString();
             PropObj["required"] = Prop.IsRequired.ToString().ToLower();
             PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
+
+            bool ShowPropertyName = false == ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image ||
+                                       FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
+                                       ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid && PropWrapper.AsGrid.GridMode == CswNbtNodePropGrid.GridPropMode.Full ) );
+
+            PropObj["showpropertyname"] = ShowPropertyName;
 
             CswNbtMetaDataNodeTypeTab Tab = null;
             if( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) && Prop.EditLayout != null )

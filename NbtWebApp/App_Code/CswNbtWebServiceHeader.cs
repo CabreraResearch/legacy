@@ -51,10 +51,10 @@ namespace ChemSW.Nbt.WebServices
             //                             "dash_stis",
             //                             "http://www.chemswlive.com/19002.htm",
             //                             CswNbtResources.CswNbtModule.STIS ) );
-            //DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
-            //                             "dash_cispro",
-            //                             "http://www.chemswlive.com/19002.htm",
-            //                             CswNbtResources.CswNbtModule.CISPro ) );
+            DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
+                                         "dash_cispro",
+                                         "",                              //"http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.CISPro ) );
             //DashIcons.Add( new DashIcon( "CCPro - Control Charts",
             //                             "dash_ccpro",
             //                             "http://www.chemswlive.com/19002.htm",

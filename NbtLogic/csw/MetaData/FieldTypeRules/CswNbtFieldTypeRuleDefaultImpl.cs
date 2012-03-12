@@ -55,11 +55,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CswNbtPropFilterSql.PropertyFilterMode FilterMode;
             string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubFields.Default.Column );
             if( StringValueToCheck == string.Empty )
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Null;
+            { FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Null; }
             else
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+            { FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals; }
 
-            CswNbtViewPropertyFilter UniqueValPropertyFilter = View.AddViewPropertyFilter( UniqueValueViewProperty, SubFields.Default.Name, FilterMode, StringValueToCheck, false );
+            View.AddViewPropertyFilter( UniqueValueViewProperty, SubFields.Default.Name, FilterMode, StringValueToCheck.Trim(), false );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
