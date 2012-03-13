@@ -34,7 +34,7 @@
 }
 .CswWizard_StepLinkDivSelected
 {
-	background-color: #ffff00;
+	background-color: &cswbgcolorhilite;
 }
 .CswWizard_StepDiv
 {

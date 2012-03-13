@@ -9,6 +9,7 @@ create index prop3 on nodetype_props(fieldtypeid, nodetypeid, nodetypepropid);
 create index prop4 on nodetype_props(fieldtypeid);
 create index prop5 on nodetype_props(objectclasspropid);
 create index prop6 on nodetype_props(nodetypepropid, firstpropversionid, propname, nodetypeid);
+create index prop7 on nodetype_props(nodetypepropid, firstpropversionid, propname, nodetypeid, fieldtypeid);
 create index jct1 on jct_nodes_props (nodeid);
 create index jct2 on jct_nodes_props (nodetypepropid);
 create index jct3 on jct_nodes_props (nodeid, nodetypepropid);

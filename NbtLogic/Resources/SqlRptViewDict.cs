@@ -8,22 +8,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NbtWebApp.Reports {
+namespace ChemSW.Nbt.Resources {
     using System;
     using System.ComponentModel;
-    using CrystalDecisions.CrystalReports.Engine;
-    using CrystalDecisions.ReportSource;
     using CrystalDecisions.Shared;
+    using CrystalDecisions.ReportSource;
+    using CrystalDecisions.CrystalReports.Engine;
     
     
-    public class DueTasks : ReportClass {
+    public class SqlRptViewDict : ReportClass {
         
-        public DueTasks() {
+        public SqlRptViewDict() {
         }
         
         public override string ResourceName {
             get {
-                return "DueTasks.rpt";
+                return "SqlRptViewDict.rpt";
             }
             set {
                 // Do nothing
@@ -41,7 +41,7 @@ namespace NbtWebApp.Reports {
         
         public override string FullResourceName {
             get {
-                return "NbtWebApp.Reports.DueTasks.rpt";
+                return "ChemSW.Nbt.Resources.SqlRptViewDict.rpt";
             }
             set {
                 // Do nothing
@@ -90,9 +90,9 @@ namespace NbtWebApp.Reports {
     }
     
     [System.Drawing.ToolboxBitmapAttribute(typeof(CrystalDecisions.Shared.ExportOptions), "report.bmp")]
-    public class CachedDueTasks : Component, ICachedReport {
+    public class CachedSqlRptViewDict : Component, ICachedReport {
         
-        public CachedDueTasks() {
+        public CachedSqlRptViewDict() {
         }
         
         [Browsable(false)]
@@ -129,7 +129,7 @@ namespace NbtWebApp.Reports {
         }
         
         public virtual CrystalDecisions.CrystalReports.Engine.ReportDocument CreateReport() {
-            DueTasks rpt = new DueTasks();
+            SqlRptViewDict rpt = new SqlRptViewDict();
             rpt.Site = this.Site;
             return rpt;
         }

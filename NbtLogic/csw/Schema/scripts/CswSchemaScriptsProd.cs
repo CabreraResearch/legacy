@@ -51,6 +51,10 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );      //21
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );      //22
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );      //23
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );     //24
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );      //25
+
+
 
 
             // This automatically detects the latest version
@@ -186,7 +190,7 @@ namespace ChemSW.Nbt.Schema
             CswSchemaUpdateDriver.Description = "Update to schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
             _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
 
-        }//_addVersionedScript() 
+        }//addReleaseDmlDriver() 
 
 
         #endregion

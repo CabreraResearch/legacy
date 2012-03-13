@@ -85,7 +85,10 @@
             internal.$searchresults_parent.CswNodeTable({
                 ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
                 onEditNode: null,
-                onDeleteNode: null,
+                onDeleteNode: function() {
+                    // case 25380 - refresh on delete
+                    external.restoreSearch(internal.sessiondataid);
+                },
                 //onSuccess: internal.onAfterSearch,
                 onNoResults: function () {
                     internal.$searchresults_parent.text('No Results Found');
