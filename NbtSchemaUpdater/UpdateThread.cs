@@ -52,10 +52,7 @@ namespace ChemSW.Nbt.Schema
             //CswNbtResources CswNbtResources = null;
             try
             {
-                if( ( null == _CswNbtResources ) || ( AccessId != _CswNbtResources.AccessId ) )
-                {
-                    _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false, null, ChemSW.RscAdo.PooledConnectionState.Closed );
-                }
+                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false, null, ChemSW.RscAdo.PooledConnectionState.Closed );
 
                 _CswNbtResources.AccessId = AccessId;
                 _CswNbtResources.InitCurrentUser = InitUser;
