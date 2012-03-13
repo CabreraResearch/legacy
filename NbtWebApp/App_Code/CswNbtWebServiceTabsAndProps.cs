@@ -328,6 +328,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( PropWrapper != null )
             {
+                PropObj["readonly"] = PropWrapper.IsReadOnly().ToString().ToLower();
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
                 PropWrapper.ToJSON( PropObj, EditMode, Tab );
