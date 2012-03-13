@@ -13,13 +13,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            //validate role nodetype permissions
-            foreach( CswNbtNode roleNode in _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ).getNodes( false, true ) )
-            {
-                CswNbtObjClassRole nodeAsRole = CswNbtNodeCaster.AsRole( roleNode );
-                CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;
-                prop.ValidateValues();
-            }
+            //do nothing this time
 
         }//Update()
 

@@ -48,6 +48,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25290b.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24520.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25374B.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
