@@ -24,7 +24,7 @@ namespace ChemSW.Nbt
 
         public void clear()
         {
-            _CswTableUpdateNodes.clear(); 
+            _CswTableUpdateNodes.clear();
         }//clear()
 
         public CswNbtNodeWriterNative( CswNbtResources CswNbtResources )
@@ -48,6 +48,7 @@ namespace ChemSW.Nbt
             NewNodeRow["nodetypeid"] = CswConvert.ToDbVal( Node.NodeTypeId );
             NewNodeRow["pendingupdate"] = CswConvert.ToDbVal( false );
             NewNodeRow["readonly"] = CswConvert.ToDbVal( false );
+            NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
             NewNodeTable.Rows.Add( NewNodeRow );
 
@@ -70,9 +71,10 @@ namespace ChemSW.Nbt
 
             NodesTable.Rows[0]["nodename"] = Node.NodeName;
             NodesTable.Rows[0]["pendingupdate"] = CswConvert.ToDbVal( Node.PendingUpdate );
-			NodesTable.Rows[0]["readonly"] = CswConvert.ToDbVal( Node.ReadOnly );
-			NodesTable.Rows[0]["locked"] = CswConvert.ToDbVal( Node.Locked );
-			CswTableUpdateNodes.update( NodesTable );
+            NodesTable.Rows[0]["readonly"] = CswConvert.ToDbVal( Node.ReadOnly );
+            NodesTable.Rows[0]["locked"] = CswConvert.ToDbVal( Node.Locked );
+            NodesTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( Node.IsDemo );
+            CswTableUpdateNodes.update( NodesTable );
 
         }//write()
 
