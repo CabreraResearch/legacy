@@ -376,9 +376,9 @@ namespace ChemSW.NbtWebControls
                 // Do non-conditional properties (or all properties if ShowConditionalPropertiesBeneath = false)
                 IEnumerable<CswNbtMetaDataNodeTypeProp> PropCollection = null;
                 if( PropertySort == PropertySortSetting.DisplayOrder )
-                    PropCollection = Tab.NodeTypePropsByDisplayOrder;
+                    PropCollection = Tab.getNodeTypePropsByDisplayOrder();
                 else
-                    PropCollection = Tab.NodeTypeProps;
+                    PropCollection = Tab.getNodeTypeProps();
 
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropCollection )
                 {

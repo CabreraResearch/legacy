@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.MetaData
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first
                 Dictionary<Int32, CswNbtMetaDataNodeTypeProp> PropsToDo = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>();
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.getNodeTypePropsByDisplayOrder() )
                 {
                     if( Prop.UseNumbering )
                         PropsToDo.Add( Prop.FirstPropVersionId, Prop );
