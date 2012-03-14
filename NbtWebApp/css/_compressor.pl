@@ -1,35 +1,37 @@
+
 use strict;
 
+use FindBin;
+use lib $FindBin::Bin;
+use cssVariables;
+my %vars = %cssVariables::vars;
+
 my $dir = $ARGV[0];
-my $destfile = "$dir\\css\\ChemSW.min.css";
+my $destfile = "$dir\\js\\ChemSW.min.css";
+
+printf("Starting compile: css\n");
 
 unlink($destfile);
 
-printf("Compiling: $dir\\css\\_style.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\_style.css >> $destfile`;
+my $param = "";
+$param .= extract("$dir\\csw.css");
 
-printf("Compiling: $dir\\css\\csw.combobox.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.combobox.css >> $destfile`;
+sub extract
+{
+    my $filelist = "";
+    my $path = $_[0];
+    opendir(CSSDIR, $path) or die("Cannot open css directory: $path ; $!");
+    while((my $filename = readdir(CSSDIR)))
+    {
+        if($filename =~ /.*\.css$/ ) 
+        {
+            printf("Compiling: $path\\$filename\n");
+            $filelist .= "--js $path\\$filename ";
+            `java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $path\\$filename >> $destfile`;
+        }
+    }
+    closedir(CSSDIR);
+    return $filelist;
+}
 
-printf("Compiling: $dir\\css\\csw.errormessage.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.errormessage.css >> $destfile`;
 
-printf("Compiling: $dir\\css\\csw.fieldtypes.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.fieldtypes.css >> $destfile`;
-
-printf("Compiling: $dir\\css\\csw.menu.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.menu.css >> $destfile`;
-
-printf("Compiling: $dir\\css\\csw.search.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.search.css >> $destfile`;
-
-printf("Compiling: $dir\\css\\csw.table.layout.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.table.layout.css >> $destfile`;
-
-printf("Compiling: $dir\\css\\csw.vieweditor.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.vieweditor.css >> $destfile`;
-
-printf("Compiling: $dir\\css\\csw.wizard.css\n");
-`java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $dir\\css\\csw.wizard.css >> $destfile`;
-
-printf("Finished compiling css\n");

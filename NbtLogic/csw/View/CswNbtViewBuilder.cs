@@ -369,37 +369,30 @@ namespace ChemSW.Nbt.Logic
         {
             JObject Ret = new JObject();
 
-            //var PropType = CswNbtPropType.Unknown;
-            //CswNbtPropType.TryParse( (string) FilterProp["proptype"], true, out PropType );
-            NbtViewPropType PropType = (NbtViewPropType) FilterProp["proptype"].ToString();
-
             string FiltArbitraryId = CswConvert.ToString( FilterProp["filtarbitraryid"] );
             string PropArbitraryId = CswConvert.ToString( FilterProp["proparbitraryid"] );
             if( FiltArbitraryId == "undefined" ) FiltArbitraryId = string.Empty;
             if( PropArbitraryId == "undefined" ) PropArbitraryId = string.Empty;
 
             CswNbtViewPropertyFilter ViewPropFilt = null;
-            if( PropType != NbtViewPropType.Unknown )
+            if( false == string.IsNullOrEmpty( PropArbitraryId ) )
             {
-                if( false == string.IsNullOrEmpty( PropArbitraryId ) )
+                CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
+
+                if( false == string.IsNullOrEmpty( FiltArbitraryId ) )
                 {
-                    CswNbtViewProperty ViewProp = (CswNbtViewProperty) View.FindViewNodeByArbitraryId( PropArbitraryId );
+                    ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
+                }
+                else
+                {
+                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty, false );
+                }
 
-                    if( false == string.IsNullOrEmpty( FiltArbitraryId ) )
-                    {
-                        ViewPropFilt = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FiltArbitraryId );
-                    }
-                    else
-                    {
-                        ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty, false );
-                    }
-
-                    //Case 23779, 23937, 24064
-                    if( ClearFilters && null != ViewPropFilt )
-                    {
-                        ViewProp.Filters.Clear();
-                        ViewProp.Filters.Add( ViewPropFilt );
-                    }
+                //Case 23779, 23937, 24064
+                if( ClearFilters && null != ViewPropFilt )
+                {
+                    ViewProp.Filters.Clear();
+                    ViewProp.Filters.Add( ViewPropFilt );
                 }
             }
 

@@ -23,8 +23,10 @@ namespace ChemSW.Nbt.WebServices
 				if( !JustDateColumn )
 				{
 					SQL += @", 
-								  x.transactionusername as Username, ";
-								  // na.auditeventtype as EventType,     case 22590
+								  x.transactionusername as Username, 
+                                  x.transactionfirstname as FirstName, 
+                                  x.transactionlastname as LastName, ";
+                                // na.auditeventtype as EventType,     case 22590
 					SQL += @"     x.auditeventname as Context";
 				}
 				SQL += @"		 from nodes n
@@ -36,7 +38,9 @@ namespace ChemSW.Nbt.WebServices
 				if( !JustDateColumn )
 				{
 					SQL += @", 
-								  x.transactionusername as Username, ";
+								  x.transactionusername as Username, 
+                                  x.transactionfirstname as FirstName, 
+                                  x.transactionlastname as LastName, ";
 								  // ja.auditeventtype as EventType,     case 22590
 					SQL += @"     x.auditeventname as Context";
 				}

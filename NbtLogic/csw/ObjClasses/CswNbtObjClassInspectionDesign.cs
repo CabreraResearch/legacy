@@ -70,6 +70,8 @@ namespace ChemSW.Nbt.ObjClasses
         /// Nodetype Version
         /// </summary>
         public static string VersionPropertyName { get { return "Version"; } }
+        public static string InspectionDatePropertyName { get { return "Inspection Date"; } }
+        public static string InspectorPropertyName { get { return "Inspector"; } }
 
         /// <summary>
         /// Possible status values for Inspection. Should match List values on ID Status attribute.
@@ -360,13 +362,17 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonAction = NbtButtonAction.refresh;
                             this.Status.Value = StatusValue;
                         }
-
+                        if( true == this.InspectionDate.Empty )
+                        {
+                            this.InspectionDate.DateTimeValue = DateTime.Now;
+                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
+                        }
                         CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
                         if( ParentNode != null )
                         {
                             ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
                             Parent.Status.Value = _OOC ? "OOC" : "OK";
-                            Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                            //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                             ParentNode.postChanges( false );
                         }
 
@@ -562,6 +568,28 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[VersionPropertyName].AsText );
+            }
+        }
+
+        /// <summary>
+        /// Date the inspection switched to action required or completed...
+        /// </summary>
+        public CswNbtNodePropDateTime InspectionDate
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[InspectionDatePropertyName].AsDateTime );
+            }
+        }
+
+        /// <summary>
+        /// inspector is a user
+        /// </summary>
+        public CswNbtNodePropRelationship Inspector
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[InspectorPropertyName].AsRelationship );
             }
         }
 

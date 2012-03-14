@@ -726,8 +726,8 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeTypeProp LocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
                 RetView.AddViewProperty( InspectionTargetVr, LocationNtp ).Order = 2;
 
-                CswNbtMetaDataNodeTypeProp DateNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName );
-                RetView.AddViewProperty( InspectionTargetVr, DateNtp ).Order = 3;
+                //CswNbtMetaDataNodeTypeProp DateNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName );
+                //RetView.AddViewProperty( InspectionTargetVr, DateNtp ).Order = 3;
 
                 CswNbtMetaDataNodeTypeProp StatusNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.StatusPropertyName );
                 RetView.AddViewProperty( InspectionTargetVr, StatusNtp ).Order = 4;

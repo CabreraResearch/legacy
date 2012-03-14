@@ -156,17 +156,20 @@
                             thisTabDiv.tabs({
                                 selected: selectedtabno,
                                 select: function (event, ui) {
+                                    var ret = false;
                                     var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                     var selectTabid = selectTabContentDiv.getId();
-                                    Csw.tryExec(o.onBeforeTabSelect, selectedtabid);
-                                    if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
-                                        getProps(selectTabContentDiv, selectTabid);
-                                        Csw.tryExec(o.onTabSelect, selectTabid);
-                                    } else {
-                                        return false;
+                                    if(Csw.tryExec(o.onBeforeTabSelect, selectedtabid))
+                                    {
+                                        if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
+                                            getProps(selectTabContentDiv, selectTabid);
+                                            Csw.tryExec(o.onTabSelect, selectTabid);
+                                            ret=true;
+                                        }
                                     }
-                                }
-                            });
+                                    return ret;
+                                } // select()
+                            }); // tabs
                             var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
                             if (eachTabContentDiv.isValid) {
                                 var selectedtabid = eachTabContentDiv.getId();

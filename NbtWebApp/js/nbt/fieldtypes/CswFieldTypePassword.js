@@ -46,7 +46,7 @@
                 });
                 if (isAdmin) {
                     cell31.input({
-                        id: o.ID + '_exp',
+                        ID: o.ID + '_exp',
                         name: o.ID + '_exp',
                         type: Csw.enums.inputTypes.checkbox,
                         checked: isExpired

@@ -100,17 +100,19 @@
 
         external.toggleCheckAll = function () {
             var checkBoxes = external.find('.CBACheckBox_' + internal.ID);
-            if(internal.checkAllLink.text() === 'Uncheck All') {
-            //if (internal.checked <= 0) {
-            //    internal.checked = internal.data.length;
-                checkBoxes.propDom('checked', 'checked');  // Yes, this checks.  But click below unchecks again.
-                internal.checkAllLink.text('Check All');
-            } else {
-            //    internal.checked = 0;
-                checkBoxes.$.removeAttr('checked');    // Yes, this unchecks.  But click below checks again.
-                internal.checkAllLink.text('Uncheck All');
+            if(checkBoxes.isValid) {
+                if(internal.checkAllLink.text() === 'Uncheck All') {
+                //if (internal.checked <= 0) {
+                //    internal.checked = internal.data.length;
+                    checkBoxes.propDom('checked', 'checked');  // Yes, this checks.  But click below unchecks again.
+                    internal.checkAllLink.text('Check All');
+                } else {
+                //    internal.checked = 0;
+                    checkBoxes.$.removeAttr('checked');    // Yes, this unchecks.  But click below checks again.
+                    internal.checkAllLink.text('Uncheck All');
+                }
+                checkBoxes.trigger('click');        // this toggles again
             }
-            checkBoxes.trigger('click');        // this toggles again
         }; // ToggleCheckAll()
 
         (function () {
@@ -289,7 +291,7 @@
                     } // for(var c = 0; c < internal.cols.length; c++)
                 } // for(var r = 0; r < internal.data.length; r++)
 
-                if (false === internal.UseRadios) {
+                if (false === internal.UseRadios && internal.data.length > 0) {
                     var checkAllLinkText = 'Check All';
                     if ($('.CBACheckBox_' + internal.ID).not(':checked').length === 0) {
                         checkAllLinkText = 'Uncheck All';

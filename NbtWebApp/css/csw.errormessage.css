@@ -6,20 +6,20 @@
 .CswErrorMessage_Error
 {
 	background-color: #ff3333;
-	color: #000000;
+	color: &cswtextcolor;
 }
 .CswErrorMessage_Error a
 {
 	background-color: #ff3333;
-	color: #000000;
+	color: &cswtextcolor;
 }
 .CswErrorMessage_Warning
 {
-	background-color: #ffff00;
-	color: #000000;
+	background-color: &cswbgcolorhilite;
+	color: &cswtextcolor;
 }
 .CswErrorMessage_Warning a
 {
-	background-color: #ffff00;
-	color: #000000;
+	background-color: &cswbgcolorhilite;
+	color: &cswtextcolor;
 }

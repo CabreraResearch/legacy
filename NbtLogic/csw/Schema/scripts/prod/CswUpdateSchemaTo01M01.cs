@@ -31,6 +31,19 @@ namespace ChemSW.Nbt.Schema
 
             #endregion case 25322
 
+            #region case 24520
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "audit_transactions", "transactionfirstname" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "audit_transactions", "transactionfirstname", "First name of transaction user", false, false, 50 );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "audit_transactions", "transactionlastname" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "audit_transactions", "transactionlastname", "Last name of transaction user", false, false, 50 );
+            }
+
+            #endregion case 24520
+
 
         }//Update()
 
