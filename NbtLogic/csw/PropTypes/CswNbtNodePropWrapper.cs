@@ -157,7 +157,6 @@ namespace ChemSW.Nbt.PropTypes
             set { _HelpText = value; }
         }
 
-        private bool _IsEditable { get { return ( CanEdit && false == ReadOnly ); } }
 
         public bool CanEdit
         {
@@ -167,20 +166,45 @@ namespace ChemSW.Nbt.PropTypes
                 return Ret;
             }
         }
+        public bool CanAdd
+        {
+            get
+            {
+                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), false, null, null, _Node, NodeTypeProp );
+                return Ret;
+            }
+        }
 
+        /// <summary>
+        /// This is only whether this property value in jct_nodes_props has been marked readonly.
+        /// For full readonly determination, use IsReadOnly()
+        /// </summary>
         public bool ReadOnly
         {
             get
             {
-                return ( _CswNbtNodePropData.ReadOnly || // jct_nodes_props.readonly
-                         NodeTypeProp.ReadOnly || // nodetype_props.readonly
-                         _EditMode == NodeEditMode.Preview ||
-                        ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
+                return _CswNbtNodePropData.ReadOnly;
             }
             set
             {
                 _CswNbtNodePropData.ReadOnly = value;
             }
+        }
+
+        /// <summary>
+        /// Determine whether the property is readonly for any reason
+        /// </summary>
+        public bool IsReadOnly()
+        {
+            return ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
+                     NodeTypeProp.ReadOnly ||              // nodetype_props.readonly
+                     NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
+                     _EditMode == NodeEditMode.Preview ||
+                     _EditMode == NodeEditMode.PrintReport ||
+                     _EditMode == NodeEditMode.AuditHistoryInPopup ||
+                     ( _EditMode == NodeEditMode.Add && false == CanAdd ) ||
+                     ( ( _EditMode == NodeEditMode.Edit || _EditMode == NodeEditMode.EditInPopup ) && false == CanEdit ) ||
+                     ( null != _Node && ( _Node.ReadOnly || _Node.Locked ) ) ); // nodes.readonly or nodes.locked
         }
 
         /// <summary>
@@ -210,7 +234,6 @@ namespace ChemSW.Nbt.PropTypes
             _EditMode = EditMode;
             _Tab = Tab;
             JObject["values"] = Values;
-            JObject["readonly"] = ( false == _IsEditable );
             _CswNbtNodeProp.ToJSON( Values );
         }
 
@@ -223,9 +246,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _EditMode = EditMode;
                 _Tab = Tab;
-                Object["readonly"] = ( false == _IsEditable );
                 if( null != Object["values"] &&
-                    _IsEditable &&
+                    false == IsReadOnly() && 
                     ( null == Object["wasmodified"] ||
                      CswConvert.ToBoolean( Object["wasmodified"] ) ) )
                 {

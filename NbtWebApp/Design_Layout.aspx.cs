@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.WebPages
             if( _Mode == LayoutMode.Add )
                 Props = NodeType.getNodeTypeProps();
             else
-                Props = Tab.NodeTypePropsByDisplayOrder;
+                Props = Tab.getNodeTypePropsByDisplayOrder();
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
             {

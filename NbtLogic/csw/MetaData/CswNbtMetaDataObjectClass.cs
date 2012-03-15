@@ -149,19 +149,13 @@ namespace ChemSW.Nbt.MetaData
         //}
 
 
-        public Collection<Int32> ObjectClassPropIds
+        public Collection<Int32> getObjectClassPropIds()
         {
-            get
-            {
-                return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropIdsByObjectClass( ObjectClassId );
-            }
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropIdsByObjectClass( ObjectClassId );
         }
-        public IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps()
         {
-            get
-            {
-                return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId );
-            }
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId );
         }
 
         public CswNbtMetaDataObjectClassProp getObjectClassProp( string ObjectClassPropName )
