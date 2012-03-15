@@ -117,7 +117,8 @@ namespace ChemSW.Nbt.WebServices
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
                     CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
-                    RetSuccess = RetSuccess && DeleteNode( NodePk );
+                    bool ThisNodeDeleted = DeleteNode( NodePk );
+                    RetSuccess = RetSuccess && ThisNodeDeleted;
                 }
             }
             else

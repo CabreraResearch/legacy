@@ -95,15 +95,22 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // _attemptRefresh()
 
-        private void _deInitResources()
+        private void _deInitResources( CswNbtResources OtherResources = null )
         {
             _CswSessionResources.endSession();
-            if( _CswNbtResources != null )
+            if( null != _CswNbtResources )
             {
                 _CswNbtResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
 
                 _CswNbtResources.finalize();
                 _CswNbtResources.release();
+            }
+            if( null != OtherResources )
+            {
+                OtherResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
+
+                OtherResources.finalize();
+                OtherResources.release();
             }
         } // _deInitResources()
 
@@ -2854,11 +2861,17 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
+                CswNbtResources NbtSystemResources = null;
+                if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                {
+                    /* Get a new CswNbtResources as the System User */
+                    CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( _CswNbtResources );
+                    NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
 
-                CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal["Succeeded"] = ws.deleteDemoDataNodes();
-
-                _deInitResources();
+                    CswNbtWebServiceNode ws = new CswNbtWebServiceNode( NbtSystemResources, _CswNbtStatisticsEvents );
+                    ReturnVal["Succeeded"] = ws.deleteDemoDataNodes();
+                }
+                _deInitResources( NbtSystemResources );
             }
             catch( Exception ex )
             {

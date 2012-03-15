@@ -807,9 +807,34 @@
             openDialog($div, 400, 300, null, 'Error');
             $div.CswErrorMessage(error);
         },
-        AlertDialog: function (message, title) {
-            var $div = $('<div>' + message + '</div>');
-            openDialog($div, 200, 200, null, title);
+        AlertDialog: function (message, title, okFunc, cancelFunc) {
+
+            var div = Csw.controls.div({
+                ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
+                text: message
+            });
+
+            if (okFunc) {
+                div.button({
+                    enabledText: 'OK',
+                    onClick: function () {
+                        Csw.tryExec(okFunc);
+                        div.$.dialog('close');
+                    }
+                });
+            }
+
+            if (cancelFunc) {
+                div.button({
+                    enabledText: 'Cancel',
+                    onClick: function () {
+                        Csw.tryExec(cancelFunc);
+                        div.$.dialog('close');
+                    }
+                });
+            }
+
+            openDialog(div.$, 200, 200, null, title);
         },
 
         NavigationSelectDialog: function (options) {
