@@ -78,6 +78,11 @@
   <ItemGroup>
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24520.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25374B.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
+    <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
+    <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_029.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

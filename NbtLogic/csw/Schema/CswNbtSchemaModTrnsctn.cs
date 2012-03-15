@@ -235,10 +235,6 @@ namespace ChemSW.Nbt.Schema
         //}//removeConstraint()
 
 
-        public bool doesConstraintExistInDb( string ConstraintName )
-        {
-            return ( _CswDdl.doesConstraintExistInDb( ConstraintName ) );
-        }//doesConstraintExist()
 
         public List<CswTableConstraint> getConstraints( string PkTableName, string PkColumnName, string FkTableName, string FkColumnName )
         {
@@ -1121,6 +1117,7 @@ namespace ChemSW.Nbt.Schema
         #endregion
 
 
+
         /// <summary>
         /// Replaces one property for another in all Views.
         /// If the new property's name ends with _TMP, the suffix is removed.
@@ -1299,6 +1296,24 @@ namespace ChemSW.Nbt.Schema
             }//if-else the dump setup setting exists
 
         }//takeADump() 
+
+
+        public string makeUniqueConstraint( string TableName, string ColumnName )
+        {
+            return ( _CswNbtResources.makeUniqueConstraint( TableName, ColumnName ) );
+
+        }//makeUniqueConstraintInDb() 
+
+        public string makeUniqueConstraint( string TableName, string ColumnName, bool AddDdData )
+        {
+            return ( _CswNbtResources.makeUniqueConstraint( TableName, ColumnName, AddDdData ) );
+        }
+
+        public bool doesFkConstraintExistInDb( string ConstraintName ) { return ( _CswNbtResources.doesFkConstraintExistInDb( ConstraintName ) ); }
+        public bool doesUniqueConstraintExistInDb( string ConstraintName ) { return ( _CswNbtResources.doesUniqueConstraintExistInDb( ConstraintName ) ); }
+        public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswNbtResources.getUniqueConstraintName( TableName, ColumName ) ); }
+
+
 
     }//class CswNbtSchemaModTrnsctn
 

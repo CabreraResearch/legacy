@@ -991,6 +991,14 @@ namespace ChemSW.Nbt
 
         public void sendEmailNotification( Collection<CswMailMessage> MailMessages ) { _CswResources.sendEmailNotification( MailMessages ); }
 
+
+        public string makeUniqueConstraint( string TableName, string ColumnName ) { return ( _CswResources.makeUniqueConstraint( TableName, ColumnName ) ); }
+        public string makeUniqueConstraint( string TableName, string ColumnName, bool AddDdData ) { return ( _CswResources.makeUniqueConstraint( TableName, ColumnName, AddDdData ) ); }
+
+        public bool doesFkConstraintExistInDb( string ConstraintName ) { return ( _CswResources.doesFkConstraintExistInDb( ConstraintName ) ); }
+        public bool doesUniqueConstraintExistInDb( string ConstraintName ) { return ( _CswResources.doesUniqueConstraintExistInDb( ConstraintName ) ); }
+        public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswResources.getUniqueConstraintName( TableName, ColumName ) ); }
+
         #endregion Pass-thru to CswResources
 
 
