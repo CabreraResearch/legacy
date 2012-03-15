@@ -567,9 +567,9 @@
                         if (Csw.contains(components, comp)) {
                             var thisComp = components[comp];
 
-                            table.cell(row, 1).text(thisComp.name).css('padding', '2px 5px 2px 5px');
-                            table.cell(row, 2).text(thisComp.version).css('padding', '2px 5px 2px 5px');
-                            table.cell(row, 3).text(thisComp.copyright).css('padding', '2px 5px 2px 5px');
+                            table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append(thisComp.name);
+                            table.cell(row, 2).css({ padding: '2px 5px 2px 5px' }).append(thisComp.version);
+                            table.cell(row, 3).css({ padding: '2px 5px 2px 5px' }).append(thisComp.copyright);
                             row += 1;
                         }
                     }
