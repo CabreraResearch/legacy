@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -97,10 +99,32 @@ namespace ChemSW.Nbt.WebServices
 
             RetObj["action"] = ButtonAction.ToString();
             RetObj["actiondata"] = ActionData;  //e.g. popup url
-            RetObj["message"] = Message; 
+            RetObj["message"] = Message;
             RetObj["success"] = Success.ToString().ToLower();
 
             return RetObj;
+        }
+
+        public bool deleteDemoDataNodes()
+        {
+            bool RetSuccess = true;
+            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                CswTableSelect NodesSelect = new CswTableSelect( _CswNbtResources.CswResources, "delete_demodata_nodes",
+                                                                "nodes" );
+                DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
+                                                            " where to_char(isdemo)='1' " );
+                foreach( DataRow NodeRow in NodesTable.Rows )
+                {
+                    CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
+                    RetSuccess = RetSuccess && DeleteNode( NodePk );
+                }
+            }
+            else
+            {
+                RetSuccess = false;
+            }
+            return RetSuccess;
         }
 
     } // class CswNbtWebServiceNode
