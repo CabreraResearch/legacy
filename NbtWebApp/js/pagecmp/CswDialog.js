@@ -811,7 +811,8 @@
             var width = Csw.number((message.length * 7), 200);
             var div = Csw.controls.div({
                 ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
-                text: message
+                text: message,
+                align: 'center'
             });
             
             div.br();
