@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.WebServices
             _IsMultiEdit = Multi;
         }
 
-        public JObject getTabs( NodeEditMode EditMode, string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getTabs( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
             TabOrderModifier = 0;
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( NodeEditMode EditMode, string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
 
@@ -146,10 +146,10 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode );
+                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node = null;
-                if( EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue )
+                if( _CswNbtResources.EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue )
                 {
                     Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                 }
@@ -171,9 +171,9 @@ namespace ChemSW.Nbt.WebServices
 
                     foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                     {
-                        if( _showProp( Prop, EditMode, FilterPropIdAttr, Node ) )
+                        if( _showProp( Prop, FilterPropIdAttr, Node ) )
                         {
-                            _addProp( Ret, EditMode, Node, Prop );
+                            _addProp( Ret, Node, Prop );
                         }
                     }
                 } // if(Node != null)
@@ -181,11 +181,11 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getProps()
 
-        private bool _showProp( CswNbtMetaDataNodeTypeProp Prop, NodeEditMode EditMode, CswPropIdAttr FilterPropIdAttr, CswNbtNode Node )
+        private bool _showProp( CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, CswNbtNode Node )
         {
             bool RetShow = false;
 
-            switch( EditMode )
+            switch( _CswNbtResources.EditMode )
             {
                 case NodeEditMode.Add:
                     //Case 24023: Exclude buttons on Add
@@ -205,12 +205,12 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns XML for a single property and its conditional properties
         /// </summary>
-        public JObject getSingleProp( NodeEditMode EditMode, string NodeId, string NodeKey, string PropIdFromJson, Int32 NodeTypeId, string NewPropJson )
+        public JObject getSingleProp( string NodeId, string NodeKey, string PropIdFromJson, Int32 NodeTypeId, string NewPropJson )
         {
             JObject Ret = new JObject();
             JObject PropObj = new JObject();
             CswNbtNode Node = null;
-            Node = EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue ?
+            Node = _CswNbtResources.EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue ?
                                     _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing ) :
                                     wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
 
@@ -229,12 +229,12 @@ namespace ChemSW.Nbt.WebServices
                 {
                     // for prop filters, update node prop value but don't save the change
                     JObject PropJson = JObject.Parse( NewPropJson );
-                    _applyPropJson( Node, PropJson, EditMode, null );
+                    _applyPropJson( Node, PropJson, null );
                 }
 
                 CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdFromJson );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-                _addProp( PropObj, EditMode, Node, Prop );
+                _addProp( PropObj, Node, Prop );
 
                 if( false == string.IsNullOrEmpty( NewPropJson ) )
                 {
@@ -249,18 +249,18 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getProp()
 
-        private void _addProp( JObject ParentObj, NodeEditMode EditMode, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
+        private void _addProp( JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
         {
-            if( EditMode == NodeEditMode.Add )
+            if( _CswNbtResources.EditMode == NodeEditMode.Add )
             {
-                ParentObj.Add( makePropJson( EditMode, Node.NodeId, Prop, Node.Properties[Prop], Prop.AddLayout.DisplayRow, Prop.AddLayout.DisplayColumn ) );
+                ParentObj.Add( makePropJson( Node.NodeId, Prop, Node.Properties[Prop], Prop.AddLayout.DisplayRow, Prop.AddLayout.DisplayColumn ) );
             }
             else
             {
-                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode );
+                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
                 CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType );
 
-                JProperty JpProp = makePropJson( EditMode, Node.NodeId, Prop, Node.Properties[Prop], Layout.DisplayRow, Layout.DisplayColumn );
+                JProperty JpProp = makePropJson( Node.NodeId, Prop, Node.Properties[Prop], Layout.DisplayRow, Layout.DisplayColumn );
                 ParentObj.Add( JpProp );
                 JObject PropObj = (JObject) JpProp.Value;
 
@@ -275,7 +275,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         HasSubProps = true;
                         CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp );
-                        JProperty JPFilterProp = makePropJson( EditMode, Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout.DisplayRow, FilterPropLayout.DisplayColumn );
+                        JProperty JPFilterProp = makePropJson( Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout.DisplayRow, FilterPropLayout.DisplayColumn );
                         SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;
 
@@ -287,11 +287,11 @@ namespace ChemSW.Nbt.WebServices
                 } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
                 PropObj["hassubprops"] = HasSubProps;
 
-            } // if-else( EditMode == NodeEditMode.Add )
+            } // if-else( _CswNbtResources.EditMode == NodeEditMode.Add )
         } // addProp()
 
 
-        public JProperty makePropJson( NodeEditMode EditMode, CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, Int32 Row, Int32 Column )
+        public JProperty makePropJson( CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, Int32 Row, Int32 Column )
         {
             CswPropIdAttr PropIdAttr = null;
             PropIdAttr = new CswPropIdAttr( NodeId, Prop.PropId );
@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.WebServices
             PropObj["showpropertyname"] = ShowPropertyName;
 
             CswNbtMetaDataNodeTypeTab Tab = null;
-            if( ( EditMode == NodeEditMode.Edit || EditMode == NodeEditMode.EditInPopup ) && Prop.EditLayout != null )
+            if( ( _CswNbtResources.EditMode == NodeEditMode.Edit || _CswNbtResources.EditMode == NodeEditMode.EditInPopup ) && Prop.EditLayout != null )
             {
                 Tab = _CswNbtResources.MetaData.getNodeTypeTab( Prop.EditLayout.TabId );
             }
@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.WebServices
                 PropObj["readonly"] = PropWrapper.IsReadOnly().ToString().ToLower();
                 PropObj["gestalt"] = PropWrapper.Gestalt.Replace( "\"", "&quot;" );
                 PropObj["highlight"] = PropWrapper.AuditChanged.ToString().ToLower();
-                PropWrapper.ToJSON( PropObj, EditMode, Tab );
+                PropWrapper.ToJSON( PropObj, Tab );
             }
             return ret;
         } // makePropJson()
@@ -360,7 +360,7 @@ namespace ChemSW.Nbt.WebServices
 
         } // _getAuditHistoryGridProp()
 
-        public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn, NodeEditMode EditMode )
+        public bool moveProp( string PropIdAttr, Int32 NewRow, Int32 NewColumn )
         {
             bool ret = false;
             if( _canEditLayout() )
@@ -370,7 +370,7 @@ namespace ChemSW.Nbt.WebServices
                 if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode ), Int32.MinValue, NewRow, NewColumn );
+                    Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ), Int32.MinValue, NewRow, NewColumn );
                     ret = true;
                 }
             } // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
@@ -381,7 +381,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // moveProp()
 
-        public bool removeProp( string PropIdAttr, NodeEditMode EditMode )
+        public bool removeProp( string PropIdAttr )
         {
             bool ret = false;
             if( _canEditLayout() )
@@ -391,11 +391,11 @@ namespace ChemSW.Nbt.WebServices
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( EditMode == NodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue() )
+                    if( _CswNbtResources.EditMode == NodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue() )
                     {
                         throw new CswDniException( ErrorType.Warning, Prop.PropName + " may not be removed", Prop.PropName + " is required and has no unique value, and therefore cannot be removed from 'Add' layouts" );
                     }
-                    Prop.removeFromLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( EditMode ) );
+                    Prop.removeFromLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ) );
                     ret = true;
                 }
             } // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
@@ -406,7 +406,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // removeProp()
 
-        public JObject saveProps( NodeEditMode EditMode, Collection<CswPrimaryKey> NodePks, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
+        public JObject saveProps( Collection<CswPrimaryKey> NodePks, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
         {
             JObject ret = new JObject();
             JObject PropsObj = JObject.Parse( NewPropsJson );
@@ -422,7 +422,7 @@ namespace ChemSW.Nbt.WebServices
             }
             if( null != NodeType )
             {
-                switch( EditMode )
+                switch( _CswNbtResources.EditMode )
                 {
                     case NodeEditMode.Add:
                         CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
@@ -432,7 +432,7 @@ namespace ChemSW.Nbt.WebServices
                             bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
                             if( CanEdit )
                             {
-                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab, true );
+                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab, true );
                                 if( null != RetNbtNodeKey )
                                 {
                                     AllSucceeded = true;
@@ -456,7 +456,7 @@ namespace ChemSW.Nbt.WebServices
                                     CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                                     Act.UpdateNode( Node, false );
                                 }
-                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, EditMode, NodeTypeTab );
+                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab );
                                 if( null != RetNbtNodeKey )
                                 {
                                     Succeeded += 1;
@@ -465,7 +465,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         AllSucceeded = ( NodePks.Count == Succeeded );
                         break;
-                } //switch( EditMode )
+                } //switch( _CswNbtResources.EditMode )
                 if( AllSucceeded && null != RetNbtNodeKey )
                 {
                     string RetNodeKey = RetNbtNodeKey.ToString();
@@ -480,7 +480,7 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     string ErrString;
-                    if( EditMode == NodeEditMode.Add )
+                    if( _CswNbtResources.EditMode == NodeEditMode.Add )
                     {
                         ErrString = "Attempt to Add failed.";
                     }
@@ -504,7 +504,7 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // saveProps()
 
-        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
+        private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
         {
             CswNbtNodeKey Ret = null;
             if( Node != null )
@@ -518,7 +518,7 @@ namespace ChemSW.Nbt.WebServices
                         where PropObj.HasValues
                         select PropObj )
                 {
-                    _applyPropJson( Node, PropObj, EditMode, Tab );
+                    _applyPropJson( Node, PropObj, Tab );
                 }
 
                 // BZ 8517 - this sets sequences that have setvalonadd = 0
@@ -635,12 +635,12 @@ namespace ChemSW.Nbt.WebServices
             return true;
         } // addPropertyToLayout()
 
-        private void _applyPropJson( CswNbtNode Node, JObject PropObj, NodeEditMode EditMode, CswNbtMetaDataNodeTypeTab Tab )
+        private void _applyPropJson( CswNbtNode Node, JObject PropObj, CswNbtMetaDataNodeTypeTab Tab )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, EditMode, Tab );
+            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
 
             // Recurse on sub-props
             if( null != PropObj["subprops"] )
@@ -653,7 +653,7 @@ namespace ChemSW.Nbt.WebServices
                                 .Select( ChildProp => (JObject) ChildProp.Value )
                                 .Where( ChildPropObj => ChildPropObj.HasValues ) )
                     {
-                        _applyPropJson( Node, ChildPropObj, EditMode, Tab );
+                        _applyPropJson( Node, ChildPropObj, Tab );
                     }
                 }
             }

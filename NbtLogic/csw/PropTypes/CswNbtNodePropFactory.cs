@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
         //    return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node, Tab, EditMode );
         //}
 
-        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtMetaDataNodeTypeTab Tab = null, NodeEditMode EditMode = NodeEditMode.Edit )
+        public static CswNbtNodePropWrapper makeNodeProp( CswNbtResources CswNbtResources, DataRow PropRow, DataTable PropsTable, CswNbtNode Node, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtMetaDataNodeTypeTab Tab = null )
         {
             CswPrimaryKey NodeId = null;
             if( null != Node )
@@ -30,10 +30,10 @@ namespace ChemSW.Nbt.PropTypes
                 NodeId = Node.NodeId;
             }
             CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId );
-            return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node, Tab, EditMode );
+            return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node, Tab );
         }
 
-        private static CswNbtNodePropWrapper _makeNodeProp( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node, CswNbtMetaDataNodeTypeTab Tab = null, NodeEditMode EditMode = NodeEditMode.Edit )
+        private static CswNbtNodePropWrapper _makeNodeProp( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node, CswNbtMetaDataNodeTypeTab Tab = null )
         {
             CswNbtNodePropWrapper ReturnVal = null;
 
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.PropTypes
                     throw new CswDniException( ErrorType.Error, "Internal System Error", "There is no CswNbtNodeProp Object for Field Type: " + FieldType.ToString() );
             }
 
-            ReturnVal = new CswNbtNodePropWrapper( CswNbtResources, Node, InnerProperty, CswNbtNodePropData, Tab, EditMode );
+            ReturnVal = new CswNbtNodePropWrapper( CswNbtResources, Node, InnerProperty, CswNbtNodePropData, Tab );
 
             return ( ReturnVal );
 
