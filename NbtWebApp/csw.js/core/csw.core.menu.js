@@ -92,7 +92,8 @@
                             $a.click(function() {
                                 $.CswDialog('AlertDialog', 'You are about to delete all demo data nodes from the database. Are you sure?', 'Delete All Demo Data', function() {
                                     Csw.ajax.post({
-                                        url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes'
+                                        url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
+                                        success: Csw.goHome
                                     });
                                 }, 'Cancel');
                             });

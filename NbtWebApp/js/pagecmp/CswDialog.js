@@ -808,12 +808,14 @@
             $div.CswErrorMessage(error);
         },
         AlertDialog: function (message, title, okFunc, cancelFunc) {
-
+            var width = Csw.number((message.length * 7), 200);
             var div = Csw.controls.div({
                 ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message
             });
-
+            
+            div.br();
+            
             if (okFunc) {
                 div.button({
                     enabledText: 'OK',
@@ -834,7 +836,7 @@
                 });
             }
 
-            openDialog(div.$, 200, 200, null, title);
+            openDialog(div.$, width, 200, null, title);
         },
 
         NavigationSelectDialog: function (options) {
