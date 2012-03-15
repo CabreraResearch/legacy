@@ -580,7 +580,7 @@ namespace ChemSW.Nbt.MetaData
             // Make initial props
             Dictionary<Int32, CswNbtMetaDataNodeTypeProp> NewNTPropsByOCPId = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>();
             int DisplayRow = 1;
-            IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps = ObjectClass.ObjectClassProps;
+            IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps = ObjectClass.getObjectClassProps();
             foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
             {
                 DataRow NewNodeTypePropRow = NodeTypeProps.NewRow();
@@ -1472,7 +1472,7 @@ namespace ChemSW.Nbt.MetaData
                 NewTab = NodeTypeTab.getNodeType().getSecondNodeTypeTab();
 
             Collection<CswNbtMetaDataNodeTypeProp> PropsToReassign = new Collection<CswNbtMetaDataNodeTypeProp>();
-            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeTab.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeTab.getNodeTypeProps() )
                 PropsToReassign.Add( Prop );
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )

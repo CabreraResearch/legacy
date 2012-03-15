@@ -2156,7 +2156,7 @@ namespace ChemSW.Nbt.WebPages
                                     if( RelatedObjectClass != null )
                                     {
                                         RelatedPropType.Value = NbtViewPropIdType.ObjectClassPropId.ToString();
-                                        IEnumerable<CswNbtMetaDataObjectClassProp> RelatedProps = RelatedObjectClass.ObjectClassProps;
+                                        IEnumerable<CswNbtMetaDataObjectClassProp> RelatedProps = RelatedObjectClass.getObjectClassProps();
                                         if( RelatedProps != null )
                                         {
                                             foreach( CswNbtMetaDataObjectClassProp RelatedProp in RelatedProps )

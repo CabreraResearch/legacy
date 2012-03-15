@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.WebServices
                     TabObj["nexttab"] = Tabs[i + 1].TabName;
                 }
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.NodeTypePropsByDisplayOrder
+                foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.getNodeTypePropsByDisplayOrder()
                                                                 .Cast<CswNbtMetaDataNodeTypeProp>()
                                                                 .Where( Prop => !Prop.HideInMobile &&
                                                                         Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&

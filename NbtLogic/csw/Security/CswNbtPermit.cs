@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.Security
                                 // You can't edit readonly properties
                                 if( ret &&
                                     Permission != NodeTypePermission.View &&
-                                    Node.Properties[MetaDataProp].ReadOnly )
+                                    Node.Properties[MetaDataProp].ReadOnly )   // don't use IsReadOnly() here
                                 {
                                     ret = false;
                                 }

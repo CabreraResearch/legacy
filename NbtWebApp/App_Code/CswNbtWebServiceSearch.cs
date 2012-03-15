@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses().Cast<CswNbtMetaDataObjectClass>()
                                                               .Where( ObjectClass => CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
-                                                                      ( ObjectClass.ObjectClassProps.Count() > 0 &&
+                                                                      ( ObjectClass.getObjectClassProps().Count() > 0 &&
                                                                         ObjectClass.getNodeTypes().Count() > 0 ) ) )
             {
                 string OptionId = "option_" + ObjectClass.ObjectClassId;
