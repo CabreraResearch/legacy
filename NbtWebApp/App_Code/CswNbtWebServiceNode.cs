@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.WebServices
                 CswTableSelect NodesSelect = new CswTableSelect( _CswNbtResources.CswResources, "delete_demodata_nodes",
                                                                 "nodes" );
                 DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
-                                                            " where to_char(isdemo)='1' " );
+                                                            " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
                     CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
