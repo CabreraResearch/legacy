@@ -40,20 +40,22 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );      //14
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );      //15
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );      //16
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );      //17
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );      //18
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );      //19
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );      //20
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );      //21
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );      //22
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );      //23
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );     //24
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );      //25
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );      //26
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) ) ;
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );       //14
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );       //15
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );       //16
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );       //17
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );       //18
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );       //19
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );       //20
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );       //21
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );       //22
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );       //23
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );      //24
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );       //25
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );       //26
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue01() ) ); //27
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue02() ) ); //28
 
 
 
