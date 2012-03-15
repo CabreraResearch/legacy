@@ -32,7 +32,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x64</PlatformTarget>
@@ -42,10 +42,13 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
@@ -56,7 +59,10 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
@@ -101,6 +107,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassComponent.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
     <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25426.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25377.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25374.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24777.cs" />
@@ -529,15 +536,12 @@
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
     <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
     <Compile Include="csw\Tree\CswNbtLocationTree.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeCatalogue.cs" />
     <Compile Include="csw\Tree\CswNbtNodeCollection.cs" />
-    <Compile Include="csw\Tree\CswNbtNodeContext.cs" />
     <Compile Include="csw\Tree\CswNbtNodeFactory.cs" />
     <Compile Include="csw\Tree\CswNbtNodeKey.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropColl.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropCollDataNative.cs" />
     <Compile Include="csw\Tree\CswNbtNodePropCollDataRelational.cs" />
-    <Compile Include="csw\Tree\CswNbtNodePropTableColEvtArgs.cs" />
     <Compile Include="csw\Tree\CswNbtNodeReader.cs" />
     <Compile Include="csw\Tree\CswNbtNodeReaderDataNative.cs" />
     <Compile Include="csw\Tree\CswNbtNodeReaderDataRelationalDb.cs" />
@@ -547,18 +551,11 @@
     <Compile Include="csw\Tree\CswNbtNodeWriterRelationalDb.cs" />
     <Compile Include="csw\Tree\CswNbtPropEnmrtrFiltered.cs" />
     <Compile Include="csw\Tree\CswNbtTreeBuilder.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeCache.cs" />
     <Compile Include="csw\Tree\CswNbtTreeDomProxy.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeDs.cs" />
     <Compile Include="csw\Tree\CswNbtTreeKey.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoader.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeLoaderFactory.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearch.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlView.cs" />
     <Compile Include="csw\Tree\CswNbtTreeModEventArgs.cs" />
     <Compile Include="csw\Tree\CswNbtTreeNodes.cs" />
-    <Compile Include="csw\Tree\CswNbtTreePermissions.cs" />
-    <Compile Include="csw\Tree\CswNbtTreeResources.cs" />
     <Compile Include="csw\Tree\ICswNbtNodePropCollData.cs" />
     <Compile Include="csw\Tree\ICswNbtNodeReaderData.cs" />
     <Compile Include="csw\Tree\ICswNbtNodeWriterFactory.cs" />

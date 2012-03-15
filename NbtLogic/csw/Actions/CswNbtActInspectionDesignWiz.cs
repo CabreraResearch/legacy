@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeTab SectionOneTab = InspectionDesignNt.getNodeTypeTab( "Section 1" );
             if( null != SectionOneTab )
             {
-                if( SectionOneTab.NodeTypeProps.Count() > 0 )
+                if( SectionOneTab.getNodeTypeProps().Count() > 0 )
                 {
                     SectionOneTab.TabName = "Questions";
                 }

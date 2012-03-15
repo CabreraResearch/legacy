@@ -41,9 +41,9 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        public Collection<Int32> NodeTypePropIds { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); } }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); } }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypePropsByDisplayOrder { get { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( NodeTypeId, TabId ); } }
+        public Collection<Int32> getNodeTypePropIds() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); }
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByDisplayOrder() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( NodeTypeId, TabId ); }
 
         //public CswNbtMetaDataNodeTypeProp FirstPropByDisplayOrder()
         //{
@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 bool ret = false;
-                foreach( CswNbtMetaDataNodeTypeProp Prop in this.NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                     ret = ret || Prop.hasFilter();
                 return ret;
             }
@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.MetaData
             TabNode.Attributes.Append( TabOrderAttr );
 
             bool bAtLeastOneProp = false;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in this.NodeTypeProps )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
             {
                 if( View == null || !PropsInViewOnly || View.ContainsNodeTypeProp( Prop ) )
                 {

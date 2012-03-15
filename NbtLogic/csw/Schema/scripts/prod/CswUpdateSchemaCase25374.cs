@@ -29,7 +29,10 @@ namespace ChemSW.Nbt.Schema
             // Remove Report.View property
             CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp ReportViewOCP = ReportOC.getObjectClassProp( "View" );
-            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ReportViewOCP, true );
+            if( ReportViewOCP != null )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ReportViewOCP, true );
+            }
 
             // Remove old (defunct) reports
             Collection<CswNbtNode> DoomedNodes = new Collection<CswNbtNode>();

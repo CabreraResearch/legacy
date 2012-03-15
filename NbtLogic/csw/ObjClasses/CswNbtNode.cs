@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         private CswNbtResources _CswNbtResources;
-        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId ) //, ICswNbtObjClassFactory ICswNbtObjClassFactory )
+        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, bool IsDemo = false ) //, ICswNbtObjClassFactory ICswNbtObjClassFactory )
         {
             _CswNbtResources = CswNbtResources;
             _UniqueId = UniqueId;
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null ); //, ICswNbtObjClassFactory);
             //_CswNbtObjClassFactory = ICswNbtObjClassFactory; // new CswNbtObjClassFactory(CswNbtResources, this);
             _NodeSpecies = NodeSpecies;
-            
+            _IsDemo = IsDemo;
             //if( NodeType != null )
             //    ObjectClassId = NodeType.ObjectClassId;
 
@@ -212,6 +212,9 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
 
         }//ModificationState
+
+        private bool _IsDemo = false;
+        public bool IsDemo { get { return _IsDemo; } set { _IsDemo = value; } }
 
         private bool _ReadOnly = false;
         public bool ReadOnly
@@ -492,7 +495,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( IsNew )
                         _CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
                     else
-                        _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation  );
+                        _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
                 }
 
                 OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
