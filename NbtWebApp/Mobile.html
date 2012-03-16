@@ -14,13 +14,12 @@
         <script type="text/javascript" src="Scripts/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="Scripts/jquery.cookie.min.js"></script>
         <script type="text/javascript" src="Scripts/jquery.mobile-1.0rc1.min.js"></script>
-        <!--#include file="_DevMobileIncludes.html" -->
-        <!-- <script type="text/javascript" src="js/mobile/CswAllMobile.min.js"></script> -->
+        <script type="text/javascript" src="js/mobile/CswAllMobile.min.js"></script>
     </head>
     <body>
         <script type="text/javascript">
 
-            (function (undefined) {
+            
                 try {
                     if (hasWebStorage()) {
 
@@ -29,7 +28,7 @@
                         window.debug = false;
                         // This causes case 22968!
                         //$(window).bind("orientationchange resize scrollstart", fixGeometry);
-                        debugger;
+            
                         $('body').CswMobile({
                             'Theme': 'b'
                         });
@@ -40,9 +39,9 @@
                     }
                 }
                 catch (e) {
-                    //errorHandler(e);
+                    debugger;
                 }
-            })();
+            
         </script>
     </body>
 </html>
