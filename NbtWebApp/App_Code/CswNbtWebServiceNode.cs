@@ -57,8 +57,13 @@ namespace ChemSW.Nbt.WebServices
 
         public bool DeleteNode( CswPrimaryKey NodePk )
         {
+            return _DeleteNode( NodePk, _CswNbtResources );
+        }
+
+        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources )
+        {
             bool ret = false;
-            CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( NodePk );
+            CswNbtNode NodeToDelete = NbtResources.Nodes.GetNode( NodePk );
             if( null != NodeToDelete )
             {
                 NodeToDelete.delete();
@@ -108,18 +113,25 @@ namespace ChemSW.Nbt.WebServices
         public bool deleteDemoDataNodes()
         {
             bool RetSuccess = true;
+
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                CswTableSelect NodesSelect = new CswTableSelect( _CswNbtResources.CswResources, "delete_demodata_nodes",
+                /* Get a new CswNbtResources as the System User */
+                CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( _CswNbtResources );
+                CswNbtResources NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
+
+                CswTableSelect NodesSelect = new CswTableSelect( NbtSystemResources.CswResources, "delete_demodata_nodes",
                                                                 "nodes" );
                 DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
                                                             " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
                     CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
-                    bool ThisNodeDeleted = DeleteNode( NodePk );
+                    bool ThisNodeDeleted = _DeleteNode( NodePk, NbtSystemResources );
                     RetSuccess = RetSuccess && ThisNodeDeleted;
                 }
+
+                wsMd.finalizeOtherResources( NbtSystemResources );
             }
             else
             {

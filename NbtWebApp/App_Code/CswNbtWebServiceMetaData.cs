@@ -86,6 +86,16 @@ namespace ChemSW.Nbt.WebServices
             return new CswNbtSystemUser( Resources, "CswNbtWebServiceNbtManager_SystemUser" );
         }
 
+        public void finalizeOtherResources( CswNbtResources NbtOtherResources )
+        {
+            if( null != NbtOtherResources )
+            {
+                NbtOtherResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
+                NbtOtherResources.finalize();
+                NbtOtherResources.release();
+            }
+        } //finalizeOtherResources
+
     } // class CswNbtWebServiceMetaData
 
 } // namespace ChemSW.Nbt.WebServices

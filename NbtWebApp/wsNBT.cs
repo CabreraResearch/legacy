@@ -2861,17 +2861,13 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                CswNbtResources NbtSystemResources = null;
+
                 if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
-                    /* Get a new CswNbtResources as the System User */
-                    CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
-
-                    CswNbtWebServiceNode ws = new CswNbtWebServiceNode( NbtSystemResources, _CswNbtStatisticsEvents );
+                    CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal["Succeeded"] = ws.deleteDemoDataNodes();
                 }
-                _deInitResources( NbtSystemResources );
+                _deInitResources();
             }
             catch( Exception ex )
             {
