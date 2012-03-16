@@ -91,6 +91,7 @@
     <Content Include="js\mobile\CswAllMobile.min.js" />
     <Content Include="js\mobile\CswMobile.css" />
     <Content Include="js\mobile\CswMobile.js" />
+    <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeButton.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeBarcode.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeDateTime.js" />
     <Content Include="js\mobile\fieldtypes\CswMobileFieldTypeLink.js" />
