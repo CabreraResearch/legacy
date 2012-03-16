@@ -39,11 +39,17 @@ namespace ChemSW.Nbt.WebServices
             // All Views
             JObject RetJson = new JObject();
             Dictionary<CswNbtViewId, CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
-            foreach( CswNbtView MobileView in MobileViews.Values )
+            if( MobileViews.Count == 0 )
             {
-                RetJson.Add( new JProperty( MobileView.ViewId.ToString(), MobileView.ViewName ) );
+                RetJson["-1"] = "No Views Have Been Configured for Mobile.";
             }
-
+            else
+            {
+                foreach ( CswNbtView MobileView in MobileViews.Values )
+                {
+                    RetJson[MobileView.ViewId.ToString()] = MobileView.ViewName;
+                }
+            }
             return RetJson;
         } // Run()
 

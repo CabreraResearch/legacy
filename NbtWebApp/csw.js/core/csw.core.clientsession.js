@@ -209,10 +209,8 @@
 
         external.isAdministrator = function (options) {
             var o = {
-                'Yes': function () {
-                },
-                'No': function () {
-                }
+                'Yes': null,
+                'No': null
             };
             if (options) {
                 $.extend(o, options);
@@ -221,10 +219,10 @@
             Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/isAdministrator',
                 success: function (data) {
-                    if (data.Administrator === 'true') {
-                        o.Yes();
+                    if (Csw.bool(data.Administrator)) {
+                        Csw.tryExec(o.Yes);
                     } else {
-                        o.No();
+                        Csw.tryExec(o.No);
                     }
                 }
             });

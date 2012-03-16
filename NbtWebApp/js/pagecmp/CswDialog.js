@@ -808,8 +808,52 @@
             $div.CswErrorMessage(error);
         },
         AlertDialog: function (message, title) {
-            var $div = $('<div>' + message + '</div>');
-            openDialog($div, 200, 200, null, title);
+
+            var div = Csw.controls.div({
+                ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
+                text: message,
+                align: 'center'
+            });
+
+            div.br();
+
+            div.button({
+                enabledText: 'OK',
+                onClick: function() {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div.$, 400, 200, null, title);
+        },
+
+        ConfirmDialog: function (message, title, okFunc, cancelFunc) {
+            var width = Csw.number((message.length * 7), 200);
+            var div = Csw.controls.div({
+                ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
+                text: message,
+                align: 'center'
+            });
+
+            div.br();
+
+            div.button({
+                enabledText: 'OK',
+                onClick: function () {
+                    Csw.tryExec(okFunc);
+                    div.$.dialog('close');
+                }
+            });
+
+            div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    Csw.tryExec(cancelFunc);
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div.$, width, 200, null, title);
         },
 
         NavigationSelectDialog: function (options) {

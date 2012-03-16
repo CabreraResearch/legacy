@@ -13,6 +13,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
@@ -21,7 +22,6 @@ using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Logic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -95,15 +95,22 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // _attemptRefresh()
 
-        private void _deInitResources()
+        private void _deInitResources( CswNbtResources OtherResources = null )
         {
             _CswSessionResources.endSession();
-            if( _CswNbtResources != null )
+            if( null != _CswNbtResources )
             {
                 _CswNbtResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
 
                 _CswNbtResources.finalize();
                 _CswNbtResources.release();
+            }
+            if( null != OtherResources )
+            {
+                OtherResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
+
+                OtherResources.finalize();
+                OtherResources.release();
             }
         } // _deInitResources()
 
@@ -1985,9 +1992,9 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
-                    CswNbtWebServiceReport ws = new CswNbtWebServiceReport(_CswNbtResources,rpt );
-                    ReturnVal = ws.runReport( rformat,Context );
-                    
+                    CswNbtWebServiceReport ws = new CswNbtWebServiceReport( _CswNbtResources, rpt );
+                    ReturnVal = ws.runReport( rformat, Context );
+
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
                 _deInitResources();
             } // try
@@ -2844,6 +2851,33 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string DeleteDemoDataNodes()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                {
+                    CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ReturnVal["Succeeded"] = ws.deleteDemoDataNodes();
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
