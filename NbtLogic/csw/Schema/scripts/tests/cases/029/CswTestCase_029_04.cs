@@ -11,7 +11,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override string Description { set { ; } get { return ( CswTestCaseRsrc.makeTestCaseDescription( this.GetType().Name, CswTstCaseRsrc_029.Purpose, "Drop test table" ) ); } }
 
-        private CswTestCaseRsrc _CswTstCaseRsrc = null;
+        //private CswTestCaseRsrc _CswTstCaseRsrc = null;
         private CswTstCaseRsrc_029 _CswTstCaseRsrc_029 = null;
 
         private CswSchemaVersion _CswSchemaVersion = null;
