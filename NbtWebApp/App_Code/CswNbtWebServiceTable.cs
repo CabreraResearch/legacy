@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.WebServices
             if( NodeType != null )
             {
                 // default image, overridden below
-                ret["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
+                ret["thumbnailurl"] = "Images/icons/300/" + NodeType.IconFileName;
             }
 
             // Map property order to insert position
