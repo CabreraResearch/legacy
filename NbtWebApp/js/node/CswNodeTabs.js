@@ -182,7 +182,7 @@
             } // if-else editmode is add or preview
         } // getTabs()
 
-        function getProps(tabContentDiv, tabid) {
+        function getProps(tabContentDiv, tabid, onSuccess) {
             if (o.EditMode === Csw.enums.editMode.Add && o.Config === false) {
                 // case 20970 - make sure there's room in the quota
                 Csw.ajax.post({
@@ -191,7 +191,7 @@
                     data: { NodeTypeId: o.nodetypeid },
                     success: function (data) {
                         if (Csw.bool(data.result)) {
-                            getPropsImpl(tabContentDiv, tabid);
+                            getPropsImpl(tabContentDiv, tabid, onSuccess);
                         } else {
                             tabContentDiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
                             Csw.tryExec(o.onInitFinish, false);
@@ -199,11 +199,11 @@
                     }
                 });
             } else {
-                getPropsImpl(tabContentDiv, tabid);
+                getPropsImpl(tabContentDiv, tabid, onSuccess);
             }
         } // getProps()
 
-        function getPropsImpl(tabContentDiv, tabid) {
+        function getPropsImpl(tabContentDiv, tabid, onSuccess) {
             var jsonData = {
                 EditMode: o.EditMode,
                 NodeId: Csw.tryParseObjByIdx(o.nodeids, 0),
@@ -369,6 +369,7 @@
                     else 
                     {
                         Csw.tryExec(o.onInitFinish, atLeastOne.Property);
+                        Csw.tryExec(onSuccess);
                     }
                 } // success{}
             }); // ajax
@@ -703,12 +704,15 @@
 
                             // reload tab
                             if(o.ReloadTabOnSave) {
-                                getProps(tabContentDiv, tabid);
+                                getProps(tabContentDiv, tabid, function() {
+                                    Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
+                                    Csw.tryExec(onSuccess);
+                                });
+                            } else {
+                                // external events
+                                Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
+                                Csw.tryExec(onSuccess);
                             }
-
-                            // external events
-                            Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
-                            Csw.tryExec(onSuccess);
                         }
 
                     }, // success
