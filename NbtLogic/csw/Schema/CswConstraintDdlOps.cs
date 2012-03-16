@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.Schema
 
         public bool doesConstraintExistInDb( string ConstraintName )
         {
-            return ( _CswNbtResources.CswResources.doesConstraintExistInDb( ConstraintName ) );
+            return ( _CswNbtResources.CswResources.doesFkConstraintExistInDb( ConstraintName ) );
         }
 
         public List<CswTableConstraint> getConstraints( string ReferencingTableName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName )
