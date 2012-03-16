@@ -12,6 +12,7 @@ namespace ChemSW.Nbt.Schema
             //***************  ADD your own code
             _CswNbtSchemaModTrnsctn.CswLogger.reportAppState("Ran after-script 1");
 
+
         }//Update()
 
     }//class CswUpdateSchema_Infr_TakeDump
