@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 // Microsoft JET engine knows how to read Excel files as a database
                 // Problem is - it is old OLE technology - not newer ADO.NET
-                string ConnStr = "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + FullPathAndFileName + ";Extended Properties=Excel 8.0;";
+                string ConnStr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + FullPathAndFileName + ";Extended Properties=Excel 8.0;";
                 ExcelConn = new OleDbConnection( ConnStr );
                 ExcelConn.Open();
 
