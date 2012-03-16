@@ -29,13 +29,10 @@
                             button.enable();
                             if (Csw.bool(data.success)) {
 
-                                // Button calls saveProps and saveProps calls getProps, so we'll need to display this on refresh
                                 if (false === Csw.isNullOrEmpty(data.message)) {
-                                    var MessageHandler = function (event, newmessagediv) {
-                                        $(newmessagediv).text(data.message);
-                                        Csw.unsubscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
-                                    };
-                                    Csw.subscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                    // can't use messagediv, since doSave has remade the tab
+                                    var $newmessagediv = $('#' + messagediv.getId());
+                                    $newmessagediv.text(data.message);
                                 }
 
                                 switch (data.action) {
@@ -71,7 +68,7 @@
                     }); // ajax.post()
                 } // doSave.onSuccess()
             }); // doSave()
-        }// if-else (Csw.isNullOrEmpty(propAttr)) {
+        } // if-else (Csw.isNullOrEmpty(propAttr)) {
     }; // onButtonClick()
 
     var methods = {
@@ -117,15 +114,13 @@
             }
 
             messagediv = table.cell(1, 2).div({
-                ID: Csw.controls.dom.makeId(o.ID, '', 'msg'),
+                ID: Csw.controls.dom.makeId(o.ID, '', 'msg', '', false),
                 cssclass: 'buttonmessage'
             });
 
             if (o.Required) {
                 button.addClass('required');
             }
-
-            Csw.publish(o.ID + 'CswFieldTypeButton_MessageHandler', messagediv.$);
 
         },
         save: function (o) {

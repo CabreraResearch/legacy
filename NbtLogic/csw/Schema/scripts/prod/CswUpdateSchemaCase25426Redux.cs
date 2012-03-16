@@ -91,16 +91,16 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-
-            CswTableSelect NodesSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "25426Redux_nodes_select", "nodes" );
-            DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" } );
+            // 1. mark all nodes isdemo = 0
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update nodes set isdemo = '0'" );            
+            
+            // 2. mark nodes in dictionary isdemo = 1
             FillDemoNodesDictionary();
-            foreach( DataRow NodeRow in NodesTable.Rows )
+            foreach( Int32 NodeId in DemoDataNodes.Keys )
             {
-                CswNbtNode Node = getNode( NodeRow["nodeid"] );
+                CswNbtNode Node = getNode( NodeId );
                 setIsDemo( Node );
             }
-
 
         }//Update()
 

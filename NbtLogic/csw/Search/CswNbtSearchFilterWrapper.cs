@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Search
         {
             _FilterObj = FilterObj;
         }
-        public CswNbtSearchFilterWrapper( string inFilterName, CswNbtSearchFilterType inType, string inFilterId, string inFilterValue, Int32 inCount, string inIcon )
+        public CswNbtSearchFilterWrapper( string inFilterName, CswNbtSearchFilterType inType, string inFilterId, string inFilterValue, Int32 inCount, string inIcon, bool inRemoveable )
         {
             _FilterObj = new JObject();
 
@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.Search
             FilterValue = inFilterValue;
             Count = inCount;
             Icon = inIcon;
+            Removeable = inRemoveable;
         }
 
         public JObject ToJObject()
@@ -79,6 +80,11 @@ namespace ChemSW.Nbt.Search
         {
             get { return _FilterObj["icon"].ToString(); }
             set { _FilterObj["icon"] = value; }
+        }
+        public bool Removeable
+        {
+            get { return CswConvert.ToBoolean( _FilterObj["removeable"] ); }
+            set { _FilterObj["removeable"] = value; }
         }
         public string FilterValue
         {

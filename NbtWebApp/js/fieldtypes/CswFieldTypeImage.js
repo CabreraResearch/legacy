@@ -33,8 +33,8 @@
                 });
                 var cell11 = table.cell(1, 1).propDom('colspan', '3');
                 var cell21 = table.cell(2, 1).propDom('width', width);
-                var cell22 = table.cell(2, 2).propDom('align', 'right').div();
-                var cell23 = table.cell(2, 3).propDom('align', 'right').div();
+                var cell22 = table.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
+                var cell23 = table.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
 
                 if (false === Csw.isNullOrEmpty(fileName)) {
                     //Case 24389: IE interprets height and width absolutely, better not to use them at all.
