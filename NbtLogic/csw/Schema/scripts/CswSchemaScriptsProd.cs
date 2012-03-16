@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ChemSW.Exceptions;
-using ChemSW.Core;
 
 //using ChemSW.RscAdo;
 //using ChemSW.TblDn;
@@ -54,6 +52,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );     //24
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );      //25
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );      //26
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426Redux() ) ); //27
 
 
 
@@ -159,7 +158,7 @@ namespace ChemSW.Nbt.Schema
 
 
         #region Versioned scripts
-  
+
         CswSchemaVersion _makeNextSchemaVersion()
         {
             int SuperCycle = _MinimumVersion.CycleIteration;

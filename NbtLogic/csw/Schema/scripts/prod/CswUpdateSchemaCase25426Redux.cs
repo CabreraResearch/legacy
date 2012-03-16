@@ -10,9 +10,9 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema for case 25426
+    /// Updates the schema for case 25426Redux
     /// </summary>
-    public class CswUpdateSchemaCase25426 : CswUpdateSchemaTo
+    public class CswUpdateSchemaCase25426Redux : CswUpdateSchemaTo
     {
         private Dictionary<Int32, string> DemoDataNodes = new Dictionary<Int32, string>();
 
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswTableSelect NodesSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "25426_nodes_select", "nodes" );
+            CswTableSelect NodesSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "25426Redux_nodes_select", "nodes" );
             DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" } );
             FillDemoNodesDictionary();
             foreach( DataRow NodeRow in NodesTable.Rows )
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     string NodeName;
                     DemoDataNodes.TryGetValue( Node.NodeId.PrimaryKey, out NodeName );
-                    if( NodeName.Trim() == Node.NodeName.Trim() )
+                    if( NodeName == Node.NodeName )
                     {
                         Node.IsDemo = true;
                     }
@@ -147,6 +147,6 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-    }//class CswUpdateSchemaCase25426
+    }//class CswUpdateSchemaCase25426Redux
 
 }//namespace ChemSW.Nbt.Schema
