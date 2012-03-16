@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     string NodeName;
                     DemoDataNodes.TryGetValue( Node.NodeId.PrimaryKey, out NodeName );
-                    if( NodeName == Node.NodeName )
+                    if( NodeName.Trim() == Node.NodeName.Trim() )
                     {
                         Node.IsDemo = true;
                     }
