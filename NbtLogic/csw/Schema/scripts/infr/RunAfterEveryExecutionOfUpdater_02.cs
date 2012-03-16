@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             //***************  ADD your own code
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Running nbt_finalize_ora.bat after to updates." ); //this one blocks        
+            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Running nbt_finalize_ora.bat after updates." ); //this one doesn't blocks        
             //"Initialize" is only for updateSequences()!!!
             _CswNbtSchemaModTrnsctn.CswDbCfgInfo.makeConfigurationCurrent( _CswNbtSchemaModTrnsctn.Accessid );
             string serverName = _CswNbtSchemaModTrnsctn.CswDbCfgInfo.CurrentServerName;
@@ -36,9 +36,8 @@ namespace ChemSW.Nbt.Schema
             p.StartInfo.RedirectStandardOutput = false;
 
             System.Diagnostics.Process.Start( p.StartInfo );
-            p.WaitForExit( 30000 );
-
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Finished nbt_finalize_ora.bat after to updates." ); //this one doesn't block
+            //we don't wait 
+            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Left nbt_finalize_ora.bat after updates without waiting." ); //this one doesn't block
 
 
         }//Update()

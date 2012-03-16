@@ -45,6 +45,15 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
+        public Int32 UpdtShellWaitMsec
+        {
+            get
+            {
+                return ( CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting("UpdtShellWaitMsec") ));
+            }
+        }
+
+
         /// <summary>
         /// Encapsulate data acces mechanics for schmema updater so that a schema treats transactions consistently
         /// and can accurately rollback to the previous data state. The idea is essentially that schema updater 

@@ -36,9 +36,11 @@ namespace ChemSW.Nbt.Schema
             p.StartInfo.RedirectStandardOutput = false;
 
             System.Diagnostics.Process.Start( p.StartInfo );
-            p.WaitForExit( 30000 );
-
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Finished nbt_initialize_ora.bat prior to updates." ); //this one doesn't block
+            if( false == p.WaitForExit( _CswNbtSchemaModTrnsctn.UpdtShellWaitMsec ) )
+            {
+                _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Timed out will running nbt_initialize_ora.bat prior to updates." );
+            }
+            else _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Finished nbt_initialize_ora.bat prior to updates." );
 
         }//Update()
 
