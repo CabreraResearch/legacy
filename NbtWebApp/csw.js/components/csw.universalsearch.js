@@ -123,15 +123,17 @@
                 ftable.cell(ftable_row, 2).span({
                     text: thisFilter.filtervalue
                 });
-                ftable.cell(ftable_row, 3).imageButton({
-                    ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
-                    ButtonType: Csw.enums.imageButton_ButtonType.Delete,
-                    AlternateText: 'Remove Filter',
-                    onClick: function () {
-                        internal.filter(thisFilter, 'remove');
-                        return Csw.enums.imageButton_ButtonType.None;
-                    }
-                });
+                if(Csw.bool(thisFilter.removeable)) {
+                    ftable.cell(ftable_row, 3).imageButton({
+                        ID: Csw.controls.dom.makeId(filtersdivid, '', thisFilter.filterid),
+                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
+                        AlternateText: 'Remove Filter',
+                        onClick: function () {
+                            internal.filter(thisFilter, 'remove');
+                            return Csw.enums.imageButton_ButtonType.None;
+                        }
+                    });
+                }
                 ftable_row++;
                 hasFilters = true;
             }
