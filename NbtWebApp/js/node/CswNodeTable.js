@@ -100,10 +100,18 @@
                             $.CswFieldTypeFactory('make', {
                                 nodeid: nodeid,
                                 fieldtype: propObj.fieldtype,
+                                propid: propObj.propid,
                                 propDiv: propDiv,
                                 propData: propObj.propData,
                                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: propObj.id }),
-                                EditMode: Csw.enums.EditMode.Table
+                                EditMode: Csw.enums.editMode.Table,
+                                doSave: function(saveoptions) { 
+                                    // Nothing to save in this case, so just call onSuccess
+                                    var s = { onSuccess: null };
+                                    if(saveoptions) $.extend(s, saveoptions);
+                                    Csw.tryExec(s.onSuccess);
+                                },
+                                onReload: null
                             });
 
                         } else {

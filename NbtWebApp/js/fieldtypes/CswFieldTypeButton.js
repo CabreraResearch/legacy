@@ -8,14 +8,13 @@
     var onButtonClick = function (propid, button, messagediv, o) {
         var propAttr = Csw.string(propid),
             params;
-
         button.disable();
         if (Csw.isNullOrEmpty(propAttr)) {
             Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
             button.enable();
         } else {
             // case 25371 - Save the tab first
-            o.doSave({
+            Csw.tryExec(o.doSave, {
                 onSuccess: function () {
 
                     params = {
@@ -52,7 +51,7 @@
                                         break;
 
                                     case Csw.enums.nbtButtonAction.refresh:
-                                        o.onReload();
+                                        Csw.tryExec(o.onReload);
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:
                                         Csw.openPopup(data.actiondata, 600, 800);
