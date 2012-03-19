@@ -109,18 +109,25 @@
                                                 paddingBottom: cellpad
                                             });
 
-                    thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
-                    textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
-
-                    // Name
-                    textCell.append('<b>' + nodeObj.nodename + '</b>');
+                    var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
 
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                        thumbnailCell.img({
+                        thumbtable.cell(1,1).img({
                             src: nodeObj.thumbnailurl
                         }).css({ width: imgwidth });
                     }
+                    var moreinfoimg = thumbtable.cell(1,2).css({ width: '25px' })
+                        .img({
+                           src: 'Images/info.png',
+                           title: 'More Info'
+                        });
+                    moreinfoimg.propNonDom({ valign: 'top' });
+                    moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
+
                     thumbnailCell.br();
+
+                    // Name
+                    textCell.append('<b>' + nodeObj.nodename + '</b>');
 
                     if (Csw.bool(nodeObj.locked)) {
                         textCell.img({
