@@ -73,7 +73,7 @@ sub postProcessor
             }
             $processedfile .= $line;
         }
-        close(CSS);
+        close(CSS1);
 
         open(CSS2, "> $path\\$destfile") or die("Could not open file: $destfile ; $!");
         print CSS2 $processedfile;
