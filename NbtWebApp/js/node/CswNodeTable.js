@@ -65,6 +65,16 @@
                 }
                 return ret;
             }
+            function _getButtonCell(cellSet)
+            {
+                var ret;
+                if(singleColumn) {
+                    ret = cellSet[2][2];
+                } else {
+                    ret = cellSet[3][1];
+                }
+                return ret;
+            }
 
             function _HandleTableData(data) {
                 var r = 1;
@@ -97,19 +107,29 @@
                                             .css({
                                                 width: thumbwidth,
                                                 verticalAlign: verticalAlign,   
-                                                borderBottom: bborder,
                                                 paddingTop: cellpad,
-                                                paddingBottom: cellpad
                                             });
                     var textCell = _getTextCell(cellSet)
                                             .css({
                                                 width: textwidth,
-                                                borderBottom: bborder,
                                                 paddingTop: cellpad,
+                                            });
+                    if(singleColumn)
+                    {
+                        cellSet[2][1].css({
+                            borderBottom: bborder,
+                            paddingBottom: cellpad
+                        });
+                    }
+                    var btncell = _getButtonCell(cellSet)
+                                            .css({
+                                                borderBottom: bborder,
                                                 paddingBottom: cellpad
                                             });
 
+
                     var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
+                    var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
 
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                         thumbtable.cell(1,1).img({
@@ -127,21 +147,30 @@
                     thumbnailCell.br();
 
                     // Name
-                    textCell.append('<b>' + nodeObj.nodename + '</b>');
+                    var maintextcell = texttable.cell(1,1);
+                    maintextcell.append('<b>' + nodeObj.nodename + '</b>');
 
                     if (Csw.bool(nodeObj.locked)) {
-                        textCell.img({
+                        maintextcell.img({
                             src: 'Images/quota/lock.gif',
                             title: 'Quota exceeded'
                         });
                     }
-                    textCell.br();
+                    maintextcell.br();
+
+                    var btnTable = btncell.table({
+                        ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl'),
+                        cellspacing: '5px'
+                    });
+                    var btncol = 1;
 
                     // Props
                     Csw.crawlObject(nodeObj.props, function (propObj) {
                         if (propObj.fieldtype == "Button") {
 
-                            var propDiv = textCell.div();
+                            // Object Class Buttons
+                            var propDiv = btnTable.cell(1,btncol).div();
+                            propObj.propData.values.mode = 'link';      // force link
                             $.CswFieldTypeFactory('make', {
                                 nodeid: nodeid,
                                 fieldtype: propObj.fieldtype,
@@ -158,27 +187,24 @@
                                 },
                                 onReload: null
                             });
+                            btncol += 1;
 
                         } else {
-                            textCell.span({text: propObj.propname + ': ' + propObj.gestalt});
+                            maintextcell.span({text: propObj.propname + ': ' + propObj.gestalt});
+                            maintextcell.br();
                         }
-                        textCell.br();
                     });
 
-                    // Buttons
-                    var btnTable = textCell.table({
-                        ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl')
-                    });
-
+                    // System Buttons
                     if (nodeObj.allowview || nodeObj.allowedit) {
                         var btntext = "View";
                         if (nodeObj.allowedit) {
                             btntext = "Edit";
                         }
-                        btnTable.cell(1, 1).button({
+                        btnTable.cell(1, btncol).link({
                             ID: Csw.controls.dom.makeId( o.ID, nodeid, 'editbtn' ),
-                            enabledText: btntext,
-                            disableOnClick: false,
+                            text: btntext,
+                            //disableOnClick: false,
                             onClick: function () {
                                 $.CswDialog('EditNodeDialog', {
                                     nodeids: [nodeid],
@@ -189,13 +215,14 @@
                                 }); // CswDialog
                             } // onClick
                         }); // CswButton
+                        btncol += 1;
                     } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                     if (nodeObj.allowdelete) {
-                        btnTable.cell(1, 2).button({
+                        btnTable.cell(1, btncol).link({
                             ID: Csw.controls.dom.makeId(o.ID, nodeid, 'btn' ),
-                            enabledText: 'Delete',
-                            disableOnClick: false,
+                            text: 'Delete',
+                            //disableOnClick: false,
                             onClick: function () {
                                 $.CswDialog('DeleteNodeDialog', {
                                     nodenames: [nodeObj.nodename],
@@ -205,6 +232,7 @@
                                 }); // CswDialog
                             } // onClick
                         }); // CswButton
+                        btncol += 1;
                     } // if (nodeObj.allowdelete)
 
                     c += 1;
@@ -222,11 +250,11 @@
                     });
 
                     var cellalign = 'left';
-                    var cellset = { rows: 2, columns: 1 };
+                    var cellset = { rows: 3, columns: 1 };
                     var cellspacing = '5px';
                     if(singleColumn) {
                         cellalign = 'left';
-                        cellset = { rows: 1, columns: 2 }
+                        cellset = { rows: 2, columns: 2 }
                         cellspacing = '0px';
                     }
 
