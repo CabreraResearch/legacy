@@ -95,6 +95,7 @@
                 },
                 tabledata: data.table,
                 //maxheight: internal.searchresults_maxheight
+                columns: 1
             });
 
             // Filter panel

@@ -32,6 +32,11 @@
             var parent = Csw.controls.factory($parent);
             var tableDiv, layoutTable;
 
+            var singleColumn = false;
+            if(o.columns === 1) {
+                singleColumn = true;
+            }
+
             if (false == Csw.isNullOrEmpty(o.tabledata)) {
                 _HandleTableData(o.tabledata);
             } else {
@@ -44,6 +49,21 @@
                     },
                     success: _HandleTableData
                 });
+            }
+
+            function _getThumbnailCell(cellSet)
+            {
+                return cellSet[1][1];
+            }
+            function _getTextCell(cellSet)
+            {
+                var ret;
+                if(singleColumn) {
+                    ret = cellSet[1][2];
+                } else {
+                    ret = cellSet[2][1];
+                }
+                return ret;
             }
 
             function _HandleTableData(data) {
@@ -59,16 +79,34 @@
                         r += 1;
                     }
                     var cellSet = layoutTable.cellSet(r, c);
-                    var width = (1 / o.columns * 100) + '%';
-                    var thumbnailCell = cellSet[1][1]
+                    var thumbwidth = (1 / o.columns * 100) + '%';
+                    var textwidth = (1 / o.columns * 100) + '%';
+                    var imgwidth = '75%';
+                    var verticalAlign = 'bottom';
+                    var bborder = '';
+                    var cellpad = o.rowpadding + 'px';
+                    if(singleColumn) {
+                        thumbwidth = '25%';
+                        textwidth = '75%';
+                        verticalAlign = 'top';
+                        imgwidth = '90%';
+                        bborder = '1px solid #cccccc';
+                        cellpad = '10px';
+                    }
+                    var thumbnailCell = _getThumbnailCell(cellSet)
                                             .css({
-                                                paddingTop: o.rowpadding + 'px',
-                                                width: width,
-                                                verticalAlign: 'bottom'
+                                                width: thumbwidth,
+                                                verticalAlign: verticalAlign,   
+                                                borderBottom: bborder,
+                                                paddingTop: cellpad,
+                                                paddingBottom: cellpad
                                             });
-                    var textCell = cellSet[2][1]
+                    var textCell = _getTextCell(cellSet)
                                             .css({
-                                                width: width
+                                                width: textwidth,
+                                                borderBottom: bborder,
+                                                paddingTop: cellpad,
+                                                paddingBottom: cellpad
                                             });
 
                     thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
@@ -80,7 +118,7 @@
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
                         thumbnailCell.img({
                             src: nodeObj.thumbnailurl
-                        }).css({ width: '40%' });
+                        }).css({ width: imgwidth });
                     }
                     thumbnailCell.br();
 
@@ -176,12 +214,21 @@
                         //styles: { overflow: 'auto' }
                     });
 
+                    var cellalign = 'left';
+                    var cellset = { rows: 2, columns: 1 };
+                    var cellspacing = '5px';
+                    if(singleColumn) {
+                        cellalign = 'left';
+                        cellset = { rows: 1, columns: 2 }
+                        cellspacing = '0px';
+                    }
+
                     layoutTable = tableDiv.layoutTable({
                         ID: o.ID + '_tbl',
-                        cellSet: { rows: 2, columns: 1 },
-                        cellalign: 'center',
+                        cellSet: cellset,
+                        cellalign: cellalign,
                         width: '100%',
-                        cellspacing: '5px'
+                        cellspacing: cellspacing
                     });
 
                     Csw.crawlObject(data.nodes, _makeNodeCell);
