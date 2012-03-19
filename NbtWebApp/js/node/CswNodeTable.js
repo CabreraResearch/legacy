@@ -23,14 +23,14 @@
                 onNoResults: null,  // function({viewid, viewmode})
                 columns: 3,      // number of columns to use
                 rowpadding: 25,  // padding between table rows, in pixels
-                maxheight: 600,   // maximum display height of table, in pixels
+                //maxheight: 600,   // maximum display height of table, in pixels
                 tabledata: null
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
             var parent = Csw.controls.factory($parent);
-            var scrollingDiv, layoutTable;
+            var tableDiv, layoutTable;
 
             if (false == Csw.isNullOrEmpty(o.tabledata)) {
                 _HandleTableData(o.tabledata);
@@ -170,13 +170,13 @@
                     Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
                 } else {
 
-                    scrollingDiv = parent.div({
+                    tableDiv = parent.div({
                         ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }),
-                        height: o.maxheight + 'px',
-                        styles: { overflow: 'auto' }
+                        //height: o.maxheight + 'px',
+                        //styles: { overflow: 'auto' }
                     });
 
-                    layoutTable = scrollingDiv.layoutTable({
+                    layoutTable = tableDiv.layoutTable({
                         ID: o.ID + '_tbl',
                         cellSet: { rows: 2, columns: 1 },
                         cellalign: 'center',

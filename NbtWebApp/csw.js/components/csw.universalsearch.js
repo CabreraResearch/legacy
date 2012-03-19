@@ -14,7 +14,7 @@
             onAfterSearch: null,
             onAfterNewSearch: null,
             onLoadView: null,
-            searchresults_maxheight: '600',
+            //searchresults_maxheight: '600',
             searchbox_width: '200px',
 
             newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
@@ -94,7 +94,7 @@
                     internal.$searchresults_parent.text('No Results Found');
                 },
                 tabledata: data.table,
-                maxheight: internal.searchresults_maxheight
+                //maxheight: internal.searchresults_maxheight
             });
 
             // Filter panel
@@ -104,8 +104,8 @@
                 $parent: internal.$searchfilters_parent
             }).css({
                 paddingTop: '15px',
-                height: internal.searchresults_maxheight + 'px',
-                overflow: 'auto'
+                //height: internal.searchresults_maxheight + 'px',
+                //overflow: 'auto'
             });
 
             fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();
