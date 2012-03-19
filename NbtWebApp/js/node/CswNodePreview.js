@@ -52,8 +52,9 @@
                                                 var X = o.eventArg.pageX;
                                                 var Y = o.eventArg.pageY;
 
+                                                
+                                                if(X + divwidth > windowX) X = windowX - divwidth;
                                                 // this doesn't work with page scrolling
-                                                // if(X + divwidth > windowX) X = windowX - divwidth;
                                                 // if(Y + divheight > windowY) Y = windowY - divheight;
 
                                                 $div.css({ 
