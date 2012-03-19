@@ -1,4 +1,4 @@
-﻿(function (window) {
+(function (window) {
 
     // Function.prototype.bind
     if (!Function.prototype.hasOwnProperty('bind')) {

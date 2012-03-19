@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" 
+<%@ Page Language="C#" 
          AutoEventWireup="true" 
          Inherits="ChemSW.Nbt.WebPages.Subscriptions" 
          MasterPageFile="~/MainLayout.master" 
