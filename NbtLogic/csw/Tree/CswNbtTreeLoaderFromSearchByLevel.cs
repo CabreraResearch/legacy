@@ -293,7 +293,7 @@ namespace ChemSW.Nbt
             //    OrderBy = " order by " + OrderByProps.ToString() + " ";
             //}
 
-            OrderBy += ",n.nodeid "; // for property multiplexing
+            OrderBy += ",n.nodeid,lower(props.propname) "; // for property multiplexing
 
             // Properties for Select
             //if( Relationship.Properties.Count > 0 )
