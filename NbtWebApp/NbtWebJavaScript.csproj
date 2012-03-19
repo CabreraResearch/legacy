@@ -71,7 +71,7 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="css\ChemSW.min.css" />
-    <None Include="csw.css\cssVariables.pm" />
+    <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.table.layout.css" />
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
@@ -135,7 +135,6 @@
     <Content Include="js\nbt\fieldtypes\CswFieldTypeViewPickList.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeViewReference.js" />
     <Content Include="js\nbt\fieldtypes\_CswFieldTypeFactory.js" />
-    <Content Include="js\nbt\Main.js" />
     <Content Include="js\nbt\nodes\CswNodeGrid.js" />
     <Content Include="js\nbt\nodes\CswNodePreview.js" />
     <Content Include="js\nbt\nodes\CswNodeSelect.js" />
@@ -240,27 +239,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="css\_compressor.pl" />
-    <None Include="js\_concatNbtVsDoc.pl" />
-    <None Include="js\_compileCommon.pl" />
-    <None Include="js\_concatCswVsDoc.pl" />
-    <None Include="js\_compileNbt.pl" />
+    <None Include="js\nbt\_concatNbtVsDoc.pl" />
+    <None Include="js\common\_compileCommon.pl" />
+    <None Include="js\common\_concatCswVsDoc.pl" />
+    <None Include="js\nbt\_compileNbt.pl" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup />
-  <ItemGroup>
-    <Reference Include="CombineAndMinify">
-      <HintPath>..\packages\CombineAndMinify.1.8\lib\CombineAndMinify.dll</HintPath>
-    </Reference>
-    <Reference Include="EcmaScript.NET.modified">
-      <HintPath>..\packages\CombineAndMinify.1.8\lib\EcmaScript.NET.modified.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="Yahoo.Yui.Compressor">
-      <HintPath>..\packages\CombineAndMinify.1.8\lib\Yahoo.Yui.Compressor.dll</HintPath>
-    </Reference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
@@ -271,9 +258,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>call $(ProjectDir)css\_compressor.pl $(ProjectDir)
-call $(ProjectDir)js\_concatCswVsDoc.pl $(ProjectDir)
-call $(ProjectDir)js\_concatNbtVsDoc.pl $(ProjectDir)
-call $(ProjectDir)js\_compileCommon.pl $(ProjectDir)
-call $(ProjectDir)js\_compileNbt.pl $(ProjectDir)</PreBuildEvent>
+call $(ProjectDir)js\common\_concatCswVsDoc.pl $(ProjectDir)
+call $(ProjectDir)js\nbt\_concatNbtVsDoc.pl $(ProjectDir)
+call $(ProjectDir)js\common\_compileCommon.pl $(ProjectDir)
+call $(ProjectDir)js\nbt\_compileNbt.pl $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>

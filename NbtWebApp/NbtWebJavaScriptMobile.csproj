@@ -62,15 +62,6 @@
     <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -152,12 +143,12 @@
     <Content Include="_DevMobileIncludes.html" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="js\_compileMobile.pl" />
+    <None Include="js\mobile\_compileMobile.pl" />
     <None Include="Mobile.manifest" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>call $(ProjectDir)js\_compileMobile.pl $(ProjectDir)</PreBuildEvent>
+    <PreBuildEvent>call $(ProjectDir)js\mobile\_compileMobile.pl $(ProjectDir)</PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

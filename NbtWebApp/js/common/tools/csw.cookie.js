@@ -4,7 +4,10 @@
 (function () {
     'use strict';
 
-    Csw.enums.cookieNames = Csw.enums.cookieNames ||
+    Csw.cookie = Csw.cookie ||
+        Csw.register('cookie', Csw.makeNameSpace());
+
+    Csw.cookie.cookieNames = Csw.cookie.cookieNames ||
         Csw.enums.register('cookieNames',
             {
                 SessionId: 'CswSessionId',
@@ -27,9 +30,6 @@
                 LastSearchId: 'csw_lastsearchid'
             }
         );
-
-    Csw.cookie = Csw.cookie ||
-        Csw.register('cookie', Csw.makeNameSpace());
 
     Csw.cookie.get = Csw.cookie.get ||
         Csw.register('get', function (cookiename) {
@@ -62,9 +62,9 @@
             /// <summary> Clear the current value of all Csw cookies.</summary>
             /// <returns type="Boolean">Always true.</returns>
             var cookieName;
-            for (cookieName in Csw.enums.cookieNames) {
-                if (Csw.contains(Csw.enums.cookieNames, cookieName)) {
-                    $.cookie(Csw.enums.cookieNames[cookieName], null);
+            for (cookieName in Csw.cookie.cookieNames) {
+                if (Csw.contains(Csw.cookie.cookieNames, cookieName)) {
+                    $.cookie(Csw.cookie.cookieNames[cookieName], null);
                 }
             }
             return true;

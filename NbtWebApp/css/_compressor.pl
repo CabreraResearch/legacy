@@ -1,37 +1,82 @@
 
 use strict;
 
+printf("Started compiling ChemSW.min.css\n");
+
 use FindBin;
 use lib $FindBin::Bin;
 use cssVariables;
 my %vars = %cssVariables::vars;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\js\\ChemSW.min.css";
-
-printf("Starting compile: css\n");
-
+my $destfile = "$dir\\css\\ChemSW.min.css";
 unlink($destfile);
 
-my $param = "";
-$param .= extract("$dir\\csw.css");
+open(CSSDOC, "> $destfile") or die("Cannot open vsdoc file: $destfile ; $!");
+close(CSSDOC);
 
-sub extract
+my $path = "$dir\\css\\";
+
+extractFile("ChemSW.css");
+extractFiles();
+
+printf("Finished compiling ChemSW.min.css\n");
+
+printf("Running CSS postprocessor\n");
+
+postProcessor("ChemSW.min.css", "ChemSW.min.css");
+
+printf("Finished running CSS postprocessor\n");
+
+sub extractFiles
 {
     my $filelist = "";
-    my $path = $_[0];
     opendir(CSSDIR, $path) or die("Cannot open css directory: $path ; $!");
     while((my $filename = readdir(CSSDIR)))
     {
-        if($filename =~ /.*\.css$/ ) 
-        {
-            printf("Compiling: $path\\$filename\n");
-            $filelist .= "--js $path\\$filename ";
-            `java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $path\\$filename >> $destfile`;
-        }
+        extractFile($filename);
     }
     closedir(CSSDIR);
     return $filelist;
 }
 
+sub extractFile
+{
+    my $filename = $_[0];
+    if($filename !~ /_dev/ &&
+       $filename =~ /.*\.css$/ &&
+       $filename !~ /.min\.css/) 
+    {
+        open(CSSFILE, "$path\\$filename") or die("Cannot open css file: $filename ; $!");        
+        printf("Compiled $filename into ChemSW.min.css\n");
+        `java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $path\\$filename >> $destfile`;
+        postProcessor($filename, "_dev.$filename");
+        close(CSSFILE);
+    }
+    return $filename;
+}
 
+sub postProcessor
+{
+    my $filename = $_[0];
+    my $destfile = $_[1];
+
+    if($filename =~ /.*\.css$/) 
+    {    
+        open(CSS1, "$path\\$filename") or die("Could not open file: $filename ; $!");
+        my $processedfile = "";
+        while(my $line = <CSS1>)
+        {
+            while((my $key, my $value) = each %vars) 
+            {
+                $line =~ s/$key/$value/g;
+            }
+            $processedfile .= $line;
+        }
+        close(CSS);
+
+        open(CSS2, "> $path\\$destfile") or die("Could not open file: $destfile ; $!");
+        print CSS2 $processedfile;
+        close(CSS2);
+    }
+}
