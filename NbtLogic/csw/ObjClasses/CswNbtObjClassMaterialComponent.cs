@@ -5,17 +5,17 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassComponent : CswNbtObjClass
+    public class CswNbtObjClassMaterialComponent : CswNbtObjClass
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassComponent( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassMaterialComponent( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassComponent( CswNbtResources CswNbtResources )
+        public CswNbtObjClassMaterialComponent( CswNbtResources CswNbtResources )
             : base( CswNbtResources )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
@@ -23,10 +23,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ); }
         }
 
         public static string PercentagePropertyName { get { return "Percentage"; } }
+        public static string MixturePropertyName { get { return "Mixture"; } }
+        public static string ConstituentPropertyName { get { return "Constituent"; } }
+
 
         #region Inherited Events
 
@@ -94,6 +97,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
 
-    }//CswNbtObjClassComponent
+    }//CswNbtObjClassMaterialComponent
 
 }//namespace ChemSW.Nbt.ObjClasses
