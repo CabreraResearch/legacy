@@ -14,7 +14,7 @@
             onAfterSearch: null,
             onAfterNewSearch: null,
             onLoadView: null,
-            searchresults_maxheight: '600',
+            //searchresults_maxheight: '600',
             searchbox_width: '200px',
 
             newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
@@ -24,7 +24,9 @@
             //filters: {},
             sessiondataid: '',
             searchterm: '',
-            filterHideThreshold: 5
+            filterHideThreshold: 5,
+            buttonSingleColumn: '',
+            buttonMultiColumn: ''
         };
         if (params) $.extend(internal, params);
 
@@ -78,24 +80,66 @@
             internal.sessiondataid = data.sessiondataid;
 
             // Search results
-            internal.$searchresults_parent
-                        .css({ paddingTop: '15px' })
-                        .append('<b>Search Results: (' + data.table.results + ')</b>');
+            function _renderResultsTable(columns) {
+                
+                internal.$searchresults_parent.css({ paddingTop: '15px' });
 
-            internal.$searchresults_parent.CswNodeTable({
-                ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
-                onEditNode: null,
-                onDeleteNode: function() {
-                    // case 25380 - refresh on delete
-                    external.restoreSearch(internal.sessiondataid);
-                },
-                //onSuccess: internal.onAfterSearch,
-                onNoResults: function () {
-                    internal.$searchresults_parent.text('No Results Found');
-                },
-                tabledata: data.table,
-                maxheight: internal.searchresults_maxheight
-            });
+                var resultstable = Csw.controls.table({
+                    ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstbl'),
+                    $parent: internal.$searchresults_parent,
+                    width: '100%'
+                });
+
+                resultstable.cell(1,1).append('<b>Search Results: (' + data.table.results + ')</b>');
+            
+                resultstable.cell(1,2).css({ width: '18px' });
+                internal.buttonSingleColumn = resultstable.cell(1,2).imageButton({
+                    ID: Csw.controls.dom.makeId(internal.ID, '', '_singlecol'),
+                    ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
+                    Active: (columns === 1),
+                    AlternateText: 'Single Column',
+                    onClick: function() {
+                        internal.$searchresults_parent.contents().remove();
+                        setTimeout(function() {   // so we see the clear immediately
+                            _renderResultsTable(1); 
+                        }, 0);
+                    }
+                });
+            
+                resultstable.cell(1,3).css({ width: '18px' });
+                internal.buttonMultiColumn = resultstable.cell(1,3).imageButton({
+                    ID: Csw.controls.dom.makeId(internal.ID, '', '_multicol'),
+                    ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
+                    Active: (columns !== 1),
+                    AlternateText: 'Multi Column',
+                    onClick: function() {
+                        internal.$searchresults_parent.contents().remove();
+                        setTimeout(function() {   // so we see the clear immediately
+                            _renderResultsTable(3);
+                        }, 0);
+                    }
+                });
+
+                resultstable.cell(2,1).propDom({ 'colspan': 3 });
+
+                resultstable.cell(2,1).$.CswNodeTable({
+                    ID: Csw.controls.dom.makeId(internal.ID, '', 'srchresults'),
+                    onEditNode: null,
+                    onDeleteNode: function() {
+                        // case 25380 - refresh on delete
+                        external.restoreSearch(internal.sessiondataid);
+                    },
+                    //onSuccess: internal.onAfterSearch,
+                    onNoResults: function () {
+                        resultstable.cell(2,1).text('No Results Found');
+                    },
+                    tabledata: data.table,
+                    //maxheight: internal.searchresults_maxheight
+                    columns: columns
+                });
+            }
+
+            _renderResultsTable(1);
 
             // Filter panel
             filtersdivid = Csw.controls.dom.makeId(internal.ID, '', 'filtersdiv');
@@ -104,8 +148,8 @@
                 $parent: internal.$searchfilters_parent
             }).css({
                 paddingTop: '15px',
-                height: internal.searchresults_maxheight + 'px',
-                overflow: 'auto'
+                //height: internal.searchresults_maxheight + 'px',
+                //overflow: 'auto'
             });
 
             fdiv.span({ text: 'Searched For: ' + data.searchterm }).br();

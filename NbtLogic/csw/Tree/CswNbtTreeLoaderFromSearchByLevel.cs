@@ -293,7 +293,7 @@ namespace ChemSW.Nbt
             //    OrderBy = " order by " + OrderByProps.ToString() + " ";
             //}
 
-            OrderBy += ",n.nodeid "; // for property multiplexing
+            OrderBy += ",n.nodeid,lower(props.propname) "; // for property multiplexing
 
             // Properties for Select
             //if( Relationship.Properties.Count > 0 )
@@ -315,6 +315,9 @@ namespace ChemSW.Nbt
                 //// This will multiplex the results by the number of properties!
                 //if( NTPropsInClause.Count > 0 || OCPropsInClause.Count > 0 )
                 //{
+
+                    string SafeLikeClause = CswTools.SafeSqlLikeClause( _SearchTerm, CswTools.SqlLikeMode.Contains, true );
+            
                     // Properties
                     Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt  ";
 
@@ -327,7 +330,7 @@ namespace ChemSW.Nbt
                                                         or (f.searchable = '1' 
                                                             and p.nodetypepropid in (select nodetypepropid 
                                                                                   from jct_nodes_props j 
-                                                                                 where (lower(j.gestalt) like '%" + _SearchTerm.ToLower() + @"%'))))
+                                                                                 where (lower(j.gestalt) " + SafeLikeClause + @"))))
                                                ) props on (props.nodetypeid = t.nodetypeid)
                                left outer join jct_nodes_props propvaljoin on (    props.nodetypepropid = propvaljoin.nodetypepropid 
                                                                                and propvaljoin.nodeid = n.nodeid)
@@ -338,7 +341,7 @@ namespace ChemSW.Nbt
                                                    join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
                                                    join field_types f on (p.fieldtypeid = f.fieldtypeid) 
                                                   where f.searchable = '1' 
-                                                    and lower(jnp.gestalt) like '%" + _SearchTerm.ToLower() + @"%' )";
+                                                    and lower(jnp.gestalt) " + SafeLikeClause + @" )";
 
                     if( CswTools.IsInteger( _SearchTerm ) )
                     {
