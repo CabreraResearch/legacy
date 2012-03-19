@@ -93,14 +93,13 @@
                     var textwidth = (1 / o.columns * 100) + '%';
                     var imgwidth = '75%';
                     var verticalAlign = 'bottom';
-                    var bborder = '';
+                    var bborder = '1px solid #cccccc';
                     var cellpad = o.rowpadding + 'px';
                     if(singleColumn) {
                         thumbwidth = '25%';
                         textwidth = '75%';
                         verticalAlign = 'top';
                         imgwidth = '90%';
-                        bborder = '1px solid #cccccc';
                         cellpad = '10px';
                     }
                     var thumbnailCell = _getThumbnailCell(cellSet)
