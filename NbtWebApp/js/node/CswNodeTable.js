@@ -106,12 +106,12 @@
                                             .css({
                                                 width: thumbwidth,
                                                 verticalAlign: verticalAlign,   
-                                                paddingTop: cellpad,
+                                                paddingTop: cellpad
                                             });
                     var textCell = _getTextCell(cellSet)
                                             .css({
                                                 width: textwidth,
-                                                paddingTop: cellpad,
+                                                paddingTop: cellpad
                                             });
                     if(singleColumn)
                     {
@@ -243,7 +243,7 @@
                 } else {
 
                     tableDiv = parent.div({
-                        ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }),
+                        ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' })
                         //height: o.maxheight + 'px',
                         //styles: { overflow: 'auto' }
                     });
