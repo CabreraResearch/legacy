@@ -137,10 +137,15 @@ window.initMain = window.initMain || function (undefined) {
     // initAll()
 
     function refreshViewSelect() {
-        $('#ViewSelectDiv').CswViewSelect({
-            'ID': 'mainviewselect',
-            'onSelect': handleItemSelect
-        }); // CswViewSelect
+//        $('#ViewSelectDiv').CswViewSelect({
+//            'ID': 'mainviewselect',
+//            'onSelect': handleItemSelect
+//        }); // CswViewSelect
+        Csw.controls.viewSelect({
+            ID: 'mainviewselect',
+            $parent: $('#ViewSelectDiv'),
+            onSelect: handleItemSelect
+        });
     }
 
     function refreshQuickLaunch() {

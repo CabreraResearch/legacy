@@ -71,6 +71,7 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <None Include="csw.css\cssVariables.pm" />
+    <Content Include="csw.js\components\csw.viewselect.js" />
     <Content Include="Report.html" />
     <Content Include="csw.js\ChemSW-vsdoc.js" />
     <Content Include="csw.js\ChemSW.js" />

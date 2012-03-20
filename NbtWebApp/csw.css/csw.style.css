@@ -1288,3 +1288,31 @@ ul li div {
 {
     color: #ff0000;
 }
+
+
+.viewselectfieldset
+{
+    padding: 5px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.viewselectlegend
+{
+    font-weight: bold;
+}
+
+.viewselecticoncell
+{
+    width: 16px;
+    cursor: pointer;
+}
+.viewselectitemcell
+{
+    cursor: pointer;
+}
+.viewselectitemhover
+{
+    background-color: &cswbgcolorhilite;
+    cursor: pointer;
+}
