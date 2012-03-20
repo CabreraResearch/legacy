@@ -162,7 +162,7 @@
                         $inspectionTarget = rowOneTable.cell(2, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .div()
-                            .$.CswNodeTypeSelect('init', {
+                            .nodeTypeSelect({
                                 ID: makeStepId('nodeTypeSelect'),
                                 objectClassName: 'InspectionTargetClass',
                                 onSelect: function () {
@@ -270,7 +270,7 @@
 
                         inspectionDesignSelect = inspectionTable.cell(1, 2);
                         inspectionDesignSelect.div()
-                            .$.CswNodeTypeSelect('init', {
+                            .nodeTypeSelect({
                                 ID: Csw.controls.dom.makeSafeId('nodeTypeSelect'),
                                 objectClassName: 'InspectionDesignClass',
                                 addNewOption: true

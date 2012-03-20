@@ -165,8 +165,8 @@
             }).hide();
 
             var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
-            var $ntselect = table.cell(3, 2)
-                                 .$.CswNodeTypeSelect({
+            var ntSelect = table.cell(3, 2)
+                                 .nodeTypeSelect({
                                      'ID': 'welcome_ntsel'
                                  });
 
@@ -204,7 +204,7 @@
                         type: typeSelect.val(),
                         viewtype: viewtype,
                         viewvalue: viewvalue,
-                        nodetypeid: $ntselect.CswNodeTypeSelect('value'),
+                        nodetypeid: ntSelect.val(),
                         text: welcomeText.val(),
                         iconfilename: buttonSel.val(),
                         onSuccess: o.onAdd,
@@ -224,7 +224,7 @@
                     $viewselect: $viewSelect,
                     $searchviewselect: $searchViewSelect,
                     ntSelectLabel: ntSelectLabel,
-                    $ntselect: $ntselect,
+                    $ntselect: ntSelect,
                     buttonSelLabel: buttonselLabel,
                     buttonSel: buttonSel,
                     buttonImg: buttonImg
