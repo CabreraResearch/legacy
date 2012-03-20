@@ -246,11 +246,11 @@ namespace ChemSW.Nbt.WebServices
                 // EXPORT
                 if( _MenuItems.Contains( "Export" ) )
                 {
-                    JObject ExportObj = new JObject();
-                    Ret["Export"] = ExportObj;
-
                     if( NbtViewRenderingMode.Grid == View.ViewMode )
                     {
+                        JObject ExportObj = new JObject();
+                        Ret["Export"] = ExportObj;
+
                         View.SaveToCache( false );
                         string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
                         if( View.Visibility == NbtViewVisibility.Property &&
@@ -274,22 +274,22 @@ namespace ChemSW.Nbt.WebServices
                             ExportObj["haschildren"] = true;
                         }
                     }
-                    else // tree or list
-                    {
-                        ExportObj["haschildren"] = true;
-                        ExportObj["Report XML"] = "";
-                        if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-                        {
-                            if( null == View.SessionViewId )
-                            {
-                                View.SaveToCache( false, false );
-                            }
-                            string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
-                                           ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-                            ExportObj["Mobile XML"] = new JObject();
-                            ExportObj["Mobile XML"]["popup"] = PopUp;
-                        }
-                    }
+                    //else // tree or list
+                    //{
+                        //ExportObj["haschildren"] = true;
+                        //ExportObj["Report XML"] = "";
+                        //if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                        //{
+                        //    if( null == View.SessionViewId )
+                        //    {
+                        //        View.SaveToCache( false, false );
+                        //    }
+                        //    string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
+                        //                   ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                        //    ExportObj["Mobile XML"] = new JObject();
+                        //    ExportObj["Mobile XML"]["popup"] = PopUp;
+                        //}
+                    //}
                 }
             } // if( null != View )
 
