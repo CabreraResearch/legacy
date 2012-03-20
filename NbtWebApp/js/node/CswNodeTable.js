@@ -92,7 +92,7 @@
                     var thumbwidth = (1 / o.columns * 100) + '%';
                     var textwidth = (1 / o.columns * 100) + '%';
                     var imgwidth = '75%';
-                    var verticalAlign = 'bottom';
+                    var verticalAlign = 'top';
                     var bborder = '1px solid #cccccc';
                     var cellpad = o.rowpadding + 'px';
                     if(singleColumn) {
