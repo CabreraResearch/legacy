@@ -162,12 +162,13 @@ namespace ChemSW.Nbt.Search
                     string FilterStr = Filter.FilterValue;
                     if( FilterStr == CswNbtSearchFilterWrapper.BlankValue )
                     {
-                        FilterStr = "gestalt is null";
+                        FilterStr = " is null";
                     }
                     else
                     {
-                        FilterStr = "gestalt like '" + FilterStr + "%'";
+                        FilterStr = CswTools.SafeSqlLikeClause( FilterStr, CswTools.SqlLikeMode.Begins, false );
                     }
+
                     if( NodeTypePropFirstVersionId != Int32.MinValue )
                     {
                         WhereClause += @" and n.nodeid in (select nodeid 
@@ -177,7 +178,7 @@ namespace ChemSW.Nbt.Search
                                                                                       where firstpropversionid = (select firstpropversionid 
                                                                                                                     from nodetype_props 
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
-                                                              and " + FilterStr + @") ";
+                                                              and gestalt " + FilterStr + @") ";
                         //FilteredPropIds.Add( NodeTypePropFirstVersionId );
                         //SingleNodeType = true;
                     }
@@ -434,6 +435,7 @@ namespace ChemSW.Nbt.Search
         }
 
         #endregion Session Cache functions
+
 
         #region IEquatable
         /// <summary>
