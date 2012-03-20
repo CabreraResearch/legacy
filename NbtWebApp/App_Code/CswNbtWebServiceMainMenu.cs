@@ -15,15 +15,15 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Supported Export formats
         /// </summary>
-        public enum ExportOutputFormat
-        {
-            CSV,
-            Excel,
-            PDF,
-            Word,
-            MobileXML,
-            ReportXML
-        }
+        //public enum ExportOutputFormat
+        //{
+        //    CSV,
+        //    Excel,
+        //    PDF,
+        //    Word,
+        //    MobileXML,
+        //    ReportXML
+        //}
 
         private readonly CswCommaDelimitedString _MenuItems = new CswCommaDelimitedString()
                                                         {
@@ -252,27 +252,36 @@ namespace ChemSW.Nbt.WebServices
                         Ret["Export"] = ExportObj;
 
                         View.SaveToCache( false );
-                        string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
-                        if( View.Visibility == NbtViewVisibility.Property &&
-                            null != Node &&
-                            false == string.IsNullOrEmpty( PropIdAttr ) )
-                        {
-                            // Grid Property is a special case
-                            CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-                            Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
-                        }
+                        ExportObj["CSV"] = new JObject();
+                        //ExportObj["CSV"]["action"] = MenuActions.Webservice.ToString();
+                        ExportObj["CSV"]["popup"] = "wsNBT.asmx/gridExportCSV?ViewId=" + View.SessionViewId.ToString();
 
-                        foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
-                            .Cast<ExportOutputFormat>()
-                            .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
-                        {
-                            ExportObj[FormatType.ToString()] = new JObject();
-                            ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-                        }
-                        if( ExportObj.HasValues )
-                        {
-                            ExportObj["haschildren"] = true;
-                        }
+                        ExportObj["haschildren"] = true;
+
+
+                        //View.SaveToCache( false );
+                        //string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
+                        //if( View.Visibility == NbtViewVisibility.Property &&
+                        //    null != Node &&
+                        //    false == string.IsNullOrEmpty( PropIdAttr ) )
+                        //{
+                        //    // Grid Property is a special case
+                        //    CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+                        //    Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
+                        //}
+
+                        //foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
+                        //    .Cast<ExportOutputFormat>()
+                        //    .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || 
+                        //            _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
+                        //{
+                        //    ExportObj[FormatType.ToString()] = new JObject();
+                        //    ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                        //}
+                        //if( ExportObj.HasValues )
+                        //{
+                        //    ExportObj["haschildren"] = true;
+                        //}
                     }
                     //else // tree or list
                     //{
