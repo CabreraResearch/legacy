@@ -1,7 +1,7 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function (options) {
+(function () {
     "use strict";
 
     function universalSearch(params) {
