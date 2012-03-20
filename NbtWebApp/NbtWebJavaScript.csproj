@@ -76,6 +76,7 @@
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
+    <Content Include="js\common\components\csw.nodetypeselect.js" />
     <Content Include="js\common\components\csw.tree.js" />
     <Content Include="js\nbt\nodes\csw.node.tree.js" />
     <Content Include="js\nbt\Main.js" />
@@ -95,7 +96,6 @@
     <Content Include="js\nbt\controls\CswImageButton.js" />
     <Content Include="js\nbt\controls\CswInput.js" />
     <Content Include="js\nbt\controls\CswList.js" />
-    <Content Include="js\nbt\controls\CswNodeTypeSelect.js" />
     <Content Include="js\nbt\controls\CswSelect.js" />
     <Content Include="js\nbt\controls\CswTristateCheckBox.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
@@ -189,7 +189,6 @@
     <Content Include="js\common\components\csw.datetimepicker.js" />
     <Content Include="js\common\components\csw.imagebutton.js" />
     <Content Include="js\common\components\csw.multiselect.js" />
-    <Content Include="js\common\components\csw.nodetypeselect.js" />
     <Content Include="js\common\controls\csw.numbertextbox.js" />
     <Content Include="js\common\core\csw.ajax.js" />
     <Content Include="js\common\types\csw.array.js" />
