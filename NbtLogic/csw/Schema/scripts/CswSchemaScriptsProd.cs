@@ -50,12 +50,17 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );       //22
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );       //23
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );      //24
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );      //25
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );       //25
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );       //26
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25466() ) );           //27
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue01() ) ); //28
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue02() ) ); //29
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426Redux() ) );      //30
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290b() ) );     //26
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25253() ) );      //27
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );       //28
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue01() ) ); //29
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue02() ) ); //30
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

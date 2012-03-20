@@ -29,6 +29,30 @@ namespace ChemSW.Nbt.Schema
         private CswDDL _CswDdl = null;
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
+        public ICswDbCfgInfo CswDbCfgInfo
+        {
+            get
+            {
+                return ( _CswNbtResources.CswDbCfgInfo );
+            }
+        }
+
+        public string ConfigFileLocation
+        {
+            get
+            {
+                return ( CswTools.getConfigurationFilePath( _CswNbtResources.SetupVbls.SetupMode ) );
+            }
+        }
+
+        public Int32 UpdtShellWaitMsec
+        {
+            get
+            {
+                return ( CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting("UpdtShellWaitMsec") ));
+            }
+        }
+
 
         /// <summary>
         /// Encapsulate data acces mechanics for schmema updater so that a schema treats transactions consistently
