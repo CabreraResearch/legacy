@@ -237,20 +237,20 @@
             return Csw.controls.multiSelect(opts);
         };
 
+        external.nodeTypeSelect = function (opts) {
+            /// <summary> Creates a Csw.numberTextBox on this element</summary>
+            /// <param name="opts" type="Object">Options to define the numberTextBox.</param>
+            /// <returns type="Object">A Csw.numberTextBox</returns>
+            opts = internal.prepControl(opts, 'nodeTypeSelect');
+            return Csw.controls.nodeTypeSelect(opts);
+        };
+        
         external.numberTextBox = function (opts) {
             /// <summary> Creates a Csw.numberTextBox on this element</summary>
             /// <param name="opts" type="Object">Options to define the numberTextBox.</param>
             /// <returns type="Object">A Csw.numberTextBox</returns>
             opts = internal.prepControl(opts, 'numberTextBox');
             return Csw.controls.numberTextBox(opts);
-        };
-
-        external.option = function (opts) {
-            /// <summary> Creates a Csw.option on this element</summary>
-            /// <param name="opts" type="Object">Options to define the option.</param>
-            /// <returns type="Object">A Csw.option</returns>
-            opts = internal.prepControl(opts, 'option');
-            return Csw.controls.option(opts);
         };
 
         external.p = function (opts) {
