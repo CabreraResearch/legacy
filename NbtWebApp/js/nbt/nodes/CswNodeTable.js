@@ -33,7 +33,7 @@
             var tableDiv, layoutTable;
 
             var singleColumn = false;
-            if(o.columns === 1) {
+            if (o.columns === 1) {
                 singleColumn = true;
             }
 
@@ -51,24 +51,21 @@
                 });
             }
 
-            function _getThumbnailCell(cellSet)
-            {
+            function _getThumbnailCell(cellSet) {
                 return cellSet[1][1];
             }
-            function _getTextCell(cellSet)
-            {
+            function _getTextCell(cellSet) {
                 var ret;
-                if(singleColumn) {
+                if (singleColumn) {
                     ret = cellSet[1][2];
                 } else {
                     ret = cellSet[2][1];
                 }
                 return ret;
             }
-            function _getButtonCell(cellSet)
-            {
+            function _getButtonCell(cellSet) {
                 var ret;
-                if(singleColumn) {
+                if (singleColumn) {
                     ret = cellSet[2][2];
                 } else {
                     ret = cellSet[3][1];
@@ -95,7 +92,7 @@
                     var verticalAlign = 'bottom';
                     var bborder = '1px solid #cccccc';
                     var cellpad = o.rowpadding + 'px';
-                    if(singleColumn) {
+                    if (singleColumn) {
                         thumbwidth = '25%';
                         textwidth = '75%';
                         verticalAlign = 'top';
@@ -105,16 +102,15 @@
                     var thumbnailCell = _getThumbnailCell(cellSet)
                                             .css({
                                                 width: thumbwidth,
-                                                verticalAlign: verticalAlign,   
-                                                paddingTop: cellpad,
+                                                verticalAlign: verticalAlign,
+                                                paddingTop: cellpad
                                             });
                     var textCell = _getTextCell(cellSet)
                                             .css({
                                                 width: textwidth,
-                                                paddingTop: cellpad,
+                                                paddingTop: cellpad
                                             });
-                    if(singleColumn)
-                    {
+                    if (singleColumn) {
                         cellSet[2][1].css({
                             borderBottom: bborder,
                             paddingBottom: cellpad
@@ -131,14 +127,14 @@
                     var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
 
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                        thumbtable.cell(1,1).img({
+                        thumbtable.cell(1, 1).img({
                             src: nodeObj.thumbnailurl
                         }).css({ width: imgwidth });
                     }
-                    var moreinfoimg = thumbtable.cell(1,2).css({ width: '25px' })
+                    var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
                         .img({
-                           src: 'Images/info.png',
-                           title: 'More Info'
+                            src: 'Images/info.png',
+                            title: 'More Info'
                         });
                     moreinfoimg.propNonDom({ valign: 'top' });
                     moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
@@ -146,7 +142,7 @@
                     thumbnailCell.br();
 
                     // Name
-                    var maintextcell = texttable.cell(1,1);
+                    var maintextcell = texttable.cell(1, 1);
                     maintextcell.append('<b>' + nodeObj.nodename + '</b>');
 
                     if (Csw.bool(nodeObj.locked)) {
@@ -168,7 +164,7 @@
                         if (propObj.fieldtype == "Button") {
 
                             // Object Class Buttons
-                            var propDiv = btnTable.cell(1,btncol).div();
+                            var propDiv = btnTable.cell(1, btncol).div();
                             propObj.propData.values.mode = 'link';      // force link
                             $.CswFieldTypeFactory('make', {
                                 nodeid: nodeid,
@@ -178,10 +174,10 @@
                                 propData: propObj.propData,
                                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: propObj.id }),
                                 EditMode: Csw.enums.editMode.Table,
-                                doSave: function(saveoptions) { 
+                                doSave: function (saveoptions) {
                                     // Nothing to save in this case, so just call onSuccess
                                     var s = { onSuccess: null };
-                                    if(saveoptions) $.extend(s, saveoptions);
+                                    if (saveoptions) $.extend(s, saveoptions);
                                     Csw.tryExec(s.onSuccess);
                                 },
                                 onReload: null
@@ -189,7 +185,7 @@
                             btncol += 1;
 
                         } else {
-                            maintextcell.span({text: propObj.propname + ': ' + propObj.gestalt});
+                            maintextcell.span({ text: propObj.propname + ': ' + propObj.gestalt });
                             maintextcell.br();
                         }
                     });
@@ -201,7 +197,7 @@
                             btntext = "Edit";
                         }
                         btnTable.cell(1, btncol).link({
-                            ID: Csw.controls.dom.makeId( o.ID, nodeid, 'editbtn' ),
+                            ID: Csw.controls.dom.makeId(o.ID, nodeid, 'editbtn'),
                             text: btntext,
                             //disableOnClick: false,
                             onClick: function () {
@@ -219,7 +215,7 @@
 
                     if (nodeObj.allowdelete) {
                         btnTable.cell(1, btncol).link({
-                            ID: Csw.controls.dom.makeId(o.ID, nodeid, 'btn' ),
+                            ID: Csw.controls.dom.makeId(o.ID, nodeid, 'btn'),
                             text: 'Delete',
                             //disableOnClick: false,
                             onClick: function () {
@@ -243,7 +239,7 @@
                 } else {
 
                     tableDiv = parent.div({
-                        ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }),
+                        ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' })
                         //height: o.maxheight + 'px',
                         //styles: { overflow: 'auto' }
                     });
@@ -251,9 +247,9 @@
                     var cellalign = 'left';
                     var cellset = { rows: 3, columns: 1 };
                     var cellspacing = '5px';
-                    if(singleColumn) {
+                    if (singleColumn) {
                         cellalign = 'left';
-                        cellset = { rows: 2, columns: 2 }
+                        cellset = { rows: 2, columns: 2 };
                         cellspacing = '0px';
                     }
 

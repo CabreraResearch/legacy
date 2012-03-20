@@ -147,7 +147,7 @@
                 ID: filtersdivid,
                 $parent: internal.$searchfilters_parent
             }).css({
-                paddingTop: '15px',
+                paddingTop: '15px'
                 //height: internal.searchresults_maxheight + 'px',
                 //overflow: 'auto'
             });
