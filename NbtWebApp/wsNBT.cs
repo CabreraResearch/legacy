@@ -776,7 +776,41 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // getGrid()
+        } // getThinGrid()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string gridExportCSV( string ViewId )
+        {
+            UseCompression();
+            JObject ReturnVal = new JObject();
+            bool IsQuickLaunch = false;
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtView View = _getView( ViewId );
+                if( null != View )
+                {
+                    CswNbtWebServiceGrid ws = new CswNbtWebServiceGrid( _CswNbtResources, View );
+                    ws.ExportCsv( Context );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // gridExportCSV()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -2208,7 +2242,7 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
                     wsTools Tools = new wsTools();
-                    Stream MolStream = Tools.getFileInputStream( "qqfile" );
+                    Stream MolStream = Tools.getFileInputStream( Context, "qqfile" );
 
                     if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
                     {

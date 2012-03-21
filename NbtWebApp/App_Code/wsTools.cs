@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.IO;
 using System.Web;
 using System.Web.Script.Serialization;
@@ -9,7 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.WebServices
 {
 
-    public class wsTools : System.Web.Services.WebService
+    public class wsTools //: System.Web.Services.WebService
     {
         /// <summary>
         /// These are files we do NOT want to keep around after temporarily using them.  There is a function that purges old files.  
@@ -91,6 +92,38 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        public static void ReturnCSV( HttpContext Context, DataTable DT )
+        {
+            Context.Response.ClearContent();
+            //Context.Response.ContentType = "application/vnd.ms-excel";
+
+            // Headers
+            Int32 idx = 0;
+            foreach( DataColumn dc in DT.Columns )
+            {
+                if( idx > 0 ) Context.Response.Write( "," );
+                Context.Response.Write( "\"" + dc.ColumnName.ToString() + "\"" );
+                idx++;
+            }
+            Context.Response.Write( "\r\n" );
+
+            // Rows
+            foreach( DataRow dr in DT.Rows )
+            {
+                idx = 0;
+                foreach( DataColumn dc in DT.Columns )
+                {
+                    if( idx > 0 ) Context.Response.Write( "," );
+                    Context.Response.Write( "\"" + dr[dc].ToString() + "\"" );
+                    idx++;
+                }
+                Context.Response.Write( "\r\n" );
+            }
+
+            Context.Response.AddHeader( "Content-Disposition", "attachment; filename=export.csv;" );
+            Context.Response.End();
+        }
+
         #region Conversion
 
         /// <summary>
@@ -164,13 +197,13 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public Stream getFileInputStream( string ParamName = "" )
+        public Stream getFileInputStream( HttpContext Context, string ParamName = "" )
         {
             Stream RetStream = null;
 
             //This is the IE case
             if( false == string.IsNullOrEmpty( ParamName ) &&
-                    string.IsNullOrEmpty( Context.Request[ParamName] ) )
+                string.IsNullOrEmpty( Context.Request[ParamName] ) )
             {
                 HttpPostedFile File = Context.Request.Files[0];
                 RetStream = File.InputStream;

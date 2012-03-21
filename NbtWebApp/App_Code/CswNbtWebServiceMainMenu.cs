@@ -15,15 +15,15 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Supported Export formats
         /// </summary>
-        public enum ExportOutputFormat
-        {
-            CSV,
-            Excel,
-            PDF,
-            Word,
-            MobileXML,
-            ReportXML
-        }
+        //public enum ExportOutputFormat
+        //{
+        //    CSV,
+        //    Excel,
+        //    PDF,
+        //    Word,
+        //    MobileXML,
+        //    ReportXML
+        //}
 
         private readonly CswCommaDelimitedString _MenuItems = new CswCommaDelimitedString()
                                                         {
@@ -246,50 +246,59 @@ namespace ChemSW.Nbt.WebServices
                 // EXPORT
                 if( _MenuItems.Contains( "Export" ) )
                 {
-                    JObject ExportObj = new JObject();
-                    Ret["Export"] = ExportObj;
-
                     if( NbtViewRenderingMode.Grid == View.ViewMode )
                     {
-                        View.SaveToCache( false );
-                        string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
-                        if( View.Visibility == NbtViewVisibility.Property &&
-                            null != Node &&
-                            false == string.IsNullOrEmpty( PropIdAttr ) )
-                        {
-                            // Grid Property is a special case
-                            CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
-                            Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
-                        }
+                        JObject ExportObj = new JObject();
+                        Ret["Export"] = ExportObj;
 
-                        foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
-                            .Cast<ExportOutputFormat>()
-                            .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
-                        {
-                            ExportObj[FormatType.ToString()] = new JObject();
-                            ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-                        }
-                        if( ExportObj.HasValues )
-                        {
-                            ExportObj["haschildren"] = true;
-                        }
-                    }
-                    else // tree or list
-                    {
+                        View.SaveToCache( false );
+                        ExportObj["CSV"] = new JObject();
+                        //ExportObj["CSV"]["action"] = MenuActions.Webservice.ToString();
+                        ExportObj["CSV"]["popup"] = "wsNBT.asmx/gridExportCSV?ViewId=" + View.SessionViewId.ToString();
+
                         ExportObj["haschildren"] = true;
-                        ExportObj["Report XML"] = "";
-                        if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-                        {
-                            if( null == View.SessionViewId )
-                            {
-                                View.SaveToCache( false, false );
-                            }
-                            string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
-                                           ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-                            ExportObj["Mobile XML"] = new JObject();
-                            ExportObj["Mobile XML"]["popup"] = PopUp;
-                        }
+
+
+                        //View.SaveToCache( false );
+                        //string Url = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString();
+                        //if( View.Visibility == NbtViewVisibility.Property &&
+                        //    null != Node &&
+                        //    false == string.IsNullOrEmpty( PropIdAttr ) )
+                        //{
+                        //    // Grid Property is a special case
+                        //    CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
+                        //    Url = "Popup_Export.aspx?nodeid=" + Node.NodeId.ToString() + "&propid=" + PropId.NodeTypePropId;
+                        //}
+
+                        //foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) )
+                        //    .Cast<ExportOutputFormat>()
+                        //    .Where( FormatType => ExportOutputFormat.MobileXML != FormatType || 
+                        //            _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) ) )
+                        //{
+                        //    ExportObj[FormatType.ToString()] = new JObject();
+                        //    ExportObj[FormatType.ToString()]["popup"] = Url + "&format=" + FormatType.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                        //}
+                        //if( ExportObj.HasValues )
+                        //{
+                        //    ExportObj["haschildren"] = true;
+                        //}
                     }
+                    //else // tree or list
+                    //{
+                        //ExportObj["haschildren"] = true;
+                        //ExportObj["Report XML"] = "";
+                        //if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                        //{
+                        //    if( null == View.SessionViewId )
+                        //    {
+                        //        View.SaveToCache( false, false );
+                        //    }
+                        //    string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
+                        //                   ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                        //    ExportObj["Mobile XML"] = new JObject();
+                        //    ExportObj["Mobile XML"]["popup"] = PopUp;
+                        //}
+                    //}
                 }
             } // if( null != View )
 

@@ -24,6 +24,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestApps", "TestApps", "{549DF965-EC55-4562-A2EE-64F746C53832}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtSchemaDiff", "TestApps\NbtSchemaDiff\NbtSchemaDiff.csproj", "{FBB13792-B2DF-46A8-AE14-9C17F72F89C0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{02F17B0F-5A95-4A99-81F4-456B8589008A} = {02F17B0F-5A95-4A99-81F4-456B8589008A}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswLogService", "..\..\Common\CswLogService\CswLogService\CswLogService.csproj", "{799B613A-C722-43C2-8D3F-61CE81384C74}"
 EndProject
@@ -100,6 +103,7 @@ Global
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Debug|x64.ActiveCfg = Debug|x64
+		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Debug|x64.Build.0 = Debug|x64
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Release|Any CPU.Build.0 = Release|Any CPU
