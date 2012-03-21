@@ -32,7 +32,7 @@
 
             (function () {
 
-                function handleClick () {
+                function handleClick() {
                     if (Csw.tryExec(internal.onClick)) {
                         external.toggle();
                     }
@@ -47,16 +47,16 @@
                 internal.topDiv = external.div({
                     ID: internal.ID + '_top',
                     cssclass: 'CswComboBox_TopDiv',
-                    styles: {width: internal.width}
+                    width: internal.width
                 });
 
                 internal.topTable = internal.topDiv.table({
                     ID: Csw.controls.dom.makeId(internal.ID, 'tbl'),
-                    width: '100%'
+                    width: internal.width
                 });
 
                 internal.topTable.cell(1, 1).text(internal.topContent)
-                    .propDom('width', '100%')
+                    .propDom('width', internal.width)
                     .bind('click', handleClick);
 
                 internal.topTable.cell(1, 2)
@@ -71,12 +71,13 @@
                 external.pickList = external.div({
                     ID: internal.ID + '_child',
                     cssclass: 'CswComboBox_ChildDiv',
-                    text: internal.selectContent,
-                    styles: {width: internal.width}
-                }).bind('click', handleClick);
+                    width: internal.width
+                })
+                    .append(internal.selectContent)
+                    .bind('click', handleClick);
 
                 external.pickList.$.hover(internal.hoverIn, internal.hoverOut);
-            }());
+            } ());
 
             external.topContent = function (content, itemid) {
                 var cell1 = internal.topTable.cell(1, 1);

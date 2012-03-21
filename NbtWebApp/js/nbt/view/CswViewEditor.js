@@ -1044,7 +1044,7 @@
                 ID: propArbId + '_addfiltbtn',
                 enabledText: 'Add',
                 disabledText: 'Adding'
-            }); // CswButton
+            });
             return $span;
         }
 
