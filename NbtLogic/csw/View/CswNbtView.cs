@@ -647,10 +647,10 @@ namespace ChemSW.Nbt
                     if( UserNodeAsUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
                     {
                         // Remove this view from the Quick Launch views
-                        if( UserNodeAsUser.QuickLaunchViews != null )
+                        if( UserNodeAsUser.FavoriteViews != null )
                         {
-                            if( UserNodeAsUser.QuickLaunchViews.ContainsViewId( this.ViewId ) )
-                                UserNodeAsUser.QuickLaunchViews.RemoveViewId( this.ViewId );
+                            if( UserNodeAsUser.FavoriteViews.ContainsViewId( this.ViewId ) )
+                                UserNodeAsUser.FavoriteViews.RemoveViewId( this.ViewId );
                         }
                         UserNode.postChanges( false );
                         UserTree.goToParentNode();

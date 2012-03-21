@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
 
                 //Add the user's stored views to Favorites
-                foreach( CswNbtView View in UserOc.QuickLaunchViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )
+                foreach( CswNbtView View in UserOc.FavoriteViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )
                 {
                     JObject ViewObj = _addViewSelectObj( ref ret, "Favorites", View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
                     ViewObj["viewid"] = View.ViewId.ToString();
@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 //Add the user's stored actions to Favorites
-                DataTable ActionsTable = UserOc.QuickLaunchActions.GetDataAsTable( ActionName, ActionPk );
+                DataTable ActionsTable = UserOc.FavoriteActions.GetDataAsTable( ActionName, ActionPk );
                 foreach( CswNbtAction Action in ( from DataRow ActionRow in ActionsTable.Rows
                                                   where CswConvert.ToBoolean( ActionRow[ActionSelected] )
                                                   select CswNbtAction.ActionNameStringToEnum( CswConvert.ToString( ActionRow[ActionPk] ) )

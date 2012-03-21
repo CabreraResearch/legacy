@@ -64,8 +64,8 @@ namespace ChemSW.NbtWebControls
             {
                 Clear();
 
-                CswNbtNodePropViewPickList UsersViews = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).QuickLaunchViews;
-                CswNbtNodePropLogicalSet UsersActions = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).QuickLaunchActions;
+                CswNbtNodePropViewPickList UsersViews = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).FavoriteViews;
+                CswNbtNodePropLogicalSet UsersActions = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).FavoriteActions;
 
                 // First user specified ones
                 Collection<Int32> SelectedViewIds = UsersViews.SelectedViewIds.ToIntCollection();
