@@ -90,7 +90,6 @@
     <Content Include="js\nbt\actions\CswQuotas.js" />
     <Content Include="js\nbt\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\nbt\actions\CswSessions.js" />
-    <Content Include="js\nbt\controls\CswButton.js" />
     <Content Include="js\nbt\controls\CswComboBox.js" />
     <Content Include="js\nbt\controls\CswDiv.js" />
     <Content Include="js\nbt\controls\CswImageButton.js" />
@@ -172,7 +171,7 @@
     <Content Include="js\common\controls\_control.factory.js" />
     <Content Include="js\common\controls\csw.img.js" />
     <Content Include="js\common\controls\csw.link.js" />
-    <Content Include="js\common\controls\csw.button.js" />
+    <Content Include="js\common\controls\csw.button1.js" />
     <Content Include="js\common\controls\csw.input.js" />
     <Content Include="js\common\controls\csw.form.js" />
     <Content Include="js\common\controls\csw.div.js" />
