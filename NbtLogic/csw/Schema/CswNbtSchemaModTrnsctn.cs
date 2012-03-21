@@ -29,6 +29,30 @@ namespace ChemSW.Nbt.Schema
         private CswDDL _CswDdl = null;
         CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
 
+        public ICswDbCfgInfo CswDbCfgInfo
+        {
+            get
+            {
+                return ( _CswNbtResources.CswDbCfgInfo );
+            }
+        }
+
+        public string ConfigFileLocation
+        {
+            get
+            {
+                return ( CswTools.getConfigurationFilePath( _CswNbtResources.SetupVbls.SetupMode ) );
+            }
+        }
+
+        public Int32 UpdtShellWaitMsec
+        {
+            get
+            {
+                return ( CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting("UpdtShellWaitMsec") ));
+            }
+        }
+
 
         /// <summary>
         /// Encapsulate data acces mechanics for schmema updater so that a schema treats transactions consistently
@@ -54,6 +78,11 @@ namespace ChemSW.Nbt.Schema
         //    set { _CswDdl.ManageConstraints = value; }
         //    get { return ( _CswDdl.ManageConstraints ); }
         //}//ManageConstraints
+
+        public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
+        {
+            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
+        }
 
         #region TransactionManagement
         public void beginTransaction()
@@ -230,10 +259,6 @@ namespace ChemSW.Nbt.Schema
         //}//removeConstraint()
 
 
-        public bool doesConstraintExistInDb( string ConstraintName )
-        {
-            return ( _CswDdl.doesConstraintExistInDb( ConstraintName ) );
-        }//doesConstraintExist()
 
         public List<CswTableConstraint> getConstraints( string PkTableName, string PkColumnName, string FkTableName, string FkColumnName )
         {
@@ -798,6 +823,28 @@ namespace ChemSW.Nbt.Schema
             return NewObjectClassId;
         }
 
+        /// <summary>
+        /// Convenience function for getting Object Class ID by name (usually for the purpose of deleting because the Enum has been removed)
+        /// </summary>
+        public Int32 getObjectClassId( string ObjectClassName )
+        {
+            Int32 Ret = Int32.MinValue;
+            string OcName = ObjectClassName.ToLower();
+            if( false == OcName.EndsWith( "class" ) )
+            {
+                OcName += "class";
+            }
+
+            CswTableSelect ObjectClassTableSelect = makeCswTableSelect( "SchemaModTrnsctn_ObjectClassUpdate", "object_class" );
+            DataTable ObjectClassTable = ObjectClassTableSelect.getTable( "where lower(objectclass)='" + OcName + "'", true );
+            if( ObjectClassTable.Rows.Count == 1 )
+            {
+                Ret = CswConvert.ToInt32( ObjectClassTable.Rows[0]["objectclassid"] );
+            }
+
+            return Ret;
+        }
+
         public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
                                                                     string PropName,
                                                                     CswNbtMetaDataFieldType.NbtFieldType FieldType,
@@ -918,17 +965,17 @@ namespace ChemSW.Nbt.Schema
         {
             bool RetIsValid = false;
 
-            CswNbtViewRelationship.PropIdType PropIdType;
-            Enum.TryParse( FkType, true, out PropIdType );
-            if( PropIdType != CswNbtViewRelationship.PropIdType.Unknown )
+            NbtViewPropIdType PropIdType = (NbtViewPropIdType) FkType;
+            //Enum.TryParse( FkType, true, out PropIdType );
+            if( PropIdType != NbtViewPropIdType.Unknown )
             {
                 RetIsValid = true;
             }
             else
             {
-                CswNbtViewRelationship.RelatedIdType RelatedIdType;
-                Enum.TryParse( FkType, true, out RelatedIdType );
-                if( RelatedIdType != CswNbtViewRelationship.RelatedIdType.Unknown )
+                NbtViewRelatedIdType RelatedIdType = (NbtViewRelatedIdType) FkType;
+                //Enum.TryParse( FkType, true, out RelatedIdType );
+                if( RelatedIdType != NbtViewRelatedIdType.Unknown )
                 {
                     RetIsValid = true;
                 }
@@ -1092,6 +1139,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion
+
 
 
         /// <summary>
@@ -1272,6 +1320,24 @@ namespace ChemSW.Nbt.Schema
             }//if-else the dump setup setting exists
 
         }//takeADump() 
+
+
+        public string makeUniqueConstraint( string TableName, string ColumnName )
+        {
+            return ( _CswNbtResources.makeUniqueConstraint( TableName, ColumnName ) );
+
+        }//makeUniqueConstraintInDb() 
+
+        public string makeUniqueConstraint( string TableName, string ColumnName, bool AddDdData )
+        {
+            return ( _CswNbtResources.makeUniqueConstraint( TableName, ColumnName, AddDdData ) );
+        }
+
+        public bool doesFkConstraintExistInDb( string ConstraintName ) { return ( _CswNbtResources.doesFkConstraintExistInDb( ConstraintName ) ); }
+        public bool doesUniqueConstraintExistInDb( string ConstraintName ) { return ( _CswNbtResources.doesUniqueConstraintExistInDb( ConstraintName ) ); }
+        public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswNbtResources.getUniqueConstraintName( TableName, ColumName ) ); }
+
+
 
     }//class CswNbtSchemaModTrnsctn
 

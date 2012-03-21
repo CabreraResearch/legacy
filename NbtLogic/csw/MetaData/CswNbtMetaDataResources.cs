@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
@@ -21,6 +23,13 @@ namespace ChemSW.Nbt.MetaData
         public CswTableUpdate NodeTypeTabTableUpdate;
         public CswTableUpdate JctNodesPropsTableUpdate;  // for prop default values
 
+        public CswTableSelect ObjectClassTableSelect;
+        public CswTableSelect ObjectClassPropTableSelect;
+        public CswTableSelect NodeTypeTableSelect;
+        public CswTableSelect FieldTypeTableSelect;
+        public CswTableSelect NodeTypePropTableSelect;
+        public CswTableSelect NodeTypeTabTableSelect;
+
         public CswNbtMetaDataCollectionObjectClass ObjectClassesCollection;
         public CswNbtMetaDataCollectionObjectClassProp ObjectClassPropsCollection;
         public CswNbtMetaDataCollectionFieldType FieldTypesCollection;
@@ -28,14 +37,25 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataCollectionNodeTypeProp NodeTypePropsCollection;
         public CswNbtMetaDataCollectionNodeTypeTab NodeTypeTabsCollection;
 
+        private bool _ExcludeDisabledModules;
+        public bool ExcludeDisabledModules { get { return CswNbtMetaData.ExcludeDisabledModules; } }
 
-        CswNbtMetaDataTableCache _CswNbtMetaDataTableCache = null;
+        //CswNbtMetaDataTableCache _CswNbtMetaDataTableCache = null;
         public CswNbtMetaDataResources( CswNbtResources Resources, CswNbtMetaData MetaData )
         {
             CswNbtResources = Resources;
             CswNbtMetaData = MetaData;
             CswNbtFieldResources = new CswNbtFieldResources( Resources );
+            
+            _ExcludeDisabledModules = ExcludeDisabledModules;
 
+            ObjectClassTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_ObjectClass_Select", "object_class" );
+            ObjectClassPropTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_ObjectClassProp_Select", "object_class_props" );
+            NodeTypeTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeType_Select", "nodetypes" );
+            FieldTypeTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_FieldType_Select", "field_types" );
+            NodeTypePropTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeProp_Select", "nodetype_props" );
+            NodeTypeTabTableSelect = CswNbtResources.makeCswTableSelect( "MetaData_NodeTypeTab_Select", "nodetype_tabset" );
+            
             ObjectClassTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClass_update", "object_class" );
             ObjectClassPropTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_ObjectClassProp_update", "object_class_props" );
             NodeTypeTableUpdate = CswNbtResources.makeCswTableUpdate( "MetaData_NodeType_update", "nodetypes" );
@@ -51,7 +71,7 @@ namespace ChemSW.Nbt.MetaData
             NodeTypePropsCollection = new CswNbtMetaDataCollectionNodeTypeProp( this );
             NodeTypeTabsCollection = new CswNbtMetaDataCollectionNodeTypeTab( this );
 
-            _CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources );
+            //_CswNbtMetaDataTableCache = new CswNbtMetaDataTableCache( CswNbtResources );
         }
 
         //public void tryAddToMetaDataCollection( object Key, object Value, IDictionary Collection, string MetaDataObjectTypeName, Int32 MetaDataObjectId, string MetaDataObjectName )
@@ -89,7 +109,7 @@ namespace ChemSW.Nbt.MetaData
         //}
 
         
-        public void refreshAll( bool ExcludeDisabledModules )
+        public void refreshAll()// bool ExcludeDisabledModules )
         {
             ObjectClassesCollection.clearCache();
             ObjectClassPropsCollection.clearCache();
@@ -372,14 +392,14 @@ namespace ChemSW.Nbt.MetaData
             {
                 Int32 CurrentQuestionNo = 1;
                 // Do non-conditional ones first
-                Collection<CswNbtMetaDataNodeTypeProp> PropsToDo = new Collection<CswNbtMetaDataNodeTypeProp>();
-                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.NodeTypePropsByDisplayOrder )
+                Dictionary<Int32, CswNbtMetaDataNodeTypeProp> PropsToDo = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>();
+                foreach( CswNbtMetaDataNodeTypeProp Prop in Tab.getNodeTypePropsByDisplayOrder() )
                 {
                     if( Prop.UseNumbering )
-                        PropsToDo.Add( Prop );
+                        PropsToDo.Add( Prop.FirstPropVersionId, Prop );
                 }
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
                 {
                     if( !Prop.hasFilter() )
                     {
@@ -394,11 +414,12 @@ namespace ChemSW.Nbt.MetaData
                 for( Int32 i = 1; i <= CurrentQuestionNo; i++ )
                     SubQuestionNos[i] = 1;
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDo.Values )
                 {
                     if( Prop.hasFilter() )
                     {
-                        CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
+                        //CswNbtMetaDataNodeTypeProp ParentProp = NodeTypePropsCollection.getNodeTypeProp( Prop.FilterNodeTypePropId ).getNodeTypePropLatestVersion();
+                        CswNbtMetaDataNodeTypeProp ParentProp = PropsToDo[Prop.FilterNodeTypePropId];
                         if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
                         {
                             Prop.QuestionNo = ParentProp.QuestionNo;
@@ -425,7 +446,7 @@ namespace ChemSW.Nbt.MetaData
             if( ChangesMade )
             {
                 CswNbtResources.ConfigVbls.setConfigVariableValue( "cache_lastupdated", DateTime.Now.ToString() );
-                _CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
+                //_CswNbtMetaDataTableCache.makeCacheStale(); //this will force a reload of tables
             }
         }
 

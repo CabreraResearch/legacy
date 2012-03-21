@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassUser UserOc = User.UserNode;
 
                 //Add the user's stored views to QuickLaunchHistory
-                foreach( CswNbtView View in UserOc.QuickLaunchViews.SelectedViews.Where( View => View.IsFullyEnabled() ) )
+                foreach( CswNbtView View in UserOc.QuickLaunchViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )
                 {
                     View.SaveToCache( true, false, true );
                 }

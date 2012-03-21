@@ -123,6 +123,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns whether Universal Search is enabled for this field type
+        /// </summary>
+        public bool Searchable
+        {
+            get { return CswConvert.ToBoolean( _FieldTypeRow["searchable"] ); }
+        }
+
+        /// <summary>
         /// Returns whether the field type should be considered a "simple" type,
         /// meaning that it is not a fancy-schmancy UI control
         /// </summary>

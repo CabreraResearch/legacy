@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -42,8 +43,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();
             foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
             {
                 if( CurrentProp.WasModified )
@@ -64,9 +66,9 @@ namespace ChemSW.Nbt.ObjClasses
                         foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
                         {
                             CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
-                            if( ( PropRefProp.RelationshipType == CswNbtViewRelationship.PropIdType.NodeTypePropId &&
+                            if( ( PropRefProp.RelationshipType == NbtViewPropIdType.NodeTypePropId &&
                                  PropRefProp.RelationshipId == CurrentProp.NodeTypePropId ) ||
-                                ( PropRefProp.RelationshipType == CswNbtViewRelationship.PropIdType.ObjectClassPropId &&
+                                ( PropRefProp.RelationshipType == NbtViewPropIdType.ObjectClassPropId &&
                                  PropRefProp.RelationshipId == CurrentProp.ObjectClassPropId ) )
                             {
                                 PropRefProp.PendingUpdate = true;
@@ -124,8 +126,82 @@ namespace ChemSW.Nbt.ObjClasses
                         _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
                     }
 
+                    // 5. Prepare for compound unique validation
+                    if( CurrentProp.NodeTypeProp.IsCompoundUnique() )
+                    {
+                        CompoundUniqueProps.Add( CurrentProp );
+                    }
                 } // if(CurrentProp.WasModified)
             } // foreach (CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties)
+
+            if( CompoundUniqueProps.Count > 0 )
+            {
+
+                if( false == IsCopy && false == OverrideUniqueValidation )
+                {
+
+                    //check for other compound unique props that were _not_ modififed
+                    foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
+                    {
+                        if( CurrentProp.NodeTypeProp.IsCompoundUnique() && ( false == CompoundUniqueProps.Contains( CurrentProp ) ) )
+                        {
+                            CompoundUniqueProps.Add( CurrentProp );
+                        }
+                    }
+
+                    //CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
+                    CswNbtView CswNbtView = this.NodeType.CreateDefaultView();
+                    CswNbtView.ViewName = "For compound unique";
+
+                    CswNbtViewRelationship ViewRelationship = CswNbtView.Root.ChildRelationships[0];
+
+                    if( NodeId != null )
+                    {
+                        ViewRelationship.NodeIdsToFilterOut.Add( NodeId );
+                    }
+
+
+                    foreach( CswNbtNodePropWrapper CurrentCompoundUniuqeProp in CompoundUniqueProps )
+                    {
+                        CswNbtViewProperty CswNbtViewProperty = CswNbtView.AddViewProperty( ViewRelationship, CurrentCompoundUniuqeProp.NodeTypeProp );
+                        CurrentCompoundUniuqeProp.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, CswNbtViewProperty, CurrentCompoundUniuqeProp );
+                    }
+
+                    ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( CswNbtView, true, true, false, false );
+
+                    if( NodeTree.getChildNodeCount() > 0 )
+                    {
+                        NodeTree.goToNthChild( 0 );
+                        CswNbtNode DuplicateValueNode = NodeTree.getNodeForCurrentPosition();
+
+                        CswCommaDelimitedString CompoundUniquePropNames = new CswCommaDelimitedString();
+                        CswCommaDelimitedString CompoundUniquePropValues = new CswCommaDelimitedString();
+                        foreach( CswNbtNodePropWrapper CurrentUniqueProp in CompoundUniqueProps )
+                        {
+                            CompoundUniquePropNames.Add( CurrentUniqueProp.PropName );
+                            CompoundUniquePropValues.Add( CurrentUniqueProp.Gestalt );
+                        }
+
+                        string ExotericMessage = "The following properties must have unique values:  " + CompoundUniquePropNames.ToString();
+                        string EsotericMessage = "The " + CompoundUniquePropNames.ToString() + " of node " + NodeId.ToString() + " are the same as for node " + DuplicateValueNode.NodeId.ToString() + ": " + CompoundUniquePropValues.ToString();
+
+                        throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+
+
+                    }//we have a duplicate value situation
+                }
+
+                else
+                {
+                    foreach( CswNbtNodePropWrapper CurrentPropWrapper in CompoundUniqueProps )
+                    {
+                        CurrentPropWrapper.ClearValue();
+                        CurrentPropWrapper.clearModifiedFlag();
+                    }
+
+                }//if-else we're not a copy and not overridding
+
+            }//if we have at leaste one modified compound unique prop
 
             //_synchNodeName();
             // can't do this here, because we miss some of the onBeforeUpdateNodePropRow events
@@ -201,9 +277,13 @@ namespace ChemSW.Nbt.ObjClasses
         //    }
         //}
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
+            Message = string.Empty;
+            ActionData = string.Empty;
+            ButtonAction = NbtButtonAction.Unknown;
             if( null != NodeTypeProp ) { /*Do Something*/ }
+            return true;
         }
     }//CswNbtObjClassDefault
 

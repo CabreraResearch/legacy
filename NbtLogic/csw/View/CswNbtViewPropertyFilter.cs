@@ -42,14 +42,15 @@ namespace ChemSW.Nbt
                 if( FilterString[2] != String.Empty )
                     Value = FilterString[2].ToString();
                 if( FilterString[3] != String.Empty )
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterString[3].ToString(), true );
+                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterString[3].ToString(), true );
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) FilterString[3].ToString();
                 if( FilterString[4] != String.Empty )
                     CaseSensitive = Convert.ToBoolean( FilterString[4].ToString() );
                 //if( Values[ 5 ] != String.Empty )
                 //    ArbitraryId = Values[ 5 ].ToString();
                 if( FilterString[6] != String.Empty )
-                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterString[6].ToString() );
-
+                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterString[6].ToString() );
+                    SubfieldName = (CswNbtSubField.SubFieldName) FilterString[6].ToString();
                 _validate();
             }
 
@@ -64,15 +65,25 @@ namespace ChemSW.Nbt
             try
             {
                 if( FilterNode.Attributes["value"] != null )
+                {
                     Value = FilterNode.Attributes["value"].Value;
+                }
                 if( FilterNode.Attributes["filtermode"] != null )
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterNode.Attributes["filtermode"].Value, true );
+                {
+                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterNode.Attributes["filtermode"].Value, true );
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) FilterNode.Attributes["filtermode"].Value;
+                }
                 if( FilterNode.Attributes["casesensitive"] != null )
+                {
                     CaseSensitive = Convert.ToBoolean( FilterNode.Attributes["casesensitive"].Value );
+                }
                 //if( FilterNode.Attributes[ "arbitraryid" ] != null )
                 //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
                 if( FilterNode.Attributes["subfieldname"] != null )
-                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
+                {
+                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
+                    SubfieldName = (CswNbtSubField.SubFieldName) FilterNode.Attributes["subfieldname"].Value;
+                }
 
                 _validate();
 
@@ -104,7 +115,8 @@ namespace ChemSW.Nbt
                 string _FilterMode = CswConvert.ToString( FilterObj["filtermode"] );
                 if( !string.IsNullOrEmpty( _FilterMode ) )
                 {
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), _FilterMode, true );
+                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), _FilterMode, true );
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) _FilterMode;
                 }
 
                 if( FilterObj["casesensitive"] != null )
@@ -116,7 +128,8 @@ namespace ChemSW.Nbt
                 string _SfName = CswConvert.ToString( FilterObj["subfieldname"] );
                 if( !string.IsNullOrEmpty( _SfName ) )
                 {
-                    SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), _SfName );
+                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), _SfName );
+                    SubfieldName = (CswNbtSubField.SubFieldName) _SfName;
                 }
 
                 _validate();
@@ -151,9 +164,9 @@ namespace ChemSW.Nbt
                 if( SubfieldName == CswNbtSubField.SubFieldName.Unknown )
                 {
                     // Set the subfield to be the default subfield for the new parent's field type:
-                    if( _Parent.Type == CswNbtViewProperty.CswNbtPropType.NodeTypePropId )
+                    if( _Parent.Type == NbtViewPropType.NodeTypePropId )
                         SubfieldName = _Parent.NodeTypeProp.getFieldTypeRule().SubFields.Default.Name;
-                    else if( _Parent.Type == CswNbtViewProperty.CswNbtPropType.ObjectClassPropId )
+                    else if( _Parent.Type == NbtViewPropType.ObjectClassPropId )
                         SubfieldName = _Parent.ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
                 }
             }
@@ -197,7 +210,7 @@ namespace ChemSW.Nbt
             }
         }//
 
-        public CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Undefined;
+        public CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
         public bool CaseSensitive;
 
         public override string IconFileName
@@ -208,7 +221,7 @@ namespace ChemSW.Nbt
 
         private void _validate()
         {
-            if( CswNbtPropFilterSql.PropertyFilterMode.Undefined == FilterMode )
+            if( CswNbtPropFilterSql.PropertyFilterMode.Unknown == FilterMode )
                 throw ( new CswDniException( "Illegal filter definition: A filter mode setting is required" ) );
 
 
@@ -218,7 +231,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, CswNbtViewXmlNodeName.Filter.ToString(), "" );
+            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.Filter.ToString(), "" );
 
             XmlAttribute FilterValueAttribute = XmlDoc.CreateAttribute( "value" );
             FilterValueAttribute.Value = Value;
@@ -245,7 +258,7 @@ namespace ChemSW.Nbt
 
         public XElement ToXElement()
         {
-            XElement PropFilter = new XElement( CswNbtViewXmlNodeName.Filter.ToString(),
+            XElement PropFilter = new XElement( NbtViewXmlNodeName.Filter.ToString(),
                                      new XAttribute( "value", Value ),
                                      new XAttribute( "filtermode", FilterMode.ToString() ),
                                      new XAttribute( "casesensitive", CaseSensitive.ToString() ),
@@ -257,9 +270,9 @@ namespace ChemSW.Nbt
 
         public JProperty ToJson()
         {
-            JProperty PropFilter = new JProperty( CswNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
+            JProperty PropFilter = new JProperty( NbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
                                             new JObject(
-                                                new JProperty( "nodename", CswNbtViewXmlNodeName.Filter.ToString().ToLower() ),
+                                                new JProperty( "nodename", NbtViewXmlNodeName.Filter.ToString().ToLower() ),
                                                 new JProperty( "value", Value ),
                                                 new JProperty( "filtermode", FilterMode.ToString() ),
                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),

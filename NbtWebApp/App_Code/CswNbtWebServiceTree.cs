@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using ChemSW.Core;
@@ -151,6 +151,7 @@ namespace ChemSW.Nbt.WebServices
                         _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeId );
                         _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                         ReturnObj["newviewid"] = _View.SessionViewId.ToString();
+                        ReturnObj["newviewmode"] = _View.ViewMode.ToString();
                         Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
                     }
                 }
@@ -162,6 +163,7 @@ namespace ChemSW.Nbt.WebServices
                     _View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( IncludeNodeKey.NodeId );
                     _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                     ReturnObj["newviewid"] = _View.SessionViewId.ToString();
+                    ReturnObj["newviewmode"] = _View.ViewMode.ToString();
                     Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
                 }
 
@@ -480,14 +482,14 @@ namespace ChemSW.Nbt.WebServices
             ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
             foreach( CswNbtViewRelationship Rel in Relationships )
             {
-                if( Rel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
                     if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
                     {
                         NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
                     }
-                } // if( Rel.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
                 else
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );

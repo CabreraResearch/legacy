@@ -17,20 +17,16 @@ namespace ChemSW.Nbt
         private CswNbtMetaDataNodeType _NodeType { get { return _CswNbtResources.MetaData.getNodeType( _NodeTypeId ); } }
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _CswNbtNode = null;
-        //private ICswNbtObjClassFactory _CswNbtObjClassFactory = null;
         private CswNbtNodePropCollDataNative _CswNbtNodePropCollDataNative = null;
         private CswNbtNodePropCollDataRelational _CswNbtNodePropCollDataRelational = null;
-        private NodeEditMode _EditMode = NodeEditMode.Unknown;
         private CswNbtMetaDataNodeTypeTab _CswNbtMetaDataNodeTypeTab = null;
 
-        public CswNbtNodePropColl( CswNbtResources CswNbtResources, CswNbtNode CswNbtNode, CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab = null, NodeEditMode EditMode = NodeEditMode.Edit )//, ICswNbtObjClassFactory ICswNbtObjClassFactory )
+        public CswNbtNodePropColl( CswNbtResources CswNbtResources, CswNbtNode CswNbtNode, CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtNode = CswNbtNode;
             _CswNbtMetaDataNodeTypeTab = CswNbtMetaDataNodeTypeTab;
-            _EditMode = EditMode;
-            //_CswNbtObjClassFactory = ICswNbtObjClassFactory;
-
+        
         }//ctor()
 
         private Int32 __NodeTypeId = Int32.MinValue;
@@ -283,7 +279,7 @@ namespace ChemSW.Nbt
                         break;
                     }
                 }
-                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp, _CswNbtMetaDataNodeTypeTab, _EditMode );
+                CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp, _CswNbtMetaDataNodeTypeTab );
                 //if( MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
                 //    MetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
                 //{

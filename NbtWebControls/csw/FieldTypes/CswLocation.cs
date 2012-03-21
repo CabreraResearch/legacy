@@ -42,8 +42,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
                             if( View != null )
                             {
                                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
-                                string XmlStr = Tree.getTreeAsXml();
-                                _TreeView.LoadXml( XmlStr );
+                                
+                                // BROKEN BY case 24709
+                                //string XmlStr = Tree.getTreeAsXml();
+                                //_TreeView.LoadXml( XmlStr );
 
                                 _SelectedNodeKey = Tree.getNodeKeyByNodeId( Prop.AsLocation.SelectedNodeId );
                             }

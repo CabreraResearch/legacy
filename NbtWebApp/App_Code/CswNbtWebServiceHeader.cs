@@ -1,10 +1,13 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Newtonsoft.Json.Linq;
+using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -51,10 +54,10 @@ namespace ChemSW.Nbt.WebServices
             //                             "dash_stis",
             //                             "http://www.chemswlive.com/19002.htm",
             //                             CswNbtResources.CswNbtModule.STIS ) );
-            //DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
-            //                             "dash_cispro",
-            //                             "http://www.chemswlive.com/19002.htm",
-            //                             CswNbtResources.CswNbtModule.CISPro ) );
+            DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
+                                         "dash_cispro",
+                                         "",                              //"http://www.chemswlive.com/19002.htm",
+                                         CswNbtResources.CswNbtModule.CISPro ) );
             //DashIcons.Add( new DashIcon( "CCPro - Control Charts",
             //                             "dash_ccpro",
             //                             "http://www.chemswlive.com/19002.htm",
@@ -85,6 +88,12 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getDashboard()
 
+        private bool _SchemaHasDemoData()
+        {
+            CswTableSelect DemoNodesSelect = new CswTableSelect( _CswNbtResources.CswResources, "AdminMenuDemoSelect", "nodes" );
+            DataTable DemoNodesTable = DemoNodesSelect.getTable( new CswCommaDelimitedString { "nodeid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+            return DemoNodesTable.Rows.Count > 0;
+        }
 
         public JObject getHeaderMenu()
         {
@@ -93,24 +102,28 @@ namespace ChemSW.Nbt.WebServices
             Ret["Home"] = new JObject( new JProperty( "action", "Home" ) );
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                Ret["Admin"] = new JObject(
-                                new JProperty( "haschildren", true ),
-                                new JProperty( "Current User List", new JObject(
-                                    new JProperty( "action", "Sessions" )
-                                ) ),
-                                new JProperty( "Edit Config Vars", new JObject(
-                                    new JProperty( "href", "ConfigVars.aspx" )
-                                ) ),
-                                new JProperty( "Statistics", new JObject(
-                                    new JProperty( "href", "Statistics.aspx" )
-                                ) ),
-                                new JProperty( "Quotas", new JObject(
-                                    new JProperty( "action", "Quotas" )
-                                ) )
-                        );
+                Ret["Admin"] = new JObject();
+                Ret["Admin"]["haschildren"] = true;
+                Ret["Admin"]["Current User List"] = new JObject();
+                Ret["Admin"]["Current User List"]["action"] = "Sessions";
+                Ret["Admin"]["Edit Config Vars"] = new JObject();
+                Ret["Admin"]["Edit Config Vars"]["href"] = "ConfigVars.aspx";
+                Ret["Admin"]["Statistics"] = new JObject();
+                Ret["Admin"]["Statistics"]["href"] = "Statistics.aspx";
+                Ret["Admin"]["Quotas"] = new JObject();
+                Ret["Admin"]["Quotas"]["action"] = "Quotas";
+
                 if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                 {
-                    Ret["Admin"]["View Log"] = new JObject( new JProperty( "href", "DisplayLog.aspx" ) );
+                    Ret["Admin"]["View Log"] = new JObject();
+                    Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
+                }
+
+                if( _CswNbtResources.CurrentNbtUser.IsAdministrator() &&
+                    _SchemaHasDemoData() )
+                {
+                    Ret["Admin"]["Delete Demo Data"] = new JObject();
+                    Ret["Admin"]["Delete Demo Data"]["action"] = "DeleteDemoNodes";
                 }
             }
             Ret["Preferences"] = new JObject(
@@ -172,7 +185,6 @@ namespace ChemSW.Nbt.WebServices
             Assemblies.Add( "CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304" );
             Assemblies.Add( "CswCommon" );
             Assemblies.Add( "CswWebControls" );
-            Assemblies.Add( "FarPoint.Web.Spread" );
             Assemblies.Add( "NbtConfig" );
             Assemblies.Add( "NbtLogic" );
             Assemblies.Add( "NbtWebControls" );

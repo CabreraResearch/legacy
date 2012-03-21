@@ -210,6 +210,13 @@ namespace ChemSW.Nbt.MetaData
             // Update MetaData
             _CswNbtMetaDataResources.ObjectClassesCollection.clearCache();
 
+            foreach( CswNbtMetaDataObjectClassProp OcProp in ObjectClass.getObjectClassProps() )
+            {
+                DeleteObjectClassProp( OcProp, false );
+            }
+
+            _CswNbtMetaDataResources.ObjectClassPropsCollection.clearCache();
+
             // Delete the Object Class Prop
             ObjectClass._DataRow.Delete();
             _CswNbtMetaDataResources.ObjectClassTableUpdate.update( ObjectClass._DataRow.Table );

@@ -101,7 +101,9 @@ namespace ChemSW.Nbt.Schema
                 TestCaseCtorArgs[1] = TestResourceInstancesByName[TestCaseGroupId];
 
                 CswUpdateSchemaTo CurrentTestCaseInstance = (CswUpdateSchemaTo) Activator.CreateInstance( CurrentTestCaseType, TestCaseCtorArgs );
-                _UpdateDrivers.Add( CurrentTestCaseInstance.SchemaVersion, new CswSchemaUpdateDriver( CurrentTestCaseInstance ) );
+                CswSchemaUpdateDriver CurrentDriver = new CswSchemaUpdateDriver( CurrentTestCaseInstance );
+                CurrentDriver.SchemaVersion = CurrentVersion;
+                _UpdateDrivers.Add( CurrentDriver.SchemaVersion, CurrentDriver );
 
             }
 
@@ -192,12 +194,6 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtResources.CswLogger.reportAppState( "Succesfully ran schema updater test " + CswSchemaUpdateDriver.Description );
         }//stampSchemaVersion()
-
-
-        public void addUniversalPreProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
-        public void addReleaseDmlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
-        public void addReleaseDdlDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
-        public void addUniversalPostProcessDriver( CswSchemaUpdateDriver CswSchemaUpdateDriver ) { new CswDniException( "Not Implemented" ); }
 
 
         //#endregion

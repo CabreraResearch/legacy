@@ -169,14 +169,15 @@ namespace ChemSW.NbtWebControls
                     CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, true, ref ParentKey, null, ResultsLimit, true, false, null, false );
                     //_MainFilterEditor.LoadView(Master.CswNbtView);
 
-                    if( ParentKey != null )
-                        CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
-                    else
-                        CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGrid;
+                    // BROKEN BY case 24709
+                    //if( ParentKey != null )
+                    //    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGridProperty;
+                    //else
+                    //    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.TelerikRadGrid;
 
-                    string XmlStrForGrid = CswNbtTree.getTreeAsXml();
+                    //string XmlStrForGrid = CswNbtTree.getTreeAsXml();
                     DataSet UnsortedXmlDataSet = new DataSet();
-                    UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( XmlStrForGrid ), XmlReadMode.InferTypedSchema );
+                    //UnsortedXmlDataSet.ReadXml( new System.IO.StringReader( XmlStrForGrid ), XmlReadMode.InferTypedSchema );
 
                     if( UnsortedXmlDataSet.Tables.Count > 0 && UnsortedXmlDataSet.Tables[0].Rows.Count > 0 )
                     {
@@ -187,7 +188,7 @@ namespace ChemSW.NbtWebControls
                         //if( SortProp != null )
                         //{
                         //    string SortMethod = "";
-                        //    if( SortProp != null && SortProp.SortMethod == CswNbtViewProperty.PropertySortMethod.Descending )
+                        //    if( SortProp != null && SortProp.SortMethod == PropertySortMethod.Descending )
                         //        SortMethod = " DESC";
 
                         //    DataView Sortedview = UnsortedXmlDataSet.Tables[0].DefaultView;
@@ -343,21 +344,21 @@ namespace ChemSW.NbtWebControls
                         //Int32 CurrentNodeTypePropId = CswConvert.ToInt32( NoPrefixColumnName.Substring( 0, NoPrefixColumnName.IndexOf( '_' ) ) );
                         string RealColumnName = CswTools.XmlRealAttributeName( NoPrefixColumnName ); //.Substring( NoPrefixColumnName.IndexOf( '_' ) + 1 ) );
                         //CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( CurrentNodeTypePropId );
-                        //CswNbtViewProperty CurrentViewProp = View.FindPropertyById( CswNbtViewProperty.CswNbtPropType.NodeTypePropId, CurrentNodeTypePropId );
+                        //CswNbtViewProperty CurrentViewProp = View.FindPropertyById( CswNbtPropType.NodeTypePropId, CurrentNodeTypePropId );
                         CswNbtViewProperty CurrentViewProp = View.findPropertyByName( RealColumnName );
                         //if( CurrentViewProp == null )
                         //    CurrentViewProp = View.FindPropertyByName( CurrentNodeTypeProp.PropName );
                         CswNbtMetaDataFieldType.NbtFieldType ColFieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
                         if( CurrentViewProp != null )
                         {
-                            if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                            if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == NbtViewRelatedIdType.NodeTypeId )
                             {
                                 CswNbtMetaDataNodeType CurrentNT = _CswNbtResources.MetaData.getNodeType( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
                                 CswNbtMetaDataNodeTypeProp CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
                                 if( CurrentNTP != null )
                                     ColFieldType = CurrentNTP.getFieldType().FieldType;
                             }
-                            else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+                            else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == NbtViewRelatedIdType.ObjectClassId )
                             {
                                 CswNbtMetaDataObjectClass CurrentOC = _CswNbtResources.MetaData.getObjectClass( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
                                 foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.getNodeTypes() )

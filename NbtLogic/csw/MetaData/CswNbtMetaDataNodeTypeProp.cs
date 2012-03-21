@@ -29,6 +29,7 @@ namespace ChemSW.Nbt.MetaData
             //isfk, 
             isrequired,
             isunique,
+            iscompoundunique,
             length,
             //nodetypeid, 
             //nodetypepropid, 
@@ -50,7 +51,7 @@ namespace ChemSW.Nbt.MetaData
             statictext,
             multi,
             nodeviewid,
-            read_only,
+            readOnly,
             //display_col_add,
             //display_row_add,
             //setvalonadd,
@@ -174,6 +175,17 @@ namespace ChemSW.Nbt.MetaData
             _UniqueId = CswConvert.ToInt32( NewRow[UniqueIdFieldName] );
         }
 
+        private void _checkVersioningProp()
+        {
+            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+            if( NewNodeType.NodeTypeId != NodeTypeId )
+            {
+                // Get the new property and reassign myself
+                CswNbtMetaDataNodeTypeProp NewProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypePropVersion( NewNodeType.NodeTypeId, this.PropId );
+                this._NodeTypePropRow = NewProp._DataRow;
+            }
+        }
+
         /// <summary>
         /// This function sets the value of the field to the provided value, checking for nodetype versioning 
         /// and re-registering the property with the collection.
@@ -187,7 +199,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToDouble( _NodeTypePropRow[FieldName] ) != (double) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                    _checkVersioningProp();
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (double) value );
                     ret = true;
                     if( ReRegister )
@@ -200,7 +212,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToInt32( _NodeTypePropRow[FieldName] ) != (Int32) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                    _checkVersioningProp();
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (Int32) value );
                     ret = true;
                     if( ReRegister )
@@ -213,7 +225,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( CswConvert.ToBoolean( _NodeTypePropRow[FieldName] ) != (bool) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                    _checkVersioningProp();
                     _NodeTypePropRow[FieldName] = CswConvert.ToDbVal( (bool) value );
                     ret = true;
                     if( ReRegister )
@@ -226,7 +238,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypePropRow[FieldName].ToString() != (string) value )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                    _checkVersioningProp();
                     _NodeTypePropRow[FieldName] = (string) value;
                     ret = true;
                     if( ReRegister )
@@ -239,7 +251,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _NodeTypePropRow[FieldName].ToString() != string.Empty )
                 {
-                    _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                    _checkVersioningProp();
                     _NodeTypePropRow[FieldName] = value;
                     ret = true;
                     if( ReRegister )
@@ -278,7 +290,7 @@ namespace ChemSW.Nbt.MetaData
                 // BZ 5492: Make sure this is unique for this nodetype
 
                 if( _NodeTypePropRow["propname"].ToString() != value &&
-                    _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( this.NodeTypeId, value ) != null )
+                    _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypePropId( this.NodeTypeId, value ) != Int32.MinValue )
                 {
                     throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }
@@ -296,13 +308,7 @@ namespace ChemSW.Nbt.MetaData
                 string name = string.Empty;
                 if( UseNumbering && QuestionNo != Int32.MinValue )
                 {
-                    name += "Q";
-                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
-                    if( Tab.SectionNo != Int32.MinValue )
-                        name += Tab.SectionNo.ToString() + ".";
-                    name += QuestionNo.ToString();
-                    if( SubQuestionNo != Int32.MinValue )
-                        name += "." + SubQuestionNo.ToString();
+                    name += FullQuestionNo;
                     name += " ";
                 }
                 name += PropName.ToString();
@@ -379,6 +385,18 @@ namespace ChemSW.Nbt.MetaData
         {
             _setAttribute( "isunique", value, false );
         }
+
+        //case 24979
+        public bool IsCompoundUnique()
+        {
+            return ( CswConvert.ToBoolean( _NodeTypePropRow["iscompoundunique"] ) );
+        }
+
+        public void setIsCompoundUnique( bool value )
+        {
+            _setAttribute( "iscompoundunique", value, false );
+        }
+
 
         // BZ 9754
         public bool IsGlobalUnique()
@@ -489,7 +507,7 @@ namespace ChemSW.Nbt.MetaData
         public void SetFK( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             doSetFk setFk = _doSetFk;
-            getFieldTypeRule().setFk( setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            getFieldTypeRule().setFk( this, setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public string FKType
@@ -815,6 +833,25 @@ namespace ChemSW.Nbt.MetaData
         //    }
         //}
 
+        public string FullQuestionNo
+        {
+            get
+            {
+                string ret = "Q";
+                CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                if( Tab.SectionNo != Int32.MinValue )
+                {
+                    ret += Tab.SectionNo.ToString() + ".";
+                }
+                ret += QuestionNo.ToString();
+                if( SubQuestionNo != Int32.MinValue )
+                {
+                    ret += "." + SubQuestionNo.ToString();
+                }
+                return ret;
+            }
+        }
+
         // This should not trigger versioning
         public Int32 QuestionNo
         {
@@ -963,9 +1000,11 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtMetaDataNodeTypeProp FilterNodeTypeProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
                 if( FilterNodeTypeProp != null )
                 {
-                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                    //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) filter[0];
                     SubField = FilterNodeTypeProp.getFieldTypeRule().SubFields[Column];
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
+                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
+                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) filter[1];
                     if( filter.GetUpperBound( 0 ) > 1 )
                         FilterValue = filter[2];
                 }
@@ -1000,14 +1039,13 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( SubField.Name == CswNbtSubField.SubFieldName.Checked )
                 {
-                    switch( FilterMode )
+                    if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                     {
-                        case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
-                            break;
-                        case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                            FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
-                            break;
+                        FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
+                    }
+                    else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    {
+                        FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
                     }
                 }
                 else
@@ -1031,22 +1069,25 @@ namespace ChemSW.Nbt.MetaData
                         throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldType().FieldType.ToString() );
                 } // switch( FilterMetaDataProp.FieldType.FieldType )
 
-                switch( FilterMode )
+                if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
                 {
-                    case CswNbtPropFilterSql.PropertyFilterMode.Equals:
-                        FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.NotEquals:
-                        FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.Null:
-                        FilterMatches = ( ValueToCompare == string.Empty );
-                        break;
-                    case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
-                        FilterMatches = ( ValueToCompare != string.Empty );
-                        break;
-                    default:
-                        throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode: " + FilterMode.ToString() );
+                    FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
+                }
+                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                {
+                    FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
+                }
+                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                {
+                    FilterMatches = ( ValueToCompare == string.Empty );
+                }
+                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+                {
+                    FilterMatches = ( ValueToCompare != string.Empty );
+                }
+                else
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
                 } // switch( FilterMode )
 
             } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
@@ -1127,7 +1168,7 @@ namespace ChemSW.Nbt.MetaData
         {
             if( CswConvert.ToInt32( _NodeTypePropRow[SequenceIdColumn] ) != SequenceId )
             {
-                _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+                _checkVersioningProp();
 
                 _NodeTypePropRow[SequenceIdColumn] = CswConvert.ToDbVal( SequenceId );
 
@@ -1516,14 +1557,15 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( FKType != string.Empty )
                 {
-                    CswNbtViewRelationship.RelatedIdType TargetType = (CswNbtViewRelationship.RelatedIdType) Enum.Parse( typeof( CswNbtViewRelationship.RelatedIdType ), FKType, true );
+                    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
 
-                    if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
                         ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     }
-                    else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+                    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
                         ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );

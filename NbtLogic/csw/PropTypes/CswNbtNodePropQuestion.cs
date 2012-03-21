@@ -4,7 +4,6 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
@@ -71,10 +70,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != _CswNbtNodePropData.GetPropRowValue( _AnswerSubField.Column ) )
                 {
-                    string AnswerVal = value;
+                    string AnswerVal = value.Trim();
 
                     DateTime UpdateDateAnswered = DateAnswered;
-                    if( !string.IsNullOrEmpty( AnswerVal ) )
+                    if( false == string.IsNullOrEmpty( AnswerVal ) )
                     {
                         if( _IsValidNode &&
                             UpdateDateAnswered == DateTime.MinValue )  // case 21056
@@ -87,8 +86,8 @@ namespace ChemSW.Nbt.PropTypes
                         UpdateDateAnswered = DateTime.MinValue;
                     }
                     DateAnswered = UpdateDateAnswered;
-                    //IsCompliant = _IsCompliant;
                     _CswNbtNodePropData.SetPropRowValue( _AnswerSubField.Column, AnswerVal );
+                    IsCompliant = TestIsCompliant();
 
                     _synchGestalt( AnswerVal );
                 }
@@ -107,17 +106,22 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     DateTime UpdateDateCorrected = DateTime.MinValue;
 
-                    string val = value;
+                    string val = value.Trim();
                     if( _IsValidNode && false == string.IsNullOrEmpty( val ) )
                     {
                         UpdateDateCorrected = DateTime.Today;
                     }
-                    
+
                     DateCorrected = UpdateDateCorrected;
-                    //IsCompliant = _IsCompliant;
                     _CswNbtNodePropData.SetPropRowValue( _CorrectiveActionSubField.Column, val );
+                    IsCompliant = TestIsCompliant();
                 }
             }
+        }
+
+        private bool TestIsCompliant()
+        {
+            return ( CompliantAnswers.Contains( Answer, true ) || string.Empty != CorrectiveAction );
         }
 
         /// <summary>
@@ -125,7 +129,14 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool IsCompliant
         {
-            get { return ( CompliantAnswers.Contains( Answer, true ) || string.Empty != CorrectiveAction ); }
+            get
+            {
+                return CswConvert.ToBoolean( _CswNbtNodePropData.GetPropRowValue( _IsCompliantSubField.Column ) );
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+            }
         }
 
         /// <summary>
@@ -388,17 +399,17 @@ namespace ChemSW.Nbt.PropTypes
                 DateCorrected = CswDateCorrected.ToDateTime();
             }
 
-            if( null != JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_AnswerSubField.ToXmlNodeName( true )] )
             {
-                Answer = (string) JObject.Property( _AnswerSubField.ToXmlNodeName( true ) ).Value;
+                Answer = JObject[_AnswerSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject.Property( _CommentsSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_CommentsSubField.ToXmlNodeName( true )] )
             {
-                Comments = (string) JObject.Property( _CommentsSubField.ToXmlNodeName( true ) ).Value;
+                Comments = JObject[_CommentsSubField.ToXmlNodeName( true )].ToString();
             }
-            if( null != JObject.Property( _CorrectiveActionSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_CorrectiveActionSubField.ToXmlNodeName( true )] )
             {
-                CorrectiveAction = (string) JObject.Property( _CorrectiveActionSubField.ToXmlNodeName( true ) ).Value;
+                CorrectiveAction = JObject[_CorrectiveActionSubField.ToXmlNodeName( true )].ToString();
             }
         }
     }//CswNbtNodePropQuestion

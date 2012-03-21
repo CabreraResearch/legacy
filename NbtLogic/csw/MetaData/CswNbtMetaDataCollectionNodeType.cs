@@ -18,8 +18,15 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "nodetypeid",
                                                           "nodetypename",
+                                                          _CswNbtMetaDataResources.NodeTypeTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypeTableUpdate,
-                                                          makeNodeType );
+                                                          makeNodeType,
+                                                          _makeModuleWhereClause );
+        }
+
+        public void AddToCache( CswNbtMetaDataNodeType NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()
@@ -101,6 +108,28 @@ namespace ChemSW.Nbt.MetaData
                                                                                             where firstversionid = (select firstversionid 
                                                                                                                       from nodetypes
                                                                                                                      where lower(nodetypename) = '" + NodeTypeName.ToLower() + "'))" );
+        }
+
+        private string _makeModuleWhereClause()
+        {
+            return @" ( ( exists (select j.jctmoduleobjectclassid
+                                    from jct_modules_objectclass j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.objectclassid = nodetypes.objectclassid
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmoduleobjectclassid
+                                           from jct_modules_objectclass j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.objectclassid = nodetypes.objectclassid) )
+                    and ( exists (select j.jctmodulenodetypeid
+                                    from jct_modules_nodetypes j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.nodetypeid = nodetypes.nodetypeid
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmodulenodetypeid
+                                           from jct_modules_nodetypes j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.nodetypeid = nodetypes.nodetypeid) ) )";
         }
 
         //public void ClearKeys()

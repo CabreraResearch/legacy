@@ -1,9 +1,10 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -19,6 +20,7 @@ namespace ChemSW.Nbt.WebServices
         private bool _CanEdit = true;
         private bool _CanDelete = true;
         private Collection<CswViewBuilderProp> _PropsInGrid = null;
+        private string _FirstPropInGrid = string.Empty;
         public enum GridReturnType
         {
             Xml,
@@ -56,7 +58,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Collection<CswNbtMetaDataNodeType> FirstLevelNodeTypes = new Collection<CswNbtMetaDataNodeType>();
 
-                if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                if( Relationship.SecondType == NbtViewRelatedIdType.ObjectClassId &&
                     Relationship.SecondId != Int32.MinValue )
                 {
                     CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
@@ -65,7 +67,7 @@ namespace ChemSW.Nbt.WebServices
                         FirstLevelNodeTypes.Add( NT );
                     }
                 }
-                else if( Relationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                else if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId &&
                          Relationship.SecondId != Int32.MinValue )
                 {
                     FirstLevelNodeTypes.Add( _CswNbtResources.MetaData.getNodeType( Relationship.SecondId ) );
@@ -183,6 +185,72 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         } // getGridOuterJson()
 
+        private void _ensureIndex( JArray Array, Int32 Position )
+        {
+            if( Position >= Array.Count )
+            {
+                for( Int32 I = Array.Count; I <= Position; I += 1 )
+                {
+                    Array.Add( "" );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns a thin JArray of grid row values
+        /// </summary>
+        public JArray getThinGridRows( Int32 MaxRows )
+        {
+            JArray RetRows = new JArray();
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            Int32 StartingNode = 0;
+            if( _View.Visibility == NbtViewVisibility.Property )
+            {
+                Tree.goToNthChild( 0 );
+            }
+
+            Int32 NodeCount = Tree.getChildNodeCount();
+            bool IsTruncated = false;
+            if( NodeCount > 0 )
+            {
+                JArray HeaderRow = new JArray();
+                CswCommaDelimitedString HeaderCols = new CswCommaDelimitedString();
+                RetRows.Add( HeaderRow );
+                foreach( CswViewBuilderProp VbProp in _PropsInGrid )
+                {
+                    HeaderRow.Add( VbProp.PropName );
+                    HeaderCols.Add( VbProp.PropName );
+                }
+
+                for( Int32 C = StartingNode; C < MaxRows && C < NodeCount; C += 1 )
+                {
+                    Tree.goToNthChild( C );
+
+                    JArray ThisRow = new JArray();
+                    RetRows.Add( ThisRow );
+                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    {
+                        Int32 ColumnIdx = HeaderCols.IndexOf( Prop["propname"].ToString() );
+                        if( ColumnIdx >= 0 )
+                        {
+                            _ensureIndex( ThisRow, ColumnIdx );
+                            ThisRow[ColumnIdx] = Prop["gestalt"];
+                        }
+                    }
+
+                    IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
+
+                    Tree.goToParentNode();
+                }
+
+                if( IsTruncated )
+                {
+                    RetRows.Add( new JArray( "Results Truncated" ) );
+                }
+            }
+            return RetRows;
+        } // getGridOuterJson()
+
         /// <summary>
         /// Returns a JSON Object of all Grid Rows
         /// </summary>
@@ -214,8 +282,8 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject RetObj = new JObject();
             JArray GridRows = new JArray();
-
             Int32 NodeCount = Tree.getChildNodeCount();
+            bool IsTruncated = false;
             if( NodeCount > 0 )
             {
                 for( Int32 C = StartingNode; ( C < EndingNode || IsReport ) && C < NodeCount; C += 1 )
@@ -224,8 +292,16 @@ namespace ChemSW.Nbt.WebServices
 
                     GridRows.Add( _getGridRow( Tree, _PropsInGrid ) );
 
+                    IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
+
                     Tree.goToParentNode();
                 }
+
+                if( IsTruncated )
+                {
+                    GridRows.Add( _getTruncatedGridRow( _PropsInGrid.First() ) );
+                }
+
             }
 
             Int32 PageCount;
@@ -237,10 +313,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 PageCount = ( ( NodeCount + PageSize - 1 ) / PageSize );
             }
+
             RetObj["total"] = PageCount;
             RetObj["page"] = PageNumber + 1;
             RetObj["records"] = NodeCount;
             RetObj["rows"] = GridRows;
+            RetObj["wastruncated"] = IsTruncated;
             return RetObj;
         }
 
@@ -313,7 +391,6 @@ namespace ChemSW.Nbt.WebServices
 
             ThisNodeObj["jqgridid"] = ThisNodeId;
             ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
-            ThisNodeObj["nodename"] = ThisNodeName;
             string Icon = "<img src=\'";
             if( ThisNodeLocked )
             {
@@ -325,11 +402,37 @@ namespace ChemSW.Nbt.WebServices
             }
             Icon += "\'/>";
             ThisNodeObj["Icon"] = Icon;
+            ThisNodeObj["nodename"] = ThisNodeName;
 
-            foreach( XElement Prop in Tree.getChildNodePropsOfNode() )
+            foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
             {
                 _addSafeCellContent( _CswNbtResources, Prop, ThisNodeObj, PropsInGrid );
             }
+
+            return ThisNodeObj;
+
+        } // _treeNodeJObject()
+
+        private JObject _getTruncatedGridRow( CswViewBuilderProp FirstPropInGrid )
+        {
+            JObject ThisNodeObj = new JObject();
+
+            string ThisNodeName = "Truncated";
+
+            ThisNodeObj["jqgridid"] = "-1";
+            ThisNodeObj["cswnbtnodekey"] = string.Empty;
+            string Icon = "<img src=\'";
+            Icon += "Images/icons/truncated.gif";
+            Icon += "\'/>";
+            ThisNodeObj["Icon"] = Icon;
+            ThisNodeObj["nodename"] = ThisNodeName;
+
+            if( string.IsNullOrEmpty( _FirstPropInGrid ) )
+            {
+                _FirstPropInGrid = FirstPropInGrid.PropName + "_" + FirstPropInGrid.MetaDataPropId;
+            }
+
+            ThisNodeObj[_FirstPropInGrid] = "Results Truncated Here.";
 
             return ThisNodeObj;
 
@@ -340,14 +443,14 @@ namespace ChemSW.Nbt.WebServices
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private static void _addSafeCellContent( CswNbtResources CswNbtResources, XElement DirtyElement, JObject ParentObj, Collection<CswViewBuilderProp> PropsInGrid )
+        private void _addSafeCellContent( CswNbtResources CswNbtResources, JObject DirtyElement, JObject ParentObj, IEnumerable<CswViewBuilderProp> PropsInGrid )
         {
             if( null != DirtyElement )
             {
-                string CleanPropName = DirtyElement.Attribute( "name" ).Value.Trim().ToLower().Replace( " ", "_" );
-                string DirtyValue = DirtyElement.Attribute( "gestalt" ).Value;
-                string PropFieldTypeString = DirtyElement.Attribute( "fieldtype" ).Value;
-                string PropId = DirtyElement.Attribute( "nodetypepropid" ).Value;
+                string CleanPropName = DirtyElement["propname"].ToString().Trim().ToLower().Replace( " ", "_" );
+                string DirtyValue = DirtyElement["gestalt"].ToString();
+                string PropFieldTypeString = DirtyElement["fieldtype"].ToString();
+                string PropId = DirtyElement["nodetypepropid"].ToString();
                 CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
 
                 var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
@@ -368,10 +471,14 @@ namespace ChemSW.Nbt.WebServices
                         CleanPropName += "_" + VbProp.MetaDataPropId;
                     }
                 }
-
+                if( string.IsNullOrEmpty( _FirstPropInGrid ) )
+                {
+                    _FirstPropInGrid = CleanPropName;
+                }
                 ParentObj[CleanPropName] = CleanValue;
             }
         }
+
     } // class CswNbtWebServiceGrid
 
 } // namespace ChemSW.Nbt.WebServices

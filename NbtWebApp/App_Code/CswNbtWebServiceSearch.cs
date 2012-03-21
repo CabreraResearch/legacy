@@ -1,11 +1,17 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.DB;
+using ChemSW.Nbt.Search;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Logic;
+
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -15,7 +21,8 @@ namespace ChemSW.Nbt.WebServices
         //private readonly Int32 _ConstrainToObjectClassId = Int32.MinValue;
         private const string _NodeTypePrefix = "nt_";
         private const string _ObjectClassPrefix = "oc_";
-        private wsViewBuilder _ViewBuilder;
+        private CswNbtViewBuilder _ViewBuilder;
+
         /// <summary>
         /// Searching against these field types is not yet supported
         /// </summary>
@@ -40,7 +47,7 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceSearch( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _ViewBuilder = new wsViewBuilder( _CswNbtResources, _ProhibittedFieldTypes );
+            _ViewBuilder = new CswNbtViewBuilder( _CswNbtResources, _ProhibittedFieldTypes );
             //wsViewBuilder.CswViewBuilderProp 
         }//ctor
 
@@ -113,7 +120,7 @@ namespace ChemSW.Nbt.WebServices
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses().Cast<CswNbtMetaDataObjectClass>()
                                                               .Where( ObjectClass => CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass != ObjectClass.ObjectClass &&
-                                                                      ( ObjectClass.ObjectClassProps.Count() > 0 &&
+                                                                      ( ObjectClass.getObjectClassProps().Count() > 0 &&
                                                                         ObjectClass.getNodeTypes().Count() > 0 ) ) )
             {
                 string OptionId = "option_" + ObjectClass.ObjectClassId;
@@ -291,22 +298,22 @@ namespace ChemSW.Nbt.WebServices
                                                         .Cast<JObject>()
                                                         .Where( FilterProp => FilterProp.HasValues ) )
                     {
-                        CswNbtViewRelationship.RelatedIdType PropType;
-                        Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
+                        NbtViewRelatedIdType PropType = (NbtViewRelatedIdType) FilterProp["relatedidtype"].ToString();
+                        //Enum.TryParse( (string) FilterProp["relatedidtype"], true, out PropType );
 
                         Int32 NodeTypeOrObjectClassId = CswConvert.ToInt32( (string) FilterProp["nodetypeorobjectclassid"] );
                         Int32 PropId = CswConvert.ToInt32( (string) FilterProp["viewbuilderpropid"] );
                         CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
 
-                        CswNbtSubField.SubFieldName SubField;
-                        Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
+                        CswNbtSubField.SubFieldName SubField = (CswNbtSubField.SubFieldName) CswConvert.ToString( FilterProp["subfield"] );
+                        //Enum.TryParse( (string) FilterProp["subfield"], true, out SubField );
 
-                        CswNbtPropFilterSql.PropertyFilterMode FilterMode;
-                        Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
+                        CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
+                        //Enum.TryParse( (string) FilterProp["filter"], true, out FilterMode );
 
                         string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
-                        if( PropType == CswNbtViewRelationship.RelatedIdType.ObjectClassId &&
+                        if( PropType == NbtViewRelatedIdType.ObjectClassId &&
                             Int32.MinValue != NodeTypeProp.ObjectClassPropId )
                         {
                             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( NodeTypeOrObjectClassId );
@@ -331,7 +338,7 @@ namespace ChemSW.Nbt.WebServices
                                 _ViewBuilder.makeViewPropFilter( SearchView, FilterProp );
                             }
                         }
-                        else if( PropType == CswNbtViewRelationship.RelatedIdType.NodeTypeId &&
+                        else if( PropType == NbtViewRelatedIdType.NodeTypeId &&
                             Int32.MinValue != NodeTypeProp.PropId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeOrObjectClassId );
@@ -373,6 +380,78 @@ namespace ChemSW.Nbt.WebServices
         }
 
         #endregion
+
+        #region UniversalSearch
+
+        public JObject doUniversalSearch( string SearchTerm )
+        {
+            CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
+            return _finishUniversalSearch( Search );
+        }
+        
+        public JObject restoreUniversalSearch( CswNbtSessionDataId SessionDataId )
+        {
+            JObject ret = new JObject();
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                CswNbtSearch Search = SessionDataItem.Search;
+                ret = _finishUniversalSearch( Search );
+            }
+            return ret;
+        } // restoreUniversalSearch()
+
+        public JObject filterUniversalSearch( CswNbtSessionDataId SessionDataId, JObject Filter, string Action )
+        {
+            JObject ret = new JObject();
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                CswNbtSearch Search = SessionDataItem.Search;
+                if( Action == "add" )
+                {
+                    Search.addFilter( Filter );
+                }
+                else
+                {
+                    Search.removeFilter( Filter );
+                }
+                ret = _finishUniversalSearch( Search );
+            }
+            return ret;
+        }
+        private JObject _finishUniversalSearch( CswNbtSearch Search )
+        {
+            ICswNbtTree Tree = Search.Results();
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null );
+
+            JObject ret = new JObject();
+            ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
+            ret["filters"] = Search.FilterOptions( Tree );
+            ret["searchterm"] = Search.SearchTerm;
+            ret["filtersapplied"] = Search.FiltersApplied;
+            Search.SaveToCache( true );
+            ret["sessiondataid"] = Search.SessionDataId.ToString();
+            return ret;
+        }
+
+        public JObject saveSearchAsView( CswNbtSessionDataId SessionDataId, CswNbtView View )
+        {
+            JObject ret = new JObject();
+            CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
+            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            {
+                CswNbtSearch Search = SessionDataItem.Search;
+                ret["result"] = Search.saveSearchAsView( View );
+            }
+            else
+            {
+                ret["result"] = false;
+            }
+            return ret;
+        }
+
+        #endregion UniversalSearch
 
 
     } // class CswNbtWebServiceSearch

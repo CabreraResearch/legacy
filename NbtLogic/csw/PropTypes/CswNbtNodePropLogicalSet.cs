@@ -8,6 +8,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
+using System.Collections.ObjectModel;
 
 
 namespace ChemSW.Nbt.PropTypes
@@ -288,6 +289,31 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
+/*
+        /// <summary>
+        /// Checks to be sure all values assigned are valid against possible options
+        /// </summary>
+        public void ValidateValues()
+        {
+            // Y values
+            XmlNodeList YValueNodes = LogicalSetXmlDoc.ChildNodes[0].SelectNodes( "YValue" );
+            Collection<XmlNode> DoomedNodes = new Collection<XmlNode>();
+            foreach( XmlNode YValueNode in YValueNodes )
+            {
+                string ThisYValue = YValueNode.Attributes["y"].Value;
+                if( false == YValues.Contains( ThisYValue ) )
+                {
+                    DoomedNodes.Add( YValueNode );
+                }
+            }
+
+            foreach( XmlNode DoomedNode in DoomedNodes )
+            {
+                LogicalSetXmlDoc.ChildNodes[0].RemoveChild( DoomedNode );
+            }
+
+        } // ValidateValues() 
+*/
 
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
         private string _ElemName_LogicalSetJson = "logicalsetjson";
@@ -408,7 +434,10 @@ namespace ChemSW.Nbt.PropTypes
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
 
-            if( null != JObject["logicalsetjson"] )
+            if( null != JObject["logicalsetjson"] &&
+                JObject["logicalsetjson"].HasValues &&
+                null != JObject["logicalsetjson"]["data"] &&
+                null != JObject["logicalsetjson"]["columns"] )
             {
                 JArray Data = (JArray) JObject["logicalsetjson"]["data"];
                 JArray ColumnsAry = (JArray) JObject["logicalsetjson"]["columns"];

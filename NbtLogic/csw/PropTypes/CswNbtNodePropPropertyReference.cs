@@ -65,11 +65,11 @@ namespace ChemSW.Nbt.PropTypes
             //    _CswNbtMetaDataNodeTypeProp.FKValue = value;
             //}
         }
-        public CswNbtViewRelationship.PropIdType RelationshipType
+        public NbtViewPropIdType RelationshipType
         {
             get
             {
-                return CswNbtViewRelationship.PropIdType.NodeTypePropId;
+                return NbtViewPropIdType.NodeTypePropId;
             }
         }
 
@@ -84,14 +84,15 @@ namespace ChemSW.Nbt.PropTypes
             //    _CswNbtMetaDataNodeTypeProp.ValuePropId = value;
             //}
         }
-        public CswNbtViewRelationship.PropIdType RelatedPropType
+        public NbtViewPropIdType RelatedPropType
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
-                    return (CswNbtViewRelationship.PropIdType) Enum.Parse( typeof( CswNbtViewRelationship.PropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
-                else
-                    return CswNbtViewRelationship.PropIdType.Unknown;
+                //if( _CswNbtMetaDataNodeTypeProp.ValuePropType != String.Empty )
+                //    return (NbtViewPropIdType) Enum.Parse( typeof( NbtViewPropIdType ), _CswNbtMetaDataNodeTypeProp.ValuePropType, true );
+                //else
+                //    return NbtViewPropIdType.Unknown;
+                return (NbtViewPropIdType) _CswNbtMetaDataNodeTypeProp.ValuePropType;
             }
             //set
             //{
@@ -112,18 +113,25 @@ namespace ChemSW.Nbt.PropTypes
                 if( _CswNbtMetaDataNodeTypeProp == null )
                     throw new CswDniException( "RecalculateReferenceValue(): _CswNbtMetaDataNodeTypeProp is null" );
 
-                CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId );
+                Int32 NodeTypeId = this.NodeTypeProp.getNodeType().NodeTypeId;
+                if( RelationshipType != NbtViewPropIdType.NodeTypePropId )
+                {
+                    throw new CswDniException( "RecalculateReferenceValue(): RelationshipType is not valid:" + RelationshipType.ToString() );
+                }
+                CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropVersion( NodeTypeId, RelationshipId );
                 if( RelationshipProp == null )
+                {
                     throw new CswDniException( "RecalculateReferenceValue(): RelationshipId is not valid:" + RelationshipId.ToString() );
+                }
 
-                ICswNbtMetaDataProp RelatedProp = null;
-                if( RelatedPropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-                    RelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
-                else
-                    RelatedProp = _CswNbtResources.MetaData.getObjectClassProp( RelatedPropId );
+                //ICswNbtMetaDataProp RelatedProp = null;
+                //if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
+                //    RelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
+                //else
+                //    RelatedProp = _CswNbtResources.MetaData.getObjectClassProp( RelatedPropId );
 
-                if( RelatedProp == null )
-                    throw new CswDniException( "RecalculateReferenceValue(): RelatedPropId is not valid:" + RelatedPropId.ToString() );
+                //if( RelatedProp == null )
+                //    throw new CswDniException( "RecalculateReferenceValue(): RelatedPropId is not valid:" + RelatedPropId.ToString() );
 
                 CswNbtView ReferenceView = new CswNbtView( _CswNbtResources );
                 ReferenceView.Root.Selectable = false;
@@ -132,10 +140,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtViewRelationship ThisNodeRelationship = ReferenceView.AddViewRelationship( _CswNbtMetaDataNodeTypeProp.getNodeType(), false );
                 ThisNodeRelationship.NodeIdsToFilterIn.Add( _CswNbtNodePropData.NodeId );
 
-                if( RelationshipType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
-                    ReferenceView.AddViewRelationship( ThisNodeRelationship, CswNbtViewRelationship.PropOwnerType.First, _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId ), false );
-                else
-                    ReferenceView.AddViewRelationship( ThisNodeRelationship, CswNbtViewRelationship.PropOwnerType.First, _CswNbtResources.MetaData.getObjectClassProp( RelationshipId ), false );
+                ReferenceView.AddViewRelationship( ThisNodeRelationship, NbtViewPropOwnerType.First, RelationshipProp, false );
 
                 //ReferenceView.Root.NodeIdsToFilterIn.Add(_CswNbtNodePropData.NodeId);
                 //ReferenceView.Root.FilterInNodesRecursively = false;
@@ -153,9 +158,9 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         ReferenceTree.goToNthChild( 0 );
                         CswNbtNode RelatedNode = ReferenceTree.getNodeForCurrentPosition();
-                        if( RelatedPropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                        if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
                         {
-                            Value = ( (CswNbtNodePropWrapper) RelatedNode.Properties[_CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId )] ).Gestalt;
+                            Value = ( (CswNbtNodePropWrapper) RelatedNode.Properties[_CswNbtResources.MetaData.getNodeTypePropVersion( RelatedNode.NodeTypeId, RelatedPropId )] ).Gestalt;
                         }
                         else
                         {
@@ -169,8 +174,8 @@ namespace ChemSW.Nbt.PropTypes
                 }
             } // if (RelationshipId > 0 && RelatedPropId > 0)
 
-            _CswNbtNodePropData.Field1 = Value;
-            _CswNbtNodePropData.Gestalt = Value;
+            _CswNbtNodePropData.SetPropRowValue( _CachedValueSubField.Column, Value );
+            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
             _CswNbtNodePropData.PendingUpdate = false;
 
             return Value;

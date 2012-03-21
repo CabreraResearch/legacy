@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //View.ViewName = "CswNbtObjClassUser(" + Node.NodeId.ToString() + ")";
                 //CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
                 //UserRelationship.NodeIdsToFilterIn.Add( Node.NodeId );
-                //CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( UserRelationship, CswNbtViewRelationship.PropOwnerType.First, Role_ObjectClassProp, false );
+                //CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( UserRelationship, PropOwnerType.First, Role_ObjectClassProp, false );
 
                 //// generate the tree
                 //ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, true );
@@ -137,9 +137,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
             // BZ 5906
             UsernameProperty.ReadOnly = true;
@@ -256,9 +256,13 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
+            Message = string.Empty;
+            ActionData = string.Empty;
+            ButtonAction = NbtButtonAction.Unknown;
             if( null != NodeTypeProp ) { /*Do Something*/ }
+            return true;
         }
 
         public static string makeRandomPassword( Int32 Length = 12 )

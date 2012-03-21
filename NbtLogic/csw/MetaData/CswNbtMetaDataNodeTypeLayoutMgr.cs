@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
@@ -60,16 +61,20 @@ namespace ChemSW.Nbt.MetaData
 
         public NodeTypeLayout getLayout(LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop)
         {
+            return getLayout( LayoutType, Prop.PropId );      
+        }
+        public NodeTypeLayout getLayout( LayoutType LayoutType, Int32 PropId )
+        {
             CswTimer GetLayoutTimer = new CswTimer();
 
             NodeTypeLayout Layout = null;
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
-            DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + Prop.PropId.ToString() );
+            DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
             if(LayoutTable.Rows.Count > 0)
             {
                 Layout = new NodeTypeLayout();
                 Layout.LayoutType = LayoutType;
-                Layout.PropId = Prop.PropId;
+                Layout.PropId = PropId;
                 //Layout.Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( CswConvert.ToInt32( LayoutTable.Rows[0]["nodetypetabsetid"] ) );
                 Layout.TabId = CswConvert.ToInt32( LayoutTable.Rows[0]["nodetypetabsetid"] );
                 Layout.DisplayRow = CswConvert.ToInt32( LayoutTable.Rows[0]["display_row"] );
@@ -147,7 +152,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
         } // updatePropLayout()
-    
+
         public void removePropFromLayout( LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop )
         {
             if( LayoutType != LayoutType.Unknown && Prop != null )
@@ -181,50 +186,52 @@ namespace ChemSW.Nbt.MetaData
             return MaxRow;
         } // getCurrentMaxDisplayRow()
 
-        public Collection<CswNbtMetaDataNodeTypeProp> getPropsInLayout( Int32 NodeTypeId, Int32 TabId, LayoutType LayoutType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsInLayout( Int32 NodeTypeId, Int32 TabId, LayoutType LayoutType )
         {
-            Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+            //Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
 
-            CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsInLayout_Select", "nodetype_layout" );
-            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString();
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
-            {
-                WhereClause += "and nodetypetabsetid = " + TabId.ToString();
-            }
-            Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { 
-                new OrderByClause( "display_row", OrderByType.Ascending ),
-                new OrderByClause( "display_column", OrderByType.Ascending )
-            };
-            DataTable LayoutTable = LayoutSelect.getTable( WhereClause, OrderBy );
-            foreach( DataRow Row in LayoutTable.Rows )
-            {
-                CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) );
-                if( Prop != null )
-                    ret.Add( Prop );
-            }
-            return ret;
+            //CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsInLayout_Select", "nodetype_layout" );
+            //string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString();
+            //if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
+            //{
+            //    WhereClause += "and nodetypetabsetid = " + TabId.ToString();
+            //}
+            //Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { 
+            //    new OrderByClause( "display_row", OrderByType.Ascending ),
+            //    new OrderByClause( "display_column", OrderByType.Ascending )
+            //};
+            //DataTable LayoutTable = LayoutSelect.getTable( WhereClause, OrderBy );
+            //foreach( DataRow Row in LayoutTable.Rows )
+            //{
+            //    CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) );
+            //    if( Prop != null )
+            //        ret.Add( Prop );
+            //}
+            //return ret;
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeTypeId, TabId, LayoutType );
         } // getPropsInLayout()
 
-        public Collection<CswNbtMetaDataNodeTypeProp> getPropsNotInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, LayoutType LayoutType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsNotInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, LayoutType LayoutType )
         {
-            Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
-            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps())
-            {
-                ret.Add( Prop );
-            }
+            //Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+            //foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps())
+            //{
+            //    ret.Add( Prop );
+            //}
 
-            CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsNotInLayout_Select", "nodetype_layout" );
-            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
-            {
-                WhereClause += "and nodetypetabsetid = " + TabId.ToString();
-            }
-            DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
-            foreach( DataRow Row in LayoutTable.Rows )
-            {
-                ret.Remove( _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) ) );
-            }
-            return ret;
+            //CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsNotInLayout_Select", "nodetype_layout" );
+            //string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
+            //if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
+            //{
+            //    WhereClause += "and nodetypetabsetid = " + TabId.ToString();
+            //}
+            //DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
+            //foreach( DataRow Row in LayoutTable.Rows )
+            //{
+            //    ret.Remove( _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) ) );
+            //}
+            //return ret;
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeType.NodeTypeId, TabId, LayoutType, false );
         } // getPropsNotInLayout()
         
 

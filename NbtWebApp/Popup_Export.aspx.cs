@@ -132,9 +132,10 @@ namespace ChemSW.Nbt.WebPages
                 string ExportXmlString = string.Empty;
                 if( Format == CswMainMenu.ExportOutputFormat.ReportXML )
                 {
-                    ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( CswNbtView, true, false, false, true );
-                    CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
-                    ExportXmlString = CswNbtTree.getTreeAsXml();
+                    // BROKEN BY case 24709
+                    //ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView( CswNbtView, true, false, false, true );
+                    //CswNbtTree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
+                    //ExportXmlString = CswNbtTree.getTreeAsXml();
                 }
                 else if( Format == CswMainMenu.ExportOutputFormat.MobileXML )
                 {
@@ -194,8 +195,10 @@ namespace ChemSW.Nbt.WebPages
 
                 NbtViewRenderingMode NbtViewRenderingMode = NbtViewRenderingMode.Grid;
                 if( null != Request.QueryString["renderingmode"] )
-                    NbtViewRenderingMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Request.QueryString["renderingmode"].ToString() );
-
+                {
+                    //NbtViewRenderingMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), Request.QueryString["renderingmode"].ToString() );
+                    NbtViewRenderingMode = (NbtViewRenderingMode) Request.QueryString["renderingmode"].ToString();
+                }
                 if( NbtViewRenderingMode.Grid == NbtViewRenderingMode )
                 {
                     if( Request.QueryString["nodeid"] != null &&

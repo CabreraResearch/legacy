@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtSubFieldColl SubFields { get { return ( _SubFields ); } }
         public bool SearchAllowed { get { return ( true ); } }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
         }
@@ -50,16 +50,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }
 
         // This is used by CswNbtNodeProp for unique value enforcement
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             CswNbtPropFilterSql.PropertyFilterMode FilterMode;
             string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubFields.Default.Column );
             if( StringValueToCheck == string.Empty )
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Null;
+            { FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Null; }
             else
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+            { FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals; }
 
-            CswNbtViewPropertyFilter UniqueValPropertyFilter = View.AddViewPropertyFilter( UniqueValueViewProperty, SubFields.Default.Name, FilterMode, StringValueToCheck, false );
+            View.AddViewPropertyFilter( UniqueValueViewProperty, SubFields.Default.Name, FilterMode, StringValueToCheck.Trim(), false );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

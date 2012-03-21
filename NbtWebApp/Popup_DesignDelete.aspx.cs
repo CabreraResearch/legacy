@@ -319,19 +319,20 @@ namespace ChemSW.Nbt.WebPages
 				CswNbtView DeleteNodeTypeView = SelectedNT.CreateDefaultView();
                 DeleteNodeTypeView.ViewName = "Nodes to Delete";
                 ICswNbtTree CswNbtTree = Master.CswNbtResources.Trees.getTreeFromView(DeleteNodeTypeView, false, true, false, true);
-                string XmlStr = CswNbtTree.getTreeAsXml();
-                TreeOfDeletedNodeType.LoadXml(XmlStr);
+                // BROKEN BY case 24709
+                //string XmlStr = CswNbtTree.getTreeAsXml();
+                //TreeOfDeletedNodeType.LoadXml(XmlStr);
 
-                if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
-                {
-                    TreeOfDeletedNodeType.Visible = true;
-                    TreeOfDeletedNodeType.ExpandAllNodes();
-                    DeleteNodeTypeGenericLabel.Visible = true;
-                }
-                else
-                {
+                //if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
+                //{
+                //    TreeOfDeletedNodeType.Visible = true;
+                //    TreeOfDeletedNodeType.ExpandAllNodes();
+                //    DeleteNodeTypeGenericLabel.Visible = true;
+                //}
+                //else
+                //{
                     TreeOfDeletedNodeType.Visible = false;
-                }
+                //}
 
                 DataTable ViewsOfNodeType = getViewsUsingNodeType(Convert.ToInt32(_SelectedValue));
 
@@ -339,10 +340,10 @@ namespace ChemSW.Nbt.WebPages
                 ViewsOfDeletedNodeType.Visible = false;
                 ViewsOfDeletedTypeLabel.Visible = false;
                 EditSelectedViewsButton.Visible = false;
-                if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
-                {
-                    DeleteNodeTypeGenericLabel.Visible = false;
-                }
+                //if (TreeOfDeletedNodeType.Nodes[0].Nodes.Count > 0)
+                //{
+                //    DeleteNodeTypeGenericLabel.Visible = false;
+                //}
 
                 if (ViewsOfNodeType.Rows.Count > 0)
                 {

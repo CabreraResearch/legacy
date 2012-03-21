@@ -10,6 +10,7 @@ namespace ChemSW.Nbt.MetaData
     public class CswNbtMetaDataCollectionImpl
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
+        private CswTableSelect _TableSelect;
         private CswTableUpdate _TableUpdate;
         private string _PkColumnName;
         private string _NameColumnName;
@@ -17,18 +18,91 @@ namespace ChemSW.Nbt.MetaData
         public delegate ICswNbtMetaDataObject MakeMetaDataObjectHandler( CswNbtMetaDataResources CswNbtMetaDataResources, DataRow Row );
         private MakeMetaDataObjectHandler _MetaDataObjectMaker = null;
 
+
+
         public CswNbtMetaDataCollectionImpl( CswNbtMetaDataResources CswNbtMetaDataResources,
                                              string PkColumnName,
                                              string NameColumnName,
+                                             CswTableSelect TableSelect,
                                              CswTableUpdate TableUpdate,
-                                             MakeMetaDataObjectHandler MetaDataObjectMaker )
+                                             MakeMetaDataObjectHandler MetaDataObjectMaker,
+                                             ModuleWhereClauseHandler makeModuleWhereClause )
         {
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
+            _TableSelect = TableSelect;
             _TableUpdate = TableUpdate;
             _PkColumnName = PkColumnName;
             _NameColumnName = NameColumnName;
             _MetaDataObjectMaker = MetaDataObjectMaker;
+            _makeModuleWhereClause = makeModuleWhereClause;
         } // constructor
+
+
+        public delegate string ModuleWhereClauseHandler();
+        private ModuleWhereClauseHandler _makeModuleWhereClause = null;
+
+        private void addModuleWhereClause(ref string WhereClause)
+        {
+            if( _CswNbtMetaDataResources.ExcludeDisabledModules )
+            {
+                string newWhereClause = _makeModuleWhereClause();
+                if( newWhereClause != string.Empty )
+                {
+                    WhereClause += ( WhereClause == string.Empty ) ? " where " : " and ";
+                    WhereClause += newWhereClause;
+                }
+            }
+        } // addModuleWhereClause()
+
+        
+        /// <summary>
+        ///  Add an ICswNbtMetaDataObject to the Cache 
+        ///  (for use by MetaData for newly created objects)
+        /// </summary>
+        public void AddToCache(ICswNbtMetaDataObject NewObj)
+        {
+            if( false == _Cache.ContainsKey( NewObj.UniqueId ) )
+            {
+                _Cache.Add( NewObj.UniqueId, NewObj );
+            }
+        }
+
+        private Dictionary<Int32, ICswNbtMetaDataObject> _Cache = new Dictionary<Int32, ICswNbtMetaDataObject>();
+        private ICswNbtMetaDataObject _makeObj( DataRow Row )
+        {
+            ICswNbtMetaDataObject ret = null;
+            Int32 PkValue = CswConvert.ToInt32( Row[_PkColumnName] );
+            if( _Cache.ContainsKey( PkValue ) )
+            {
+                // In order to guarantee only one reference per row, use the existing reference
+                // and, to prevent dirty writes, remove the row
+                ret = _Cache[PkValue];
+                Row.Table.Rows.Remove( Row );
+            }
+            else
+            {
+                ret = _MetaDataObjectMaker( _CswNbtMetaDataResources, Row );
+                _Cache[PkValue] = ret;
+            }
+            return ret;
+        }
+
+
+        private Collection<ICswNbtMetaDataObject> _makeObjs( DataTable Table )
+        {
+            Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
+            Collection<DataRow> RowsToIterate = new Collection<DataRow>();
+            // We have to iterate rows separately, because _makeObj() can remove a row
+            foreach( DataRow Row in Table.Rows )
+            {
+                RowsToIterate.Add( Row );
+            }
+            foreach( DataRow Row in RowsToIterate )
+            {
+                Coll.Add( _makeObj( Row ) );
+            }
+            return Coll;
+        } // _makeObjs()
 
         public void clearCache()
         {
@@ -37,6 +111,9 @@ namespace ChemSW.Nbt.MetaData
             _PksWhere = null;
             _ByPk = null;
             _getWhere = null;
+
+            // Don't clear this one
+            // _Cache = null;
         }
 
         private Collection<ICswNbtMetaDataObject> _All = null;
@@ -44,12 +121,12 @@ namespace ChemSW.Nbt.MetaData
         {
             if( _All == null )
             {
-                _All = new Collection<ICswNbtMetaDataObject>();
-                DataTable Table = _TableUpdate.getTable();
-                foreach( DataRow Row in Table.Rows )
-                {
-                    _All.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
-                }
+                string WhereClause = string.Empty;
+                addModuleWhereClause( ref WhereClause );
+
+                DataTable Table = _TableUpdate.getTable( WhereClause );
+                
+                _All = _makeObjs( Table );
             }
             return _All;
         } // getAll()
@@ -75,7 +152,11 @@ namespace ChemSW.Nbt.MetaData
             {
                 CswCommaDelimitedString Select = new CswCommaDelimitedString();
                 Select.Add( _PkColumnName );
-                DataTable Table = _TableUpdate.getTable( Select, string.Empty, Int32.MinValue, Where, false );
+
+                string WhereClause = Where;
+                addModuleWhereClause( ref WhereClause );
+
+                DataTable Table = _TableSelect.getTable( Select, string.Empty, Int32.MinValue, WhereClause, false );
 
                 Collection<Int32> Coll = new Collection<Int32>();
                 foreach( DataRow Row in Table.Rows )
@@ -86,6 +167,18 @@ namespace ChemSW.Nbt.MetaData
             }
             return _PksWhere[Where];
         } // getPks(Where)
+
+        public Int32 getPksFirst( string WhereClause )
+        {
+            Int32 ret = Int32.MinValue;
+            Collection<Int32> Coll = getPks( WhereClause );
+            if( Coll.Count > 0 )
+            {
+                ret = Coll[0];
+            }
+            return ret;
+        } // getPksFirst()
+
 
 
         private Dictionary<string, Int32> _PkDict = null;
@@ -110,7 +203,11 @@ namespace ChemSW.Nbt.MetaData
                 CswCommaDelimitedString Select = new CswCommaDelimitedString();
                 Select.Add( _PkColumnName );
                 Select.Add( _NameColumnName );
-                DataTable Table = _TableUpdate.getTable( Select, string.Empty, Int32.MinValue, Where, false );
+
+                string WhereClause = Where;
+                addModuleWhereClause( ref WhereClause );
+
+                DataTable Table = _TableSelect.getTable( Select, string.Empty, Int32.MinValue, WhereClause, false );
 
                 Dictionary<string, Int32> Coll = new Dictionary<string, Int32>();
                 foreach( DataRow Row in Table.Rows )
@@ -134,10 +231,13 @@ namespace ChemSW.Nbt.MetaData
                 }
                 if( false == _ByPk.ContainsKey( Pk ) )
                 {
-                    DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk );
+                    string WhereClause = string.Empty;
+                    addModuleWhereClause( ref WhereClause );
+
+                    DataTable Table = _TableUpdate.getTable( _PkColumnName, Pk, WhereClause, false );
                     if( Table.Rows.Count > 0 )
                     {
-                        _ByPk[Pk] = _MetaDataObjectMaker( _CswNbtMetaDataResources, Table.Rows[0] );
+                        _ByPk[Pk] = _makeObj( Table.Rows[0] );
                     }
                     else
                     {
@@ -148,25 +248,24 @@ namespace ChemSW.Nbt.MetaData
             } // if( Pk != Int32.MinValue )
             return ret;
         } // getByPk()
-
+        
         private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;
-        public Collection<ICswNbtMetaDataObject> getWhere( string WhereClause )
+        public Collection<ICswNbtMetaDataObject> getWhere( string Where )
         {
             if( _getWhere == null )
             {
                 _getWhere = new Dictionary<string, Collection<ICswNbtMetaDataObject>>();
             }
-            if( false == _getWhere.ContainsKey( WhereClause ) )
+            if( false == _getWhere.ContainsKey( Where ) )
             {
-                Collection<ICswNbtMetaDataObject> Coll = new Collection<ICswNbtMetaDataObject>();
+                string WhereClause = Where;
+                addModuleWhereClause( ref WhereClause );
+
                 DataTable Table = _TableUpdate.getTable( WhereClause );
-                foreach( DataRow Row in Table.Rows )
-                {
-                    Coll.Add( _MetaDataObjectMaker( _CswNbtMetaDataResources, Row ) );
-                }
-                _getWhere[WhereClause] = Coll;
+
+                _getWhere[Where] = _makeObjs( Table );
             }
-            return _getWhere[WhereClause];
+            return _getWhere[Where];
         } // getWhere()
 
         public ICswNbtMetaDataObject getWhereFirst( string WhereClause )
@@ -179,6 +278,35 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         } // getWhereFirst()
+
+        private Dictionary<string, string> _getNameWhere = null;
+        public string getNameWhereFirst( string Where )
+        {
+            if( _getNameWhere == null )
+            {
+                _getNameWhere = new Dictionary<string, string>();
+            }
+            if( false == _getNameWhere.ContainsKey( Where ) )
+            {
+                CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+                SelectCols.Add( _NameColumnName );
+
+                string WhereClause = Where;
+                addModuleWhereClause( ref WhereClause );
+                
+                DataTable Table = _TableSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
+                if( Table.Rows.Count > 0 )
+                {
+                    _getNameWhere[Where] = Table.Rows[0][_NameColumnName].ToString();
+                }
+                else
+                {
+                    _getNameWhere[Where] = string.Empty;
+                }
+            }
+            return _getNameWhere[Where];
+        } // getNameWhereFirst()
+
 
     } // public class CswNbtMetaDataCollectionImpl
 } // namespace ChemSW.Nbt.MetaData

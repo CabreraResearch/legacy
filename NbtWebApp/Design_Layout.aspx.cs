@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Web.UI.WebControls;
@@ -225,7 +225,7 @@ namespace ChemSW.Nbt.WebPages
             if( _Mode == LayoutMode.Add )
                 Props = NodeType.getNodeTypeProps();
             else
-                Props = Tab.NodeTypePropsByDisplayOrder;
+                Props = Tab.getNodeTypePropsByDisplayOrder();
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
             {

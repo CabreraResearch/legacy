@@ -9,25 +9,23 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     {
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
-
         private CswNbtFieldResources _CswNbtFieldResources = null;
-        private ICswNbtMetaDataProp _MetaDataProp = null;
 
         public CswNbtFieldTypeRulePropertyReference( CswNbtFieldResources CswNbtFieldResources )
         {
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
-            
-            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
-            CachedValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Ends |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                              CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                              CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                              CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                              CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                              CswNbtPropFilterSql.PropertyFilterMode.Null;
+
+            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Value );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            CachedValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( CachedValueSubField );
 
         }//ctor
@@ -54,7 +52,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
@@ -62,60 +60,58 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         private bool _validateRelationship( string FkType, Int32 FkValue, Int32 inValuePropId )
         {
             bool RetIsInvalid = false;
-            CswNbtViewRelationship.RelatedIdType RelatedIdType;
-            Enum.TryParse( FkType, true, out RelatedIdType );
-            switch( RelatedIdType )
+            NbtViewRelatedIdType RelatedIdType = (NbtViewRelatedIdType) FkType;
+            //Enum.TryParse( FkType, true, out RelatedIdType );
+            if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
             {
-                case CswNbtViewRelationship.RelatedIdType.NodeTypeId:
-                    CswNbtMetaDataNodeType FkRelationshipTargetNt = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeType( FkValue );
-                    RetIsInvalid = ( null == FkRelationshipTargetNt );
-                    if( false == RetIsInvalid )
-                    {
-                        CswNbtMetaDataNodeTypeProp ValueNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inValuePropId );
-                        RetIsInvalid = ( null == ValueNtp ||
-                                         _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeFirstVersion( ValueNtp.NodeTypeId ) != FkRelationshipTargetNt.getFirstVersionNodeType() );
-                    }
-                    break;
-                case CswNbtViewRelationship.RelatedIdType.ObjectClassId:
-                    CswNbtMetaDataObjectClass FkRelationshipTargetOc = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( FkValue );
-                    RetIsInvalid = ( null == FkRelationshipTargetOc );
+                CswNbtMetaDataNodeType FkRelationshipTargetNt = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeType( FkValue );
+                RetIsInvalid = ( null == FkRelationshipTargetNt );
+                if( false == RetIsInvalid )
+                {
+                    CswNbtMetaDataNodeTypeProp ValueNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inValuePropId );
+                    RetIsInvalid = ( null == ValueNtp ||
+                                     _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeFirstVersion( ValueNtp.NodeTypeId ) != FkRelationshipTargetNt.getFirstVersionNodeType() );
+                }
+            }
+            else if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
+            {
+                CswNbtMetaDataObjectClass FkRelationshipTargetOc = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( FkValue );
+                RetIsInvalid = ( null == FkRelationshipTargetOc );
 
-                    if( false == RetIsInvalid )
-                    {
-                        CswNbtMetaDataObjectClassProp ValueOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inValuePropId );
-                        RetIsInvalid = ( null == ValueOcp || ( ValueOcp.getObjectClass().ObjectClass != FkRelationshipTargetOc.ObjectClass ) );
-                    }
-                    break;
+                if( false == RetIsInvalid )
+                {
+                    CswNbtMetaDataObjectClassProp ValueOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inValuePropId );
+                    RetIsInvalid = ( null == ValueOcp || ( ValueOcp.getObjectClass().ObjectClass != FkRelationshipTargetOc.ObjectClass ) );
+                }
             }
             return RetIsInvalid;
         }
 
-        private bool _validateFkTarget( CswNbtViewRelationship.PropIdType NewFkPropIdType, Int32 inFKValue, Int32 inValuePropId )
+        private bool _validateFkTarget( NbtViewPropIdType NewFkPropIdType, Int32 inFKValue, Int32 inValuePropId )
         {
             bool RetClearPropVal = false;
-            switch( NewFkPropIdType )
+            if( NewFkPropIdType == NbtViewPropIdType.NodeTypePropId )
             {
-                case CswNbtViewRelationship.PropIdType.NodeTypePropId:
-                    CswNbtMetaDataNodeTypeProp FkNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inFKValue );
-                    RetClearPropVal = ( null == FkNtp );
-                    if( false == RetClearPropVal )
-                    {
-                        RetClearPropVal = _validateRelationship( FkNtp.FKType, FkNtp.FKValue, inValuePropId );
-                    }
-                    break;
-                case CswNbtViewRelationship.PropIdType.ObjectClassPropId:
-                    CswNbtMetaDataObjectClassProp FkOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inFKValue );
-                    RetClearPropVal = ( null == FkOcp );
-                    if( false == RetClearPropVal )
-                    {
-                        RetClearPropVal = _validateRelationship( FkOcp.FKType, FkOcp.FKValue, inValuePropId );
-                    }
-                    break;
+                CswNbtMetaDataNodeTypeProp FkNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inFKValue );
+                RetClearPropVal = ( null == FkNtp );
+                if( false == RetClearPropVal )
+                {
+                    RetClearPropVal = _validateRelationship( FkNtp.FKType, FkNtp.FKValue, inValuePropId );
+                }
+            }
+            else if( NewFkPropIdType == NbtViewPropIdType.ObjectClassPropId )
+            {
+                CswNbtMetaDataObjectClassProp FkOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inFKValue );
+                RetClearPropVal = ( null == FkOcp );
+                if( false == RetClearPropVal )
+                {
+                    RetClearPropVal = _validateRelationship( FkOcp.FKType, FkOcp.FKValue, inValuePropId );
+                }
             }
             return RetClearPropVal;
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             string OutFkType = inFKType;
             Int32 OutFkValue = inFKValue;
@@ -123,24 +119,24 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Int32 OutValuePropId = inValuePropId;
 
             //New PropIdTypes
-            CswNbtViewRelationship.PropIdType NewFkPropIdType;
-            Enum.TryParse( inFKType, true, out NewFkPropIdType );
+            NbtViewPropIdType NewFkPropIdType = (NbtViewPropIdType) inFKType;
+            //Enum.TryParse( inFKType, true, out NewFkPropIdType );
 
-            CswNbtViewRelationship.PropIdType NewPropTypePropIdType;
-            Enum.TryParse( inValuePropType, true, out NewPropTypePropIdType );
+            NbtViewPropIdType NewPropTypePropIdType = (NbtViewPropIdType) inValuePropType;
+            //Enum.TryParse( inValuePropType, true, out NewPropTypePropIdType );
 
             //Current PropIdTypes
-            CswNbtViewRelationship.PropIdType CurrentFkPropIdType;
-            Enum.TryParse( _MetaDataProp.FKType, true, out CurrentFkPropIdType );
+            NbtViewPropIdType CurrentFkPropIdType = (NbtViewPropIdType) MetaDataProp.FKType;
+            //Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
 
-            CswNbtViewRelationship.PropIdType CurrentPropTypePropIdType;
-            Enum.TryParse( _MetaDataProp.ValuePropType, true, out CurrentPropTypePropIdType );
+            NbtViewPropIdType CurrentPropTypePropIdType = (NbtViewPropIdType) MetaDataProp.ValuePropType;
+            //Enum.TryParse( MetaDataProp.ValuePropType, true, out CurrentPropTypePropIdType );
 
             //We're changing the relationship
             if( NewFkPropIdType != CurrentFkPropIdType ||
                 NewPropTypePropIdType != CurrentPropTypePropIdType ||
-                inFKValue != _MetaDataProp.FKValue ||
-                inValuePropId != _MetaDataProp.ValuePropId
+                inFKValue != MetaDataProp.FKValue ||
+                inValuePropId != MetaDataProp.ValuePropId
                 )
             {
                 bool ClearValueProp = _validateFkTarget( NewFkPropIdType, inFKValue, inValuePropId );

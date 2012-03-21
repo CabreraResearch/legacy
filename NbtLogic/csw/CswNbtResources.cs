@@ -183,8 +183,6 @@ namespace ChemSW.Nbt
 
         public ICswSuperCycleCache CswSuperCycleCache { get { return ( _CswResources.CswSuperCycleCache ); } }
 
-        public PooledConnectionState PooledConnectionState { set { _CswResources.PooledConnectionState = value; } }
-
         /// <summary>
         /// Information related to the set of workflows registered in the database
         /// </summary>
@@ -200,6 +198,8 @@ namespace ChemSW.Nbt
 
 
         #region Nodes and Trees
+
+        public NodeEditMode EditMode = NodeEditMode.Edit;
 
         /// <summary>
         /// Access to the node factory.  Consider using Nodes instead.
@@ -489,21 +489,27 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Prepare this class for storage in the cache
         /// </summary>
+        ///
+        /*
         public void BeforeStoreInCache()
         {
             this.CswEventLinker = null;
             _CswNbtNodeCollection = null;        // case 21246
-            _CswResources.BeforeStoreInCache();
+            //_CswResources.BeforeStoreInCache();
         }
+         */
         /// <summary>
         /// Clean-up after storing this class in the cache
         /// </summary>
+        /// 
+        /*
         public void AfterRestoreFromCache()
         {
             _CswResources.AfterRestoreFromCache();
             CswEventLinker = new CswEventLinker();
             _CswNbtNodeCollection = new CswNbtNodeCollection( this );  // case 21246
         }
+         */
 
 
         public bool CacheInitialized
@@ -565,7 +571,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// During initialization, allows setting database resources
         /// </summary>
-        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory )
+        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, PooledConnectionState PooledConnectionState )
         {
             _CswNbtNodeCollection = new CswNbtNodeCollection( this ); //, _ICswNbtObjClassFactory );
             _CswNbtTreeFactory = CswNbtTreeFactory;
@@ -574,7 +580,7 @@ namespace ChemSW.Nbt
             //_CswNbtTreeCache = new CswNbtTreeCache( this, _CswNbtTreeFactory );
 
             _CswNbtTreeBuilder = new CswNbtTreeBuilder( this, _CswNbtTreeFactory );
-            _CswResources.SetDbResources();
+            _CswResources.SetDbResources( PooledConnectionState );
 
             _CswResources.OnGetAuditLevel = new Audit.GetAuditLevelHandler( handleGetAuditLevel );
         }
@@ -836,6 +842,24 @@ namespace ChemSW.Nbt
         /// </summary>
         /// 
         public CswConfigurationVariables ConfigVbls { get { return ( _CswResources.ConfigVbls ); } }
+
+        private Int32 _TreeViewResultLimit = Int32.MinValue;
+        public Int32 TreeViewResultLimit
+        {
+            get
+            {
+                if( _TreeViewResultLimit == Int32.MinValue )
+                {
+                    _TreeViewResultLimit = CswConvert.ToInt32( ConfigVbls.getConfigVariableValue( ConfigurationVariables.treeview_resultlimit.ToString() ) );
+                    if( _TreeViewResultLimit == Int32.MinValue )
+                    {
+                        _TreeViewResultLimit = 1001;
+                    }
+                }
+                return _TreeViewResultLimit;
+            }
+        } // TreeViewResultLimit
+
         //public string getConfigVariableValue( string VariableName ) { return _CswResources.getConfigVariableValue( VariableName ); }
         ///// <summary>
         ///// Setting of values located in the configuration_variables table
@@ -968,6 +992,14 @@ namespace ChemSW.Nbt
         public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
 
         public void sendEmailNotification( Collection<CswMailMessage> MailMessages ) { _CswResources.sendEmailNotification( MailMessages ); }
+
+
+        public string makeUniqueConstraint( string TableName, string ColumnName ) { return ( _CswResources.makeUniqueConstraint( TableName, ColumnName ) ); }
+        public string makeUniqueConstraint( string TableName, string ColumnName, bool AddDdData ) { return ( _CswResources.makeUniqueConstraint( TableName, ColumnName, AddDdData ) ); }
+
+        public bool doesFkConstraintExistInDb( string ConstraintName ) { return ( _CswResources.doesFkConstraintExistInDb( ConstraintName ) ); }
+        public bool doesUniqueConstraintExistInDb( string ConstraintName ) { return ( _CswResources.doesUniqueConstraintExistInDb( ConstraintName ) ); }
+        public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswResources.getUniqueConstraintName( TableName, ColumName ) ); }
 
         #endregion Pass-thru to CswResources
 

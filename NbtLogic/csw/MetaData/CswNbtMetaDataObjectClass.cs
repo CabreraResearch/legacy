@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.MetaData
             Unknown,
             AliquotClass,
             BiologicalClass,
+            MaterialComponentClass,
             ContainerClass,
             CustomerClass,
             EquipmentAssemblyClass,
@@ -33,8 +34,6 @@ namespace ChemSW.Nbt.MetaData
             InspectionTargetClass,
             InspectionTargetGroupClass,
             NotificationClass,
-            PackageClass,
-            PackDetailClass,
             ParameterClass,
             PrintLabelClass,
             ProblemClass,
@@ -50,14 +49,6 @@ namespace ChemSW.Nbt.MetaData
             VendorClass,
             UnitTypeClass
         };
-
-        public enum OnButtonClickEvents
-        {
-            reauthenticate,
-            home,
-            url,
-            refresh
-        }
 
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
         {
@@ -158,19 +149,13 @@ namespace ChemSW.Nbt.MetaData
         //}
 
 
-        public Collection<Int32> ObjectClassPropIds
+        public Collection<Int32> getObjectClassPropIds()
         {
-            get
-            {
-                return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropIdsByObjectClass( ObjectClassId );
-            }
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropIdsByObjectClass( ObjectClassId );
         }
-        public IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps()
         {
-            get
-            {
-                return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId );
-            }
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId );
         }
 
         public CswNbtMetaDataObjectClassProp getObjectClassProp( string ObjectClassPropName )

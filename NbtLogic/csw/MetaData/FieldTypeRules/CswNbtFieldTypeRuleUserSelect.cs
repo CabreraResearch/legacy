@@ -22,10 +22,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            SelectedUserIdsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.NodeID );
-            SelectedUserIdsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                                  CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                                  CswNbtPropFilterSql.PropertyFilterMode.Null;
+            SelectedUserIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.NodeID );
+            SelectedUserIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            SelectedUserIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            SelectedUserIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( SelectedUserIdsSubField );
 
         }//ctor
@@ -58,52 +58,55 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             string ReturnVal = "";
             string FullColumn = _FilterTableAlias + CswNbtSubField.Column.ToString();
-            switch( CswNbtViewPropertyFilterIn.FilterMode )
-            {
-                case CswNbtPropFilterSql.PropertyFilterMode.Contains:
-                    // BZ 7938
-                    // We store the users by ID, but search by name.  So we have to decode.
-                    Collection<CswPrimaryKey> MatchingUserKeys = new Collection<CswPrimaryKey>();
-                    //ICswNbtTree UsersTree = _CswNbtFieldResources.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                    //for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
-                    //{
-                    //    UsersTree.goToNthChild( u );
-                    CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                    foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
-                    {
-                        string UserNodeName = UserNode.NodeName; //UsersTree.getNodeNameForCurrentPosition();
-                        if( UserNodeName.ToLower().IndexOf( CswNbtViewPropertyFilterIn.Value ) > -1 )
-                            MatchingUserKeys.Add( UserNode.NodeId ); //UsersTree.getNodeIdForCurrentPosition() );
 
-                        //UsersTree.goToParentNode();
-                    }
-                    if( MatchingUserKeys.Count > 0 )
+            if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Contains )
+            {
+                // BZ 7938
+                // We store the users by ID, but search by name.  So we have to decode.
+                Collection<CswPrimaryKey> MatchingUserKeys = new Collection<CswPrimaryKey>();
+                //ICswNbtTree UsersTree = _CswNbtFieldResources.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                //for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
+                //{
+                //    UsersTree.goToNthChild( u );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
+                {
+                    string UserNodeName = UserNode.NodeName; //UsersTree.getNodeNameForCurrentPosition();
+                    if( UserNodeName.ToLower().IndexOf( CswNbtViewPropertyFilterIn.Value ) > -1 )
+                        MatchingUserKeys.Add( UserNode.NodeId ); //UsersTree.getNodeIdForCurrentPosition() );
+
+                    //UsersTree.goToParentNode();
+                }
+                if( MatchingUserKeys.Count > 0 )
+                {
+                    ReturnVal = "(";
+                    bool first = true;
+                    foreach( CswPrimaryKey UserKey in MatchingUserKeys )
                     {
-                        ReturnVal = "(";
-                        bool first = true;
-                        foreach( CswPrimaryKey UserKey in MatchingUserKeys )
-                        {
-                            if( !first )
-                                ReturnVal += " or ";
-                            ReturnVal += "'" + CswNbtNodePropUserSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropUserSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropUserSelect.delimiter.ToString() + UserKey.PrimaryKey.ToString() + CswNbtNodePropUserSelect.delimiter.ToString() + "%'";
-                            first = false;
-                        }
-                        ReturnVal += ")";
+                        if( !first )
+                            ReturnVal += " or ";
+                        ReturnVal += "'" + CswNbtNodePropUserSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropUserSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropUserSelect.delimiter.ToString() + UserKey.PrimaryKey.ToString() + CswNbtNodePropUserSelect.delimiter.ToString() + "%'";
+                        first = false;
                     }
-                    else
-                    {
-                        // We didn't find a match.  This is better than nothing.
-                        ReturnVal = "'" + CswNbtNodePropUserSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropUserSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropUserSelect.delimiter.ToString() + CswNbtViewPropertyFilterIn.Value + CswNbtNodePropUserSelect.delimiter.ToString() + "%'";
-                    }
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.NotNull:
-                    ReturnVal = FullColumn + " is not null";
-                    break;
-                case CswNbtPropFilterSql.PropertyFilterMode.Null:
-                    ReturnVal = FullColumn + " is null";
-                    break;
-                default:
-                    throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for UserSelect fields" ) );
+                    ReturnVal += ")";
+                }
+                else
+                {
+                    // We didn't find a match.  This is better than nothing.
+                    ReturnVal = "'" + CswNbtNodePropUserSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropUserSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropUserSelect.delimiter.ToString() + CswNbtViewPropertyFilterIn.Value + CswNbtNodePropUserSelect.delimiter.ToString() + "%'";
+                }
+            }
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+            {
+                ReturnVal = FullColumn + " is not null";
+            }
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+            {
+                ReturnVal = FullColumn + " is null";
+            }
+            else
+            {
+                throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for UserSelect fields" ) );
                 //break;
             }
 
@@ -116,14 +119,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

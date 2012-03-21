@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInspectionTarget : CswNbtObjClass, ICswNbtPropertySetInspectionParent
     {
-        public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
+        //public static string LastInspectionDatePropertyName { get { return "Last Inspection Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
         public static string LocationPropertyName { get { return "Location"; } }
         public static string DescriptionPropertyName { get { return "Description"; } }
@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         //ICswNbtPropertySetInspectionParent
         public string InspectionParentStatusPropertyName { get { return StatusPropertyName; } }
-        public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
+        //public string InspectionParentLastInspectionDatePropertyName { get { return LastInspectionDatePropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -105,9 +105,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
-        public override void beforeWriteNode( bool OverrideUniqueValidation )
+        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( OverrideUniqueValidation );
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -135,14 +135,18 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        public override void onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ActionObj )
+        public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
+            Message = string.Empty;
+            ActionData = string.Empty;
+            ButtonAction = NbtButtonAction.Unknown;
             if( null != NodeTypeProp ) { /*Do Something*/ }
+            return true;
         }
         #endregion
 
         #region Object class specific properties
-
+/*
         /// <summary>
         /// Date of last Inspection
         /// </summary>
@@ -153,6 +157,7 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[LastInspectionDatePropertyName].AsDateTime );
             }
         }
+        */
 
         /// <summary>
         /// Inspection Target Inspection Status (OK, OOC)

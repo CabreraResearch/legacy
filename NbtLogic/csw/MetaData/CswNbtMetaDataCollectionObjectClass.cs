@@ -17,8 +17,15 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "objectclassid",
                                                           "objectclass",
+                                                          _CswNbtMetaDataResources.ObjectClassTableSelect,
                                                           _CswNbtMetaDataResources.ObjectClassTableUpdate,
-                                                          makeObjectClass );
+                                                          makeObjectClass,
+                                                          _makeModuleWhereClause );
+        }
+
+        public void AddToCache( CswNbtMetaDataObjectClass NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()
@@ -46,6 +53,11 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         }
+        public Int32 getObjectClassId( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        {
+            return _CollImpl.getPksFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
+        }
+
         public IEnumerable<CswNbtMetaDataObjectClass> getObjectClasses()
         {
             return _CollImpl.getAll().Cast<CswNbtMetaDataObjectClass>();
@@ -62,6 +74,19 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataObjectClass getObjectClassByNodeTypeId( Int32 NodeTypeId )
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclassid in (select objectclassid from nodetypes where nodetypeid = " + NodeTypeId.ToString() + ")" );
+        }
+
+        private string _makeModuleWhereClause()
+        {
+            return @" (exists (select j.jctmoduleobjectclassid
+                                 from jct_modules_objectclass j
+                                 join modules m on j.moduleid = m.moduleid
+                                where j.objectclassid = object_class.objectclassid
+                                  and m.enabled = '1')
+                       or not exists (select j.jctmoduleobjectclassid
+                                        from jct_modules_objectclass j
+                                        join modules m on j.moduleid = m.moduleid
+                                       where j.objectclassid = object_class.objectclassid))";
         }
 
         //public void ClearKeys()

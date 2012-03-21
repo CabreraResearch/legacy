@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 
@@ -40,67 +40,67 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.CswSuperCycleCache.delete( CachedTreeName );
         }
 
-        public ICswNbtTree getTreeFromCache()
-        {
-            ICswNbtTree Tree = null;
-            string CacheTreeName = CachedTreeName;
-            if( _CswNbtResources.CswSuperCycleCache != null && _View != null )
-            {
-                ICswNbtTree CacheTree = (ICswNbtTree) _CswNbtResources.CswSuperCycleCache.get( CacheTreeName );
-                if( CacheTree != null )
-                {
-                    // Make a local copy to iterate, to avoid race conditions with other threads
-                    Tree = _CswNbtResources.Trees.getTreeFromXml( _View, CacheTree.getRawTreeXml() );
-                }
-                else
-                {
-                    // Refetch the tree
-                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
-                }
-            }
-            return Tree;
-        } // _getCachedTree()
+        //public ICswNbtTree getTreeFromCache()
+        //{
+        //    ICswNbtTree Tree = null;
+        //    string CacheTreeName = CachedTreeName;
+        //    if( _CswNbtResources.CswSuperCycleCache != null && _View != null )
+        //    {
+        //        ICswNbtTree CacheTree = (ICswNbtTree) _CswNbtResources.CswSuperCycleCache.get( CacheTreeName );
+        //        if( CacheTree != null )
+        //        {
+        //            // Make a local copy to iterate, to avoid race conditions with other threads
+        //            Tree = _CswNbtResources.Trees.getTreeFromXml( _View, CacheTree.getRawTreeXml() );
+        //        }
+        //        else
+        //        {
+        //            // Refetch the tree
+        //            Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+        //        }
+        //    }
+        //    return Tree;
+        //} // _getCachedTree()
 
-        public Collection<CswNbtNodeKey> getNextPageOfNodes( ICswNbtTree Tree, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd )
-        {
-            Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
-            Collection<CswNbtNodeKey> NodeKeys = Tree.getKeysForLevel( Level );
-            foreach( CswNbtNodeKey NodeKey in NodeKeys )
-            {
-                Int32 ParentCount = CswConvert.ToInt32( NodeKey.NodeCountPath[Level - 2] );
-                if( ParentCount >= ParentRangeStart &&
-                    ParentCount <= ParentRangeEnd )
-                {
-                    ret.Add( NodeKey );
-                }
-            }
-            return ret;
-        }
+        //public Collection<CswNbtNodeKey> getNextPageOfNodes( ICswNbtTree Tree, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd )
+        //{
+        //    Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
+        //    Collection<CswNbtNodeKey> NodeKeys = Tree.getKeysForLevel( Level );
+        //    foreach( CswNbtNodeKey NodeKey in NodeKeys )
+        //    {
+        //        Int32 ParentCount = CswConvert.ToInt32( NodeKey.NodeCountPath[Level - 2] );
+        //        if( ParentCount >= ParentRangeStart &&
+        //            ParentCount <= ParentRangeEnd )
+        //        {
+        //            ret.Add( NodeKey );
+        //        }
+        //    }
+        //    return ret;
+        //}
 
-        public Collection<CswNbtNodeKey> getNextPageOfNodes( ICswNbtTree Tree, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, Int32 PageSize, Int32 PageNo, ref bool More )
-        {
-            Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
-            Collection<CswNbtNodeKey> NodeKeys = Tree.getKeysForLevel( Level );
-            Int32 c = 0;
-            foreach( CswNbtNodeKey NodeKey in NodeKeys )
-            {
-                Int32 ParentCount = CswConvert.ToInt32( NodeKey.NodeCountPath[Level - 2] );
-                if( ParentCount >= ParentRangeStart &&
-                    ParentCount <= ParentRangeEnd &&
-                    c >= ( PageSize * PageNo ) &&
-                    c < ( PageSize * ( PageNo + 1 ) ) )
-                {
-                    ret.Add( NodeKey );
-                }
-                else if( c >= ( PageSize * ( PageNo + 1 ) ) )
-                {
-                    More = true;
-                    break;
-                }
-                c++;
-            }
-            return ret;
-        } // getNextPageOfNodes()
+        //public Collection<CswNbtNodeKey> getNextPageOfNodes( ICswNbtTree Tree, Int32 Level, Int32 ParentRangeStart, Int32 ParentRangeEnd, Int32 PageSize, Int32 PageNo, ref bool More )
+        //{
+        //    Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
+        //    Collection<CswNbtNodeKey> NodeKeys = Tree.getKeysForLevel( Level );
+        //    Int32 c = 0;
+        //    foreach( CswNbtNodeKey NodeKey in NodeKeys )
+        //    {
+        //        Int32 ParentCount = CswConvert.ToInt32( NodeKey.NodeCountPath[Level - 2] );
+        //        if( ParentCount >= ParentRangeStart &&
+        //            ParentCount <= ParentRangeEnd &&
+        //            c >= ( PageSize * PageNo ) &&
+        //            c < ( PageSize * ( PageNo + 1 ) ) )
+        //        {
+        //            ret.Add( NodeKey );
+        //        }
+        //        else if( c >= ( PageSize * ( PageNo + 1 ) ) )
+        //        {
+        //            More = true;
+        //            break;
+        //        }
+        //        c++;
+        //    }
+        //    return ret;
+        //} // getNextPageOfNodes()
 
     }//wsNBT
 

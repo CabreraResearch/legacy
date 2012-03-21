@@ -17,8 +17,15 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "nodetypetabsetid",
                                                           "tabname",
+                                                          _CswNbtMetaDataResources.NodeTypeTabTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypeTabTableUpdate,
-                                                          makeNodeTypeTab );
+                                                          makeNodeTypeTab,
+                                                          _makeModuleWhereClause);
+        }
+
+        public void AddToCache( CswNbtMetaDataNodeTypeTab NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()
@@ -43,6 +50,10 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(tabname) = '" + NodeTypeTabName.ToLower() + "'" );
         }
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTabVersion( Int32 NodeTypeId, Int32 NodeTypeTabId )
+        {
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and firsttabversionid = (select firsttabversionid from nodetype_tabset where nodetypetabsetid = " + NodeTypeTabId.ToString() + ")" );
+        }
         public Collection<Int32> getNodeTypeTabIds( Int32 NodeTypeId )
         {
             return _CollImpl.getPks( "where nodetypeid = " + NodeTypeId.ToString());
@@ -50,6 +61,28 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataNodeTypeTab> getNodeTypeTabs( Int32 NodeTypeId )
         {
             return _CollImpl.getWhere( "where nodetypeid = " + NodeTypeId.ToString() ).Cast<CswNbtMetaDataNodeTypeTab>();
+        }
+
+        private string _makeModuleWhereClause()
+        {
+            return @" ( ( exists (select j.jctmoduleobjectclassid
+                                    from jct_modules_objectclass j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmoduleobjectclassid
+                                           from jct_modules_objectclass j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_tabset.nodetypeid)) )
+                    and ( exists (select j.jctmodulenodetypeid
+                                    from jct_modules_nodetypes j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.nodetypeid = nodetype_tabset.nodetypeid
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmodulenodetypeid
+                                           from jct_modules_nodetypes j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.nodetypeid = nodetype_tabset.nodetypeid) ) )";
         }
 
         //public void ClearKeys()

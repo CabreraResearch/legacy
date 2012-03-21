@@ -17,8 +17,15 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "nodetypepropid",
                                                           "propname",
+                                                          _CswNbtMetaDataResources.NodeTypePropTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypePropTableUpdate,
-                                                          makeNodeTypeProp );
+                                                          makeNodeTypeProp,
+                                                          _makeModuleWhereClause );
+        }
+
+        public void AddToCache( CswNbtMetaDataNodeTypeProp NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()
@@ -36,6 +43,11 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId );
         }
 
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropVersion( Int32 NodeTypeId, Int32 NodeTypePropId )
+        {
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and firstpropversionid = (select firstpropversionid from nodetype_props where nodetypepropid = " + NodeTypePropId.ToString() + ")" );
+        }
+
         public Collection<Int32> getNodeTypePropIds()
         {
             return _CollImpl.getPks();
@@ -48,7 +60,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CollImpl.getPks( "where nodetypetabsetid = " + TabId.ToString() );
         }
-        
+
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByObjectClassProp( Int32 ObjectClassPropId )
         {
             return _CollImpl.getWhere( "where objectclasspropid = " + ObjectClassPropId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
@@ -93,6 +105,14 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
         }
+        public Int32 getNodeTypePropId( Int32 NodeTypeId, string PropName )
+        {
+            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + PropName.ToLower() + "'" );
+        }
+        public Int32 getNodeTypePropIdByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
+        {
+            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
+        }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropFirstVersion( Int32 NodeTypePropId )
         {
@@ -113,6 +133,56 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( @"where nodetypepropid = (select max(nodetypepropid) maxpropid
                                                                                                      from nodetype_props 
                                                                                                     where firstpropversionid = " + NodeTypeProp.FirstPropVersionId.ToString() + ")" );
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getLayoutProps( Int32 NodeTypeId, Int32 TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool PropsInLayout = true )
+        {
+            string NodeTypeIdStr = NodeTypeId.ToString();
+            string WhereClause = "where nodetypeid = '" + NodeTypeIdStr + "' ";
+            WhereClause += " and nodetypepropid ";
+            if( PropsInLayout )
+            {
+                WhereClause += " in ";
+            }
+            else
+            {
+                WhereClause += " not in ";
+            }
+            WhereClause += @" (select nodetypepropid 
+                                 from nodetype_layout
+                                where layouttype = '" + LayoutType.ToString() + @"' 
+                                  and nodetypeid = " + NodeTypeIdStr + @" ";
+            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
+            {
+                WhereClause += "and nodetypetabsetid = " + TabId.ToString();
+            }
+            WhereClause += ")";
+
+            return _CollImpl.getWhere( WhereClause ).Cast<CswNbtMetaDataNodeTypeProp>();
+
+        } // getPropsInLayout()
+
+
+        private string _makeModuleWhereClause()
+        {
+            return @" ( ( exists (select j.jctmoduleobjectclassid
+                                    from jct_modules_objectclass j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmoduleobjectclassid
+                                           from jct_modules_objectclass j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)) )
+                    and ( exists (select j.jctmodulenodetypeid
+                                    from jct_modules_nodetypes j
+                                    join modules m on j.moduleid = m.moduleid
+                                   where j.nodetypeid = nodetype_props.nodetypeid
+                                     and m.enabled = '1')
+                          or not exists (select j.jctmodulenodetypeid
+                                           from jct_modules_nodetypes j
+                                           join modules m on j.moduleid = m.moduleid
+                                          where j.nodetypeid = nodetype_props.nodetypeid) ) )";
         }
 
         //public void ClearKeys()

@@ -17,14 +17,23 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "fieldtypeid", 
                                                           "fieldtype",
+                                                          _CswNbtMetaDataResources.FieldTypeTableSelect,
                                                           _CswNbtMetaDataResources.FieldTypeTableUpdate,
-                                                          makeFieldType );
+                                                          makeFieldType,
+                                                          _makeModuleWhereClause );
+        }
+
+        public void AddToCache( CswNbtMetaDataFieldType NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()
         {
             _CollImpl.clearCache();
         }
+
+
 
         public CswNbtMetaDataFieldType makeFieldType( CswNbtMetaDataResources Resources, DataRow Row )
         {
@@ -61,5 +70,34 @@ namespace ChemSW.Nbt.MetaData
         {
             return (CswNbtMetaDataFieldType) _CollImpl.getByPk( FieldTypeId );
         }
+
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
+        {
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+            if( NodeTypePropId != Int32.MinValue )
+            {
+                string FieldTypeStr = _CollImpl.getNameWhereFirst( "where fieldtypeid = (select fieldtypeid from nodetype_props where nodetypepropid = " + NodeTypePropId.ToString() + ")" );
+                Enum.TryParse<CswNbtMetaDataFieldType.NbtFieldType>( FieldTypeStr, out FieldType );
+            }
+            return FieldType;
+        } // getFieldTypeValueForNodeTypePropId()
+
+        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForObjectClassPropId( Int32 ObjectClassPropId )
+        {
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+            if( ObjectClassPropId != Int32.MinValue )
+            {
+                string FieldTypeStr = _CollImpl.getNameWhereFirst( "where fieldtypeid = (select fieldtypeid from object_class_props where objectclasspropid = " + ObjectClassPropId.ToString() + ")" );
+                Enum.TryParse<CswNbtMetaDataFieldType.NbtFieldType>( FieldTypeStr, out FieldType );
+            }
+            return FieldType;
+        } // getFieldTypeValueForObjectClassPropId()
+
+
+        private string _makeModuleWhereClause()
+        {
+            return string.Empty;
+        }
+
     } // class CswNbtMetaDataCollectionFieldType
 } // namespace ChemSW.Nbt.MetaData

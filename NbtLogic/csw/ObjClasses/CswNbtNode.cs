@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         private CswNbtResources _CswNbtResources;
-        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId ) //, ICswNbtObjClassFactory ICswNbtObjClassFactory )
+        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, bool IsDemo = false ) //, ICswNbtObjClassFactory ICswNbtObjClassFactory )
         {
             _CswNbtResources = CswNbtResources;
             _UniqueId = UniqueId;
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtNodePropColl = new CswNbtNodePropColl( CswNbtResources, this, null ); //, ICswNbtObjClassFactory);
             //_CswNbtObjClassFactory = ICswNbtObjClassFactory; // new CswNbtObjClassFactory(CswNbtResources, this);
             _NodeSpecies = NodeSpecies;
-            
+            _IsDemo = IsDemo;
             //if( NodeType != null )
             //    ObjectClassId = NodeType.ObjectClassId;
 
@@ -212,6 +212,9 @@ namespace ChemSW.Nbt.ObjClasses
             }//get
 
         }//ModificationState
+
+        private bool _IsDemo = false;
+        public bool IsDemo { get { return _IsDemo; } set { _IsDemo = value; } }
 
         private bool _ReadOnly = false;
         public bool ReadOnly
@@ -492,7 +495,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( IsNew )
                         _CswNbtObjClass.beforeCreateNode( OverrideUniqueValidation );
                     else
-                        _CswNbtObjClass.beforeWriteNode( OverrideUniqueValidation );
+                        _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
                 }
 
                 OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
@@ -660,16 +663,16 @@ namespace ChemSW.Nbt.ObjClasses
             foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
             {
                 // BZ 8355 - Set relationships on children pointing to parents, not the other way
-                if( ViewRelationship.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
+                if( ViewRelationship.PropOwner == NbtViewPropOwnerType.Second )
                 {
-                    if( ( ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
-                          ( ViewRelationship.SecondType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&
-                        ( ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
-                          ( ViewRelationship.FirstType == CswNbtViewRelationship.RelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
+                    if( ( ( ViewRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
+                          ( ViewRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&
+                        ( ( ViewRelationship.FirstType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.FirstId == ParentNode.NodeTypeId ) ||
+                          ( ViewRelationship.FirstType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
                     {
-                        if( ViewRelationship.PropType == CswNbtViewRelationship.PropIdType.NodeTypePropId )
+                        if( ViewRelationship.PropType == NbtViewPropIdType.NodeTypePropId )
                             Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
-                        else if( ViewRelationship.PropType == CswNbtViewRelationship.PropIdType.ObjectClassPropId )
+                        else if( ViewRelationship.PropType == NbtViewPropIdType.ObjectClassPropId )
                             Prop = this.Properties[_CswNbtResources.MetaData.getObjectClassProp( ViewRelationship.PropId ).PropName];
 
                         if( Prop != null )
@@ -687,7 +690,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                     }
-                } // if( ViewRelationship.PropOwner == CswNbtViewRelationship.PropOwnerType.Second )
+                } // if( ViewRelationship.PropOwner == PropOwnerType.Second )
             } // foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
         } // RelateToNode()
 

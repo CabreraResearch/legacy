@@ -4,7 +4,6 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using Newtonsoft.Json.Linq;
@@ -86,6 +85,25 @@ namespace ChemSW.Nbt.PropTypes
         {
             return Value.Contains( ValueToCheck );
         }
+
+
+        /// <summary>
+        /// Checks to be sure all values assigned are valid against possible options
+        /// </summary>
+        public void ValidateValues()
+        {
+            CswCommaDelimitedString newVals = new CswCommaDelimitedString();
+
+            foreach( string aval in Value )
+            {
+                if( Options.ContainsKey( aval ) )
+                {
+                    newVals.Add( aval );
+                }
+            }
+            Value = newVals;
+
+        } // ValidateValues() 
 
         /// <summary>
         /// Remove a value from the set of selected values
@@ -205,10 +223,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject.Property( _ValueSubField.ToXmlNodeName( true ) ) )
+            if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
             {
                 CswCommaDelimitedString NewValue = new CswCommaDelimitedString();
-                NewValue.FromString( (string) JObject.Property( _ValueSubField.ToXmlNodeName( true ) ).Value );
+                NewValue.FromString( JObject[_ValueSubField.ToXmlNodeName( true )].ToString() );
                 Value = NewValue;
             }
         }

@@ -16,12 +16,14 @@ namespace ChemSW.Nbt.MetaData
             isbatchentry,
             isrequired,
             isunique,
+            iscompoundunique,
             servermanaged,
             valuefieldid,
             numberprecision,
             listoptions,
             viewxml,
             fktype,
+            fkvalue,
             multi,
             readOnly,
             display_col_add,
@@ -32,6 +34,7 @@ namespace ChemSW.Nbt.MetaData
             statictext,
             filter,
             filterpropid,
+            usenumbering,
             valueoptions,
             propname,
             isglobalunique,
@@ -146,6 +149,13 @@ namespace ChemSW.Nbt.MetaData
         {
             return ( CswConvert.ToBoolean( _ObjectClassPropRow["isunique"] ) || IsGlobalUnique() );
         }
+
+        public bool IsCompoundUnique() //bz # 24979
+        {
+            return ( CswConvert.ToBoolean( _ObjectClassPropRow["iscompoundunique"] ) );
+        }
+
+
         public bool IsGlobalUnique() // BZ 9754
         {
             return CswConvert.ToBoolean( _ObjectClassPropRow["isglobalunique"] );
@@ -209,9 +219,11 @@ namespace ChemSW.Nbt.MetaData
             if( _ObjectClassPropRow["filter"].ToString() != string.Empty )
             {
                 string[] filter = _ObjectClassPropRow["filter"].ToString().Split( FilterDelimiter );
-                CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
+                CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) filter[0];
                 SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).getFieldTypeRule().SubFields[Column];
-                FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
+                //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
+                FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) filter[1];
                 if( filter.GetUpperBound( 0 ) > 1 )
                     FilterValue = filter[2];
             }
@@ -419,14 +431,15 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( FKType != string.Empty )
                 {
-                    CswNbtViewRelationship.RelatedIdType TargetType = (CswNbtViewRelationship.RelatedIdType) Enum.Parse( typeof( CswNbtViewRelationship.RelatedIdType ), FKType, true );
+                    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
 
-                    if( TargetType == CswNbtViewRelationship.RelatedIdType.NodeTypeId )
+                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
                         ret = ( TargetNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                     }
-                    else if( TargetType == CswNbtViewRelationship.RelatedIdType.ObjectClassId )
+                    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
                         ret = ( TargetObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );

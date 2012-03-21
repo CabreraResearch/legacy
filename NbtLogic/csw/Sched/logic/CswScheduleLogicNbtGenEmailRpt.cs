@@ -1,7 +1,9 @@
 using System;
+using System.Data;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Mail;
 using ChemSW.MtSched.Core;
@@ -70,12 +72,11 @@ namespace ChemSW.Nbt.Sched
             ret += ViewId.ToString();
             return ret;
         }
-        private string makeReportUrl( CswPrimaryKey ReportNodeId )
+        private string makeReportUrl( CswNbtObjClassReport ReportObjClass )
         {
             string ret = _CswNbtResources.SetupVbls["MailReportUrlStem"];
             if( !ret.EndsWith( "/" ) ) ret += "/";
-            ret += "Main.html?reportid=";
-            ret += ReportNodeId.PrimaryKey.ToString();
+            ret += ReportObjClass.ReportUrl;
             return ret;
         }
 
@@ -88,6 +89,8 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
+                    _CompletionMessage = string.Empty; 
+
                     List<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
 
                     for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
@@ -122,71 +125,75 @@ namespace ChemSW.Nbt.Sched
                                     ( DateTime.Now >= ThisDueDateValue ) )
                                 {
                                     CswMail CswMail = _CswNbtResources.CswMail;
-
                                     CurrentMailReport.LastProcessed.DateTimeValue = DateTime.Now;
-
-                                    string ReportLink = string.Empty;
 
                                     if( !CurrentMailReport.Type.Empty )
                                     {
-                                        bool ContinueWithReport = false;
-                                        CswNbtViewId ViewId = new CswNbtViewId();
-                                        if( "View" == CurrentMailReport.Type.Value )
+                                        // BZ 10094 - Run report in context of recipient 
+                                        if( !CurrentMailReport.Recipients.Empty )
                                         {
-                                            Int32 ViewIdInt = CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds );
-                                            if( Int32.MinValue != ViewIdInt )
+                                            Collection<Int32> RecipientUserIds = CurrentMailReport.Recipients.SelectedUserIds.ToIntCollection();
+                                            foreach( Int32 UserId in RecipientUserIds )
                                             {
-                                                ViewId.set( ViewIdInt );
-                                                if( ViewId.isSet() )
+                                                if( Int32.MinValue != UserId )
                                                 {
-                                                    ReportLink = makeViewUrl( ViewId );
-                                                    ContinueWithReport = true;
-                                                }
-                                            }
-                                        }
-                                        else if( "Report" == CurrentMailReport.Type.Value )
-                                        {
-                                            if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
-                                            {
-                                                CswNbtNode ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
-                                                CswNbtObjClassReport ReportObjClass = CswNbtNodeCaster.AsReport( ReportNode );
-                                                ViewId = ReportObjClass.View.ViewId;
-                                                ReportLink = makeReportUrl( ReportNode.NodeId );
-                                                ContinueWithReport = true;
-                                            }
-                                        }
-
-                                        if( ContinueWithReport )
-                                        {
-
-
-                                            if( string.Empty != ReportLink )
-                                            {
-                                                CswNbtMailReportStatus.Link = ReportLink;
-                                            }
-
-                                            if( CswNbtMailReportStatus.ReportReadyForQuery )
-                                            {
-                                                // BZ 10094 - Run report in context of recipient 
-                                                if( !CurrentMailReport.Recipients.Empty )
-                                                {
-                                                    Collection<Int32> RecipientUserIds = CurrentMailReport.Recipients.SelectedUserIds.ToIntCollection();
-                                                    foreach( Int32 UserId in RecipientUserIds )
+                                                    CswNbtNode UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
+                                                    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
+                                                    string EmailAddy = UserNodeAsUser.Email.Trim();
+                                                    if( EmailAddy != string.Empty )
                                                     {
-                                                        if( Int32.MinValue != UserId )
+                                                        string ReportLink = string.Empty;
+                                                        bool ContinueWithReport = false;
+                                                        bool HasResults = false;
+                                                        string Subject = string.Empty;
+                                                        if( "View" == CurrentMailReport.Type.Value )
                                                         {
-                                                            CswNbtNode UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                                                            CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
-                                                            string EmailAddy = UserNodeAsUser.Email.Trim();
-                                                            if( EmailAddy != string.Empty )
+                                                            Int32 ViewIdInt = CswConvert.ToInt32( CurrentMailReport.ReportView.SelectedViewIds );
+                                                            if( Int32.MinValue != ViewIdInt )
                                                             {
-                                                                CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                                                                CswNbtViewId ViewId = new CswNbtViewId(ViewIdInt);
+                                                                if( ViewId.isSet() )
+                                                                {
+                                                                    ReportLink = makeViewUrl( ViewId );
+                                                                    ContinueWithReport = true;
+                                                    
+                                                                    CswNbtView ReportView = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                                                                    ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
+                                                                    Subject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
+                                                                    HasResults = ( ReportTree.getChildNodeCount() > 0 );
+                                                                }
+                                                            }
+                                                        }
+                                                        else if( "Report" == CurrentMailReport.Type.Value )
+                                                        {
+                                                            if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
+                                                            {
+                                                                CswNbtNode ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
+                                                                CswNbtObjClassReport ReportObjClass = CswNbtNodeCaster.AsReport( ReportNode );
+                                                                //ViewId = ReportObjClass.View.ViewId;
 
-                                                                string Subject = CurrentMailReport.Type.Value + " Notification: " + ReportView.ViewName;
+                                                                CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportObjClass.SQL.Text );
+                                                                DataTable ReportTable = ReportSelect.getTable();
 
-                                                                ICswNbtTree ReportTree = _CswNbtResources.Trees.getTreeFromView( UserNodeAsUser as ICswNbtUser, ReportView, true, true, false, false );
+                                                                ReportLink = makeReportUrl( ReportObjClass );
+                                                                ContinueWithReport = true;
+
+                                                                Subject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
+                                                                HasResults = (ReportTable.Rows.Count > 0);
+                                                            }
+                                                        }
+
+                                                        if( ContinueWithReport )
+                                                        {
+                                                            if( string.Empty != ReportLink )
+                                                            {
+                                                                CswNbtMailReportStatus.Link = ReportLink;
+                                                            }
+                                                            if( CswNbtMailReportStatus.ReportReadyForQuery )
+                                                            {
+
                                                                 string Message = string.Empty;
-                                                                if( ReportTree.getChildNodeCount() > 0 )
+                                                                if(HasResults)
                                                                 {
                                                                     CswNbtMailReportStatus.ReportDataExist = true;
                                                                     Message = CurrentMailReport.Message.Text + "\r\n";
@@ -239,24 +246,24 @@ namespace ChemSW.Nbt.Sched
 
                                                                 } // if( CswNbtMailReportStatus.ReportDataExist )
 
-                                                            } // if( EmailAddy != string.Empty )
+                                                            } // if( CswNbtMailReportStatus.ReportReadyForQuery )
 
-                                                        } //if( Int32.MinValue != UserId )
+                                                        } // if( ContinueWithReport )
 
-                                                    } //foreach( Int32 UserId in RecipientUserIds )
+                                                    } //if( EmailAddy != string.Empty )
 
-                                                } //if-else report data exist
+                                                } //if( Int32.MinValue != UserId )
 
-                                            } //if report is ready for query
+                                            } // foreach( Int32 UserId in RecipientUserIds )
 
-                                        }
-                                        else
-                                        {
-                                            CswNbtMailReportStatus.ReportFailureReason = "Unknown " + CurrentMailReport.Type.Value;
+                                        } // if( !CurrentMailReport.Recipients.Empty )
 
-                                        } //if-else on format
+                                    } // if( !CurrentMailReport.Type.Empty )
+                                    else
+                                    {
+                                        CswNbtMailReportStatus.ReportFailureReason = "Unknown " + CurrentMailReport.Type.Value;
                                     }
-                                }
+                                } // if( ThisDueDateValue != DateTime.MinValue )
                                 else
                                 {
                                     CswNbtMailReportStatus.ReportFailureReason = "Report type is not specified";
@@ -268,13 +275,10 @@ namespace ChemSW.Nbt.Sched
                                     CurrentMailReport.RunStatus.StaticText = CswNbtMailReportStatus.Message;
                                     CurrentMailReport.postChanges( true );
 
-                                } // if( ThisDueDateValue != DateTime.MinValue )
-
-                            } // if( CurrentMailReport.Enabled.Checked == Tristate.True )
-
-                        }//iterate mail reports
-
-                    }//if there is a report node 
+                                } 
+                            } // if( ThisDueDateValue != DateTime.MinValue )
+                        }// if( CurrentMailReport.Enabled.Checked == Tristate.True )
+                    }// for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
 
 
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line

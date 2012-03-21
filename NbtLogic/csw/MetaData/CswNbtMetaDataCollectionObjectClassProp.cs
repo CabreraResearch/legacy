@@ -17,8 +17,15 @@ namespace ChemSW.Nbt.MetaData
             _CollImpl = new CswNbtMetaDataCollectionImpl( _CswNbtMetaDataResources,
                                                           "objectclasspropid",
                                                           "propname",
+                                                          _CswNbtMetaDataResources.ObjectClassPropTableSelect,
                                                           _CswNbtMetaDataResources.ObjectClassPropTableUpdate,
-                                                          makeObjectClassProp );
+                                                          makeObjectClassProp,
+                                                          _makeModuleWhereClause );
+        }
+
+        public void AddToCache( CswNbtMetaDataObjectClassProp NewObj )
+        {
+            _CollImpl.AddToCache( NewObj );
         }
 
         public void clearCache()
@@ -61,6 +68,19 @@ namespace ChemSW.Nbt.MetaData
         public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassPropsByObjectClass( Int32 ObjectClassId )
         {
             return _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() ).Cast<CswNbtMetaDataObjectClassProp>();
+        }
+
+        private string _makeModuleWhereClause()
+        {
+            return @" (exists (select j.jctmoduleobjectclassid
+                                 from jct_modules_objectclass j
+                                 join modules m on j.moduleid = m.moduleid
+                                where j.objectclassid = object_class_props.objectclassid
+                                  and m.enabled = '1')
+                       or not exists (select j.jctmoduleobjectclassid
+                                        from jct_modules_objectclass j
+                                        join modules m on j.moduleid = m.moduleid
+                                       where j.objectclassid = object_class_props.objectclassid))";
         }
 
         //public void ClearKeys()

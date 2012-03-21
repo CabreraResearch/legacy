@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
@@ -64,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
                 ResetWelcomeItems( strRoleId );
                 WelcomeTable = _getWelcomeTable( RoleId );
             }
-            Collection<CswNbtView> VisibleViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, true, false, false, NbtViewRenderingMode.Any );
+            Dictionary<CswNbtViewId, CswNbtView>  VisibleViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, true, false, false, NbtViewRenderingMode.Any );
 
             foreach( DataRow WelcomeRow in WelcomeTable.Rows )
             {
@@ -97,7 +98,7 @@ namespace ChemSW.Nbt.WebServices
                         if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
                         {
                             CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
-                            if( null != ThisView && ThisView.IsFullyEnabled() && VisibleViews.Contains( ThisView ) )
+                            if( null != ThisView && ThisView.IsFullyEnabled() && VisibleViews.ContainsKey( ThisView.ViewId ) )
                             {
                                 LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
 

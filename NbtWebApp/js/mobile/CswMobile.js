@@ -1,26 +1,3 @@
-/// <reference path="../../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../Scripts/jquery.mobile-1.0rc1.js" />
-/// <reference path="../globals/CswGlobalTools.js" />
-/// <reference path="../globals/Global.js" />
-/// <reference path="../mobile/clientdb/CswMobileClientDb.js" />
-/// <reference path="../mobile/clientdb/CswMobileClientDbResources.js" />
-/// <reference path="../main/tools/CswClientDb.js" />
-/// <reference path="../globals/CswEnums.js" />
-/// <reference path="../main/tools/CswProfileMethod.js" />
-/// <reference path="../mobile/globals/CswMobileTools.js" />
-/// <reference path="../mobile/sync/CswMobileBackgroundTask.js" />
-/// <reference path="../mobile/sync/CswMobileSync.js" />
-/// <reference path="controls/CswMobileMenuButton.js" />
-/// <reference path="controls/ICswMobileWebControls.js" />
-/// <reference path="controls/CswMobilePageFooter.js" />
-/// <reference path="controls/CswMobilePageHeader.js" />
-/// <reference path="pages/CswMobilePageFactory.js" />
-/// <reference path="objectclasses/CswMobileNodesFactory.js" />
-/// <reference path="globals/CswMobileTools.js" />
-/// <reference path="globals/CswMobileEnums.js" />
-/// <reference path="../main/tools/CswCookie.js" />
-
-CswAppMode.mode = 'mobile';
 
 (function($) {
     /// <param name="$" type="jQuery" />
@@ -29,7 +6,6 @@ CswAppMode.mode = 'mobile';
         /// <summary>
         ///   Generates the Nbt Mobile page
         /// </summary>
-
         //#region Resource Initialization
         var x = {
             Theme: CswMobileGlobal_Config.theme,

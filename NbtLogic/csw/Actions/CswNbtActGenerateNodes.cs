@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Actions
                         CswNbtView.ViewName = "Nodes for Generator";
                         //CswNbtViewRelationship GeneratorRelationship = CswNbtView.AddViewRelationship( GeneratorClass, false );
                         //GeneratorRelationship.NodeIdsToFilterIn.Add( CswNbtNodeGenerator.NodeId );
-                        //CswNbtViewRelationship ChildRelationship = CswNbtView.AddViewRelationship( GeneratorRelationship, CswNbtViewRelationship.PropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
+                        //CswNbtViewRelationship ChildRelationship = CswNbtView.AddViewRelationship( GeneratorRelationship, PropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
                         //CswNbtViewProperty GeneratedDateProperty = CswNbtView.AddViewProperty( ChildRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName ) );
                         //CswNbtViewPropertyFilter GeneratedDateFilter = CswNbtView.AddViewPropertyFilter( GeneratedDateProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.Date.ToShortDateString(), false );
                         CswNbtViewRelationship RootRelationship = CswNbtView.AddViewRelationship( CreatedNodeType, false );
@@ -123,13 +123,12 @@ namespace ChemSW.Nbt.Actions
             if( DueDate == DateTime.MinValue )
             {
                 DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
-                DateFilter = DueDate.ToShortDateString() + " " + DueDate.ToLongTimeString();
             }
-            if( DueDate == DateTime.MinValue || string.IsNullOrEmpty( DateFilter ) )
+            if( DueDate == DateTime.MinValue )
             {
                 DueDate = GeneratorNodeAsGenerator.DueDateInterval.getStartDate();
-                DateFilter = DueDate.ToShortDateString();
             }
+            DateFilter = DueDate.ToShortDateString();
 
             bool GeneratorBaseIsProperlyConfigured = ( null != GeneratorNodeAsGenerator.Owner &&
                                                    null != GeneratorNodeAsGenerator.Owner.RelatedNodeId &&

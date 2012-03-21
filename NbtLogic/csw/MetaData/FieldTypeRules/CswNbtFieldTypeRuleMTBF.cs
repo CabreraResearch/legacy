@@ -18,29 +18,29 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            StartDateTimeSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.StartDateTime,true );
-            StartDateTimeSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                                CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                                CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
-                                                CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                                CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals |
-                                                CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                                CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                                CswNbtPropFilterSql.PropertyFilterMode.Null;
+            StartDateTimeSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.StartDateTime, true );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( StartDateTimeSubField );
 
-            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Units,true );
-            UnitsSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.Contains |
-                                        CswNbtPropFilterSql.PropertyFilterMode.Begins |
-                                        CswNbtPropFilterSql.PropertyFilterMode.Ends;
+            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Units, true );
+            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
             SubFields.add( UnitsSubField );
 
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Value,true );
-            ValueSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                        CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                        CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                        CswNbtPropFilterSql.PropertyFilterMode.NotEquals;
+            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_Numeric, CswNbtSubField.SubFieldName.Value, true );
+            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             SubFields.add( ValueSubField, true );
         }//ctor
 
@@ -101,14 +101,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ret;
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

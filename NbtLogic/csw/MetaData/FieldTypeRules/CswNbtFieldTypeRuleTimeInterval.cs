@@ -18,26 +18,26 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            IntervalSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Interval,true );
-            IntervalSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                           CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                           CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
-                                           CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals |
-                                           CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                           CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                           CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                           CswNbtPropFilterSql.PropertyFilterMode.Null;
+            IntervalSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Interval, true );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( IntervalSubField );
 
-            StartDateSubField = new CswNbtSubField( _CswNbtFieldResources,  CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.StartDateTime,true );
-            StartDateSubField.FilterModes = CswNbtPropFilterSql.PropertyFilterMode.Equals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.GreaterThan |
-                                            CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.LessThan |
-                                            CswNbtPropFilterSql.PropertyFilterMode.NotEquals |
-                                            CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-                                            CswNbtPropFilterSql.PropertyFilterMode.Null;
+            StartDateSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.StartDateTime, true );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( StartDateSubField );
 
 
@@ -101,14 +101,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ret;
         }
 
-        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropData PropertyValueToCheck )
+        public void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck )
         {
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck );
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            _CswNbtFieldTypeRuleDefault.setFk( doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

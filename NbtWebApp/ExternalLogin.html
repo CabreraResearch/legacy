@@ -1,0 +1,81 @@
+<!--#include file="MainHeader.html" -->
+                <tr>
+                    <td id="Td5" class="PageTable_LeftColumn" rowspan="6">
+                        <img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450" />
+                    </td>
+                    <td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
+                        <table cellpadding="0" cellspacing="0" width="100%">
+                            <tr>
+                                <td>
+                                    <img id="headerblank4" src="Images/pagelayout/blank.gif" alt="X" width="1" height="30" />
+                                </td>
+                                <td width="100%">
+                                    <div id="MainMenuDiv">
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="SearchDiv">
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                </td>
+                                <td>
+                                    <div id="ViewSelectDiv">
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td id="Td6" class="PageTable_RightColumn" rowspan="6">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <div id="ErrorDiv" style="display: none;">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="Td7" class="PageTable_CenterCell" colspan="2" valign="top">
+                        <div id="CenterTopDiv">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="Td8" class="PageTable_LeftCell" valign="top">
+                        <div id="LeftDiv">
+                        </div>
+                    </td>
+                    <td id="Td9" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+                        <div id="RightDiv">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="Td10" class="PageTable_CenterCell" colspan="2" valign="top">
+                        <div id="CenterBottomDiv">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td id="Td11" class="PageTable_CenterCell" colspan="2" valign="top">
+                        <div id="QuickLaunch">
+                        </div>
+                    </td>
+                </tr>
+
+    <script type="text/javascript">
+        var formHtml = '<p>This Page Tests the External Login functionality of NBT</p>';
+        formHtml += '<form action="ExternalLogin.aspx" method="post">';
+        formHtml += '<label>AccessId: <input type="text" name="accessid" id="accessid" value="1" /></label><br/>';
+        formHtml += '<label>Username: <input type="text" name="username" id="username" value="admin" /></label><br/>';
+        formHtml += '<label>Password: <input type="password" name="password" id="password" value="admin" /></label><br/>';
+        formHtml += '<input type="submit" />';
+        formHtml += '</form>';
+
+        $('#CenterBottomDiv').append(formHtml);
+    </script>
+    
+<!--#include file="MainFooter.html" -->

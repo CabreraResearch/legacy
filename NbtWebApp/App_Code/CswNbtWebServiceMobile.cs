@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -37,12 +38,18 @@ namespace ChemSW.Nbt.WebServices
         {
             // All Views
             JObject RetJson = new JObject();
-            Collection<CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
-            foreach( CswNbtView MobileView in MobileViews )
+            Dictionary<CswNbtViewId, CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
+            if( MobileViews.Count == 0 )
             {
-                RetJson.Add( new JProperty( MobileView.ViewId.ToString(), MobileView.ViewName ) );
+                RetJson["-1"] = "No Views Have Been Configured for Mobile.";
             }
-
+            else
+            {
+                foreach ( CswNbtView MobileView in MobileViews.Values )
+                {
+                    RetJson[MobileView.ViewId.ToString()] = MobileView.ViewName;
+                }
+            }
             return RetJson;
         } // Run()
 
@@ -219,7 +226,7 @@ namespace ChemSW.Nbt.WebServices
                         NodeProps["location"] = Node.Properties[CswNbtObjClassInspectionTarget.LocationPropertyName].Gestalt;
                         NodeProps["description"] = Node.Properties[CswNbtObjClassInspectionTarget.DescriptionPropertyName].Gestalt;
                         NodeProps["status"] = Node.Properties[CswNbtObjClassInspectionTarget.StatusPropertyName].Gestalt;
-                        NodeProps["lastinspectiondate"] = Node.Properties[CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName].Gestalt;
+                        //NodeProps["lastinspectiondate"] = Node.Properties[CswNbtObjClassInspectionTarget.LastInspectionDatePropertyName].Gestalt;
                         break;
                     }
 
@@ -254,7 +261,7 @@ namespace ChemSW.Nbt.WebServices
                     TabObj["nexttab"] = Tabs[i + 1].TabName;
                 }
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.NodeTypePropsByDisplayOrder
+                foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.getNodeTypePropsByDisplayOrder()
                                                                 .Cast<CswNbtMetaDataNodeTypeProp>()
                                                                 .Where( Prop => !Prop.HideInMobile &&
                                                                         Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
@@ -269,7 +276,7 @@ namespace ChemSW.Nbt.WebServices
                     TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
-                    PropWrapper.ToJSON( (JObject) TabObj[PropId], NodeEditMode.Edit, Tabs[i] );
+                    PropWrapper.ToJSON( (JObject) TabObj[PropId], Tabs[i] );
                 }
 
             }
@@ -368,17 +375,25 @@ namespace ChemSW.Nbt.WebServices
                     JObject PropObj = (JObject) Prop.Value;
 
                     CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( Node.NodeTypeId, CswConvert.ToString( PropObj["currenttab"] ) );
-                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit, Tab );
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
 
                     //Case 20964. Client needs to know whether the inspection is complete.
                     if( false == Ret && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
                     {
-                        CswNbtMetaDataObjectClassProp Finished = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishedPropertyName );
-                        CswNbtMetaDataObjectClassProp Cancelled = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelledPropertyName );
-                        if( MetaDataProp.getObjectClassProp() == Finished ||
-                            MetaDataProp.getObjectClassProp() == Cancelled )
+                        CswNbtMetaDataObjectClassProp MetaDataOCP = MetaDataProp.getObjectClassProp();
+                        if( MetaDataOCP != null )
                         {
-                            Ret = Ret || Node.Properties[MetaDataProp].AsLogical.Checked == Tristate.True;
+                            CswNbtMetaDataObjectClassProp Finish = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.FinishPropertyName );
+                            CswNbtMetaDataObjectClassProp Cancel = _CswNbtResources.MetaData.getObjectClassProp( Node.getObjectClassId(), CswNbtObjClassInspectionDesign.CancelPropertyName );
+                            if( MetaDataOCP == Finish ||
+                                MetaDataOCP == Cancel )
+                            {
+                                //Ret = Ret || Node.Properties[MetaDataProp].AsButton.Checked == Tristate.True;
+                                CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
+                                string Message = string.Empty;
+                                string ActionData = string.Empty;
+                                ( CswNbtNodeCaster.AsInspectionDesign( Node ) ).onButtonClick( MetaDataProp, out ButtonAction, out ActionData, out Message );
+                            }
                         }
                     }
 

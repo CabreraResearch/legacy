@@ -1,0 +1,265 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <NoStandardLibraries>false</NoStandardLibraries>
+    <AssemblyName>NbtJavaScript</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js|\CswNbt.min.js|\CswCommon.min.js</JSLintSkip>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>NbtJavaScript</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Debug\NbtJavaScript.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <CodeAnalysisLogFile>bin\Release\NbtJavaScript.dll.CodeAnalysisLog.xml</CodeAnalysisLogFile>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSetDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\\Rule Sets</CodeAnalysisRuleSetDirectories>
+    <CodeAnalysisRuleDirectories>;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Team Tools\Static Analysis Tools\FxCop\\Rules</CodeAnalysisRuleDirectories>
+    <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
+    <CodeAnalysisFailOnMissingRules>false</CodeAnalysisFailOnMissingRules>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="ConnectTest.html" />
+    <Content Include="css\ChemSW.min.css" />
+    <None Include="css\cssVariables.pm" />
+    <Content Include="css\csw.table.layout.css" />
+    <Content Include="js\ChemSW-vsdoc.js" />
+    <Content Include="CswCommon.min.js" />
+    <Content Include="CswNbt.min.js" />
+    <Content Include="js\common\components\csw.nodetypeselect.js" />
+    <Content Include="js\common\components\csw.tree.js" />
+    <Content Include="js\nbt\nodes\csw.node.tree.js" />
+    <Content Include="js\nbt\Main.js" />
+    <Content Include="js\_first-vsdoc.js" />
+    <Content Include="js\_last-vsdoc.js" />
+    <Content Include="js\nbt\actions\csw.futureScheduling.js" />
+    <Content Include="js\nbt\actions\CswAuditHistoryGrid.js" />
+    <Content Include="js\nbt\actions\CswInspectionDesign.js" />
+    <Content Include="js\nbt\actions\CswInspectionStatus.js" />
+    <Content Include="js\nbt\actions\CswQuotaImage.js" />
+    <Content Include="js\nbt\actions\CswQuotas.js" />
+    <Content Include="js\nbt\actions\CswScheduledRulesGrid.js" />
+    <Content Include="js\nbt\actions\CswSessions.js" />
+    <Content Include="js\nbt\controls\CswButton.js" />
+    <Content Include="js\nbt\controls\CswComboBox.js" />
+    <Content Include="js\nbt\controls\CswDiv.js" />
+    <Content Include="js\nbt\controls\CswImageButton.js" />
+    <Content Include="js\nbt\controls\CswInput.js" />
+    <Content Include="js\nbt\controls\CswList.js" />
+    <Content Include="js\nbt\controls\CswSelect.js" />
+    <Content Include="js\nbt\controls\CswTristateCheckBox.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeBarcode.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeButton.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeComments.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeComposite.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeDateTime.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeFile.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeGrid.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeImage.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeImageList.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeLink.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeList.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeLocation.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeLocationContents.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeLogical.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeLogicalSet.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeMemo.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeMol.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeMTBF.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeMultiList.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeNFPA.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeNodeTypeSelect.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeNumber.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypePassword.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypePropertyReference.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeQuantity.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeQuestion.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeRelationship.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeScientific.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeSequence.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeStatic.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeText.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeTimeInterval.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeUserSelect.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeViewPickList.js" />
+    <Content Include="js\nbt\fieldtypes\CswFieldTypeViewReference.js" />
+    <Content Include="js\nbt\fieldtypes\_CswFieldTypeFactory.js" />
+    <Content Include="js\nbt\nodes\CswNodeGrid.js" />
+    <Content Include="js\nbt\nodes\CswNodePreview.js" />
+    <Content Include="js\nbt\nodes\CswNodeSelect.js" />
+    <Content Include="js\nbt\nodes\CswNodeTable.js" />
+    <Content Include="js\nbt\nodes\CswNodeTabs.js" />
+    <Content Include="js\nbt\nodes\CswNodeTree.js" />
+    <Content Include="js\nbt\pagecmp\CswDashboard.js" />
+    <Content Include="js\nbt\pagecmp\CswDefaultContent.js" />
+    <Content Include="js\nbt\pagecmp\CswDialog.js" />
+    <Content Include="js\nbt\pagecmp\CswErrorMessage.js" />
+    <Content Include="js\nbt\pagecmp\CswLogin.js" />
+    <Content Include="js\nbt\pagecmp\CswMenu.js" />
+    <Content Include="js\nbt\pagecmp\CswMenuHeader.js" />
+    <Content Include="js\nbt\pagecmp\CswMenuMain.js" />
+    <Content Include="js\nbt\pagecmp\CswQuickLaunch.js" />
+    <Content Include="js\nbt\pagecmp\CswSearch.js" />
+    <Content Include="js\nbt\pagecmp\CswWelcome.js" />
+    <Content Include="js\nbt\pagecmp\CswWizard.js" />
+    <Content Include="js\nbt\tools\CswAttr.js" />
+    <Content Include="js\nbt\tools\CswQueryString.js" />
+    <Content Include="js\nbt\tools\CswTools.js" />
+    <Content Include="js\nbt\view\CswViewContentTree.js" />
+    <Content Include="js\nbt\view\CswViewEditor.js" />
+    <Content Include="js\nbt\view\CswViewListTree.js" />
+    <Content Include="js\nbt\view\CswViewPropFilter.js" />
+    <Content Include="js\nbt\view\CswViewSelect.js" />
+    <Content Include="Report.html" />
+    <Content Include="js\ChemSW.js" />
+    <Content Include="js\common\controls\csw.thingrid.js" />
+    <Content Include="js\common\controls\csw.p.js" />
+    <Content Include="js\common\controls\csw.textarea.js" />
+    <Content Include="js\common\controls\csw.tabdiv.js" />
+    <Content Include="js\common\controls\csw.li.js" />
+    <Content Include="js\common\controls\csw.ul.js" />
+    <Content Include="js\common\controls\_control.factory.js" />
+    <Content Include="js\common\controls\csw.img.js" />
+    <Content Include="js\common\controls\csw.link.js" />
+    <Content Include="js\common\controls\csw.button.js" />
+    <Content Include="js\common\controls\csw.input.js" />
+    <Content Include="js\common\controls\csw.form.js" />
+    <Content Include="js\common\controls\csw.div.js" />
+    <Content Include="js\common\controls\csw.span.js" />
+    <Content Include="js\common\controls\csw.br.js" />
+    <Content Include="js\common\components\csw.universalsearch.js" />
+    <Content Include="js\common\components\csw.visibilityselect.js" />
+    <Content Include="js\common\controls\csw.dom.js" />
+    <Content Include="js\common\components\csw.grid.js" />
+    <Content Include="js\common\controls\csw.table.js" />
+    <Content Include="js\common\components\csw.timeinterval.js" />
+    <Content Include="js\common\components\csw.checkboxarray.js" />
+    <Content Include="js\common\components\csw.combobox.js" />
+    <Content Include="js\common\components\csw.datetimepicker.js" />
+    <Content Include="js\common\components\csw.imagebutton.js" />
+    <Content Include="js\common\components\csw.multiselect.js" />
+    <Content Include="js\common\controls\csw.numbertextbox.js" />
+    <Content Include="js\common\core\csw.ajax.js" />
+    <Content Include="js\common\types\csw.array.js" />
+    <Content Include="js\common\types\csw.boolean.js" />
+    <Content Include="js\common\core\csw.clientchanges.js" />
+    <Content Include="js\common\core\csw.clientsession.js" />
+    <Content Include="js\common\core\csw.clientstate.js" />
+    <Content Include="js\common\types\csw.date.js" />
+    <Content Include="js\common\core\csw.debug.js" />
+    <Content Include="js\common\core\csw.enums.js" />
+    <Content Include="js\common\core\csw.error.js" />
+    <Content Include="js\common\core\csw.events.js" />
+    <Content Include="js\common\types\csw.function.js" />
+    <Content Include="js\common\core\csw.menu.js" />
+    <Content Include="js\common\types\csw.number.js" />
+    <Content Include="js\common\types\csw.object.js" />
+    <Content Include="js\common\types\csw.string.js" />
+    <Content Include="js\common\types\csw.window.js" />
+    <Content Include="js\nbt\nodes\csw.node.interaction.js" />
+    <Content Include="js\nbt\nodes\csw.node.preview.js" />
+    <Content Include="js\nbt\props\csw.props.js" />
+    <Content Include="js\common\tools\csw.clientdb.js" />
+    <Content Include="js\common\tools\csw.cookie.js" />
+    <Content Include="js\common\tools\csw.newwindow.js" />
+    <Content Include="css\csw.combobox.css" />
+    <Content Include="js\common\components\csw.layouttable.js" />
+    <Content Include="js\common\controls\csw.select.js" />
+    <Content Include="js\common\components\csw.tristatecheckbox.js" />
+    <Content Include="css\csw.fieldtypes.css" />
+    <Content Include="css\csw.errormessage.css" />
+    <Content Include="css\csw.menu.css" />
+    <Content Include="css\csw.search.css" />
+    <Content Include="css\csw.wizard.css" />
+    <Content Include="js\common\tools\csw.pubsub.js" />
+    <Content Include="css\csw.vieweditor.css" />
+    <Content Include="css\_style.css" />
+    <Content Include="Main.html" />
+    <Content Include="MainFooter.html" />
+    <Content Include="MainHeader.html" />
+    <Content Include="MainIncludes.html" />
+    <Content Include="NodeReport.html" />
+    <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
+    <Content Include="_DevIncludes.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="css\_compressor.pl" />
+    <None Include="js\nbt\_concatNbtVsDoc.pl" />
+    <None Include="js\common\_compileCommon.pl" />
+    <None Include="js\common\_concatCswVsDoc.pl" />
+    <None Include="js\nbt\_compileNbt.pl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
+  <ProjectExtensions>
+    <VisualStudio AllowExistingFolder="true" />
+  </ProjectExtensions>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>call $(ProjectDir)css\_compressor.pl $(ProjectDir)
+call $(ProjectDir)js\common\_concatCswVsDoc.pl $(ProjectDir)
+call $(ProjectDir)js\nbt\_concatNbtVsDoc.pl $(ProjectDir)
+call $(ProjectDir)js\common\_compileCommon.pl $(ProjectDir)
+call $(ProjectDir)js\nbt\_compileNbt.pl $(ProjectDir)</PreBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         private CswNbtResources _makeResources( string AccessId )
 		{
-			CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false );
+            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false, null, ChemSW.RscAdo.PooledConnectionState.Closed );
 			ret.InitCurrentUser = InitUser;
 			if( AccessId != string.Empty )
 			{
@@ -211,7 +211,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
 							CswConsoleOutput.write( _Separator_NuLine );
 
 						} // if-else( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
+
 					} // foreach( string CurrentAccessId in AccessIdsToUpdate )
+
 				} // if-else( _UserArgs.ContainsKey( _ArgKey_Help ) )
 			}//try
 
@@ -231,6 +233,16 @@ namespace ChemSW.Nbt.Schema.CmdLn
             if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             {
 				CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to schema version " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
+
+
+                CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd(); 
+                foreach( CswSchemaUpdateDriver CurrentUpdateDriver in CswSchemaScriptsProd.RunBeforeScripts )
+                {
+                    CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
+                    CswConsoleOutput.write( "AccessId " + AccessId + ": unversioned script: " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description + _Separator_NuLine + _Separator_NuLine );
+                }
+
+
 
 				bool UpdateSucceeded = true;
                 while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
@@ -280,8 +292,18 @@ namespace ChemSW.Nbt.Schema.CmdLn
 						CswNbtResources.ClearCache();
 
 						CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
+
                     } // if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
+
 				}// while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
+
+
+                foreach( CswSchemaUpdateDriver CurrentUpdateDriver in CswSchemaScriptsProd.RunAfterScripts )
+                {
+                    CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
+                    CswConsoleOutput.write( "AccessId " + AccessId + ": unversioned script: " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description + _Separator_NuLine + _Separator_NuLine );
+                }
+
 
 			} // if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             else
