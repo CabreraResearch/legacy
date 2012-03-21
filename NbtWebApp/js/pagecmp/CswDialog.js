@@ -567,9 +567,9 @@
                         if (Csw.contains(components, comp)) {
                             var thisComp = components[comp];
 
-                            table.cell(row, 1).text(thisComp.name).css('padding', '2px 5px 2px 5px');
-                            table.cell(row, 2).text(thisComp.version).css('padding', '2px 5px 2px 5px');
-                            table.cell(row, 3).text(thisComp.copyright).css('padding', '2px 5px 2px 5px');
+                            table.cell(row, 1).css({ padding: '2px 5px 2px 5px' }).append(thisComp.name);
+                            table.cell(row, 2).css({ padding: '2px 5px 2px 5px' }).append(thisComp.version);
+                            table.cell(row, 3).css({ padding: '2px 5px 2px 5px' }).append(thisComp.copyright);
                             row += 1;
                         }
                     }
@@ -808,8 +808,52 @@
             $div.CswErrorMessage(error);
         },
         AlertDialog: function (message, title) {
-            var $div = $('<div>' + message + '</div>');
-            openDialog($div, 200, 200, null, title);
+
+            var div = Csw.controls.div({
+                ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
+                text: message,
+                align: 'center'
+            });
+
+            div.br();
+
+            div.button({
+                enabledText: 'OK',
+                onClick: function() {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div.$, 400, 200, null, title);
+        },
+
+        ConfirmDialog: function (message, title, okFunc, cancelFunc) {
+            var width = Csw.number((message.length * 7), 200);
+            var div = Csw.controls.div({
+                ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
+                text: message,
+                align: 'center'
+            });
+
+            div.br();
+
+            div.button({
+                enabledText: 'OK',
+                onClick: function () {
+                    Csw.tryExec(okFunc);
+                    div.$.dialog('close');
+                }
+            });
+
+            div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    Csw.tryExec(cancelFunc);
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div.$, width, 200, null, title);
         },
 
         NavigationSelectDialog: function (options) {

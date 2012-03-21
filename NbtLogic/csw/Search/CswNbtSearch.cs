@@ -162,12 +162,13 @@ namespace ChemSW.Nbt.Search
                     string FilterStr = Filter.FilterValue;
                     if( FilterStr == CswNbtSearchFilterWrapper.BlankValue )
                     {
-                        FilterStr = "gestalt is null";
+                        FilterStr = " is null";
                     }
                     else
                     {
-                        FilterStr = "gestalt like '" + FilterStr + "%'";
+                        FilterStr = CswTools.SafeSqlLikeClause( FilterStr, CswTools.SqlLikeMode.Begins, false );
                     }
+
                     if( NodeTypePropFirstVersionId != Int32.MinValue )
                     {
                         WhereClause += @" and n.nodeid in (select nodeid 
@@ -177,7 +178,7 @@ namespace ChemSW.Nbt.Search
                                                                                       where firstpropversionid = (select firstpropversionid 
                                                                                                                     from nodetype_props 
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
-                                                              and " + FilterStr + @") ";
+                                                              and gestalt " + FilterStr + @") ";
                         //FilteredPropIds.Add( NodeTypePropFirstVersionId );
                         //SingleNodeType = true;
                     }
@@ -216,14 +217,23 @@ namespace ChemSW.Nbt.Search
                     Tree.goToParentNode();
                 } // for( Int32 n = 0; n < ChildCnt; n++ )
 
+                string FilterName = "Filter To";
                 if( NodeTypeIds.Keys.Count == 1 )
                 {
+                    if( false == IsSingleNodeType() )
+                    {
+                        // If we have uniform results but no nodetype filter applied
+                        // add the filter to the filters list for display
+                        Int32 NodeTypeId = NodeTypeIds.Keys.First();
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                        CswNbtSearchFilterWrapper NodeTypeFilter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.nodetype, "NT_" + NodeType.NodeTypeId.ToString(), NodeType.NodeTypeName, NodeTypeIds[NodeTypeId], NodeType.IconFileName, false );
+                        NodeTypeFilter.FirstVersionId = NodeType.FirstVersionNodeTypeId;
+                        addFilter( NodeTypeFilter.ToJObject() );
+                    }
                     SingleNodeType = true;
                 }
                 else
                 {
-                    string FilterName = "Filter To";
-
                     JArray FilterSet = new JArray();
                     FiltersObj[FilterName] = FilterSet;
 
@@ -238,7 +248,7 @@ namespace ChemSW.Nbt.Search
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                         Int32 Count = sortedDict[NodeTypeId];
 
-                        CswNbtSearchFilterWrapper NodeTypeFilter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.nodetype, "NT_" + NodeType.NodeTypeId.ToString(), NodeType.NodeTypeName, Count, NodeType.IconFileName );
+                        CswNbtSearchFilterWrapper NodeTypeFilter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.nodetype, "NT_" + NodeType.NodeTypeId.ToString(), NodeType.NodeTypeName, Count, NodeType.IconFileName, true );
                         NodeTypeFilter.FirstVersionId = NodeType.FirstVersionNodeTypeId;
 
                         FilterSet.Add( NodeTypeFilter.ToJObject() );
@@ -301,7 +311,7 @@ namespace ChemSW.Nbt.Search
                     {
                         Int32 Count = sortedDict[Value];
 
-                        CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.propval, NodeTypePropId.ToString() + "_" + Value, Value, Count, string.Empty );
+                        CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.propval, NodeTypePropId.ToString() + "_" + Value, Value, Count, string.Empty, true );
                         Filter.FirstPropVersionId = NodeTypeProp.FirstPropVersionId;
 
                         FilterSet.Add( Filter.ToJObject() );
@@ -425,6 +435,7 @@ namespace ChemSW.Nbt.Search
         }
 
         #endregion Session Cache functions
+
 
         #region IEquatable
         /// <summary>

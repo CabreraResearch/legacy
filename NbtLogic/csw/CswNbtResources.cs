@@ -199,6 +199,8 @@ namespace ChemSW.Nbt
 
         #region Nodes and Trees
 
+        public NodeEditMode EditMode = NodeEditMode.Edit;
+
         /// <summary>
         /// Access to the node factory.  Consider using Nodes instead.
         /// </summary>

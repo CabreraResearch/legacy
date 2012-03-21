@@ -48,25 +48,27 @@ function CswMobilePropsFactory(propDef) {
         };
         if (propDef) $.extend(p, propDef);
         var field = tryParseString(p.fieldtype, '');
-        
+
         if (isTrue(p['readonly'])) {
             field = CswSubFields_Map.Static.name;
         }
-        
+
         nodeId = p.nodeId;
         tabId = p.tabId;
         viewId = p.viewId;
-        
+
         prop = getPropFromFieldType(field, p);
         fieldType = prop.fieldType;
         propId = prop.propId;
         propName = prop.propName;
         contentDivId = prop.contentDivId;
-        
-        $label = $('<h2 id="' + propId + '_label" style="white-space:normal;" class="' + CswMobileCssClasses.proplabel.name + '">' + propName + '</h2>');
+
+        if (prop.showLabel !== false) {
+            $label = $('<h2 id="' + propId + '_label" style="white-space:normal;" class="' + CswMobileCssClasses.proplabel.name + '">' + propName + '</h2>');
+        }
         //prop.applyFieldTypeLogicToContent($label);
         $content = prop.$content;
-    })(); //ctor
+    })();  //ctor
 
     function getPropFromFieldType(field, ftDef) {
         /// <summary>
@@ -82,6 +84,9 @@ function CswMobilePropsFactory(propDef) {
                 break;
             case CswSubFields_Map.Barcode.name:
                 ret = new CswMobileFieldTypeBarcode(ftDef);                
+                break;
+            case CswSubFields_Map.Button.name:
+                ret = new CswMobileFieldTypeButton(ftDef);                
                 break;
             case CswSubFields_Map.Composite.name:
                 ret = new CswMobileFieldTypeStatic(ftDef);

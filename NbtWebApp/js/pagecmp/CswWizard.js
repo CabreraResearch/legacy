@@ -122,7 +122,7 @@
 
             _selectStep(table, o.SelectedStep);
             if (o.doNextOnInit) {
-                Csw.tryExec(o.onNext, table, o.SelectedStep);
+                Csw.tryExec(o.onNext, table.$, o.SelectedStep);
             }
 
             return table.$;

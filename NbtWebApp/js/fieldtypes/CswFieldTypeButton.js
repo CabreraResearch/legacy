@@ -8,14 +8,13 @@
     var onButtonClick = function (propid, button, messagediv, o) {
         var propAttr = Csw.string(propid),
             params;
-
         button.disable();
         if (Csw.isNullOrEmpty(propAttr)) {
             Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
             button.enable();
         } else {
             // case 25371 - Save the tab first
-            o.doSave({
+            Csw.tryExec(o.doSave, {
                 onSuccess: function () {
 
                     params = {
@@ -29,13 +28,10 @@
                             button.enable();
                             if (Csw.bool(data.success)) {
 
-                                // Button calls saveProps and saveProps calls getProps, so we'll need to display this on refresh
                                 if (false === Csw.isNullOrEmpty(data.message)) {
-                                    var MessageHandler = function (event, newmessagediv) {
-                                        $(newmessagediv).text(data.message);
-                                        Csw.unsubscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
-                                    };
-                                    Csw.subscribe(o.ID + 'CswFieldTypeButton_MessageHandler', MessageHandler);
+                                    // can't use messagediv, since doSave has remade the tab
+                                    var $newmessagediv = $('#' + messagediv.getId());
+                                    $newmessagediv.text(data.message);
                                 }
 
                                 switch (data.action) {
@@ -55,7 +51,7 @@
                                         break;
 
                                     case Csw.enums.nbtButtonAction.refresh:
-                                        o.onReload();
+                                        Csw.tryExec(o.onReload);
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:
                                         Csw.openPopup(data.actiondata, 600, 800);
@@ -71,7 +67,7 @@
                     }); // ajax.post()
                 } // doSave.onSuccess()
             }); // doSave()
-        }// if-else (Csw.isNullOrEmpty(propAttr)) {
+        } // if-else (Csw.isNullOrEmpty(propAttr)) {
     }; // onButtonClick()
 
     var methods = {
@@ -117,15 +113,13 @@
             }
 
             messagediv = table.cell(1, 2).div({
-                ID: Csw.controls.dom.makeId(o.ID, '', 'msg'),
+                ID: Csw.controls.dom.makeId(o.ID, '', 'msg', '', false),
                 cssclass: 'buttonmessage'
             });
 
             if (o.Required) {
                 button.addClass('required');
             }
-
-            Csw.publish(o.ID + 'CswFieldTypeButton_MessageHandler', messagediv.$);
 
         },
         save: function (o) {

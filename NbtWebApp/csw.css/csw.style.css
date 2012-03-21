@@ -1284,3 +1284,7 @@ ul li div {
             text-decoration: line-through;
 }
                 
+.error
+{
+    color: #ff0000;
+}

@@ -23,14 +23,19 @@
                 onNoResults: null,  // function({viewid, viewmode})
                 columns: 3,      // number of columns to use
                 rowpadding: 25,  // padding between table rows, in pixels
-                maxheight: 600,   // maximum display height of table, in pixels
+                //maxheight: 600,   // maximum display height of table, in pixels
                 tabledata: null
             };
             if (options) $.extend(o, options);
 
             var $parent = $(this);
             var parent = Csw.controls.factory($parent);
-            var scrollingDiv, layoutTable;
+            var tableDiv, layoutTable;
+
+            var singleColumn = false;
+            if(o.columns === 1) {
+                singleColumn = true;
+            }
 
             if (false == Csw.isNullOrEmpty(o.tabledata)) {
                 _HandleTableData(o.tabledata);
@@ -46,6 +51,31 @@
                 });
             }
 
+            function _getThumbnailCell(cellSet)
+            {
+                return cellSet[1][1];
+            }
+            function _getTextCell(cellSet)
+            {
+                var ret;
+                if(singleColumn) {
+                    ret = cellSet[1][2];
+                } else {
+                    ret = cellSet[2][1];
+                }
+                return ret;
+            }
+            function _getButtonCell(cellSet)
+            {
+                var ret;
+                if(singleColumn) {
+                    ret = cellSet[2][2];
+                } else {
+                    ret = cellSet[3][1];
+                }
+                return ret;
+            }
+
             function _HandleTableData(data) {
                 var r = 1;
                 var c = 1;
@@ -59,73 +89,121 @@
                         r += 1;
                     }
                     var cellSet = layoutTable.cellSet(r, c);
-                    var width = (1 / o.columns * 100) + '%';
-                    var thumbnailCell = cellSet[1][1]
+                    var thumbwidth = (1 / o.columns * 100) + '%';
+                    var textwidth = (1 / o.columns * 100) + '%';
+                    var imgwidth = '75%';
+                    var verticalAlign = 'bottom';
+                    var bborder = '1px solid #cccccc';
+                    var cellpad = o.rowpadding + 'px';
+                    if(singleColumn) {
+                        thumbwidth = '25%';
+                        textwidth = '75%';
+                        verticalAlign = 'top';
+                        imgwidth = '90%';
+                        cellpad = '10px';
+                    }
+                    var thumbnailCell = _getThumbnailCell(cellSet)
                                             .css({
-                                                paddingTop: o.rowpadding + 'px',
-                                                width: width,
-                                                verticalAlign: 'bottom'
+                                                width: thumbwidth,
+                                                verticalAlign: verticalAlign,   
+                                                paddingTop: cellpad,
                                             });
-                    var textCell = cellSet[2][1]
+                    var textCell = _getTextCell(cellSet)
                                             .css({
-                                                width: width
+                                                width: textwidth,
+                                                paddingTop: cellpad,
+                                            });
+                    if(singleColumn)
+                    {
+                        cellSet[2][1].css({
+                            borderBottom: bborder,
+                            paddingBottom: cellpad
+                        });
+                    }
+                    var btncell = _getButtonCell(cellSet)
+                                            .css({
+                                                borderBottom: bborder,
+                                                paddingBottom: cellpad
                                             });
 
-                    thumbnailCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
-                    textCell.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid); }, Csw.nodeHoverOut);
 
-                    // Name
-                    textCell.append('<b>' + nodeObj.nodename + '</b>');
+                    var thumbtable = thumbnailCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
+                    var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
 
                     if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                        thumbnailCell.img({
+                        thumbtable.cell(1,1).img({
                             src: nodeObj.thumbnailurl
-                        }).css({ width: '40%' });
+                        }).css({ width: imgwidth });
                     }
+                    var moreinfoimg = thumbtable.cell(1,2).css({ width: '25px' })
+                        .img({
+                           src: 'Images/info.png',
+                           title: 'More Info'
+                        });
+                    moreinfoimg.propNonDom({ valign: 'top' });
+                    moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
+
                     thumbnailCell.br();
 
+                    // Name
+                    var maintextcell = texttable.cell(1,1);
+                    maintextcell.append('<b>' + nodeObj.nodename + '</b>');
+
                     if (Csw.bool(nodeObj.locked)) {
-                        textCell.img({
+                        maintextcell.img({
                             src: 'Images/quota/lock.gif',
                             title: 'Quota exceeded'
                         });
                     }
-                    textCell.br();
+                    maintextcell.br();
+
+                    var btnTable = btncell.table({
+                        ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl'),
+                        cellspacing: '5px'
+                    });
+                    var btncol = 1;
 
                     // Props
                     Csw.crawlObject(nodeObj.props, function (propObj) {
                         if (propObj.fieldtype == "Button") {
 
-                            var propDiv = textCell.div();
+                            // Object Class Buttons
+                            var propDiv = btnTable.cell(1,btncol).div();
+                            propObj.propData.values.mode = 'link';      // force link
                             $.CswFieldTypeFactory('make', {
                                 nodeid: nodeid,
                                 fieldtype: propObj.fieldtype,
+                                propid: propObj.propid,
                                 propDiv: propDiv,
                                 propData: propObj.propData,
                                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: propObj.id }),
-                                EditMode: Csw.enums.EditMode.Table
+                                EditMode: Csw.enums.editMode.Table,
+                                doSave: function(saveoptions) { 
+                                    // Nothing to save in this case, so just call onSuccess
+                                    var s = { onSuccess: null };
+                                    if(saveoptions) $.extend(s, saveoptions);
+                                    Csw.tryExec(s.onSuccess);
+                                },
+                                onReload: null
                             });
+                            btncol += 1;
 
                         } else {
-                            textCell.span({text: propObj.propname + ': ' + propObj.gestalt});
+                            maintextcell.span({text: propObj.propname + ': ' + propObj.gestalt});
+                            maintextcell.br();
                         }
-                        textCell.br();
                     });
 
-                    // Buttons
-                    var btnTable = textCell.table({
-                        ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl')
-                    });
-
+                    // System Buttons
                     if (nodeObj.allowview || nodeObj.allowedit) {
                         var btntext = "View";
                         if (nodeObj.allowedit) {
                             btntext = "Edit";
                         }
-                        btnTable.cell(1, 1).button({
+                        btnTable.cell(1, btncol).link({
                             ID: Csw.controls.dom.makeId( o.ID, nodeid, 'editbtn' ),
-                            enabledText: btntext,
-                            disableOnClick: false,
+                            text: btntext,
+                            //disableOnClick: false,
                             onClick: function () {
                                 $.CswDialog('EditNodeDialog', {
                                     nodeids: [nodeid],
@@ -136,13 +214,14 @@
                                 }); // CswDialog
                             } // onClick
                         }); // CswButton
+                        btncol += 1;
                     } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                     if (nodeObj.allowdelete) {
-                        btnTable.cell(1, 2).button({
+                        btnTable.cell(1, btncol).link({
                             ID: Csw.controls.dom.makeId(o.ID, nodeid, 'btn' ),
-                            enabledText: 'Delete',
-                            disableOnClick: false,
+                            text: 'Delete',
+                            //disableOnClick: false,
                             onClick: function () {
                                 $.CswDialog('DeleteNodeDialog', {
                                     nodenames: [nodeObj.nodename],
@@ -152,6 +231,7 @@
                                 }); // CswDialog
                             } // onClick
                         }); // CswButton
+                        btncol += 1;
                     } // if (nodeObj.allowdelete)
 
                     c += 1;
@@ -162,18 +242,27 @@
                     Csw.tryExec(o.onNoResults, { viewid: o.viewid, viewmode: Csw.enums.viewMode.table.name });
                 } else {
 
-                    scrollingDiv = parent.div({
+                    tableDiv = parent.div({
                         ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' }),
-                        height: o.maxheight + 'px',
-                        styles: { overflow: 'auto' }
+                        //height: o.maxheight + 'px',
+                        //styles: { overflow: 'auto' }
                     });
 
-                    layoutTable = scrollingDiv.layoutTable({
+                    var cellalign = 'left';
+                    var cellset = { rows: 3, columns: 1 };
+                    var cellspacing = '5px';
+                    if(singleColumn) {
+                        cellalign = 'left';
+                        cellset = { rows: 2, columns: 2 }
+                        cellspacing = '0px';
+                    }
+
+                    layoutTable = tableDiv.layoutTable({
                         ID: o.ID + '_tbl',
-                        cellSet: { rows: 2, columns: 1 },
-                        cellalign: 'center',
+                        cellSet: cellset,
+                        cellalign: cellalign,
                         width: '100%',
-                        cellspacing: '5px'
+                        cellspacing: cellspacing
                     });
 
                     Csw.crawlObject(data.nodes, _makeNodeCell);

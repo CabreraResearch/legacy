@@ -153,6 +153,8 @@
             Refresh: 9,
             SaveStatus: 13,
             Select: 32,
+            TableSingleColumn: 33,
+            TableMultiColumn: 34,
             ToggleActive: 1,
             ToggleInactive: 0,
             View: 8

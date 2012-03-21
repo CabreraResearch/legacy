@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
             _View = View;
+            _CswNbtResources.EditMode = NodeEditMode.Table;
         }
 
         public JObject getTable()
@@ -156,7 +157,7 @@ namespace ChemSW.Nbt.WebServices
             if( NodeType != null )
             {
                 // default image, overridden below
-                ret["thumbnailurl"] = "Images/icons/" + NodeType.IconFileName;
+                ret["thumbnailurl"] = "Images/icons/300/" + NodeType.IconFileName;
             }
 
             // Map property order to insert position
@@ -219,7 +220,7 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
                             CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
-                            JProperty JpPropData = ws.makePropJson( NodeEditMode.Table, NodeId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue );
+                            JProperty JpPropData = ws.makePropJson( NodeId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue );
                             JObject PropData = (JObject) JpPropData.Value;
 
                             JObject PropValues = new JObject();

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
+using ChemSW.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -69,6 +72,29 @@ namespace ChemSW.Nbt.WebServices
             }
 
         }
+
+        public CswNbtResources makeSystemUserResources( string AccessId, bool ExcludeDisabledModules = true, bool IsDeleteModeLogical = true )
+        {
+            CswNbtResources NbtSystemResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, ExcludeDisabledModules, IsDeleteModeLogical, new CswSuperCycleCacheDefault() );
+            NbtSystemResources.AccessId = AccessId;
+            NbtSystemResources.InitCurrentUser = _InitSystemUser;
+            return NbtSystemResources;
+        }
+
+        private ICswUser _InitSystemUser( ICswResources Resources )
+        {
+            return new CswNbtSystemUser( Resources, "CswNbtWebServiceNbtManager_SystemUser" );
+        }
+
+        public void finalizeOtherResources( CswNbtResources NbtOtherResources )
+        {
+            if( null != NbtOtherResources )
+            {
+                NbtOtherResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
+                NbtOtherResources.finalize();
+                NbtOtherResources.release();
+            }
+        } //finalizeOtherResources
 
     } // class CswNbtWebServiceMetaData
 

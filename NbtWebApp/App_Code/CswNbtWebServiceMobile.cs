@@ -39,11 +39,17 @@ namespace ChemSW.Nbt.WebServices
             // All Views
             JObject RetJson = new JObject();
             Dictionary<CswNbtViewId, CswNbtView> MobileViews = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, CurrentUser, false, _ForMobile, false, NbtViewRenderingMode.Any );
-            foreach( CswNbtView MobileView in MobileViews.Values )
+            if( MobileViews.Count == 0 )
             {
-                RetJson.Add( new JProperty( MobileView.ViewId.ToString(), MobileView.ViewName ) );
+                RetJson["-1"] = "No Views Have Been Configured for Mobile.";
             }
-
+            else
+            {
+                foreach ( CswNbtView MobileView in MobileViews.Values )
+                {
+                    RetJson[MobileView.ViewId.ToString()] = MobileView.ViewName;
+                }
+            }
             return RetJson;
         } // Run()
 
@@ -270,7 +276,7 @@ namespace ChemSW.Nbt.WebServices
                     TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
                     TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
-                    PropWrapper.ToJSON( (JObject) TabObj[PropId], NodeEditMode.Edit, Tabs[i] );
+                    PropWrapper.ToJSON( (JObject) TabObj[PropId], Tabs[i] );
                 }
 
             }
@@ -369,7 +375,7 @@ namespace ChemSW.Nbt.WebServices
                     JObject PropObj = (JObject) Prop.Value;
 
                     CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( Node.NodeTypeId, CswConvert.ToString( PropObj["currenttab"] ) );
-                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, NodeEditMode.Edit, Tab );
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
 
                     //Case 20964. Client needs to know whether the inspection is complete.
                     if( false == Ret && Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )

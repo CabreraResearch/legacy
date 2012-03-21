@@ -25,19 +25,19 @@ namespace ChemSW.Nbt.Schema
 
             #region case 24459
 
-            CswTableUpdate ObjectClassUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "createcomponentobjectclass", "object_class" );
+            CswTableUpdate ObjectClassUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "creatematerialcomponentobjectclass", "object_class" );
             DataTable ObjectClasstable = ObjectClassUpdate.getEmptyTable();
             DataRow NewObjectClassRow = ObjectClasstable.NewRow();
             ObjectClasstable.Rows.Add( NewObjectClassRow );
-            NewObjectClassRow["objectclass"] = CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass.ToString();
+            NewObjectClassRow["objectclass"] = CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass.ToString();
             ObjectClassUpdate.update( ObjectClasstable );
 
-            CswNbtMetaDataObjectClassProp ComponentNumberProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass, CswNbtObjClassComponent.PercentagePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number );
+            CswNbtMetaDataObjectClassProp ComponentNumberProp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass, CswNbtObjClassMaterialComponent.PercentagePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number );
 
-            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( _CswNbtSchemaModTrnsctn.getModuleId( CswNbtResources.CswNbtModule.CISPro ), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ComponentClass ).ObjectClassId );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( _CswNbtSchemaModTrnsctn.getModuleId( CswNbtResources.CswNbtModule.CISPro ), _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ).ObjectClassId );
 
 
-            string ComponentNodeTypeName = "Component";
+            string ComponentNodeTypeName = "Material Component";
             CswNbtMetaDataNodeType ComponentNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass.ToString(), ComponentNodeTypeName, MaterialsCategory );
             CswNbtView ComponentView = _CswNbtSchemaModTrnsctn.makeView();
             ComponentView.makeNew( "Components", NbtViewVisibility.Global, null, null, null );

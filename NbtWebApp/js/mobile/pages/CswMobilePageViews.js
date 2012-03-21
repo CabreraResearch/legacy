@@ -62,7 +62,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
         } 
     }
     
-    function refreshViewJson(onSuccess) {
+    function refreshViewJson(onSuccess, runOnce) {
         ///<summary>Fetches the current views list from the web server and rebuilds the list.</summary>
         var getViewsUrl = '/NbtWebApp/wsNBT.asmx/GetViewsList',
             ret = {};
@@ -86,7 +86,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
 
                     mobileStorage.storeViewJson(id, title, data, 0);
 
-                    refreshViewContent(data,onSuccess);
+                    refreshViewContent(data,onSuccess,runOnce);
                 },
                 error: function() {
                     onError();
@@ -94,7 +94,7 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
             });
     }
     
-    function refreshViewContent(viewJson,onSuccess) {
+    function refreshViewContent(viewJson,onSuccess,runOnce) {
         ///<summary>Rebuilds the views list from JSON</summary>
         ///<param name="viewJson" type="Object">JSON representing a list of views</param>
         var ulDef, listView, viewId, viewName, opts, onClick,
@@ -103,44 +103,49 @@ function CswMobilePageViews(viewsDef, $parent, mobileStorage, $contentRole) {
             viewJson = mobileStorage.fetchStoredViews();
         }
         if (isNullOrEmpty(viewJson)) {
-            refreshViewJson(onSuccess);
-        } else {
-            ulDef = {
-                ID: id + ulSuffix,
-                cssclass: CswMobileCssClasses.listview.name
-            };
-            listView = new CswMobileListView(ulDef, $content);
-
-            for (viewId in viewJson) {
-                if (contains(viewJson, viewId)) {
-                    viewName = viewJson[viewId];
-                    opts = {
-                        ParentId: id,
-                        DivId: viewId,
-                        viewId: viewId,
-                        level: 1,
-                        title: viewName,
-                        onHelpClick: pageDef.onHelpClick,
-                        onOnlineClick: pageDef.onOnlineClick,
-                        onRefreshClick: pageDef.onRefreshClick,
-                        mobileStorage: mobileStorage
-                    };
-
-                    onClick = makeDelegate(pageDef.onListItemSelect, opts);
-                    listView.addListItemLink(viewId, viewName, onClick);
-                    viewCount += 1;
-                }
+            if (true === runOnce) {
+                viewJson = {};
+            } else {
+                 return refreshViewJson(onSuccess, true);
             }
-            if (viewCount === 0) {
-                listView.addListItemHtml('no_results', 'No Mobile Views to Display');
-            }
+        } 
+        ulDef = {
+            ID: id + ulSuffix,
+            cssclass: CswMobileCssClasses.listview.name
+        };
+        listView = new CswMobileListView(ulDef, $content);
 
-            if (false === mobileStorage.stayOffline()) {
-                toggleOnline(mobileStorage);
+        for (viewId in viewJson) {
+            if (viewId !== -1 && 
+                contains(viewJson, viewId)) {
+                viewName = viewJson[viewId];
+                opts = {
+                    ParentId: id,
+                    DivId: viewId,
+                    viewId: viewId,
+                    level: 1,
+                    title: viewName,
+                    onHelpClick: pageDef.onHelpClick,
+                    onOnlineClick: pageDef.onOnlineClick,
+                    onRefreshClick: pageDef.onRefreshClick,
+                    mobileStorage: mobileStorage
+                };
+
+                onClick = makeDelegate(pageDef.onListItemSelect, opts);
+                listView.addListItemLink(viewId, viewName, onClick);
+                viewCount += 1;
             }
-            $contentRole.append($content);
-            doSuccess(onSuccess, $contentRole, { 1: 1 }, 1, $content);
         }
+        if (viewCount === 0) {
+            listView.addListItemHtml('no_results', 'No Mobile Views to Display');
+        }
+
+        if (false === mobileStorage.stayOffline()) {
+            toggleOnline(mobileStorage);
+        }
+        $contentRole.append($content);
+        doSuccess(onSuccess, $contentRole, { 1: 1 }, 1, $content);
+        
     }
     
     //#endregion private
