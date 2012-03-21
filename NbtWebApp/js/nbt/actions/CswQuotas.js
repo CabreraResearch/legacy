@@ -22,7 +22,7 @@
             var quotaJson;
 
             function initTable() {
-                div.contents().remove();
+                div.empty();
                 table = div.table({
                     ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
                     border: 1,
