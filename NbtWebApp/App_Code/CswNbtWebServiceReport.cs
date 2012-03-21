@@ -45,36 +45,7 @@ namespace ChemSW.Nbt.WebServices
                     
                     if( "csv" == rformat.ToLower() )
                     {
-                        Context.Response.ClearContent();                        
-                        //Context.Response.ContentType = "application/vnd.ms-excel";
-                        bool headers = false;
-                        //DataColumn rows
-                        foreach( DataRow dr in rptDataTbl.Rows )
-                        {
-                            int idx = 0;
-                            if( false == headers )
-                            {
-                                foreach(DataColumn dc in rptDataTbl.Columns )
-                                {
-                                    if( idx > 0 ) Context.Response.Write( "," );
-                                    Context.Response.Write( "\"" + dc.ColumnName.ToString() + "\"" );
-                                    idx++;
-                                }
-                                Context.Response.Write( "\r\n" );
-                                idx = 0;
-                                headers = true;
-                            }
-                            foreach( DataColumn dc in rptDataTbl.Columns )
-                            {
-                                if( idx > 0 ) Context.Response.Write( "," );
-                                Context.Response.Write( "\"" + dr[dc].ToString() + "\"" );
-                                idx++;
-                            }
-                            Context.Response.Write( "\r\n" );
-                        }
-
-                        Context.Response.AddHeader( "Content-Disposition", "attachment; filename=export.csv;" );
-                        Context.Response.End();
+                        wsTools.ReturnCSV( Context, rptDataTbl );
                     }
                     else
                     {

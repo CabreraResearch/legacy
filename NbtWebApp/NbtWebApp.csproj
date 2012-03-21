@@ -1311,7 +1311,6 @@
     <Content Include="Main.js" />
     <Content Include="Popup_DesignAdd.aspx" />
     <Content Include="Popup_DesignDelete.aspx" />
-    <Content Include="Popup_Export.aspx" />
     <Content Include="SkinPrint\Calendar.ChemSWPrint.css" />
     <Content Include="SkinPrint\Calendar\arrowLeft.gif" />
     <Content Include="SkinPrint\Calendar\arrowLeftHover.gif" />
@@ -1528,9 +1527,7 @@
     <Compile Include="App_Code\CswNbtWebServiceWelcomeItems.cs" />
     <Compile Include="App_Code\CswPropIdAttr.cs" />
     <Compile Include="App_Code\TimingModule.cs" />
-    <Compile Include="App_Code\wsTools.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="App_Code\wsTools.cs" />
     <Compile Include="Base.master.cs">
       <DependentUpon>Base.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -1586,13 +1583,6 @@
     </Compile>
     <Compile Include="Popup_DesignDelete.aspx.designer.cs">
       <DependentUpon>Popup_DesignDelete.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="Popup_Export.aspx.cs">
-      <DependentUpon>Popup_Export.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Popup_Export.aspx.designer.cs">
-      <DependentUpon>Popup_Export.aspx</DependentUpon>
     </Compile>
     <Compile Include="PrintableLayout.master.cs">
       <DependentUpon>PrintableLayout.master</DependentUpon>

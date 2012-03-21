@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
+using System.Web;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Logic;
@@ -196,6 +198,55 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        public void ExportCsv(HttpContext Context)
+        {
+            DataTable DT = new DataTable();
+
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            Tree.goToRoot();
+            if( _View.Visibility == NbtViewVisibility.Property )
+            {
+                Tree.goToNthChild( 0 );
+            }
+            Int32 NodeCount = Tree.getChildNodeCount();
+            bool IsTruncated = false;
+            if( NodeCount > 0 )
+            {
+                foreach( CswViewBuilderProp VbProp in _PropsInGrid )
+                {
+                    DT.Columns.Add( VbProp.PropName );
+                }
+
+                for( Int32 C = 0; C < NodeCount; C += 1 )
+                {
+                    Tree.goToNthChild( C );
+
+                    DataRow Row = DT.NewRow();
+                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    {
+                        if( DT.Columns.Contains( Prop["propname"].ToString() ) )
+                        {
+                            Row[Prop["propname"].ToString()] = Prop["gestalt"].ToString();
+                        }
+                    }
+                    DT.Rows.Add( Row );
+
+                    IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
+
+                    Tree.goToParentNode();
+                }
+
+                if( IsTruncated )
+                {
+                    DataRow Row = DT.NewRow();
+                    Row[DT.Columns[0]] = "Results Truncated";
+                    DT.Rows.Add( Row );
+                }
+            }
+
+            wsTools.ReturnCSV( Context, DT );
+        } // ExportCsv()
+
         /// <summary>
         /// Returns a thin JArray of grid row values
         /// </summary>
@@ -203,7 +254,6 @@ namespace ChemSW.Nbt.WebServices
         {
             JArray RetRows = new JArray();
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
-            Int32 StartingNode = 0;
             if( _View.Visibility == NbtViewVisibility.Property )
             {
                 Tree.goToNthChild( 0 );
@@ -222,7 +272,7 @@ namespace ChemSW.Nbt.WebServices
                     HeaderCols.Add( VbProp.PropName );
                 }
 
-                for( Int32 C = StartingNode; C < MaxRows && C < NodeCount; C += 1 )
+                for( Int32 C = 0; C < MaxRows && C < NodeCount; C += 1 )
                 {
                     Tree.goToNthChild( C );
 
