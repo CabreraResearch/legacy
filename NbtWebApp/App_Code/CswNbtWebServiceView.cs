@@ -129,6 +129,15 @@ namespace ChemSW.Nbt.WebServices
             return NewObj;
         }
 
+        public JArray getViewSelectRecent()
+        {
+            JArray ret = new JArray();
+            JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
+            _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
+            return ret;
+        } // getViewSelectRecent()
+
+
         public JArray getViewSelect( bool IsSearchable )
         {
             JArray ret = new JArray();
