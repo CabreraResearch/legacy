@@ -1,53 +1,99 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
-(function _cswbutton() {
+(function () {
     'use strict';
 
-    function button(options) {
-        /// <summary> Create or extend an HTML <button /> and return a Csw.button object
-        ///     &#10;1 - button(options)
-        ///     &#10;2 - button($jqueryElement)
-        ///</summary>
-        /// <param name="options" type="Object">
-        /// <para>A JSON Object</para>
-        /// <para>options.$parent: An element to attach to.</para>
-        /// <para>options.ID: An ID for the button.</para>
-        /// <para>options.cssclass: CSS class to asign</para>
-        /// <para>options.enabledText: Text to display when enabled</para>
-        /// <para>options.disabledText: Text to display when disabled</para>
-        /// <para>options.disableOnClick: Disable the button when it's clicked</para>
-        /// <para>options.onclick: Event to execute when the button is clicked</para>
-        /// </param>
-        /// <returns type="button">A button object</returns>
-        var internal = {
-            $parent: '',
-            ID: '',
-            enabledText: '',
-            disabledText: '',
-            cssclass: '',
-            hasText: true,
-            disableOnClick: true,
-            primaryicon: '',
-            secondaryicon: '',
-            onclick: null
-        };
-        var external = {};
+    Csw.controls.button = Csw.controls.button ||
+        Csw.controls.register('button', function(options) {
+            /// <summary> Create or extend an HTML <button /> and return a Csw.button object
+            ///     &#10;1 - button(options)
+            ///     &#10;2 - button($jqueryElement)
+            ///</summary>
+            /// <param name="options" type="Object">
+            /// <para>A JSON Object</para>
+            /// <para>options.$parent: An element to attach to.</para>
+            /// <para>options.ID: An ID for the button.</para>
+            /// <para>options.cssclass: CSS class to asign</para>
+            /// <para>options.enabledText: Text to display when enabled</para>
+            /// <para>options.disabledText: Text to display when disabled</para>
+            /// <para>options.disableOnClick: Disable the button when it's clicked</para>
+            /// <para>options.onClick: Event to execute when the button is clicked</para>
+            /// </param>
+            /// <returns type="button">A button object</returns>
+            var internal = {
+                $parent: '',
+                ID: '',
+                enabledText: '',
+                disabledText: '',
+                cssclass: '',
+                hasText: true,
+                disableOnClick: true,
+                primaryicon: '',
+                secondaryicon: '',
+                onClick: null
+            };
+            var external = { };
 
-        (function () {
-            var $button;
-            var buttonOpt;
-            var isjQuery = Csw.isJQuery(options);
+            external.enable = function() {
+                /// <summary>Enable the button.</summary>
+                /// <returns type="button">The button object.</returns>
+                if (external.length() > 0) {
+                    external.$.button({
+                        label: external.propNonDom('enabledText'),
+                        disabled: false
+                    });
+                }
+                return external;
+            };
+            external.disable = function() {
+                /// <summary>Disable the button.</summary>
+                /// <returns type="button">The button object.</returns>
+                if (external.length() > 0) {
+                    external.$.button({
+                        label: external.propNonDom('disabledText'),
+                        disabled: true
+                    });
+                }
+                return external;
+            };
 
-            if (isjQuery) {
-                $button = options;
-                Csw.controls.domExtend($button, external);
-            } else {
+            external.click = function(func) {
+                /// <summary>Trigger or assign a button click event.</summary>
+                /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
+                /// <returns type="button">The button object.</returns>
+                if (Csw.isFunction(func)) {
+                    external.bind('click', func);
+                } else {
+                    external.trigger('click');
+                }
+                return external;
+            };
+
+            (function() {
                 if (options) {
                     $.extend(internal, options);
                 }
-                internal.type = Csw.enums.inputTypes.button.name;
-                external = Csw.controls.input(internal);
+                internal.type = Csw.enums.inputTypes.button;
+                var buttonOpt;
+                var internalOnClick = Csw.makeDelegate(internal.onClick);
+
+                function onClick() {
+                    var doEnable = function() {
+                        external.enable();
+                        Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
+                    };
+                    if (internal.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
+                        external.disable();
+                        Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
+                    }
+                    Csw.tryExec(internalOnClick, arguments);
+                }
+
+                internal.onClick = onClick;
+
+                $.extend(external, Csw.controls.input(internal));
+
 
                 external.propNonDom({
                     enabledText: internal.enabledText,
@@ -71,43 +117,11 @@
                     buttonOpt.label = internal.disabledText;
                 }
                 external.$.button(buttonOpt);
-            }
-        } ());
 
-        external.enable = function () {
-            /// <summary>Enable the button.</summary>
-            /// <returns type="button">The button object.</returns>
-            if (external.length() > 0) {
-                external.$.button({
-                    label: external.propNonDom('enabledText'),
-                    disabled: false
-                });
-            }
-            return external;
-        };
-        external.disable = function () {
-            /// <summary>Disable the button.</summary>
-            /// <returns type="button">The button object.</returns>
-            if (external.length() > 0) {
-                external.$.button({
-                    label: external.propNonDom('disabledText'),
-                    disabled: true
-                });
-            }
-            return external;
-        };
+            }());
 
-        external.click = function () {
-            /// <summary>Trigger a button click.</summary>
-            /// <returns type="button">The button object.</returns>
-            external.trigger('click');
             return external;
-        };
-
-        return external;
-    }
-    Csw.controls.register('button', button);
-    Csw.controls.button = Csw.controls.button || button;
+        });
 
 } ());
 
