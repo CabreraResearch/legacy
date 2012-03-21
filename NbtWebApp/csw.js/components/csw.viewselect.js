@@ -59,8 +59,8 @@
                 var linkcell = tbl.cell(row, 2).addClass('viewselectitemcell');
                 linkcell.text(itemobj.name);
 
-                iconcell.$.click(function () { internal.handleSelect(itemobj); });
-                linkcell.$.click(function () { internal.handleSelect(itemobj); });
+                iconcell.bind('click', function () { internal.handleSelect(itemobj); });
+                linkcell.bind('click', function () { internal.handleSelect(itemobj); });
 
                 linkcell.$.hover(
                     function () {
