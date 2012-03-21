@@ -209,7 +209,7 @@
                                     onEditNode: o.onEditNode
                                 }); // CswDialog
                             } // onClick
-                        }); // CswButton
+                        }); // 
                         btncol += 1;
                     } // if (nodeObj.allowview || nodeObj.allowedit) 
 
@@ -226,7 +226,7 @@
                                     onDeleteNode: o.onDeleteNode
                                 }); // CswDialog
                             } // onClick
-                        }); // CswButton
+                        }); // 
                         btncol += 1;
                     } // if (nodeObj.allowdelete)
 

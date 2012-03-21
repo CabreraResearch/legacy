@@ -16,17 +16,17 @@
 
             if (options) $.extend(o, options);
 
-            var $div = $('<div></div>');
+            var div = Csw.controls.div();
 
-            $div.append('<p>Your session is about to time out.  Would you like to continue working?</p>');
+            div.p('Your session is about to time out.  Would you like to continue working?');
 
-            $div.CswButton({
+            div.button({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
                 onClick: function () { $div.dialog('close'); o.onYes(); }
             });
 
-            openDialog($div, 300, 250, null, 'Expire Warning');
+            openDialog(div, 300, 250, null, 'Expire Warning');
 
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {
@@ -36,17 +36,16 @@
 
             if (options) $.extend(o, options);
 
-            var $div = $('<div></div>');
+            var div = Csw.controls.div();
 
-            $div.CswWelcome('getAddItemForm', { 'onAdd': function () {
-                $div.dialog('close');
-                if (Csw.isFunction(o.onAdd)) {
-                    o.onAdd();
+            div.$.CswWelcome('getAddItemForm', {
+                'onAdd': function () {
+                    div.$.dialog('close');
+                    Csw.tryExec(o.onAdd);
                 }
-            }
             });
 
-            openDialog($div, 400, 400, null, 'New Welcome Item');
+            openDialog(div, 400, 400, null, 'New Welcome Item');
 
         }, // AddWelcomeItemDialog
         AddViewDialog: function (options) {
@@ -58,9 +57,8 @@
             };
             if (options) $.extend(o, options);
 
-            var $div = $('<div></div>');
-            var table = Csw.controls.table({
-                $parent: $div,
+            var div = Csw.controls.div();
+            var table = div.table({
                 ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
                 FirstCellRightAlign: true
             });
@@ -83,13 +81,17 @@
             }
 
             var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
-            var $savebtn = $div.CswButton({
+            var saveBtn = div.button({
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
                 disabledText: 'Creating View',
                 onClick: function () {
 
-                    var createData = {};
+                    var createData = {
+                        Visibility: '',
+                        VisibilityRoleId: '',
+                        VisibilityUserId: ''
+                    };
                     createData.ViewName = nameTextBox.val();
                     createData.ViewId = o.viewid;
                     if (Csw.isNullOrEmpty(o.viewmode)) {
@@ -97,40 +99,35 @@
                     } else {
                         createData.ViewMode = o.viewmode;
                     }
-                    if (!Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
+
+                    if (false === Csw.isNullOrEmpty(visSelect.$visibilityselect)) {
                         createData.Visibility = visSelect.$visibilityselect.val();
                         createData.VisibilityRoleId = visSelect.$visroleselect.val();
                         createData.VisibilityUserId = visSelect.$visuserselect.val();
-                    } else {
-                        createData.Visibility = "";
-                        createData.VisibilityRoleId = "";
-                        createData.VisibilityUserId = "";
                     }
 
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/createView',
                         data: createData,
                         success: function (data) {
-                            $div.dialog('close');
+                            div.$.dialog('close');
                             Csw.tryExec(o.onAddView, data.newviewid, createData.ViewMode);
                         },
-                        error: function () {
-                            $savebtn.CswButton('enable');
-                        }
+                        error: saveBtn.enable
                     });
                 }
             });
             /* Cancel Button */
-            $div.CswButton({
+            div.button({
                 ID: o.ID + '_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
-                    $div.dialog('close');
+                    div.$.dialog('close');
                 }
             });
 
-            openDialog($div, 400, 200, null, 'New View');
+            openDialog(div, 400, 200, null, 'New View');
         }, // AddViewDialog
         AddNodeDialog: function (options) {
             var o = {
@@ -144,20 +141,21 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div></div>'),
+            var div = Csw.controls.div(),
                 title = 'New ' + o.text;
-            $div.CswNodeTabs({
+
+            div.$.CswNodeTabs({
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
                 EditMode: Csw.enums.editMode.Add,
                 ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey) {
-                    $div.dialog('close');
+                    div.$.dialog('close');
                     Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey);
                 },
                 onInitFinish: function () {
-                    openDialog($div, 800, 600, null, title);
+                    openDialog(div, 800, 600, null, title);
                 },
                 ShowAsReport: false
             });
@@ -175,23 +173,21 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div></div>'),
-                $newNode;
+            var div = Csw.controls.div(),
+                newNode;
 
-            $div.append('New ' + o.nodetypename + ': ');
-            $newNode = $div.CswInput('init', { ID: o.ID + '_newNode', type: Csw.enums.inputTypes.text });
+            div.append('New ' + o.nodetypename + ': ');
+            newNode = div.input({ ID: o.ID + '_newNode', type: Csw.enums.inputTypes.text });
 
-            $div.CswButton({
+            div.button({
                 ID: o.objectClassId + '_add',
                 enabledText: 'Add',
                 onClick: function () {
-                    if (Csw.isFunction(o.onSuccess)) {
-                        o.onSuccess($newNode.val());
-                    }
-                    $div.dialog('close');
+                    Csw.tryExec(o.onSuccess, newNode.val());
+                    div.$.dialog('close');
                 }
             });
-            openDialog($div, 300, 200, null, o.title);
+            openDialog(div, 300, 200, null, o.title);
         }, // AddNodeClientSideDialog
         AddNodeTypeDialog: function (options) {
             var o = {
@@ -199,7 +195,7 @@
                 nodetypename: '',
                 maxlength: 50, //DB nodetypename = varchar(50)
                 category: '',
-                $select: '',
+                select: '',
                 nodeTypeDescriptor: '',
                 onSuccess: null,
                 title: ''
@@ -209,48 +205,44 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div></div>'),
-                $nodeType, $category, $addBtn,
+            var div = Csw.controls.div(),
+                nodeTypeInp, categoryInp, addBtn,
                 category = Csw.string(o.category);
 
-            $div.append('New ' + o.nodeTypeDescriptor + ': ');
-            $nodeType = $div.CswInput('init', { ID: o.objectClassId + '_nodeType', type: Csw.enums.inputTypes.text, value: o.nodetypename, maxlength: o.maxlength });
-            $div.append('<br />');
+            div.append('New ' + o.nodeTypeDescriptor + ': ');
+            nodeTypeInp = div.input({ ID: o.objectClassId + '_nodeType', type: Csw.enums.inputTypes.text, value: o.nodetypename, maxlength: o.maxlength });
+            div.br();
             if (Csw.isNullOrEmpty(category)) {
-                $div.append('Category Name: ');
-                $category = $div.CswInput('init', { ID: o.objectClassId + '_category', type: Csw.enums.inputTypes.text });
-                $div.append('<br />');
+                div.append('Category Name: ');
+                categoryInp = div.input({ ID: o.objectClassId + '_category', type: Csw.enums.inputTypes.text });
+                div.br();
             }
-            $addBtn = $div.CswButton({
+            addBtn = div.button({
                 ID: o.objectClassId + '_add',
                 enabledText: 'Add',
                 onClick: function () {
-                    var newNodeTypeName = $nodeType.val();
+                    var newNodeTypeName = nodeTypeInp.val();
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                         async: false,
                         data: { 'NodeTypeName': newNodeTypeName },
                         success: function () {
-                            o.$select.append('<option data-newNodeType="true" value="' + $nodeType.val() + '">' + $nodeType.val() + '</option>');
-                            o.$select.val($nodeType.val());
-                            if (Csw.isNullOrEmpty(category) && false === Csw.isNullOrEmpty($category)) {
-                                category = $category.val();
+                            o.select.option({ value: nodeTypeInp.val() }).propNonDom({ 'data-newNodeType': true });
+                            o.select.val(nodeTypeInp.val());
+                            if (Csw.isNullOrEmpty(category) && false === Csw.isNullOrEmpty(categoryInp)) {
+                                category = categoryInp.val();
                             }
-                            $div.dialog('close');
-                            if (Csw.isFunction(o.onSuccess)) {
-                                o.onSuccess({
-                                    nodetypename: newNodeTypeName,
-                                    category: category
-                                });
-                            }
+                            div.$.dialog('close');
+                            Csw.tryExec(o.onSuccess, {
+                                nodetypename: newNodeTypeName,
+                                category: category
+                            });
                         },
-                        error: function () {
-                            $addBtn.CswButton('enable');
-                        }
+                        error: addBtn.enable
                     });
                 }
             });
-            openDialog($div, 400, 200, null, o.title);
+            openDialog(div, 400, 200, null, o.title);
         }, // AddNodeTypeDialog
         EditLayoutDialog: function (cswNodeTabOptions) {
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
@@ -264,9 +256,8 @@
                 _configAddOptions();
             };
 
-            var $div = $('<div></div>');
-            var table = Csw.controls.table({
-                $parent: $div,
+            var div = Csw.controls.div();
+            var table = div.table({
                 ID: 'EditLayoutDialog_table',
                 width: '100%'
             });
@@ -344,7 +335,7 @@
 
             _resetLayout();
 
-            openDialog($div, 900, 600, _onclose, 'Edit Layout');
+            openDialog(div, 900, 600, _onclose, 'Edit Layout');
         }, // EditLayoutDialog
         EditNodeDialog: function (options) {
             var o = {
@@ -362,12 +353,10 @@
             };
             if (options) $.extend(o, options);
 
-            var $div = $('<div></div>');
+            var div = Csw.controls.div();
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
-            var table = Csw.controls.table({
-                $parent: $div
-            });
+            var table = div.table();
             if (false === Csw.isNullOrEmpty(o.date) && false === o.Multi) {
                 myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
                 table.cell(1, 1).$.CswAuditHistoryGrid({
@@ -400,20 +389,16 @@
                     date: date,
                     ReloadTabOnSave: false,
                     onEditView: function (viewid) {
-                        if (Csw.isFunction(o.onEditView)) {
-                            $div.dialog('close');
-                            o.onEditView(viewid);
-                        }
+                        div.$.dialog('close');
+                        Csw.tryExec(o.onEditView, viewid);
                     },
                     onSave: function (nodeids, nodekeys, tabcount) {
                         Csw.clientChanges.unsetChanged();
                         if (tabcount === 1 || o.Multi) {
-                            $div.dialog('close');
+                            div.$.dialog('close');
                         }
                         setupTabs(date);
-                        if (Csw.isFunction(o.onEditNode)) {
-                            o.onEditNode(nodeids, nodekeys);
-                        }
+                        Csw.tryExec(o.onEditNode, nodeids, nodekeys);
                     },
                     onBeforeTabSelect: function () {
                         return Csw.clientChanges.manuallyCheckChanges();
@@ -430,7 +415,7 @@
             if (Csw.isNullOrEmpty(title)) {
                 title = (false === o.Multi) ? o.nodenames[0] : o.nodenames.join(', ');
             }
-            openDialog($div, 900, 600, null, title);
+            openDialog(div, 900, 600, null, title);
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
             var o = {
@@ -444,9 +429,10 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div>Copying: ' + o.nodename + '<br/><br/></div>');
+            var div = Csw.controls.div({ text: 'Copying: ' + o.nodename });
+            div.br().br();
 
-            var $copybtn = $div.CswButton({ ID: 'copynode_submit',
+            var copyBtn = div.button({ ID: 'copynode_submit',
                 enabledText: 'Copy',
                 disabledText: 'Copying',
                 onClick: function () {
@@ -454,25 +440,25 @@
                         'nodeid': o.nodeid,
                         'nodekey': o.nodekey,
                         'onSuccess': function (nodeid, nodekey) {
-                            $div.dialog('close');
+                            div.$.dialog('close');
                             o.onCopyNode(nodeid, nodekey);
                         },
                         'onError': function () {
-                            $copybtn.CswButton('enable');
+                            copyBtn.enable();
                         }
                     });
                 }
             });
             /* Cancel Button */
-            $div.CswButton({ ID: 'copynode_cancel',
+            div.button({ ID: 'copynode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
-                    $div.dialog('close');
+                    div.$.dialog('close');
                 }
             });
 
-            openDialog($div, 400, 300, null, 'Confirm Copy');
+            openDialog(div, 400, 300, null, 'Confirm Copy');
         }, // CopyNodeDialog       
         DeleteNodeDialog: function (options) {
             var o = {
@@ -489,7 +475,9 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div><span>Are you sure you want to delete:&nbsp;</span></div>');
+            var div = Csw.controls.div();
+            div.span({ text: 'Are you sure you want to delete:&nbsp;' });
+
 
             if (o.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
@@ -500,23 +488,22 @@
                     var n = 0;
                     //$nodechecks.each(function () {
                     Csw.each(nodechecks, function (thisObj) {
-                        //var $nodecheck = $(this);
-                        o.nodeids[n] = thisObj.nodeid; //$nodecheck.CswAttrNonDom('nodeid');
-                        o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey; //$nodecheck.CswAttrNonDom('cswnbtnodekey');
-                        $div.append('<br/><span style="padding-left: 10px;">' + thisObj.nodename + '</span>'); //$nodecheck.CswAttrNonDom('nodename') + '</span>');
-                        n++;
+                        o.nodeids[n] = thisObj.nodeid;
+                        o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey;
+                        div.br().span({ text: thisObj.nodename }).css({ 'padding-left': '10px' });
+                        n += 1;
                     });
                 } else {
                     for (var i = 0; i < o.nodenames.length; i++) {
-                        $div.append('<br/><span style="padding-left: 10px;">' + o.nodenames[i] + '</span>');
+                        div.br().span({ text: o.nodenames[i] }).css({ 'padding-left': '10px' });
                     }
                 }
             } else {
-                $div.append('<span>' + o.nodenames + '?</span>');
+                div.span({ text: o.nodenames + '?' });
             }
-            $div.append('<br/><br/>');
+            div.br().br();
 
-            var $deletebtn = $div.CswButton({ ID: 'deletenode_submit',
+            var deleteBtn = div.button({ ID: 'deletenode_submit',
                 enabledText: 'Delete',
                 disabledText: 'Deleting',
                 onClick: function () {
@@ -524,44 +511,39 @@
                         nodeids: o.nodeids,
                         nodekeys: o.cswnbtnodekeys,
                         onSuccess: function (nodeid, nodekey) {
-                            $div.dialog('close');
-                            if (Csw.isFunction(o.onDeleteNode)) {
-                                o.onDeleteNode(nodeid, nodekey);
-                            }
+                            div.$.dialog('close');
+                            Csw.tryExec(o.onDeleteNode, nodeid, nodekey);
                             if (Csw.bool(o.publishDeleteEvent)) {
                                 Csw.publish(Csw.enums.events.CswNodeDelete, { nodeids: o.nodeids, cswnbtnodekeys: o.cswnbtnodekeys });
                             }
                         },
-                        onError: function () {
-                            $deletebtn.CswButton('enable');
-                        }
+                        onError: deleteBtn.enable
                     });
                 }
             });
             /* Cancel Button */
-            $div.CswButton({ ID: 'deletenode_cancel',
+            div.button({ ID: 'deletenode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
-                    $div.dialog('close');
+                    div.$.dialog('close');
                 }
             });
-            openDialog($div, 400, 200, null, 'Confirm Delete');
+            openDialog(div, 400, 200, null, 'Confirm Delete');
         }, // DeleteNodeDialog
         AboutDialog: function () {
-            var $div = $('<div></div>');
+
+            var div = Csw.controls.div();
             Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/getAbout',
                 data: {},
                 success: function (data) {
-                    $div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
-                    var table = Csw.controls.table({
-                        $parent: $div,
+                    div.append('NBT Assembly Version: ' + data.assembly + '<br/><br/>');
+                    var table = div.table({
                         ID: 'abouttale'
                     });
 
                     var row = 1;
-
                     var components = data.components;
                     for (var comp in components) {
                         if (Csw.contains(components, comp)) {
@@ -575,7 +557,7 @@
                     }
                 }
             });
-            openDialog($div, 600, 400, null, 'About');
+            openDialog(div, 600, 400, null, 'About');
         }, // AboutDialog
         FileUploadDialog: function (options) {
             var o = {
@@ -587,33 +569,31 @@
                 $.extend(o, options);
             }
 
-            var $div = $('<div></div>');
+            var div = Csw.controls.div();
 
-            var $btn = $('<input id="fileupload" type="file" name="fileupload" />')
-                            .appendTo($div);
+            var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
 
-            $btn.fileupload({
+            uploadBtn.$.fileupload({
                 datatype: 'json',
                 url: o.url + '?' + $.param(o.params),
                 paramName: 'fileupload',
                 done: function () {
-                    $div.dialog('close');
-                    o.onSuccess();
+                    div.$.dialog('close');
+                    Csw.tryExec(o.onSuccess);
                 }
             });
 
-            $div.CswButton({ ID: 'fileupload_cancel',
+            div.button({ ID: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
-                    $div.dialog('close');
+                    div.$.dialog('close');
                 }
             });
 
-            openDialog($div, 400, 300, null, 'Upload');
+            openDialog(div, 400, 300, null, 'Upload');
         },
-
-        'EditMolDialog': function (options) {
+        EditMolDialog: function (options) {
             var o = {
                 TextUrl: '',
                 FileUrl: '',
@@ -624,60 +604,55 @@
             if (options) {
                 $.extend(o, options);
             }
+            var div = Csw.controls.div(),
+                molTxtArea, saveBtn;
 
-            var $div = $('<div></div>'),
-                $moltxtarea, $txtsave;
+            var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
 
-            var $btn = $('<input id="fileupload" type="file" name="fileupload" />')
-                            .appendTo($div);
-
-            $btn.fileupload({
+            uploadBtn.$.fileupload({
                 datatype: 'json',
                 url: o.FileUrl + '?' + $.param({ PropId: o.PropId }),
                 paramName: 'fileupload',
                 done: function (e, data) {
-                    $moltxtarea.text(data.molData);
-                    $div.dialog('close');
+                    molTxtArea.text(data.molData);
+                    div.dialog('close');
                     o.onSuccess();
                 }
             });
 
-            $div.CswButton({
+            div.button({
                 ID: 'fileupload_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
-                    $div.dialog('close');
+                    div.$.dialog('close');
                 }
             });
 
-            $div.append('<br/>MOL Text (Paste from Clipboard):<br/>');
-            $moltxtarea = $('<textarea id="moltxt" rows="4" cols="40">' + o.molData + '</textarea>')
-                                    .appendTo($div);
-            $div.append('<br/>');
-            $txtsave = $div.CswButton({ ID: 'txt_save',
+            div.br().span({ text: 'MOL Text (Paste from Clipboard):' }).br();
+
+            molTxtArea = div.textArea({ ID: '', rows: 4, cols: 40 });
+            div.br();
+            saveBtn = div.button({ ID: 'txt_save',
                 enabledText: 'Save MOL Text',
                 disabledText: 'Saving MOL...',
                 onClick: function () {
                     Csw.ajax.post({
                         url: o.TextUrl,
                         data: {
-                            molData: $moltxtarea.val(),
+                            molData: molTxtArea.val(),
                             PropId: o.PropId
                         },
                         success: function (data) {
-                            $div.dialog('close');
-                            o.onSuccess();
+                            div.$.dialog('close');
+                            Csw.tryExec(o.onSuccess);
                         },
-                        error: function () {
-                            $txtsave.CswButton('enable');
-                        }
+                        error: saveBtn.enable
                     }); // ajax
                 } // onClick
-            }); // CswButton
+            }); // 
 
-
-            openDialog($div, 400, 300, null, 'Upload');
+            openDialog(div, 400, 300, null, 'Upload');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             var o = {
@@ -686,21 +661,23 @@
                 onAccept: function () { },
                 onDecline: function () { }
             };
-            if (options) $.extend(o, options);
-            var $div = $('<div align="center"></div>');
-            $div.append('Service Level Agreement<br/>');
-            var $licensetextarea = $('<textarea id="license" disabled="true" rows="30" cols="80"></textarea>')
-                                    .appendTo($div);
-            $div.append('<br/>');
+            if (options) {
+                $.extend(o, options);
+            }
+
+            var div = Csw.controls.div({ align: 'center' });
+            div.append('Service Level Agreement').br();
+            var licenseTextArea = div.textArea({ ID: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
+            div.br();
 
             Csw.ajax.post({
                 url: o.GetLicenseUrl,
                 success: function (data) {
-                    $licensetextarea.text(data.license);
+                    licenseTextArea.text(data.license);
                 }
             });
 
-            var $acceptbtn = $div.CswButton({
+            var acceptBtn = div.button({
                 ID: 'license_accept',
                 enabledText: 'I Accept',
                 disabledText: 'Accepting...',
@@ -708,26 +685,24 @@
                     Csw.ajax.post({
                         url: o.AcceptLicenseUrl,
                         success: function () {
-                            $div.dialog('close');
-                            o.onAccept();
+                            div.$.dialog('close');
+                            Csw.tryExec(o.onAccept);
                         },
-                        error: function () {
-                            $acceptbtn.CswButton('enable');
-                        }
+                        error: acceptBtn.enable
                     }); // ajax
                 } // onClick
-            }); // CswButton
+            }); // 
 
-            $div.CswButton({ ID: 'license_decline',
+            div.button({ ID: 'license_decline',
                 enabledText: 'I Decline',
                 disabledText: 'Declining...',
                 onClick: function () {
-                    $div.dialog('close');
-                    o.onDecline();
+                    div.$.dialog('close');
+                    Csw.tryExec(o.onDecline);
                 }
             });
 
-            openDialog($div, 800, 600, null, 'Terms and Conditions');
+            openDialog(div, 800, 600, null, 'Terms and Conditions');
         }, // ShowLicenseDialog
         PrintLabelDialog: function (options) {
 
@@ -740,12 +715,10 @@
             };
             if (options) $.extend(o, options);
 
-            var $div = $('<div align="center"></div>');
-
-            $div.append('Select a Label to Print:<br/>');
-            var $labelsel_div = $('<div />')
-                                .appendTo($div);
-            var $labelsel;
+            var div = Csw.controls.div({ align: 'center', text: 'Select a Label to Print:' });
+            div.br();
+            var labelSelDiv = div.div();
+            var labelSel = labelSelDiv.select({ ID: o.ID + '_labelsel' });
 
             var jData = { PropId: o.propid };
             Csw.ajax.post({
@@ -753,27 +726,25 @@
                 data: jData,
                 success: function (data) {
                     if (data.labels.length > 0) {
-                        $labelsel = $('<select id="' + o.ID + '_labelsel"></select>');
                         for (var i = 0; i < data.labels.length; i++) {
                             var label = data.labels[i];
-                            $labelsel.append('<option value="' + label.nodeid + '">' + label.name + '</option>');
+                            labelSel.option({ value: label.nodeid, display: label.name });
                         }
-                        $labelsel.appendTo($labelsel_div);
-                        $printbtn.CswButton('enable');
+                        printBtn.enable();
                     } else {
-                        $printbtn.hide();
-                        $labelsel_div.append('<span>No labels have been assigned!</span>');
+                        printBtn.hide();
+                        labelSelDiv.span({ text: 'No labels have been assigned!' });
                     }
                 } // success
             }); // ajax
 
-            var $printbtn = $div.CswButton({
+            var printBtn = div.button({
                 ID: 'print_label_print',
                 enabledText: 'Print',
                 //disabledText: 'Printing...', 
                 disableOnClick: false,
                 onClick: function () {
-                    var jData2 = { PropId: o.propid, PrintLabelNodeId: $labelsel.val() };
+                    var jData2 = { PropId: o.propid, PrintLabelNodeId: labelSel.val() };
                     Csw.ajax.post({
                         url: o.GetEPLTextUrl,
                         data: jData2,
@@ -784,28 +755,27 @@
                         } // success
                     }); // ajax
                 } // onClick
-            }); // CswButton
-            $printbtn.CswButton('disable');
+            }); // 
+            printBtn.disable();
 
-            $div.CswButton({ ID: 'print_label_close',
+            div.button({ ID: 'print_label_close',
                 enabledText: 'Close',
                 disabledText: 'Closing...',
                 onClick: function () {
-                    $div.dialog('close');
+                    div.$.dialog('close');
                 }
             });
 
-            var $hiddendiv = $('<div style="display: none; border: 1px solid red;"></div>')
-                                .appendTo($div);
-            $("<OBJECT ID='labelx' Name='labelx' classid='clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0' codebase='CafLabelPrintUtil.cab#version=0,1,6,0' width=500 height=300 align=center hspace=0 vspace=0></OBJECT>")
-                                .appendTo($hiddendiv);
+            var hiddenDiv = div.div().css({ display: 'none', border: '1px solid red' });
 
-            openDialog($div, 400, 300, null, 'Print');
+            hiddenDiv.append('<OBJECT ID="labelx" Name="labelx" classid="clsid:A8926827-7F19-48A1-A086-B1A5901DB7F0" codebase="CafLabelPrintUtil.cab#version=0,1,6,0" width=500 height=300 align=center hspace=0 vspace=0></OBJECT>');
+
+            openDialog(div, 400, 300, null, 'Print');
         }, // PrintLabelDialog
         ErrorDialog: function (error) {
-            var $div = $('<div />');
-            openDialog($div, 400, 300, null, 'Error');
-            $div.CswErrorMessage(error);
+            var div = Csw.controls.div();
+            openDialog(div, 400, 300, null, 'Error');
+            div.$.CswErrorMessage(error);
         },
         AlertDialog: function (message, title) {
 
@@ -819,14 +789,13 @@
 
             div.button({
                 enabledText: 'OK',
-                onClick: function() {
+                onClick: function () {
                     div.$.dialog('close');
                 }
             });
 
-            openDialog(div.$, 400, 200, null, title);
+            openDialog(div, 400, 200, null, title);
         },
-
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
             var width = Csw.number((message.length * 7), 200);
             var div = Csw.controls.div({
@@ -853,9 +822,8 @@
                 }
             });
 
-            openDialog(div.$, width, 200, null, title);
+            openDialog(div, width, 200, null, title);
         },
-
         NavigationSelectDialog: function (options) {
             var o = {
                 ID: '',
@@ -884,13 +852,11 @@
                 ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
                 enabledText: 'OK',
                 onClick: function () {
-                    if (Csw.isFunction(o.onOkClick)) {
-                        o.onOkClick(select.find(':selected'));
-                    }
+                    Csw.tryExec(o.onOkClick, select.find(':selected'));
                     div.$.dialog('close');
                 }
             });
-            openDialog(div.$, 600, 150, null, o.title);
+            openDialog(div, 600, 150, null, o.title);
         },
         //#endregion Specialized
 
@@ -902,11 +868,11 @@
         //							return popup;
         //						},
         OpenDialog: function (id, url) {
-            var $dialogdiv = $('<div id="' + id + '"></div>');
-            $dialogdiv.load(url,
-                            function () {
-                                openDialog($dialogdiv, 600, 400);
-                            });
+            var div = Csw.controls.div({ ID: id });
+            div.$.load(url,
+                function () {
+                    openDialog(div, 600, 400);
+                });
         },
         OpenEmptyDialog: function (options) {
             var o = {
@@ -922,7 +888,7 @@
             }
             var div = Csw.controls.div(o.ID);
             Csw.tryExec(o.onOpen, div);
-            openDialog(div.$, o.width, o.height, o.onClose, o.title);
+            openDialog(div, o.width, o.height, o.onClose, o.title);
         },
         CloseDialog: function (id) {
             $('#' + id)
@@ -934,18 +900,18 @@
     };
 
 
-    function openDialog($div, width, height, onClose, title) {
+    function openDialog(div, width, height, onClose, title) {
         $('<div id="DialogErrorDiv" style="display: none;"></div>')
-            .prependTo($div);
+            .prependTo(div.$);
 
-        $div.dialog({
+        div.$.dialog({
             modal: true,
             width: width,
             height: height,
             title: title,
             close: function () {
-                $div.remove();
-                if (Csw.isFunction(onClose)) onClose();
+                div.remove();
+                Csw.tryExec(onClose);
             }
         });
     }

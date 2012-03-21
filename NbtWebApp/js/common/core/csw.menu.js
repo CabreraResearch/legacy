@@ -1,11 +1,11 @@
-﻿/// <reference path="~/js/ChemSW-vsdoc.js" />
-/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
 (function () {
     'use strict';
 
     Csw.goHome = Csw.goHome ||
-        Csw.register('goHome', function goHome() {
+        Csw.register('goHome', function () {
             'use strict';
             Csw.clientState.clearCurrent();
             window.location = Csw.getGlobalProp('homeUrl');
@@ -137,7 +137,7 @@
                         break;
                     case 'Home':
                     $a.click(function() {
-                            goHome();
+                            Csw.goHome();
                             return false;
                         });
                         break;

@@ -34,7 +34,7 @@
             },
 
         // Step 1 - Select or Create Inspection Target
-            $divStep1, selectedInspectionTarget, $inspectionTarget, addNewTarget, categoryNameInput,
+            $divStep1, selectedInspectionTarget, inspectionTargetSelect, addNewTarget, categoryNameInput,
         // Step 2 - Select or Create Inspection Design
             selectedInspectionDesign = { id: '[Create New]', name: '[Create New]' },
             $divStep2, categoryName, inspectionDesignSelect, newDesignName,
@@ -96,7 +96,7 @@
                     var onNodeTypeSelectSuccess = function (data) {
                         //If the picklist is empty, we have to add a new Target
                         if (data.nodetypecount === 0) {
-                            $inspectionTarget.$.hide();
+                            inspectionTargetSelect.hide();
                             isNewTarget(true);
                             addNewTarget = rowOneTable.cell(2, 2);
                             addNewTarget.css({ 'padding': '1px', 'vertical-align': 'middle' })
@@ -115,7 +115,7 @@
                                     }, 100);
                                 });
                         } else { //Select an existing Target or add a new Target
-                            selectedInspectionTarget = $inspectionTarget.find(':selected').text();
+                            selectedInspectionTarget = inspectionTargetSelect.find(':selected').text();
                             $wizard.CswWizard('button', 'next', 'enable');
 
                             addBtn = addBtn || rowOneTable.cell(2, 3);
@@ -127,10 +127,10 @@
                                         disableOnClick: false,
                                         onClick: function () {
                                             $.CswDialog('AddNodeTypeDialog', {
-                                                objectclassid: $inspectionTarget.find(':selected').data('objectClassId'),
+                                                objectclassid: inspectionTargetSelect.find(':selected').data('objectClassId'),
                                                 nodetypename: '',
                                                 category: 'do not show',
-                                                $select: $inspectionTarget,
+                                                select: inspectionTargetSelect,
                                                 nodeTypeDescriptor: 'Target',
                                                 maxlength: 40,
                                                 onSuccess: function (newData) {
@@ -141,7 +141,7 @@
                                                         $wizard.CswWizard('button', 'next', 'enable');
                                                         Csw.publish(createInspectionEvents.targetNameChanged);
                                                     } else {
-                                                        $inspectionTarget.find('option[value="' + proposedInspectionTarget + '"]').remove();
+                                                        inspectionTargetSelect.find('option[value="' + proposedInspectionTarget + '"]').remove();
                                                     }
                                                 },
                                                 title: 'Create a New Inspection Target Type.'
@@ -155,25 +155,25 @@
                     var makeTargetSelect = function () {
                         //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
                         //However, the variable assignment is sufficiently complex that this deviation is justified.
-                        if (false === Csw.isNullOrEmpty($inspectionTarget, true)) {
-                            $inspectionTarget.remove();
+                        if (false === Csw.isNullOrEmpty(inspectionTargetSelect, true)) {
+                            inspectionTargetSelect.remove();
                         }
 
-                        $inspectionTarget = rowOneTable.cell(2, 1)
+                        inspectionTargetSelect = rowOneTable.cell(2, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .div()
                             .nodeTypeSelect({
                                 ID: makeStepId('nodeTypeSelect'),
                                 objectClassName: 'InspectionTargetClass',
                                 onSelect: function () {
-                                    var $this = $inspectionTarget.find(':selected');
-                                    isNewTarget($this.CswAttrNonDom('data-newNodeType'));
-                                    selectedInspectionTarget = $this.text();
+                                    var selected = inspectionTargetSelect.find(':selected');
+                                    isNewTarget(selected.CswAttrNonDom('data-newNodeType'));
+                                    selectedInspectionTarget = selected.text();
                                     Csw.publish(createInspectionEvents.targetNameChanged);
                                 },
                                 onSuccess: function (data) {
                                     onNodeTypeSelectSuccess(data);
-                                    selectedInspectionTarget = $inspectionTarget.find(':selected').text();
+                                    selectedInspectionTarget = inspectionTargetSelect.find(':selected').text();
                                 }
                             });
                     };
