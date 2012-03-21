@@ -91,7 +91,7 @@
 
             table.cell(1, 2).text(Csw.string(itemobj.name).substr(0, 30));
 
-            internal.div.comboBox('TopContent', $newTopContent);
+            internal.comboBox.topContent($newTopContent);
             internal.div.propNonDom('selectedType', itemobj.type);
             switch (itemobj.type.toLowerCase()) {
                 case 'view':
@@ -105,7 +105,7 @@
                     break;
             }
 
-            setTimeout(function () { internal.div.comboBox.toggle(); }, internal.ClickDelay);
+            setTimeout(function () { internal.comboBox.toggle(); }, internal.ClickDelay);
             Csw.tryExec(internal.onSelect, itemobj);
         }; // internal.handleSelect()
 
@@ -114,11 +114,11 @@
         (function () {
             internal.div = Csw.controls.div({ $parent: internal.$parent });
             internal.vsdiv = Csw.controls.div({ ID: Csw.controls.dom.makeId(internal.ID, '', 'vsdiv') });
-            internal.div.comboBox({
+            internal.comboBox = internal.div.comboBox({
                 ID: internal.ID + '_combo',
-                TopContent: 'Select a View',
-                SelectContent: internal.vsdiv.$,
-                Width: '266px'
+                topContent: 'Select a View',
+                selectContent: internal.vsdiv.$,
+                width: '266px'
             });
 
             Csw.ajax.post({
