@@ -14,6 +14,7 @@
             ClickDelay: 300,
             issearchable: false,
             //usesession: true,
+            hidethreshold: 5,
 
             div: null
         };
@@ -40,10 +41,25 @@
                     Csw.each(data.viewselectitems, function (catobj) {
                         var $fieldset = $('<fieldset class="viewselectfieldset"><legend class="viewselectlegend">' + catobj.category + '</legend></fieldset>')
                                             .appendTo(internal.vsdiv.$);
-                        var tbl = Csw.controls.table({ $parent: $fieldset, cellpadding: '2px', width: '100%' });
+                        
+                        var morediv = Csw.controls.moreDiv({ 
+                            ID: Csw.controls.dom.makeId(internal.ID, '', catobj.category + '_morediv'),
+                            $parent: $fieldset
+                        });
+                        
+                        var showntbl = morediv.shownDiv.table({ cellpadding: '2px', width: '100%' });
+                        var hiddentbl = morediv.hiddenDiv.table({ cellpadding: '2px', width: '100%' });
                         var row = 1;
+                        var tbl = showntbl;
+                        morediv.moreLink.hide();
 
                         Csw.each(catobj.items, function (itemobj, itemname) {
+                            if(row > internal.hidethreshold) {
+                                row = 1;
+                                tbl = hiddentbl;
+                                morediv.moreLink.show();
+                            }
+                            
                             var iconcell = tbl.cell(row, 1).addClass('viewselecticoncell');
                             iconcell.img({ src: itemobj.iconurl });
 
@@ -65,6 +81,7 @@
 
                             row += 1;
                         }); // Csw.each() items
+
                     }); // Csw.each() categories
 
                     Csw.tryExec(internal.onSuccess);
