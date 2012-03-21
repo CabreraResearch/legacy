@@ -12,8 +12,8 @@
         keys: [],
         deserialize: $.parseJSON,
         serializer: JSON,
-        hasLocalStorage: (window.Modernizr.localstorage && false === Csw.isNullOrEmpty(window.localStorage)),
-        hasSessionStorage: (window.Modernizr.sessionstorage && false === Csw.isNullOrEmpty(window.sessionStorage))
+        hasLocalStorage: (window.Modernizr.localstorage),
+        hasSessionStorage: (window.Modernizr.sessionstorage)
     };
     internal.serialize = internal.serializer.stringify;
 
