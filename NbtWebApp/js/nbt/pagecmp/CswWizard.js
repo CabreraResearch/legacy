@@ -136,7 +136,7 @@
         // e.g. $wizard.CswWizard('button', 'next', 'disable');
         button: function (button, action) {
             var $table = $(this);
-            var ret;
+            var ret = null;
             switch (button) {
                 case 'previous':
                     ret = $('#' + $table.prop('id') + '_prev');
@@ -151,19 +151,35 @@
                     ret = $('#' + $table.prop('id') + '_cancel');
                     break;
             }
-            if (false === Csw.isNullOrEmpty(ret, true)) {
-                ret.CswButton(action);
+
+            switch (action) {
+                case 'enable':
+                    enable(ret);
+                    break;
+                case 'disable':
+                    disable(ret);
+                    break;
             }
             return ret;
         },
 
-        setStep: function(stepno) {
+        setStep: function (stepno) {
             var $table = $(this);
             var table = Csw.controls.factory($table, {});
             _selectStep(table, stepno);
         }
     };
 
+    function enable($button) {
+        if ($button && $button.length > 0) {
+            $button.button({ label: $button.attr('enabledText'), disabled: false });
+        }
+    }
+    function disable($button) {
+        if ($button && $button.length > 0) {
+            $button.button({ label: $button.attr('disabledText'), disabled: true });
+        }
+    }
 
     function _getCurrentStepNo(table) {
         return Csw.number(table.find('.CswWizard_StepLinkDivSelected').propNonDom('stepno'));
@@ -180,16 +196,18 @@
             table.find('.CswWizard_StepDiv[stepno=' + stepno + ']').show();
 
             var $prevbtn = $('#' + table.propDom('id') + '_prev');
-            if (stepno <= startingstep)
-                $prevbtn.CswButton('disable');
-            else
-                $prevbtn.CswButton('enable');
+            if (stepno <= startingstep) {
+                disable($prevbtn);
+            } else {
+                enable($prevbtn);
+            }
 
             var $nextbtn = $('#' + table.propDom('id') + '_next');
-            if (stepno >= stepcount)
-                $nextbtn.CswButton('disable');
-            else
-                $nextbtn.CswButton('enable');
+            if (stepno >= stepcount) {
+                disable($nextbtn);
+            } else {
+                enable($nextbtn);
+            }
         } // if(stepno <= stepcount)
     } // _selectStep()
 

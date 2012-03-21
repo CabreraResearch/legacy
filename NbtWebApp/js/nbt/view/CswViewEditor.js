@@ -780,7 +780,7 @@
                 var $btn = $span.find('#' + arbitraryId + '_addfiltbtn');
                 $btn.bind('click', function () {
                     var $this = $(this);
-                    $this.CswButton('disable');
+                    $this.button({ label: $this.attr('disabledText'), disabled: true });
                     var objHelper = Csw.object(currentViewJson);
 
                     var propJson = objHelper.find('arbitraryid', arbitraryId);
