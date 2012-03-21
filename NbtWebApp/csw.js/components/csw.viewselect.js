@@ -91,8 +91,8 @@
 
             table.cell(1, 2).text(Csw.string(itemobj.name).substr(0, 30));
 
-            internal.div.$.CswComboBox('TopContent', $newTopContent);
-            internal.div.$.CswAttrNonDom('selectedType', itemobj.type);
+            internal.div.comboBox('TopContent', $newTopContent);
+            internal.div.propNonDom('selectedType', itemobj.type);
             switch (itemobj.type.toLowerCase()) {
                 case 'view':
                     internal.div.propNonDom('selectedValue', itemobj.viewid);
@@ -105,7 +105,7 @@
                     break;
             }
 
-            setTimeout(function () { internal.div.$.CswComboBox('toggle'); }, internal.ClickDelay);
+            setTimeout(function () { internal.div.comboBox.toggle(); }, internal.ClickDelay);
             Csw.tryExec(internal.onSelect, itemobj);
         }; // internal.handleSelect()
 
@@ -114,7 +114,7 @@
         (function () {
             internal.div = Csw.controls.div({ $parent: internal.$parent });
             internal.vsdiv = Csw.controls.div({ ID: Csw.controls.dom.makeId(internal.ID, '', 'vsdiv') });
-            internal.div.$.CswComboBox('init', {
+            internal.div.comboBox({
                 ID: internal.ID + '_combo',
                 TopContent: 'Select a View',
                 SelectContent: internal.vsdiv.$,
