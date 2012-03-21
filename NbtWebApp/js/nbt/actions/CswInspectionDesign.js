@@ -167,7 +167,7 @@
                                 objectClassName: 'InspectionTargetClass',
                                 onSelect: function () {
                                     var selected = inspectionTargetSelect.find(':selected');
-                                    isNewTarget(selected.CswAttrNonDom('data-newNodeType'));
+                                    isNewTarget(selected.propNonDom('data-newNodeType'));
                                     selectedInspectionTarget = selected.text();
                                     Csw.publish(createInspectionEvents.targetNameChanged);
                                 },

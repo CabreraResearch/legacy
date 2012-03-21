@@ -32,8 +32,8 @@
                 $.extend(external, Csw.controls.select(internal));
 
                 external.bind('change', function () {
-                    Csw.tryExec(internal.onChange, select);
-                    Csw.tryExec(internal.onSelect, $select.val());
+                    Csw.tryExec(internal.onChange, external);
+                    Csw.tryExec(internal.onSelect, external.val());
                 });
 
                 if (Csw.bool(internal.addNewOption)) {
