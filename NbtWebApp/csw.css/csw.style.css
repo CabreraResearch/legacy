@@ -22,7 +22,7 @@ ul li {
     list-style-position:inside;
 }
 ul li div {
-    display:inline;
+    /* display:inline;   this caused case 25544 */ 
 }
 
 
