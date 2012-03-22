@@ -232,14 +232,14 @@ namespace ChemSW.Nbt.Schema.CmdLn
 			CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
             if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             {
-				CswConsoleOutput.write( _Separator_NuLine + _Separator_NuLine + "AccessId " + AccessId + ": schema version " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to schema version " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
+                CswConsoleOutput.write( "From " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
 
 
                 CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd(); 
                 foreach( CswSchemaUpdateDriver CurrentUpdateDriver in CswSchemaScriptsProd.RunBeforeScripts )
                 {
                     CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
-                    CswConsoleOutput.write( "AccessId " + AccessId + ": unversioned script: " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description + _Separator_NuLine + _Separator_NuLine );
+                    CswConsoleOutput.write( CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description + _Separator_NuLine );
                 }
 
 
@@ -252,8 +252,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
                     {
                         UpdateSucceeded = false;
-						CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " );
-						CswConsoleOutput.write( " failed: Schema version (" + CurrentVersion.ToString() + ") is below minimum version (" + CswSchemaUpdater.MinimumVersion.ToString() + ")" + _Separator_NuLine + _Separator_NuLine );
+						CswConsoleOutput.write( "AccessId " + AccessId + ": " );
+						CswConsoleOutput.write( " failed: Schema version (" + CurrentVersion.ToString() + ") is below minimum version (" + CswSchemaUpdater.MinimumVersion.ToString() + ")" + _Separator_NuLine );
                     }
                     else
                     {
@@ -269,24 +269,24 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                         string UpdateDescription = CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
 
-						CswConsoleOutput.write( "AccessId " + AccessId + ": applying schema operation -- " + UpdateDescription );
+						CswConsoleOutput.write( UpdateDescription + ": " );
 						CswSchemaUpdateThread.start();
 						while( UpdateState.Running == CswSchemaUpdateThread.UpdateState )
                         {
-							CswConsoleOutput.write( " ." );
+                            CswConsoleOutput.write( "." );
                             Thread.Sleep( 1000 );
                         }
 
 						UpdateSucceeded = ( UpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
-                        string MessageStem = "AccessId " + AccessId + ": ";
+                        
                         if( UpdateSucceeded )
                         {
 
-							CswConsoleOutput.write( " succeeded." + _Separator_NuLine + _Separator_NuLine );
+							CswConsoleOutput.write( " succeeded." + _Separator_NuLine );
                         }
                         else
                         {
-							CswConsoleOutput.write( " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine + _Separator_NuLine );
+							CswConsoleOutput.write( " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine );
                         }
 
 						CswNbtResources.ClearCache();
@@ -301,14 +301,13 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 foreach( CswSchemaUpdateDriver CurrentUpdateDriver in CswSchemaScriptsProd.RunAfterScripts )
                 {
                     CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
-                    CswConsoleOutput.write( "AccessId " + AccessId + ": unversioned script: " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description + _Separator_NuLine + _Separator_NuLine );
+                    CswConsoleOutput.write( CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description + _Separator_NuLine );
                 }
-
 
 			} // if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             else
             {
-				CswConsoleOutput.write( _Separator_NuLine + "AccessId " + AccessId + ": Schema version -- " + CswSchemaUpdater.LatestVersion.ToString() + "-- is current" );
+				CswConsoleOutput.write( _Separator_NuLine + "Schema version -- " + CswSchemaUpdater.LatestVersion.ToString() + "-- is current" );
             }
         }//_updateAccessId() 
 

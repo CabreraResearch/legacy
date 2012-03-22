@@ -192,7 +192,7 @@ namespace ChemSW.Nbt.Schema
         private void _addVersionedScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
             CswSchemaUpdateDriver.SchemaVersion = _makeNextSchemaVersion();
-            CswSchemaUpdateDriver.Description = "Update to schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
+            CswSchemaUpdateDriver.Description = CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
             _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
 
         }//addReleaseDmlDriver() 
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Schema
         private void _addRunBeforeScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
         {
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
-            CswSchemaUpdateDriver.Description = "Run before script: " + Description;
+            CswSchemaUpdateDriver.Description = Description;
             if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunBeforeScripts.Add( CswSchemaUpdateDriver );
@@ -236,8 +236,8 @@ namespace ChemSW.Nbt.Schema
         }//RunBeforeScripts
         private void _addRunAfterScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
         {
-            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunAfterScripts.Count );
-            CswSchemaUpdateDriver.Description = "Run after script: " + Description;
+            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 99, '#', _RunAfterScripts.Count );
+            CswSchemaUpdateDriver.Description = Description;
             if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunAfterScripts.Add( CswSchemaUpdateDriver );
