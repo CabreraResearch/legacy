@@ -111,7 +111,7 @@
                             Csw.tryExec(o.onChange);
                             return Csw.enums.imageButton_ButtonType.None;
                         } // onClick
-                    }); // CswImageButton
+                    }); //
                 } // if(!o.ReadOnly)
 
                 if (doAnimation) {

@@ -809,7 +809,8 @@
 
                 $span.find('.ViewPropFilterLogical').each(function () {
                     var $this = $(this);
-                    $this.CswTristateCheckBox('reBindClick');
+                    /* This may not be necessary */
+                    //$this.CswTristateCheckBox('reBindClick');
                 });
 
             });

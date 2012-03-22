@@ -340,7 +340,7 @@
 
             switch (fieldtype) {
                 case Csw.enums.subFieldsMap.Logical.name:
-                    filterValue = $filtInput.CswTristateCheckBox('value');
+                    filterValue = $filtInput.attr('alt');
                     break;
                 case Csw.enums.subFieldsMap.List.name:
                     filterValue = $filtInput.find(':selected').val();
