@@ -33,11 +33,11 @@ namespace ChemSW.Nbt.Schema
             p.StartInfo.FileName = _CswNbtSchemaModTrnsctn.ConfigFileLocation + "\\nbt_initialize_ora.bat";
             p.StartInfo.Arguments = " " + serverName + " " + userName + " " + passWord + " " + _CswNbtSchemaModTrnsctn.ConfigFileLocation;
             p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-            p.StartInfo.UseShellExecute=false;
+            p.StartInfo.UseShellExecute = false;
             p.StartInfo.RedirectStandardOutput = false;
 
-            System.Diagnostics.Process.Start( p.StartInfo );
-            if( false == p.WaitForExit( _CswNbtSchemaModTrnsctn.UpdtShellWaitMsec ) )
+            Process SpawnedProcess = System.Diagnostics.Process.Start( p.StartInfo );
+            if( false == SpawnedProcess.WaitForExit( _CswNbtSchemaModTrnsctn.UpdtShellWaitMsec ) )
             {
                 _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Timed out will running nbt_initialize_ora.bat prior to updates." );
             }
