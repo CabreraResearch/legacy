@@ -49,7 +49,15 @@ namespace ChemSW.Nbt.Schema
         {
             get
             {
-                return ( CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting("UpdtShellWaitMsec") ));
+                Int32 ReturnVal = 30000;
+                string UpdtShellWaitMsecVarName = "UpdtShellWaitMsec";
+
+                if( _CswNbtResources.SetupVbls.doesSettingExist( UpdtShellWaitMsecVarName ) )
+                {
+                    ReturnVal = CswConvert.ToInt32( _CswNbtResources.SetupVbls.readSetting( UpdtShellWaitMsecVarName ) );
+                }
+
+                return ( ReturnVal );
             }
         }
 
