@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
 using ChemSW.Config;
@@ -237,6 +238,49 @@ namespace ChemSW.Nbt.Schema
 
         public delegate void DoUpdateInvoker( string AccessId );
 
+        private bool _runNonVersionScripts( List<CswSchemaUpdateDriver> ScriptCollection, CswNbtResources CswNbtResources, SchemaInfoEventArgs SchemaInfoEventArgs )
+        {
+            bool ReturnVal = true;
+
+            for( int idx = 0; ReturnVal && ( idx < ScriptCollection.Count ); idx++ )
+            {
+                CswSchemaUpdateDriver CurrentUpdateDriver = _CswSchemaScriptsProd.RunBeforeScripts[idx];
+
+                string ScriptDescription = CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description;
+                ReturnVal = _CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
+                if( ReturnVal )
+                {
+                    SetStatus( "Update successful: " + ScriptDescription );
+                }
+                else
+                {
+                    SetStatus( "Update failed: " + ScriptDescription + ": " + CurrentUpdateDriver.Message );
+                }
+
+                _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
+            }
+
+            return ( ReturnVal );
+
+        }//_runNonVersionScripts
+
+        private void _updateHistoryTable( CswNbtResources CswNbtResources, SchemaInfoEventArgs SchemaInfoEventArgs )
+        {
+            CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
+            DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
+            SchemaInfoEventArgs.UpdateHistoryTable = UpdateHistoryTable;
+
+
+            if( OnGetSchemaInfo != null )
+                OnGetSchemaInfo( SchemaInfoEventArgs );
+
+            if( OnUpdateDone != null )
+                OnUpdateDone( SchemaInfoEventArgs );
+
+
+        }//_updateHistoryTable() 
+
+
         public void DoUpdate( string AccessId )
         {
             try
@@ -244,54 +288,49 @@ namespace ChemSW.Nbt.Schema
                 SetStatus( "Updating Selected Schema" );
 
                 CswNbtResources CswNbtResources = _InitSessionResources( AccessId );
+                SchemaInfoEventArgs SchemaInfoEventArgs = new SchemaInfoEventArgs();
+
 
                 _CswSchemaUpdater = new CswSchemaUpdater( AccessId, new CswSchemaUpdater.ResourcesInitHandler( _InitSessionResources ), _CswSchemaScriptsProd ); //wait to create updater until resource initiation is thoroughly done
 
-                foreach( CswSchemaUpdateDriver CurrentUpdateDriver in _CswSchemaScriptsProd.RunBeforeScripts )
+                bool UpdateSucceeded = _runNonVersionScripts( _CswSchemaScriptsProd.RunBeforeScripts, CswNbtResources, SchemaInfoEventArgs );
+
+
+                if( UpdateSucceeded )
                 {
-                    _CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
-                    SetStatus( "Ran unversioned script: " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description );
+                    CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
+                    while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
+                    {
+                        SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ).ToString() );
+
+                        UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
+
+                        CswNbtResources.AccessId = AccessId; //cases 23787,9751: you have to re-init after the release() that is done in the Updater
+                        CswNbtResources.ClearCache();
+
+                        SchemaInfoEventArgs.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
+                        SchemaInfoEventArgs.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
+
+                        CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
+                        SchemaInfoEventArgs.CurrentSchemaVersion = CurrentVersion;
+
+                        _updateHistoryTable( CswNbtResources, SchemaInfoEventArgs );
+
+                        if( UpdateSucceeded )
+                            SetStatus( "Update successful" );
+
+
+
+                    }//iterate veresions
+
+                }//if pre-process scripts succeded
+
+                if( UpdateSucceeded )
+                {
+                    UpdateSucceeded = _runNonVersionScripts( _CswSchemaScriptsProd.RunAfterScripts, CswNbtResources, SchemaInfoEventArgs );
                 }
 
-                bool UpdateSucceeded = true;
-                SchemaInfoEventArgs SchemaInfoEventArgs = new SchemaInfoEventArgs();
-                CswSchemaVersion CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
-                while( UpdateSucceeded && !Cancel && CurrentVersion != _CswSchemaUpdater.LatestVersion )
-                {
-                    SetStatus( "Updating to " + _CswSchemaUpdater.TargetVersion( CswNbtResources ).ToString() );
 
-                    UpdateSucceeded = _CswSchemaUpdater.runNextVersionedScript();
-
-                    CswNbtResources.AccessId = AccessId; //cases 23787,9751: you have to re-init after the release() that is done in the Updater
-                    CswNbtResources.ClearCache();
-
-                    SchemaInfoEventArgs.MinimumSchemaVersion = _CswSchemaUpdater.MinimumVersion;
-                    SchemaInfoEventArgs.LatestSchemaVersion = _CswSchemaUpdater.LatestVersion;
-
-                    CurrentVersion = _CswSchemaUpdater.CurrentVersion( CswNbtResources );
-                    SchemaInfoEventArgs.CurrentSchemaVersion = CurrentVersion;
-
-                    CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
-                    DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
-                    SchemaInfoEventArgs.UpdateHistoryTable = UpdateHistoryTable;
-
-                    if( UpdateSucceeded )
-                        SetStatus( "Update successful" );
-
-                    if( OnGetSchemaInfo != null )
-                        OnGetSchemaInfo( SchemaInfoEventArgs );
-                }//iterate veresions
-
-
-
-                foreach( CswSchemaUpdateDriver CurrentUpdateDriver in _CswSchemaScriptsProd.RunAfterScripts )
-                {
-                    _CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
-                    SetStatus( "Ran unversioned script: " + CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description );
-                }
-
-                if( OnUpdateDone != null )
-                    OnUpdateDone( SchemaInfoEventArgs );
 
                 if( Cancel )
                 {

@@ -113,18 +113,19 @@ namespace ChemSW.Nbt.Schema
             DataRow NewUpdateHistoryRow = _UpdateHistoryTable.NewRow();
             NewUpdateHistoryRow["updatedate"] = DateTime.Now.ToString();
             NewUpdateHistoryRow["version"] = CswSchemaUpdateDriver.SchemaVersion.ToString();
+
             if( ReturnVal )
             {
                 NewUpdateHistoryRow["log"] = CswSchemaUpdateDriver.Message;
 
             }
-            else if( CswSchemaUpdateDriver.RollbackSucceeded )
-            {
-                NewUpdateHistoryRow["log"] = "Schema rolled back to previous version due to failure: " + CswSchemaUpdateDriver.Message;
-            }
+            //else if( CswSchemaUpdateDriver.RollbackSucceeded )
+            //{
+            //    NewUpdateHistoryRow["log"] = "Schema rolled back to previous version due to failure: " + CswSchemaUpdateDriver.Message;
+            //}
             else
             {
-                NewUpdateHistoryRow["log"] = "Schema rollback failed; current schema state undefined: " + CswSchemaUpdateDriver.Message;
+                NewUpdateHistoryRow["log"] = "Failed update: " + CswSchemaUpdateDriver.Message;
             }
 
             _UpdateHistoryTable.Rows.Add( NewUpdateHistoryRow );

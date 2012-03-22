@@ -64,9 +64,13 @@ namespace ChemSW.Nbt.Schema
         private delegate void InitSchemaInfoHandler( UpdateThread.SchemaInfoEventArgs e );
         private void _InitSchemaInfo( UpdateThread.SchemaInfoEventArgs e )
         {
-            minimumversion.Text = e.MinimumSchemaVersion.ToString();
-            currentschemaversion.Text = e.CurrentSchemaVersion.ToString();
-            updatetoschemaversion.Text = e.LatestSchemaVersion.ToString();
+
+            if( ( null != e.MinimumSchemaVersion ) && ( null != e.CurrentSchemaVersion ) && ( null != e.LatestSchemaVersion ) )
+            {
+                minimumversion.Text = e.MinimumSchemaVersion.ToString();
+                currentschemaversion.Text = e.CurrentSchemaVersion.ToString();
+                updatetoschemaversion.Text = e.LatestSchemaVersion.ToString();
+            }
 
             _SetUpdateButtonVisible( e );
 
