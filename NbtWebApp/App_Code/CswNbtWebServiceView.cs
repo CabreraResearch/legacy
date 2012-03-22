@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -32,6 +33,11 @@ namespace ChemSW.Nbt.WebServices
             Unknown
         };
 
+        private const string ActionName = "actionname";
+        private const string ActionPk = "actionid";
+        private const string ActionSelected = "Include";
+
+
         private CswNbtResources _CswNbtResources;
 
         public CswNbtWebServiceView( CswNbtResources CswNbtResources )
@@ -39,34 +45,149 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         }
 
-        //public string getViews()
-        //{
-        //    string ret = string.Empty;
-        //    DataTable ViewDT = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false );
-        //    foreach( DataRow ViewRow in ViewDT.Rows )
-        //    {
-        //        ret += "<view id=\"" + CswConvert.ToInt32( ViewRow["nodeviewid"] ) + "\"";
-        //        ret += " name=\"" + ViewRow["viewname"].ToString() + "\"";
-        //        ret += "/>";
-        //    }
-        //    return "<views>" + ret + "</views>";
-        //}
-
-        public const string ViewTreeSessionKey = "ViewTreeXml";
-
-        // jsTree compatible format
-        public JObject getViewTree( bool IsSearchable )
+        private JObject _getCategory( ref JArray ret, string Category )
         {
-            JArray TreeData = new JArray();
+            JObject CatItemsJObj = null;
 
+            for( Int32 i = 0; i < ret.Count; i++ )
+            {
+                string ThisCat = ret[i]["category"].ToString();
+                if( ThisCat == Category )
+                {
+                    CatItemsJObj = (JObject) ret[i]["items"];
+                }
+            }
+
+            if( CatItemsJObj == null )
+            {
+                JObject CatJObjToAdd = new JObject();
+                CatJObjToAdd["category"] = Category;
+                CatJObjToAdd["items"] = new JObject();
+                CatItemsJObj = (JObject) CatJObjToAdd["items"];
+
+                // Insertion sort on category name
+                if( Category == "Uncategorized" )
+                {
+                    // Last
+                    ret.Add( CatJObjToAdd );
+                }
+                else if( Category == "Favorites" || Category == "Recent" )
+                {
+                    // First
+                    ret.AddFirst( CatJObjToAdd );
+                }
+                else
+                {
+                    // Alphabetical
+                    Int32 insertAt = -1;
+                    for( Int32 i = 0; i < ret.Count; i++ )
+                    {
+                        string ThisCat = ret[i]["category"].ToString();
+                        if( ThisCat == "Uncategorized" )
+                        {
+                            insertAt = i;
+                            break;
+                        }
+                        else if( ThisCat != "Favorites" && ThisCat != "Recent" )
+                        {
+                            if( Category.CompareTo( ThisCat ) <= 0 )
+                            {
+                                insertAt = i;
+                                break;
+                            }
+                        }
+                    } // for( Int32 i = 0; i < ret.Count; i++ )
+
+                    if( insertAt >= 0 )
+                    {
+                        ret.Insert( insertAt, CatJObjToAdd );
+                    }
+                    else
+                    {
+                        ret.Add( CatJObjToAdd );
+                    }
+                }
+            }
+            return CatItemsJObj;
+        } // _addCategory()
+
+        private JObject _addViewSelectObj( ref JArray ret, string Category, string Name, ItemType Type, string Icon, string Id )
+        {
+            if( Category == string.Empty )
+            {
+                Category = "Uncategorized";
+            }
+            JObject CatItemsJObj = _getCategory( ref ret, Category );
+
+            JObject NewObj = new JObject();
+            NewObj["name"] = Name;
+            NewObj["type"] = Type.ToString();
+            NewObj["id"] = Id;
+            NewObj["iconurl"] = Icon;
+            CatItemsJObj[Name] = NewObj;
+
+            return NewObj;
+        }
+
+        public JArray getViewSelectRecent()
+        {
+            JArray ret = new JArray();
+            JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
+            _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
+            return ret;
+        } // getViewSelectRecent()
+
+
+        public JArray getViewSelect( bool IsSearchable )
+        {
+            JArray ret = new JArray();
+
+            // Favorites and Recent
+            ICswNbtUser User = _CswNbtResources.CurrentNbtUser;
+            if( User != null )
+            {
+                CswNbtObjClassUser UserOc = User.UserNode;
+
+                // Recent
+                JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
+                _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
+
+                //Add the user's stored views to Favorites
+                foreach( CswNbtView View in UserOc.FavoriteViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )
+                {
+                    JObject ViewObj = _addViewSelectObj( ref ret, "Favorites", View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
+                    ViewObj["viewid"] = View.ViewId.ToString();
+                    ViewObj["viewmode"] = View.ViewMode.ToString();
+                    ViewObj["viewname"] = View.ViewName.ToString();
+                }
+
+                //Add the user's stored actions to Favorites
+                DataTable ActionsTable = UserOc.FavoriteActions.GetDataAsTable( ActionName, ActionPk );
+                foreach( CswNbtAction Action in ( from DataRow ActionRow in ActionsTable.Rows
+                                                  where CswConvert.ToBoolean( ActionRow[ActionSelected] )
+                                                  select CswNbtAction.ActionNameStringToEnum( CswConvert.ToString( ActionRow[ActionPk] ) )
+                                                      into NbtActionName
+                                                      select _CswNbtResources.Actions[NbtActionName]
+                                                          into ThisAction
+                                                          where null != ThisAction
+                                                          select ThisAction ) )
+                {
+                    JObject ActionObj = _addViewSelectObj( ref ret, "Favorites", Action.DisplayName, ItemType.Action, "Images/view/action.gif", Action.ActionId.ToString() );
+                    ActionObj["actionid"] = Action.ActionId.ToString();
+                    ActionObj["actionurl"] = Action.Url;
+                    ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
+                }
+            }
+            
             // Views
             Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
 
             foreach( CswNbtView View in Views.Values )
             {
-                // BZ 10121
-                // This is a performance hit, but since this view list is cached, it's ok
-                _makeViewTreeObject( ref TreeData, View.Category, ItemType.View, View.ViewId, View.ViewName, View.ViewMode );
+                JObject ViewObj = _addViewSelectObj( ref ret, View.Category, View.ViewName, ItemType.View, View.IconFileName, View.ViewId.ToString() );
+                ViewObj["viewid"] = View.ViewId.ToString();
+                ViewObj["viewmode"] = View.ViewMode.ToString();
+                ViewObj["viewname"] = View.ViewName.ToString();
             }
 
             if( !IsSearchable )
@@ -78,10 +199,10 @@ namespace ChemSW.Nbt.WebServices
                         //Case 23687: "View By Location" Action is toast. Bye-bye "loc_use_images" config var check.
                         _CswNbtResources.Permit.can( Action.Name ) )
                     {
-                        JObject ActionNode = _makeViewTreeObject( ref TreeData, Action.Category, ItemType.Action, Action.ActionId, Action.DisplayName );
-                        ActionNode["isleaf"] = true;
-                        ActionNode["actionurl"] = Action.Url;
-                        ActionNode["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
+                        JObject ActionObj = _addViewSelectObj( ref ret, Action.Category, Action.DisplayName, ItemType.Action, "Images/view/action.gif", Action.ActionId.ToString() );
+                        ActionObj["actionid"] = Action.ActionId.ToString();
+                        ActionObj["actionurl"] = Action.Url;
+                        ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
                     }
                 }
 
@@ -95,118 +216,15 @@ namespace ChemSW.Nbt.WebServices
                     ReportTree.goToNthChild( i );
 
                     CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
-                    _makeViewTreeObject( ref TreeData, ReportNode.Category.Text, ItemType.Report, ReportNode.NodeId.PrimaryKey, ReportNode.ReportName.Text );
+                    JObject ReportObj = _addViewSelectObj( ref ret, ReportNode.Category.Text, ReportNode.ReportName.Text, ItemType.Report, "Images/view/report.gif", ReportNode.NodeId.ToString() );
+                    ReportObj["reportid"] = ReportNode.NodeId.ToString();
 
                     ReportTree.goToParentNode();
                 }
             }
 
-            JObject ReturnVal = new JObject();
-            ReturnVal["tree"] = TreeData;
-            ReturnVal["types"] = _getTypes();
-
-            return ReturnVal;
-        } // getViewTree()
-
-        private JObject _makeViewTreeObject( ref JArray DocRoot, string Category, ItemType Type, object Id, string Text )
-        {
-            return _makeViewTreeObject( ref DocRoot, Category, Type, Id, Text, NbtViewRenderingMode.Unknown );
-        }
-
-        private JObject _makeViewTreeObject( ref JArray DocRoot, string Category, ItemType Type, object Id, string Text, NbtViewRenderingMode ViewMode )
-        {
-            JArray CategoryNode = _getCategoryObject( ref DocRoot, Category );
-            return _makeItemObject( CategoryNode, Type, Id, Text, ViewMode );
-        }
-
-        private static JObject _makeItemObject( JArray ParentNode, ItemType ItemType, object Id, string Text )
-        {
-            return _makeItemObject( ParentNode, ItemType, Id, Text, NbtViewRenderingMode.Unknown );
-        }
-        private static JObject _makeItemObject( JArray ParentNode, ItemType ItemType, object Id, string Text, NbtViewRenderingMode ViewMode )
-        {
-            string Type = ItemType.ToString().ToLower();
-            string Mode = ViewMode.ToString().ToLower();
-            string Rel = Type;
-
-            JObject ItemNodeObj = new JObject();
-            ParentNode.Add( ItemNodeObj );
-            ItemNodeObj["data"] = Text;
-
-            JObject Attributes = new JObject();
-            Attributes["isleaf"] = true;
-            if( ViewMode != NbtViewRenderingMode.Unknown )
-            {
-                Attributes["viewmode"] = ViewMode.ToString().ToLower();
-                Rel += Mode;
-            }
-
-            Attributes["viewtype"] = Type;
-            Attributes["rel"] = Rel;
-            Attributes["id"] = Rel + "_" + Id;
-            Attributes[Type + "id"] = Id.ToString();
-
-            ItemNodeObj["attr"] = Attributes;
-
-            return Attributes;
-        }
-
-        private Dictionary<string, JObject> Categories = new Dictionary<string, JObject>();
-
-        private JArray _getCategoryObject( ref JArray DocRoot, string Category )
-        {
-            JArray Children = new JArray();
-            if( Category != string.Empty )
-            {
-                JObject CategoryObj;
-                if( Categories.ContainsKey( Category ) )
-                {
-                    CategoryObj = Categories[Category];
-                    if( null != CategoryObj["children"] )
-                    {
-                        Children = (JArray) CategoryObj["children"];
-                    }
-                }
-                else
-                {
-                    // Make one
-                    CategoryObj = new JObject(
-                        new JProperty( "data", Category ),
-                        new JProperty( "id", "category_" + Category + "_viewselect" ),
-                        new JProperty( "attr", new JObject( new JProperty( "isleaf", false ) ) ),
-                        new JProperty( "children", Children ) );
-                    DocRoot.Add( CategoryObj );
-                    Categories.Add( Category, CategoryObj ); //_makeItemObject( DocRoot, ItemType.Category, _Catcount, Category );
-                }
-            }
-            else
-            {
-                Children = DocRoot;
-            }
-            return Children;
-        } // _getCategoryObject()
-
-
-        public JObject _getTypes()
-        {
-            JObject ReturnObj = new JObject( new JProperty( "default", "" ) );
-
-            string[] types = { "action", "category", "report", "viewtree", "viewgrid", "viewlist", "viewtable" };
-            foreach( string type in types )
-            {
-                bool Selectable = true;
-                if( type == "category" )
-                {
-                    Selectable = false;
-                }
-                ReturnObj[type] = new JObject();
-                ReturnObj[type]["icon"] = new JObject();
-                ReturnObj[type]["icon"]["image"] = "Images/view/" + type + ".gif";
-                ReturnObj[type]["hover_mode"] = Selectable;
-                ReturnObj[type]["select_mode"] = Selectable;
-            }
-            return ReturnObj;
-        }
+            return ret;
+        } // getViewSelect()
 
 
         public JObject getViewGrid( bool All )

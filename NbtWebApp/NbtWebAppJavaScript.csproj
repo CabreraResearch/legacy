@@ -88,6 +88,8 @@
     <Content Include="css\ChemSW.min.css" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.table.layout.css" />
+    <Content Include="csw.js\components\csw.viewselect.js" />
+    <Content Include="csw.js\controls\csw.morediv.js" />
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
