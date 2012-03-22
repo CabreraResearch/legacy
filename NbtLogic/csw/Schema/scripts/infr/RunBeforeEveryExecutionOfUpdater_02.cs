@@ -15,11 +15,12 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_02 : CswUpdateSchemaTo
     {
+        public static string Title = "nbt_initialize_ora.bat";
 
         public override void update()
         {
-            //***************  ADD your own code
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState("Running nbt_initialize_ora.bat prior to updates."); //this one blocks        
+            //_CswNbtSchemaModTrnsctn.CswLogger.reportAppState("Running nbt_initialize_ora.bat prior to updates."); //this one blocks        
+            
             //"Initialize" is only for updateSequences()!!!
             _CswNbtSchemaModTrnsctn.CswDbCfgInfo.makeConfigurationCurrent( _CswNbtSchemaModTrnsctn.Accessid );
             string serverName = _CswNbtSchemaModTrnsctn.CswDbCfgInfo.CurrentServerName;
@@ -40,7 +41,10 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Timed out will running nbt_initialize_ora.bat prior to updates." );
             }
-            else _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Finished nbt_initialize_ora.bat prior to updates." );
+            //else
+            //{
+            //    _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Finished nbt_initialize_ora.bat prior to updates." );
+            //}
 
         }//Update()
 
