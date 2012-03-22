@@ -85,13 +85,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="css\ChemSW.css" />
     <Content Include="css\ChemSW.min.css" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.table.layout.css" />
+    <Content Include="css\_dev.ChemSW.css" />
+    <Content Include="css\_dev.csw.combobox.css" />
+    <Content Include="css\_dev.csw.errormessage.css" />
+    <Content Include="css\_dev.csw.fieldtypes.css" />
+    <Content Include="css\_dev.csw.menu.css" />
+    <Content Include="css\_dev.csw.search.css" />
+    <Content Include="css\_dev.csw.table.layout.css" />
+    <Content Include="css\_dev.csw.vieweditor.css" />
+    <Content Include="css\_dev.csw.wizard.css" />
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
-    <Content Include="js\common\components\csw.nodetypeselect.js" />
+    <Content Include="js\nbt\components\csw.nodetypeselect.js" />
     <Content Include="js\common\components\csw.tree.js" />
     <Content Include="js\common\components\csw.viewselect.js" />
     <Content Include="js\common\controls\csw.button.js" />
@@ -100,7 +110,7 @@
     <Content Include="js\nbt\Main.js" />
     <Content Include="js\_first-vsdoc.js" />
     <Content Include="js\_last-vsdoc.js" />
-    <Content Include="js\nbt\actions\csw.futureScheduling.js" />
+    <Content Include="js\nbt\actions\csw.futurescheduling.js" />
     <Content Include="js\nbt\actions\CswAuditHistoryGrid.js" />
     <Content Include="js\nbt\actions\CswInspectionDesign.js" />
     <Content Include="js\nbt\actions\CswInspectionStatus.js" />
@@ -167,12 +177,10 @@
     <Content Include="js\nbt\pagecmp\CswWizard.js" />
     <Content Include="js\nbt\tools\CswAttr.js" />
     <Content Include="js\nbt\tools\CswQueryString.js" />
-    <Content Include="js\nbt\tools\CswTools.js" />
+    <Content Include="js\common\events\csw.onenter.js" />
     <Content Include="js\nbt\view\CswViewContentTree.js" />
     <Content Include="js\nbt\view\CswViewEditor.js" />
-    <Content Include="js\nbt\view\CswViewListTree.js" />
     <Content Include="js\nbt\view\CswViewPropFilter.js" />
-    <Content Include="js\nbt\view\CswViewSelect.js" />
     <Content Include="Report.html" />
     <Content Include="js\ChemSW.js" />
     <Content Include="js\common\controls\csw.thingrid.js" />
@@ -235,7 +243,6 @@
     <Content Include="css\csw.wizard.css" />
     <Content Include="js\common\tools\csw.pubsub.js" />
     <Content Include="css\csw.vieweditor.css" />
-    <Content Include="css\_style.css" />
     <Content Include="Main.html" />
     <Content Include="MainFooter.html" />
     <Content Include="MainHeader.html" />

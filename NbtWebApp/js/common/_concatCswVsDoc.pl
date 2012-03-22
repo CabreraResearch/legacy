@@ -11,6 +11,7 @@ $js .= extractFile("$dir\\js\\ChemSW.js");
 $js .= extract("$dir\\js\\common\\components");
 $js .= extract("$dir\\js\\common\\controls");
 $js .= extract("$dir\\js\\common\\core");
+$js .= extract("$dir\\js\\common\\events");
 $js .= extract("$dir\\js\\common\\tools");
 $js .= extract("$dir\\js\\common\\types");
 $js .= extractFile("$dir\\js\\_last-vsdoc.js");
