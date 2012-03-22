@@ -6,9 +6,8 @@
     <meta http-equiv="Cache-Control" content="no-cache">
     <title>NBT</title>
     <!--#include file="MainIncludes.html" -->
-    <!--#include file="_DevIncludes.html" -->
-    <!-- <script type="text/javascript" src="js/CswAll.min.js"></script> -->
-    <!-- <script type="text/javascript" src="js/ChemSW.min.js"></script> -->
+    <script type="text/javascript" src="js/CswAll.min.js"></script>
+    <script type="text/javascript" src="js/ChemSW.min.js"></script>
     <style type="text/css">
         
         .propertylabel
@@ -25,8 +24,8 @@
     
         $(document).ready(function () {
             var initReport = function() {
-                if ($.CswQueryString) {
-                    var qs = $.CswQueryString();
+                if (Csw.queryString) {
+                    var qs = Csw.queryString();
                     $('#ReportContent').CswNodeTabs({
                         ID: 'nodereporttabs',
                         nodeids: [qs.nodeid],

@@ -176,7 +176,7 @@
     <Content Include="js\nbt\pagecmp\CswWelcome.js" />
     <Content Include="js\nbt\pagecmp\CswWizard.js" />
     <Content Include="js\nbt\tools\CswAttr.js" />
-    <Content Include="js\nbt\tools\CswQueryString.js" />
+    <Content Include="js\common\tools\csw.querystring.js" />
     <Content Include="js\common\events\csw.onenter.js" />
     <Content Include="js\nbt\view\CswViewContentTree.js" />
     <Content Include="js\nbt\view\CswViewEditor.js" />

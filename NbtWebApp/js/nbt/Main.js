@@ -30,7 +30,7 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     // handle querystring arguments
-    var qs = $.CswQueryString();
+    var qs = Csw.queryString();
     if (false == Csw.isNullOrEmpty(qs.viewid)) {
         var setView = function () {
             Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode));
