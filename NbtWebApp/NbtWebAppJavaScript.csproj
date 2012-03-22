@@ -88,14 +88,14 @@
     <Content Include="css\ChemSW.min.css" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.table.layout.css" />
-    <Content Include="csw.js\components\csw.viewselect.js" />
-    <Content Include="csw.js\controls\csw.morediv.js" />
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
     <Content Include="js\common\components\csw.nodetypeselect.js" />
     <Content Include="js\common\components\csw.tree.js" />
+    <Content Include="js\common\components\csw.viewselect.js" />
     <Content Include="js\common\controls\csw.button.js" />
+    <Content Include="js\common\controls\csw.morediv.js" />
     <Content Include="js\nbt\nodes\csw.node.tree.js" />
     <Content Include="js\nbt\Main.js" />
     <Content Include="js\_first-vsdoc.js" />
