@@ -258,6 +258,7 @@
             $.CswDialog('AddViewDialog', {
                 ID: Csw.controls.dom.makeId(internal.ID, '', 'addviewdialog'),
                 //viewmode: 'table',
+                category: 'Saved Searches',
                 onAddView: function (newviewid, viewmode) {
 
                     Csw.ajax.post({

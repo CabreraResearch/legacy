@@ -1589,7 +1589,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId, string ViewId )
+        public string createView( string ViewName, string Category, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId, string ViewId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1630,6 +1630,7 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
                     NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
+                    NewView.Category = Category;
 
                     if( ViewMode != string.Empty )
                     {

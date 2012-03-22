@@ -54,7 +54,8 @@
                 ID: 'addviewdialog',
                 onAddView: function () { },
                 viewid: '',
-                viewmode: ''
+                viewmode: '',
+                category: ''
             };
             if (options) $.extend(o, options);
 
@@ -65,24 +66,40 @@
                 FirstCellRightAlign: true
             });
 
-            table.cell(1, 1).text('Name:');
-
-            var nameTextCell = table.cell(1, 2);
-            var nameTextBox = nameTextCell.input({ ID: o.ID + '_nametb',
+            var row = 1;
+            table.cell(row, 1).text('Name:');
+            var nameTextCell = table.cell(row, 2);
+            var nameTextBox = nameTextCell.input({ 
+                ID: o.ID + '_nametb',
                 type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
             });
+            row += 1;
+
+            table.cell(row, 1).text('Category:');
+            var categoryTextCell = table.cell(row, 2);
+            var categoryTextBox = categoryTextCell.input({ 
+                ID: o.ID + '_cattb',
+                type: Csw.enums.inputTypes.text,
+                value: o.category,
+                cssclass: 'textinput'
+            });
+            row += 1;
+
             var displayModeSelect;
             if (Csw.isNullOrEmpty(o.viewmode)) {
-                table.cell(2, 1).text('Display Mode:');
-                displayModeSelect = table.cell(2, 2).select({ ID: o.ID + '_dmsel' });
+                table.cell(row, 1).text('Display Mode:');
+                displayModeSelect = table.cell(row, 2).select({ ID: o.ID + '_dmsel' });
                 displayModeSelect.option({ value: 'Grid' });
                 displayModeSelect.option({ value: 'List' });
                 displayModeSelect.option({ value: 'Table' });
                 displayModeSelect.option({ value: 'Tree', isSelected: true });
+                row += 1;
             }
 
-            var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
+            var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to:');
+
+            row += 1;
             var $savebtn = $div.CswButton({
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
@@ -91,6 +108,7 @@
 
                     var createData = {};
                     createData.ViewName = nameTextBox.val();
+                    createData.Category = categoryTextBox.val();
                     createData.ViewId = o.viewid;
                     if (Csw.isNullOrEmpty(o.viewmode)) {
                         createData.ViewMode = displayModeSelect.val();
@@ -120,6 +138,7 @@
                     });
                 }
             });
+
             /* Cancel Button */
             $div.CswButton({
                 ID: o.ID + '_cancel',
