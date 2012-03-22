@@ -77,9 +77,9 @@ namespace ChemSW.Nbt.Sched
                         CswNbtObjClassInspectionDesign CurrentInspectionDesign = InspectionDesigns[idx];
 
                         DateTime DueDate = CurrentInspectionDesign.Date.DateTimeValue;
-                        CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
-                        if( null != GeneratorNode &&
-                            _Pending == CurrentInspectionDesign.Status.Value &&
+                        //CswNbtNode GeneratorNode = _CswNbtResources.Nodes.GetNode( CurrentInspectionDesign.Generator.RelatedNodeId );
+                        //if( null != GeneratorNode &&
+                        if( _Pending == CurrentInspectionDesign.Status.Value &&
                             DateTime.Today >= DueDate &&
                             Tristate.True != CurrentInspectionDesign.IsFuture.Checked )
                         {
