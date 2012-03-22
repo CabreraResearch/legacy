@@ -11,22 +11,27 @@
 
         ExpireDialog: function (options) {
             var o = {
-                onYes: function () { }
+                onYes: null
             };
 
-            if (options) $.extend(o, options);
+            if (options) {
+                $.extend(o, options);
+            }
 
             var div = Csw.controls.div();
 
-            div.p('Your session is about to time out.  Would you like to continue working?');
+            div.p({ text: 'Your session is about to time out.  Would you like to continue working?' });
 
             div.button({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
-                onClick: function () { $div.dialog('close'); o.onYes(); }
+                onClick: function() {
+                    div.$.dialog('close');
+                    Csw.tryExec(o.onYes);
+                }
             });
 
-            openDialog(div, 300, 250, null, 'Expire Warning');
+            openDialog(div, 300, 150, null, 'Expire Warning');
 
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {
