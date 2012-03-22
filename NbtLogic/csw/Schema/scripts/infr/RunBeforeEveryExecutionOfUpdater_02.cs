@@ -28,11 +28,10 @@ namespace ChemSW.Nbt.Schema
 
 
             System.Diagnostics.Process p = new System.Diagnostics.Process();
-            p.StartInfo.UseShellExecute = false;
             p.StartInfo.FileName = _CswNbtSchemaModTrnsctn.ConfigFileLocation + "\\nbt_initialize_ora.bat";
             p.StartInfo.Arguments = " " + serverName + " " + userName + " " + passWord + " " + _CswNbtSchemaModTrnsctn.ConfigFileLocation;
             p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
-            p.StartInfo.UseShellExecute=false;
+            p.StartInfo.UseShellExecute = true; 
             p.StartInfo.RedirectStandardOutput = false;
 
             System.Diagnostics.Process.Start( p.StartInfo );

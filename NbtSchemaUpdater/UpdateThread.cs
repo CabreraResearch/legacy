@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.Schema
 
             for( int idx = 0; ReturnVal && ( idx < ScriptCollection.Count ); idx++ )
             {
-                CswSchemaUpdateDriver CurrentUpdateDriver = _CswSchemaScriptsProd.RunBeforeScripts[idx];
+                CswSchemaUpdateDriver CurrentUpdateDriver = ScriptCollection[idx];
 
                 string ScriptDescription = CurrentUpdateDriver.SchemaVersion.ToString() + ": " + CurrentUpdateDriver.Description;
                 ReturnVal = _CswSchemaUpdater.runArbitraryScript( CurrentUpdateDriver );
@@ -329,8 +329,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     UpdateSucceeded = _runNonVersionScripts( _CswSchemaScriptsProd.RunAfterScripts, CswNbtResources, SchemaInfoEventArgs );
                 }
-
-
 
                 if( Cancel )
                 {
