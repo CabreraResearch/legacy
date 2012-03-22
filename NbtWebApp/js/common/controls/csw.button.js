@@ -2,10 +2,10 @@
 /// <reference path="~/js/ChemSW-vsdoc.js" />
 
 (function () {
-    'use strict';
-
+    
     Csw.controls.button = Csw.controls.button ||
         Csw.controls.register('button', function(options) {
+            'use strict';
             /// <summary> Create or extend an HTML <button /> and return a Csw.button object
             ///     &#10;1 - button(options)
             ///     &#10;2 - button($jqueryElement)
