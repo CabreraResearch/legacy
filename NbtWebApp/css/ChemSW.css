@@ -1,17 +1,17 @@
 ﻿body
 {
-	color: &cswtextcolor;
-	background-color: &cswpagebgcolor;
+    color: &cswtextcolor;
+    background-color: &cswpagebgcolor;
 
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	margin: 0px 0px 0px 0px;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    margin: 0px 0px 0px 0px;
 }
 body a
 {
-	color: &cswtextcolor;
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
+    color: &cswtextcolor;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
 }
 
 /* This keeps bullets aligned with list items */
@@ -22,257 +22,257 @@ ul li {
     list-style-position:inside;
 }
 ul li div {
-    display:inline;
+    /* display:inline; */
 }
 
 
 
 .OuterDiv
 {
-	text-align: center;
+    text-align: center;
 }
 
 .PageTable
 {
-	text-align: left;
-	background-color: &cswpageinnerbgcolor;
-	margin: 10px 10px 5px 10px;
+    text-align: left;
+    background-color: &cswpageinnerbgcolor;
+    margin: 10px 10px 5px 10px;
 }
 
 .HeaderTable_LeftBorder
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -0px -0px no-repeat;
-	width: 18px;
-	/* height: 79px; */
-	height: 32px;
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -0px -0px no-repeat;
+    width: 18px;
+    /* height: 79px; */
+    height: 32px;
 }
 .HeaderTable_TopBorder
 {
-	background: url(../Images/pagelayout/pagelayoutx.gif) 0px 0px repeat-x;
-	height: 10px;
+    background: url(../Images/pagelayout/pagelayoutx.gif) 0px 0px repeat-x;
+    height: 10px;
 }
 .HeaderTable_RightBorder
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -29px -0px no-repeat;
-	width: 20px;
-	/* height: 79px; */
-	height: 32px;
-	
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -29px -0px no-repeat;
+    width: 20px;
+    /* height: 79px; */
+    height: 32px;
+    
 }
 .HeaderTable_LeftCell
 {
-	background-color: &cswheaderbgcolor;
-	border-bottom: 1px solid &cswheaderbordercolor;
-	padding: 0px 10px 0px 0px;
-	height: 32px;
-	width: 270px;
-	/*
-	height: 64px;
-	width: 270px;
-	*/
+    background-color: &cswheaderbgcolor;
+    border-bottom: 1px solid &cswheaderbordercolor;
+    padding: 0px 10px 0px 0px;
+    height: 32px;
+    width: 270px;
+    /*
+    height: 64px;
+    width: 270px;
+    */
 }
 .HeaderTable_RightTopCell
 {
-	background-color: &cswheaderbgcolor;
-	height: 30px;
-	width: 100%;
-	border-bottom: 1px solid &cswheaderbordercolor;
+    background-color: &cswheaderbgcolor;
+    height: 30px;
+    width: 100%;
+    border-bottom: 1px solid &cswheaderbordercolor;
 }
 
 .HeaderTable_RightMenu
 {
-	width: 300px;
+    width: 300px;
 }
 
 .HeaderTable_BottomMenu
 {
-	background-color: &cswpageinnerbgcolor;
-	height: 36px;
+    background-color: &cswpageinnerbgcolor;
+    height: 36px;
 }
 
 .PageTable_LeftColumn
 {
-	background: url(../Images/pagelayout/pagelayouty.gif) 0px 0px repeat-y;
-	width: 18px;
+    background: url(../Images/pagelayout/pagelayouty.gif) 0px 0px repeat-y;
+    width: 18px;
 }
 .PageTable_LeftCell
 {
-	background-image: url(../Images/pagelayout/page_leftbg.jpg);
-	background-repeat: no-repeat;
-	vertical-align: top;
-	width: 270px;
+    background-image: url(../Images/pagelayout/page_leftbg.jpg);
+    background-repeat: no-repeat;
+    vertical-align: top;
+    width: 270px;
 }
 .PageTable_LeftCellNoBg
 {
-	width: 270px;
+    width: 270px;
 }
 .PageTable_RightCell
 {
-	vertical-align: top;
+    vertical-align: top;
 }
 
 .PageTable_RightColumn
 {
-	background: url(../Images/pagelayout/pagelayouty.gif) -28px 0px repeat-y;
-	width: 20px;
+    background: url(../Images/pagelayout/pagelayouty.gif) -28px 0px repeat-y;
+    width: 20px;
 }
 .PageTable_BottomLeftCorner
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -0px -80px no-repeat;
-	width: 18px;
-	height: 15px;
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -0px -80px no-repeat;
+    width: 18px;
+    height: 15px;
 }
 .PageTable_BottomRowLeft
 {
-	background: url(../Images/pagelayout/pagelayoutx.gif) -0px -23px repeat-x;
-	height: 15px;
-	width: 270px;
+    background: url(../Images/pagelayout/pagelayoutx.gif) -0px -23px repeat-x;
+    height: 15px;
+    width: 270px;
 }
 .PageTable_BottomRowRight
 {
-	background: url(../Images/pagelayout/pagelayoutx.gif) -0px -23px repeat-x;
-	height: 15px;
+    background: url(../Images/pagelayout/pagelayoutx.gif) -0px -23px repeat-x;
+    height: 15px;
 }
 .PageTable_BottomRightCorner
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -29px -80px no-repeat;
-	width: 20px;
-	height: 15px;
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -29px -80px no-repeat;
+    width: 20px;
+    height: 15px;
 }
 
 .HeaderInnerTable
 {
-	height: 18px;
+    height: 18px;
 }
 .HeaderInnerTable_LeftHeaderCell
 {
-	width: 50%;
+    width: 50%;
 }
 .HeaderInnerTable_RightHeaderCell
 {
-	width: 50%;
+    width: 50%;
 }
 .DashboardTable
 {
 }
 .DashboardCell
 {
-	padding: 0px 2px 0px 2px;
+    padding: 0px 2px 0px 2px;
 }
 
 .dash_imcs
 {
-	background:url('../Images/pagelayout/dash.gif') 0px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') 0px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_imcs_off
 {
-	background:url('../Images/pagelayout/dash.gif') 0px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') 0px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_fe
 {
-	background:url('../Images/pagelayout/dash.gif') -30px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -30px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_fe_off
 {
-	background:url('../Images/pagelayout/dash.gif') -30px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -30px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_si
 {
-	background:url('../Images/pagelayout/dash.gif') -60px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -60px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_si_off
 {
-	background:url('../Images/pagelayout/dash.gif') -60px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -60px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 
 .dash_stis
 {
-	background:url('../Images/pagelayout/dash.gif') -90px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -90px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_stis_off
 {
-	background:url('../Images/pagelayout/dash.gif') -90px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -90px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 
 .dash_cispro
 {
-	background:url('../Images/pagelayout/dash.gif') -120px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -120px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_cispro_off
 {
-	background:url('../Images/pagelayout/dash.gif') -120px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -120px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 
 .dash_ccpro
 {
-	background:url('../Images/pagelayout/dash.gif') -150px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -150px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_ccpro_off
 {
-	background:url('../Images/pagelayout/dash.gif') -150px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -150px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 
 .dash_biosafety
 {
-	background:url('../Images/pagelayout/dash.gif') -180px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -180px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_biosafety_off
 {
-	background:url('../Images/pagelayout/dash.gif') -180px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -180px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 
 .dash_hh
 {
-	background:url('../Images/pagelayout/dash.gif') -210px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -210px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_hh_off
 {
-	background:url('../Images/pagelayout/dash.gif') -210px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -210px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 
 .dash_nbtmgr
 {
-	background:url('../Images/pagelayout/dash.gif') -240px 0px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -240px 0px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 .dash_nbtmgr_off
 {
-	background:url('../Images/pagelayout/dash.gif') -240px -30px no-repeat;
-	width: 30px;
-	height: 30px;
+    background:url('../Images/pagelayout/dash.gif') -240px -30px no-repeat;
+    width: 30px;
+    height: 30px;
 }
 
 
@@ -283,112 +283,112 @@ ul li div {
 
 .selectinput
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	background-color: #ffffff;
-	border-top: 2px solid #7f9db9;
-	border-left: 2px solid #7f9db9;
-	border-right: 2px solid #7f9db9;
-	border-bottom: 2px solid #7f9db9;
-	color: &cswtextcolor;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    background-color: #ffffff;
+    border-top: 2px solid #7f9db9;
+    border-left: 2px solid #7f9db9;
+    border-right: 2px solid #7f9db9;
+    border-bottom: 2px solid #7f9db9;
+    color: &cswtextcolor;
 }
 .selectinput_invalid
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	background-color: #ffcccc;
-	border-top: 2px solid #7f9db9;
-	border-left: 2px solid #7f9db9;
-	border-right: 2px solid #7f9db9;
-	border-bottom: 2px solid #7f9db9;
-	color: &cswtextcolor;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    background-color: #ffcccc;
+    border-top: 2px solid #7f9db9;
+    border-left: 2px solid #7f9db9;
+    border-right: 2px solid #7f9db9;
+    border-bottom: 2px solid #7f9db9;
+    color: &cswtextcolor;
 }
 .textinput
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	background-color: #ffffff;
-	border-top: 1px solid #7f9db9;
-	border-left: 1px solid #7f9db9;
-	border-right: 1px solid #7f9db9;
-	border-bottom: 1px solid #7f9db9;
-	color: &cswtextcolor;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    background-color: #ffffff;
+    border-top: 1px solid #7f9db9;
+    border-left: 1px solid #7f9db9;
+    border-right: 1px solid #7f9db9;
+    border-bottom: 1px solid #7f9db9;
+    color: &cswtextcolor;
 }
 .textinput_invalid
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	background-color: #ffcccc;
-	border-top: 1px solid #7f9db9;
-	border-left: 1px solid #7f9db9;
-	border-right: 1px solid #7f9db9;
-	border-bottom: 1px solid #7f9db9;
-	color: &cswtextcolor;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    background-color: #ffcccc;
+    border-top: 1px solid #7f9db9;
+    border-left: 1px solid #7f9db9;
+    border-right: 1px solid #7f9db9;
+    border-bottom: 1px solid #7f9db9;
+    color: &cswtextcolor;
 }
 
 .staticvalue
 {
-	position: relative;
-	top: -3px;
-	padding: 0px 20px 0px 0px;
-	margin: 0px 20px 0px 0px;
-	border-top: 1px solid &cswpagebgcolor;
-	border-left: 1px solid &cswpagebgcolor;
-	border-right: 1px solid &cswpagebgcolor;
-	border-bottom: 1px solid &cswpagebgcolor;
-	color: &cswtextcolor;
+    position: relative;
+    top: -3px;
+    padding: 0px 20px 0px 0px;
+    margin: 0px 20px 0px 0px;
+    border-top: 1px solid &cswpagebgcolor;
+    border-left: 1px solid &cswpagebgcolor;
+    border-right: 1px solid &cswpagebgcolor;
+    border-bottom: 1px solid &cswpagebgcolor;
+    color: &cswtextcolor;
 }
 
 .propertylabelcell
 {
-	vertical-align: top;
-	padding: 4px 4px 4px 10px;
-	text-align: right;
+    vertical-align: top;
+    padding: 4px 4px 4px 10px;
+    text-align: right;
 }
 
 .propertylabel
 {
-	vertical-align: top;
-	padding: 4px 4px 4px 10px;
-	font-weight: bold;
+    vertical-align: top;
+    padding: 4px 4px 4px 10px;
+    font-weight: bold;
 }
 
 .propertyvaluecell
 {
-	vertical-align: top;
-	padding: 4px 0px 4px 0px;
+    vertical-align: top;
+    padding: 4px 0px 4px 0px;
 }
 
 .ErrorContent
 {
-	padding: 1px 3px 1px 3px;
-	background-color: &cswbgcolorhilite;
-	color: &cswtextcolor;
+    padding: 1px 3px 1px 3px;
+    background-color: &cswbgcolorhilite;
+    color: &cswtextcolor;
 }
 
 .ErrorMessage
 {
-	color: &cswtextcolor;
+    color: &cswtextcolor;
 }
 
 .Button
 {
-	font-size: &cswtextfontsize;
-	color: &cswtextcolor;
+    font-size: &cswtextfontsize;
+    color: &cswtextcolor;
 }
 
 .Login
 {
-	text-align: center;
-	color: &cswtextcolor;
+    text-align: center;
+    color: &cswtextcolor;
 }
 .Login a
 {
-	color: &cswtextcolor;
+    color: &cswtextcolor;
 }
 .Login a:hover
 {
-	color: #003366;
+    color: #003366;
 }
 
 .LoginControlDiv
@@ -397,9 +397,9 @@ ul li div {
 
 .LoginFailure
 {
-	background-color:#ffff66;
-	color: #ff0000;
-	padding: 5px 5px 5px 5px;
+    background-color:#ffff66;
+    color: #ff0000;
+    padding: 5px 5px 5px 5px;
 }
 
 
@@ -412,82 +412,82 @@ ul li div {
 
 .TabTable
 {
-	padding: 3px 3px 3px 3px;
-	margin: 0px 0px 0px 0px;
-	
+    padding: 3px 3px 3px 3px;
+    margin: 0px 0px 0px 0px;
+    
 }
 
 .TabOuterTable
 {
-	background-color: #ffffff;
-	width: 100%;
-	height: 300px;
+    background-color: #ffffff;
+    width: 100%;
+    height: 300px;
 }
 
 .TabOuterTable_TopLeft
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -19px -80px no-repeat;
-	width: 3px;
-	height: 5px;
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -19px -80px no-repeat;
+    width: 3px;
+    height: 5px;
 }
 .TabOuterTable_Top
 {
-	background: url(../Images/pagelayout/pagelayoutx.gif) 0px -11px repeat-x;
-	height: 5px;
+    background: url(../Images/pagelayout/pagelayoutx.gif) 0px -11px repeat-x;
+    height: 5px;
 }
 .TabOuterTable_TopRight
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -24px -80px no-repeat;
-	width: 4px;
-	height: 5px;
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -24px -80px no-repeat;
+    width: 4px;
+    height: 5px;
 }
 .TabOuterTable_Left
 {
-	background: url(../Images/pagelayout/pagelayouty.gif) -19px 0px repeat-y;
-	width: 3px;
+    background: url(../Images/pagelayout/pagelayouty.gif) -19px 0px repeat-y;
+    width: 3px;
 }
 .TabOuterTable_Center
 {
-	width: 100%;
-	height: 100%;
-	padding: 3px 3px 3px 3px;
+    width: 100%;
+    height: 100%;
+    padding: 3px 3px 3px 3px;
 }
 .TabOuterTable_Right
 {
-	background: url(../Images/pagelayout/pagelayouty.gif) -23px 0px repeat-y;
-	width: 4px;
+    background: url(../Images/pagelayout/pagelayouty.gif) -23px 0px repeat-y;
+    width: 4px;
 }
 .TabOuterTable_BottomLeft
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -19px -86px no-repeat;
-	width: 3px;
-	height: 5px;
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -19px -86px no-repeat;
+    width: 3px;
+    height: 5px;
 }
 .TabOuterTable_Bottom
 {
-	background: url(../Images/pagelayout/pagelayoutx.gif) 0px -17px repeat-x;
-	height: 5px;
+    background: url(../Images/pagelayout/pagelayoutx.gif) 0px -17px repeat-x;
+    height: 5px;
 }
 .TabOuterTable_BottomRight
 {
-	background: url(../Images/pagelayout/pagelayoutcorners.gif) -24px -86px no-repeat;
-	width: 4px;
-	height: 5px;
+    background: url(../Images/pagelayout/pagelayoutcorners.gif) -24px -86px no-repeat;
+    width: 4px;
+    height: 5px;
 }
 
 
 .MenuCell
 {
-	border-bottom: 1px solid #bababc;
+    border-bottom: 1px solid #bababc;
 }
 
 .Menu
 {
-	z-index: 5;
+    z-index: 5;
 }
 .MenuDiv
 {
-	background-color: Transparent;
+    background-color: Transparent;
 }
 
 .MenuGroup
@@ -508,77 +508,77 @@ ul li div {
 
 .TabStrip
 {
-	z-index: 50;
+    z-index: 50;
 }
 
 
 .Wizard
 {
-	border: 1px solid #99ccff;
-	padding: 5px 5px 5px 5px;
-	margin: 5px 5px 5px 5px;
+    border: 1px solid #99ccff;
+    padding: 5px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
 }
 .WizardTopCell
 {
-	background-color: #bbddff;
-	color: &cswtextcolor;	
-	font-weight: bold;
-	font-size: 1.2em;
+    background-color: #bbddff;
+    color: &cswtextcolor;	
+    font-weight: bold;
+    font-size: 1.2em;
 }
 .WizardSideCell
 {
-	background-color: #ddeeff;
-	padding: 0px 10px 0px 10px;
+    background-color: #ddeeff;
+    padding: 0px 10px 0px 10px;
 }
 .WizardMainCell
 {
-	background-color: #ddeeff;
-	padding: 0px 10px 10px 10px;
+    background-color: #ddeeff;
+    padding: 0px 10px 10px 10px;
 }
 .WizardStep
 {
 }
 .WizardSelectedStep
 {
-	background-color: &cswbgcolorhilite;
+    background-color: &cswbgcolorhilite;
 }
 .WizardStepTitleCell
 {
-	font-size: 1.1em;
-	font-weight: bold;
-	padding-bottom: 20px;
+    font-size: 1.1em;
+    font-weight: bold;
+    padding-bottom: 20px;
 }
 .WizardStepTableDiv
 {
-	background: #ffffff;
-	height: 400px;
-	border: 1px solid #99ccff;
-	padding: 5px 5px 5px 5px;
-	margin: 5px 5px 5px 5px;
-	overflow: auto;
+    background: #ffffff;
+    height: 400px;
+    border: 1px solid #99ccff;
+    padding: 5px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
+    overflow: auto;
 }
 .WizardStepTable
 {
-	width: 600px;
-	padding: 5px 5px 5px 5px;
-	margin: 5px 5px 5px 5px;
+    width: 600px;
+    padding: 5px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
 }
 .WizardButtonTable
 {
-	width: 600px;
-	text-align: right;
-	padding: 5px 5px 5px 5px;
-	margin: 5px 5px 5px 5px;
+    width: 600px;
+    text-align: right;
+    padding: 5px 5px 5px 5px;
+    margin: 5px 5px 5px 5px;
 }
 .WizardButtonTableNextCell
 {
-	width: 80%;
-	text-align: right;
+    width: 80%;
+    text-align: right;
 }
 .WizardButtonTableCancelCell
 {
-	width: 20%;
-	text-align: right;
+    width: 20%;
+    text-align: right;
 }
 
 .ViewEditorOuterTable
@@ -586,176 +586,176 @@ ul li div {
 }
 .ViewEditorWizardCell
 {
-	padding-bottom: 5px; 
+    padding-bottom: 5px; 
 }
 .ViewEditorPreviewCell
 {
-	width: 100%;
-	padding-top: 5px; 
+    width: 100%;
+    padding-top: 5px; 
 }
 .ViewEditorSubTable
 {
-	margin-left: 5px;
-	padding-left: 5px;
-	border-left: 1px solid #6699cc;
+    margin-left: 5px;
+    padding-left: 5px;
+    border-left: 1px solid #6699cc;
 }
 
 .DatePicker
 {
-	background-color: #ddeeff;
-	color: #003366;
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	cursor: pointer;
-	width: 140px;
-	border-top: 2px solid #6699cc;
-	border-left: 2px solid #6699cc;
-	border-right: 2px solid #eeeeee;
-	border-bottom: 2px solid #eeeeee;
+    background-color: #ddeeff;
+    color: #003366;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    cursor: pointer;
+    width: 140px;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
 }
 .DatePickerInvalid
 {
-	background-color: #ffcccc;
-	color: #003366;
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	cursor: pointer;
-	width: 140px;
-	border-top: 2px solid #6699cc;
-	border-left: 2px solid #6699cc;
-	border-right: 2px solid #eeeeee;
-	border-bottom: 2px solid #eeeeee;
+    background-color: #ffcccc;
+    color: #003366;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    cursor: pointer;
+    width: 140px;
+    border-top: 2px solid #6699cc;
+    border-left: 2px solid #6699cc;
+    border-right: 2px solid #eeeeee;
+    border-bottom: 2px solid #eeeeee;
 }
 
 .DateCalendar
 {
-	background-color: #003366;
-	color: #ddeeff;
+    background-color: #003366;
+    color: #ddeeff;
 }
 .DateTitle
 {
 }
 .DateNextPrev
 {
-	cursor: pointer;
+    cursor: pointer;
 }
 .DateMonth
 {
 }
 .DateDayHeader
 {
-	text-align:center;
-	cursor: default;
+    text-align:center;
+    cursor: default;
 }
 .DateDay
 {
-	background-color: #ddeeff;
-	color: #003366;
-	cursor: pointer;
+    background-color: #ddeeff;
+    color: #003366;
+    cursor: pointer;
 }
 .DateSelectedDay
 {
-	background-color: &cswbgcolorhilite;
-	color: #003366;
-	cursor: pointer;
+    background-color: &cswbgcolorhilite;
+    color: #003366;
+    cursor: pointer;
 }
 .DateOtherMonthDay
 {
-	background-color: #99ccff;
-	color: #003366;
-	cursor: pointer;
+    background-color: #99ccff;
+    color: #003366;
+    cursor: pointer;
 }
 .DateDayHover
 {
-	background-color: #ddeeff;
-	color: #ff0000;
-	cursor: pointer;
+    background-color: #ddeeff;
+    color: #ff0000;
+    cursor: pointer;
 }
 .DateSelectedDayHover
 {
-	background-color: &cswbgcolorhilite;
-	color: #ff0000;
-	cursor: pointer;
+    background-color: &cswbgcolorhilite;
+    color: #ff0000;
+    cursor: pointer;
 }
 .DateOtherMonthDayHover
 {
-	background-color: #99ccff;
-	color: #ff0000;
-	cursor: pointer;
+    background-color: #99ccff;
+    color: #ff0000;
+    cursor: pointer;
 }
 
 .OuterTable
 {
-	border-top: 1px solid #6699cc;
-	border-left: 1px solid #6699cc;
-	border-right: 1px solid #6699cc;
-	border-bottom: 1px solid #6699cc;
+    border-top: 1px solid #6699cc;
+    border-left: 1px solid #6699cc;
+    border-right: 1px solid #6699cc;
+    border-bottom: 1px solid #6699cc;
 }
 
 
 
 .Dialog
 {
-	border-top: 4px solid #6699cc;
-	border-left: 4px solid #6699cc;
-	border-right: 4px solid #003366;
-	border-bottom: 4px solid #003366;
-	padding: 5px 5px 5px 5px;
-	background-color: #ddeeff;
-	z-index: 1000;
+    border-top: 4px solid #6699cc;
+    border-left: 4px solid #6699cc;
+    border-right: 4px solid #003366;
+    border-bottom: 4px solid #003366;
+    padding: 5px 5px 5px 5px;
+    background-color: #ddeeff;
+    z-index: 1000;
 }
 .DialogTitle
 {
-	color: #ddeeff;
-	background-color: #336699;
-	text-align: center;
-	padding: 2px 2px 2px 2px;
+    color: #ddeeff;
+    background-color: #336699;
+    text-align: center;
+    padding: 2px 2px 2px 2px;
 }
 .DialogText
 {
-	padding: 5px 0px 0px 0px;
-	color: #003366;
+    padding: 5px 0px 0px 0px;
+    color: #003366;
 }
 
 .ProgressDiv
 {
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	z-index: 1000;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: 1000;
 }
 
 .ProgressTable
 {
-	border-top: 1px solid #6699cc;
-	border-left: 1px solid #6699cc;
-	border-right: 1px solid #6699cc;
-	border-bottom: 1px solid #6699cc;
-	background-color: #ffffff;
-	color: #003366;
+    border-top: 1px solid #6699cc;
+    border-left: 1px solid #6699cc;
+    border-right: 1px solid #6699cc;
+    border-bottom: 1px solid #6699cc;
+    background-color: #ffffff;
+    color: #003366;
 }
 
 
 .Grid
 {
-	background-color: #336699;
-	border: 1px solid #6699cc;
-	color: #003366;
-	cursor: default;
-	margin: 0px 0px 0px 0px;
+    background-color: #336699;
+    border: 1px solid #6699cc;
+    color: #003366;
+    cursor: default;
+    margin: 0px 0px 0px 0px;
 }
 .GridFooter
 {
-	background-color: #336699;
-	color: #ffffff;
+    background-color: #336699;
+    color: #ffffff;
 }
 .GridRowOdd
 {
-	background-color: #ddeeff;
+    background-color: #ddeeff;
 }
 .GridRowEven
 {
-	background-color: #ffffff;
+    background-color: #ffffff;
 }
 
 .GridIndentCell
@@ -763,66 +763,66 @@ ul li div {
 }
 .GridHeaderText
 {
-	background-color: #336699;
-	color: #ffffff;
-	width: 100%;
+    background-color: #336699;
+    color: #ffffff;
+    width: 100%;
 }
 .GridCell
 {
-	border-right: 1px solid #003366;
+    border-right: 1px solid #003366;
 }
 .GridRowSelected
 {
-	background-color: &cswbgcolorhilite;
-	font-weight: bold;
+    background-color: &cswbgcolorhilite;
+    font-weight: bold;
 }
 
 
 .ImageOverlayDiv
 {
-	text-align: center;
+    text-align: center;
 }
 .ImageOverlayDivButton
 {
-	text-align: center;
-	cursor: pointer;
+    text-align: center;
+    cursor: pointer;
 }
 .LocationText
 {
-	background-color: #ddeeff;
-	color: #003366;
+    background-color: #ddeeff;
+    color: #003366;
 }
 .LocationTextSelected
 {
-	background-color: &cswbgcolorhilite;
-	color: #003366;
+    background-color: &cswbgcolorhilite;
+    color: #003366;
 }
 .LocationTitleText
 {
-	color: #003366;
-	font-size: large;
+    color: #003366;
+    font-size: large;
 }
 .LocationTitleTextSelected
 {
-	background-color: &cswbgcolorhilite;
-	color: #003366;
-	font-size: large;
+    background-color: &cswbgcolorhilite;
+    color: #003366;
+    font-size: large;
 }
 
 .LoginTitle
 {
-	color: &cswtextcolor;
-	font-size: large;
-	font-weight: bold;
+    color: &cswtextcolor;
+    font-size: large;
+    font-weight: bold;
 }
 
 .LocationRowLabel
 {
-	font-size: large;
+    font-size: large;
 }
 .LocationColumnLabel
 {
-	font-size: large;
+    font-size: large;
 }
 
 .LocationGridTable
@@ -831,29 +831,29 @@ ul li div {
 
 .LocationRowLabelCell
 {
-	vertical-align: middle;
-	padding: 0px 5px 0px 0px;
+    vertical-align: middle;
+    padding: 0px 5px 0px 0px;
 }
 .LocationColumnLabelCell
 {
-	text-align: center;
+    text-align: center;
 }
 
 .GridScrollBar
 {
-	background-color: #336699;
+    background-color: #336699;
 }
 
 .GridScrollGrip
 {
-	background-color: #ddeeff;
-	background-image: url(../Images/scroller/grip_bg.gif);
+    background-color: #ddeeff;
+    background-image: url(../Images/scroller/grip_bg.gif);
 }
 .GridScrollPopup
 {
-	border: 1px solid #003366;
-	background-color: #ddeeff;
-	color: #003366;
+    border: 1px solid #003366;
+    background-color: #ddeeff;
+    color: #003366;
 }
 
 .StandardMasterContentDiv
@@ -862,57 +862,57 @@ ul li div {
 
 .TabScrollItem
 {
-	color: #ddeeff;
-	background-color: #336699;
-	border-top: 1px solid #99ccff;
-	border-right: 1px solid #003366;
-	border-bottom: 1px solid #003366;
-	border-left: 1px solid #99ccff;
-	margin: 0px 5px 0px 5px;
+    color: #ddeeff;
+    background-color: #336699;
+    border-top: 1px solid #99ccff;
+    border-right: 1px solid #003366;
+    border-bottom: 1px solid #003366;
+    border-left: 1px solid #99ccff;
+    margin: 0px 5px 0px 5px;
 }
 
 .TabScrollItemHover
 {
-	color: #ffffff;
-	background-color: #6699cc;
-	border-top: 1px solid #99ccff;
-	border-right: 1px solid #003366;
-	border-bottom: 1px solid #003366;
-	border-left: 1px solid #99ccff;
-	margin: 0px 5px 0px 5px;
+    color: #ffffff;
+    background-color: #6699cc;
+    border-top: 1px solid #99ccff;
+    border-right: 1px solid #003366;
+    border-bottom: 1px solid #003366;
+    border-left: 1px solid #99ccff;
+    margin: 0px 5px 0px 5px;
 }
 
-	
+    
 .BottomPanelDiv
 {
-	margin-top: 8px;
-	border-top: 3px solid #336699;
-	padding: 5px 5px 5px 5px;
+    margin-top: 8px;
+    border-top: 3px solid #336699;
+    padding: 5px 5px 5px 5px;
 }
 
 .MainContentTable
 {
-	width: 100%;
+    width: 100%;
 }
 
 .NodesGridTopCell
 {
-	padding: 5px 5px 5px 5px;
-	width: 100%;
+    padding: 5px 5px 5px 5px;
+    width: 100%;
 }
 .NodesGridBottomCell
 {
-	padding: 5px 5px 5px 5px;
-	border-top: 3px solid #336699;
-	width: 100%;
+    padding: 5px 5px 5px 5px;
+    border-top: 3px solid #336699;
+    width: 100%;
 }
 
 .fileupload
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	background-color: #ddeeff;
-	color: #003366;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    background-color: #ddeeff;
+    color: #003366;
 }
 
 .SessionListTable
@@ -921,30 +921,30 @@ ul li div {
 
 .GridPager
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	color: #ffffff;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    color: #ffffff;
 }
 .GridPager a
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	color: #ddeeff;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    color: #ddeeff;
 }
 .GridPager a:hover
 {
-	font-family: &cswtextfontfamily;
-	font-size: &cswtextfontsize;
-	color: #ffffff;
+    font-family: &cswtextfontfamily;
+    font-size: &cswtextfontsize;
+    color: #ffffff;
 }
 
 .TimeReportOuter
 {
-	position: absolute;
-	bottom: 1px;
-	right: 1px;
-	color: #aaaaaa;
-	text-align: right;
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    color: #aaaaaa;
+    text-align: right;
 }
 .TimeReport
 {
@@ -952,60 +952,60 @@ ul li div {
 
 .designhr
 {
-	width: 100%;
-	height: 1px;
-	color: #6699CC;
+    width: 100%;
+    height: 1px;
+    color: #6699CC;
 }
 
 .emphasize
 {
-	font-weight: bold;
+    font-weight: bold;
 }
 
 .cbarraydiv
 {
-	border: 1px solid #336699;
-	overflow: auto;
+    border: 1px solid #336699;
+    overflow: auto;
 }
 
 .cbarraytable
 {
-	padding: 0px 5px 0px 5px;
-	margin: 0px 0px 0px 0px;
+    padding: 0px 5px 0px 5px;
+    margin: 0px 0px 0px 0px;
 }
 
 .cbarraycell
 {
-	padding: 0px 5px 0px 5px;
+    padding: 0px 5px 0px 5px;
 }
 
 .treediv
 {
-	padding: 5px 0px 5px 0px;
-	width: 270px;
-	height: 400px;
-	overflow: auto;
+    padding: 5px 0px 5px 0px;
+    width: 270px;
+    height: 400px;
+    overflow: auto;
 }
 .treediv_noscroll
 {
-	padding: 5px 0px 5px 0px;
-	width: 270px;
-	height: 400px;
-	overflow: visible;
+    padding: 5px 0px 5px 0px;
+    width: 270px;
+    height: 400px;
+    overflow: visible;
 }
 .jstree-default.jstree-focused {
-	background-color: transparent !important;
+    background-color: transparent !important;
 }
 
 .warning
 {
-	color: #ff0000;
+    color: #ff0000;
 }
 
 .timeintervaltable
 {
-	border: 1px solid #336699;
-	padding: 5px 5px 5px 5px;
+    border: 1px solid #336699;
+    padding: 5px 5px 5px 5px;
 }
 
 .cbarray_outertable
@@ -1014,7 +1014,7 @@ ul li div {
 
 .cbarray_outertable_checkallcell
 {
-	text-align: right;	
+    text-align: right;	
 }
 
 .relationship_outertable
@@ -1022,38 +1022,38 @@ ul li div {
 }
 .relationshipdiv
 {
-	border: 1px solid #336699;
-	overflow: auto;
+    border: 1px solid #336699;
+    overflow: auto;
 }
 .loctreediv
 {
-	border: 1px solid #336699;
-	overflow: auto;
-	height: 100px;
+    border: 1px solid #336699;
+    overflow: auto;
+    height: 100px;
 }
 
 
 .StatisticsTable
 {
-	padding: 5px 5px 5px 5px;
+    padding: 5px 5px 5px 5px;
 }
 .EvenRow
 {
-	background-color: #ffffff;
+    background-color: #ffffff;
 }
 .OddRow
 {
-	background-color: #eeeeee;
+    background-color: #eeeeee;
 }
 
 .ContextSensitiveContentDiv
 {
-	background-color: #eef0a7;
+    background-color: #eef0a7;
 }
 
 .ContextSensitiveMessage
 {
-	color: &cswtextcolor;	
+    color: &cswtextcolor;	
 }
 
 .QuickLaunchDiv
@@ -1063,53 +1063,53 @@ ul li div {
 
 .QuickLaunchTable
 {
-	border: 1px solid #e1e2e4;
-	width: 100%;
-	padding: 3px 3px 3px 3px;
-	margin: 3px 0px 3px 0px;
-	color: #4e94c8;
+    border: 1px solid #e1e2e4;
+    width: 100%;
+    padding: 3px 3px 3px 3px;
+    margin: 3px 0px 3px 0px;
+    color: #4e94c8;
 }
 .QuickLaunchTable a
 {
-	color: #4e94c8;
+    color: #4e94c8;
 }
 .NodeReportLinkDiv
 {
-	width: 100%;
-	text-align: right;
+    width: 100%;
+    text-align: right;
 }
 .NodeReportLink
 {
-	color: #4e94c8;
+    color: #4e94c8;
 }
 
 .WelcomeTitle
 {
-	font-size: 14px;
+    font-size: 14px;
 }
 
 .FiltersTableDiv
 {
-	padding: 10px 5px 7px 25px;
-	text-align: center;
-	font-size: 16px;
+    padding: 10px 5px 7px 25px;
+    text-align: center;
+    font-size: 16px;
 }
 .FiltersTable
 {
-	text-align: left;
-	padding: 3px;
+    text-align: left;
+    padding: 3px;
 }
 .filtertable
 {
-	/*
-	border: 1px solid #e1e2e4;
-	*/
+    /*
+    border: 1px solid #e1e2e4;
+    */
 }
 
 .calendartoday_ChemSW
 {
-	background-color: #ddeeff;
-	border: 1px solid #99ccff !important;
+    background-color: #ddeeff;
+    border: 1px solid #99ccff !important;
 }
 
 .changepasswordtable
@@ -1117,96 +1117,96 @@ ul li div {
 }
 .changepassworddiv
 {
-	text-align:center;
-	width: 100%;
+    text-align:center;
+    width: 100%;
 }
 .divbutton
 {
-	width: 18px;
-	height: 18px;
-	cursor: pointer;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
 }
 .WelcomeDiv
 {
-	text-align: center;
-	width: 95%;
-	height: 475px;
-	margin: 5px 5px 5px 5px;
-	padding: 5px 5px 0px 0px;
-	overflow: auto;
+    text-align: center;
+    width: 95%;
+    height: 475px;
+    margin: 5px 5px 5px 5px;
+    padding: 5px 5px 0px 0px;
+    overflow: auto;
 }
 .ComponentTable
 {
-	padding: 2px 2px 2px 2px;
+    padding: 2px 2px 2px 2px;
 }
 .ComponentValueCell
 {
-	padding: 4px 4px 4px 4px;
+    padding: 4px 4px 4px 4px;
 }
 .ComponentValueCellEditMode
 {
-	border: 1px solid #003366;
+    border: 1px solid #003366;
 }
 .ComponentEmptyValueCell
 {
 }
 .ComponentEmptyValueCellEditMode
 {
-	border: 1px solid #003366;
-	width: 100px;
+    border: 1px solid #003366;
+    width: 100px;
 }
 .WelcomeTable
 {
-	font-size: 16px;
-	text-align: center;
+    font-size: 16px;
+    text-align: center;
 }
 .WelcomeTable a
 {
-	font-size: 16px;
+    font-size: 16px;
 }
 .WelcomeText
 {
-	font-size: 16px;
+    font-size: 16px;
 }
 .WelcomeText a
 {
-	font-size: 16px;
+    font-size: 16px;
 }
 .ResetButton
 {
-	color: #ff0000;
+    color: #ff0000;
 }
 .ResetButton a
 {
-	color: #ff0000;
+    color: #ff0000;
 }
 .SearchLabel
 {
-	color: #6699cc;
-	font-size: 22px;
+    color: #6699cc;
+    font-size: 22px;
 }
 .ListTable
 {
-	width: 250px;
+    width: 250px;
 }
 .ListRowEven
 {
-	background-color: #ffffff;
+    background-color: #ffffff;
 }
 .ListRowOdd
 {
-	background-color: #ddeeff;
+    background-color: #ddeeff;
 }
 .ListRowSelected
 {
-	background-color: &cswbgcolorhilite;
+    background-color: &cswbgcolorhilite;
 }
 .CswLayoutTable
 {
 }
 .WelcomeButton
 {
-	padding: 10px;
+    padding: 10px;
 }
 
 .adddiv
@@ -1216,10 +1216,10 @@ ul li div {
 }
 .scrollingdiv
 {
-	padding: 5px 0px 5px 0px;
-	width: 270px;
-	max-height: 115px;
-	overflow: auto;
+    padding: 5px 0px 5px 0px;
+    width: 270px;
+    max-height: 115px;
+    overflow: auto;
 }
 
 .morelink
