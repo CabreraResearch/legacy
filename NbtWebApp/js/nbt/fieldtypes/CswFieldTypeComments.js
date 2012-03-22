@@ -1,10 +1,5 @@
-/// <reference path="_CswFieldTypeFactory.js" />
-/// <reference path="../../globals/CswEnums.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../../Scripts/jquery-1.6.4-vsdoc.js" />
-/// <reference path="../controls/CswDiv.js" />
-/// <reference path="../controls/CswTable.js" />
+/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
 ; (function ($) {
 
@@ -29,19 +24,19 @@
                 'width': '350px'
             });
             var myTable = commentsDiv.table({
-							TableCssClass: '',
-							CellCssClass: '',
-							cellpadding: 4,
-							cellspacing: 0,
-							align: '',
-							width: '100%',
-							cellalign: 'top',
-							cellvalign: 'top',
-							//onCreateCell: function (e, $table, $cell, row, column) { },
-							FirstCellRightAlign: false,
-							OddCellRightAlign: false,
-							border: 0
-						});
+                            TableCssClass: '',
+                            CellCssClass: '',
+                            cellpadding: 4,
+                            cellspacing: 0,
+                            align: '',
+                            width: '100%',
+                            cellalign: 'top',
+                            cellvalign: 'top',
+                            //onCreateCell: function (e, $table, $cell, row, column) { },
+                            FirstCellRightAlign: false,
+                            OddCellRightAlign: false,
+                            border: 0
+                        });
             var arow=0;
             var bgclass='';
             Csw.each(propVals.comments,function(acomment){

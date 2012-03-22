@@ -701,11 +701,15 @@ window.initMain = window.initMain || function (undefined) {
         };
         if (viewopts) $.extend(v, viewopts);
         clear({ centerbottom: true });
-        var $div = $('#CenterBottomDiv').CswDiv({ ID: 'deftbldiv' });
-        $div.CswAttrDom('align', 'center');
-        $div.css({ textAlign: 'center' });
-        $div.append('No Results.<BR/><BR/>');
-        $div.CswDefaultContent(v);
+        var div = Csw.controls.div({
+            $parent: $('#CenterBottomDiv'),
+            ID: 'deftbldiv',
+            align: 'center'
+        });
+        div.css({ textAlign: 'center' });
+        div.append('No Results.');
+        
+        div.$.CswDefaultContent(v);
 
     } // showDefaultContentTable()
 

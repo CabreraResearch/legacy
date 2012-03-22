@@ -14,39 +14,42 @@
         };
         if (options) $.extend(o, options);
 
-        var $this = $(this);
+        var $parent = $(this);
 
         Csw.ajax.post({
             url: o.Url,
             data: { ViewId: o.viewid },
             success: function (data) {
-                
-                var $addDiv = $this.CswDiv({ ID: Csw.controls.dom.makeId({ id: o.ID, suffix: 'adddiv' }), cssclass: 'adddiv' });
-                $addDiv.append('Add New:');
 
-                function _makeAddLinksRecursive(addObj, $parent) {
-                    var $ul = $('<ul></ul>');
+                var addDiv = Csw.controls.div({
+                    $parent: $parent,
+                    ID: Csw.controls.dom.makeId({ id: o.ID, suffix: 'adddiv' }),
+                    cssclass: 'adddiv',
+                    text: 'Add New:'
+                });
+
+                function _makeAddLinksRecursive(addObj, parent) {
+                    var ul = parent.ul();
                     function onEach(entryObj) {
                         var $li = Csw.handleMenuItem({
-                            $ul: $ul,
+                            $ul: ul.$,
                             itemKey: entryObj.text,
                             itemJson: entryObj,
                             onAlterNode: o.onAddNode
-                        }).appendTo($ul);
+                        }).appendTo(ul.$);
                     }
 
                     if (Csw.contains(addObj, 'entries')) {
                         Csw.each(addObj.entries, onEach);
-                        if ($ul.children().length > 0) {
-                            $ul.appendTo($parent);
-                            _makeAddLinksRecursive(addObj.children, $ul);
+                        if (ul.children().length() > 0) {
+                            _makeAddLinksRecursive(addObj.children, ul);
                         } else {
-                            _makeAddLinksRecursive(addObj.children, $parent);
+                            _makeAddLinksRecursive(addObj.children, parent);
                         }
                     } // if(contains(addObj, 'entries'))
                 } // _makeAddLinksRecursive()
 
-                _makeAddLinksRecursive(data, $addDiv);
+                _makeAddLinksRecursive(data, addDiv);
             } // success
         }); // ajax
 
