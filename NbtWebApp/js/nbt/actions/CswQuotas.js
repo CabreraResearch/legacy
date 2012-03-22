@@ -81,7 +81,7 @@
 
                 if (canedit) {
                     cell4 = table.cell(row, 4);
-                    cell4.$.CswInput({
+                    cell4.input({
                         ID: o.ID + '_' + id + '_quota',
                         name: o.ID + '_' + id + '_quota',
                         type: Csw.enums.inputTypes.text,

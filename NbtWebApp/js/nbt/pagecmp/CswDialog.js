@@ -302,7 +302,7 @@
                         }
                     }); // Csw.ajax
                 } // onChange
-            }); // CswSelect
+            }); // 
 
             function _resetLayout() {
                 cell12.empty();

@@ -586,7 +586,7 @@
                                                         viewnodejson.groupbypropname = Csw.string(selected.text());
                                                     } // if (false === Csw.isNullOrEmpty(selval)) {
                                                 } // onChange
-                                            }); // CswSelect
+                                            }); // 
                 row += 1;
 
                 var jsonData = {
