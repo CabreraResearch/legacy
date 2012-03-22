@@ -22,8 +22,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string FirstNamePropertyName { get { return "First Name"; } }
         public static string LastNamePropertyName { get { return "Last Name"; } }
         public static string LastLoginPropertyName { get { return "Last Login"; } }
-        public static string QuickLaunchViewsPropertyName { get { return "Quick Launch Views"; } }
-        public static string QuickLaunchActionsPropertyName { get { return "Quick Launch Actions"; } }
+        public static string FavoriteViewsPropertyName { get { return "Favorite Views"; } }
+        public static string FavoriteActionsPropertyName { get { return "Favorite Actions"; } }
         public static string EmailPropertyName { get { return "Email"; } }
         public static string PageSizePropertyName { get { return "Page Size"; } }
         public static string DateFormatPropertyName { get { return "Date Format"; } }
@@ -223,10 +223,10 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 6941, 8288
             // Set the Default View to use the selected User, rather than the logged in User
             //DefaultView.User = this;
-            QuickLaunchViews.User = this;
+            FavoriteViews.User = this;
 
             // BZ 8288
-            // Quick Launch Actions options should derive from Role's Action Permissions
+            // Favorite Actions options should derive from Role's Action Permissions
             if( _RoleNode != null )
             {
                 CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
@@ -238,7 +238,7 @@ namespace ChemSW.Nbt.ObjClasses
                         NewYValues.Add( Action.DisplayName.ToString() );
                     }
                 }
-                this.QuickLaunchActions.YValues = NewYValues;
+                this.FavoriteActions.YValues = NewYValues;
             }
 
             //BZ 9933
@@ -310,8 +310,8 @@ namespace ChemSW.Nbt.ObjClasses
         public string LastName { get { return LastNameProperty.Text; } }
         public string Username { get { return UsernameProperty.Text; } }
         public CswNbtNodePropDateTime LastLogin { get { return ( _CswNbtNode.Properties[LastLoginPropertyName].AsDateTime ); } }
-        public CswNbtNodePropViewPickList QuickLaunchViews { get { return _CswNbtNode.Properties[QuickLaunchViewsPropertyName].AsViewPickList; } }
-        public CswNbtNodePropLogicalSet QuickLaunchActions { get { return _CswNbtNode.Properties[QuickLaunchActionsPropertyName].AsLogicalSet; } }
+        public CswNbtNodePropViewPickList FavoriteViews { get { return _CswNbtNode.Properties[FavoriteViewsPropertyName].AsViewPickList; } }
+        public CswNbtNodePropLogicalSet FavoriteActions { get { return _CswNbtNode.Properties[FavoriteActionsPropertyName].AsLogicalSet; } }
         public CswNbtNodePropText EmailProperty { get { return _CswNbtNode.Properties[EmailPropertyName].AsText; } }
         public string Email { get { return EmailProperty.Text; } }
         public string DateFormat
