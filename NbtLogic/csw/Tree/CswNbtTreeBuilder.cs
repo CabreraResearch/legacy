@@ -154,7 +154,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, Int32 PageSize = Int32.MinValue )
         {
-            return getTreeFromView( View, IncludeSystemNodes );
+            return getTreeFromView( View, true, IncludeSystemNodes );
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes, bool RequireViewPermissions )
         {
-            return getTreeFromView( View, IncludeSystemNodes );
+            return getTreeFromView( View, true, IncludeSystemNodes );
         }
 
         /// <summary>
@@ -170,7 +170,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool ForceReInit, bool FetchAllPrior, bool SingleLevelOnly, bool IncludeSystemNodes )
         {
-            return getTreeFromView( RunAsUser, View, IncludeSystemNodes );
+            return getTreeFromView( RunAsUser, View, true, IncludeSystemNodes );
         }
 
         /// <summary>
@@ -178,26 +178,34 @@ namespace ChemSW.Nbt
         /// </summary>
         public ICswNbtTree getTreeFromView( CswNbtView View, bool ForceReInit, ref CswNbtNodeKey ParentNodeKey, CswNbtViewRelationship ChildRelationshipToStartWith, Int32 PageSize, bool FetchAllPrior, bool SingleLevelOnly, CswNbtNodeKey IncludedKey, bool IncludeSystemNodes )
         {
-            return getTreeFromView( View, IncludeSystemNodes );
+            return getTreeFromView( View, true, IncludeSystemNodes );
         }
 
         /// <summary>
-        /// Instance a Tree from a View
+        /// Deprecated
         /// </summary>
         public ICswNbtTree getTreeFromView( CswNbtView View, bool IncludeSystemNodes )
         {
-            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, IncludeSystemNodes );
+            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, IncludeSystemNodes );
         }
 
         /// <summary>
         /// Instance a Tree from a View
         /// </summary>
-        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromView( CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes )
+        {
+            return getTreeFromView( _CswNbtResources.CurrentNbtUser, View, RequireViewPermissions, IncludeSystemNodes );
+        }
+
+        /// <summary>
+        /// Instance a Tree from a View
+        /// </summary>
+        public ICswNbtTree getTreeFromView( ICswNbtUser RunAsUser, CswNbtView View, bool RequireViewPermissions, bool IncludeSystemNodes )
         {
             ICswNbtTree ReturnVal = _makeTree( View, true );
 
             CswNbtTreeLoaderFromXmlViewByLevel TreeLoader = new CswNbtTreeLoaderFromXmlViewByLevel( _CswNbtResources, RunAsUser, ReturnVal, View, IncludeSystemNodes );
-            TreeLoader.load();
+            TreeLoader.load( RequireViewPermissions );
 
             return ( ReturnVal );
 
@@ -207,20 +215,20 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( string SearchTerm, string WhereClause, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromSearch( string SearchTerm, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes )
         {
-            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, WhereClause, IncludeSystemNodes );
+            return getTreeFromSearch( _CswNbtResources.CurrentNbtUser, SearchTerm, WhereClause, RequireViewPermissions, IncludeSystemNodes );
         }
 
         /// <summary>
         /// Instance a Tree from a Universal Search
         /// </summary>
-        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, string WhereClause, bool IncludeSystemNodes )
+        public ICswNbtTree getTreeFromSearch( ICswNbtUser RunAsUser, string SearchTerm, string WhereClause, bool RequireViewPermissions, bool IncludeSystemNodes )
         {
             ICswNbtTree ReturnVal = _makeTree( true );
 
             CswNbtTreeLoaderFromSearchByLevel TreeLoader = new CswNbtTreeLoaderFromSearchByLevel( _CswNbtResources, RunAsUser, ReturnVal, SearchTerm, WhereClause, IncludeSystemNodes );
-            TreeLoader.load();
+            TreeLoader.load( RequireViewPermissions );
 
             return ( ReturnVal );
 

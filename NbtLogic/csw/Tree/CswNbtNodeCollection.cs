@@ -432,7 +432,7 @@ namespace ChemSW.Nbt
         /// not sure if this belongs here in CswNbtNodeCollection
         /// </remarks>
         /// <param name="Username">Username of User</param>
-        public CswNbtNode makeUserNodeFromUsername( string Username )
+        public CswNbtNode makeUserNodeFromUsername( string Username, bool RequireViewPermissions = true )
         {
             CswNbtNode UserNode = null;
 
@@ -447,7 +447,7 @@ namespace ChemSW.Nbt
             CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, Username, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, true, true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true );
 
             // get user node
             UserTree.goToRoot();
