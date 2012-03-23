@@ -14,7 +14,7 @@
                 $parent: null,
                 onSelect: null,
                 onSuccess: null,
-                ClickDelay: 300,
+                //ClickDelay: 300,
                 issearchable: false,
                 //usesession: true,
                 hidethreshold: 5,
@@ -107,7 +107,7 @@
                         break;
                 }
 
-                setTimeout(function () { internal.comboBox.toggle(); }, internal.ClickDelay);
+                //setTimeout(function () { internal.comboBox.toggle(); }, internal.ClickDelay);
                 Csw.tryExec(internal.onSelect, itemobj);
             }; // internal.handleSelect()
 
