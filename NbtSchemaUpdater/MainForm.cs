@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Schema
                 updatetoschemaversion.Text = e.LatestSchemaVersion.ToString();
             }
 
-            _SetUpdateButtonVisible( e );
+//            _SetUpdateButtonVisible( e );
 
             historygrid.DataSource = e.UpdateHistoryTable;
             historygrid.Columns["version"].DisplayIndex = 0;
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.Schema
             updatebutton.Enabled = true;
             schemacombobox.Enabled = true;
 
-            _SetUpdateButtonVisible( e );
+//            _SetUpdateButtonVisible( e );
         }
 
         private delegate void ShowClipboardLinkHandler();
