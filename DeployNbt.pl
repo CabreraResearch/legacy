@@ -42,6 +42,7 @@ $schemata{"sales"} = "nbt";  # sales
 $schemata{"nbt_manager"} = "nbt";  # nbt_manager
 $schemata{"cispro"} = "nbt";  # CISPro
 $schemata{"darryl"} = "darryl";  # Darryl
+$schemata{"judy"} = "judy";  # Darryl
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
