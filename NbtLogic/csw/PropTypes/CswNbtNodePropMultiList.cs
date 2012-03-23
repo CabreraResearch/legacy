@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.PropTypes
 
 
         /// <summary>
-        /// Checks to be sure all values assigned are valid against possible options
+        /// Checks to be sure all values assigned are unique and valid against possible options
         /// </summary>
         public void ValidateValues()
         {
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.PropTypes
 
             foreach( string aval in Value )
             {
-                if( Options.ContainsKey( aval ) )
+                if( Options.ContainsKey( aval ) && false == newVals.Contains( aval ) )
                 {
                     newVals.Add( aval );
                 }

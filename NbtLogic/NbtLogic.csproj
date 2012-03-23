@@ -82,6 +82,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25444.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25471.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25559.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25556.cs" />
