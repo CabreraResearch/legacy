@@ -101,6 +101,7 @@
     <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
+    <Content Include="js\common\components\_components.factory.js" />
     <Content Include="js\nbt\components\csw.nodetypeselect.js" />
     <Content Include="js\common\components\csw.tree.js" />
     <Content Include="js\common\components\csw.viewselect.js" />
@@ -183,11 +184,11 @@
     <Content Include="js\nbt\view\CswViewPropFilter.js" />
     <Content Include="Report.html" />
     <Content Include="js\ChemSW.js" />
-    <Content Include="js\common\controls\csw.thingrid.js" />
+    <Content Include="js\common\components\csw.thingrid.js" />
     <Content Include="js\common\controls\csw.p.js" />
     <Content Include="js\common\controls\csw.textarea.js" />
     <Content Include="js\common\controls\csw.tabdiv.js" />
-    <Content Include="js\common\controls\csw.li.js" />
+    <Content Include="js\common\controls\csw.ol.js" />
     <Content Include="js\common\controls\csw.ul.js" />
     <Content Include="js\common\controls\_control.factory.js" />
     <Content Include="js\common\controls\csw.img.js" />
@@ -199,7 +200,7 @@
     <Content Include="js\common\controls\csw.br.js" />
     <Content Include="js\common\components\csw.universalsearch.js" />
     <Content Include="js\common\components\csw.visibilityselect.js" />
-    <Content Include="js\common\controls\csw.dom.js" />
+    <Content Include="js\common\core\csw.dom.js" />
     <Content Include="js\common\components\csw.grid.js" />
     <Content Include="js\common\controls\csw.table.js" />
     <Content Include="js\common\components\csw.timeinterval.js" />
