@@ -139,6 +139,7 @@ window.initMain = window.initMain || function (undefined) {
     // initAll()
 
     function refreshViewSelect(onSuccess) {
+        $('#ViewSelectDiv').empty();
         mainviewselect = Csw.controls.viewSelect({
             ID: 'mainviewselect',
             $parent: $('#ViewSelectDiv'),
@@ -981,6 +982,17 @@ window.initMain = window.initMain || function (undefined) {
                         } else {
                             handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
                         }
+                    },
+                    onDeleteView: function(deletedviewid) {
+                        var current = Csw.clientState.getCurrent();
+                        if(current.viewid == deletedviewid){
+                            Csw.clientState.clearCurrent();
+                        }
+                        var last = Csw.clientState.getLast();
+                        if(last.viewid == deletedviewid){
+                            Csw.clientState.clearLast();
+                        }
+                        refreshViewSelect();
                     },
                     'startingStep': o.ActionOptions.startingStep
                 };
