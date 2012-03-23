@@ -87,7 +87,7 @@
             }
             external.treeDiv.bind('dehover_node.jstree', deHoverNode);
 
-            external.treeDiv.$.jstree('select_node', Csw.controls.dom.tryParseElement(data.selectid));
+            external.treeDiv.$.jstree('select_node', Csw.tryParseElement(data.selectid));
 
             internal.rootnode = external.treeDiv.find('li').first();
 

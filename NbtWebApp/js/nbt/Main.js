@@ -67,7 +67,7 @@ window.initMain = window.initMain || function (undefined) {
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
-                universalsearch = Csw.controls.universalSearch({
+                universalsearch = Csw.components.universalSearch({}, {
                     $searchbox_parent: $('#SearchDiv'),
                     $searchresults_parent: $('#RightDiv'),
                     $searchfilters_parent: $('#LeftDiv'),
@@ -139,9 +139,9 @@ window.initMain = window.initMain || function (undefined) {
     // initAll()
 
     function refreshViewSelect(onSuccess) {
-        mainviewselect = Csw.controls.viewSelect({
+        var selectDiv = Csw.controls.factory($('#ViewSelectDiv'));
+        mainviewselect = selectDiv.viewSelect({
             ID: 'mainviewselect',
-            $parent: $('#ViewSelectDiv'),
             onSelect: handleItemSelect,
             onSuccess: onSuccess
         });
@@ -377,8 +377,8 @@ window.initMain = window.initMain || function (undefined) {
             'onSearch':
                  {
                      'onViewSearch': function () {
-                         var genericSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
                          refreshSearchPanel({
                              'genericSearchId': genericSearchId,
                              'viewSearchId': viewSearchId,
@@ -388,8 +388,8 @@ window.initMain = window.initMain || function (undefined) {
                          });
                      },
                      'onGenericSearch': function () {
-                         var genericSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = Csw.controls.dom.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
                          refreshSearchPanel({
                              'genericSearchId': genericSearchId,
                              'viewSearchId': viewSearchId,
@@ -706,7 +706,7 @@ window.initMain = window.initMain || function (undefined) {
         });
         div.css({ textAlign: 'center' });
         div.append('No Results.');
-        
+
         div.$.CswDefaultContent(v);
 
     } // showDefaultContentTable()
@@ -930,11 +930,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                                 
-            //				break;                                                 
-            //			case 'Assign_Tests':                                                 
-            //				break;                                                 
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                 
+            //			case 'Assign_Inspection':                                                  
+            //				break;                                                  
+            //			case 'Assign_Tests':                                                  
+            //				break;                                                  
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                  
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -964,8 +964,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswInspectionDesign(designOpt);
 
                 break;
-            //			case 'Design':                                                 
-            //				break;                                                 
+            //			case 'Design':                                                  
+            //				break;                                                  
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -992,8 +992,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                                 
-            //				break;                                                 
+            //			case 'Enter_Results':                                                  
+            //				break;                                                  
 
             case 'Future_Scheduling':
                 clear({ 'all': true });
@@ -1008,10 +1008,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                 
-            //				break;                                                 
-            //			case 'Inspection_Design':                                                 
-            //				break;                                                 
+            //			case 'Import_Fire_Extinguisher_Data':                                                  
+            //				break;                                                  
+            //			case 'Inspection_Design':                                                  
+            //				break;                                                  
 
             case 'OOC_Inspections':
                 setupOocInspections();
@@ -1046,14 +1046,14 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
 
                 break;
-            //			case 'Load_Mobile_Data':                                                 
-            //				break;                                                 
-            //			case 'Receiving':                                                 
-            //				break;                                                 
-            //			case 'Split_Samples':                                                 
-            //				break;                                                 
-            //			case 'View_By_Location':                                                 
-            //				break;                                                 
+            //			case 'Load_Mobile_Data':                                                  
+            //				break;                                                  
+            //			case 'Receiving':                                                  
+            //				break;                                                  
+            //			case 'Split_Samples':                                                  
+            //				break;                                                  
+            //			case 'View_By_Location':                                                  
+            //				break;                                                  
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;

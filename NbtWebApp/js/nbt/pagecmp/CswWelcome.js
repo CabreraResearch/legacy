@@ -160,7 +160,7 @@
             }).hide();
 
 //            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
-            var $searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
+            var searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
                 ID: 'welcome_searchviewsel',
                 issearchable: true,
                 usesession: false
@@ -190,13 +190,13 @@
                     var viewtype = '';
                     var viewvalue = '';
                     var selectedView;
-                    if (!$viewSelect.is(':hidden')) {
-                        selectedView = $viewSelect.CswViewSelect('value');
+                    if (!viewSelect.is(':hidden')) {
+                        selectedView = viewSelect.val();
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
-                    else if (!$searchViewSelect.is(':hidden')) {
-                        selectedView = $searchViewSelect.CswViewSelect('value');
+                    else if (!searchViewSelect.is(':hidden')) {
+                        selectedView = searchViewSelect.val();
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
@@ -223,8 +223,8 @@
                 _onTypeChange({
                     typeSelect: typeSelect,
                     viewSelectLabel: viewSelectLabel,
-                    $viewselect: $viewSelect,
-                    $searchviewselect: $searchViewSelect,
+                    $viewselect: viewSelect,
+                    $searchviewselect: searchViewSelect,
                     ntSelectLabel: ntSelectLabel,
                     $ntselect: ntSelect,
                     buttonSelLabel: buttonselLabel,

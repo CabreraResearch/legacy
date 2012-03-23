@@ -266,7 +266,7 @@
 //                Csw.nodeHoverOut();
 //            });
 
-//            treeDiv.$.jstree('select_node', Csw.controls.dom.tryParseElement(data.selectid));
+//            treeDiv.$.jstree('select_node', Csw.tryParseElement(data.selectid));
 //            //setTimeout(function () { Csw.log('select: #' + data.selectid);  }, 1000);
 //            rootnode = treeDiv.find('li').first();
 

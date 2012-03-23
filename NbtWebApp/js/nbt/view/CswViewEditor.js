@@ -200,7 +200,7 @@
         // we don't have json to see whether this is a Property view or not yet,
         // so checking startingStep will have to suffice
         if (o.startingStep === 1) {
-            visSelect = Csw.controls.makeViewVisibilitySelect(table2, 3, 'View Visibility:');
+            visSelect = Csw.components.makeViewVisibilitySelect(table2, 3, 'View Visibility:');
         }
 
         table2.cell(4, 1).text('For Mobile:');
@@ -542,7 +542,7 @@
                 var viewnodejson = objHelper.find('arbitraryid', arbitraryId);
 
                 var subTable = table6.cell(1, 2).table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'editrel'),
+                    ID: Csw.makeId(o.ID, 'editrel'),
                     FirstCellRightAlign: true
                 });
 
