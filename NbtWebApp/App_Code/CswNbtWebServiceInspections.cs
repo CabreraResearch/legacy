@@ -11,7 +11,7 @@ using ChemSW.Nbt.Logic;
 namespace ChemSW.Nbt.WebServices
 {
     /// <summary>
-    /// Webservice for the table of components on the Welcome page
+    /// Webservice for inspections
     /// </summary>
     public class CswNbtWebServiceInspections
     {
@@ -56,6 +56,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 OOCTree.goToNthChild( i );
 
+                bool AtLeastOneQuestion = false;
                 CswNbtNode InspectionNode = OOCTree.getNodeForCurrentPosition();
                 CswNbtObjClassInspectionDesign NodeAsInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
                 CswNbtPropEnmrtrFiltered QuestionProps = InspectionNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
@@ -77,8 +78,23 @@ namespace ChemSW.Nbt.WebServices
                         Row["Comments"] = QuestionProp.AsQuestion.Comments;
                         InspectionData.Rows.Add( Row );
 
+                        AtLeastOneQuestion = true;
                     } // if(!QuestionProp.AsQuestion.IsCompliant)
                 } // foreach(CswNbtNodePropWrapper QuestionProp  in QuestionProps )
+
+                if( false == AtLeastOneQuestion )
+                {
+                    // case 25501 - add a row for the inspection anyway
+                    DataRow Row = InspectionData.NewRow();
+                    Row["rownum"] = CswConvert.ToDbVal( InspectionData.Rows.Count + 1 );
+                    Row["nodeid"] = CswConvert.ToDbVal( InspectionNode.NodeId.PrimaryKey );
+                    Row["nodepk"] = InspectionNode.NodeId.ToString();
+                    Row["Inspection"] = InspectionNode.NodeName;
+                    Row["Inspection Point"] = NodeAsInspection.Target.CachedNodeName;
+                    Row["Due"] = NodeAsInspection.Date.DateTimeValue.ToShortDateString();
+                    Row["Status"] = NodeAsInspection.Status.Value;
+                    InspectionData.Rows.Add( Row );
+                }
 
                 OOCTree.goToParentNode();
             } // for( Int32 i = 0; i < OOCTree.getChildNodeCount(); i++ )
