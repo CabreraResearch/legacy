@@ -79,7 +79,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
                                                                 .Cast<CswNbtMetaDataNodeTypeTab>()
-                                                                .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) ) )
+                                                                .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) )
+                                                                .OrderBy<CswNbtMetaDataNodeTypeTab, Int32>( _getTabOrder ) )
                     {
                         _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
                     }
@@ -103,6 +104,8 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( filterToPropId != string.Empty )
             return Ret;
         } // getTabs()
+        
+        private Int32 _getTabOrder( CswNbtMetaDataNodeTypeTab Tab ) { return Tab.TabOrder; }
 
         private Int32 TabOrderModifier = 0;
         public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout )
