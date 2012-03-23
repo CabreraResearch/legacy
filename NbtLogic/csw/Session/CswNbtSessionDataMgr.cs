@@ -150,7 +150,7 @@ namespace ChemSW.Nbt
             DataTable SessionViewTable = null;
             SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ActionId, Action.ActionId, "where sessionid = '" + SessionId + "'", false );
 
-            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.Name, CswNbtSessionDataItem.SessionDataType.Action, IncludeInQuickLaunch, KeepInQuickLaunch );
+            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.DisplayName, CswNbtSessionDataItem.SessionDataType.Action, IncludeInQuickLaunch && Action.ShowInList, KeepInQuickLaunch );
             SessionViewRow[SessionDataColumn_ActionId] = CswConvert.ToDbVal( Action.ActionId );
             SessionViewsUpdate.update( SessionViewTable );
 
