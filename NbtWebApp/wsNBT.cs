@@ -1569,6 +1569,9 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView DoomedView = _getView( ViewId );
                     if( null != DoomedView )
                     {
+                        // Remove from quick launch
+                        _CswNbtResources.SessionDataMgr.removeSessionData( DoomedView );
+                        
                         DoomedView.Delete();
                         ReturnVal.Add( new JProperty( "succeeded", true ) );
                     }

@@ -14,7 +14,7 @@
                 $parent: null,
                 onSelect: null,
                 onSuccess: null,
-                ClickDelay: 300,
+                //ClickDelay: 300,
                 issearchable: false,
                 //usesession: true,
                 hidethreshold: 5,
@@ -49,7 +49,7 @@
                 morediv.moreLink.hide();
 
                 Csw.each(catobj.items, function (itemobj, itemname) {
-                    if (row > internal.hidethreshold) {
+                    if (row > internal.hidethreshold && tbl === showntbl) {
                         row = 1;
                         tbl = hiddentbl;
                         morediv.moreLink.show();
@@ -107,7 +107,7 @@
                         break;
                 }
 
-                setTimeout(function () { internal.comboBox.toggle(); }, internal.ClickDelay);
+                //setTimeout(function () { internal.comboBox.toggle(); }, internal.ClickDelay);
                 Csw.tryExec(internal.onSelect, itemobj);
             }; // internal.handleSelect()
 

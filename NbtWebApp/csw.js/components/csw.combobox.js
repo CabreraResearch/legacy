@@ -13,6 +13,7 @@
             width: '180px',
             onClick: function() { return true; },
             topTable: {},
+            hidedelay: 500,
 
             hideTo: null
         };
@@ -23,7 +24,7 @@
         };
 
         internal.hoverOut = function () {
-            internal.hideTo = setTimeout(external.pickList.hide, 300);
+            internal.hideTo = setTimeout(external.pickList.hide, internal.hidedelay);
         };
 
 

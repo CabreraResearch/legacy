@@ -22,6 +22,7 @@
             ColumnViewMode: 'VIEWMODE',
             onCancel: null, // function ($wizard) {},
             onFinish: null, // function (viewid, viewmode) {},
+            onDeleteView: null, // function (deletedviewid) {},
             startingStep: 1
         };
         if (options) $.extend(o, options);
@@ -145,6 +146,8 @@
                                 _getViewsGrid();
                                 copyViewBtn.disable();
                                 deleteViewBtn.disable();  // button reenables itself, so need to disable it again
+
+                                Csw.tryExec(o.onDeleteView, viewid);
                             },
                             error: function () {
                                 deleteViewBtn.enable();

@@ -109,5 +109,18 @@ order by lower(n.nodename), lower(p.propname);
 
 commit;
 
+
+
+create or replace procedure createNTview(ntid in number) is
+ ntcount number(12);
+begin
+
+ select count(*) into ntcount from nodetypes where nodetypeid=ntid;
+
+end createNTview;
+/
+commit;
+
+
 quit
 

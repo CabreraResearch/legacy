@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Security
         public ICswUser getUser( string UserName )
         {
             if( _User == null || _User.Username != UserName )
-                _User = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes.makeUserNodeFromUsername( UserName ) ) as ICswUser;
+                _User = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes.makeUserNodeFromUsername( UserName, false ) ) as ICswUser;    // can't require permissions if we are fetching the current user context
             return _User;
         }
 
@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Security
             AuthenticationStatus ReturnVal = AuthenticationStatus.Failed;
             _User = null;
 
-            CswNbtNode UserAsNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username );
+            CswNbtNode UserAsNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, false );   // can't require permissions if we aren't authenticated yet
             if( UserAsNode != null )
             {
                 CswNbtObjClassUser UserObjClass = CswNbtNodeCaster.AsUser( UserAsNode );

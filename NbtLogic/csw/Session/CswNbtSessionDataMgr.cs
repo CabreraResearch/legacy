@@ -150,7 +150,7 @@ namespace ChemSW.Nbt
             DataTable SessionViewTable = null;
             SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ActionId, Action.ActionId, "where sessionid = '" + SessionId + "'", false );
 
-            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.Name, CswNbtSessionDataItem.SessionDataType.Action, IncludeInQuickLaunch, KeepInQuickLaunch );
+            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.DisplayName, CswNbtSessionDataItem.SessionDataType.Action, IncludeInQuickLaunch && Action.ShowInList, KeepInQuickLaunch );
             SessionViewRow[SessionDataColumn_ActionId] = CswConvert.ToDbVal( Action.ActionId );
             SessionViewsUpdate.update( SessionViewTable );
 
@@ -238,7 +238,19 @@ namespace ChemSW.Nbt
         public void removeSessionData( CswNbtView View )
         {
             removeSessionData( View.SessionViewId );
-        }
+
+            // Also remove views that match by viewid
+            CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_View_update", SessionDataTableName );
+            string WhereClause = @"where " + SessionDataColumn_SessionId + @"='" + _CswNbtResources.Session.SessionId + @"' 
+                                     and " + SessionDataColumn_ViewId + @" = '" + View.ViewId.get() + @"'";
+            
+            DataTable SessionDataTable = SessionDataUpdate.getTable( WhereClause );
+            foreach( DataRow Row in SessionDataTable.Rows )
+            {
+                Row.Delete();
+            }
+            SessionDataUpdate.update( SessionDataTable );
+        } // removeSessionData(CswNbtView)
 
         /// <summary>
         /// Remove a view from the session view cache
@@ -256,7 +268,7 @@ namespace ChemSW.Nbt
                     SessionDataUpdate.update( SessionDataTable );
                 }
             }
-        } // removeSessionData()
+        } // removeSessionData(CswNbtSessionDataId)
 
         /// <summary>
         /// Remove all data for a given session
