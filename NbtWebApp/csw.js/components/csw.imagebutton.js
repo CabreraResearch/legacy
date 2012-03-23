@@ -69,12 +69,9 @@
                 $.extend(internal, options);
             }
 
-            //using 'title' instead of 'alt' does make the alternate text appear in Chrome, 
-            //but it also screws up clicking.
-
             $.extend(external, Csw.controls.div(internal));
             external.addClass('divbutton');
-            external.propNonDom('alt', internal.AlternateText);
+            external.propNonDom('title', internal.AlternateText);
             external.css('display', 'inline-block');
 
             internal.setButton(internal.ButtonType);
