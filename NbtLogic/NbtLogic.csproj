@@ -609,6 +609,7 @@
     <None Include="Resources\nbt_initialize_ora-bat" />
     <None Include="Resources\nbt_initialize_ora-sql" />
     <None Include="Resources\nbt_initialize_ora.bat" />
+    <None Include="Resources\nbt_initialize_ora_sql" />
     <None Include="Resources\SqlRptViewDict.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>SqlRptViewDict.cs</LastGenOutput>
