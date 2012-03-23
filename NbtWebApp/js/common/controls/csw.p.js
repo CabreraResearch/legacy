@@ -32,8 +32,8 @@
                     $.extend(internal, options);
                 }
                 var html = '',
-                    attr = Csw.controls.dom.attributes(),
-                    style = Csw.controls.dom.style();
+                    attr = Csw.makeAttr(),
+                    style = Csw.makeStyle();
 
                 var $p;
 

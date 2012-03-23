@@ -97,7 +97,7 @@
 
                     var html = '<option ',
                         $option,
-                        attr = Csw.controls.dom.attributes(),
+                        attr = Csw.makeAttr(),
                         display;
 
                     display = Csw.string(optInternal.display, optInternal.value);
@@ -124,8 +124,8 @@
 
             (function () {
                 var html = '',
-                    attr = Csw.controls.dom.attributes(),
-                    style = Csw.controls.dom.style();
+                    attr = Csw.makeAttr(),
+                    style = Csw.makeStyle();
                 var $select;
 
                 if (options) {

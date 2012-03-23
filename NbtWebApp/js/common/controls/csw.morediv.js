@@ -18,17 +18,17 @@
             var external = {};
 
             external.shownDiv = Csw.controls.div({
-                ID: Csw.controls.dom.makeId(internal.ID, '', '_shwn'),
+                ID: Csw.makeId(internal.ID, '', '_shwn'),
                 $parent: internal.$parent
             });
 
             external.hiddenDiv = Csw.controls.div({
-                ID: Csw.controls.dom.makeId(internal.ID, '', '_hddn'),
+                ID: Csw.makeId(internal.ID, '', '_hddn'),
                 $parent: internal.$parent
             }).hide();
 
             external.moreLink = Csw.controls.link({
-                ID: Csw.controls.dom.makeId(internal.ID, '', '_more'),
+                ID: Csw.makeId(internal.ID, '', '_more'),
                 $parent: internal.$parent,
                 text: internal.moretext,
                 cssclass: 'morelink',

@@ -33,8 +33,8 @@
 
         (function () {
             var html = '',
-                style = Csw.controls.dom.style(),
-                attr = Csw.controls.dom.attributes();
+                style = Csw.makeStyle(),
+                attr = Csw.makeAttr();
             var $link;
 
             if (options) {

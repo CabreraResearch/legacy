@@ -44,8 +44,8 @@
 
             var html = '',
                 value = Csw.string(internal.value, internal.text),
-                attr = Csw.controls.dom.attributes(),
-                style = Csw.controls.dom.style();
+                attr = Csw.makeAttr(),
+                style = Csw.makeStyle();
             var $textArea;
 
             internal.name = Csw.string(internal.name, internal.ID);

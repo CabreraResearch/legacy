@@ -28,7 +28,7 @@
 
         (function () {
             var html = '',
-                attr = Csw.controls.dom.attributes();
+                attr = Csw.makeAttr();
             var $span;
             var spanText;
 

@@ -82,7 +82,7 @@
             /// <returns type="Object">A Csw table cell object.</returns>
             var thisRow, align, newCell, retCell = {}, html,
                 thisCol, id,
-                attr = Csw.controls.dom.attributes();
+                attr = Csw.makeAttr();
 
             if (external.length() > 0 &&
                 false === Csw.isNullOrEmpty(row) &&
@@ -97,7 +97,7 @@
                 }
 
                 if (internal.ID) {
-                    retCell = external.find('#' + Csw.controls.dom.makeId(internal.ID, 'row_' + row, 'col_' + col, '', false));
+                    retCell = external.find('#' + Csw.makeId(internal.ID, 'row_' + row, 'col_' + col, '', false));
                 }
                 if (Csw.isNullOrEmpty(retCell)) {
                     retCell = external.children('tbody')
@@ -115,7 +115,7 @@
                     while (col > thisCol) {
                         html = '';
                         thisCol += 1;
-                        id = Csw.controls.dom.makeId(internal.ID, 'row_' + row, 'col_' + thisCol, '', false);
+                        id = Csw.makeId(internal.ID, 'row_' + row, 'col_' + thisCol, '', false);
                         align = external.propNonDom('cellalign');
                         if ((thisRow.children('td').length() === 0 && Csw.bool(external.propNonDom('FirstCellRightAlign'))) ||
                             (thisRow.children('td').length() % 2 === 0 && Csw.bool(external.propNonDom('OddCellRightAlign')))) {
