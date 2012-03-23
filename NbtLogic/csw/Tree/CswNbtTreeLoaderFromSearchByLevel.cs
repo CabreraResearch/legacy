@@ -37,7 +37,7 @@ namespace ChemSW.Nbt
             return 10;
         }
 
-        public override void load()
+        public override void load( bool RequireViewPermissions )
         {
             _CswNbtTree.makeRootNode( "", false, NbtViewAddChildrenSetting.None );
 
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt
                 // Verify permissions
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
+                if(false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
                 {
 
                     // Handle property multiplexing

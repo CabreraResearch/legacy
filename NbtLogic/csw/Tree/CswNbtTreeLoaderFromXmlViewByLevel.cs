@@ -45,20 +45,20 @@ namespace ChemSW.Nbt
         //{
         //}
 
-        public override void load()
+        public override void load( bool RequireViewPermissions )
         {
             _CswNbtTree.makeRootNode( _View.Root );
 
             _CswNbtTree.goToRoot();
             foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
             {
-                loadRelationshipRecursive( Relationship );
+                loadRelationshipRecursive( Relationship, RequireViewPermissions );
             }
             _CswNbtTree.goToRoot();
 
         } // load()
 
-        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship )
+        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship, bool RequireViewPermissions )
         {
             CswNbtNodeKey PriorCurrentNodeKey = _CswNbtTree.getNodeKeyForCurrentPosition();
 
@@ -94,80 +94,86 @@ namespace ChemSW.Nbt
             foreach( DataRow NodesRow in NodesTable.Rows )
             {
                 Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
-
-                // Handle property multiplexing
-                // This assumes that property rows for the same nodeid are next to one another
-                if( ThisNodeId != PriorNodeId )
+                Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
+                
+                // Verify permissions
+                // this could be a performance problem
+                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
+                if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
                 {
-                    PriorNodeId = ThisNodeId;
-                    NewNodeKeys = null;
-                    bool AddChild = true;
-                    ParentNodeKey = null;
-
-                    if( NodesTable.Columns.Contains( "parentnodeid" ) )
+                    // Handle property multiplexing
+                    // This assumes that property rows for the same nodeid are next to one another
+                    if( ThisNodeId != PriorNodeId )
                     {
-                        CswPrimaryKey ParentNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
+                        PriorNodeId = ThisNodeId;
+                        NewNodeKeys = null;
+                        bool AddChild = true;
+                        ParentNodeKey = null;
 
-                        // We can't use getNodeKeyByNodeId, because there may be more instances of this node at different places in the tree
-                        //ParentNodeKey = _CswNbtTree.getNodeKeyByNodeId( ParentNodeId );
-                        ParentNodeKey = _CswNbtTree.getNodeKeyByNodeIdAndViewNode( ParentNodeId, Relationship.Parent );
+                        if( NodesTable.Columns.Contains( "parentnodeid" ) )
+                        {
+                            CswPrimaryKey ParentNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
 
+                            // We can't use getNodeKeyByNodeId, because there may be more instances of this node at different places in the tree
+                            //ParentNodeKey = _CswNbtTree.getNodeKeyByNodeId( ParentNodeId );
+                            ParentNodeKey = _CswNbtTree.getNodeKeyByNodeIdAndViewNode( ParentNodeId, Relationship.Parent );
+
+                            if( ParentNodeKey != null )
+                            {
+                                _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                            }
+                            else
+                            {
+                                // If the parent isn't in the tree, don't add the child
+                                AddChild = false;
+                                PriorNodeId = Int32.MinValue;   // case 24788
+                            }
+                        } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
+
+                        if( AddChild )
+                        {
+                            Int32 ChildCount = _CswNbtTree.getChildNodeCount();
+
+                            string GroupName = string.Empty;
+                            if( Relationship.GroupByPropId != Int32.MinValue )
+                            {
+                                GroupName = NodesRow["groupname"].ToString();
+                                if( GroupName == string.Empty )
+                                    GroupName = "[blank]";
+                            }
+
+                            NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
+                        }
+                    } // if( ThisNodeId != PriorNodeId )
+
+                    // This assumes that property rows for the same nodeid are next to one another
+                    // It also assumes that loadNodeAsChildFromRow() made the node current
+                    if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                    {
+                        //Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
+                        //if( ThisJctNodePropId != Int32.MinValue )
+                        //{
+                        foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
+                        {
+                            _CswNbtTree.makeNodeCurrent( NewNodeKey );
+                            _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
+                                                     CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                     NodesRow["propname"].ToString(),
+                                                     NodesRow["gestalt"].ToString(),
+                                                     (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodesRow["fieldtype"].ToString() ) );
+
+                        } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         if( ParentNodeKey != null )
                         {
                             _CswNbtTree.makeNodeCurrent( ParentNodeKey );
                         }
                         else
                         {
-                            // If the parent isn't in the tree, don't add the child
-                            AddChild = false;
-                            PriorNodeId = Int32.MinValue;   // case 24788
+                            _CswNbtTree.goToRoot();
                         }
-                    } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
-
-                    if( AddChild )
-                    {
-                        Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-
-                        string GroupName = string.Empty;
-                        if( Relationship.GroupByPropId != Int32.MinValue )
-                        {
-                            GroupName = NodesRow["groupname"].ToString();
-                            if( GroupName == string.Empty )
-                                GroupName = "[blank]";
-                        }
-
-                        NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
-                    }
-                } // if( ThisNodeId != PriorNodeId )
-
-                // This assumes that property rows for the same nodeid are next to one another
-                // It also assumes that loadNodeAsChildFromRow() made the node current
-                if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
-                {
-                    //Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
-                    //if( ThisJctNodePropId != Int32.MinValue )
-                    //{
-                    foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                    {
-                        _CswNbtTree.makeNodeCurrent( NewNodeKey );
-                        _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
-                                                 CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                 NodesRow["propname"].ToString(),
-                                                 NodesRow["gestalt"].ToString(),
-                                                 (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodesRow["fieldtype"].ToString() ) );
-
-                    } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                    if( ParentNodeKey != null )
-                    {
-                        _CswNbtTree.makeNodeCurrent( ParentNodeKey );
-                    }
-                    else
-                    {
-                        _CswNbtTree.goToRoot();
-                    }
-                    //} // if( ThisJctNodePropId != Int32.MinValue )
-                } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
-
+                        //} // if( ThisJctNodePropId != Int32.MinValue )
+                    } // if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
             } // foreach(DataRow NodesRow in NodesTable.Rows)
 
             if( NodesTable.Rows.Count > 0 ) // only recurse if there are results
@@ -175,7 +181,7 @@ namespace ChemSW.Nbt
                 // Recurse
                 foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
                 {
-                    loadRelationshipRecursive( ChildRelationship );
+                    loadRelationshipRecursive( ChildRelationship, RequireViewPermissions );
                 }
 
                 // case 24678 - Mark truncated results
