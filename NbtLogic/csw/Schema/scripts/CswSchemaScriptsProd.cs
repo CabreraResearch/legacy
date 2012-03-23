@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) ) ;
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );           //14
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );           //15
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );           //16
@@ -64,9 +64,9 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25556() ) );           //36
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25559() ) );           //37
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25471() ) );           //38
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25444() ) );           //39
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25519() ) );           //39
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25444() ) );           //40
             
-
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||

@@ -12,7 +12,7 @@
             propDiv.empty();
 
             var propVals = o.propData.values;
-            var text = (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue;
+            var text = (false === o.Multi) ? Csw.string(propVals.value, o.propData.gestalt).trim() : Csw.enums.multiEditDefaultValue;
             
             if (false === Csw.isNullOrEmpty(text)) {
                 text += '&nbsp;';
