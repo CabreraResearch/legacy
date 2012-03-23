@@ -49,7 +49,7 @@
                 morediv.moreLink.hide();
 
                 Csw.each(catobj.items, function (itemobj, itemname) {
-                    if (row > internal.hidethreshold) {
+                    if (row > internal.hidethreshold && tbl === showntbl) {
                         row = 1;
                         tbl = hiddentbl;
                         morediv.moreLink.show();
