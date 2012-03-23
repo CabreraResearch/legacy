@@ -506,7 +506,7 @@
                             makeInspectionDesignUpload($uploadP);
 
                             $step3List.CswList('addItem', {
-                                value: $('<span>Upload the completed InspectionDesign.<p/></span>').append($uploadP)
+                                value: $('<span>Upload the completed Inspection Design.<p/></span>').append($uploadP)
                             });
 
                             //$fileUploadBtn.hide();
