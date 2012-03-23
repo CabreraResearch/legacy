@@ -1,15 +1,14 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 /// <reference path="~/js/ChemSW-vsdoc.js" />
 
-(function _cswUl() {
+(function () {
     'use strict';
 
-
-    Csw.controls.ul = Csw.controls.ul ||
-        Csw.controls.register('ul', function ul(options) {
-            /// <summary> Create a <ul /> </summary>
-            /// <param name="options" type="Object">Options to define the ul.</param>
-            /// <returns type="ul">A ul object</returns>
+    Csw.controls.ol = Csw.controls.ol ||
+        Csw.controls.register('ol', function(options) {
+            /// <summary> Create an <ol /> </summary>
+            /// <param name="options" type="Object">Options to define the ol.</param>
+            /// <returns type="ol">A ol object</returns>
             var internal = {
                 $parent: '',
                 number: 1
@@ -40,13 +39,13 @@
                 };
 
             (function() {
-                var html = '<ul></ul>';
-                var $ul;
+                var html = '<ol></ol>';
+                var $ol;
 
                 $.extend(internal, options);
 
-                $ul = $(html);
-                Csw.controls.factory($ul, external);
+                $ol = $(html);
+                Csw.controls.factory($ol, external);
 
                 internal.$parent.append(external.$);
             }());
