@@ -24,6 +24,7 @@
                 datatype: 'local',
                 emptyrecords: 'No Results',
                 height: '300',
+                hidegrid: false,
                 loadtext: 'Loading...',
                 multiselect: false,
                 toppager: false,
