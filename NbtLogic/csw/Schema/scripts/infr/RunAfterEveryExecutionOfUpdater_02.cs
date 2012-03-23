@@ -18,11 +18,12 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunAfterEveryExecutionOfUpdater_02 : CswUpdateSchemaTo
     {
+        public static string Title = "nbt_finalize_ora.bat";
 
         public override void update()
         {
-            //***************  ADD your own code
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Running nbt_finalize_ora.bat after updates." ); //this one doesn't blocks        
+            //_CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Running nbt_finalize_ora.bat after updates." ); //this one doesn't blocks        
+
             //"Initialize" is only for updateSequences()!!!
 
             string FileLocations = Application.StartupPath;
@@ -67,7 +68,7 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-    }//class CswUpdateSchema_Infr_TakeDump
+    }//class RunAfterEveryExecutionOfUpdater_02
 
 }//namespace ChemSW.Nbt.Schema
 

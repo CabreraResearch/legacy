@@ -407,11 +407,16 @@
             return external;
         };
 
-        external.css = function (values) {
+        external.css = function (param1, param2) {
             /// <summary>Add css styles to an element.</summary>
-            /// <param name="values" type="Object">Styles to apply</param>
+            /// <param name="param1" type="Object">Either a single JSON object with CSS to apply, or a single CSS name</param>
+            /// <param name="param2" type="string">single CSS value</param>
             /// <returns type="Object">The Csw object (for chaining)</returns> 
-            $element.css(values);
+            if (arguments.length===1) {
+                $element.css(param1);
+            } else {
+                $element.css(param1,param2);
+            }
             return external;
         };
 

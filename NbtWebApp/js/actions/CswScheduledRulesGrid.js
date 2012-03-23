@@ -89,7 +89,7 @@
                                 onChange: function () {
                                     var $selected = customerIdSelect.find(':selected');
                                     selectedCustomerId = $selected.val();
-                                    toggleButton(buttons.next, (false === Csw.isNullOrEmpty(selectedCustomerId)));
+                                    toggleButton(buttons.next, (false === Csw.isNullOrEmpty(selectedCustomerId) && selectedCustomerId !== '[ None ]'));
                                 }
                             });
 

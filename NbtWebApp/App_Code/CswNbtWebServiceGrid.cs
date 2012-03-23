@@ -516,7 +516,9 @@ namespace ChemSW.Nbt.WebServices
                 }
                 foreach( CswViewBuilderProp VbProp in PropsInGrid )
                 {
-                    if( Prop != null && VbProp.PropNameUnique == CleanPropName && VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) )
+                    if( Prop != null && VbProp.PropNameUnique == CleanPropName && 
+                        ( VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) ||
+                          VbProp.AssociatedPropIds.Contains( Prop.ObjectClassPropId ) ) )
                     {
                         CleanPropName += "_" + VbProp.MetaDataPropId;
                     }
