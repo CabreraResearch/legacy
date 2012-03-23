@@ -238,7 +238,19 @@ namespace ChemSW.Nbt
         public void removeSessionData( CswNbtView View )
         {
             removeSessionData( View.SessionViewId );
-        }
+
+            // Also remove views that match by viewid
+            CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_View_update", SessionDataTableName );
+            string WhereClause = @"where " + SessionDataColumn_SessionId + @"='" + _CswNbtResources.Session.SessionId + @"' 
+                                     and " + SessionDataColumn_ViewId + @" = '" + View.ViewId.get() + @"'";
+            
+            DataTable SessionDataTable = SessionDataUpdate.getTable( WhereClause );
+            foreach( DataRow Row in SessionDataTable.Rows )
+            {
+                Row.Delete();
+            }
+            SessionDataUpdate.update( SessionDataTable );
+        } // removeSessionData(CswNbtView)
 
         /// <summary>
         /// Remove a view from the session view cache
@@ -256,7 +268,7 @@ namespace ChemSW.Nbt
                     SessionDataUpdate.update( SessionDataTable );
                 }
             }
-        } // removeSessionData()
+        } // removeSessionData(CswNbtSessionDataId)
 
         /// <summary>
         /// Remove all data for a given session
