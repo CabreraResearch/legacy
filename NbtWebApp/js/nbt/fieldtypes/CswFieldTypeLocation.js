@@ -25,7 +25,7 @@
                     propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, nodeId); }, Csw.nodeHoverOut);
                 } else {
                     var table = propDiv.table({
-                        ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                        ID: Csw.makeId(o.ID, 'tbl')
                     });
 
                     table.cell(1, 1).text(path).propDom('colspan', '2').br();

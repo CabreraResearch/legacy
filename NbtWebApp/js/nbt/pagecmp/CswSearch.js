@@ -58,13 +58,13 @@
         var parent = Csw.controls.factory($parent);
 
         o.searchTable = parent.table({
-            ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+            ID: Csw.makeId(o.ID, 'tbl'),
             align: 'center'
         });
 
         var topSpan = o.searchTable.span();
 
-        var topSpanDivId = Csw.controls.dom.makeId({ ID: 'search_criteria_div', prefix: o.ID });
+        var topSpanDivId = Csw.makeId({ ID: 'search_criteria_div', prefix: o.ID });
         var topSpanDiv = topSpan.div({ ID: topSpanDivId })
                             .addClass('CswSearch_Div');
 
@@ -114,7 +114,7 @@
             for (prop in properties) {
                 if (Csw.contains(properties, prop)) {
                     thisProp = properties[prop];
-                    nodeTypeId = Csw.controls.dom.makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
+                    nodeTypeId = Csw.makeId({ ID: 'viewbuilderpropid', suffix: thisProp.viewbuilderpropid, prefix: o.ID });
                     o.searchTable.cell(propRow, 2)
                         .span({ ID: nodeTypeId, cssclass: Csw.enums.cssClasses_ViewBuilder.metadatatype_static.name, text: thisProp.metadatatypename })
                         .propNonDom('relatedidtype', thisProp.relatedidtype);
@@ -174,7 +174,7 @@
         function renderNodeTypeSearchContent() {
             //Row 1, Column 1: empty (Csw.contains 'and' for View search)
             //Row 1, Column 2: nodetypeselect picklist
-            var nodeTypeSelectId = Csw.controls.dom.makeId(o.ID, 'nodetype_select'),
+            var nodeTypeSelectId = Csw.makeId(o.ID, 'nodetype_select'),
                 $select;
 
             $select = makeSelect(o.nodeTypesData.nodetypeselect, o.nodeTypesData.objectclassselect);
@@ -207,7 +207,7 @@
                 genProps = o.propsData.properties['Generic Properties'],
                 specProps = o.propsData.properties['Specific Properties'];
             //Row propRow, Column 3: properties 
-            var propSelectId = Csw.controls.dom.makeId({ ID: 'property_select', prefix: o.ID });
+            var propSelectId = Csw.makeId({ ID: 'property_select', prefix: o.ID });
 
             genProps.label = 'Generic Properties';
             specProps.label = 'Specific Properties';
@@ -287,7 +287,7 @@
             if (o.searchtype === 'nodetypesearch') {
                 //Row i, Column 1: cell for clear/advanced                                            
                 var splitCellTable = o.searchTable.cell(o.bottomRow, o.bottomCell).table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'split_cell_table'),
+                    ID: Csw.makeId(o.ID, 'split_cell_table'),
                     cellpadding: 1,
                     cellspacing: 1,
                     cellalign: 'left',
@@ -305,7 +305,7 @@
             var clearButtonCell = clearPositionTable.cell(cellRow, clearCellNumber);
             //clear btn
             clearButtonCell.button({
-                ID: Csw.controls.dom.makeId(o.ID, 'clear_button'),
+                ID: Csw.makeId(o.ID, 'clear_button'),
                 enabledText: 'Reset', //case 22756: this is more accurate name-to-behavior.
                 disabledText: 'Reset',
                 disableOnClick: false,
@@ -317,7 +317,7 @@
             //Row i, Column 1 (1/2): advanced link
             var advancedLinkCell = clearPositionTable.cell(cellRow, advancedCellNumber);
             var advancedLink = advancedLinkCell.link({
-                ID: Csw.controls.dom.makeId(o.ID, 'advanced_options'),
+                ID: Csw.makeId(o.ID, 'advanced_options'),
                 href: 'javascript:void(0)',
                 value: (o.advancedIsHidden) ? 'Advanced' : 'Simple'
             })
@@ -331,7 +331,7 @@
                                     .propDom({ align: 'right' })
                                     .css({ 'text-align': 'right' });
             var searchButton = searchButtonCell.button({
-                ID: Csw.controls.dom.makeId(o.ID, 'search_button'),
+                ID: Csw.makeId(o.ID, 'search_button'),
                 enabledText: 'Search',
                 disabledText: 'Searching',
                 onClick: function () { doSearch(); }
@@ -354,7 +354,7 @@
                 'success': function (data) {
                     topSpanDiv.empty();
                     o.searchtype = data.searchtype;
-                    var searchTableId = Csw.controls.dom.makeId({ prefix: o.ID, ID: 'search_tbl' });
+                    var searchTableId = Csw.makeId({ prefix: o.ID, ID: 'search_tbl' });
                     o.searchTable = topSpanDiv.table({
                         ID: searchTableId,
                         cellpadding: 1,
@@ -371,7 +371,7 @@
                                    .imageButton({
                                        ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                                        AlternateText: 'Close',
-                                       ID: Csw.controls.dom.makeId({ 'prefix': o.ID, 'id': 'closebtn' }),
+                                       ID: Csw.makeId({ 'prefix': o.ID, 'id': 'closebtn' }),
                                        onClick: function () {
                                            o.onSearchClose();
                                            return Csw.enums.imageButton_ButtonType.None;

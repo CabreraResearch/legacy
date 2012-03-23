@@ -18,7 +18,7 @@
             var units = (false === o.Multi) ? Csw.string(propVals.units).trim() : Csw.enums.multiEditDefaultValue;
 
             var table = propDiv.table({
-                ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                ID: Csw.makeId(o.ID, 'tbl')
             });
 
             var mtbfStatic = (units !== Csw.enums.multiEditDefaultValue) ? value + '&nbsp;' + units : value;
@@ -36,7 +36,7 @@
                     }
                 });
 
-                var editTable = table.cell(2, 2).table({ ID: Csw.controls.dom.makeId(o.ID, 'edittbl') });
+                var editTable = table.cell(2, 2).table({ ID: Csw.makeId(o.ID, 'edittbl') });
                 editTable.cell(1, 1).text('Start Date');
 
                 editTable.cell(1, 2)

@@ -29,7 +29,7 @@
                 var fileName = Csw.string(propVals.name).trim();
 
                 var table = propDiv.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    ID: Csw.makeId(o.ID, 'tbl')
                 });
                 var cell11 = table.cell(1, 1).propDom('colspan', '3');
                 var cell21 = table.cell(2, 1).propDom('width', width);
@@ -61,7 +61,7 @@
                     cell22.imageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Edit,
                             AlternateText: 'Edit',
-                            ID: Csw.controls.dom.makeId(o.ID, 'edit'),
+                            ID: Csw.makeId(o.ID, 'edit'),
                             onClick: function () {
                                 $.CswDialog('FileUploadDialog', {
                                     url: '/NbtWebApp/wsNBT.asmx/fileForProp',
@@ -80,7 +80,7 @@
                         cell23.imageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Clear,
                                 AlternateText: 'Clear',
-                                ID: Csw.controls.dom.makeId(o.ID, 'clr'),
+                                ID: Csw.makeId(o.ID, 'clr'),
                                 onClick: function () {
                                     /* remember: confirm is globally blocking call */
                                     if (confirm("Are you sure you want to clear this image?")) {

@@ -32,7 +32,7 @@
         }
 
         var table = errorDiv.table({
-            ID: Csw.controls.dom.makeId(id, 'tbl'),
+            ID: Csw.makeId(id, 'tbl'),
             width: '100%'
         });
 
@@ -41,7 +41,7 @@
         cell21.hide();
 
         table.cell(1, 1).link({
-            ID: Csw.controls.dom.makeId({ ID: id, suffix: 'cell' }),
+            ID: Csw.makeId({ ID: id, suffix: 'cell' }),
             text: o.message,
             onClick: function () { cell21.$.toggle(); }
         });
@@ -51,7 +51,7 @@
         cell12.imageButton({
             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
             AlternateText: 'Hide',
-            ID: Csw.controls.dom.makeId(id, 'hidebtn'),
+            ID: Csw.makeId(id, 'hidebtn'),
             onClick: function () {
                 errorDiv.remove();
                 if ($parentdiv.children().length === 0)

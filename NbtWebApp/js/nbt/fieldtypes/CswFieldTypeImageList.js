@@ -18,7 +18,7 @@
             var height = Csw.string(propVals.height);
             var allowMultiple = Csw.bool(propVals.allowmultiple);
             var table = propDiv.table({
-                ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                ID: Csw.makeId(o.ID, 'tbl')
             });
             var currCol = 1;
             var selectedValues = [];
@@ -100,7 +100,7 @@
                     nameCell.imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
-                        ID: Csw.controls.dom.makeId('image', currCol, 'rembtn'),
+                        ID: Csw.makeId('image', currCol, 'rembtn'),
                         onClick: function () {
                             nameCell.$.fadeOut('fast');
                             imageCell.$.fadeOut('fast');

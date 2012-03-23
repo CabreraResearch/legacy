@@ -88,7 +88,7 @@
             }
 
             table = propDiv.table({
-                ID: Csw.controls.dom.makeId(o.ID, '', 'tbl')
+                ID: Csw.makeId(o.ID, '', 'tbl')
             });
 
             if (mode === 'button') {
@@ -113,7 +113,7 @@
             }
 
             messagediv = table.cell(1, 2).div({
-                ID: Csw.controls.dom.makeId(o.ID, '', 'msg', '', false),
+                ID: Csw.makeId(o.ID, '', 'msg', '', false),
                 cssclass: 'buttonmessage'
             });
 

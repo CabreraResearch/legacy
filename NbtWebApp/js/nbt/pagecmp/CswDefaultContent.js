@@ -23,7 +23,7 @@
 
                 var addDiv = Csw.controls.div({
                     $parent: $parent,
-                    ID: Csw.controls.dom.makeId({ id: o.ID, suffix: 'adddiv' }),
+                    ID: Csw.makeId({ id: o.ID, suffix: 'adddiv' }),
                     cssclass: 'adddiv',
                     text: 'Add New:'
                 });

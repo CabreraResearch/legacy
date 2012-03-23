@@ -22,7 +22,7 @@
                 });
             } else {
                 var table = propDiv.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    ID: Csw.makeId(o.ID, 'tbl')
                 });
 
                 table.cell(1, 1).link({
@@ -43,7 +43,7 @@
                     });
 
                 var editTable = propDiv.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'edittbl')
+                    ID: Csw.makeId(o.ID, 'edittbl')
                 }).hide();
 
                 editTable.cell(1, 1).span({text: 'Text'});

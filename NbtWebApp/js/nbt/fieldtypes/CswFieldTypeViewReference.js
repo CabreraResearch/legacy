@@ -15,7 +15,7 @@
             var viewMode = Csw.string(propVals.viewmode).trim().toLowerCase();
             /* var viewName = Csw.string(propVals.name).trim(); */
             var table = propDiv.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    ID: Csw.makeId(o.ID, 'tbl')
                 });
 
             if (o.EditMode !== Csw.enums.editMode.Add && false === o.Multi) {

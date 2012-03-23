@@ -21,7 +21,7 @@
                 var fileName = Csw.string(propVals.name).trim();
 
                 var table = propDiv.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    ID: Csw.makeId(o.ID, 'tbl')
                 });
                 table.cell(1, 1).link({ href: href, target: '_blank', text: fileName });
                 var cell12 = table.cell(1, 2).div();

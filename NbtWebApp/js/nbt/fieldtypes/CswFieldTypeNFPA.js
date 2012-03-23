@@ -18,10 +18,10 @@
             var white = (false === o.Multi) ? propVals.special : Csw.enums.multiEditDefaultValue;
 
             var outerTable = propDiv.table({
-                ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                ID: Csw.makeId(o.ID, 'tbl')
             });
 
-            var table = outerTable.cell(1, 1).table({ID: Csw.controls.dom.makeId(o.ID, 'tbl1')})
+            var table = outerTable.cell(1, 1).table({ID: Csw.makeId(o.ID, 'tbl1')})
                                    .addClass('CswFieldTypeNFPA_table');
 
             var redDiv = table.cell(1, 1)
@@ -48,7 +48,7 @@
 
             function makeSelect(cell, id, selected, div) {
                 var select = cell.select({
-                    ID: Csw.controls.dom.makeId(o.ID, id),
+                    ID: Csw.makeId(o.ID, id),
                     selected: selected,
                     values: selVals,
                     cssclass: '',
@@ -65,7 +65,7 @@
 
             if (false === o.ReadOnly) {
                 var editTable = outerTable.cell(1, 2).table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'edittbl'),
+                    ID: Csw.makeId(o.ID, 'edittbl'),
                     FirstCellRightAlign: true
                 });
                 var selVals = [
@@ -104,7 +104,7 @@
                 }
                 var whiteSelect = editTable.cell(4, 2)
                                           .select({
-                                              ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'white' }),
+                                              ID: Csw.makeId({ ID: o.ID, suffix: 'white' }),
                                               selected: white,
                                               values: whiteVals,
                                               cssclass: '',

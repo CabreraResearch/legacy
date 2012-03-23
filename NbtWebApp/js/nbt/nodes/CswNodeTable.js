@@ -154,7 +154,7 @@
                     maintextcell.br();
 
                     var btnTable = btncell.table({
-                        ID: Csw.controls.dom.makeId(o.ID, nodeid + '_btntbl'),
+                        ID: Csw.makeId(o.ID, nodeid + '_btntbl'),
                         cellspacing: '5px'
                     });
                     var btncol = 1;
@@ -172,7 +172,7 @@
                                 propid: propObj.propid,
                                 propDiv: propDiv,
                                 propData: propObj.propData,
-                                ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: propObj.id }),
+                                ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
                                 EditMode: Csw.enums.editMode.Table,
                                 doSave: function (saveoptions) {
                                     // Nothing to save in this case, so just call onSuccess
@@ -197,7 +197,7 @@
                             btntext = "Edit";
                         }
                         btnTable.cell(1, btncol).link({
-                            ID: Csw.controls.dom.makeId(o.ID, nodeid, 'editbtn'),
+                            ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
                             text: btntext,
                             //disableOnClick: false,
                             onClick: function () {
@@ -215,7 +215,7 @@
 
                     if (nodeObj.allowdelete) {
                         btnTable.cell(1, btncol).link({
-                            ID: Csw.controls.dom.makeId(o.ID, nodeid, 'btn'),
+                            ID: Csw.makeId(o.ID, nodeid, 'btn'),
                             text: 'Delete',
                             //disableOnClick: false,
                             onClick: function () {
@@ -239,7 +239,7 @@
                 } else {
 
                     tableDiv = parent.div({
-                        ID: Csw.controls.dom.makeId({ id: o.ID, suffix: '_scrolldiv' })
+                        ID: Csw.makeId({ id: o.ID, suffix: '_scrolldiv' })
                         //height: o.maxheight + 'px',
                         //styles: { overflow: 'auto' }
                     });

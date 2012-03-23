@@ -18,7 +18,7 @@
             }
             else {
                 var table = propDiv.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                    ID: Csw.makeId(o.ID, 'tbl')
                 });
 
                 var cell1 = table.cell(1, 1);
@@ -32,7 +32,7 @@
                     table.cell(1, 2).div()
                          .imageButton({ ButtonType: Csw.enums.imageButton_ButtonType.Print,
                              AlternateText: '',
-                             ID: Csw.controls.dom.makeId(o.ID, 'print'),
+                             ID: Csw.makeId(o.ID, 'print'),
                              onClick: function () {
                                  $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
                                  return Csw.enums.imageButton_ButtonType.None;

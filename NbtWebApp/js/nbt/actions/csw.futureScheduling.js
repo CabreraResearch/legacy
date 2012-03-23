@@ -62,7 +62,7 @@
                 success: function (data) {
 
                     var resultstree = Csw.nbt.nodeTree({
-                        ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree'),
+                        ID: Csw.makeId(internal.ID, '', 'resultstree'),
                         height: '250px',
                         width: '500px',
                         parent: internal.resultscell
@@ -82,7 +82,7 @@
         // Init
         (function () {
             var div = Csw.controls.div({
-                ID: Csw.controls.dom.makeId(internal.ID, '', 'div'),
+                ID: Csw.makeId(internal.ID, '', 'div'),
                 $parent: internal.$parent
             });
             var wizardSteps = {
@@ -91,7 +91,7 @@
             };
 
             internal.$wizard = div.$.CswWizard('init', {
-                ID: Csw.controls.dom.makeId(internal.ID, '', 'wizard'),
+                ID: Csw.makeId(internal.ID, '', 'wizard'),
                 Title: 'Future Scheduling Wizard',
                 StepCount: Csw.enums.wizardSteps_FutureScheduling.stepcount,
                 Steps: wizardSteps,
@@ -117,7 +117,7 @@
             internal.step1div = Csw.controls.factory($divstep1, {});
 
             var step1table = internal.step1div.table({
-                ID: Csw.controls.dom.makeId(internal.ID, '', 'table1'),
+                ID: Csw.makeId(internal.ID, '', 'table1'),
                 FirstCellRightAlign: true,
                 width: '100%',
                 cellpadding: 2
@@ -126,7 +126,7 @@
             step1table.cell(1, 1).span({ text: 'Select future date:' });
 
             internal.endDatePicker = step1table.cell(1, 2).dateTimePicker({
-                ID: Csw.controls.dom.makeId(internal.ID, '', 'date'),
+                ID: Csw.makeId(internal.ID, '', 'date'),
                 DisplayMode: 'Date',
                 Date: Csw.date().addDays(90).toString()
             });
@@ -143,7 +143,7 @@
                 success: function (data) {
 
                     internal.generatorTree = Csw.nbt.nodeTree({
-                        ID: Csw.controls.dom.makeId(internal.ID, '', 'gentree'),
+                        ID: Csw.makeId(internal.ID, '', 'gentree'),
                         height: '225px',
                         width: '500px',
                         parent: cell42,
@@ -158,7 +158,7 @@
             var $divstep2 = $(internal.$wizard.CswWizard('div', Csw.enums.wizardSteps_FutureScheduling.step2.step));
             internal.step2div = Csw.controls.factory($divstep2, {});
 
-            var step2table = internal.step2div.table({ ID: Csw.controls.dom.makeId(internal.ID, '', 'table2'), width: '100%' });
+            var step2table = internal.step2div.table({ ID: Csw.makeId(internal.ID, '', 'table2'), width: '100%' });
             step2table.cell(1, 1).span({ text: 'Results:' });
             internal.resultscell = step2table.cell(2, 1);
 

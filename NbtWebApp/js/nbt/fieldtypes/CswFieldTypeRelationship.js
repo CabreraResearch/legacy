@@ -36,7 +36,7 @@
                     propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectedNodeId); }, Csw.nodeHoverOut);
                 } else {
                     var table = propDiv.table({
-                        ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                        ID: Csw.makeId(o.ID, 'tbl')
                     });
 
                     var selectBox = table.cell(1, 1).select({

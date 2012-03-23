@@ -27,11 +27,11 @@
 
                 var makeFullGrid = function (newDiv) {
                     'use strict';
-                    var menuDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_menu') });
+                    var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_menu') });
                     newDiv.br();
-                    var searchDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype_search') });
+                    var searchDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_search') });
                     newDiv.br();
-                    var gridDiv = newDiv.div({ ID: Csw.controls.dom.makeId(o.ID, 'grid_as_fieldtype') });
+                    var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype') });
 
 
                     var gridOpts = {

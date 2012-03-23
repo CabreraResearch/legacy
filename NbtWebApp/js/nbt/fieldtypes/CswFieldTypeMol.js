@@ -15,7 +15,7 @@
             var mol = Csw.string(propVals.mol).trim();
 
             var table = propDiv.table({
-                ID: Csw.controls.dom.makeId(o.ID, 'tbl')
+                ID: Csw.makeId(o.ID, 'tbl')
             });
             var cell11 = table.cell(1, 1).propDom('colspan', '3');
             var cell21 = table.cell(2, 1).css('width', width - 36);

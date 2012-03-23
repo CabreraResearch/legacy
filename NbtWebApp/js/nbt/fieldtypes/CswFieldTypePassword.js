@@ -18,7 +18,7 @@
                 // show nothing
             } else {
                 var table = propDiv.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                    ID: Csw.makeId(o.ID, 'tbl'),
                     OddCellRightAlign: true
                 });
 

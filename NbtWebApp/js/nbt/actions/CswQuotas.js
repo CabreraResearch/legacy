@@ -24,7 +24,7 @@
             function initTable() {
                 div.empty();
                 table = div.table({
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                    ID: Csw.makeId(o.ID, 'tbl'),
                     border: 1,
                     cellpadding: 5
                 });

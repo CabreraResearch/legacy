@@ -64,7 +64,7 @@
 
             var div = Csw.controls.div();
             var table = div.table({
-                ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                ID: Csw.makeId(o.ID, 'tbl'),
                 FirstCellRightAlign: true
             });
 
@@ -85,7 +85,7 @@
                 displayModeSelect.option({ value: 'Tree', isSelected: true });
             }
 
-            var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
+            var visSelect = Csw.components.makeViewVisibilitySelect(table, 3, 'Available to:');
             var saveBtn = div.button({
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
@@ -849,12 +849,12 @@
             });
             div.p({ text: o.navigationText });
             var select = div.select({
-                ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
+                ID: Csw.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog' }),
                 values: o.values
             });
 
             div.button({
-                ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
+                ID: Csw.makeId({ ID: o.ID, suffix: 'CswNavigationSelectDialog_OK' }),
                 enabledText: 'OK',
                 onClick: function () {
                     Csw.tryExec(o.onOkClick, select.find(':selected'));

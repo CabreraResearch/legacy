@@ -17,25 +17,25 @@
         if (options) $.extend(o, options);
 
         if (!Csw.isNullOrEmpty(o.filtarbitraryid)) {
-            filterId = Csw.controls.dom.makeId({ ID: id + delimiter + 'filtarbitraryid',
+            filterId = Csw.makeId({ ID: id + delimiter + 'filtarbitraryid',
                 prefix: o.ID,
                 suffix: o.filtarbitraryid
             });
         }
         else if (!Csw.isNullOrEmpty(o.viewbuilderpropid)) {
-            filterId = Csw.controls.dom.makeId({ ID: id + delimiter + 'viewbuilderpropid',
+            filterId = Csw.makeId({ ID: id + delimiter + 'viewbuilderpropid',
                 prefix: o.ID,
                 suffix: o.viewbuilderpropid
             });
         }
         else if (!Csw.isNullOrEmpty(o.proparbitraryid)) {
-            filterId = Csw.controls.dom.makeId({ ID: id + delimiter + 'proparbitraryid',
+            filterId = Csw.makeId({ ID: id + delimiter + 'proparbitraryid',
                 prefix: o.ID,
                 suffix: o.proparbitraryid
             });
         }
         else if (!Csw.isNullOrEmpty(o.ID)) {
-            filterId = Csw.controls.dom.makeId({ ID: id,
+            filterId = Csw.makeId({ ID: id,
                 prefix: o.ID
             });
         } else {

@@ -50,7 +50,7 @@
 
             makeStepId = function (suffix, stepNo) {
                 var step = stepNo || currentStepNo;
-                return Csw.controls.dom.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
+                return Csw.makeId({ prefix: 'step_' + step, ID: o.ID, suffix: suffix });
             },
 
         //Step 1. Select a Customer ID
@@ -83,7 +83,7 @@
 
                         customerIdSelect = customerIdTable.cell(1, 2)
                             .select({
-                                ID: Csw.controls.dom.makeSafeId('customerIdSelect'),
+                                ID: Csw.makeSafeId('customerIdSelect'),
                                 selected: '',
                                 values: [{ value: '[ None ]', display: '[ None ]'}],
                                 onChange: function () {
@@ -172,7 +172,7 @@
 
                 headerTable.cell(1, 2)
                            .button({
-                               ID: Csw.controls.dom.makeSafeId('clearAll'),
+                               ID: Csw.makeSafeId('clearAll'),
                                enabledText: 'Clear All Reprobates',
                                disabledText: 'Clearing...',
                                onClick: function () {
@@ -211,7 +211,7 @@
 
         //#region Execution
         $wizard = $div.CswWizard('init', {
-            ID: Csw.controls.dom.makeId({ ID: o.ID, suffix: 'wizard' }),
+            ID: Csw.makeId({ ID: o.ID, suffix: 'wizard' }),
             Title: 'View Nbt Scheduler Rules by Schema',
             StepCount: Csw.enums.wizardSteps_ScheduleRulesGrid.stepcount,
             Steps: wizardSteps,

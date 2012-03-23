@@ -23,7 +23,7 @@
                 $Div.contents().remove();
                 table = Csw.controls.table({
                     $parent: $Div,
-                    ID: Csw.controls.dom.makeId(o.ID, 'tbl'),
+                    ID: Csw.makeId(o.ID, 'tbl'),
                     border: 1,
                     cellpadding: 5
                 });

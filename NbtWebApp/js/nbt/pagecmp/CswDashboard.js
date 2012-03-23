@@ -24,7 +24,7 @@
 
                 var table = Csw.controls.table({
                     $parent: $DashDiv,
-                    ID: Csw.controls.dom.makeId(o.ID, 'DashboardTable')
+                    ID: Csw.makeId(o.ID, 'DashboardTable')
                 });
                 table.addClass('DashboardTable');
 
