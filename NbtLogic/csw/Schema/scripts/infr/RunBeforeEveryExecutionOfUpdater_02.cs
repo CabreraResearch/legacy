@@ -58,6 +58,9 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Finished nbt_initialize_ora.bat prior to updates." );
             }
 
+            File.Delete( BatchFilePath );
+            File.Delete( SqlFilePath );
+
         }//Update()
 
     }//class CswUpdateSchema_Infr_TakeDump

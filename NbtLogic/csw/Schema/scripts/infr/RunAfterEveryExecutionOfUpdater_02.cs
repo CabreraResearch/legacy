@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 using System.Data;
@@ -27,8 +28,8 @@ namespace ChemSW.Nbt.Schema
             string FileLocations = Application.StartupPath;
             string BatchFilePath = FileLocations + "\\nbt_finalize_ora.bat";
             string SqlFilePath = FileLocations + "\\nbt_finalize_ora.sql";
-            File.WriteAllBytes( BatchFilePath, ChemSW.Nbt.Properties.Resources.nbt_initialize_ora_bat );
-            File.WriteAllBytes( SqlFilePath, ChemSW.Nbt.Properties.Resources.nbt_initialize_ora_sql );
+            File.WriteAllBytes( BatchFilePath, ChemSW.Nbt.Properties.Resources.nbt_finalize_ora_bat );
+            File.WriteAllBytes( SqlFilePath, ChemSW.Nbt.Properties.Resources.nbt_finalize_ora_sql );
 
 
             _CswNbtSchemaModTrnsctn.CswDbCfgInfo.makeConfigurationCurrent( _CswNbtSchemaModTrnsctn.Accessid );
@@ -45,10 +46,24 @@ namespace ChemSW.Nbt.Schema
             Process.StartInfo.UseShellExecute = false;
             Process.StartInfo.RedirectStandardOutput = false;
 
-            System.Diagnostics.Process.Start( Process.StartInfo );
-            //we don't wait 
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Left nbt_finalize_ora.bat after updates without waiting." ); //this one doesn't block
 
+            while( ( false == File.Exists( BatchFilePath ) ) && ( false == File.Exists( SqlFilePath ) ) )
+            {
+                Thread.Sleep( 100 );
+            }
+
+            Process SpawnedProcess = System.Diagnostics.Process.Start( Process.StartInfo );
+            //we don't wait 
+            //_CswNbtSchemaModTrnsctn.CswLogger.reportAppState( "Left nbt_finalize_ora.bat after updates without waiting." ); //this one doesn't block
+
+            //We would _like_ to nuke the files so that no one will delude themselves into believing that modifying
+            //the files we leave behind will have an effect on future runs; but I guess we don't want to wait 
+            //around forever, either.
+            if( SpawnedProcess.WaitForExit( 5000 ) )
+            {
+                File.Delete( BatchFilePath );
+                File.Delete( SqlFilePath );
+            }
 
         }//Update()
 
