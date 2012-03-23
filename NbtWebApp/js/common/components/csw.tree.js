@@ -5,7 +5,7 @@
     'use strict';
 
     Csw.jsTreeGetSelected = Csw.jsTreeGetSelected ||
-        Csw.register('jsTreeGetSelected', function jsTreeGetSelected ($treediv) {
+        Csw.register('jsTreeGetSelected', function ($treediv) {
             var idPrefix = $treediv.CswAttrDom('id');
             var $SelectedItem = $treediv.jstree('get_selected');
             var ret = {

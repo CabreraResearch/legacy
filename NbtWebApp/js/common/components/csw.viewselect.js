@@ -1,11 +1,11 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
 (function () {
     "use strict";
 
-    Csw.controls.viewSelect = Csw.controls.viewSelect ||
-        Csw.controls.register('viewSelect', function (params) {
+    Csw.components.viewSelect = Csw.components.viewSelect ||
+        Csw.components.register('viewSelect', function (cswParent, params) {
 
             var internal = {
                 viewurl: '/NbtWebApp/wsNBT.asmx/getViewSelect',
@@ -21,13 +21,15 @@
 
                 div: null
             };
-            if (params) $.extend(internal, params);
+            if (params) {
+                $.extend(internal, params);
+            }
 
             var external = {};
 
             internal.addCategory = function (catobj) {
 
-                var fieldsetid = Csw.controls.dom.makeId(internal.ID, '', catobj.category + '_fs', '', false);
+                var fieldsetid = Csw.makeId(internal.ID, '', catobj.category + '_fs', '', false);
                 var $fieldset = internal.vsdiv.$.find('#' + fieldsetid);
                 if ($fieldset.length === 0) {
                     $fieldset = $('<fieldset id="' + fieldsetid + '" class="viewselectfieldset"></fieldset>')
@@ -38,7 +40,7 @@
                 $fieldset.append('<legend class="viewselectlegend">' + catobj.category + '</legend>');
 
                 var morediv = Csw.controls.moreDiv({
-                    ID: Csw.controls.dom.makeId(internal.ID, '', catobj.category + '_morediv'),
+                    ID: Csw.makeId(internal.ID, '', catobj.category + '_morediv'),
                     $parent: $fieldset
                 });
 
@@ -114,8 +116,8 @@
 
             // Constructor
             (function () {
-                internal.div = Csw.controls.div({ $parent: internal.$parent });
-                internal.vsdiv = Csw.controls.div({ ID: Csw.controls.dom.makeId(internal.ID, '', 'vsdiv') });
+                internal.div = cswParent.div();
+                internal.vsdiv = Csw.controls.div({ ID: Csw.makeId(internal.ID, '', 'vsdiv') });
                 internal.comboBox = internal.div.comboBox({
                     ID: internal.ID + '_combo',
                     topContent: 'Select a View',

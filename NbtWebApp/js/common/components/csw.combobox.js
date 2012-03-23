@@ -4,8 +4,8 @@
 (function () {
     'use strict';
 
-    Csw.controls.comboBox = Csw.controls.comboBox ||
-        Csw.controls.register('comboBox', function (options) {
+    Csw.components.comboBox = Csw.components.comboBox ||
+        Csw.components.register('comboBox', function (cswParent, options) {
             var internal = {
                 $parent: '',
                 ID: '',
@@ -28,8 +28,7 @@
             internal.hoverOut = function () {
                 internal.hideTo = setTimeout(external.pickList.hide, 300);
             };
-
-
+            
             (function () {
 
                 function handleClick() {
@@ -41,21 +40,24 @@
                 if (options) {
                     $.extend(internal, options);
                 }
+                internal.comboDiv = cswParent.div({
+                    ID: internal.ID
+                });
+                external = Csw.dom({ }, internal.comboDiv);
+                //$.extend(external, Csw.controls.div(internal));
 
-                $.extend(external, Csw.controls.div(internal));
-
-                internal.topDiv = external.div({
+                internal.topDiv = internal.comboDiv.div({
                     ID: internal.ID + '_top',
                     cssclass: 'CswComboBox_TopDiv',
                     width: internal.width
                 });
 
                 internal.topTable = internal.topDiv.table({
-                    ID: Csw.controls.dom.makeId(internal.ID, 'tbl'),
+                    ID: Csw.makeId(internal.ID, 'tbl'),
                     width: internal.width
                 });
 
-            internal.topTable.cell(1, 1).append(internal.topContent)
+                internal.topTable.cell(1, 1).append(internal.topContent)
                     .propDom('width', internal.width)
                     .bind('click', handleClick);
 
@@ -68,11 +70,11 @@
                         onClick: handleClick
                     });
 
-                external.pickList = external.div({
+                external.pickList = internal.comboDiv.div({
                     ID: internal.ID + '_child',
                     cssclass: 'CswComboBox_ChildDiv',
-                width: internal.width
-            })
+                    width: internal.width
+                })
                 .bind('click', handleClick)
                 .append(internal.selectContent);
 

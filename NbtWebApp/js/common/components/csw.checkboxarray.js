@@ -4,8 +4,12 @@
 (function _cswCheckBoxArray() {
     "use strict";
 
-    Csw.controls.checkBoxArray = Csw.controls.checkBoxArray ||
-        Csw.controls.register('checkBoxArray', function checkBoxArray(options) {
+    Csw.components.checkBoxArray = Csw.components.checkBoxArray ||
+        Csw.components.register('checkBoxArray', function (cswParent, options) {
+
+            if (Csw.isNullOrEmpty(cswParent)) {
+                throw new Error('Cannot instance a Csw component without a Csw control');
+            }
 
             var internal = {
                 storedDataSuffix: 'cswCbaArrayDataStore',
@@ -28,11 +32,9 @@
                 valColName: '',
                 storeDataId: ''
             };
-            var external = {
-                
-            };
+            var external = {};
 
-            internal.transmogrify = function() {
+            internal.transmogrify = function () {
                 var dataStore = {
                     cols: [],
                     data: []
@@ -86,7 +88,7 @@
                 return dataStore;
             };
 
-            external.getdata = function(opts) {
+            external.getdata = function (opts) {
                 var _internal = {
                     ID: ''
                 };
@@ -99,7 +101,7 @@
                 return data;
             };
 
-            external.toggleCheckAll = function() {
+            external.toggleCheckAll = function () {
                 var checkBoxes = external.find('.CBACheckBox_' + internal.ID);
                 if (checkBoxes.isValid) {
                     if (internal.checkAllLink.text() === 'Uncheck All') {
@@ -116,18 +118,23 @@
                 }
             }; // ToggleCheckAll()
 
-            (function() {
+            (function () {
                 if (options) {
                     $.extend(internal, options);
                 }
 
-                internal.storeDataId = Csw.controls.dom.makeId(internal.ID, internal.storedDataSuffix, '', '', false);
-                internal.cbaPrevSelected = Csw.controls.dom.makeId(internal.storeDataId, internal.cbaPrevSelectedSuffix, '', '', false);
+                internal.storeDataId = Csw.makeId(internal.ID, internal.storedDataSuffix, '', '', false);
+                internal.cbaPrevSelected = Csw.makeId(internal.storeDataId, internal.cbaPrevSelectedSuffix, '', '', false);
 
                 Csw.clientDb.removeItem(internal.storeDataId);
                 Csw.clientDb.removeItem(internal.cbaPrevSelected);
 
-                Csw.controls.factory(internal.$parent, external);
+                internal.cbaDiv = cswParent.div({
+                    ID: internal.storeDataId,
+                    height: (25 * internal.HeightInRows) + 'px'
+                });
+                external = Csw.dom({ }, internal.cbaDiv);
+                //Csw.components.factory(internal.$parent, external);
 
                 var cbaData = internal.transmogrify({
                     dataAry: internal.dataAry,
@@ -146,11 +153,6 @@
                     checkType = Csw.enums.inputTypes.radio;
                 }
 
-                var outerDiv = external.div({
-                    ID: internal.storeDataId,
-                    height: (25 * internal.HeightInRows) + 'px'
-                });
-
                 Csw.clientDb.setItem(internal.storeDataId, { columns: internal.cols, data: internal.data });
 
                 if (internal.ReadOnly) {
@@ -162,29 +164,29 @@
                             if (Csw.bool(rRow.values[c])) {
                                 if (false === internal.Multi) {
                                     if (false === rowlabeled) {
-                                        outerDiv.append(rRow.label + ": ");
+                                        internal.cbaDiv.append(rRow.label + ": ");
                                         rowlabeled = true;
                                     }
                                     if (false === first) {
-                                        outerDiv.append(", ");
+                                        internal.cbaDiv.append(", ");
                                     }
                                     if (false === internal.UseRadios) {
-                                        outerDiv.append(internal.cols[c]);
+                                        internal.cbaDiv.append(internal.cols[c]);
                                     }
                                     first = false;
                                 }
                             }
                         }
                         if (rowlabeled) {
-                            outerDiv.br();
+                            internal.cbaDiv.br();
                         }
                     }
                 } else {
-                    var table = outerDiv.table({
-                        ID: Csw.controls.dom.makeId(internal.ID, 'tbl')
+                    var table = internal.cbaDiv.table({
+                        ID: Csw.makeId(internal.ID, 'tbl')
                     });
 
-                    outerDiv.addClass('cbarraydiv');
+                    internal.cbaDiv.addClass('cbarraydiv');
                     table.addClass('cbarraytable');
 
                     // Header
@@ -221,7 +223,7 @@
                             });
                             eCheck.propNonDom({ 'key': '', rowlabel: '[none]', collabel: internal.cols[e], row: -1, col: e });
                             var delClick = Csw.makeDelegate(internal.onChange, eCheck);
-                            eCheck.click(function() {
+                            eCheck.click(function () {
                                 internal.MultiIsUnchanged = false;
                                 delClick();
                             });
@@ -230,7 +232,7 @@
                     } // if(internal.UseRadios && ! internal.Required)
                     tablerow += 1;
 
-                    var onChange = function(cB) {
+                    var onChange = function (cB) {
                         //var cB = this;
                         var col = cB.propNonDom('col');
                         var row = cB.propNonDom('row');
@@ -298,13 +300,14 @@
                             checkAllLinkText = 'Uncheck All';
                         }
 
-                        internal.checkAllLink = external.div({
+                        internal.checkAllLink = cswParent.div({
+                            isControl: internal.isControl,
                             align: 'right'
                         })
                             .link({
                                 href: 'javascript:void(0)',
                                 text: checkAllLinkText,
-                                onClick: function() {
+                                onClick: function () {
                                     external.toggleCheckAll();
                                     return false;
                                 }
@@ -313,7 +316,7 @@
 
                 } // if-else(internal.ReadOnly)
 
-            }());
+            } ());
 
             return external;
         });
