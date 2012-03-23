@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Schema
                 updatetoschemaversion.Text = e.LatestSchemaVersion.ToString();
             }
 
-//            _SetUpdateButtonVisible( e );
+            _SetUpdateButtonVisible( e );
 
             historygrid.DataSource = e.UpdateHistoryTable;
             historygrid.Columns["version"].DisplayIndex = 0;
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.Schema
             updatebutton.Enabled = true;
             schemacombobox.Enabled = true;
 
-//            _SetUpdateButtonVisible( e );
+            _SetUpdateButtonVisible( e );
         }
 
         private delegate void ShowClipboardLinkHandler();
@@ -115,17 +115,17 @@ namespace ChemSW.Nbt.Schema
 
         private void _SetUpdateButtonVisible( UpdateThread.SchemaInfoEventArgs e )
         {
-            if( e.CurrentSchemaVersion == e.MinimumSchemaVersion ||
-                ( e.LatestSchemaVersion.CycleIteration == e.CurrentSchemaVersion.CycleIteration &&
-                  e.LatestSchemaVersion.ReleaseIdentifier == e.CurrentSchemaVersion.ReleaseIdentifier &&
-                  e.LatestSchemaVersion.ReleaseIteration > e.CurrentSchemaVersion.ReleaseIteration ) )
-            {
-                updatebutton.Visible = true;
-            }
-            else
-            {
-                updatebutton.Visible = false;
-            }
+            //if( e.CurrentSchemaVersion == e.MinimumSchemaVersion ||
+            //    ( e.LatestSchemaVersion.CycleIteration == e.CurrentSchemaVersion.CycleIteration &&
+            //      e.LatestSchemaVersion.ReleaseIdentifier == e.CurrentSchemaVersion.ReleaseIdentifier &&
+            //      e.LatestSchemaVersion.ReleaseIteration > e.CurrentSchemaVersion.ReleaseIteration ) )
+            //{
+            //    updatebutton.Visible = true;
+            //}
+            //else
+            //{
+            updatebutton.Visible = true;
+            //}
         }
 
         private delegate void SetStatusHandler( string Message );
