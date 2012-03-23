@@ -70,11 +70,17 @@ namespace ChemSW.Nbt.WebServices
                         Row["nodepk"] = InspectionNode.NodeId.ToString();
                         Row["Inspection"] = InspectionNode.NodeName;
                         Row["Inspection Point"] = NodeAsInspection.Target.CachedNodeName;
-                        Row["Due"] = NodeAsInspection.Date.DateTimeValue.ToShortDateString();
+                        if( NodeAsInspection.Date.DateTimeValue != DateTime.MinValue )
+                        {
+                            Row["Due"] = NodeAsInspection.Date.DateTimeValue.ToShortDateString();
+                        }
                         Row["Status"] = NodeAsInspection.Status.Value;
                         Row["OOC Question"] = QuestionProp.NodeTypeProp.PropNameWithQuestionNo;
                         Row["OOC Answer"] = QuestionProp.AsQuestion.Answer;
-                        Row["Date Answered"] = QuestionProp.AsQuestion.DateAnswered.ToShortDateString();
+                        if( NodeAsInspection.Date.DateTimeValue != DateTime.MinValue )
+                        {
+                            Row["Date Answered"] = QuestionProp.AsQuestion.DateAnswered.ToShortDateString();
+                        }
                         Row["Comments"] = QuestionProp.AsQuestion.Comments;
                         InspectionData.Rows.Add( Row );
 
@@ -91,7 +97,10 @@ namespace ChemSW.Nbt.WebServices
                     Row["nodepk"] = InspectionNode.NodeId.ToString();
                     Row["Inspection"] = InspectionNode.NodeName;
                     Row["Inspection Point"] = NodeAsInspection.Target.CachedNodeName;
-                    Row["Due"] = NodeAsInspection.Date.DateTimeValue.ToShortDateString();
+                    if( NodeAsInspection.Date.DateTimeValue != DateTime.MinValue )
+                    {
+                        Row["Due"] = NodeAsInspection.Date.DateTimeValue.ToShortDateString();
+                    }
                     Row["Status"] = NodeAsInspection.Status.Value;
                     InspectionData.Rows.Add( Row );
                 }
