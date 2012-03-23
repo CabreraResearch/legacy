@@ -13,7 +13,7 @@
             width: '180px',
             onClick: function() { return true; },
             topTable: {},
-            hidedelay: 750,
+            hidedelay: 500,
 
             hideTo: null
         };
