@@ -209,11 +209,17 @@ namespace ChemSW.Nbt.Logic
         /// </summary>
         public JArray getGridColumnNamesJson( JArray ColumnArrary, IEnumerable<CswNbtViewProperty> PropCollection )
         {
-            foreach( CswNbtViewProperty ViewProp in PropCollection )
-            {
-                CswViewBuilderProp Prop = new CswViewBuilderProp( ViewProp );
-                ColumnArrary.Add( Prop.PropName );
-            }
+            //foreach ( CswViewBuilderProp Prop in PropCollection.Select( ViewProp => new CswViewBuilderProp( ViewProp ) ) )
+            //{
+            //    ColumnArrary.Add( Prop.PropName );
+            //}
+            //return ColumnArrary;
+            ColumnArrary.Add(
+               from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
+               where ViewProp != null
+               orderby ViewProp.ViewProp.Order
+               select ViewProp.PropName
+               );
             return ColumnArrary;
         }
 
@@ -222,10 +228,16 @@ namespace ChemSW.Nbt.Logic
         /// </summary>
         public JArray getGridColumnNamesJson( JArray ColumnArrary, Collection<CswViewBuilderProp> PropCollection )
         {
-            foreach( CswViewBuilderProp VbProp in PropCollection )
-            {
-                ColumnArrary.Add( VbProp.PropName );
-            }
+            //foreach( CswViewBuilderProp VbProp in PropCollection.OrderBy() )
+            //{
+            //    ColumnArrary.Add( VbProp.PropName );
+            //}
+            ColumnArrary.Add(
+                from VbProp in PropCollection
+                orderby VbProp.ViewProp.Order
+                select VbProp.PropName
+            );
+
             return ColumnArrary;
         }
 
@@ -245,6 +257,7 @@ namespace ChemSW.Nbt.Logic
             JArray ColumnDefArray = new JArray(
                 from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
                 where ViewProp != null
+                orderby ViewProp.ViewProp.Order
                 select JqGridViewProperty.getJqGridAttributesForViewProp( ViewProp )
                 );
             return ColumnDefArray;
@@ -255,12 +268,18 @@ namespace ChemSW.Nbt.Logic
         /// </summary>
         public JArray getGridColumnDefinitionJson( Collection<CswViewBuilderProp> PropCollection )
         {
-            JArray ColumnDefArray = new JArray();
-            foreach( CswViewBuilderProp VbProp in PropCollection )
-            {
-                ColumnDefArray.Add( JqGridViewProperty.getJqGridAttributesForViewProp( VbProp ) );
-            }
-            return ColumnDefArray;
+            //JArray ColumnDefArray = new JArray();
+            //foreach( CswViewBuilderProp VbProp in PropCollection )
+            //{
+            //    ColumnDefArray.Add( JqGridViewProperty.getJqGridAttributesForViewProp( VbProp ) );
+            //}
+            //return ColumnDefArray;
+            JArray ColumnArrary = new JArray(
+                from VbProp in PropCollection
+                orderby VbProp.ViewProp.Order
+                select JqGridViewProperty.getJqGridAttributesForViewProp( VbProp )
+            );
+            return ColumnArrary;
         }
 
         /// <summary>

@@ -255,86 +255,86 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
             //string AccessId = _CswNbtResources.AccessId;
             CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
-            if( CswSchemaUpdater.LatestVersion != CurrentVersion )
+            //if( CswSchemaUpdater.LatestVersion != CurrentVersion )
+            //{
+            CswConsoleOutput.write( "From " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
+
+
+            CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd();
+
+
+
+
+            bool UpdateSucceeded = _runNonVersionScripts( CswSchemaUpdater, CswSchemaScriptsProd.RunBeforeScripts, CswConsoleOutput );
+
+            if( UpdateSucceeded )
             {
-                CswConsoleOutput.write( "From " + CswSchemaUpdater.CurrentVersion( CswNbtResources ).ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
 
 
-                CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd();
-
-
-
-
-                bool UpdateSucceeded = _runNonVersionScripts( CswSchemaUpdater, CswSchemaScriptsProd.RunBeforeScripts, CswConsoleOutput );
-
-                if( UpdateSucceeded )
+                while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
                 {
+                    CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration );
 
-
-                    while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
+                    if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
                     {
-                        CswSchemaVersion UpdateFromVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration );
-
-                        if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
+                        UpdateSucceeded = false;
+                        CswConsoleOutput.write( "AccessId " + AccessId + ": " );
+                        CswConsoleOutput.write( " failed: Schema version (" + CurrentVersion.ToString() + ") is below minimum version (" + CswSchemaUpdater.MinimumVersion.ToString() + ")" + _Separator_NuLine );
+                    }
+                    else
+                    {
+                        CswSchemaVersion UpdateToVersion = null;
+                        if( CurrentVersion == CswSchemaUpdater.MinimumVersion )
                         {
-                            UpdateSucceeded = false;
-                            CswConsoleOutput.write( "AccessId " + AccessId + ": " );
-                            CswConsoleOutput.write( " failed: Schema version (" + CurrentVersion.ToString() + ") is below minimum version (" + CswSchemaUpdater.MinimumVersion.ToString() + ")" + _Separator_NuLine );
+                            UpdateToVersion = new CswSchemaVersion( CswSchemaUpdater.LatestVersion.CycleIteration, CswSchemaUpdater.LatestVersion.ReleaseIdentifier, 1 );
                         }
                         else
                         {
-                            CswSchemaVersion UpdateToVersion = null;
-                            if( CurrentVersion == CswSchemaUpdater.MinimumVersion )
-                            {
-                                UpdateToVersion = new CswSchemaVersion( CswSchemaUpdater.LatestVersion.CycleIteration, CswSchemaUpdater.LatestVersion.ReleaseIdentifier, 1 );
-                            }
-                            else
-                            {
-                                UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
-                            }
+                            UpdateToVersion = new CswSchemaVersion( CurrentVersion.CycleIteration, CurrentVersion.ReleaseIdentifier, CurrentVersion.ReleaseIteration + 1 );
+                        }
 
-                            string UpdateDescription = CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
+                        string UpdateDescription = CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
 
-                            CswConsoleOutput.write( UpdateDescription + ": " );
-                            CswSchemaUpdateThread.start();
-                            while( UpdateState.Running == CswSchemaUpdateThread.UpdateState )
-                            {
-                                CswConsoleOutput.write( "." );
-                                Thread.Sleep( 1000 );
-                            }
+                        CswConsoleOutput.write( UpdateDescription + ": " );
+                        CswSchemaUpdateThread.start();
+                        while( UpdateState.Running == CswSchemaUpdateThread.UpdateState )
+                        {
+                            CswConsoleOutput.write( "." );
+                            Thread.Sleep( 1000 );
+                        }
 
-                            UpdateSucceeded = ( UpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
+                        UpdateSucceeded = ( UpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
 
-                            if( UpdateSucceeded )
-                            {
+                        if( UpdateSucceeded )
+                        {
 
-                                CswConsoleOutput.write( " succeeded" + _Separator_NuLine );
-                            }
-                            else
-                            {
-                                CswConsoleOutput.write( " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine );
-                            }
+                            CswConsoleOutput.write( " succeeded" + _Separator_NuLine );
+                        }
+                        else
+                        {
+                            CswConsoleOutput.write( " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine );
+                        }
 
-                            CswNbtResources.ClearCache();
+                        CswNbtResources.ClearCache();
 
-                            CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
+                        CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
 
-                        } // if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
+                    } // if( CurrentVersion < CswSchemaUpdater.MinimumVersion )
 
-                    }// while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
+                }// while( UpdateSucceeded && CurrentVersion != CswSchemaUpdater.LatestVersion )
 
-                }//if pre-scripts succeded
+            }//if pre-scripts succeded
 
-                if( UpdateSucceeded )
-                {
-                    UpdateSucceeded = _runNonVersionScripts( CswSchemaUpdater, CswSchemaScriptsProd.RunAfterScripts, CswConsoleOutput );
-                }
-
-            } // if( CswSchemaUpdater.LatestVersion != CurrentVersion )
-            else
+            if( UpdateSucceeded )
             {
-                CswConsoleOutput.write( _Separator_NuLine + "Schema version -- " + CswSchemaUpdater.LatestVersion.ToString() + "-- is current" );
+                UpdateSucceeded = _runNonVersionScripts( CswSchemaUpdater, CswSchemaScriptsProd.RunAfterScripts, CswConsoleOutput );
             }
+
+            //} // if( CswSchemaUpdater.LatestVersion != CurrentVersion )
+            //else
+            //{
+            //    CswConsoleOutput.write( _Separator_NuLine + "Schema version -- " + CswSchemaUpdater.LatestVersion.ToString() + "-- is current" );
+            //}
 
         }//_updateAccessId() 
 
