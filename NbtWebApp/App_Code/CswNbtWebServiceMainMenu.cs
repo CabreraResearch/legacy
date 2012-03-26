@@ -311,7 +311,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             if( _MenuItems.Contains( "Multi-Edit" ) &&
-                null != View )
+                null != View &&
+                _CswNbtResources.Permit.can( CswNbtActionName.Multi_Edit ) )
             {
                 Ret["Multi-Edit"] = new JObject();
                 Ret["Multi-Edit"]["action"] = MenuActions.multiedit.ToString();
