@@ -31,7 +31,7 @@
                 return opts;
             };
 
-            internal.controlPostProcessing = function (opts, controlName) {
+            internal.controlPostProcessing = function (componentParent, controlName) {
                 /* If it's possible/desirable to attach a complex component to a simple control, then extend */
                 if (Csw.isNullOrEmpty(controlName) ||
                     controlName === 'div' ||
@@ -44,9 +44,9 @@
                                                 controlName === 'ul' ||
                                                     controlName === 'table' ||
                                                         controlName === 'tabDiv') {
-                    Csw.components.factory(external, opts);
+                    Csw.components.factory(componentParent, controlName);
                 }
-                return opts;
+                return componentParent;
             };
 
             internal.makeControlForChaining = function (opts, controlName, $jqElement) {

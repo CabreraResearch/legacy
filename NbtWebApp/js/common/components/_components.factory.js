@@ -5,16 +5,14 @@
 
     Csw.components.factory = Csw.components.factory ||
         Csw.components.register('factory',
-            function (cswParent, external) {
+            function (cswParent) {
                 /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
                 /// <param name="cswParent" type="Csw.controls">An Csw Control to bind to.</param>
-                /// <param name="external" type="Object">An options collection to extend.</param>
                 /// <returns type="Csw.components">The options object with DOM methods attached.</returns> 
                 'use strict';
                 //#region internal
 
                 var internal = {};
-                external = external || {};
                 if (Csw.isNullOrEmpty(cswParent)) {
                     throw new Error('Cannot create a Csw component without a Csw control');
                 }
@@ -28,7 +26,7 @@
 
                 //#region Csw DOM classes
 
-                external.checkBoxArray = function (opts) {
+                cswParent.checkBoxArray = function (opts) {
                     /// <summary> Creates a Csw.checkBoxArray on this element</summary>
                     /// <param name="opts" type="Object">Options to define the checkBoxArray.</param>
                     /// <returns type="Csw.components.checkBoxArray">A Csw.components.checkBoxArray</returns>
@@ -36,7 +34,7 @@
                     return Csw.components.checkBoxArray(cswParent, opts);
                 };
 
-                external.comboBox = function (opts) {
+                cswParent.comboBox = function (opts) {
                     /// <summary> Creates a Csw.comboBox on this element</summary>
                     /// <param name="opts" type="Object">Options to define the comboBox.</param>
                     /// <returns type="Csw.components.comboBox">A Csw.components.comboBox</returns>
@@ -44,7 +42,7 @@
                     return Csw.components.comboBox(cswParent, opts);
                 };
 
-                external.dateTimePicker = function (opts) {
+                cswParent.dateTimePicker = function (opts) {
                     /// <summary> Creates a Csw.dateTimePicker on this element</summary>
                     /// <param name="opts" type="Object">Options to define the dateTimePicker.</param>
                     /// <returns type="Csw.components.dateTimePicker">A Csw.components.dateTimePicker</returns>
@@ -52,7 +50,7 @@
                     return Csw.components.dateTimePicker(cswParent, opts);
                 };
 
-                external.grid = function (opts) {
+                cswParent.grid = function (opts) {
                     /// <summary> Creates a Csw.grid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the grid.</param>
                     /// <returns type="Csw.components.grid">A Csw.components.grid</returns>
@@ -60,7 +58,7 @@
                     return Csw.components.grid(cswParent, opts);
                 };
 
-                external.imageButton = function (opts) {
+                cswParent.imageButton = function (opts) {
                     /// <summary> Creates a Csw.imageButton on this element</summary>
                     /// <param name="opts" type="Object">Options to define the imageButton.</param>
                     /// <returns type="Csw.components.imageButton">A Csw.components.imageButton</returns>
@@ -68,7 +66,7 @@
                     return Csw.components.imageButton(cswParent, opts);
                 };
 
-                external.layoutTable = function (opts) {
+                cswParent.layoutTable = function (opts) {
                     /// <summary> Creates a Csw.layoutTable on this element</summary>
                     /// <param name="opts" type="Object">Options to define the table.</param>
                     /// <returns type="Csw.components.layoutTable">A Csw.components.layoutTable</returns> 
@@ -76,7 +74,7 @@
                     return Csw.components.layoutTable(cswParent, opts);
                 };
 
-                external.multiSelect = function (opts) {
+                cswParent.multiSelect = function (opts) {
                     /// <summary> Creates a Csw.multiSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the multiSelect.</param>
                     /// <returns type="Csw.components.multiSelect">A Csw.components.multiSelect</returns>
@@ -84,7 +82,7 @@
                     return Csw.components.multiSelect(cswParent, opts);
                 };
 
-                external.nodeTypeSelect = function (opts) {
+                cswParent.nodeTypeSelect = function (opts) {
                     /// <summary> Creates a Csw.numberTextBox on this element</summary>
                     /// <param name="opts" type="Object">Options to define the numberTextBox.</param>
                     /// <returns type="Csw.components.nodeTypeSelect">A Csw.components.nodeTypeSelect</returns>
@@ -92,7 +90,7 @@
                     return Csw.components.nodeTypeSelect(cswParent, opts);
                 };
 
-                external.thinGrid = function (opts) {
+                cswParent.thinGrid = function (opts) {
                     /// <summary> Creates a Csw.thinGrid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the thinGrid.</param>
                     /// <returns type="Csw.components.thinGrid">A Csw.components.thinGrid</returns>
@@ -100,7 +98,7 @@
                     return Csw.components.thinGrid(cswParent, opts);
                 };
 
-                external.timeInterval = function (opts) {
+                cswParent.timeInterval = function (opts) {
                     /// <summary> Creates a Csw.timeInterval on this element</summary>
                     /// <param name="opts" type="Object">Options to define the timeInterval.</param>
                     /// <returns type="Csw.components.timeInterval">A Csw.components.timeInterval</returns>
@@ -108,7 +106,7 @@
                     return Csw.components.timeInterval(cswParent, opts);
                 };
 
-                external.triStateCheckBox = function (opts) {
+                cswParent.triStateCheckBox = function (opts) {
                     /// <summary> Creates a Csw.triStateCheckBox on this element</summary>
                     /// <param name="opts" type="Object">Options to define the triStateCheckBox.</param>
                     /// <returns type="Csw.components.triStateCheckBox">A Csw.components.triStateCheckBox</returns>
@@ -116,7 +114,7 @@
                     return Csw.components.triStateCheckBox(cswParent, opts);
                 };
 
-                external.viewSelect = function (opts) {
+                cswParent.viewSelect = function (opts) {
                     /// <summary> Creates a Csw.viewSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the viewSelect.</param>
                     /// <returns type="Csw.components.viewSelect">A Csw.components.viewSelect</returns>
@@ -126,7 +124,7 @@
 
                 //#endregion Csw DOM classes
 
-                return external;
+                return cswParent;
             });
 
 
