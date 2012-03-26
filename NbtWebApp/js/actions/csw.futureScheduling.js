@@ -40,6 +40,8 @@
 
         internal.handleNext = function ($wizard, SelectedStep) {
 
+            internal.resultscell.empty();
+
             // Disable all buttons until Ajax finishes
             internal.$wizard.CswWizard('button', 'previous', 'disable');
             internal.$wizard.CswWizard('button', 'next', 'disable');
@@ -61,19 +63,25 @@
                 },
                 success: function (data) {
 
-                    var resultstree = Csw.nbt.nodeTree({
-                        ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree'),
-                        height: '250px',
-                        width: '500px',
-                        parent: internal.resultscell
-                    });
-                    resultstree.makeTree(data.treedata);
+                    if(Csw.number(data.result) > 0) {
+                        var resultstree = Csw.nbt.nodeTree({
+                            ID: Csw.controls.dom.makeId(internal.ID, '', 'resultstree'),
+                            height: '250px',
+                            width: '500px',
+                            parent: internal.resultscell
+                        });
+                        resultstree.makeTree(data.treedata);
+                    
+                        internal.resultsviewid = data.sessionviewid;
+                        internal.resultsviewmode = data.viewmode;
 
-                    internal.resultsviewid = data.sessionviewid;
-                    internal.resultsviewmode = data.viewmode;
-
-                    // Only Finish for step 2
-                    internal.$wizard.CswWizard('button', 'finish', 'enable');
+                        // Only Finish for step 2
+                        internal.$wizard.CswWizard('button', 'finish', 'enable');
+                    } else {
+                        internal.resultscell.append('<br>No results');
+                        internal.$wizard.CswWizard('button', 'cancel', 'enable');
+                        internal.$wizard.CswWizard('button', 'previous', 'enable');
+                    }
                 } // success
             }); // ajax 
         };

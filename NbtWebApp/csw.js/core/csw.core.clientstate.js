@@ -29,6 +29,18 @@
             return true;
         };
 
+        external.clearLast = function () {
+            /// <summary> Clear all last state cookies  </summary>
+            /// <returns type="Boolean">Always true</returns>
+            Csw.cookie.clear(Csw.cookie.cookieNames.LastViewId);
+            Csw.cookie.clear(Csw.cookie.cookieNames.LastViewMode);
+            Csw.cookie.clear(Csw.cookie.cookieNames.LastActionName);
+            Csw.cookie.clear(Csw.cookie.cookieNames.LastActionUrl);
+            //Csw.cookie.clear(Csw.cookie.cookieNames.LastReportId);
+            Csw.cookie.clear(Csw.cookie.cookieNames.LastSearchId);
+            return true;
+        };
+
         external.setCurrentView = function (viewid, viewmode) {
             /// <summary> Store the current view in a cookie.</summary>
             /// <param name="viewid" type="String">An Nbt ViewId</param>

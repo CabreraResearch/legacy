@@ -656,8 +656,8 @@ namespace ChemSW.Nbt
         /// </summary>
         public void releaseDbResources()
         {
-            _CswResources.releaseDbResources();
             _clear();
+            _CswResources.releaseDbResources();
         }
 
 

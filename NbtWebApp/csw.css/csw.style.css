@@ -22,7 +22,7 @@ ul li {
     list-style-position:inside;
 }
 ul li div {
-    display:inline;
+    /* display:inline;   this caused case 25544 */ 
 }
 
 
@@ -1222,7 +1222,7 @@ ul li div {
 	overflow: auto;
 }
 
-.filtermorelink
+.morelink
 {
     color: #336699;
     font-style: italic;
@@ -1287,4 +1287,32 @@ ul li div {
 .error
 {
     color: #ff0000;
+}
+
+
+.viewselectfieldset
+{
+    padding: 5px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.viewselectlegend
+{
+    font-weight: bold;
+}
+
+.viewselecticoncell
+{
+    width: 16px;
+    cursor: pointer;
+}
+.viewselectitemcell
+{
+    cursor: pointer;
+}
+.viewselectitemhover
+{
+    background-color: &cswbgcolorhilite;
+    cursor: pointer;
 }

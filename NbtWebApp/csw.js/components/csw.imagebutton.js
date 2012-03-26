@@ -29,7 +29,13 @@
             }
             prefix += '/NbtWebApp';
             if (newButtonType !== undefined && newButtonType !== Csw.enums.imageButton_ButtonType.None) {
-                external.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') 0px ' + newButtonType * multiplier + 'px no-repeat';
+                
+                var offset = 0;
+                if(internal.Active) {
+                    offset = -36;
+                }
+                external.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') '+ offset +'px ' + newButtonType * multiplier + 'px no-repeat';
+                
                 external.unbind('mouseover');
                 external.unbind('mouseout');
                 external.unbind('mousedown');
@@ -38,7 +44,7 @@
                     external.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                 });
                 external.bind('mouseout', function () {
-                    external.css('background-position', '0px ' + newButtonType * multiplier + 'px');
+                    external.css('background-position', offset + 'px ' + newButtonType * multiplier + 'px');
                 });
                 external.bind('mousedown', function () {
                     external.css('background-position', '-36px ' + newButtonType * multiplier + 'px');
@@ -63,12 +69,9 @@
                 $.extend(internal, options);
             }
 
-            //using 'title' instead of 'alt' does make the alternate text appear in Chrome, 
-            //but it also screws up clicking.
-
             $.extend(external, Csw.controls.div(internal));
             external.addClass('divbutton');
-            external.propNonDom('alt', internal.AlternateText);
+            external.propNonDom('title', internal.AlternateText);
             external.css('display', 'inline-block');
 
             internal.setButton(internal.ButtonType);

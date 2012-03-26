@@ -13,6 +13,7 @@
             width: '180px',
             onClick: function() { return true; },
             topTable: {},
+            hidedelay: 500,
 
             hideTo: null
         };
@@ -23,7 +24,7 @@
         };
 
         internal.hoverOut = function () {
-            internal.hideTo = setTimeout(external.pickList.hide, 300);
+            internal.hideTo = setTimeout(external.pickList.hide, internal.hidedelay);
         };
 
 
@@ -53,7 +54,7 @@
                 width: '100%'
             });
 
-            internal.topTable.cell(1, 1).text(internal.topContent)
+            internal.topTable.cell(1, 1).append(internal.topContent)
                 .propDom('width', '100%')
                 .bind('click', handleClick);
 
@@ -69,9 +70,10 @@
             external.pickList = external.div({
                 ID: internal.ID + '_child',
                 cssclass: 'CswComboBox_ChildDiv',
-                text: internal.selectContent,
-                styles: { width: internal.width }
-            }).bind('click', handleClick);
+                width: internal.width
+            })
+                .bind('click', handleClick)
+                .append(internal.selectContent);
 
             external.pickList.$.hover(internal.hoverIn, internal.hoverOut);
         } ());

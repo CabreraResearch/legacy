@@ -57,10 +57,8 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public JObject getQuickLaunchJson()
+        public void getQuickLaunchJson( ref JObject ParentObj )
         {
-            JObject ReturnVal = new JObject();
-
             CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
             OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, OrderByType.Descending ) );
@@ -75,16 +73,14 @@ namespace ChemSW.Nbt
                 bool KeepInQuickLaunch = CswConvert.ToBoolean( Row[SessionDataColumn_KeepInQuickLaunch] );
                 if( KeepInQuickLaunch )
                 {
-                    _addQuickLaunchProp( Row, ReturnVal );
+                    _addQuickLaunchProp( Row, ParentObj );
                 }
                 else if( RowCount < 5 )
                 {
-                    _addQuickLaunchProp( Row, ReturnVal );
+                    _addQuickLaunchProp( Row, ParentObj );
                     RowCount++;
                 }
             }
-
-            return ReturnVal;
         } // getQuickLaunchJson()
 
         private void _addQuickLaunchProp( DataRow Row, JObject ParentObj )
@@ -116,26 +112,32 @@ namespace ChemSW.Nbt
 
         private void _addQuickLaunchView( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId, string ViewMode )
         {
-            ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
-            ParentObj["text"] = Text;
-            ParentObj["itemid"] = SessionDataId.ToString();
+            ParentObj["type"] = CswConvert.ToString( LaunchType );
+            ParentObj["name"] = Text;
+            ParentObj["id"] = SessionDataId.ToString();
+            ParentObj["iconurl"] = "Images/view/view" + ViewMode.ToString().ToLower() + ".gif";
+            ParentObj["viewid"] = SessionDataId.ToString();
             ParentObj["viewmode"] = ViewMode;
         }
 
         private void _addQuickLaunchAction( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId, CswNbtActionName ActionName, string ActionUrl )
         {
-            ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
-            ParentObj["text"] = Text;
-            ParentObj["itemid"] = SessionDataId.ToString();
+            ParentObj["type"] = CswConvert.ToString( LaunchType );
+            ParentObj["name"] = Text;
+            ParentObj["id"] = SessionDataId.ToString();
+            ParentObj["iconurl"] = "Images/view/action.gif";
             ParentObj["actionname"] = CswConvert.ToString( ActionName );
+            ParentObj["actionid"] = CswConvert.ToString( ActionName );
             ParentObj["actionurl"] = CswConvert.ToString( ActionUrl );
         }
 
         private void _addQuickLaunchSearch( JObject ParentObj, CswNbtSessionDataItem.SessionDataType LaunchType, string Text, CswNbtSessionDataId SessionDataId )
         {
-            ParentObj["launchtype"] = CswConvert.ToString( LaunchType );
-            ParentObj["text"] = Text;
-            ParentObj["itemid"] = SessionDataId.ToString();
+            ParentObj["type"] = CswConvert.ToString( LaunchType );
+            ParentObj["name"] = Text;
+            ParentObj["id"] = SessionDataId.ToString();
+            ParentObj["iconurl"] = "Images/view/search.gif";
+            ParentObj["searchid"] = SessionDataId.ToString();
         }
 
 
@@ -148,7 +150,7 @@ namespace ChemSW.Nbt
             DataTable SessionViewTable = null;
             SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ActionId, Action.ActionId, "where sessionid = '" + SessionId + "'", false );
 
-            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.Name, CswNbtSessionDataItem.SessionDataType.Action, IncludeInQuickLaunch, KeepInQuickLaunch );
+            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.DisplayName, CswNbtSessionDataItem.SessionDataType.Action, IncludeInQuickLaunch && Action.ShowInList, KeepInQuickLaunch );
             SessionViewRow[SessionDataColumn_ActionId] = CswConvert.ToDbVal( Action.ActionId );
             SessionViewsUpdate.update( SessionViewTable );
 
@@ -236,7 +238,19 @@ namespace ChemSW.Nbt
         public void removeSessionData( CswNbtView View )
         {
             removeSessionData( View.SessionViewId );
-        }
+
+            // Also remove views that match by viewid
+            CswTableUpdate SessionDataUpdate = _CswNbtResources.makeCswTableUpdate( "removeSessionData_View_update", SessionDataTableName );
+            string WhereClause = @"where " + SessionDataColumn_SessionId + @"='" + _CswNbtResources.Session.SessionId + @"' 
+                                     and " + SessionDataColumn_ViewId + @" = '" + View.ViewId.get() + @"'";
+            
+            DataTable SessionDataTable = SessionDataUpdate.getTable( WhereClause );
+            foreach( DataRow Row in SessionDataTable.Rows )
+            {
+                Row.Delete();
+            }
+            SessionDataUpdate.update( SessionDataTable );
+        } // removeSessionData(CswNbtView)
 
         /// <summary>
         /// Remove a view from the session view cache
@@ -254,7 +268,7 @@ namespace ChemSW.Nbt
                     SessionDataUpdate.update( SessionDataTable );
                 }
             }
-        } // removeSessionData()
+        } // removeSessionData(CswNbtSessionDataId)
 
         /// <summary>
         /// Remove all data for a given session

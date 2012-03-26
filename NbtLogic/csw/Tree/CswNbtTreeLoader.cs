@@ -19,7 +19,7 @@ namespace ChemSW.Nbt
         //                          bool SingleLevelOnly, 
         //                          CswNbtNodeKey IncludedKey,
         //                          bool RequireViewPermissions );
-        public abstract void load();
+        public abstract void load( bool RequireViewPermissions );
 
     }//CswNbtTreeLoader
 

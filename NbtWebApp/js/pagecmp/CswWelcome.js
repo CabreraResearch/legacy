@@ -154,11 +154,13 @@
                 ID: 'viewselecttable'
             });
 
-            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
+//            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
+            var viewSelect = viewSelectTable.cell(1, 1).viewSelect({
                 ID: 'welcome_viewsel'
             }).hide();
 
-            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
+//            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
+            var $searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
                 ID: 'welcome_searchviewsel',
                 issearchable: true,
                 usesession: false

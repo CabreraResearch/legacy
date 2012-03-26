@@ -22,7 +22,7 @@
 {
     position: absolute;
     background: #fff;
-    height: 200px;
+    max-height: 500px;
     border: 1px solid #abadb3;
     display: none;
     overflow-y: scroll;

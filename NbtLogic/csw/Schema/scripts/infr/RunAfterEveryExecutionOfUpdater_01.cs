@@ -6,16 +6,15 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class RunAfterEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
+        public static string Title = "Post-Script";
 
         public override void update()
         {
-            //***************  ADD your own code
-            _CswNbtSchemaModTrnsctn.CswLogger.reportAppState("Ran after-script 1");
 
 
         }//Update()
 
-    }//class CswUpdateSchema_Infr_TakeDump
+    }//class RunAfterEveryExecutionOfUpdater_01
 
 }//namespace ChemSW.Nbt.Schema
 

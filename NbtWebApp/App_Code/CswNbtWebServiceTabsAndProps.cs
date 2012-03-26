@@ -79,7 +79,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
                                                                 .Cast<CswNbtMetaDataNodeTypeTab>()
-                                                                .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) ) )
+                                                                .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) )
+                                                                .OrderBy<CswNbtMetaDataNodeTypeTab, Int32>( _getTabOrder ) )
                     {
                         _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
                     }
@@ -103,6 +104,8 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( filterToPropId != string.Empty )
             return Ret;
         } // getTabs()
+        
+        private Int32 _getTabOrder( CswNbtMetaDataNodeTypeTab Tab ) { return Tab.TabOrder; }
 
         private Int32 TabOrderModifier = 0;
         public void _makeTab( JObject ParentObj, Int32 TabOrder, string Id, string Name, bool CanEditLayout )
@@ -149,9 +152,18 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node = null;
+                bool CanCreate = false;
                 if( _CswNbtResources.EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue )
                 {
-                    Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                    if( null != NodeType )
+                    {
+                        CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    }
+                    if( CanCreate )
+                    {
+                        Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                    }
                 }
                 else
                 {
@@ -168,12 +180,14 @@ namespace ChemSW.Nbt.WebServices
                     IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
 
 
-
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
+                    if( _CswNbtResources.EditMode != NodeEditMode.Add || CanCreate )
                     {
-                        if( _showProp( Prop, FilterPropIdAttr, Node ) )
+                        foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                         {
-                            _addProp( Ret, Node, Prop );
+                            if( _showProp( Prop, FilterPropIdAttr, Node ) )
+                            {
+                                _addProp( Ret, Node, Prop );
+                            }
                         }
                     }
                 } // if(Node != null)
@@ -189,9 +203,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 case NodeEditMode.Add:
                     //Case 24023: Exclude buttons on Add
-                    bool CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() );
-                    RetShow = ( CanCreate &&
-                                Prop.EditProp( Node, _ThisUser, true ) &&
+                    RetShow = ( Prop.EditProp( Node, _ThisUser, true ) &&
                                 Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
                     break;
                 default:
@@ -428,7 +440,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
                         if( wsQ.CheckQuota( NodeTypeId ) )
                         {
-                            Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                             bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
                             if( CanEdit )
                             {
@@ -521,9 +533,8 @@ namespace ChemSW.Nbt.WebServices
                     _applyPropJson( Node, PropObj, Tab );
                 }
 
-                // BZ 8517 - this sets sequences that have setvalonadd = 0
+                /* Case 8517 - this sets sequences that have setvalonadd = 0 */
                 _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
-
                 Node.postChanges( ForceUpdate );
 
                 ICswNbtTree Tree;

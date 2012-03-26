@@ -399,14 +399,14 @@ namespace ChemSW.Nbt.WebServices
                     ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
                 }
 
-                if( AuthenticationStatus == AuthenticationStatus.Authenticated ||
-                    AuthenticationStatus == AuthenticationStatus.ExpiredPassword ||
-                    AuthenticationStatus == AuthenticationStatus.ShowLicense )
-                {
-                    // initial quick launch setup
-                    CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
-                    wsQL.initQuickLaunchItems();
-                }
+                //if( AuthenticationStatus == AuthenticationStatus.Authenticated ||
+                //    AuthenticationStatus == AuthenticationStatus.ExpiredPassword ||
+                //    AuthenticationStatus == AuthenticationStatus.ShowLicense )
+                //{
+                //    // initial quick launch setup
+                //    CswNbtWebServiceQuickLaunchItems wsQL = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources );
+                //    wsQL.initQuickLaunchItems();
+                //}
 
                 _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus, IsMobile );
                 _deInitResources();
@@ -477,54 +477,83 @@ namespace ChemSW.Nbt.WebServices
         #region Render Core UI
 
 
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getQuickLaunchItems()
+        //{
+
+        //    CswTimer QuickLaunchItemsTimer = new CswTimer();
+
+
+        //    //XElement ReturnVal = new XElement( "quicklaunch" );
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
+
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
+        //            var Ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
+        //            if( null != UserId )
+        //            {
+        //                ReturnVal = Ws.getQuickLaunchItems();
+        //            }
+        //        }
+
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
+
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+        //    _CswNbtResources.logTimerResult( "wsNBT.getQuickLaunchItems()", QuickLaunchItemsTimer.ElapsedDurationInSecondsAsString );
+
+
+        //    return ReturnVal.ToString();
+
+        //} // getQuickLaunchItems()
+
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getViewTree( bool IsSearchable, bool UseSession )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    //XElement ReturnVal = new XElement( "viewtree" );
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
+
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            var ws = new CswNbtWebServiceView( _CswNbtResources );
+        //            ReturnVal = ws.getViewTree( IsSearchable );
+        //            _deInitResources();
+        //        }
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
+
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+        //    return ReturnVal.ToString();
+
+        //} // getViews()
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getQuickLaunchItems()
-        {
-
-            CswTimer QuickLaunchItemsTimer = new CswTimer();
-
-
-            //XElement ReturnVal = new XElement( "quicklaunch" );
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswPrimaryKey UserId = _CswNbtResources.CurrentNbtUser.UserId;
-                    var Ws = new CswNbtWebServiceQuickLaunchItems( _CswNbtResources ); //, new CswWebClientStorageCookies( Context.Request, Context.Response ) ); // , Session );
-                    if( null != UserId )
-                    {
-                        ReturnVal = Ws.getQuickLaunchItems();
-                    }
-                }
-
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            _CswNbtResources.logTimerResult( "wsNBT.getQuickLaunchItems()", QuickLaunchItemsTimer.ElapsedDurationInSecondsAsString );
-
-
-            return ReturnVal.ToString();
-
-        } // getQuickLaunchItems()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getViewTree( bool IsSearchable, bool UseSession )
+        public string getViewSelect( bool IsSearchable )
         {
             JObject ReturnVal = new JObject();
-            //XElement ReturnVal = new XElement( "viewtree" );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -534,7 +563,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
-                    ReturnVal = ws.getViewTree( IsSearchable );
+                    ReturnVal["viewselectitems"] = ws.getViewSelect( IsSearchable );
                     _deInitResources();
                 }
             }
@@ -547,7 +576,36 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // getViews()
+        } // getViewSelect()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getViewSelectRecent()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceView( _CswNbtResources );
+                    ReturnVal["viewselectitems"] = ws.getViewSelectRecent();
+                    _deInitResources();
+                }
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getViewSelectRecent()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -776,7 +834,41 @@ namespace ChemSW.Nbt.WebServices
 
             return ReturnVal.ToString();
 
-        } // getGrid()
+        } // getThinGrid()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string gridExportCSV( string ViewId )
+        {
+            UseCompression();
+            JObject ReturnVal = new JObject();
+            //bool IsQuickLaunch = false;
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtView View = _getView( ViewId );
+                if( null != View )
+                {
+                    CswNbtWebServiceGrid ws = new CswNbtWebServiceGrid( _CswNbtResources, View );
+                    ws.ExportCsv( Context );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // gridExportCSV()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -1477,6 +1569,9 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtView DoomedView = _getView( ViewId );
                     if( null != DoomedView )
                     {
+                        // Remove from quick launch
+                        _CswNbtResources.SessionDataMgr.removeSessionData( DoomedView );
+                        
                         DoomedView.Delete();
                         ReturnVal.Add( new JProperty( "succeeded", true ) );
                     }
@@ -1497,7 +1592,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string createView( string ViewName, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId, string ViewId )
+        public string createView( string ViewName, string Category, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId, string ViewId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1538,6 +1633,7 @@ namespace ChemSW.Nbt.WebServices
 
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
                     NewView.makeNew( ViewName, RealVisibility, RealVisibilityRoleId, RealVisibilityUserId, CopyView );
+                    NewView.Category = Category;
 
                     if( ViewMode != string.Empty )
                     {
@@ -2208,7 +2304,7 @@ namespace ChemSW.Nbt.WebServices
                     string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
                     wsTools Tools = new wsTools();
-                    Stream MolStream = Tools.getFileInputStream( "qqfile" );
+                    Stream MolStream = Tools.getFileInputStream( Context, "qqfile" );
 
                     if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
                     {

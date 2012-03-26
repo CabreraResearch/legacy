@@ -38,30 +38,35 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) ) ;
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );       //14
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );       //15
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );       //16
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );       //17
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );       //18
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );       //19
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );       //20
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );       //21
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );       //22
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );       //23
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );      //24
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );      //25
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );       //25
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) );
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );           //14
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );           //15
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );           //16
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );           //17
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );           //18
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );           //19
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );           //20
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );           //21
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );           //22
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );           //23
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );          //24
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );           //25
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );           //26
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25466() ) );           //27
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue01() ) ); //28
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue02() ) ); //29
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426Redux() ) );      //30
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290b() ) );     //26
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25253() ) );      //27
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );       //28
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue01() ) ); //29
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue02() ) ); //30
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290b() ) );          //31
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25253() ) );           //32
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaEmpty() ) );               //33
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaEmpty() ) );               //34
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaEmpty() ) );               //35
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25556() ) );           //36
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25559() ) );           //37
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25471() ) );           //38
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25519() ) );           //39
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25444() ) );           //40
+            
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
             foreach( CswSchemaVersion Version in _UpdateDrivers.Keys.Where( Version => _LatestVersion == _MinimumVersion ||
@@ -74,11 +79,11 @@ namespace ChemSW.Nbt.Schema
 
 
 
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01() ), "Arbitrary DML" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), "Shell-out script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01() ), RunBeforeEveryExecutionOfUpdater_01.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), RunBeforeEveryExecutionOfUpdater_02.Title );
 
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), "Arbitrary DML" );
-            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), "Shell-out script" );
+            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
+            _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), RunAfterEveryExecutionOfUpdater_02.Title );
 
         }//ctor
 
@@ -192,7 +197,7 @@ namespace ChemSW.Nbt.Schema
         private void _addVersionedScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
             CswSchemaUpdateDriver.SchemaVersion = _makeNextSchemaVersion();
-            CswSchemaUpdateDriver.Description = "Update to schema version " + CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
+            CswSchemaUpdateDriver.Description = CswSchemaUpdateDriver.SchemaVersion.ToString(); //we do this in prod scripts because test scripts have a different dispensation for description
             _UpdateDrivers.Add( CswSchemaUpdateDriver.SchemaVersion, CswSchemaUpdateDriver );
 
         }//addReleaseDmlDriver() 
@@ -216,7 +221,7 @@ namespace ChemSW.Nbt.Schema
         private void _addRunBeforeScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
         {
             CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunBeforeScripts.Count );
-            CswSchemaUpdateDriver.Description = "Run before script: " + Description;
+            CswSchemaUpdateDriver.Description = Description;
             if( false == _RunBeforeScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunBeforeScripts.Add( CswSchemaUpdateDriver );
@@ -236,8 +241,8 @@ namespace ChemSW.Nbt.Schema
         }//RunBeforeScripts
         private void _addRunAfterScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, string Description )
         {
-            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 0, '#', _RunAfterScripts.Count );
-            CswSchemaUpdateDriver.Description = "Run after script: " + Description;
+            CswSchemaUpdateDriver.SchemaVersion = new CswSchemaVersion( 99, '#', _RunAfterScripts.Count );
+            CswSchemaUpdateDriver.Description = Description;
             if( false == _RunAfterScripts.Contains( CswSchemaUpdateDriver ) )
             {
                 _RunAfterScripts.Add( CswSchemaUpdateDriver );

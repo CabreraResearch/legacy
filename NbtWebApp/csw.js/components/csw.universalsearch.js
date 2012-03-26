@@ -1,7 +1,7 @@
 /// <reference path="~/csw.js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
-(function (options) {
+(function () {
     "use strict";
 
     function universalSearch(params) {
@@ -147,7 +147,7 @@
                 ID: filtersdivid,
                 $parent: internal.$searchfilters_parent
             }).css({
-                paddingTop: '15px',
+                paddingTop: '15px'
                 //height: internal.searchresults_maxheight + 'px',
                 //overflow: 'auto'
             });
@@ -210,46 +210,27 @@
             function makeFilterSet(thisFilterSet, Name) {
 
                 var thisfilterdivid = Csw.controls.dom.makeId(filtersdivid, '', Name);
-                var thisfilterdiv = fdiv.div({ ID: thisfilterdivid });
+                //var thisfilterdiv = fdiv.div({ ID: thisfilterdivid });
                 var filterCount = 0;
-                var hiddenfiltersdiv;
+                var moreDiv = Csw.controls.moreDiv({ 
+                    ID: thisfilterdivid, 
+                    $parent: fdiv.$ 
+                });
 
-                thisfilterdiv.append('<b>' + Name + ':</b>');
-                thisfilterdiv.br();
+                moreDiv.shownDiv.append('<b>' + Name + ':</b>');
+                moreDiv.shownDiv.br();
+                var thisdiv = moreDiv.shownDiv;
+                moreDiv.moreLink.hide();
                 Csw.each(thisFilterSet, function (thisFilter) {
-
                     if (filterCount === internal.filterHideThreshold) {
-
-                        hiddenfiltersdiv = thisfilterdiv.div({ ID: Csw.controls.dom.makeId(thisfilterdivid, '', 'hidediv') });
-                        hiddenfiltersdiv.hide();
-
-                        var morelink = thisfilterdiv.link({
-                            ID: Csw.controls.dom.makeId(thisfilterdivid, '', 'more'),
-                            text: 'more...',
-                            cssclass: 'filtermorelink',
-                            onClick: function () {
-                                if (morelink.toggleState === Csw.enums.toggleState.on) {
-                                    morelink.text('less...');
-                                    hiddenfiltersdiv.show();
-                                } else {
-                                    morelink.text('more...');
-                                    hiddenfiltersdiv.hide();
-                                }
-                                return false;
-                            } // onClick()
-                        }); // link()
-
-                    } //  if (filterCount === internal.filterHideThreshold) {
-
-                    if (filterCount >= internal.filterHideThreshold) {
-                        makeFilterLink(thisFilter, hiddenfiltersdiv, filterCount);
-                    } else {
-                        makeFilterLink(thisFilter, thisfilterdiv, filterCount);
+                        moreDiv.moreLink.show();
+                        thisdiv = moreDiv.hiddenDiv;
                     }
+                    makeFilterLink(thisFilter, thisdiv, filterCount);
                     filterCount++;
                 });
-                thisfilterdiv.br();
-                thisfilterdiv.br();
+                fdiv.br();
+                fdiv.br();
             }
 
             Csw.each(data.filters, makeFilterSet);
@@ -277,6 +258,7 @@
             $.CswDialog('AddViewDialog', {
                 ID: Csw.controls.dom.makeId(internal.ID, '', 'addviewdialog'),
                 //viewmode: 'table',
+                category: 'Saved Searches',
                 onAddView: function (newviewid, viewmode) {
 
                     Csw.ajax.post({

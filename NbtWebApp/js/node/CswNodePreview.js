@@ -3,84 +3,90 @@
 /// <reference path="../../globals/CswGlobalTools.js" />
 /// <reference path="../../globals/CswEnums.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
     var pluginName = 'CswNodePreview';
 
     var methods = {
-        'open': function (options) 
-            {    
-                var o = {
-                    ID: '',
-                    nodeid: '',
-                    cswnbtnodekey: '',
-                    eventArg: {},
-                    delay: 750
-                };
-                if(options) $.extend(o, options);
+        'open': function (options) {
+            var o = {
+                ID: '',
+                nodeid: '',
+                cswnbtnodekey: '',
+                eventArg: {},
+                delay: 750
+            };
+            if (options) $.extend(o, options);
 
+            function _fixDimensions()
+            {
+                // Make sure preview div is within the window
                 var windowX = $(window).width() - 10;
                 var windowY = $(window).height() - 10;
-                var $div = $('<div id="' + o.ID + '" class="CswNodePreview"></div>')
+                var divwidth = $div.width();
+                var divheight = $div.height();
+                var X = o.eventArg.pageX + 20; // move it to the right of the cursor, to keep from preventing click events
+                var Y = o.eventArg.pageY;
+
+                if (X + divwidth > windowX) X = windowX - divwidth;
+                // this doesn't work with page scrolling
+                // if(Y + divheight > windowY) Y = windowY - divheight;
+
+                $div.css({
+                    maxWidth: windowX,
+                    maxHeight: windowY,
+                    top: Y + 'px',
+                    left: X + 'px'
+                });
+            } // _fixDimensions()
+            
+            function _loadPreview() {
+                $div.show();
+                $div.CswNodeTabs({
+                    ID: o.ID + 'tabs',
+                    nodeids: [o.nodeid],
+                    cswnbtnodekeys: [o.cswnbtnodekey],
+                    EditMode: Csw.enums.editMode.Preview,
+                    AjaxWatchGlobal: false,
+                    ShowAsReport: false,
+                    onInitFinish: function (AtLeastOneProp) {
+                        $loadingspan.remove();
+                        if (AtLeastOneProp) {
+                            _fixDimensions();
+                        }
+                    }
+                });
+            } // _loadPreview()
+
+            var $div = $('<div id="' + o.ID + '" class="CswNodePreview"></div>')
                                 .css({
                                     position: 'absolute',
                                     overflow: 'auto',
                                     border: '1px solid #003366',
                                     padding: '2px',
-                                    backgroundColor: '#ffffff',
-                                    maxWidth: windowX,
-                                    maxHeight: windowY
+                                    backgroundColor: '#ffffff'
                                 })
                                 .appendTo('body')
                                 .hide();
-                var timeoutHandle = setTimeout(function () {
-                        $div.CswNodeTabs({
-                                        ID: o.ID + 'tabs',
-                                        nodeids: [ o.nodeid ],
-                                        cswnbtnodekeys: [ o.cswnbtnodekey ],
-                                        EditMode: Csw.enums.editMode.Preview,
-                                        AjaxWatchGlobal: false,
-                                        ShowAsReport: false,
-                                        onInitFinish: function (AtLeastOneProp) {
-                                            if(AtLeastOneProp)
-                                            {
-                                                // Make sure preview div is within the window
-                                                windowX = $(window).width() - 10;
-                                                windowY = $(window).height() - 10;
-                                                var divwidth = $div.width();
-                                                var divheight = $div.height();
-                                                var X = o.eventArg.pageX;
-                                                var Y = o.eventArg.pageY;
 
-                                                
-                                                if(X + divwidth > windowX) X = windowX - divwidth;
-                                                // this doesn't work with page scrolling
-                                                // if(Y + divheight > windowY) Y = windowY - divheight;
+            _fixDimensions();
 
-                                                $div.css({ 
-                                                        top: Y + 'px',
-                                                        left: X + 'px'
-                                                });
-                                                $div.show();
-                                            }
-                                        }
-                                    });
-                    }, o.delay);
+            var $loadingspan = $('<div style="font-style: italic;">&nbsp;&nbsp;&nbsp;Loading...</div>')
+                                        .appendTo($div);
 
-                $div.data('timeoutHandle', timeoutHandle);
+            var timeoutHandle = setTimeout(_loadPreview, o.delay);
+            $div.data('timeoutHandle', timeoutHandle);
 
-                return $div;
-            },
-        'close': function ()
-            {
-                var $div = $(this);
-                if($div.length > 0)
-                {
-                    clearTimeout($div.data('timeoutHandle'));
-                    // Clear all node previews, in case other ones are hanging around
-                    $('.CswNodePreview').remove();
-                }
+            return $div;
+        },
+        'close': function () {
+            var $div = $(this);
+            if ($div.length > 0) {
+                clearTimeout($div.data('timeoutHandle'));
+                // Clear all node previews, in case other ones are hanging around
+                $('.CswNodePreview').remove();
             }
+        }
     };
 
 
@@ -98,15 +104,15 @@
     };
 
     $.fn.CswNodePreview = function (method) {
-        
-        if ( methods[method] ) {
-          return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
-        } else if ( typeof method === 'object' || ! method ) {
-          return methods.init.apply( this, arguments );
+
+        if (methods[method]) {
+            return methods[method].apply(this, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object' || !method) {
+            return methods.init.apply(this, arguments);
         } else {
-          $.error( 'Method ' +  method + ' does not exist on ' + pluginName ); return false;
-        }    
-  
+            $.error('Method ' + method + ' does not exist on ' + pluginName); return false;
+        }
+
     };
 
 })(jQuery);

@@ -118,6 +118,18 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="nbt_finalize_ora_bat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\nbt_finalize_ora-bat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="nbt_finalize_ora_sql" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\nbt_finalize_ora-sql;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="nbt_initialize_ora_bat" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\nbt_initialize_ora-bat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="nbt_initialize_ora_sql" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\nbt_initialize_ora_sql;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="SqlRptViewDict_rpt" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\SqlRptViewDict.rpt;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
