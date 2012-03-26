@@ -89,13 +89,19 @@ namespace ChemSW.Nbt
             }
 
             Int32 PriorNodeId = Int32.MinValue;
-            Collection<CswNbtNodeKey> NewNodeKeys = null;
-            CswNbtNodeKey ParentNodeKey = null;
+            Int32 PriorParentNodeId = Int32.MinValue;
+            Collection<CswNbtNodeKey> NewNodeKeys = new Collection<CswNbtNodeKey>();
+            Collection<CswNbtNodeKey> ParentNodeKeys = null;
             foreach( DataRow NodesRow in NodesTable.Rows )
             {
                 Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
+                Int32 ThisParentNodeId = Int32.MinValue;
+                if( NodesTable.Columns.Contains( "parentnodeid" ) )
+                {
+                    ThisParentNodeId = CswConvert.ToInt32( NodesRow["parentnodeid"] );
+                }
                 Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
-                
+
                 // Verify permissions
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
@@ -103,52 +109,65 @@ namespace ChemSW.Nbt
                 {
                     // Handle property multiplexing
                     // This assumes that property rows for the same nodeid are next to one another
-                    if( ThisNodeId != PriorNodeId )
+                    if( ThisNodeId != PriorNodeId || ThisParentNodeId != PriorParentNodeId )
                     {
                         PriorNodeId = ThisNodeId;
-                        NewNodeKeys = null;
+                        PriorParentNodeId = ThisParentNodeId;
+                        NewNodeKeys = new Collection<CswNbtNodeKey>(); 
+                        Collection<CswNbtNodeKey> ThisNewNodeKeys = new Collection<CswNbtNodeKey>();
                         bool AddChild = true;
-                        ParentNodeKey = null;
+                        ParentNodeKeys = new Collection<CswNbtNodeKey>();
+
+                        string GroupName = string.Empty;
+                        if( Relationship.GroupByPropId != Int32.MinValue )
+                        {
+                            GroupName = NodesRow["groupname"].ToString();
+                            if( GroupName == string.Empty )
+                                GroupName = "[blank]";
+                        }
 
                         if( NodesTable.Columns.Contains( "parentnodeid" ) )
                         {
-                            CswPrimaryKey ParentNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
+                            CswPrimaryKey ParentNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["parentnodeid"] ) );
 
                             // We can't use getNodeKeyByNodeId, because there may be more instances of this node at different places in the tree
                             //ParentNodeKey = _CswNbtTree.getNodeKeyByNodeId( ParentNodeId );
-                            ParentNodeKey = _CswNbtTree.getNodeKeyByNodeIdAndViewNode( ParentNodeId, Relationship.Parent );
+                            ParentNodeKeys = _CswNbtTree.getNodeKeysByNodeIdAndViewNode( ParentNodePk, Relationship.Parent );
 
-                            if( ParentNodeKey != null )
+                            if( ParentNodeKeys.Count == 0 )
                             {
-                                _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                                // If the parent isn't in the tree, don't add the child
+                                PriorNodeId = Int32.MinValue;   // case 24788
                             }
                             else
                             {
-                                // If the parent isn't in the tree, don't add the child
-                                AddChild = false;
-                                PriorNodeId = Int32.MinValue;   // case 24788
+                                foreach( CswNbtNodeKey ParentNodeKey in ParentNodeKeys )
+                                {
+                                    _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                                    Int32 ChildCount = _CswNbtTree.getChildNodeCount();
+                                    ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
+                                    foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
+                                    {
+                                        NewNodeKeys.Add( ThisNewNodeKey );
+                                    }
+                                } // foreach( CswNbtNodeKey ParentNodeKey in ParentNodeKeys )
                             }
-                        } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
 
-                        if( AddChild )
+                        } // if( NodesTable.Columns.Contains( "parentnodeid" ) )
+                        else
                         {
                             Int32 ChildCount = _CswNbtTree.getChildNodeCount();
-
-                            string GroupName = string.Empty;
-                            if( Relationship.GroupByPropId != Int32.MinValue )
+                            ThisNewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
+                            foreach( CswNbtNodeKey ThisNewNodeKey in ThisNewNodeKeys )
                             {
-                                GroupName = NodesRow["groupname"].ToString();
-                                if( GroupName == string.Empty )
-                                    GroupName = "[blank]";
+                                NewNodeKeys.Add( ThisNewNodeKey );
                             }
-
-                            NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( ParentNodeKey, NodesRow, ( Relationship.GroupByPropId != Int32.MinValue ), GroupName, Relationship, ChildCount + 1 );
-                        }
+                        } // if( AddChild )
                     } // if( ThisNodeId != PriorNodeId )
 
                     // This assumes that property rows for the same nodeid are next to one another
                     // It also assumes that loadNodeAsChildFromRow() made the node current
-                    if( NewNodeKeys != null && NodesTable.Columns.Contains( "jctnodepropid" ) )
+                    if( NewNodeKeys.Count > 0 && NodesTable.Columns.Contains( "jctnodepropid" ) )
                     {
                         //Int32 ThisJctNodePropId = CswConvert.ToInt32( NodesRow["jctnodepropid"] );
                         //if( ThisJctNodePropId != Int32.MinValue )
@@ -163,9 +182,9 @@ namespace ChemSW.Nbt
                                                      (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodesRow["fieldtype"].ToString() ) );
 
                         } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
-                        if( ParentNodeKey != null )
+                        if( ParentNodeKeys.Count > 0 )
                         {
-                            _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                            _CswNbtTree.makeNodeCurrent( ParentNodeKeys[0] );
                         }
                         else
                         {
@@ -187,16 +206,19 @@ namespace ChemSW.Nbt
                 // case 24678 - Mark truncated results
                 if( NodesTable.Rows.Count == thisResultLimit )
                 {
-                    if( ParentNodeKey != null )
+                    if( ParentNodeKeys.Count > 0 )
                     {
-                        // assume truncation on every potential parent
-                        _CswNbtTree.makeNodeCurrent( ParentNodeKey );
-                        _CswNbtTree.goToParentNode();
-                        for( Int32 c = 0; c < _CswNbtTree.getChildNodeCount(); c++ )
+                        foreach( CswNbtNodeKey ParentNodeKey in ParentNodeKeys )
                         {
-                            _CswNbtTree.goToNthChild( c );
-                            _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                            // assume truncation on every potential parent
+                            _CswNbtTree.makeNodeCurrent( ParentNodeKey );
                             _CswNbtTree.goToParentNode();
+                            for( Int32 c = 0; c < _CswNbtTree.getChildNodeCount(); c++ )
+                            {
+                                _CswNbtTree.goToNthChild( c );
+                                _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                                _CswNbtTree.goToParentNode();
+                            }
                         }
                     }
                     else

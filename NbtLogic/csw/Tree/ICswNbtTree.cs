@@ -182,11 +182,11 @@ namespace ChemSW.Nbt
         CswNbtNodeKey getNodeKeyByNodeId( CswPrimaryKey NodeId );
 
         /// <summary>
-        /// Return a node key for the first matching node in the tree which derived from the given ViewNode
+        /// Return a node key for all matching nodes in the tree which derived from the given ViewNode
         /// </summary>
         /// <param name="NodeId">Primary key of node</param>
         /// <param name="NodeId">View Node</param>
-        CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode );
+        Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode );
 
         /// <summary>
         /// Returns the currently indexed node

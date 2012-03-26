@@ -342,7 +342,7 @@ namespace ChemSW.Nbt
             return ( ReturnVal );
         }//getNodeKeyByNodeId()
 
-        public CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
+        public Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
         {
             //CswNbtNodeKey ReturnVal = null;
             //Collection<CswNbtNodeKey> KeyList = _CswNbtTreeNodes.getKeysForNodeId( NodeId );
@@ -355,8 +355,8 @@ namespace ChemSW.Nbt
             //    }
             //}
             //return ReturnVal;
-            return _CswNbtTreeNodes.getNodeKeyByNodeIdAndViewNode( NodeId, ViewNode );
-        } // getNodeKeyByNodeIdAndViewNode()
+            return _CswNbtTreeNodes.getNodeKeysByNodeIdAndViewNode( NodeId, ViewNode );
+        } // getNodeKeysByNodeIdAndViewNode()
 
 
         //public CswNbtNodeContext getNodeContextForNodeKey(CswNbtNodeKey NodeKey)
