@@ -18,7 +18,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
 
             div.p({ text: 'Your session is about to time out.  Would you like to continue working?' });
 
@@ -41,7 +41,7 @@
 
             if (options) $.extend(o, options);
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
 
             div.$.CswWelcome('getAddItemForm', {
                 'onAdd': function () {
@@ -63,7 +63,7 @@
             };
             if (options) $.extend(o, options);
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
             var table = div.table({
                 ID: Csw.makeId(o.ID, 'tbl'),
                 FirstCellRightAlign: true
@@ -167,7 +167,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div(),
+            var div = Csw.literals.div(),
                 title = 'New ' + o.text;
 
             div.$.CswNodeTabs({
@@ -199,7 +199,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div(),
+            var div = Csw.literals.div(),
                 newNode;
 
             div.append('New ' + o.nodetypename + ': ');
@@ -231,7 +231,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div(),
+            var div = Csw.literals.div(),
                 nodeTypeInp, categoryInp, addBtn,
                 category = Csw.string(o.category);
 
@@ -282,7 +282,7 @@
                 _configAddOptions();
             };
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
             var table = div.table({
                 ID: 'EditLayoutDialog_table',
                 width: '100%'
@@ -379,7 +379,7 @@
             };
             if (options) $.extend(o, options);
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
             var table = div.table();
@@ -455,7 +455,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div({ text: 'Copying: ' + o.nodename });
+            var div = Csw.literals.div({ text: 'Copying: ' + o.nodename });
             div.br().br();
 
             var copyBtn = div.button({ ID: 'copynode_submit',
@@ -501,7 +501,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
             div.span({ text: 'Are you sure you want to delete:&nbsp;' });
 
 
@@ -559,7 +559,7 @@
         }, // DeleteNodeDialog
         AboutDialog: function () {
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
             Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/getAbout',
                 data: {},
@@ -595,7 +595,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
 
             var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
 
@@ -630,7 +630,7 @@
             if (options) {
                 $.extend(o, options);
             }
-            var div = Csw.controls.div(),
+            var div = Csw.literals.div(),
                 molTxtArea, saveBtn;
 
             var uploadBtn = div.input({ ID: 'fileupload', type: Csw.enums.inputTypes.file });
@@ -691,7 +691,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div({ align: 'center' });
+            var div = Csw.literals.div({ align: 'center' });
             div.append('Service Level Agreement').br();
             var licenseTextArea = div.textArea({ ID: 'license', rows: 30, cols: 80 }).propDom({ disabled: true });
             div.br();
@@ -741,7 +741,7 @@
             };
             if (options) $.extend(o, options);
 
-            var div = Csw.controls.div({ align: 'center', text: 'Select a Label to Print:' });
+            var div = Csw.literals.div({ align: 'center', text: 'Select a Label to Print:' });
             div.br();
             var labelSelDiv = div.div();
             var labelSel = labelSelDiv.select({ ID: o.ID + '_labelsel' });
@@ -799,13 +799,13 @@
             openDialog(div, 400, 300, null, 'Print');
         }, // PrintLabelDialog
         ErrorDialog: function (error) {
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
             openDialog(div, 400, 300, null, 'Error');
             div.$.CswErrorMessage(error);
         },
         AlertDialog: function (message, title) {
 
-            var div = Csw.controls.div({
+            var div = Csw.literals.div({
                 ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,
                 align: 'center'
@@ -824,7 +824,7 @@
         },
         ConfirmDialog: function (message, title, okFunc, cancelFunc) {
             var width = Csw.number((message.length * 7), 200);
-            var div = Csw.controls.div({
+            var div = Csw.literals.div({
                 ID: Csw.string(title, 'an alert dialog').replace(' ', '_'),
                 text: message,
                 align: 'center'
@@ -865,7 +865,7 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.controls.div({
+            var div = Csw.literals.div({
                 ID: o.ID
             });
             div.p({ text: o.navigationText });
@@ -894,7 +894,7 @@
         //							return popup;
         //						},
         OpenDialog: function (id, url) {
-            var div = Csw.controls.div({ ID: id });
+            var div = Csw.literals.div({ ID: id });
             div.$.load(url,
                 function () {
                     openDialog(div, 600, 400);
@@ -912,7 +912,7 @@
             if (options) {
                 $.extend(o, options);
             }
-            var div = Csw.controls.div(o.ID);
+            var div = Csw.literals.div(o.ID);
             Csw.tryExec(o.onOpen, div);
             openDialog(div, o.width, o.height, o.onClose, o.title);
         },

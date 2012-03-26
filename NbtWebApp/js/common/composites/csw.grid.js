@@ -6,7 +6,7 @@
     Csw.components.grid = Csw.components.grid ||
         Csw.components.register('grid', function (cswParent, options) {
             ///<summary>Generates a grid</summary>
-            ///<param name="cswParent" type="Csw.controls">Parent element to attach grid to.</param>
+            ///<param name="cswParent" type="Csw.literals">Parent element to attach grid to.</param>
             ///<param name="options" type="Object">Object defining paramaters for jqGrid construction.</param>
             ///<returns type="Csw.components.grid">Object representing a CswGrid</returns>
             'use strict';
@@ -464,7 +464,7 @@
                     isControl: internal.isControl,
                     ID: internal.ID
                 });
-                //$.extend(external, Csw.controls.div(internal));
+                //$.extend(external, Csw.literals.div(internal));
 
                 internal.makeGrid();
             } ());

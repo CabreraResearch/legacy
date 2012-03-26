@@ -50,7 +50,7 @@
         }
 
         var $parent = $(this);
-        var parent = Csw.controls.factory($parent, {});
+        var parent = Csw.literals.factory($parent, {});
 
         var outerTabDiv = parent.tabDiv({ ID: o.ID + '_tabdiv' });
         var tabcnt = 0;
@@ -258,7 +258,7 @@
                         onRemove: function (event, onRemoveData) {
                             onRemove(onRemoveData);
                         } // onRemove
-                    }); // Csw.controls.layoutTable()
+                    }); // Csw.literals.layoutTable()
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {

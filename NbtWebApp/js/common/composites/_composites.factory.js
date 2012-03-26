@@ -7,7 +7,7 @@
         Csw.components.register('factory',
             function (cswParent) {
                 /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
-                /// <param name="cswParent" type="Csw.controls">An Csw Control to bind to.</param>
+                /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
                 /// <returns type="Csw.components">The options object with DOM methods attached.</returns> 
                 'use strict';
                 //#region internal

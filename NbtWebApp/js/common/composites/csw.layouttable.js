@@ -240,7 +240,7 @@
                 var $dragDiv, dragCell, dragCells, dropCells;
                 if (external.isConfig(external.table)) {
                     $dragDiv = dd.draggable;
-                    dragCell = Csw.controls.factory($dragDiv.parent(), { });
+                    dragCell = Csw.literals.factory($dragDiv.parent(), { });
 
                     dragCells = external.cellSet(dragCell.propNonDom('row'), dragCell.propNonDom('column')); // .table.findCell('[row="' + Csw.number(dragCell.propNonDom('row')) + '"][column="' + Csw.number(dragCell.propNonDom('column')) + '"]');
                     dropCells = external.cellSet($dropCell.attr('row'), $dropCell.attr('column')); //table.findCell('[row="' + Csw.number($dropCell.attr('row')) + '"][column="' + Csw.number($dropCell.attr('column')) + '"]');
@@ -397,7 +397,7 @@
                 }
                 var layoutDiv = cswParent.div(internal);
                 
-                //$.extend(external, Csw.controls.div(internal));
+                //$.extend(external, Csw.literals.div(internal));
                 var buttonDiv = layoutDiv.div({
                     ID: Csw.makeId(internal.ID, 'btnDiv')
                 });

@@ -7,7 +7,7 @@
     Csw.components.imageButton = Csw.components.imageButton ||
         Csw.components.register('imageButton', function (cswParent, options) {
             ///<summary>Generates an imageButton</summary>
-            ///<param name="cswParent" type="Csw.controls">Parent element to attach imageButton to.</param>
+            ///<param name="cswParent" type="Csw.literals">Parent element to attach imageButton to.</param>
             ///<param name="options" type="Object">Object defining paramaters for imageButton construction.</param>
             ///<returns type="Csw.components.imageButton">Object representing an imageButton</returns>
             'use strict';
@@ -78,7 +78,7 @@
                 internal.imageButton = cswParent.div(internal);
                 external = Csw.dom(external, internal.imageButton);
                 
-                //$.extend(external, Csw.controls.div(internal));
+                //$.extend(external, Csw.literals.div(internal));
                 external.addClass('divbutton');
                 external.propNonDom('title', internal.AlternateText);
                 external.css('display', 'inline-block');

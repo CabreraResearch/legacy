@@ -93,7 +93,7 @@
                     internal.checkBox.imageButton(internal);
                 }
                 external = Csw.dom({}, internal.checkBox);
-                //$.extend(external, Csw.controls.div(internal));
+                //$.extend(external, Csw.literals.div(internal));
                 external.bind('click', function () {
                     if (!Csw.bool(internal.ReadOnly)) {
                         Csw.tryExec(internal.changeState);

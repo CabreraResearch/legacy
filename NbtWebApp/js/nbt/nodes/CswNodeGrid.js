@@ -181,7 +181,7 @@
                         }
 
                         cswGridOpts.printUrl = getGridRowsUrl(true);
-                        var parent = Csw.controls.factory($parent);
+                        var parent = Csw.literals.factory($parent);
                         ret = parent.grid(cswGridOpts);
 
                         if (Csw.isFunction(o.onSuccess)) {
