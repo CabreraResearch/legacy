@@ -1,5 +1,5 @@
-/// <reference path="~/js/ChemSW-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
+/// <reference path="~/js/ChemSW-vsdoc.js" />
 
 (function () {
 
@@ -35,16 +35,15 @@
                 /* If it's possible/desirable to attach a complex component to a simple control, then extend */
                 if (Csw.isNullOrEmpty(controlName) ||
                     controlName === 'div' ||
-                    controlName === 'span' ||
-                    controlName === 'p' ||
-                    controlName === 'form' ||
-                    controlName === 'jquery' ||
-                    controlName === 'div' ||
-                    controlName === 'ol' ||
-                    controlName === 'ul' ||
-                    controlName === 'table' ||
-                    controlName === 'tabDiv'
-                 ) {
+                        controlName === 'span' ||
+                            controlName === 'p' ||
+                                controlName === 'form' ||
+                                    controlName === 'jquery' ||
+                                        controlName === 'div' ||
+                                            controlName === 'ol' ||
+                                                controlName === 'ul' ||
+                                                    controlName === 'table' ||
+                                                        controlName === 'tabDiv') {
                     Csw.components.factory(external, opts);
                 }
                 return opts;
@@ -196,18 +195,8 @@
 
             //#endregion Csw DOM classes
 
-        external.css = function (param1, param2) {
-            /// <param name="param1" type="Object">Either a single JSON object with CSS to apply, or a single CSS name</param>
-            /// <param name="param2" type="string">single CSS value</param>
-            if (arguments.length===1) {
-                $element.css(param1);
-            } else {
-                $element.css(param1,param2);
-            }
             return external;
         });
-
-
 } ());
 
 
