@@ -141,8 +141,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
-            // BZ 5906
-            UsernameProperty.ReadOnly = true;
+            if( UsernameProperty.Text != string.Empty ) // case 25616
+            {
+                UsernameProperty.ReadOnly = true;       // BZ 5906
+            }
 
             if( Role.WasModified )
             {
