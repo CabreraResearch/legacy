@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
