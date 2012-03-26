@@ -22,8 +22,9 @@
             propDiv.triStateCheckBox(checkOpt);
         },
         save: function (o) {
-            var propDiv = o.propDiv.find('div');
-            var attributes = { checked: Csw.string(propDiv.val(), propDiv.propNonDom('alt')) };
+            // this should be refactored to use tristatecheckbox.val() eventually
+            var imagebtn = o.propDiv.find('div');
+            var attributes = { checked: Csw.string(imagebtn.propNonDom('value')) };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };

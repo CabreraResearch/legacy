@@ -20,8 +20,17 @@
 
         var external = {};
 
-        internal.val = function () {
-            return internal.buttonVal;
+        external.val = function (value) {
+            var ret;
+            if (Csw.isNullOrEmpty(value)) {
+                ret = internal.value;
+            } else {
+                ret = external;
+                external.propNonDom('value', value);
+                external.propDom('title', value);
+                internal.value = value;
+            }
+            return ret;
         };
 
         external.getButtonType = function () {
@@ -58,7 +67,8 @@
                 internal.value = 'false';
             }
             external.val(internal.value);
-            external.propDom('alt', internal.value);
+            external.propNonDom('value', internal.value);
+            external.propDom('title', internal.value);
             internal.onChange();
             return external.click(internal.btnValue);
         }; // onClick()
