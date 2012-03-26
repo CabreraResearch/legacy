@@ -46,7 +46,7 @@
             html += spanText;
             html += '</span>';
             $span = $(html);
-            Csw.controls.factory($span, external);
+            Csw.literals.factory($span, external);
 
             if (internal.$parent) {
                 internal.$parent.append(external.$);
@@ -55,8 +55,8 @@
 
         return external;
     }
-    Csw.controls.register('span', span);
-    Csw.controls.span = Csw.controls.span || span;
+    Csw.literals.register('span', span);
+    Csw.literals.span = Csw.literals.span || span;
 
 } ());
 

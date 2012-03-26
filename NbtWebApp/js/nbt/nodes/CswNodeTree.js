@@ -16,7 +16,7 @@
 
 //            var idPrefix = o.ID + '_';
 //            var $parent = $(this);
-//            var parent = Csw.controls.factory($parent);
+//            var parent = Csw.literals.factory($parent);
 
 //            var treeDiv = parent.div({ ID: idPrefix });
 
@@ -79,7 +79,7 @@
 //        // For making a tree without using the regular mechanism for fetching tree data
 //        'makeTree': function (treeData, options) {   // see parseOptions() below for options definitions
 //            var $parent = $(this);
-//            var parent = Csw.controls.factory($parent);
+//            var parent = Csw.literals.factory($parent);
 
 //            var o = parseOptions(options);
 

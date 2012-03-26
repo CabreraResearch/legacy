@@ -35,7 +35,7 @@
 
                 internal.select = cswParent.select(internal);
                 external = Csw.dom({ }, internal.select);
-                //$.extend(external, Csw.controls.select(internal));
+                //$.extend(external, Csw.literals.select(internal));
 
                 if (Csw.isFunction(internal.onChange)) {
                     internal.select.bind('change', function () {

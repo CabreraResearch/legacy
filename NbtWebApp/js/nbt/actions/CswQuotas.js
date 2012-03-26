@@ -16,7 +16,7 @@
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var div = Csw.controls.div({ $parent: $parent });
+            var div = Csw.literals.div({ $parent: $parent });
             var table;
             var row;
             var quotaJson;

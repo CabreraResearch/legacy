@@ -40,7 +40,7 @@
             }
 
             var $parent = $(this);
-            var table = Csw.controls.table({
+            var table = Csw.literals.table({
                 $parent: $parent,
                 ID: o.ID,
                 TableCssClass: 'CswWizard_WizardTable'
@@ -165,7 +165,7 @@
 
         setStep: function (stepno) {
             var $table = $(this);
-            var table = Csw.controls.factory($table, {});
+            var table = Csw.literals.factory($table, {});
             _selectStep(table, stepno);
         }
     };

@@ -21,7 +21,7 @@
             //Case 20939: if your prop isn't saving, check for duplicate IDs
             var intervalData = Csw.clientDb.getItem(o.ID + '_rateIntervalSave');
             var $parent = $(this);
-            var parent = Csw.controls.factory($parent);
+            var parent = Csw.literals.factory($parent);
 
             try {
                 var attributes = {

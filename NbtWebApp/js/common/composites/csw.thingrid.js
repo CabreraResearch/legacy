@@ -45,7 +45,7 @@
 
                 internal.table = cswParent.table(internal);
                 external = Csw.dom({}, internal.table);
-                //$.extend(external, Csw.controls.table(internal));
+                //$.extend(external, Csw.literals.table(internal));
 
                 /* Ignore the header row for now */
                 if (internal.rows.length > 0) {

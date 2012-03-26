@@ -182,12 +182,12 @@
                         $divStep1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_InspectionDesign.step1.step);
                         $divStep1.append('<br />');
 
-                        inspectionTable = Csw.controls.table({
+                        inspectionTable = Csw.literals.table({
                             $parent: $divStep1,
                             ID: makeStepId('setInspectionTargetTable')
                         });
 
-                        rowOneTable = Csw.controls.table({
+                        rowOneTable = Csw.literals.table({
                             $parent: inspectionTable.cell(1, 1).$,
                             FirstCellRightAlign: true
                         });
@@ -257,7 +257,7 @@
 
                         Csw.subscribe(createInspectionEvents.targetNameChanged, targetChangedHandle);
 
-                        inspectionTable = Csw.controls.table({
+                        inspectionTable = Csw.literals.table({
                             $parent: $divStep2,
                             ID: makeStepId('inspectionTable'),
                             FirstCellRightAlign: true
@@ -423,7 +423,7 @@
                 } else {
                     $.extend(gridOptions.gridOpts, jqGridOpts);
                 }
-                inspectionGrid = Csw.controls.grid(gridOptions);
+                inspectionGrid = Csw.literals.grid(gridOptions);
             },
 
         //File upload button for Step 3
@@ -613,7 +613,7 @@
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
 
-                            Csw.controls.grid(confirmGridOptions);
+                            Csw.literals.grid(confirmGridOptions);
                         } else {
                             $confirmationList.CswList('addItem', {
                                 value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'

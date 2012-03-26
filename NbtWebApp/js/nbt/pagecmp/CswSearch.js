@@ -55,7 +55,7 @@
         if (options) $.extend(o, options);
 
         var $parent = $(this);
-        var parent = Csw.controls.factory($parent);
+        var parent = Csw.literals.factory($parent);
 
         o.searchTable = parent.table({
             ID: Csw.makeId(o.ID, 'tbl'),

@@ -77,7 +77,7 @@
             html += ' />';
 
             $input = $(html);
-            Csw.controls.factory($input, external);
+            Csw.literals.factory($input, external);
             internal.$parent.append(external.$);
 
             if (Csw.isFunction(internal.onChange)) {
@@ -124,8 +124,8 @@
 
         return external;
     }
-    Csw.controls.register('input', input);
-    Csw.controls.input = Csw.controls.input || input;
+    Csw.literals.register('input', input);
+    Csw.literals.input = Csw.literals.input || input;
 
 } ());
 

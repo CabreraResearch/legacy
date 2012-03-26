@@ -3,8 +3,8 @@
 
 (function () {
     
-    Csw.controls.p = Csw.controls.p ||
-        Csw.controls.register('p', function(options) {
+    Csw.literals.p = Csw.literals.p ||
+        Csw.literals.register('p', function(options) {
             'use strict';
             /// <summary> Create or extend an HTML <p /> and return a Csw.divobject
             ///     &#10;1 - div(options)
@@ -50,7 +50,7 @@
                 html += Csw.string(internal.text);
                 html += '</p>';
                 $p = $(html);
-                Csw.controls.factory($p, external);
+                Csw.literals.factory($p, external);
 
                 if (Csw.isFunction(internal.onClick)) {
                     external.bind('click', internal.onClick);

@@ -4,8 +4,8 @@
 (function () {
 
 
-    Csw.controls.timeInterval = Csw.controls.timeInterval ||
-        Csw.controls.register('timeInterval', function (cswParent, options) {
+    Csw.literals.timeInterval = Csw.literals.timeInterval ||
+        Csw.literals.register('timeInterval', function (cswParent, options) {
             'use strict';
             var internal = {
                 ID: '',
@@ -618,7 +618,7 @@
                     ID: internal.ID
                 });
                 external = Csw.dom({}, internal.interval);
-                //Csw.controls.factory(internal.$parent, external);
+                //Csw.literals.factory(internal.$parent, external);
 
                 var propVals = internal.propVals,
                     textValue,

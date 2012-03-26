@@ -89,7 +89,7 @@
 
         // Init
         (function () {
-            var div = Csw.controls.div({
+            var div = Csw.literals.div({
                 ID: Csw.makeId(internal.ID, '', 'div'),
                 $parent: internal.$parent
             });
@@ -122,7 +122,7 @@
 
 
             var $divstep1 = $(internal.$wizard.CswWizard('div', Csw.enums.wizardSteps_FutureScheduling.step1.step));
-            internal.step1div = Csw.controls.factory($divstep1, {});
+            internal.step1div = Csw.literals.factory($divstep1, {});
 
             var step1table = internal.step1div.table({
                 ID: Csw.makeId(internal.ID, '', 'table1'),
@@ -164,7 +164,7 @@
             }); // ajax
 
             var $divstep2 = $(internal.$wizard.CswWizard('div', Csw.enums.wizardSteps_FutureScheduling.step2.step));
-            internal.step2div = Csw.controls.factory($divstep2, {});
+            internal.step2div = Csw.literals.factory($divstep2, {});
 
             var step2table = internal.step2div.table({ ID: Csw.makeId(internal.ID, '', 'table2'), width: '100%' });
             step2table.cell(1, 1).span({ text: 'Results:' });

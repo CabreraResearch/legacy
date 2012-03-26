@@ -37,7 +37,7 @@
             html += '</form>';
             $form = $(html);
             
-            Csw.controls.factory($form, external);
+            Csw.literals.factory($form, external);
 
             internal.$parent.append(external.$);
             
@@ -45,8 +45,8 @@
 
         return external;
     }
-    Csw.controls.register('form', form);
-    Csw.controls.form = Csw.controls.form || form;
+    Csw.literals.register('form', form);
+    Csw.literals.form = Csw.literals.form || form;
 
 } ());
 

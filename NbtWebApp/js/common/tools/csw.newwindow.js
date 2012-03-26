@@ -35,7 +35,7 @@
             printDoc.close();
 
             $newBody = $(printDoc).find('body');
-            newFactory = Csw.controls.factory($newBody);
+            newFactory = Csw.literals.factory($newBody);
 
             /* 
         In theory, this would create a DIV with all the styles required, but it's probably not necessary to do so.

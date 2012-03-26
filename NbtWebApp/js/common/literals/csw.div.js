@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.div = Csw.controls.div ||
-        Csw.controls.register('div', function(options) {
+    Csw.literals.div = Csw.literals.div ||
+        Csw.literals.register('div', function(options) {
             'use strict';
             /// <summary> Create or extend an HTML <div /> and return a Csw.divobject
             ///     &#10;1 - div(options)
@@ -63,7 +63,7 @@
                 html += divText;
                 html += '</div>';
                 $div = $(html);
-                Csw.controls.factory($div, external);
+                Csw.literals.factory($div, external);
 
                 if (Csw.isFunction(internal.onClick)) {
                     external.bind('click', internal.onClick);

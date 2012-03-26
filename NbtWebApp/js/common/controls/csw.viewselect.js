@@ -39,7 +39,7 @@
                 $fieldset.contents().remove();
                 $fieldset.append('<legend class="viewselectlegend">' + catobj.category + '</legend>');
 
-                var morediv = Csw.controls.moreDiv({
+                var morediv = Csw.literals.moreDiv({
                     ID: Csw.makeId(internal.ID, '', catobj.category + '_morediv'),
                     $parent: $fieldset
                 });
@@ -83,7 +83,7 @@
             internal.handleSelect = function (itemobj) {
 
                 var $newTopContent = $('<div></div>');
-                var table = Csw.controls.table({
+                var table = Csw.literals.table({
                     $parent: $newTopContent,
                     ID: internal.ID + 'selectedtbl'
                 });
@@ -117,7 +117,7 @@
             // Constructor
             (function () {
                 internal.div = cswParent.div();
-                internal.vsdiv = Csw.controls.div({ ID: Csw.makeId(internal.ID, '', 'vsdiv') });
+                internal.vsdiv = Csw.literals.div({ ID: Csw.makeId(internal.ID, '', 'vsdiv') });
                 internal.comboBox = internal.div.comboBox({
                     ID: internal.ID + '_combo',
                     topContent: 'Select a View',

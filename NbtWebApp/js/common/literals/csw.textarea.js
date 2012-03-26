@@ -84,7 +84,7 @@
             html += value;
             html += '</textarea>';
             $textArea = $(html);
-            Csw.controls.factory($textArea, external);
+            Csw.literals.factory($textArea, external);
             internal.$parent.append(external.$);
 
             if (Csw.isFunction(internal.onChange)) {
@@ -103,8 +103,8 @@
 
         return external;
     }
-    Csw.controls.register('textArea', textArea);
-    Csw.controls.textArea = Csw.controls.textArea || textArea;
+    Csw.literals.register('textArea', textArea);
+    Csw.literals.textArea = Csw.literals.textArea || textArea;
 
 } ());
 

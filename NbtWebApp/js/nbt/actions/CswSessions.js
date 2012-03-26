@@ -21,7 +21,7 @@
             
             function initTable() {
                 $Div.contents().remove();
-                table = Csw.controls.table({
+                table = Csw.literals.table({
                     $parent: $Div,
                     ID: Csw.makeId(o.ID, 'tbl'),
                     border: 1,

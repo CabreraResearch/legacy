@@ -29,7 +29,7 @@
             if (options) $.extend(o, options);
 
             var $parent = $(this);
-            var parent = Csw.controls.factory($parent);
+            var parent = Csw.literals.factory($parent);
             var tableDiv, layoutTable;
 
             var singleColumn = false;

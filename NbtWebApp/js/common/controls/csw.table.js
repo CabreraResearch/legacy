@@ -46,7 +46,7 @@
             if (isjQuery) {
                 $table = options;
             }
-            Csw.controls.factory($table, external);
+            Csw.literals.factory($table, external);
 
             external.bind('CswTable_onCreateCell', function (e, cell, row, column) {
                 Csw.tryExec(internal.onCreateCell(e, cell, row, column));
@@ -256,8 +256,8 @@
 
         return external;
     }
-    Csw.controls.register('table', table);
-    Csw.controls.table = Csw.controls.table || table;
+    Csw.literals.register('table', table);
+    Csw.literals.table = Csw.literals.table || table;
 
 } ());
 

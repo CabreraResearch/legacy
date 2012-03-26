@@ -22,7 +22,7 @@
                 $.extend(o, options);
             }
             var $parent = $(this);
-            var parent = Csw.controls.factory($parent);
+            var parent = Csw.literals.factory($parent);
             
             var jsonData = {
                 RoleId: ''
@@ -132,7 +132,7 @@
             }
 
             var $parent = $(this);
-            var parent = Csw.controls.factory($parent);
+            var parent = Csw.literals.factory($parent);
             var table = parent.table({
                 ID: 'addwelcomeitem_tbl'
             });

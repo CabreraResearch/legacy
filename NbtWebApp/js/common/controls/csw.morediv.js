@@ -4,8 +4,8 @@
 (function _cswMoreDiv() {
     'use strict';
 
-    Csw.controls.moreDiv = Csw.controls.moreDiv ||
-        Csw.controls.register('moreDiv', function (options) {
+    Csw.literals.moreDiv = Csw.literals.moreDiv ||
+        Csw.literals.register('moreDiv', function (options) {
 
             var internal = {
                 ID: '',
@@ -17,17 +17,17 @@
 
             var external = {};
 
-            external.shownDiv = Csw.controls.div({
+            external.shownDiv = Csw.literals.div({
                 ID: Csw.makeId(internal.ID, '', '_shwn'),
                 $parent: internal.$parent
             });
 
-            external.hiddenDiv = Csw.controls.div({
+            external.hiddenDiv = Csw.literals.div({
                 ID: Csw.makeId(internal.ID, '', '_hddn'),
                 $parent: internal.$parent
             }).hide();
 
-            external.moreLink = Csw.controls.link({
+            external.moreLink = Csw.literals.link({
                 ID: Csw.makeId(internal.ID, '', '_more'),
                 $parent: internal.$parent,
                 text: internal.moretext,

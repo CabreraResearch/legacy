@@ -43,7 +43,7 @@
                 precision = Csw.number(internal.Precision);
 
             if (internal.ReadOnly) {
-                $.extend(external, Csw.controls.div(internal));
+                $.extend(external, Csw.literals.div(internal));
                 external.append(internal.value);
             } else {
                 /* Case 24499: Client-side logic to validate numbers. */
@@ -60,7 +60,7 @@
                 internal.cssclass += ' textinput number ';
                 internal.maxlength = maxLength;
 
-                $.extend(external, Csw.controls.input(internal));
+                $.extend(external, Csw.literals.input(internal));
 
                 external.bind('change', function () {
                     internal.value = external.val();
@@ -107,7 +107,7 @@
         } ());
         return external;
     }
-    Csw.controls.register('numberTextBox', numberTextBox);
-    Csw.controls.numberTextBox = Csw.controls.numberTextBox || numberTextBox;
+    Csw.literals.register('numberTextBox', numberTextBox);
+    Csw.literals.numberTextBox = Csw.literals.numberTextBox || numberTextBox;
 
 })(jQuery);

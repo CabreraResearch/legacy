@@ -21,7 +21,7 @@
             data: { ViewId: o.viewid },
             success: function (data) {
 
-                var addDiv = Csw.controls.div({
+                var addDiv = Csw.literals.div({
                     $parent: $parent,
                     ID: Csw.makeId({ id: o.ID, suffix: 'adddiv' }),
                     cssclass: 'adddiv',

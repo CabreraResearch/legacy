@@ -45,7 +45,7 @@
                     ID: internal.ID
                 });
                 external = Csw.dom({ }, internal.comboDiv);
-                //$.extend(external, Csw.controls.div(internal));
+                //$.extend(external, Csw.literals.div(internal));
 
                 internal.topDiv = internal.comboDiv.div({
                     ID: internal.ID + '_top',

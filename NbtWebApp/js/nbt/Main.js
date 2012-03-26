@@ -139,7 +139,7 @@ window.initMain = window.initMain || function (undefined) {
     // initAll()
 
     function refreshViewSelect(onSuccess) {
-        var selectDiv = Csw.controls.factory($('#ViewSelectDiv'));
+        var selectDiv = Csw.literals.factory($('#ViewSelectDiv'));
         selectDiv.empty();
         mainviewselect = selectDiv.viewSelect({
             ID: 'mainviewselect',
@@ -700,7 +700,7 @@ window.initMain = window.initMain || function (undefined) {
         };
         if (viewopts) $.extend(v, viewopts);
         clear({ centerbottom: true });
-        var div = Csw.controls.div({
+        var div = Csw.literals.div({
             $parent: $('#CenterBottomDiv'),
             ID: 'deftbldiv',
             align: 'center'
@@ -875,7 +875,7 @@ window.initMain = window.initMain || function (undefined) {
 
         mainTree = Csw.nbt.nodeTree({
             ID: 'main',
-            parent: Csw.controls.factory($('#LeftDiv')),
+            parent: Csw.literals.factory($('#LeftDiv')),
             forsearch: o.forsearch,
             //showempty: getEmptyTree,
             onSelectNode: function (optSelect) {

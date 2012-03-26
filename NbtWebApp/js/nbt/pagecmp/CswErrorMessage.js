@@ -14,7 +14,7 @@
         if (options) $.extend(o, options);
 
         var $parentdiv = $(this);
-        var parent = Csw.controls.factory($parentdiv);
+        var parent = Csw.literals.factory($parentdiv);
         parent.show();
 
         var date = new Date();

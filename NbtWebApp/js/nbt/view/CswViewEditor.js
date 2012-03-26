@@ -76,7 +76,7 @@
 
         _getViewsGrid(o.viewid);
 
-        var div1BtnTable = Csw.controls.table({
+        var div1BtnTable = Csw.literals.table({
             $parent: $div1,
             ID: o.ID + '_1_btntbl',
             width: '100%'
@@ -183,7 +183,7 @@
 
         // Step 2 - Edit View Attributes
         var $div2 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.attributes.step);
-        var table2 = Csw.controls.table({
+        var table2 = Csw.literals.table({
             $parent: $div2,
             ID: o.ID + '_tbl2',
             FirstCellRightAlign: true
@@ -244,7 +244,7 @@
         // Step 6 - Fine Tuning
         var $div6 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.tuning.step);
         $div6.append('Select what you want to edit from the tree:<br/><br/>');
-        var table6 = Csw.controls.table({
+        var table6 = Csw.literals.table({
             $parent: $div6,
             'ID': o.ID + '_6_tbl'
         });
@@ -481,7 +481,7 @@
                         };
                         $.extend(g.gridOpts, gridJson);
                         g.$parent = $viewgrid;
-                        cswViewGrid = Csw.controls.grid(g);
+                        cswViewGrid = Csw.literals.grid(g);
                         cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
 
                         cswViewGrid.hideColumn(o.ColumnFullViewId);
@@ -1005,7 +1005,7 @@
 
         function makeViewPropFilterStaticSpan(propArbId, filterJson, filtArbitraryId) {
             var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + filtArbitraryId + '"></span>');
-            var table = Csw.controls.table({
+            var table = Csw.literals.table({
                 $parent: $span,
                 'ID': o.ID + '_' + filtArbitraryId + '_propfilttbl'
             });
@@ -1027,7 +1027,7 @@
 
         function makeViewPropFilterAddSpan(propArbId) {
             var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
-            var table = Csw.controls.table({
+            var table = Csw.literals.table({
                 $parent: $span,
                 'ID': o.ID + '_' + propArbId + '_propfilttbl'
             });
@@ -1062,7 +1062,7 @@
         }
 
         function makeDeleteSpan(arbid, $parent) {
-            var td = Csw.controls.span({
+            var td = Csw.literals.span({
                 $parent: $parent,
                 cssclass: Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name
             }).propNonDom('arbid', arbid);

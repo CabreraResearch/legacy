@@ -266,7 +266,7 @@
                 /// <param name="$element" type="jQuery">Element to extend.</param>
                 /// <returns type="jquery">A Csw.jquery object</returns>
                 opts = internal.controlPreProcessing(opts, 'jquery');
-                return Csw.controls.factory($jqElement, opts);
+                return Csw.literals.factory($jqElement, opts);
             };
 
             external.length = function () {

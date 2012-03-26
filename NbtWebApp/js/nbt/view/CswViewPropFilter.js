@@ -67,7 +67,7 @@
             if (options) $.extend(o, options);
 
             var $table = $(this); //must call on a table
-            var propFilterTable = Csw.controls.table($table);
+            var propFilterTable = Csw.literals.table($table);
 
             if (Csw.isNullOrEmpty(o.propsData) && false === Csw.isNullOrEmpty(o.proparbitraryid)) {
                 var jsonData = {
@@ -261,7 +261,7 @@
             if (options) $.extend(o, options);
 
             var $table = $(this); //must call on a table
-            var propFilterTable = Csw.controls.table($table);
+            var propFilterTable = Csw.literals.table($table);
 
             if (false === Csw.isNullOrEmpty(o.propsData)) {
                 renderPropFiltRow(o);

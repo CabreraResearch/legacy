@@ -38,7 +38,7 @@
             // Constructor
             // Adds a searchbox to the form
             (function () {
-                var cswtable = Csw.controls.table({
+                var cswtable = Csw.literals.table({
                     ID: Csw.makeId(internal.ID, '', '_div'),
                     $parent: internal.$searchbox_parent
                 });
@@ -88,7 +88,7 @@
 
                     internal.$searchresults_parent.css({ paddingTop: '15px' });
 
-                    var resultstable = Csw.controls.table({
+                    var resultstable = Csw.literals.table({
                         ID: Csw.makeId(internal.ID, '', 'resultstbl'),
                         $parent: internal.$searchresults_parent,
                         width: '100%'
@@ -147,7 +147,7 @@
 
                 // Filter panel
                 filtersdivid = Csw.makeId(internal.ID, '', 'filtersdiv');
-                fdiv = Csw.controls.div({
+                fdiv = Csw.literals.div({
                     ID: filtersdivid,
                     $parent: internal.$searchfilters_parent
                 }).css({
@@ -220,7 +220,7 @@
                     var thisfilterdivid = Csw.makeId(filtersdivid, '', Name);
                     //var thisfilterdiv = fdiv.div({ ID: thisfilterdivid });
                     var filterCount = 0;
-                    var moreDiv = Csw.controls.moreDiv({
+                    var moreDiv = Csw.literals.moreDiv({
                         ID: thisfilterdivid,
                         $parent: fdiv.$
                     });

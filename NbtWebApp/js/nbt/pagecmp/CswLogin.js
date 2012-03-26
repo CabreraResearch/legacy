@@ -19,7 +19,7 @@
 
                 var thisSessionId = Csw.cookie.get(Csw.cookie.cookieNames.SessionId);
                 var $parent = $(this);
-                var parent = Csw.controls.factory($parent, {});
+                var parent = Csw.literals.factory($parent, {});
                 var loginDiv, loginTable, loginBtn, inpAccessId, inpUserName, inpPassword, loginMsg;
 
                 if (false === Csw.isNullOrEmpty(thisSessionId)) {

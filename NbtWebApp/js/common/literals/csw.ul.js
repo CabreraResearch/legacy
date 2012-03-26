@@ -5,8 +5,8 @@
     'use strict';
 
 
-    Csw.controls.ul = Csw.controls.ul ||
-        Csw.controls.register('ul', function ul(options) {
+    Csw.literals.ul = Csw.literals.ul ||
+        Csw.literals.register('ul', function ul(options) {
             /// <summary> Create a <ul /> </summary>
             /// <param name="options" type="Object">Options to define the ul.</param>
             /// <returns type="ul">A ul object</returns>
@@ -32,7 +32,7 @@
                         $.extend(liInternal, liOptions);
 
                         $li = $(html);
-                        Csw.controls.factory($li, liExternal);
+                        Csw.literals.factory($li, liExternal);
                         external.append($li);
                     }());
 
@@ -46,7 +46,7 @@
                 $.extend(internal, options);
 
                 $ul = $(html);
-                Csw.controls.factory($ul, external);
+                Csw.literals.factory($ul, external);
 
                 internal.$parent.append(external.$);
             }());

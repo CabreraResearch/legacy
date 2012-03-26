@@ -62,7 +62,7 @@
             html += ' />';
             $img = $(html);
 
-            Csw.controls.factory($img, external);
+            Csw.literals.factory($img, external);
             if (Csw.isFunction(internal.onClick)) {
                 external.bind('click', internal.onClick);
             }
@@ -79,8 +79,8 @@
 
         return external;
     }
-    Csw.controls.register('img', img);
-    Csw.controls.img = Csw.controls.img || img;
+    Csw.literals.register('img', img);
+    Csw.literals.img = Csw.literals.img || img;
 
 } ());
 

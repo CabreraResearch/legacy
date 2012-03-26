@@ -3,8 +3,8 @@
 
 (function () {
     
-    Csw.controls.button = Csw.controls.button ||
-        Csw.controls.register('button', function(options) {
+    Csw.literals.button = Csw.literals.button ||
+        Csw.literals.register('button', function(options) {
             'use strict';
             /// <summary> Create or extend an HTML <button /> and return a Csw.button object
             ///     &#10;1 - button(options)
@@ -92,7 +92,7 @@
 
                 internal.onClick = onClick;
 
-                $.extend(external, Csw.controls.input(internal));
+                $.extend(external, Csw.literals.input(internal));
 
 
                 external.propNonDom({

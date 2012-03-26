@@ -22,7 +22,7 @@
             stringify: false,
             success: function (data) {
 
-                var table = Csw.controls.table({
+                var table = Csw.literals.table({
                     $parent: $DashDiv,
                     ID: Csw.makeId(o.ID, 'DashboardTable')
                 });

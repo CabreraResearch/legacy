@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.nodeTypeSelect = Csw.controls.nodeTypeSelect ||
-        Csw.controls.register('nodeTypeSelect', function (options) {
+    Csw.literals.nodeTypeSelect = Csw.literals.nodeTypeSelect ||
+        Csw.literals.register('nodeTypeSelect', function (options) {
 
             var internal = {
                 $parent: '',
@@ -29,7 +29,7 @@
                 }
                 internal.ID += '_sel';
 
-                $.extend(external, Csw.controls.select(internal));
+                $.extend(external, Csw.literals.select(internal));
 
                 external.bind('change', function () {
                     Csw.tryExec(internal.onChange, external);

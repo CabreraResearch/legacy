@@ -3,8 +3,8 @@
 
 (function () {
     'use strict';
-    Csw.controls.select = Csw.controls.select ||
-        Csw.controls.register('select', function select(options) {
+    Csw.literals.select = Csw.literals.select ||
+        Csw.literals.register('select', function select(options) {
 
             var internal = {
                 ID: '',
@@ -115,7 +115,7 @@
                     html += '</option>';
                     $option = $(html);
 
-                    Csw.controls.factory($option, optExternal);
+                    Csw.literals.factory($option, optExternal);
                     external.append($option);
                 }());
 
@@ -148,7 +148,7 @@
                 html += '</select>';
                 $select = $(html);
 
-                Csw.controls.factory($select, external);
+                Csw.literals.factory($select, external);
 
                 if (false === Csw.isNullOrEmpty(internal.$parent)) {
                     internal.$parent.append(external.$);

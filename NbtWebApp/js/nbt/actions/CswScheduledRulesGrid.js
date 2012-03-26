@@ -72,7 +72,7 @@
                         $divStep1 = $wizard.CswWizard('div', Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step);
                         $divStep1.append('<br />');
 
-                        customerIdTable = Csw.controls.table({
+                        customerIdTable = Csw.literals.table({
                             $parent: $divStep1,
                             ID: makeStepId('inspectionTable'),
                             FirstCellRightAlign: true
@@ -150,7 +150,7 @@
                         success: function (data) {
                             $.extend(gridOptions.gridOpts, data);
                             gridOptions.$parnet = $rulesGrid;
-                            scheduledRulesGrid = Csw.controls.grid(gridOptions);
+                            scheduledRulesGrid = Csw.literals.grid(gridOptions);
                         }
                     });
                 };
@@ -163,7 +163,7 @@
                 toggleButton(buttons.finish, true);
                 toggleButton(buttons.prev, true);
 
-                headerTable = Csw.controls.table({
+                headerTable = Csw.literals.table({
                     $parent: $divStep2,
                     ID: makeStepId('headerTable')
                 });

@@ -3,8 +3,8 @@
 
 (function _cswBr() {
 
-    Csw.controls.br = Csw.controls.br ||
-        Csw.controls.register('br', function(options) {
+    Csw.literals.br = Csw.literals.br ||
+        Csw.literals.register('br', function(options) {
             /// <summary> Create a <br /> </summary>
             /// <param name="options" type="Object">Options to define the br.</param>
             /// <returns type="br">A br object</returns>
@@ -24,7 +24,7 @@
                     html += '<br />';
                 }
                 $br = $(html);
-                Csw.controls.factory($br, external);
+                Csw.literals.factory($br, external);
 
                 internal.$parent.append(external.$);
             }());

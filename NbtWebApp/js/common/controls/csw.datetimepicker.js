@@ -7,7 +7,7 @@
     Csw.components.dateTimePicker = Csw.components.dateTimePicker ||
         Csw.components.register('dateTimePicker', function (cswParent, options) {
             ///<summary>Generates a dateTimePicker</summary>
-            ///<param name="cswParent" type="Csw.controls">Parent element to attach dateTimePicker to.</param>
+            ///<param name="cswParent" type="Csw.literals">Parent element to attach dateTimePicker to.</param>
             ///<param name="options" type="Object">Object defining paramaters for dateTimePicker construction.</param>
             ///<returns type="Csw.components.dateTimePicker">Object representing a dateTimePicker</returns>
             'use strict';
@@ -33,7 +33,7 @@
                     ID: internal.id
                 });
                 external = Csw.dom({ }, internal.dateTimeDiv);
-                //$.extend(external, Csw.controls.div(internal));
+                //$.extend(external, Csw.literals.div(internal));
 
                 if (internal.ReadOnly) {
                     switch (internal.DisplayMode) {

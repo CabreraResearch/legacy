@@ -63,7 +63,7 @@
             html += '</a>';
             $link = $(html);
 
-            Csw.controls.factory($link, external);
+            Csw.literals.factory($link, external);
             
             // Click binding
 
@@ -116,8 +116,8 @@
 
         return external;
     }
-    Csw.controls.register('link', link);
-    Csw.controls.link = Csw.controls.link || link;
+    Csw.literals.register('link', link);
+    Csw.literals.link = Csw.literals.link || link;
 
 } ());
 

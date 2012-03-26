@@ -31,7 +31,7 @@
 
         (function () {
             $.extend(internal, options);
-            $.extend(external, Csw.controls.div(internal));
+            $.extend(external, Csw.literals.div(internal));
         } ());
 
         external.tabs = function () {
@@ -47,8 +47,8 @@
 
         return external;
     }
-    Csw.controls.register('tabDiv', tabDiv);
-    Csw.controls.tabDiv = Csw.controls.tabDiv || tabDiv;
+    Csw.literals.register('tabDiv', tabDiv);
+    Csw.literals.tabDiv = Csw.literals.tabDiv || tabDiv;
 
 } ());
 
