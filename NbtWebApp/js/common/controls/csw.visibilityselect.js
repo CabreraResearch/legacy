@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.components.makeViewVisibilitySelect = Csw.components.makeViewVisibilitySelect ||
-        Csw.components.register('makeViewVisibilitySelect', function(table, rownum, label) {
+    Csw.controls.makeViewVisibilitySelect = Csw.controls.makeViewVisibilitySelect ||
+        Csw.controls.register('makeViewVisibilitySelect', function(table, rownum, label) {
             ///<summary>Make a View Visibility Select. Used by View Editor and Dialog.</summary>
             ///<param name="table" type="Object">A Csw.literals.table object.</param>
             ///<param name="rownum" type="Number">A row number.</param>

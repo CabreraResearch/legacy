@@ -6,8 +6,8 @@
 (function () {
     'use strict';
 
-    Csw.components.multiSelect = Csw.components.multiSelect ||
-        Csw.components.register('multiSelect', function (cswParent, options) {
+    Csw.controls.multiSelect = Csw.controls.multiSelect ||
+        Csw.controls.register('multiSelect', function (cswParent, options) {
 
             var internal = {
                 $parent: '',

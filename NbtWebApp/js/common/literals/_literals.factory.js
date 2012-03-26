@@ -44,7 +44,7 @@
                                                 controlName === 'ul' ||
                                                     controlName === 'table' ||
                                                         controlName === 'tabDiv') {
-                    Csw.components.factory(componentParent, controlName);
+                    Csw.controls.factory(componentParent, controlName);
                 }
                 return componentParent;
             };

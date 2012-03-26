@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.components.triStateCheckBox = Csw.components.triStateCheckBox ||
-        Csw.components.register('triStateCheckBox', function (cswParent, options) {
+    Csw.controls.triStateCheckBox = Csw.controls.triStateCheckBox ||
+        Csw.controls.register('triStateCheckBox', function (cswParent, options) {
 
             var internal = {
                 ID: '',

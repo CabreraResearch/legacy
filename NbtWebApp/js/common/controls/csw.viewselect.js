@@ -4,8 +4,8 @@
 (function () {
     "use strict";
 
-    Csw.components.viewSelect = Csw.components.viewSelect ||
-        Csw.components.register('viewSelect', function (cswParent, params) {
+    Csw.controls.viewSelect = Csw.controls.viewSelect ||
+        Csw.controls.register('viewSelect', function (cswParent, params) {
 
             var internal = {
                 viewurl: '/NbtWebApp/wsNBT.asmx/getViewSelect',

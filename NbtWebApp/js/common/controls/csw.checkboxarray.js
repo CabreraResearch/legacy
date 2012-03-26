@@ -4,8 +4,8 @@
 (function _cswCheckBoxArray() {
     "use strict";
 
-    Csw.components.checkBoxArray = Csw.components.checkBoxArray ||
-        Csw.components.register('checkBoxArray', function (cswParent, options) {
+    Csw.controls.checkBoxArray = Csw.controls.checkBoxArray ||
+        Csw.controls.register('checkBoxArray', function (cswParent, options) {
 
             if (Csw.isNullOrEmpty(cswParent)) {
                 throw new Error('Cannot instance a Csw component without a Csw control');
@@ -134,7 +134,7 @@
                     height: (25 * internal.HeightInRows) + 'px'
                 });
                 external = Csw.dom({ }, internal.cbaDiv);
-                //Csw.components.factory(internal.$parent, external);
+                //Csw.controls.factory(internal.$parent, external);
 
                 var cbaData = internal.transmogrify({
                     dataAry: internal.dataAry,

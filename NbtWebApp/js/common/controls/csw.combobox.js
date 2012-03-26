@@ -4,8 +4,8 @@
 (function () {
     'use strict';
 
-    Csw.components.comboBox = Csw.components.comboBox ||
-        Csw.components.register('comboBox', function (cswParent, options) {
+    Csw.controls.comboBox = Csw.controls.comboBox ||
+        Csw.controls.register('comboBox', function (cswParent, options) {
             var internal = {
                 $parent: '',
                 ID: '',
