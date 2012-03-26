@@ -500,6 +500,10 @@ namespace ChemSW.Nbt.Logic
             Type = NbtViewPropType.NodeTypePropId;
             PropName = MetaDataPropName;
             AssociatedPropIds.Add( MetaDataPropId.ToString() );
+            if( NodeTypeProp.ObjectClassPropId != Int32.MinValue )
+            {
+                AssociatedPropIds.Add( NodeTypeProp.ObjectClassPropId.ToString() );
+            }
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
@@ -530,6 +534,11 @@ namespace ChemSW.Nbt.Logic
                 MetaDataPropName = ViewProperty.NodeTypeProp.PropName;
                 MetaDataTypeName = ViewProperty.NodeTypeProp.getNodeType().NodeTypeName;
                 FieldTypeRule = ViewProperty.NodeTypeProp.getFieldTypeRule();
+                AssociatedPropIds.Add( MetaDataPropId.ToString() );
+                if( ViewProperty.NodeTypeProp.ObjectClassPropId != Int32.MinValue )
+                {
+                    AssociatedPropIds.Add( ViewProperty.NodeTypeProp.ObjectClassPropId.ToString() );
+                }
             }
             else if( ViewProperty.Type == NbtViewPropType.ObjectClassPropId &&
                 null != ViewProperty.ObjectClassProp )
@@ -542,6 +551,7 @@ namespace ChemSW.Nbt.Logic
                 MetaDataPropName = ViewProperty.ObjectClassProp.PropName;
                 MetaDataTypeName = ViewProperty.ObjectClassProp.getObjectClass().ObjectClass.ToString().Replace( "Class", "" );
                 FieldTypeRule = ViewProperty.ObjectClassProp.getFieldTypeRule();
+                AssociatedPropIds.Add( MetaDataPropId.ToString() );
             }
             ViewProp = ViewProperty;
             FieldType = ViewProperty.FieldType;
@@ -551,7 +561,6 @@ namespace ChemSW.Nbt.Logic
             SortBy = ViewProperty.SortBy;
             SortMethod = ViewProperty.SortMethod;
             PropName = ViewProperty.Name ?? MetaDataPropName;
-            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Vp
 
     }// CswViewBuilderProp

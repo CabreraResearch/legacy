@@ -454,14 +454,26 @@ namespace ChemSW.Nbt.WebServices
             ThisNodeObj["Icon"] = Icon;
             ThisNodeObj["nodename"] = ThisNodeName;
 
-            foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
-            {
-                _addSafeCellContent( _CswNbtResources, Prop, ThisNodeObj, PropsInGrid );
-            }
+            _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid );
 
             return ThisNodeObj;
 
         } // _treeNodeJObject()
+
+        private void _addPropsRecursive( ICswNbtTree Tree, JObject NodeObj, Collection<CswViewBuilderProp> PropsInGrid )
+        {
+            foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+            {
+                _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid );
+            }
+            // Recurse
+            for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
+            {
+                Tree.goToNthChild( i );
+                _addPropsRecursive( Tree, NodeObj, PropsInGrid );
+                Tree.goToParentNode();
+            }
+        } // _addPropsRecursive()
 
         private JObject _getTruncatedGridRow( CswViewBuilderProp FirstPropInGrid )
         {
