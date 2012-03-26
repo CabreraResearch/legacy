@@ -181,15 +181,15 @@
                         }
 
                         cswGridOpts.printUrl = getGridRowsUrl(true);
-                        cswGridOpts.$parent = $parent;
-                        ret = Csw.controls.grid(cswGridOpts);
+                        var parent = Csw.controls.factory($parent);
+                        ret = parent.grid(cswGridOpts);
 
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
 
                         if (wasTruncated) {
-                            $parent.append('<p>Results were truncated.</p>');
+                            parent.append('<p>Results were truncated.</p>');
                         }
                     };
 
