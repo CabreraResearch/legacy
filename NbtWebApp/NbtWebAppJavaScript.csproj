@@ -98,10 +98,11 @@
     <Content Include="css\_dev.csw.table.layout.css" />
     <Content Include="css\_dev.csw.vieweditor.css" />
     <Content Include="css\_dev.csw.wizard.css" />
-    <Content Include="js\ChemSW-vsdoc.js" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
     <Content Include="js\common\components\_components.factory.js" />
+    <Content Include="js\CswCommon-vsdoc.js" />
+    <Content Include="js\CswNbt-vsdoc.js" />
     <Content Include="js\nbt\components\csw.nodetypeselect.js" />
     <Content Include="js\common\components\csw.tree.js" />
     <Content Include="js\common\components\csw.viewselect.js" />

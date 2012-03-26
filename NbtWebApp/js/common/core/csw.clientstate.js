@@ -1,5 +1,5 @@
 ﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/js/ChemSW-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
     'use strict';
@@ -28,9 +28,9 @@
             Csw.cookie.clear(Csw.cookie.cookieNames.CurrentSearchId);
             return true;
         });
-    
+
     Csw.clientState.clearLast = Csw.clientState.clearLast ||
-        Csw.clientState.register('clearLast', function () {
+        Csw.clientState.register('clearLast', function() {
             /// <summary> Clear all last state cookies  </summary>
             /// <returns type="Boolean">Always true</returns>
             Csw.cookie.clear(Csw.cookie.cookieNames.LastViewId);
@@ -40,7 +40,7 @@
             //Csw.cookie.clear(Csw.cookie.cookieNames.LastReportId);
             Csw.cookie.clear(Csw.cookie.cookieNames.LastSearchId);
             return true;
-        };
+        });
 
     Csw.clientState.setCurrentView = Csw.clientState.setCurrentView ||
         Csw.clientState.register('setCurrentView', function (viewid, viewmode) {

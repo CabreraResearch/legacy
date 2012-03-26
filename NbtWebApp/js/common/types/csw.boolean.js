@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/ChemSW-vsdoc.js" />
+﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function _cswBoolean() {

@@ -1,7 +1,7 @@
 use strict;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\js\\ChemSW-vsdoc.js";
+my $destfile = "$dir\\js\\CswCommon-vsdoc.js";
 
 unlink($destfile);
 
@@ -53,9 +53,9 @@ sub extractFile
             $ret .= $line;         
         }
     }
-    printf("Assembled $filename into ChemSW-vsdoc.js\n");
+    printf("Assembled $filename into CswCommon-vsdoc.js\n");
     close(JSFILE);
     return $ret;
 }
 
-printf("Finished generating ChemSW-vsdoc.js\n");
+printf("Finished generating CswCommon-vsdoc.js\n");

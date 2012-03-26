@@ -6,7 +6,7 @@ my $destfile = "$dir\\CswCommon.min.js";
 unlink($destfile);
 
 my $param = "";
-$param .= "--js $dir\\js\\ChemSW-vsdoc.js ";
+$param .= "--js $dir\\js\\CswCommon-vsdoc.js ";
 
 `java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 

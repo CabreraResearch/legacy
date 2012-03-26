@@ -1,5 +1,5 @@
 ﻿/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/js/ChemSW-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function _cswEnums() {
     'use strict';
