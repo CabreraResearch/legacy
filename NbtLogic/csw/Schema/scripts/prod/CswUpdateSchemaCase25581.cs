@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.Security;
 using ChemSW.DB;
 using ChemSW.Nbt;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -37,6 +38,16 @@ namespace ChemSW.Nbt.Schema
                     ReportNodeAsReport.postChanges(false);
                 }
             }
+
+            // Also the 'Create Inspection' action
+            CswNbtAction CreateInspAction = _CswNbtSchemaModTrnsctn.Actions[Actions.CswNbtActionName.Create_Inspection];
+            CswTableUpdate ActionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "25581_Actions_Update", "actions" );
+            DataTable ActionTable = ActionUpdate.getTable( "actionid", CreateInspAction.ActionId );
+            if( ActionTable.Rows.Count > 0 )
+            {
+                ActionTable.Rows[0]["category"] = InspectionsCategory;
+            }
+            ActionUpdate.update( ActionTable );
 
         }//Update()
 
