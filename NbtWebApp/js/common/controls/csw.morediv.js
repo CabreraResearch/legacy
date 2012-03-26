@@ -1,12 +1,11 @@
 /// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="~/csw.js/ChemSW-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 
-(function _cswMoreDiv() {
-    'use strict';
+(function () {
 
-    Csw.literals.moreDiv = Csw.literals.moreDiv ||
-        Csw.literals.register('moreDiv', function (options) {
-
+    Csw.controls.moreDiv = Csw.controls.moreDiv ||
+        Csw.controls.register('moreDiv', function (options) {
+            'use strict';
             var internal = {
                 ID: '',
                 $parent: '',
@@ -17,17 +16,17 @@
 
             var external = {};
 
-            external.shownDiv = Csw.literals.div({
+            external.shownDiv = Csw.controls.div({
                 ID: Csw.makeId(internal.ID, '', '_shwn'),
                 $parent: internal.$parent
             });
 
-            external.hiddenDiv = Csw.literals.div({
+            external.hiddenDiv = Csw.controls.div({
                 ID: Csw.makeId(internal.ID, '', '_hddn'),
                 $parent: internal.$parent
             }).hide();
 
-            external.moreLink = Csw.literals.link({
+            external.moreLink = Csw.controls.link({
                 ID: Csw.makeId(internal.ID, '', '_more'),
                 $parent: internal.$parent,
                 text: internal.moretext,

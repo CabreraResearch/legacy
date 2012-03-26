@@ -130,13 +130,6 @@
                 return internal.makeControlForChaining(opts, 'link');
             };
 
-            external.numberTextBox = function (opts) {
-                /// <summary> Creates a Csw.numberTextBox on this element</summary>
-                /// <param name="opts" type="Object">Options to define the numberTextBox.</param>
-                /// <returns type="Csw.literals.numberTextBox">A Csw.literals.numberTextBox</returns>
-                return internal.makeControlForChaining(opts, 'numberTextBox');
-            };
-
             external.ol = function (opts) {
                 /// <summary> Creates a Csw.ol on this element</summary>
                 /// <param name="opts" type="Object">Options to define the ol.</param>
@@ -163,20 +156,6 @@
                 /// <param name="opts" type="Object">Options to define the span.</param>
                 /// <returns type="Csw.literals.span">A Csw.literals.span</returns> 
                 return internal.makeControlForChaining(opts, 'span');
-            };
-
-            external.tabDiv = function (opts) {
-                /// <summary> Creates a Csw.tabDiv on this element</summary>
-                /// <param name="opts" type="Object">Options to define the div.</param>
-                /// <returns type="Csw.literals.tabDiv">A Csw.literals.tabDiv</returns> 
-                return internal.makeControlForChaining(opts, 'tabDiv');
-            };
-
-            external.table = function (opts) {
-                /// <summary> Creates a Csw.table on this element</summary>
-                /// <param name="opts" type="Object">Options to define the table.</param>
-                /// <returns type="Csw.literals.table">A Csw.literals.table</returns> 
-                return internal.makeControlForChaining(opts, 'table');
             };
 
             external.textArea = function (opts) {

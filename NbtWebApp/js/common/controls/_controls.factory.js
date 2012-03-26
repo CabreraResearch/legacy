@@ -10,7 +10,6 @@
                 /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
                 /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
                 'use strict';
-                //#region internal
 
                 var internal = {};
                 if (Csw.isNullOrEmpty(cswParent)) {
@@ -21,10 +20,6 @@
                     opts = opts || {};
                     return opts;
                 };
-
-                //#endregion internal
-
-                //#region Csw DOM classes
 
                 cswParent.checkBoxArray = function (opts) {
                     /// <summary> Creates a Csw.checkBoxArray on this element</summary>
@@ -50,14 +45,6 @@
                     return Csw.controls.dateTimePicker(cswParent, opts);
                 };
 
-                cswParent.grid = function (opts) {
-                    /// <summary> Creates a Csw.grid on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the grid.</param>
-                    /// <returns type="Csw.controls.grid">A Csw.controls.grid</returns>
-                    opts = internal.controlPreProcessing(opts, 'grid');
-                    return Csw.controls.grid(cswParent, opts);
-                };
-
                 cswParent.imageButton = function (opts) {
                     /// <summary> Creates a Csw.imageButton on this element</summary>
                     /// <param name="opts" type="Object">Options to define the imageButton.</param>
@@ -66,12 +53,12 @@
                     return Csw.controls.imageButton(cswParent, opts);
                 };
 
-                cswParent.layoutTable = function (opts) {
-                    /// <summary> Creates a Csw.layoutTable on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the table.</param>
-                    /// <returns type="Csw.controls.layoutTable">A Csw.controls.layoutTable</returns> 
-                    opts = internal.controlPreProcessing(opts, 'layoutTable');
-                    return Csw.controls.layoutTable(cswParent, opts);
+                cswParent.moreDiv = function (opts) {
+                    /// <summary> Creates a Csw.multiSelect on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the moreDiv.</param>
+                    /// <returns type="Csw.controls.moreDiv">A Csw.controls.moreDiv</returns>
+                    opts = internal.controlPreProcessing(opts, 'moreDiv');
+                    return Csw.controls.moreDiv(cswParent, opts);
                 };
 
                 cswParent.multiSelect = function (opts) {
@@ -84,18 +71,18 @@
 
                 cswParent.nodeTypeSelect = function (opts) {
                     /// <summary> Creates a Csw.numberTextBox on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the numberTextBox.</param>
+                    /// <param name="opts" type="Object">Options to define the nodeTypeSelect.</param>
                     /// <returns type="Csw.controls.nodeTypeSelect">A Csw.controls.nodeTypeSelect</returns>
                     opts = internal.controlPreProcessing(opts, 'nodeTypeSelect');
                     return Csw.controls.nodeTypeSelect(cswParent, opts);
                 };
 
-                cswParent.thinGrid = function (opts) {
-                    /// <summary> Creates a Csw.thinGrid on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the thinGrid.</param>
-                    /// <returns type="Csw.controls.thinGrid">A Csw.controls.thinGrid</returns>
-                    opts = internal.controlPreProcessing(opts, 'thinGrid');
-                    return Csw.controls.thinGrid(cswParent, opts);
+                cswParent.numberTextBox = function (opts) {
+                    /// <summary> Creates a Csw.numberTextBox on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the numberTextBox.</param>
+                    /// <returns type="Csw.controls.numberTextBox">A Csw.controls.numberTextBox</returns>
+                    opts = internal.controlPreProcessing(opts, 'numberTextBox');
+                    return Csw.controls.numberTextBox(cswParent, opts);
                 };
 
                 cswParent.timeInterval = function (opts) {
@@ -104,6 +91,14 @@
                     /// <returns type="Csw.controls.timeInterval">A Csw.controls.timeInterval</returns>
                     opts = internal.controlPreProcessing(opts, 'timeInterval');
                     return Csw.controls.timeInterval(cswParent, opts);
+                };
+
+                cswParent.tabDiv = function (opts) {
+                    /// <summary> Creates a Csw.tabDiv on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the div.</param>
+                    /// <returns type="Csw.controls.tabDiv">A Csw.literals.tabDiv</returns> 
+                    opts = internal.controlPreProcessing(opts, 'tabDiv');
+                    return Csw.controls.tabDiv(cswParent, opts);
                 };
 
                 cswParent.triStateCheckBox = function (opts) {
@@ -121,8 +116,6 @@
                     opts = internal.controlPreProcessing(opts, 'viewSelect');
                     return Csw.controls.viewSelect(cswParent, opts);
                 };
-
-                //#endregion Csw DOM classes
 
                 return cswParent;
             });
