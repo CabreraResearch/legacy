@@ -76,11 +76,11 @@
                 }
 
                 internal.imageButton = cswParent.div(internal);
-                external = Csw.dom(external, internal.imageButton.$);
+                external = Csw.dom(external, internal.imageButton);
                 
                 //$.extend(external, Csw.controls.div(internal));
                 external.addClass('divbutton');
-            external.propNonDom('title', internal.AlternateText);
+                external.propNonDom('title', internal.AlternateText);
                 external.css('display', 'inline-block');
 
                 internal.setButton(internal.ButtonType);

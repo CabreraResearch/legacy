@@ -159,12 +159,11 @@
                                     var ret = false;
                                     var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                     var selectTabid = selectTabContentDiv.getId();
-                                    if(Csw.tryExec(o.onBeforeTabSelect, selectedtabid))
-                                    {
+                                    if (Csw.tryExec(o.onBeforeTabSelect, selectedtabid)) {
                                         if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
                                             getProps(selectTabContentDiv, selectTabid);
                                             Csw.tryExec(o.onTabSelect, selectTabid);
-                                            ret=true;
+                                            ret = true;
                                         }
                                     }
                                     return ret;
@@ -231,11 +230,11 @@
                         ID: o.ID + '_formtbl',
                         width: '100%'
                     });
-                    var formTblCell11 = formTable.cell(1, 1);
-                    var formTblCell12 = formTable.cell(1, 2);
+                    //var formTblCell11 = formTable.cell(1, 1);
+                    //var formTblCell12 = formTable.cell(1, 2);
 
                     var saveBtn = {};
-                    var layoutTable = formTblCell11.layoutTable({
+                    var layoutTable = formTable.cell(1, 1).layoutTable({
                         ID: o.ID + '_props',
                         OddCellRightAlign: true,
                         ReadOnly: (o.EditMode === Csw.enums.editMode.PrintReport || o.ReadOnly),
@@ -299,7 +298,7 @@
                     }
 
                     if (o.EditMode !== Csw.enums.editMode.PrintReport) {
-                        saveBtn = formTblCell11.button({ ID: 'SaveTab',
+                        saveBtn = formTable.cell(2, 1).button({ ID: 'SaveTab',
                             enabledText: 'Save Changes',
                             disabledText: 'Saving...',
                             onClick: function () { save(form, layoutTable, data, saveBtn, tabContentDiv, tabid); }
@@ -350,7 +349,7 @@
                         };
 
                         /* Show the 'fake' config button to open the dialog */
-                        formTblCell12.imageButton({
+                        formTable.cell(1, 2).imageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                             AlternateText: 'Configure',
                             ID: o.ID + 'configbtn',
@@ -366,8 +365,7 @@
                     if (!o.Config && !atLeastOne.Saveable && o.EditMode === Csw.enums.editMode.Add) {
                         save(form, layoutTable, data, saveBtn, tabContentDiv, tabid);
                     }
-                    else 
-                    {
+                    else {
                         Csw.tryExec(o.onInitFinish, atLeastOne.Property);
                         Csw.tryExec(onSuccess);
                     }
@@ -519,12 +517,12 @@
                     propData: propData,
                     onChange: function () { },
                     onReload: function () { getProps(tabContentDiv, tabid); },
-                    doSave: function(saveopts) { 
-                        var s = { 
-                            onSuccess: null 
+                    doSave: function (saveopts) {
+                        var s = {
+                            onSuccess: null
                         };
-                        if(saveopts) $.extend(s, saveopts);
-                        save(form, layoutTable, propsData, saveBtn, tabContentDiv, tabid, s.onSuccess); 
+                        if (saveopts) $.extend(s, saveopts);
+                        save(form, layoutTable, propsData, saveBtn, tabContentDiv, tabid, s.onSuccess);
                     },
                     cswnbtnodekey: Csw.tryParseObjByIdx(o.nodekeys, 0),
                     EditMode: o.EditMode,
@@ -703,8 +701,8 @@
                         if (doSave) {
 
                             // reload tab
-                            if(o.ReloadTabOnSave) {
-                                getProps(tabContentDiv, tabid, function() {
+                            if (o.ReloadTabOnSave) {
+                                getProps(tabContentDiv, tabid, function () {
                                     Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
                                     Csw.tryExec(onSuccess);
                                 });
