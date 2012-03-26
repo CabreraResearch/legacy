@@ -86,18 +86,8 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="css\ChemSW.css" />
-    <Content Include="css\ChemSW.min.css" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.table.layout.css" />
-    <Content Include="css\_dev.ChemSW.css" />
-    <Content Include="css\_dev.csw.combobox.css" />
-    <Content Include="css\_dev.csw.errormessage.css" />
-    <Content Include="css\_dev.csw.fieldtypes.css" />
-    <Content Include="css\_dev.csw.menu.css" />
-    <Content Include="css\_dev.csw.search.css" />
-    <Content Include="css\_dev.csw.table.layout.css" />
-    <Content Include="css\_dev.csw.vieweditor.css" />
-    <Content Include="css\_dev.csw.wizard.css" />
     <Content Include="CswCommon.min.js" />
     <Content Include="CswNbt.min.js" />
     <Content Include="js\common\components\_components.factory.js" />
