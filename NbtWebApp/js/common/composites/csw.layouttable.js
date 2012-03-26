@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.components.layoutTable = Csw.components.layoutTable ||
-        Csw.components.register('layoutTable', function(cswParent, options) {
+    Csw.composites.layoutTable = Csw.composites.layoutTable ||
+        Csw.composites.register('layoutTable', function(cswParent, options) {
             'use strict';
             var internal = {
                 $parent: '',

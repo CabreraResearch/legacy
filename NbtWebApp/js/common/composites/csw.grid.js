@@ -3,12 +3,12 @@
 
 (function () {
 
-    Csw.components.grid = Csw.components.grid ||
-        Csw.components.register('grid', function (cswParent, options) {
+    Csw.composites.grid = Csw.composites.grid ||
+        Csw.composites.register('grid', function (cswParent, options) {
             ///<summary>Generates a grid</summary>
             ///<param name="cswParent" type="Csw.literals">Parent element to attach grid to.</param>
             ///<param name="options" type="Object">Object defining paramaters for jqGrid construction.</param>
-            ///<returns type="Csw.components.grid">Object representing a CswGrid</returns>
+            ///<returns type="Csw.composites.grid">Object representing a CswGrid</returns>
             'use strict';
             var internal = {
                 $parent: '',

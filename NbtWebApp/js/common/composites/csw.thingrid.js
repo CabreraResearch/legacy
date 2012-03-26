@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.components.thinGrid = Csw.components.thinGrid ||
-        Csw.components.register('thinGrid', function (cswParent, options) {
+    Csw.composites.thinGrid = Csw.composites.thinGrid ||
+        Csw.composites.register('thinGrid', function (cswParent, options) {
             /// <summary>
             /// Create a thin grid (simple HTML table with a 'More..' link) and return a Csw.thinGrid object
             ///     &#10;1 - table(options)

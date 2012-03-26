@@ -4,8 +4,8 @@
 (function () {
 
 
-    Csw.components.universalSearch = Csw.components.universalSearch ||
-        Csw.components.register('universalSearch', function (cswParent, params) {
+    Csw.composites.universalSearch = Csw.composites.universalSearch ||
+        Csw.composites.register('universalSearch', function (cswParent, params) {
             'use strict';
             var internal = {
                 ID: 'newsearch',
