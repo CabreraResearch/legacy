@@ -115,7 +115,6 @@ namespace ChemSW.Nbt
                         PriorParentNodeId = ThisParentNodeId;
                         NewNodeKeys = new Collection<CswNbtNodeKey>(); 
                         Collection<CswNbtNodeKey> ThisNewNodeKeys = new Collection<CswNbtNodeKey>();
-                        bool AddChild = true;
                         ParentNodeKeys = new Collection<CswNbtNodeKey>();
 
                         string GroupName = string.Empty;
