@@ -80,6 +80,9 @@ window.initMain = window.initMain || function (undefined) {
                     onAfterNewSearch: function (searchid) {
                         Csw.clientState.setCurrentSearch(searchid);
                     },
+                    onAddView: function (viewid, viewmode) {
+                        refreshViewSelect();
+                    },
                     onLoadView: function (viewid, viewmode) {
                         handleItemSelect({
                             'type': 'view',
@@ -976,12 +979,16 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     'onFinish': function (viewid, viewmode) {
                         clear({ 'all': true });
+                        refreshViewSelect();
                         if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
                             Csw.clientState.setCurrent(Csw.clientState.getLast());
                             refreshSelected();
                         } else {
                             handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
                         }
+                    },
+                    onAddView: function(deletedviewid) {
+                        //refreshViewSelect();
                     },
                     onDeleteView: function(deletedviewid) {
                         var current = Csw.clientState.getCurrent();

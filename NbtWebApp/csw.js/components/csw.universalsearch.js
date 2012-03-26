@@ -14,6 +14,7 @@
             onAfterSearch: null,
             onAfterNewSearch: null,
             onLoadView: null,
+            onAddView: null,
             //searchresults_maxheight: '600',
             searchbox_width: '200px',
 
@@ -270,6 +271,7 @@
                             //                            Filters: JSON.stringify(internal.filters)
                         },
                         success: function (data) {
+                            Csw.tryExec(internal.onAddView, newviewid, viewmode);
                             Csw.tryExec(internal.onLoadView, newviewid, viewmode);
                         }
                     }); // ajax  

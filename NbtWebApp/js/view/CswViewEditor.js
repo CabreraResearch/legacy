@@ -23,6 +23,7 @@
             onCancel: null, // function ($wizard) {},
             onFinish: null, // function (viewid, viewmode) {},
             onDeleteView: null, // function (deletedviewid) {},
+            onAddView: null,
             startingStep: 1
         };
         if (options) $.extend(o, options);
@@ -169,8 +170,9 @@
             'disableOnClick': false,
             'onClick': function () {
                 $.CswDialog('AddViewDialog', {
-                    onAddView: function (newviewid) {
+                    onAddView: function (newviewid, viewmode) {
                         _getViewsGrid(newviewid);
+                        Csw.tryExec(o.onAddView, newviewid, viewmode);
                     },
                     onClose: function () {
                         newViewBtn.enable();
