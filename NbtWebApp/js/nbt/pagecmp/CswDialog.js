@@ -100,7 +100,7 @@
                 row += 1;
             }
 
-            var visSelect = Csw.controls.makeViewVisibilitySelect(table, 3, 'Available to:');
+            var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to:');
             var saveBtn = div.button({
                 /* 
                 Wacky merge result. Delete when confirmed what happened. 
