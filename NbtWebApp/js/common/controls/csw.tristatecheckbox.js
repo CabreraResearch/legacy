@@ -1,5 +1,5 @@
+/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
-/// <reference path="~/Scripts/jquery-1.7.1-vsdoc.js" />
 
 (function () {
 
