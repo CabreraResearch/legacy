@@ -614,10 +614,7 @@
     </EmbeddedResource>
     <None Include="Resources\nbt_finalize_ora-bat" />
     <None Include="Resources\nbt_finalize_ora-sql" />
-    <None Include="Resources\nbt_finalize_ora.bat" />
     <None Include="Resources\nbt_initialize_ora-bat" />
-    <None Include="Resources\nbt_initialize_ora-sql" />
-    <None Include="Resources\nbt_initialize_ora.bat" />
     <None Include="Resources\nbt_initialize_ora_sql" />
     <None Include="Resources\SqlRptViewDict.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
@@ -626,12 +623,6 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\nbt_finalize_ora.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\nbt_initialize_ora.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
