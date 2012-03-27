@@ -88,36 +88,6 @@
                 return dataStore;
             };
 
-            external.getdata = function (opts) {
-                var _internal = {
-                    ID: ''
-                };
-
-                if (opts) {
-                    $.extend(_internal, opts);
-                }
-
-                var data = Csw.clientDb.getItem(internal.storeDataId);
-                return data;
-            };
-
-            external.toggleCheckAll = function () {
-                var checkBoxes = external.find('.CBACheckBox_' + internal.ID);
-                if (checkBoxes.isValid) {
-                    if (internal.checkAllLink.text() === 'Uncheck All') {
-                        //if (internal.checked <= 0) {
-                        //    internal.checked = internal.data.length;
-                        checkBoxes.propDom('checked', 'checked'); // Yes, this checks.  But click below unchecks again.
-                        internal.checkAllLink.text('Check All');
-                    } else {
-                        //    internal.checked = 0;
-                        checkBoxes.$.removeAttr('checked'); // Yes, this unchecks.  But click below checks again.
-                        internal.checkAllLink.text('Uncheck All');
-                    }
-                    checkBoxes.trigger('click'); // this toggles again
-                }
-            }; // ToggleCheckAll()
-
             (function () {
                 if (options) {
                     $.extend(internal, options);
@@ -317,6 +287,36 @@
                 } // if-else(internal.ReadOnly)
 
             } ());
+
+            external.getdata = function (opts) {
+                var _internal = {
+                    ID: ''
+                };
+
+                if (opts) {
+                    $.extend(_internal, opts);
+                }
+
+                var data = Csw.clientDb.getItem(internal.storeDataId);
+                return data;
+            };
+
+            external.toggleCheckAll = function () {
+                var checkBoxes = external.find('.CBACheckBox_' + internal.ID);
+                if (checkBoxes.isValid) {
+                    if (internal.checkAllLink.text() === 'Uncheck All') {
+                        //if (internal.checked <= 0) {
+                        //    internal.checked = internal.data.length;
+                        checkBoxes.propDom('checked', 'checked'); // Yes, this checks.  But click below unchecks again.
+                        internal.checkAllLink.text('Check All');
+                    } else {
+                        //    internal.checked = 0;
+                        checkBoxes.$.removeAttr('checked'); // Yes, this unchecks.  But click below checks again.
+                        internal.checkAllLink.text('Uncheck All');
+                    }
+                    checkBoxes.trigger('click'); // this toggles again
+                }
+            }; // ToggleCheckAll()
 
             return external;
         });
