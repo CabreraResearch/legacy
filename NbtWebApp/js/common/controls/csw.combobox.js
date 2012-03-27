@@ -2,10 +2,10 @@
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
-    'use strict';
-
+    
     Csw.controls.comboBox = Csw.controls.comboBox ||
         Csw.controls.register('comboBox', function (cswParent, options) {
+            'use strict';
             var internal = {
                 $parent: '',
                 ID: '',

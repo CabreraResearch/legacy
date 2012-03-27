@@ -67,7 +67,7 @@ window.initMain = window.initMain || function (undefined) {
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 $('#header_dashboard').CswDashboard();
 
-                universalsearch = Csw.controls.universalSearch({}, {
+                universalsearch = Csw.composites.universalSearch({}, {
                     $searchbox_parent: $('#SearchDiv'),
                     $searchresults_parent: $('#RightDiv'),
                     $searchfilters_parent: $('#LeftDiv'),
