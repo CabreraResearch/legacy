@@ -85,20 +85,20 @@
                     return Csw.controls.numberTextBox(cswParent, opts);
                 };
 
-                cswParent.timeInterval = function (opts) {
-                    /// <summary> Creates a Csw.timeInterval on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the timeInterval.</param>
-                    /// <returns type="Csw.controls.timeInterval">A Csw.controls.timeInterval</returns>
-                    opts = internal.controlPreProcessing(opts, 'timeInterval');
-                    return Csw.controls.timeInterval(cswParent, opts);
-                };
-
                 cswParent.tabDiv = function (opts) {
                     /// <summary> Creates a Csw.tabDiv on this element</summary>
                     /// <param name="opts" type="Object">Options to define the div.</param>
                     /// <returns type="Csw.controls.tabDiv">A Csw.literals.tabDiv</returns> 
                     opts = internal.controlPreProcessing(opts, 'tabDiv');
                     return Csw.controls.tabDiv(cswParent, opts);
+                };
+
+                cswParent.timeInterval = function (opts) {
+                    /// <summary> Creates a Csw.timeInterval on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the timeInterval.</param>
+                    /// <returns type="Csw.controls.timeInterval">A Csw.controls.timeInterval</returns>
+                    opts = internal.controlPreProcessing(opts, 'timeInterval');
+                    return Csw.controls.timeInterval(cswParent, opts);
                 };
 
                 cswParent.triStateCheckBox = function (opts) {
