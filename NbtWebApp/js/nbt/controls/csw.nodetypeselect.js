@@ -3,9 +3,9 @@
 
 (function () {
 
-    Csw.literals.nodeTypeSelect = Csw.literals.nodeTypeSelect ||
-        Csw.literals.register('nodeTypeSelect', function (options) {
-
+    Csw.controls.nodeTypeSelect = Csw.controls.nodeTypeSelect ||
+        Csw.controls.register('nodeTypeSelect', function (cswParent, options) {
+            'use strict';
             var internal = {
                 $parent: '',
                 ID: '',
@@ -18,9 +18,7 @@
                 addNewOption: false,
                 excludeNodeTypeIds: ''
             };
-            if (options) {
-                $.extend(internal, options);
-            }
+            var external = { };
 
             (function () {
 
@@ -29,7 +27,10 @@
                 }
                 internal.ID += '_sel';
 
-                $.extend(external, Csw.literals.select(internal));
+                internal.select = cswParent.select(internal);
+                external = Csw.dom({}, internal.select);
+
+                //$.extend(external, Csw.literals.select(internal));
 
                 external.bind('change', function () {
                     Csw.tryExec(internal.onChange, external);
@@ -69,7 +70,7 @@
                     }
                 });
             } ());
-            
+
             return external;
         });
 } ());
