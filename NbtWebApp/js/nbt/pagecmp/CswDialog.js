@@ -25,7 +25,7 @@
             div.button({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
-                onClick: function() {
+                onClick: function () {
                     div.$.dialog('close');
                     Csw.tryExec(o.onYes);
                 }
@@ -72,7 +72,7 @@
             var row = 1;
             table.cell(row, 1).text('Name:');
             var nameTextCell = table.cell(row, 2);
-            var nameTextBox = nameTextCell.input({ 
+            var nameTextBox = nameTextCell.input({
                 ID: o.ID + '_nametb',
                 type: Csw.enums.inputTypes.text,
                 cssclass: 'textinput'
@@ -81,7 +81,7 @@
 
             table.cell(row, 1).text('Category:');
             var categoryTextCell = table.cell(row, 2);
-            var categoryTextBox = categoryTextCell.input({ 
+            var categoryTextBox = categoryTextCell.input({
                 ID: o.ID + '_cattb',
                 type: Csw.enums.inputTypes.text,
                 value: o.category,
@@ -101,6 +101,7 @@
             }
 
             var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to:');
+            row += 1;
             var saveBtn = div.button({
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
