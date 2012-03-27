@@ -23,7 +23,7 @@
         },
         save: function (o) {
             var propDiv = o.propDiv.find('.CswTristateCheckBox');
-            var attributes = { checked: Csw.string(imagebtn.propNonDom('value')) };
+            var attributes = { checked: Csw.string(propDiv.propNonDom('value')) };
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
