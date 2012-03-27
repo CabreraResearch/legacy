@@ -37,13 +37,13 @@
                     return Csw.composites.layoutTable(cswParent, opts);
                 };
                 
-                cswParent.table = function (opts) {
-                    /// <summary> Creates a Csw.table on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the table.</param>
-                    /// <returns type="Csw.composites.table">A Csw.composites.table</returns> 
-                    opts = internal.controlPreProcessing(opts, 'table');
-                    return Csw.composites.table(cswParent, opts);
-                };
+//                cswParent.table = function (opts) {
+//                    /// <summary> Creates a Csw.table on this element</summary>
+//                    /// <param name="opts" type="Object">Options to define the table.</param>
+//                    /// <returns type="Csw.composites.table">A Csw.composites.table</returns> 
+//                    opts = internal.controlPreProcessing(opts, 'table');
+//                    return Csw.composites.table(cswParent, opts);
+//                };
 
 
                 cswParent.thinGrid = function (opts) {

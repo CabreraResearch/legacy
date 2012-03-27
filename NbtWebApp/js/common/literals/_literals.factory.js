@@ -45,6 +45,7 @@
                                                     controlName === 'table' ||
                                                         controlName === 'tabDiv') {
                     Csw.controls.factory(componentParent, controlName);
+                    Csw.composites.factory(componentParent, controlName);
                 }
                 return componentParent;
             };
@@ -130,6 +131,14 @@
                 return internal.makeControlForChaining(opts, 'link');
             };
 
+            /* Case 25125: This literal is deprecated. Use composite instead. */
+            external.moreDiv = function (opts) {
+                /// <summary> (Deprecated) Creates a Csw.moreDiv on this element</summary>
+                /// <param name="opts" type="Object">Options to define the moreDiv.</param>
+                /// <returns type="Csw.literals.moreDiv">A Csw.literals.moreDiv</returns> 
+                return internal.makeControlForChaining(opts, 'moreDiv');
+            };
+
             external.ol = function (opts) {
                 /// <summary> Creates a Csw.ol on this element</summary>
                 /// <param name="opts" type="Object">Options to define the ol.</param>
@@ -156,6 +165,14 @@
                 /// <param name="opts" type="Object">Options to define the span.</param>
                 /// <returns type="Csw.literals.span">A Csw.literals.span</returns> 
                 return internal.makeControlForChaining(opts, 'span');
+            };
+
+            /* Case 25125: This literal is deprecated. Use composite instead. */
+            external.table = function (opts) {
+                /// <summary> (Deprecated) Creates a Csw.table on this element</summary>
+                /// <param name="opts" type="Object">Options to define the table.</param>
+                /// <returns type="Csw.literals.table">A Csw.literals.table</returns>
+                return internal.makeControlForChaining(opts, 'table');
             };
 
             external.textArea = function (opts) {
