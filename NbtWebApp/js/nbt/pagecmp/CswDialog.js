@@ -102,10 +102,6 @@
 
             var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to:');
             var saveBtn = div.button({
-                /* 
-                Wacky merge result. Delete when confirmed what happened. 
-                row += 1;
-                */
                 ID: o.ID + '_submit',
                 enabledText: 'Create View',
                 disabledText: 'Creating View',
