@@ -391,7 +391,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
             IdTargetNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             IdTargetNtp.IsRequired = true;
-            if( IdTargetNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() &&
+            if( false == IdTargetNtp.IsFK ||
+                IdTargetNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() ||
                 IdTargetNtp.FKValue != InspectionTargetOc.ObjectClassId )
             {
                 IdTargetNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
