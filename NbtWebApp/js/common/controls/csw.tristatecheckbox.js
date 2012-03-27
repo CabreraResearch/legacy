@@ -5,7 +5,7 @@
 
     Csw.controls.triStateCheckBox = Csw.controls.triStateCheckBox ||
         Csw.controls.register('triStateCheckBox', function (cswParent, options) {
-
+            'use strict';
             var internal = {
                 ID: '',
                 prefix: '',
@@ -22,17 +22,17 @@
 
             var external = {};
 
-        external.val = function (value) {
-            var ret;
-            if (Csw.isNullOrEmpty(value)) {
-                ret = internal.value;
-            } else {
-                ret = external;
-                external.propNonDom('value', value);
-                external.propDom('title', value);
-                internal.value = value;
-            }
-            return ret;
+            external.val = function (value) {
+                var ret;
+                if (Csw.isNullOrEmpty(value)) {
+                    ret = internal.value;
+                } else {
+                    ret = external;
+                    external.propNonDom('value', value);
+                    external.propDom('title', value);
+                    internal.value = value;
+                }
+                return ret;
             };
 
             external.getButtonType = function () {
@@ -68,10 +68,10 @@
                     internal.value = 'false';
                 }
                 external.val(internal.value);
-            external.propNonDom('value', internal.value);
-            external.propDom('title', internal.value);
+                external.propNonDom('value', internal.value);
+                external.propDom('title', internal.value);
                 internal.onChange();
-                return external.click(internal.btnValue);
+                return internal.checkBox.click(internal.btnValue);
             }; // onClick()
 
 
@@ -99,12 +99,12 @@
                 } else {
                     internal.ID = Csw.makeId(internal.ID, 'tst');
                     internal.ButtonType = external.getButtonType();
-                    internal.checkBox = cswParent.div();
-                    internal.checkBox.imageButton(internal);
+                    internal.checkBox = cswParent.imageButton(internal);
+                    //internal.checkBox.imageButton(internal);
                 }
                 external = Csw.dom({}, internal.checkBox);
                 //$.extend(external, Csw.literals.div(internal));
-                external.bind('click', function () {
+                internal.checkBox.bind('click', function () {
                     if (!Csw.bool(internal.ReadOnly)) {
                         Csw.tryExec(internal.changeState);
                     }

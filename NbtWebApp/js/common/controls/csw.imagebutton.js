@@ -61,22 +61,14 @@
                 }
                 return false;
             };
-
-            external.click = function (newButtonType, func) {
-                if (Csw.isFunction(func)) {
-                    return external.bind('click', func);
-                } else {
-                    return internal.setButton(newButtonType);
-                }
-            };
-
+            
             (function () {
                 if (options) {
                     $.extend(internal, options);
                 }
 
                 internal.imageButton = cswParent.div(internal);
-                external = Csw.dom(external, internal.imageButton);
+                external = Csw.dom({}, internal.imageButton);
                 
                 //$.extend(external, Csw.literals.div(internal));
                 external.addClass('divbutton');
@@ -88,6 +80,14 @@
                     return internal.setButton();
                 });
             } ());
+
+            external.click = function (newButtonType, func) {
+                if (Csw.isFunction(func)) {
+                    return external.bind('click', func);
+                } else {
+                    return internal.setButton(newButtonType);
+                }
+            };
 
             return external;
         });
