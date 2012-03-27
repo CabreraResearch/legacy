@@ -11,7 +11,6 @@
                 viewurl: '/NbtWebApp/wsNBT.asmx/getViewSelect',
                 recenturl: '/NbtWebApp/wsNBT.asmx/getViewSelectRecent',
                 ID: 'viewselect',
-                $parent: null,
                 onSelect: null,
                 onSuccess: null,
                 //ClickDelay: 300,
@@ -117,11 +116,13 @@
             // Constructor
             (function () {
                 internal.div = cswParent.div();
+                external = Csw.dom({}, internal.div);
+                
                 internal.vsdiv = Csw.literals.div({ ID: Csw.makeId(internal.ID, '', 'vsdiv') });
                 internal.comboBox = internal.div.comboBox({
                     ID: internal.ID + '_combo',
                     topContent: 'Select a View',
-                    selectContent: internal.vsdiv.$,
+                    selectContent: internal.vsdiv.$, /* NO! Refactor to use Csw.literals and more wholesome methods. */
                     width: '266px'
                 });
 
@@ -143,6 +144,8 @@
                     value: internal.div.propNonDom('selectedValue')
                 };
             };
+
+            external.val = external.value;
 
             external.refreshRecent = function () {
                 Csw.ajax.post({

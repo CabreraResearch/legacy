@@ -18,7 +18,6 @@
             /// <returns type="table">A table object</returns>
             'use strict';
             var internal = {
-                $parent: '',
                 ID: '',
                 TableCssClass: '',
                 CellCssClass: '',
@@ -46,15 +45,9 @@
                     $.extend(internal, options);
                 }
 
-                if (Csw.isJQuery(cswParent.$parent)) {
-                    internal.table = Csw.literals.factory(cswParent.$parent);
-                    //Csw.literals.factory($table, external);
-                } else {
-                    internal.table = cswParent.attach(table);
-                    //internal.$parent.append(external.$);
-                }
-                
+                internal.table = cswParent.attach(table);
                 external.$ = internal.table.$;
+ 
                 internal.table.bind('CswTable_onCreateCell', function (e, cell, row, column) {
                     Csw.tryExec(internal.onCreateCell(e, cell, row, column));
                     e.stopPropagation(); // prevents events from triggering in nested tables

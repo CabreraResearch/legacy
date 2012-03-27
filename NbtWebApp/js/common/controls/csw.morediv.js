@@ -8,7 +8,6 @@
             'use strict';
             var internal = {
                 ID: '',
-                $parent: '',
                 moretext: 'more',
                 lesstext: 'less'
             };
@@ -16,17 +15,20 @@
                 $.extend(internal, options);
             }
 
-            var external = {};
+            var external;
 
-            external.shownDiv = cswParent.div({
+            internal.moreDiv = cswParent.div();
+            external = Csw.dom({}, internal.moreDiv);
+
+            external.shownDiv = internal.moreDiv.div({
                 ID: Csw.makeId(internal.ID, '', '_shwn')
             });
 
-            external.hiddenDiv = cswParent.div({
+            external.hiddenDiv = internal.moreDiv.div({
                 ID: Csw.makeId(internal.ID, '', '_hddn')
             }).hide();
 
-            external.moreLink = cswParent.link({
+            external.moreLink = internal.moreDiv.link({
                 ID: Csw.makeId(internal.ID, '', '_more'),
                 text: internal.moretext,
                 cssclass: 'morelink',

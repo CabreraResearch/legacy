@@ -8,7 +8,6 @@
         Csw.controls.register('numberTextBox', function (cswParent, options) {
             'use strict';
             var internal = {
-                $parent: '',
                 ID: '',
                 value: '',
                 cssclass: '',

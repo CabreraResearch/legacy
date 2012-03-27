@@ -7,7 +7,6 @@
         Csw.composites.register('layoutTable', function(cswParent, options) {
             'use strict';
             var internal = {
-                $parent: '',
                 ID: '',
                 cellSet: { rows: 1, columns: 1 },
                 firstRow: null,

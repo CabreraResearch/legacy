@@ -20,7 +20,6 @@
             /// </param>
             /// <returns type="tabdiv">A tabdiv object</returns>
             var internal = {
-                $parent: '',
                 ID: '',
                 name: '',
                 cssclass: '',

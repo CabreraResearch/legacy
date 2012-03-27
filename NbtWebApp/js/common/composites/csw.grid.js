@@ -11,7 +11,6 @@
             ///<returns type="Csw.composites.grid">Object representing a CswGrid</returns>
             'use strict';
             var internal = {
-                $parent: '',
                 canEdit: false,
                 canDelete: false,
                 pagermode: 'default',

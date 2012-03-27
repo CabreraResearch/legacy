@@ -16,7 +16,7 @@
                 onAfterSearch: null,
                 onAfterNewSearch: null,
                 onLoadView: null,
-            onAddView: null,
+                onAddView: null,
                 //searchresults_maxheight: '600',
                 searchbox_width: '200px',
 
@@ -39,6 +39,7 @@
             // Constructor
             // Adds a searchbox to the form
             (function () {
+                /* NO! Refactor to use cswParent and more wholesome methods. */ 
                 var cswtable = Csw.literals.table({
                     ID: Csw.makeId(internal.ID, '', '_div'),
                     $parent: internal.$searchbox_parent
@@ -86,9 +87,9 @@
                 // Search results
 
                 function _renderResultsTable(columns) {
-
+                    /* NO! Refactor to use Csw.literals and more wholesome methods. */
                     internal.$searchresults_parent.css({ paddingTop: '15px' });
-
+                    /* NO! Refactor to use Csw.literals and more wholesome methods. */
                     var resultstable = Csw.literals.table({
                         ID: Csw.makeId(internal.ID, '', 'resultstbl'),
                         $parent: internal.$searchresults_parent,

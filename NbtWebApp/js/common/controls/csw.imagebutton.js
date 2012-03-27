@@ -12,7 +12,6 @@
             ///<returns type="Csw.controls.imageButton">Object representing an imageButton</returns>
             'use strict';
             var internal = {
-                $parent: '',
                 ButtonType: Csw.enums.imageButton_ButtonType.None,
                 Active: false,
                 AlternateText: '',

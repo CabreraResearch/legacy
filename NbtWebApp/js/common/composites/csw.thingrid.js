@@ -23,7 +23,6 @@
             /// <returns type="thinGrid">A thinGrid object</returns>
             'use strict';
             var internal = {
-                $parent: '',
                 ID: '',
                 cssclass: '',
                 rows: [],

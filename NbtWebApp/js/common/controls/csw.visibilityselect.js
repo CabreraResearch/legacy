@@ -28,7 +28,7 @@
                     table.cell(rownum, 1).text(label);
                     var parent = table.cell(rownum, 2);
                     var id = table.id;
-
+                    /* NO! Refactor to use Csw.literals and more wholesome methods. */
                     external.$visibilityselect = $('<select id="' + id + '_vissel" />')
                         .appendTo(parent.$);
                     external.$visibilityselect.append('<option value="User">User:</option>');

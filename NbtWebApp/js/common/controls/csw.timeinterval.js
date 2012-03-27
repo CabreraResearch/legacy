@@ -3,13 +3,11 @@
 
 (function () {
 
-
-    Csw.literals.timeInterval = Csw.literals.timeInterval ||
-        Csw.literals.register('timeInterval', function (cswParent, options) {
+    Csw.controls.timeInterval = Csw.controls.timeInterval ||
+        Csw.controls.register('timeInterval', function (cswParent, options) {
             'use strict';
             var internal = {
                 ID: '',
-                $parent: '',
                 values: {},
                 Multi: false,
                 ReadOnly: false,
@@ -545,6 +543,65 @@
                 });
             };
 
+            (function () {
+                internal.interval = cswParent.div({
+                    ID: internal.ID
+                });
+                external = Csw.dom({}, internal.interval);
+                //Csw.literals.factory(internal.$parent, external);
+                external.rateInterval = {};
+                
+                var propVals = internal.propVals,
+                    textValue,
+                    table;
+
+                if (internal.Multi) {
+                    //external.rateInterval = Csw.enums.multiEditDefaultValue;
+                    textValue = Csw.enums.multiEditDefaultValue;
+                    internal.rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
+                } else {
+                    $.extend(true, external.rateInterval, propVals.Interval.rateintervalvalue);
+                    textValue = Csw.string(propVals.Interval.text).trim();
+                    internal.rateType = external.rateInterval.ratetype;
+                }
+                internal.dateFormat = Csw.string(external.rateInterval.dateformat, 'M/d/yyyy');
+                external.interval = internal.interval.div({
+                    ID: Csw.makeId(internal.ID, 'cswTimeInterval')
+                });
+
+                //Page Components
+                external.interval.span({
+                    ID: Csw.makeId(internal.ID, 'textvalue'),
+                    text: textValue
+                });
+                table = internal.interval.table({
+                    ID: Csw.makeId(internal.ID, 'tbl'),
+                    cellspacing: 5
+                });
+
+                internal.makeRateType(table);
+
+                internal.pickerCell = table.cell(1, 3).propDom('rowspan', '3');
+
+                // Set selected values
+                switch (internal.rateType) {
+                    case Csw.enums.rateIntervalTypes.WeeklyByDay:
+                        internal.divWeekly = internal.weeklyWeekPicker(internal.onChange, false);
+                        break;
+                    case Csw.enums.rateIntervalTypes.MonthlyByDate:
+                        internal.divMonthly = internal.makeMonthlyPicker();
+                        break;
+                    case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
+                        internal.divMonthly = internal.makeMonthlyPicker();
+                        break;
+                    case Csw.enums.rateIntervalTypes.YearlyByDate:
+                        internal.divYearly = internal.makeYearlyDatePicker();
+                        break;
+                } // switch(RateType)
+
+
+            } ());
+
             external.validateRateInterval = function () {
                 var retVal = false, errorString = '';
                 switch (internal.rateType) {
@@ -612,64 +669,6 @@
                 }
                 return retVal;
             };
-
-            (function () {
-                internal.interval = cswParent.div({
-                    ID: internal.ID
-                });
-                external = Csw.dom({}, internal.interval);
-                //Csw.literals.factory(internal.$parent, external);
-
-                var propVals = internal.propVals,
-                    textValue,
-                    table;
-
-                if (internal.Multi) {
-                    //external.rateInterval = Csw.enums.multiEditDefaultValue;
-                    textValue = Csw.enums.multiEditDefaultValue;
-                    internal.rateType = Csw.enums.rateIntervalTypes.WeeklyByDay;
-                } else {
-                    $.extend(true, external.rateInterval, propVals.Interval.rateintervalvalue);
-                    textValue = Csw.string(propVals.Interval.text).trim();
-                    internal.rateType = external.rateInterval.ratetype;
-                }
-                internal.dateFormat = Csw.string(external.rateInterval.dateformat, 'M/d/yyyy');
-                external.interval = internal.interval.div({
-                    ID: Csw.makeId(internal.ID, 'cswTimeInterval')
-                });
-
-                //Page Components
-                external.interval.span({
-                    ID: Csw.makeId(internal.ID, 'textvalue'),
-                    text: textValue
-                });
-                table = internal.interval.table({
-                    ID: Csw.makeId(internal.ID, 'tbl'),
-                    cellspacing: 5
-                });
-
-                internal.makeRateType(table);
-
-                internal.pickerCell = table.cell(1, 3).propDom('rowspan', '3');
-
-                // Set selected values
-                switch (internal.rateType) {
-                    case Csw.enums.rateIntervalTypes.WeeklyByDay:
-                        internal.divWeekly = internal.weeklyWeekPicker(internal.onChange, false);
-                        break;
-                    case Csw.enums.rateIntervalTypes.MonthlyByDate:
-                        internal.divMonthly = internal.makeMonthlyPicker();
-                        break;
-                    case Csw.enums.rateIntervalTypes.MonthlyByWeekAndDay:
-                        internal.divMonthly = internal.makeMonthlyPicker();
-                        break;
-                    case Csw.enums.rateIntervalTypes.YearlyByDate:
-                        internal.divYearly = internal.makeYearlyDatePicker();
-                        break;
-                } // switch(RateType)
-
-
-            } ());
 
             external.rateType = function () {
                 return internal.rateType;

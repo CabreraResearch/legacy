@@ -90,10 +90,12 @@
     <Content Include="css\csw.table.layout.css" />
     <Content Include="js\common\composites\_composites.factory.js" />
     <Content Include="js\common\controls\_controls.factory.js" />
+    <Content Include="js\common\literals\csw.morediv.js" />
+    <Content Include="js\common\literals\csw.table.js" />
     <Content Include="js\CswCommon-vsdoc.js" />
     <Content Include="js\CswNbt-vsdoc.js" />
     <Content Include="js\nbt\actions\csw.futurescheduling.js" />
-    <Content Include="js\nbt\composites\csw.nodetypeselect.js" />
+    <Content Include="js\nbt\controls\csw.nodetypeselect.js" />
     <Content Include="js\common\composites\csw.tree.js" />
     <Content Include="js\common\controls\csw.viewselect.js" />
     <Content Include="js\common\literals\csw.button.js" />
