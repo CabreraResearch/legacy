@@ -262,7 +262,7 @@
 
 
         external.expandAll = function () {
-            if(external.treeDiv) {
+            if (external.treeDiv && internal.rootnode) {
                 external.treeDiv.$.jstree('open_all', internal.rootnode.$);
             }
 
