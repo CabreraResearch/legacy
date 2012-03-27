@@ -93,7 +93,7 @@
     <Content Include="js\CswCommon-vsdoc.js" />
     <Content Include="js\CswNbt-vsdoc.js" />
     <Content Include="js\nbt\actions\csw.futurescheduling.js" />
-    <Content Include="js\nbt\components\csw.nodetypeselect.js" />
+    <Content Include="js\nbt\composites\csw.nodetypeselect.js" />
     <Content Include="js\common\composites\csw.tree.js" />
     <Content Include="js\common\controls\csw.viewselect.js" />
     <Content Include="js\common\literals\csw.button.js" />
@@ -109,8 +109,8 @@
     <Content Include="js\nbt\actions\CswQuotas.js" />
     <Content Include="js\nbt\actions\CswScheduledRulesGrid.js" />
     <Content Include="js\nbt\actions\CswSessions.js" />
-    <Content Include="js\nbt\controls\CswInput.js" />
-    <Content Include="js\nbt\controls\CswList.js" />
+    <Content Include="js\nbt\literals\CswInput.js" />
+    <Content Include="js\nbt\literals\CswList.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeBarcode.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeButton.js" />
