@@ -331,7 +331,7 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'Category Name&nbsp' });
 
-                        categoryNameInput = categoryNameInput || 
+                        categoryNameInput = categoryNameInput ||
                             inspectionTable.cell(6, 2)
                                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                             .input({
@@ -388,6 +388,7 @@
                 } else {
                     $previewGrid.empty();
                 }
+                var preview = Csw.literals.factory($previewGrid);
 
                 gridOptions = {
                     $parent: $previewGrid,
@@ -423,7 +424,7 @@
                 } else {
                     $.extend(gridOptions.gridOpts, jqGridOpts);
                 }
-                inspectionGrid = Csw.literals.grid(gridOptions);
+                inspectionGrid = preview.grid(gridOptions);
             },
 
         //File upload button for Step 3
@@ -555,8 +556,8 @@
                 if (Csw.string(targetName).trim().toLowerCase() != Csw.string(selectedInspectionDesign.name).trim().toLowerCase()) {
                     ret = true;
                 } else {
-                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 
-                        'An Inspection Design and an Inspection Target cannot have the same name.', 
+                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(Csw.enums.errorType.warning.name,
+                        'An Inspection Design and an Inspection Target cannot have the same name.',
                         'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + selectedInspectionDesign.name));
                 }
                 return ret;
@@ -609,11 +610,12 @@
                                     delete col.edittype;
                                 }
                             });
-                            confirmGridOptions.$parent = $confirmationList.CswList('addItem', {
+
+                            var $confirmGridParent = $confirmationList.CswList('addItem', {
                                 value: 'Creating a new Inspection Design <b>' + selectedInspectionDesign.name + '</b>.'
                             });
-
-                            Csw.literals.grid(confirmGridOptions);
+                            var gridParent = Csw.literals.factory($confirmGridParent);
+                            gridParent.grid(confirmGridOptions);
                         } else {
                             $confirmationList.CswList('addItem', {
                                 value: 'Assigning Inspection Design <b>' + selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + selectedInspectionTarget + '</b>.'

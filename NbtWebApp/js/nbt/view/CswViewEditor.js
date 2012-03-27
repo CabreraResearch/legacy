@@ -482,8 +482,9 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        g.$parent = $viewgrid;
-                        cswViewGrid = Csw.literals.grid(g);
+                        //g.$parent = $viewgrid;
+                        var parent = Csw.literals.factory($viewgrid);
+                        cswViewGrid = parent.grid(g);
                         cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
 
                         cswViewGrid.hideColumn(o.ColumnFullViewId);

@@ -87,8 +87,9 @@
                                 }
                             };
                         }
-                        g.$parent = $auditGrid;
-                        var grid = Csw.literals.grid(g);
+                        //g.$parent = $auditGrid;
+                        var parent = Csw.literals.factory($auditGrid);
+                        var grid = parent.grid(g);
                         grid.gridPager.css({ width: '100%', height: '20px' });
 
                         // set selected row by date

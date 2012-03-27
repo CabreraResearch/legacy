@@ -149,8 +149,9 @@
                         data: { AccessId: selectedCustomerId },
                         success: function (data) {
                             $.extend(gridOptions.gridOpts, data);
-                            gridOptions.$parnet = $rulesGrid;
-                            scheduledRulesGrid = Csw.literals.grid(gridOptions);
+                            //gridOptions.$parnet = $rulesGrid;
+                            var parent = Csw.literals.factory($rulesGrid);
+                            scheduledRulesGrid = parent.grid(gridOptions);
                         }
                     });
                 };
