@@ -157,7 +157,8 @@
 //            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
             var viewSelect = Csw.controls.viewSelect({
                 $parent: viewSelectTable.cell(1, 1).$,
-                ID: 'welcome_viewsel'
+                ID: 'welcome_viewsel',
+                maxHeight: '275px'
             });
             viewSelect.$.hide();
 
@@ -166,7 +167,8 @@
                 $parent: viewSelectTable.cell(2, 1).$,
                 ID: 'welcome_searchviewsel',
                 issearchable: true,
-                usesession: false
+                usesession: false,
+                maxHeight: '275px'
             });
             searchViewSelect.$.hide();
 

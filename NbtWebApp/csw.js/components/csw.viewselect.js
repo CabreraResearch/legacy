@@ -18,6 +18,7 @@
                 issearchable: false,
                 //usesession: true,
                 hidethreshold: 5,
+                maxHeight: '',
 
                 div: null
             };
@@ -115,7 +116,10 @@
             // Constructor
             (function () {
                 internal.div = Csw.controls.div({ $parent: internal.$parent });
-                internal.vsdiv = Csw.controls.div({ ID: Csw.controls.dom.makeId(internal.ID, '', 'vsdiv') }).css({ maxHeight: '275px' });
+                internal.vsdiv = Csw.controls.div({ ID: Csw.controls.dom.makeId(internal.ID, '', 'vsdiv') })
+                if (false == Csw.isNullOrEmpty(internal.maxHeight)) {
+                    internal.vsdiv.css({ maxHeight: internal.maxHeight });
+                }
                 internal.comboBox = internal.div.comboBox({
                     ID: internal.ID + '_combo',
                     topContent: 'Select a View',
