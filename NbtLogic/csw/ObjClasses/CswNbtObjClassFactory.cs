@@ -172,6 +172,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassVendor( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass:
+                    ReturnVal = new CswNbtObjClassMaterialComponent( CswNbtResources, Node );
+                    break;
 
                 default:
                     //ReturnVal = new CswNbtObjClassDefault( CswNbtResources, _CswNbtNode );
