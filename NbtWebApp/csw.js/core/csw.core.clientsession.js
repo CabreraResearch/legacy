@@ -47,7 +47,7 @@
                 },
                 success: function () {
                     Csw.cookie.set(Csw.cookie.cookieNames.Username, internal.UserName);
-                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, internal.logoutPath);
+                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, internal.logoutpath);
                     Csw.tryExec(internal.onAuthenticate, internal.UserName);
                 },
                 onloginfail: function (txt) {
