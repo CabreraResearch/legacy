@@ -405,7 +405,6 @@ namespace ChemSW.Nbt.Schema
                     foreach( string CurrentTargetColumnName in _CswNbtResources.DataDictionary.getColumnNames( TableName ) )
                     {
                         if( ( _CswAuditMetaData.AuditLevelColName != CurrentTargetColumnName.ToLower() ) &&
-                            ( _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ).ToLower() != CurrentTargetColumnName.ToLower() ) &&
                             ( false == AuditColumnNames.Contains( CurrentTargetColumnName ) ) )
                         {
                             MissingAuditTableColumnNames.Add( CurrentTargetColumnName );
