@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24974.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25634.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25627.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25515.cs" />
