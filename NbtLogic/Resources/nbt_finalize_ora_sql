@@ -186,15 +186,16 @@ begin
       pcount:=pcount+1;
       pname:=alnumOnly(rec.propname,'');
       
-      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' || trim
-
-(to_char(pcount,'00')) || '_',alnumonly(upper(pname),''),'');  
+      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' 
+      --|| trim(to_char(pcount,'00')) 
+      || '_',alnumonly(upper(pname),''),'');  
       --dbms_output.put_line(aline);
       var_sql:=var_sql || aline;
       
       if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
-        aline:=',(select field1_fk from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' || trim
-        (to_char(pcount,'00')) || '_',alnumonly(upper(pname),''),'_FK');        
+        aline:=',(select field1_fk from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' 
+        --|| trim(to_char(pcount,'00')) 
+        || '_',alnumonly(upper(pname),''),'_FK');        
         var_sql:=var_sql || aline;
       end if;
       

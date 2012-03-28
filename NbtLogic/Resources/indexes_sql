@@ -32,4 +32,4 @@ analyze table node_views estimate statistics sample 20 percent;
 analyze table nodetype_layout estimate statistics sample 20 percent;
 commit;
 
-
+quit

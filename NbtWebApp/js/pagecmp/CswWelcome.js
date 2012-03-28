@@ -155,16 +155,22 @@
             });
 
 //            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
-            var viewSelect = viewSelectTable.cell(1, 1).viewSelect({
-                ID: 'welcome_viewsel'
-            }).hide();
+            var viewSelect = Csw.controls.viewSelect({
+                $parent: viewSelectTable.cell(1, 1).$,
+                ID: 'welcome_viewsel',
+                maxHeight: '275px'
+            });
+            viewSelect.$.hide();
 
 //            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
-            var $searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
+            var searchViewSelect = Csw.controls.viewSelect({
+                $parent: viewSelectTable.cell(2, 1).$,
                 ID: 'welcome_searchviewsel',
                 issearchable: true,
-                usesession: false
-            }).hide();
+                usesession: false,
+                maxHeight: '275px'
+            });
+            searchViewSelect.$.hide();
 
             var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
             var $ntselect = table.cell(3, 2)
@@ -190,13 +196,13 @@
                     var viewtype = '';
                     var viewvalue = '';
                     var selectedView;
-                    if (!$viewSelect.is(':hidden')) {
-                        selectedView = $viewSelect.CswViewSelect('value');
+                    if (false == viewSelect.$.is(':hidden')) {
+                        selectedView = viewSelect.value();
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
-                    else if (!$searchViewSelect.is(':hidden')) {
-                        selectedView = $searchViewSelect.CswViewSelect('value');
+                    else if (false == searchViewSelect.$.is(':hidden')) {
+                        selectedView = searchViewSelect.value();
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
@@ -223,8 +229,8 @@
                 _onTypeChange({
                     typeSelect: typeSelect,
                     viewSelectLabel: viewSelectLabel,
-                    $viewselect: $viewSelect,
-                    $searchviewselect: $searchViewSelect,
+                    viewselect: viewSelect,
+                    searchviewselect: searchViewSelect,
                     ntSelectLabel: ntSelectLabel,
                     $ntselect: $ntselect,
                     buttonSelLabel: buttonselLabel,
@@ -417,8 +423,8 @@
         var o = {
             typeSelect: '',
             viewSelectLabel: '',
-            $viewselect: '',
-            $searchviewselect: '',
+            viewselect: '',
+            searchviewselect: '',
             ntSelectLabel: '',
             $ntselect: '',
             buttonSelLabel: '',
@@ -432,8 +438,8 @@
         switch (o.typeSelect.val()) {
             case 'Add':
                 o.viewSelectLabel.hide();
-                o.$viewselect.hide();
-                o.$searchviewselect.hide();
+                o.viewselect.$.hide();
+                o.searchviewselect.$.hide();
                 o.ntSelectLabel.show();
                 o.$ntselect.show();
                 o.buttonSelLabel.show();
@@ -442,8 +448,8 @@
                 break;
             case 'Link':
                 o.viewSelectLabel.show();
-                o.$viewselect.show();
-                o.$searchviewselect.hide();
+                o.viewselect.$.show();
+                o.searchviewselect.$.hide();
                 o.ntSelectLabel.hide();
                 o.$ntselect.hide();
                 o.buttonSelLabel.show();
@@ -452,8 +458,8 @@
                 break;
             case 'Search':
                 o.viewSelectLabel.show();
-                o.$viewselect.hide();
-                o.$searchviewselect.show();
+                o.viewselect.$.hide();
+                o.searchviewselect.$.show();
                 o.ntSelectLabel.hide();
                 o.$ntselect.hide();
                 o.buttonSelLabel.show();
@@ -462,8 +468,8 @@
                 break;
             case 'Text':
                 o.viewSelectLabel.hide();
-                o.$viewselect.hide();
-                o.$searchviewselect.hide();
+                o.viewselect.$.hide();
+                o.searchviewselect.$.hide();
                 o.ntSelectLabel.hide();
                 o.$ntselect.hide();
                 o.buttonSelLabel.hide();

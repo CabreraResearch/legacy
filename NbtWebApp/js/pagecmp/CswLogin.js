@@ -108,7 +108,7 @@
             ForMobile: false,
             onAuthenticate: null, // function (UserName) {} 
             onFail: null, // function (errormessage) {} 
-            LogoutPath: ''
+            logoutpath: ''
         };
         if (options) $.extend(o, options);
         Csw.clientSession.login(o);

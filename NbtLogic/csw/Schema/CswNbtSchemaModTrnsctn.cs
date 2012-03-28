@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -12,6 +16,7 @@ using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
@@ -1379,6 +1384,50 @@ namespace ChemSW.Nbt.Schema
         public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswNbtResources.getUniqueConstraintName( TableName, ColumName ) ); }
 
 
+        /// <summary>
+        /// Run an external SQL script stored in Resources
+        /// </summary>
+        /// <param name="SqlFileName">Name of file</param>
+        /// <param name="ResourceSqlFile">File contents from Resources</param>
+        /// <param name="Block">Whether to wait for the script to finish</param>
+        public void runExternalSqlScript( string SqlFileName, byte[] ResourceSqlFile )
+        {
+            //Retrieve files from resource
+            string FileLocations = Application.StartupPath;
+            string BatchFilePath = FileLocations + "\\runscript.bat";
+            string SqlFilePath = FileLocations + "\\" + SqlFileName;
+            File.WriteAllBytes( BatchFilePath, ChemSW.Nbt.Properties.Resources.runscript_bat );
+            File.WriteAllBytes( SqlFilePath, ResourceSqlFile );
+
+            while( ( false == File.Exists( BatchFilePath ) ) && ( false == File.Exists( SqlFilePath ) ) )
+            {
+                Thread.Sleep( 100 );
+            }
+
+            CswDbCfgInfo.makeConfigurationCurrent( Accessid );
+            string serverName = CswDbCfgInfo.CurrentServerName;
+            string userName = CswDbCfgInfo.CurrentUserName;
+            string passWord = CswDbCfgInfo.CurrentPlainPwd;
+
+            // Start external process
+            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.FileName = BatchFilePath;
+            p.StartInfo.Arguments = " " + serverName + " " + userName + " " + passWord + " " + FileLocations + " " + SqlFileName;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = false;
+
+            Process SpawnedProcess = System.Diagnostics.Process.Start( p.StartInfo );
+            if( false == SpawnedProcess.WaitForExit( UpdtShellWaitMsec ) )
+            {
+                CswLogger.reportAppState( "Timed out will running " + SqlFileName + " prior to updates." );
+            }
+
+            File.Delete( BatchFilePath );
+            File.Delete( SqlFilePath );
+
+        } // runExternalSqlScript
 
     }//class CswNbtSchemaModTrnsctn
 

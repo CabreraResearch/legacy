@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -19,6 +20,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClassProp InspectionDesignTargetOCP = InspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
 
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InspectionDesignTargetOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, CswConvert.ToDbVal(true) );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InspectionDesignTargetOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.ObjectClassId.ToString() );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InspectionDesignTargetOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue, InspectionTargetOC.ObjectClassId.ToString() );
 
