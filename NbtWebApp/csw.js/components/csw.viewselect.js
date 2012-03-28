@@ -115,13 +115,15 @@
             // Constructor
             (function () {
                 internal.div = Csw.controls.div({ $parent: internal.$parent });
-                internal.vsdiv = Csw.controls.div({ ID: Csw.controls.dom.makeId(internal.ID, '', 'vsdiv') });
+                internal.vsdiv = Csw.controls.div({ ID: Csw.controls.dom.makeId(internal.ID, '', 'vsdiv') }).css({ maxHeight: '275px' });
                 internal.comboBox = internal.div.comboBox({
                     ID: internal.ID + '_combo',
                     topContent: 'Select a View',
                     selectContent: internal.vsdiv.$,
                     width: '266px'
                 });
+
+                $.extend(external, internal.comboBox);
 
                 Csw.ajax.post({
                     url: internal.viewurl,
