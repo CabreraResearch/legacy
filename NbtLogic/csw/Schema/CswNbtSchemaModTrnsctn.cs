@@ -371,7 +371,7 @@ namespace ChemSW.Nbt.Schema
 
         public void makeTableAuditable( string TableName )
         {
-            if( ( false == _CswAuditMetaData.isAuditTable( TableName ) ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
+            if( _CswAuditMetaData.shouldBeAudited( TableName ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
             {
                 addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
             }
@@ -379,9 +379,11 @@ namespace ChemSW.Nbt.Schema
             //datetime stamp column
 
 
-            if( false == _CswAuditMetaData.isAuditTable( TableName ) )
+            if( _CswAuditMetaData.shouldBeAudited( TableName ) )
             {
                 string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
+
+                //create the audit table if necessary
                 if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
                 {
                     copyTable( TableName, AuditTableName, false );
@@ -390,9 +392,41 @@ namespace ChemSW.Nbt.Schema
                     addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
                     addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", false, true );
 
-                }//if the audit table does not yet exist
+                }
+                else //if it does exist, maybe the target table has new columns to be added to the audit table?
+                {
 
-            }//if it isn't already an audit table
+                    string[] AuditTableColumnNameArray = new string[_CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).Count];
+                    _CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).CopyTo( AuditTableColumnNameArray, 0 );
+                    List<string> AuditColumnNames = new List<string>( AuditTableColumnNameArray );
+
+                    List<string> MissingAuditTableColumnNames = new List<string>();
+
+                    foreach( string CurrentTargetColumnName in _CswNbtResources.DataDictionary.getColumnNames( TableName ) )
+                    {
+                        if( ( _CswAuditMetaData.AuditLevelColName != CurrentTargetColumnName.ToLower() ) &&
+                            ( _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ).ToLower() != CurrentTargetColumnName.ToLower() ) &&
+                            ( false == AuditColumnNames.Contains( CurrentTargetColumnName ) ) )
+                        {
+                            MissingAuditTableColumnNames.Add( CurrentTargetColumnName );
+                        }
+                    }
+
+
+                    if( MissingAuditTableColumnNames.Count > 0 )
+                    {
+                        foreach( string CurrentMissingColumnName in MissingAuditTableColumnNames )
+                        {
+                            _CswNbtResources.DataDictionary.setCurrentColumn( TableName, CurrentMissingColumnName );
+                            addColumn( CurrentMissingColumnName, _CswNbtResources.DataDictionary.ColumnType, _CswNbtResources.DataDictionary.DataTypeSize, _CswNbtResources.DataDictionary.DblPrecision, _CswNbtResources.DataDictionary.DefaultValue, _CswNbtResources.DataDictionary.Description, _CswNbtResources.DataDictionary.ForeignKeyColumn, _CswNbtResources.DataDictionary.ForeignKeyTable, false, _CswNbtResources.DataDictionary.IsView, _CswNbtResources.DataDictionary.LogicalDelete, _CswNbtResources.DataDictionary.LowerRangeValue, _CswNbtResources.DataDictionary.LowerRangeValueInclusive, _CswNbtResources.DataDictionary.PortableDataType, _CswNbtResources.DataDictionary.ReadOnly, _CswNbtResources.DataDictionary.Required, AuditTableName, _CswNbtResources.DataDictionary.UniqueType, _CswNbtResources.DataDictionary.UpperRangeValueInclusive, _CswNbtResources.DataDictionary.UpperRangeValue );
+                        }
+
+                    }//if the audit table is missing columns
+
+                }//if-else the audit table did not yet exist
+
+
+            }//if-else it's an audited table
 
         }//makeTableAuditable() 
 
