@@ -64,11 +64,11 @@
             };
 
             internal.toggleButton = function (button, isEnabled, doClick) {
-                var $btn;
+                var btn;
                 if (Csw.bool(isEnabled)) {
-                    $btn = internal.wizard[button].enable();
+                    btn = internal.wizard[button].enable();
                     if (Csw.bool(doClick)) {
-                        $btn.click();
+                        btn.click();
                     }
                 } else {
                     internal.wizard[button].disable();
@@ -99,7 +99,7 @@
                             internal.addNewTarget = rowOneTable.cell(2, 2);
                             internal.addNewTarget.css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .input({
-                                    ID: internal.ID + '_newTargetName',
+                                    suffix: 'newTargetName',
                                     value: '',
                                     maxlength: 40
                                 })
@@ -178,15 +178,13 @@
 
                     if (false === stepOneComplete) {
                         internal.divStep1 = internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step1.step);
-                        internal.divStep1.append('<br />');
+                        internal.divStep1.br();
 
-                        inspectionTable = Csw.literals.table({
-                            $parent: internal.divStep1,
+                        inspectionTable = internal.divStep1.table({
                             ID: internal.makeStepId('setInspectionTargetTable')
                         });
 
-                        rowOneTable = Csw.literals.table({
-                            $parent: inspectionTable.cell(1, 1).$,
+                        rowOneTable = inspectionTable.cell(1, 1).table({
                             FirstCellRightAlign: true
                         });
 
@@ -251,12 +249,11 @@
                     if (false === stepTwoComplete) {
                         internal.divStep2 = internal.divStep2 || internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step2.step);
                         internal.divStep2.empty();
-                        internal.divStep2.append('<br />');
+                        internal.divStep2.br();
 
                         Csw.subscribe(internal.createInspectionEvents.targetNameChanged, targetChangedHandle);
 
-                        inspectionTable = Csw.literals.table({
-                            $parent: internal.divStep2,
+                        inspectionTable = internal.divStep2.table({
                             ID: internal.makeStepId('inspectionTable'),
                             FirstCellRightAlign: true
                         });
@@ -274,12 +271,12 @@
                                 addNewOption: true
                             })
                             .change(function () {
-                                var $selected = internal.inspectionDesignSelect.find(':selected');
-                                internal.selectedInspectionDesign.id = $selected.val();
+                                var selected = internal.inspectionDesignSelect.find(':selected');
+                                internal.selectedInspectionDesign.id = selected.val();
                                 if (internal.isNewInspectionDesign() && internal.newDesignName && false === Csw.isNullOrEmpty(internal.newDesignName.val())) {
                                     internal.selectedInspectionDesign.name = internal.newDesignName.val();
                                 } else {
-                                    internal.selectedInspectionDesign.name = $selected.text();
+                                    internal.selectedInspectionDesign.name = selected.text();
                                 }
                                 tempCategoryName = internal.selectedInspectionTarget;
                                 internal.categoryNameInput.val(tempCategoryName);
@@ -371,25 +368,23 @@
 
                 //This is ugly. Abstract the step div from this function.
                 internal.divStep4.empty();
-                var previewGridId = internal.makeStepId('previewGrid_outer', 4),
-                    $previewGrid = internal.divStep4.find('#' + previewGridId);
-                var $helpText = $('<p>Review the <b>' + internal.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.</p>')
-                    .appendTo(internal.divStep4);
+                var previewGridId = internal.makeStepId('previewGrid_outer', 4);
+
+                var helpText = internal.divStep4.p({ text: '<p>Review the <b>' + internal.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
 
                 var designChangeHandle = function () {
-                    $helpText.html('<p>Review the <b>' + internal.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.</p>');
+                    helpText.remove();
+                    helpText = internal.divStep4.p({ text: '<p>Review the <b>' + internal.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
                 };
                 Csw.subscribe(internal.createInspectionEvents.designNameChanged, designChangeHandle);
 
-                if (Csw.isNullOrEmpty($previewGrid) || $previewGrid.length === 0) {
-                    $previewGrid = $('<div id="' + previewGridId + '"></div>').appendTo(internal.divStep4);
+                if (Csw.isNullOrEmpty(internal.inspectionGridDiv) || internal.inspectionGridDiv.length() === 0) {
+                    internal.inspectionGridDiv = internal.divStep4.div({ ID: previewGridId });
                 } else {
-                    $previewGrid.empty();
+                    internal.inspectionGridDiv.empty();
                 }
-                var preview = Csw.literals.factory($previewGrid);
 
                 internal.gridOptions = {
-                    $parent: $previewGrid,
                     ID: internal.makeStepId('previewGrid'),
                     pagermode: 'default',
                     gridOpts: {
@@ -422,11 +417,11 @@
                 } else {
                     $.extend(internal.gridOptions.gridOpts, jqGridOpts);
                 }
-                internal.inspectionGrid = preview.grid(internal.gridOptions);
+                internal.inspectionGrid = internal.inspectionGridDiv.grid(internal.gridOptions);
             };
 
             //File upload button for Step 3
-            internal.makeInspectionDesignUpload = function ($control) {
+            internal.makeInspectionDesignUpload = function (control) {
                 var f = {
                     url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
                     onSuccess: function () {
@@ -436,7 +431,7 @@
                     uploadName: 'design'
                 };
 
-                $control.fileupload({
+                control.$.fileupload({
                     datatype: 'json',
                     dataType: 'json',
                     url: f.url,
@@ -468,45 +463,41 @@
                     };
 
                     var doStepThree = function () {
-                        var $step3List, $templateLink, $uploadP, $helpText;
-                        var designChangeHandle = function () {
-                            $helpText.empty();
-                            $helpText.html($('<span>Create a new <b>' + internal.selectedInspectionDesign.name + '</b> Design using the Excel template.</span>')
-                                    .append($('<p/>')
-                                    .append($templateLink)));
+                        var step3List, templateLink, uploadP, helpText;
+                        var designChangeHandle = function (help) {
+
+                            helpText.empty();
+                            helpText.span({ text: 'Create a new <b>' + internal.selectedInspectionDesign.name + '</b> Design using the Excel template.' })
+                                    .p()
+                                    .link({ href: '\"/NbtWebApp/etc/InspectionDesign.xls\"', text: 'Download Template' })
+                                    .$.button();
                         };
                         if (false === stepThreeComplete) {
                             internal.divStep3 = internal.divStep3 || internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step3.step);
                             internal.divStep3.empty();
 
                             //Ordered instructions
-                            $step3List = internal.divStep3.CswList('init', {
-                                ID: internal.makeStepId('uploadTemplateList'),
-                                ordered: true
+                            step3List = internal.divStep3.ol({
+                                ID: internal.makeStepId('uploadTemplateList')
                             });
 
                             //1. Download template
-                            $templateLink = $('<a href=\"/NbtWebApp/etc/InspectionDesign.xls\">Download Template</a>').button();
-                            $helpText = $('<span>Create a new <b>' + internal.selectedInspectionDesign.name + '</b> Design using the Excel template.</span>')
-                                .append($('<p/>')
-                                        .append($templateLink));
+
+                            helpText = step3List.li();
+                            designChangeHandle();
                             Csw.subscribe(internal.createInspectionEvents.designNameChanged, designChangeHandle);
-                            $step3List.CswList('addItem', {
-                                value: $helpText
-                            });
 
                             //2. Edit the template.
-                            $step3List.CswList('addItem', {
-                                value: $('<span>Edit the Inspection template.</span>')
-                            });
+                            step3List.li().span({ text: 'Edit the Inspection template.' });
 
                             //3. Upload the design
-                            $uploadP = $('<input id="' + internal.makeStepId('fileUploadBtn') + '" type="file" name="fileupload" />');
-                            internal.makeInspectionDesignUpload($uploadP);
+                            uploadP = step3List.li()
+                                                .span({ text: 'Upload the completed Inspection Design.' })
+                                                .p()
+                                                .input({ ID: internal.makeStepId('fileUploadBtn'), type: Csw.enums.inputTypes.file, name: 'fileupload', value: 'Upload' });
+                            internal.makeInspectionDesignUpload(uploadP);
 
-                            $step3List.CswList('addItem', {
-                                value: $('<span>Upload the completed Inspection Design.<p/></span>').append($uploadP)
-                            });
+
 
                             //$fileUploadBtn.hide();
                             //stepThreeComplete = true;
@@ -565,7 +556,7 @@
             internal.makeStepFive = (function () {
 
                 return function () {
-                    var $confirmationList, $confirmTypesList, $confirmViewsList, confirmGridOptions = {};
+                    var confirmationList, confirmTypesList, confirmViewsList, confirmGridOptions = {};
 
                     if (internal.checkTargetIsClientSideUnique()) {
 
@@ -577,10 +568,9 @@
                         internal.divStep5 = internal.divStep5 || internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step5.step);
                         internal.divStep5.empty();
 
-                        internal.divStep5.append('<p>You are about to create the following items. Click Finish to create the design.</p>');
-                        $confirmationList = internal.divStep5.CswList('init', {
-                            ID: internal.makeStepId('confirmationList'),
-                            ordered: true
+                        internal.divStep5.p({ text: 'You are about to create the following items. Click Finish to create the design.' });
+                        confirmationList = internal.divStep5.ol({
+                            ID: internal.makeStepId('confirmationList')
                         });
 
                         if (internal.isNewInspectionDesign()) {
@@ -609,56 +599,55 @@
                                 }
                             });
 
-                            var $confirmGridParent = $confirmationList.CswList('addItem', {
-                                value: 'Creating a new Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b>.'
+                            var confirmGridParent = confirmationList.li({
+                                text: 'Creating a new Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b>.'
                             });
-                            var gridParent = Csw.literals.factory($confirmGridParent);
-                            gridParent.grid(confirmGridOptions);
+                            confirmGridParent.div().grid(confirmGridOptions);
                         } else {
-                            $confirmationList.CswList('addItem', {
-                                value: 'Assigning Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + internal.selectedInspectionTarget + '</b>.'
-                            });
+                            confirmationList.li({
+                                text: 'Assigning Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + internal.selectedInspectionTarget + '</b>.'
+                            }).br();
                         }
 
                         if (internal.isNewInspectionDesign() || internal.isNewTarget()) {
-                            $confirmTypesList = $confirmationList.CswList('addItem', {
-                                value: 'New Types'
+                            confirmTypesList = confirmationList.li({
+                                text: 'New Types'
                             })
-                                .CswList('init', {
+                                .ul({
                                     ID: internal.makeStepId('confirmationTypes')
                                 });
 
                             if (internal.isNewInspectionDesign()) {
-                                $confirmTypesList.CswList('addItem', {
-                                    value: 'New Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b> on Inspection Target <b>' + internal.selectedInspectionTarget + '</b>'
+                                confirmTypesList.li({
+                                    text: 'New Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b> on Inspection Target <b>' + internal.selectedInspectionTarget + '</b>'
                                 });
                             }
 
                             if (internal.isNewTarget) {
-                                $confirmTypesList.CswList('addItem', {
-                                    value: 'New Inspection Target <b>' + internal.selectedInspectionTarget + '</b>'
+                                confirmTypesList.li({
+                                    text: 'New Inspection Target <b>' + internal.selectedInspectionTarget + '</b>'
                                 });
 
-                                $confirmTypesList.CswList('addItem', {
-                                    value: 'New Inspection Target Group <b>' + internal.selectedInspectionTarget + ' Group</b>'
+                                confirmTypesList.li({
+                                    text: 'New Inspection Target Group <b>' + internal.selectedInspectionTarget + ' Group</b>'
                                 });
                             }
                         }
 
-                        $confirmViewsList = $confirmationList.CswList('addItem', {
-                            value: 'New Views'
+                        confirmViewsList = confirmationList.li({
+                            text: 'New Views'
                         })
-                            .CswList('init', {
+                            .ul({
                                 ID: internal.makeStepId('confirmationViews')
                             });
-                        $confirmViewsList.CswList('addItem', {
-                            value: '<b>Scheduling, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
+                        confirmViewsList.li({
+                            text: '<b>Scheduling, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
                         });
-                        $confirmViewsList.CswList('addItem', {
-                            value: '<b>Groups, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
+                        confirmViewsList.li({
+                            text: '<b>Groups, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
                         });
-                        $confirmViewsList.CswList('addItem', {
-                            value: '<b>Inspections, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
+                        confirmViewsList.li({
+                            text: '<b>Inspections, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
                         });
                     } else {
                         internal.toggleButton(internal.buttons.prev, true, true);
@@ -760,9 +749,9 @@
                 });
             };
 
-            (function() {
+            (function () {
 
-                internal.wizard = Csw.layouts.wizard( external, {
+                internal.wizard = Csw.layouts.wizard(external, {
                     ID: Csw.makeId({ ID: internal.ID, suffix: 'wizard' }),
                     Title: 'Create New Inspection',
                     StepCount: Csw.enums.wizardSteps_InspectionDesign.stepcount,
@@ -778,7 +767,7 @@
 
                 internal.makeStepOne();
 
-            }());
+            } ());
 
             return external;
         });
