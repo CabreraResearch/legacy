@@ -472,10 +472,10 @@
             if (false === Csw.isNullOrEmpty(internal.suffix)) {
                 elementId.push(internal.suffix);
             }
-            if (Csw.bool(isUnique, true)) {
-                Csw.setGlobalProp('uniqueIdCount', internal.idCount);
-                elementId.push(internal.idCount);
-            }
+//            if (Csw.bool(isUnique, true)) {
+//                Csw.setGlobalProp('uniqueIdCount', internal.idCount);
+//                elementId.push(internal.idCount);
+//            }
             return elementId.join(internal.Delimiter);
         });
 
