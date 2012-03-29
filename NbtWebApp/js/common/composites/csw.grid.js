@@ -455,8 +455,8 @@
                         break;
                 }
 
-                internal.gridPagerId = internal.gridPagerId || Csw.makeId({ ID: 'cswGridPager', prefix: internal.ID });
-                internal.gridTableId = internal.gridTableId || Csw.makeId({ ID: 'cswGridTable', prefix: internal.ID });
+                internal.gridPagerId = internal.gridPagerId || Csw.makeId( 'cswGridPager', internal.ID );
+                internal.gridTableId = internal.gridTableId || Csw.makeId('cswGridTable', internal.ID );
                 
                 cswParent.empty();
                 internal.gridDiv = cswParent.div({

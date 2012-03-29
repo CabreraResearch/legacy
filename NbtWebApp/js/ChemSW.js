@@ -146,6 +146,7 @@
         makeNameSpace(external, internal);
 
         external.actions = external.actions || external.register('actions', makeNameSpace());
+        external.layouts = external.layouts || external.register('layouts', makeNameSpace());
         external.literals = external.literals || external.register('literals', makeNameSpace());
         external.composites = external.composites || external.register('composites', makeNameSpace());
         external.controls = external.controls || external.register('controls', makeNameSpace());
