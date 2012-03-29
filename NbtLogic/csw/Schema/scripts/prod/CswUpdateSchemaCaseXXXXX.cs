@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Filler
+    /// Schema Update for case XXXXX
     /// </summary>
-    public class CswUpdateSchemaEmpty : CswUpdateSchemaTo
+    public class CswUpdateSchemaCaseXXXXX : CswUpdateSchemaTo
     {
-
         public override void update()
         {
-            // Do nothing
-
+            // This is a placeholder script that does nothing.
         }//Update()
 
-    }//class CswUpdateSchemaEmpty
+    }//class CswUpdateSchemaCaseXXXXX
 
 }//namespace ChemSW.Nbt.Schema
