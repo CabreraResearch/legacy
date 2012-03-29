@@ -7,6 +7,7 @@
         var o = {
             Url: '/NbtWebApp/wsNBT.asmx/getInspectionStatusGrid',
             onEditNode: function () { },
+            onAfterButtonClick: null,
             ID: 'CswInspectionStatus'
         };
         if (options) $.extend(o, options);
@@ -49,7 +50,8 @@
                         editfunc: function (rowid) {
                             var editOpt = {
                                 nodeids: [],
-                                onEditNode: o.onEditNode
+                                onEditNode: o.onEditNode,
+                                onAfterButtonClick: o.onAfterButtonClick
                             };
                             if (false === Csw.isNullOrEmpty(rowid)) {
                                 editOpt.nodeids.push(grid.getValueForColumn('NODEPK', rowid));

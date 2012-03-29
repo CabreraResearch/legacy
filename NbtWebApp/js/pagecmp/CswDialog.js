@@ -377,6 +377,7 @@
                 title: '',
                 onEditNode: null, // function (nodeid, nodekey) { },
                 onEditView: null, // function (viewid) {}
+                onAfterButtonClick: null,
                 date: ''     // viewing audit records
             };
             if (options) $.extend(o, options);
@@ -442,7 +443,8 @@
                     },
                     onPropertyChange: function () {
                         Csw.clientChanges.setChanged();
-                    }
+                    },
+                    onAfterButtonClick: o.onAfterButtonClick
                 });
             } // _setupTabs()
             var title = Csw.string(o.title);
