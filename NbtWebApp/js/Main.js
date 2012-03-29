@@ -928,7 +928,7 @@ window.initMain = window.initMain || function (undefined) {
                 },
                 onAfterButtonClick: function () {
                     setupOocInspections();
-                },
+                }
             });
         }
 
