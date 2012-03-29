@@ -27,6 +27,8 @@
                 opts.root = external.root;
                 if (opts.suffix) {
                     opts.ID = Csw.makeId(external.getId(), opts.suffix);
+                } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(external.getId())) {
+                    opts.ID = Csw.makeId(external.getId(), controlName);
                 }
                 opts.parent = function () {
                     return external;
@@ -38,15 +40,15 @@
                 /* If it's possible/desirable to attach a complex component to a simple control, then extend */
                 if (Csw.isNullOrEmpty(controlName) ||
                     controlName === 'div' ||
-                        controlName === 'span' ||
-                            controlName === 'p' ||
-                                controlName === 'form' ||
-                                    controlName === 'jquery' ||
-                                        controlName === 'div' ||
-                                            controlName === 'ol' ||
-                                                controlName === 'ul' ||
-                                                    controlName === 'table' ||
-                                                        controlName === 'tabDiv') {
+                    controlName === 'span' ||
+                    controlName === 'p' ||
+                    controlName === 'form' ||
+                    controlName === 'jquery' ||
+                    controlName === 'div' ||
+                    controlName === 'ol' ||
+                    controlName === 'ul' ||
+                    controlName === 'table' ||
+                    controlName === 'tabDiv') {
                     Csw.controls.factory(componentParent, controlName);
                     Csw.composites.factory(componentParent, controlName);
                 }
