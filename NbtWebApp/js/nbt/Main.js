@@ -917,7 +917,8 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
-
+        var parent = Csw.literals.factory($('#CenterTopDiv'));
+        
         Csw.ajax.post({
             'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
             'data': { 'ActionName': o.actionname }
@@ -932,7 +933,7 @@ window.initMain = window.initMain || function (undefined) {
                 }
             });
         }
-
+        
         switch (o.actionname) {
             //			case 'Assign_Inspection':                                                      
             //				break;                                                      
@@ -964,7 +965,6 @@ window.initMain = window.initMain || function (undefined) {
                     startingStep: o.ActionOptions.startingStep,
                     menuRefresh: refreshSelected
                 };
-                var parent = Csw.literals.factory($('#CenterTopDiv'));
                 Csw.nbt.createInspectionWizard(parent, designOpt);
 
                 break;
@@ -1016,11 +1016,8 @@ window.initMain = window.initMain || function (undefined) {
 
             case 'Future_Scheduling':
                 clear({ 'all': true });
-                Csw.actions.futureScheduling({
-                    $parent: $('#CenterTopDiv'),
-                    onCancel: function () {
-                        refreshSelected();
-                    },
+                Csw.nbt.futureSchedulingWizard(parent, {
+                    onCancel: refreshSelected,
                     onFinish: function (viewid, viewmode) {
                         handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode });
                     }
@@ -1061,8 +1058,7 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     menuRefresh: refreshSelected
                 };
-                var parent = Csw.literals.factory($('#CenterTopDiv'));
-                //$('#CenterTopDiv').CswScheduledRulesGrid(rulesOpt);
+                
                 Csw.nbt.scheduledRulesWizard(parent, rulesOpt);
                 break;
             //			case 'Load_Mobile_Data':                                                      
