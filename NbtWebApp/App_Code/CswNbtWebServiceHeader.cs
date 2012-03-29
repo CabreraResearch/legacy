@@ -112,6 +112,8 @@ namespace ChemSW.Nbt.WebServices
                 Ret["Admin"]["Statistics"]["href"] = "Statistics.aspx";
                 Ret["Admin"]["Quotas"] = new JObject();
                 Ret["Admin"]["Quotas"]["action"] = "Quotas";
+                Ret["Admin"]["Impersonate"] = new JObject();
+                Ret["Admin"]["Impersonate"]["action"] = "Impersonate";
 
                 if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                 {
