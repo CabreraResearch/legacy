@@ -14,18 +14,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchemaTo01M06 : CswUpdateSchemaTo
     {
-//        //public override CswSchemaVersion SchemaVersion { get { return new CswSchemaVersion( 1, 'M', 06 ); } }
-//        public override string Description { set { ; } get { return "Update to schema version " + SchemaVersion.ToString(); } }
-
         public override void update()
         {
             #region case 24481
-
-            // Also in 01M-01
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "field_types", "searchable" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "field_types", "searchable", "Whether the field type is searchable", false, true );
-            }
 
             CswTableUpdate FTUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01M06_fieldtypes_update", "field_types" );
             DataTable FTTAble = FTUpdate.getTable();

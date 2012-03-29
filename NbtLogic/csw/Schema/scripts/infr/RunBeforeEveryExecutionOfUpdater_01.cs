@@ -4,16 +4,14 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01J-01
+    /// Updates the schema for DDL changes
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
-        public static string Title = "Pre-Script: DML";
+        public static string Title = "Pre-Script: DDL";
 
         public override void update()
         {
-
-
             #region case 24481
 
             // Also in 01M-06
@@ -65,9 +63,45 @@ namespace ChemSW.Nbt.Schema
             }
             #endregion case 25518
 
+            #region case 22962
 
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( "field_types_subfields" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( "field_types_subfields", "ftsubfieldid" );
+                _CswNbtSchemaModTrnsctn.addLongColumn( "field_types_subfields", "fieldtypeid", "FK to field_types", true, true );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "field_types_subfields", "propcolname", "name of storage column in jct_node_props", true, true, 20 );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "field_types_subfields", "reportable", "whether to include auto-generated views", true, true );
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "field_types_subfields", "is_default", "this field gets no subfield suffix in the view", true, true );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "field_types_subfields", "subfieldname", "suffix on this propertyname in the view", true, false, 20 );
+            }
+
+            #endregion case 22962
+
+
+            #region case 24979
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "iscompoundunique" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class_props", "iscompoundunique",
+                                                          "all compound unique columns on an instance are validated for uniqueness", false, false );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetype_props", "iscompoundunique" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetype_props", "iscompoundunique",
+                                                          "all compound unique columns on an instance are validated for uniqueness", false, false );
+            }
+
+            #endregion case 24979
+
+
+
+
+
+            // this should be last
             #region case 25635
+
             _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
+
             #endregion
 
 
