@@ -823,11 +823,58 @@
 
             openDialog($div, 400, 300, null, 'Print');
         }, // PrintLabelDialog
+
+        ImpersonateDialog: function (options) {
+            var o = {
+                onImpersonate: null
+            };
+            if(options) $.extend(o, options);
+
+            var div = Csw.controls.div();
+            
+            Csw.ajax.post({
+                url: '/NbtWebApp/wsNBT.asmx/getUsers',
+                success: function (data) {
+                    if(Csw.bool(data.result))
+                    {
+                        var usersel = div.select({
+                            ID: 'ImpersonateSelect',
+                            selected: ''
+                        });
+
+                        Csw.each( data.users, function(thisUser) {
+                            usersel.addOption({ value: thisUser.userid, display: thisUser.username }, false);
+                        });
+
+                        div.button({
+                            ID: 'ImpersonateButton',
+                            enabledText: 'Impersonate',
+                            onClick: function () {
+                                Csw.tryExec(o.onImpersonate, usersel.val(), usersel.selectedText());
+                                div.$.dialog('close');
+                            }
+                        });
+
+                        div.button({
+                            ID: 'CancelButton',
+                            enabledText: 'Cancel',
+                            onClick: function () {
+                                div.$.dialog('close');
+                            }
+                        });
+                    } // if(Csw.bool(data.result))
+                } // success
+            }); // ajax
+
+            openDialog(div.$, 400, 300, null, 'Impersonate');
+        }, // ImpersonateDialog
+
         ErrorDialog: function (error) {
             var $div = $('<div />');
             openDialog($div, 400, 300, null, 'Error');
             $div.CswErrorMessage(error);
         },
+
         AlertDialog: function (message, title) {
 
             var div = Csw.controls.div({

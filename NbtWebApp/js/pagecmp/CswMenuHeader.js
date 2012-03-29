@@ -10,6 +10,8 @@
             onLogout: function () { },
             onQuotas: function () { },
             onSessions: function () { },
+            onImpersonate: null,
+            onEndImpersonation: null,
             onSuccess: function () { }
         };
 
@@ -37,7 +39,9 @@
                                                         itemJson: thisItem, 
                                                         onLogout: o.onLogout,
                                                         onQuotas: o.onQuotas,
-                                                        onSessions: o.onSessions });
+                                                        onSessions: o.onSessions,
+                                                        onImpersonate: o.onImpersonate,
+                                                        onEndImpersonation: o.onEndImpersonation });
 
                             if (Csw.bool(thisItem.haschildren)) {
                                 delete thisItem.haschildren;
@@ -51,7 +55,9 @@
                                                          itemJson: thisChild, 
                                                          onLogout: o.onLogout,
                                                          onQuotas: o.onQuotas,
-                                                         onSessions: o.onSessions });
+                                                         onSessions: o.onSessions,
+                                                         onImpersonate: o.onImpersonate,
+                                                         onEndImpersonation: o.onEndImpersonation });
                                     }
                                 }
                             }

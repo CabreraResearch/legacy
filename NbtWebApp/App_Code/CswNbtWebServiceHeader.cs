@@ -95,39 +95,52 @@ namespace ChemSW.Nbt.WebServices
             return DemoNodesTable.Rows.Count > 0;
         }
 
-        public JObject getHeaderMenu()
+        public JObject getHeaderMenu(CswSessionResourcesNbt CswSessionResources)
         {
             JObject Ret = new JObject();
 
             Ret["Home"] = new JObject( new JProperty( "action", "Home" ) );
-            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            if( _CswNbtResources.CurrentNbtUser.IsAdministrator() || CswSessionResources.CswSessionManager.isImpersonating() )
             {
                 Ret["Admin"] = new JObject();
                 Ret["Admin"]["haschildren"] = true;
-                Ret["Admin"]["Current User List"] = new JObject();
-                Ret["Admin"]["Current User List"]["action"] = "Sessions";
-                Ret["Admin"]["Edit Config Vars"] = new JObject();
-                Ret["Admin"]["Edit Config Vars"]["href"] = "ConfigVars.aspx";
-                Ret["Admin"]["Statistics"] = new JObject();
-                Ret["Admin"]["Statistics"]["href"] = "Statistics.aspx";
-                Ret["Admin"]["Quotas"] = new JObject();
-                Ret["Admin"]["Quotas"]["action"] = "Quotas";
-                Ret["Admin"]["Impersonate"] = new JObject();
-                Ret["Admin"]["Impersonate"]["action"] = "Impersonate";
-
-                if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+                if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
-                    Ret["Admin"]["View Log"] = new JObject();
-                    Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
-                }
+                    Ret["Admin"]["Current User List"] = new JObject();
+                    Ret["Admin"]["Current User List"]["action"] = "Sessions";
+                    Ret["Admin"]["Edit Config Vars"] = new JObject();
+                    Ret["Admin"]["Edit Config Vars"]["href"] = "ConfigVars.aspx";
+                    Ret["Admin"]["Statistics"] = new JObject();
+                    Ret["Admin"]["Statistics"]["href"] = "Statistics.aspx";
+                    Ret["Admin"]["Quotas"] = new JObject();
+                    Ret["Admin"]["Quotas"]["action"] = "Quotas";
+                    if( false == CswSessionResources.CswSessionManager.isImpersonating() )
+                    {
+                        Ret["Admin"]["Impersonate"] = new JObject();
+                        Ret["Admin"]["Impersonate"]["action"] = "Impersonate";
+                    }
 
-                if( _CswNbtResources.CurrentNbtUser.IsAdministrator() &&
-                    _SchemaHasDemoData() )
+                    if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+                    {
+                        Ret["Admin"]["View Log"] = new JObject();
+                        Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
+                    }
+
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() &&
+                        _SchemaHasDemoData() )
+                    {
+                        Ret["Admin"]["Delete Demo Data"] = new JObject();
+                        Ret["Admin"]["Delete Demo Data"]["action"] = "DeleteDemoNodes";
+                    }
+                } // if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+
+                if( CswSessionResources.CswSessionManager.isImpersonating() )
                 {
-                    Ret["Admin"]["Delete Demo Data"] = new JObject();
-                    Ret["Admin"]["Delete Demo Data"]["action"] = "DeleteDemoNodes";
+                    Ret["Admin"]["End Impersonation"] = new JObject();
+                    Ret["Admin"]["End Impersonation"]["action"] = "EndImpersonation";
                 }
-            }
+            } // if( _CswNbtResources.CurrentNbtUser.IsAdministrator() || CswSessionResources.CswSessionManager.isImpersonating() )
+
             Ret["Preferences"] = new JObject(
                                     new JProperty( "haschildren", true ),
                                     new JProperty( "Profile", new JObject(

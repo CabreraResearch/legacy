@@ -474,6 +474,139 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Authentication
 
+        #region Impersonation
+
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string impersonate( string UserId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    {
+                        CswPrimaryKey UserPk = _getNodeId( UserId );
+                        CswNbtNode UserNode = _CswNbtResources.Nodes[UserPk];
+                        if( UserNode != null )
+                        {
+                            CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+
+                            // clear Recent 
+                            _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+
+                            _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
+
+                            ReturnVal.Add( new JProperty( "result", "true" ) );
+                        }
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                   "You do not have permission to use this feature.",
+                                                   "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
+                    }
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ( ReturnVal.ToString() );
+
+        } // impersonate()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string endImpersonation()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    // We don't check for admin permissions here because the impersonated user may not have them!
+
+                    // clear Recent 
+                    _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+
+                    _CswSessionResources.CswSessionManager.endImpersonation();
+                    ReturnVal.Add( new JProperty( "result", "true" ) );
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ( ReturnVal.ToString() );
+
+        } // endImpersonation()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getUsers()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    {
+                        JArray UsersArray = new JArray();
+                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
+                        {
+                            CswNbtObjClassUser ThisUser = CswNbtNodeCaster.AsUser( UserNode );
+                            JObject ThisUserObj = new JObject();
+                            ThisUserObj["userid"] = ThisUser.NodeId.ToString();
+                            ThisUserObj["username"] = ThisUser.Username;
+                            UsersArray.Add( ThisUserObj );
+                        }
+                        ReturnVal["users"] = UsersArray;
+                        ReturnVal.Add( new JProperty( "result", "true" ) );
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                   "You do not have permission to use this feature.",
+                                                   "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to run getUsers()." );
+                    }
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ( ReturnVal.ToString() );
+
+        } // getUsers()
+
+        #endregion Impersonation
+
         #region Render Core UI
 
 
@@ -653,7 +786,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
-                    ReturnVal = ws.getHeaderMenu();
+                    ReturnVal = ws.getHeaderMenu( _CswSessionResources );
                 }
 
                 _deInitResources();
@@ -1571,7 +1704,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         // Remove from quick launch
                         _CswNbtResources.SessionDataMgr.removeSessionData( DoomedView );
-                        
+
                         DoomedView.Delete();
                         ReturnVal.Add( new JProperty( "succeeded", true ) );
                     }
