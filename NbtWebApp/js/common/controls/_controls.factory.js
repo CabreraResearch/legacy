@@ -18,6 +18,11 @@
 
                 internal.controlPreProcessing = function (opts, controlName) {
                     opts = opts || {};
+                    if (opts.suffix) {
+                        opts.ID = Csw.makeId(external.getId(), opts.suffix);
+                    } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(cswParent.getId())) {
+                        opts.ID = Csw.makeId(external.getId(), controlName);
+                    }
                     return opts;
                 };
 

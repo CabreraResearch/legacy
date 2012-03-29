@@ -17,6 +17,7 @@ $js .= extract("$dir\\js\\nbt\\pagecmp");
 $js .= extract("$dir\\js\\nbt\\props");
 $js .= extract("$dir\\js\\nbt\\tools");
 $js .= extract("$dir\\js\\nbt\\view");
+$js .= extract("$dir\\js\\nbt\\wizards");
 $js .= extractFile("$dir\\js\\_last-vsdoc.js");
 
 open(VSDOC, "> $destfile") or die("Cannot open vsdoc file: $destfile ; $!");

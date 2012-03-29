@@ -16,6 +16,7 @@ $param .= extract("$dir\\js\\nbt\\props");
 $param .= extract("$dir\\js\\nbt\\pagecmp");
 $param .= extract("$dir\\js\\nbt\\tools");
 $param .= extract("$dir\\js\\nbt\\view");
+$param .= extract("$dir\\js\\nbt\\wizards");
 
 `java -jar "$dir\\..\\..\\..\\ThirdParty\\ClosureCompiler\\compiler.jar" $param --js_output_file $destfile`;
 
