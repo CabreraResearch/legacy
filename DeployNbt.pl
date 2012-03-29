@@ -38,11 +38,11 @@ $schemata{"nbt_master"} = "nbt";   # master
 $schemata{"nbt_schema1"} = "nbt";  # 1
 $schemata{"nbt_schema2"} = "nbt";  # 2
 $schemata{"nbt_schema3"} = "nbt";  # 3
-$schemata{"sales"} = "nbt";  # sales
+$schemata{"sales"} = "nbt";        # sales
 $schemata{"nbt_manager"} = "nbt";  # nbt_manager
-$schemata{"cispro"} = "nbt";  # CISPro
-$schemata{"darryl"} = "darryl";  # Darryl
-$schemata{"judy"} = "judy";  # Darryl
+$schemata{"cispro"} = "nbt";       # CISPro
+$schemata{"darryl"} = "darryl";    # Darryl
+$schemata{"judy"} = "judy";        # judy
 
 # this one will always be reset to the master
 my $masterschema = "nbt_master";
@@ -265,8 +265,6 @@ my $masterpassword = $schemata{$masterschema};
 &runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_nuke.sql" );
 
 &runCommand( "impdp.exe ". $masterschema ."/". $masterpassword ."@". $orclserver ." DUMPFILE=NBT_MASTER_11G.dmp DIRECTORY=". $masterdumpdir );
-
-&runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_finalize_ora.sql" );
 
 #---------------------------------------------------------------------------------
 # 7. run command line schema updater
