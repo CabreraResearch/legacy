@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.IO;
 using System.Windows.Forms;
 using System.Data;
@@ -13,19 +14,21 @@ using System.Diagnostics;
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Runs the initialize script
+    /// Applies indexes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02 : CswUpdateSchemaTo
+    public class RunAfterEveryExecutionOfUpdater_03 : CswUpdateSchemaTo
     {
         public static string Title = FileName;
 
-        private const string FileName = "nbt_initialize_ora.sql";
+        private const string FileName = "indexes.sql";
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.runExternalSqlScript( FileName, ChemSW.Nbt.Properties.Resources.nbt_initialize_ora_sql );
-        }//update()
+            _CswNbtSchemaModTrnsctn.runExternalSqlScript( FileName, ChemSW.Nbt.Properties.Resources.indexes_sql );
+        }//Update()
 
-    }//class RunBeforeEveryExecutionOfUpdater_02
+    }//class RunAfterEveryExecutionOfUpdater_03
 
 }//namespace ChemSW.Nbt.Schema
+
+

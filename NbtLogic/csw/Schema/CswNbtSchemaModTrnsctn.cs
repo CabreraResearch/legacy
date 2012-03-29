@@ -3,6 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -12,6 +16,7 @@ using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
@@ -371,7 +376,7 @@ namespace ChemSW.Nbt.Schema
 
         public void makeTableAuditable( string TableName )
         {
-            if( ( false == _CswAuditMetaData.isAuditTable( TableName ) ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
+            if( _CswAuditMetaData.shouldBeAudited( TableName ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
             {
                 addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
             }
@@ -379,9 +384,11 @@ namespace ChemSW.Nbt.Schema
             //datetime stamp column
 
 
-            if( false == _CswAuditMetaData.isAuditTable( TableName ) )
+            if( _CswAuditMetaData.shouldBeAudited( TableName ) )
             {
                 string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
+
+                //create the audit table if necessary
                 if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
                 {
                     copyTable( TableName, AuditTableName, false );
@@ -390,9 +397,40 @@ namespace ChemSW.Nbt.Schema
                     addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
                     addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", false, true );
 
-                }//if the audit table does not yet exist
+                }
+                else //if it does exist, maybe the target table has new columns to be added to the audit table?
+                {
 
-            }//if it isn't already an audit table
+                    string[] AuditTableColumnNameArray = new string[_CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).Count];
+                    _CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).CopyTo( AuditTableColumnNameArray, 0 );
+                    List<string> AuditColumnNames = new List<string>( AuditTableColumnNameArray );
+
+                    List<string> MissingAuditTableColumnNames = new List<string>();
+
+                    foreach( string CurrentTargetColumnName in _CswNbtResources.DataDictionary.getColumnNames( TableName ) )
+                    {
+                        if( ( _CswAuditMetaData.AuditLevelColName != CurrentTargetColumnName.ToLower() ) &&
+                            ( false == AuditColumnNames.Contains( CurrentTargetColumnName ) ) )
+                        {
+                            MissingAuditTableColumnNames.Add( CurrentTargetColumnName );
+                        }
+                    }
+
+
+                    if( MissingAuditTableColumnNames.Count > 0 )
+                    {
+                        foreach( string CurrentMissingColumnName in MissingAuditTableColumnNames )
+                        {
+                            _CswNbtResources.DataDictionary.setCurrentColumn( TableName, CurrentMissingColumnName );
+                            addColumn( CurrentMissingColumnName, _CswNbtResources.DataDictionary.ColumnType, _CswNbtResources.DataDictionary.DataTypeSize, _CswNbtResources.DataDictionary.DblPrecision, _CswNbtResources.DataDictionary.DefaultValue, _CswNbtResources.DataDictionary.Description, _CswNbtResources.DataDictionary.ForeignKeyColumn, _CswNbtResources.DataDictionary.ForeignKeyTable, false, _CswNbtResources.DataDictionary.IsView, _CswNbtResources.DataDictionary.LogicalDelete, _CswNbtResources.DataDictionary.LowerRangeValue, _CswNbtResources.DataDictionary.LowerRangeValueInclusive, _CswNbtResources.DataDictionary.PortableDataType, _CswNbtResources.DataDictionary.ReadOnly, _CswNbtResources.DataDictionary.Required, AuditTableName, _CswNbtResources.DataDictionary.UniqueType, _CswNbtResources.DataDictionary.UpperRangeValueInclusive, _CswNbtResources.DataDictionary.UpperRangeValue );
+                        }
+
+                    }//if the audit table is missing columns
+
+                }//if-else the audit table did not yet exist
+
+
+            }//if-else it's an audited table
 
         }//makeTableAuditable() 
 
@@ -1346,6 +1384,50 @@ namespace ChemSW.Nbt.Schema
         public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswNbtResources.getUniqueConstraintName( TableName, ColumName ) ); }
 
 
+        /// <summary>
+        /// Run an external SQL script stored in Resources
+        /// </summary>
+        /// <param name="SqlFileName">Name of file</param>
+        /// <param name="ResourceSqlFile">File contents from Resources</param>
+        /// <param name="Block">Whether to wait for the script to finish</param>
+        public void runExternalSqlScript( string SqlFileName, byte[] ResourceSqlFile )
+        {
+            //Retrieve files from resource
+            string FileLocations = Application.StartupPath;
+            string BatchFilePath = FileLocations + "\\runscript.bat";
+            string SqlFilePath = FileLocations + "\\" + SqlFileName;
+            File.WriteAllBytes( BatchFilePath, ChemSW.Nbt.Properties.Resources.runscript_bat );
+            File.WriteAllBytes( SqlFilePath, ResourceSqlFile );
+
+            while( ( false == File.Exists( BatchFilePath ) ) && ( false == File.Exists( SqlFilePath ) ) )
+            {
+                Thread.Sleep( 100 );
+            }
+
+            CswDbCfgInfo.makeConfigurationCurrent( Accessid );
+            string serverName = CswDbCfgInfo.CurrentServerName;
+            string userName = CswDbCfgInfo.CurrentUserName;
+            string passWord = CswDbCfgInfo.CurrentPlainPwd;
+
+            // Start external process
+            System.Diagnostics.Process p = new System.Diagnostics.Process();
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.FileName = BatchFilePath;
+            p.StartInfo.Arguments = " " + serverName + " " + userName + " " + passWord + " " + FileLocations + " " + SqlFileName;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+            p.StartInfo.UseShellExecute = false;
+            p.StartInfo.RedirectStandardOutput = false;
+
+            Process SpawnedProcess = System.Diagnostics.Process.Start( p.StartInfo );
+            if( false == SpawnedProcess.WaitForExit( UpdtShellWaitMsec ) )
+            {
+                CswLogger.reportAppState( "Timed out will running " + SqlFileName + " prior to updates." );
+            }
+
+            File.Delete( BatchFilePath );
+            File.Delete( SqlFilePath );
+
+        } // runExternalSqlScript
 
     }//class CswNbtSchemaModTrnsctn
 

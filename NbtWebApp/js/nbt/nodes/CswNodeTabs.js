@@ -333,6 +333,7 @@
                     else if (!o.Config &&
                         Csw.isNullOrEmpty(o.date) &&
                         o.filterToPropId === '' &&
+                        o.EditMode !== Csw.enums.editMode.PrintReport &&
                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {

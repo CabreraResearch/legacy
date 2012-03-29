@@ -1,7 +1,5 @@
-using System;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -14,6 +12,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+
 
             #region case 24481
 
@@ -49,7 +48,7 @@ namespace ChemSW.Nbt.Schema
 
             #region case 25518
             // This needs to be run before any execution because it breaks CswNbtObjClassUser
-            
+
             // Rename 'Quick Launch' views and actions to 'Favorite'
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
 
@@ -65,6 +64,13 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( UserQLVProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassUser.FavoriteViewsPropertyName );
             }
             #endregion case 25518
+
+
+            #region case 25635
+            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
+            #endregion
+
+
 
         }//Update()
 

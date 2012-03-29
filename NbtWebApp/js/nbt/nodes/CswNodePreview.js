@@ -53,6 +53,8 @@
                         $loadingspan.remove();
                         if (AtLeastOneProp) {
                             _fixDimensions();
+                        } else {
+                            $div.hide();
                         }
                     }
                 });

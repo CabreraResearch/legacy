@@ -32,7 +32,7 @@
             if (false === Csw.isNullOrEmpty(text)) {
                 propDiv.div({
                     cssclass: 'staticvalue',
-                    value: text
+                    text: text
                 }).css({
                     overflow: overflow,
                     width: width,

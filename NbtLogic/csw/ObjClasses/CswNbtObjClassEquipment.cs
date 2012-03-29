@@ -8,20 +8,20 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassEquipment : CswNbtObjClass
     {
-        public enum StatusOption
-        {
-            Available,
-            In_Use,
-            Retired
-        }
-        public static string StatusOptionToDisplayString( StatusOption Opt )
-        {
-            return Opt.ToString().Replace( '_', ' ' );
-        }
-        public static StatusOption StatusOptionFromDisplayString( string Opt )
-        {
-            return (StatusOption) Enum.Parse( typeof( StatusOption ), Opt.Replace( ' ', '_' ), true );
-        }
+        //public enum StatusOption
+        //{
+        //    Available,
+        //    In_Use,
+        //    Retired
+        //}
+        //public static string StatusOptionToDisplayString( StatusOption Opt )
+        //{
+        //    return Opt.ToString().Replace( '_', ' ' );
+        //}
+        //public static StatusOption StatusOptionFromDisplayString( string Opt )
+        //{
+        //    return (StatusOption) Enum.Parse( typeof( StatusOption ), Opt.Replace( ' ', '_' ), true );
+        //}
 
         public static string AssemblyPropertyName { get { return "Assembly"; } }
         public static string TypePropertyName { get { return "Type"; } }
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp,
                                                                                                            StatusOCP.getFieldTypeRule().SubFields.Default.Name,
                                                                                                            CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                                                                                                           StatusOptionToDisplayString( StatusOption.Retired ),
+                                                                                                           "Retired", //StatusOptionToDisplayString( StatusOption.Retired ),
                                                                                                            false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );

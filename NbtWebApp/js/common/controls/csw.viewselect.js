@@ -17,6 +17,7 @@
                 issearchable: false,
                 //usesession: true,
                 hidethreshold: 5,
+                maxHeight: '',
 
                 div: null
             };
@@ -119,12 +120,17 @@
                 external = Csw.dom({}, internal.div);
                 
                 internal.vsdiv = Csw.literals.div({ ID: Csw.makeId(internal.ID, '', 'vsdiv') });
+                if (false == Csw.isNullOrEmpty(internal.maxHeight)) {
+                    internal.vsdiv.css({ maxHeight: internal.maxHeight });
+                }
                 internal.comboBox = internal.div.comboBox({
                     ID: internal.ID + '_combo',
                     topContent: 'Select a View',
                     selectContent: internal.vsdiv.$, /* NO! Refactor to use Csw.literals and more wholesome methods. */
                     width: '266px'
                 });
+
+                $.extend(external, internal.comboBox);
 
                 Csw.ajax.post({
                     url: internal.viewurl,
