@@ -25,6 +25,9 @@
                 opts.controlName = controlName;
                 opts.$parent = $element;
                 opts.root = external.root;
+                if (opts.suffix) {
+                    opts.ID = Csw.makeId(external.getId(), opts.suffix);
+                }
                 opts.parent = function () {
                     return external;
                 };
@@ -67,8 +70,7 @@
                 external = Csw.dom(external, $element);
                 internal.controlPostProcessing(external);
             } else {
-                internal.id = '';
-                external.$ = {};
+                throw new Error('Cannot directly instance a literals factory without a jQuery element.');
             }
 
             //#endregion internal
