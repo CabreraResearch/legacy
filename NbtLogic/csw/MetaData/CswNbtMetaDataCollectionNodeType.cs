@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -107,7 +108,7 @@ namespace ChemSW.Nbt.MetaData
                                                                                              from nodetypes 
                                                                                             where firstversionid = (select firstversionid 
                                                                                                                       from nodetypes
-                                                                                                                     where lower(nodetypename) = '" + NodeTypeName.ToLower() + "'))" );
+                                                                                                                     where lower(nodetypename) = '" + CswTools.SafeSqlParam( NodeTypeName.ToLower() ) + "'))" );
         }
 
         private string _makeModuleWhereClause()
