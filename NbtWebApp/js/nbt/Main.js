@@ -920,7 +920,7 @@ window.initMain = window.initMain || function (undefined) {
         var parent = Csw.literals.factory($('#CenterTopDiv'));
         
         Csw.ajax.post({
-            'url': '/NbtWebApp/wsNBT.asmx/SaveActionToQuickLaunch',
+            urlMethod: 'SaveActionToQuickLaunch',
             'data': { 'ActionName': o.actionname }
         });
 
