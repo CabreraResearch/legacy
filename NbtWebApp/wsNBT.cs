@@ -239,7 +239,8 @@ namespace ChemSW.Nbt.WebServices
                     _CswSessionResources.CswSessionManager != null &&
                     !ForMobile )
                 {
-                    JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+                    CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+                    JObj.Add( new JProperty( "timeout", CswTimeout.ToClientAsJavascriptString() ) );
                 }
             }
         }//_jAuthenticationStatus()
