@@ -5,6 +5,7 @@
 
     Csw.actions.quotaImage = Csw.actions.quotaImage ||
         Csw.actions.register('quoteImage', function (cswParent, options) {
+            'use strict';
             var o = {
                 urlMethod: 'getQuotaPercent',
                 ID: 'action_quota_image'
