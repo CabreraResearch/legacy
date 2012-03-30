@@ -30,6 +30,8 @@
         /// </param>
         var o = {
             url: '',
+            urlPrefix: Csw.enums.ajaxUrlPrefix,
+            urlMethod: '',
             data: {},
             onloginfail: function () {
                 Csw.clientSession.finishLogout();
@@ -44,14 +46,14 @@
         if (options) {
             $.extend(o, options);
         }
-
+        var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
 
         $.ajax({
             type: 'POST',
             async: o.async,
             urlPrefix: Csw.enums.ajaxUrlPrefix,
-            url: o.url,
+            url: url,
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(o.data),
@@ -113,8 +115,9 @@
         ///     &#10;4 - options.error: function () {}
         /// </param>
         var o = {
-            urlPrefix: Csw.enums.ajaxUrlPrefix,
             url: '',
+            urlPrefix: Csw.enums.ajaxUrlPrefix,
+            urlMethod: '',
             data: {},
             onloginfail: function () {
                 Csw.clientSession.finishLogout();
@@ -129,13 +132,13 @@
         if (options) {
             $.extend(o, options);
         }
-
+        var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
 
         $.ajax({
             type: 'GET',
             async: o.async,
-            url: o.url,
+            url: url,
             dataType: 'json',
             data: JSON.stringify(o.data),
             success: function (result) {
@@ -177,8 +180,9 @@
         /// </param>
 
         var o = {
-            urlPrefix: Csw.enums.ajaxUrlPrefix,
             url: '',
+            urlPrefix: Csw.enums.ajaxUrlPrefix,
+            urlMethod: '',
             data: {},
             stringify: false, /* in case we need to conditionally apply $.param() instead of JSON.stringify() (or both) */
             onloginfail: function () {
@@ -197,12 +201,13 @@
             $.extend(o, options);
         }
 
+        var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         if (false === Csw.isNullOrEmpty(o.url)) {
             Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
             $.ajax({
                 type: 'POST',
                 async: o.async,
-                url: o.url,
+                url: url,
                 dataType: 'text',
                 data: $.param(o.data),
                 success: function (data, textStatus, xmlHttpRequest) {
