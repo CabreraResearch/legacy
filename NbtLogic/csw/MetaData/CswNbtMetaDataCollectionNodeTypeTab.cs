@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -20,7 +21,7 @@ namespace ChemSW.Nbt.MetaData
                                                           _CswNbtMetaDataResources.NodeTypeTabTableSelect,
                                                           _CswNbtMetaDataResources.NodeTypeTabTableUpdate,
                                                           makeNodeTypeTab,
-                                                          _makeModuleWhereClause);
+                                                          _makeModuleWhereClause );
         }
 
         public void AddToCache( CswNbtMetaDataNodeTypeTab NewObj )
@@ -48,7 +49,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, string NodeTypeTabName )
         {
-            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(tabname) = '" + NodeTypeTabName.ToLower() + "'" );
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(tabname) = '" + CswTools.SafeSqlParam( NodeTypeTabName.ToLower() ) + "'" );
         }
         public CswNbtMetaDataNodeTypeTab getNodeTypeTabVersion( Int32 NodeTypeId, Int32 NodeTypeTabId )
         {
@@ -56,7 +57,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public Collection<Int32> getNodeTypeTabIds( Int32 NodeTypeId )
         {
-            return _CollImpl.getPks( "where nodetypeid = " + NodeTypeId.ToString());
+            return _CollImpl.getPks( "where nodetypeid = " + NodeTypeId.ToString() );
         }
         public IEnumerable<CswNbtMetaDataNodeTypeTab> getNodeTypeTabs( Int32 NodeTypeId )
         {
@@ -173,6 +174,6 @@ namespace ChemSW.Nbt.MetaData
         //    public SortedList ByTabName = new SortedList();
         //    public SortedList ByTabOrder = new SortedList();
         //}
-    
+
     } // class CswNbtMetaDataCollectionNodeTypeTab
 } // namespace ChemSW.Nbt.MetaData
