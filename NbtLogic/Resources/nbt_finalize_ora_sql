@@ -77,8 +77,9 @@ select j.nodeid nid,to_char(j.gestalt) gestalt,
 commit;
 
 create or replace view vwnpvname as
-select j.nodeid nid,to_char(j.gestalt) gestalt,field1_fk,j.nodetypepropid ntpid,ntp.propname from jct_nodes_props j
- join nodetype_props ntp on ntp.nodetypepropid=j.nodetypepropid;
+select j.nodeid nid,to_char(j.gestalt) gestalt,field1_fk,j.nodetypepropid ntpid,OraColLen('P_',alnumonly(ntp.propname,''),'') safepropname 
+  from jct_nodes_props j
+  join nodetype_props ntp on ntp.nodetypepropid=j.nodetypepropid;
 /
 commit;
 
@@ -107,7 +108,7 @@ create or replace procedure createNTview(ntid in number) is
   objid number;
   ntcount number;
 begin
-  dbms_output.enable(32000);
+  --dbms_output.enable(32000);
 
 
  select count(*) into ntcount from nodetypes where nodetypeid=ntid;
@@ -168,7 +169,7 @@ commit;
 
 
 create or replace view vwobjprops as
-select distinct ntp.propname,'gestalt' subfieldname,nt.objectclassid,'' subfieldalias,ft.fieldtype
+select distinct OraColLen('P_', alnumonly(ntp.propname, ''), '') safepropname,'gestalt' subfieldname,nt.objectclassid,'' subfieldalias,ft.fieldtype
  from nodetype_props ntp
  join nodetypes nt on nt.nodetypeid=ntp.nodetypeid
  join field_types ft on ft.fieldtypeid=ntp.fieldtypeid
@@ -179,11 +180,10 @@ commit;
 create or replace procedure createOCview(objid in number) is
   cursor props is select v.* 
                     from vwObjProps v 
-                   where v.objectclassid=objid order by lower(propname);
+                   where v.objectclassid=objid order by lower(safepropname);
   var_sql varchar2(20000);
   aline varchar(2000);
   pcount number;
-  pname varchar2(200);
   viewname varchar(30);
 begin
   --dbms_output.enable(21000);
@@ -195,18 +195,13 @@ begin
   
   for rec in props loop
       pcount:=pcount+1;
-      pname:=alnumOnly(rec.propname,'');
       
-      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and propname=''' || safeSqlParam(rec.propname) || ''') ' || OraColLen('P' 
-      --|| trim(to_char(pcount,'00')) 
-      || '_',alnumonly(upper(pname),''),'');  
+      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and safepropname=''' || rec.safepropname || ''') ' || upper(rec.safepropname);
       --dbms_output.put_line(aline);
       var_sql:=var_sql || aline;
       
       if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
-        aline:=',(select field1_fk from vwNpvname where nid=n.nodeid and propname=''' || safeSqlParam(rec.propname) || ''') ' || OraColLen('P' 
-        --|| trim(to_char(pcount,'00')) 
-        || '_',alnumonly(upper(pname),''),'_FK');        
+        aline:=',(select field1_fk from vwNpvname where nid=n.nodeid and safepropname=''' || rec.safepropname || ''') ' || OraColLen('',upper(rec.safepropname),'_FK');
         var_sql:=var_sql || aline;
       end if;
       
