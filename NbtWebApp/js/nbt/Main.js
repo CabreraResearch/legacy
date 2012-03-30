@@ -92,7 +92,8 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 });
 
-                $('#header_quota').CswQuotaImage();
+                var headerQuota = Csw.literals.factory($('#header_quota'));
+                Csw.actions.quotaImage(headerQuota);
 
                 $('#header_menu').CswMenuHeader({
                     'onLogout': function () {
@@ -918,7 +919,7 @@ window.initMain = window.initMain || function (undefined) {
 
         Csw.clientState.setCurrentAction(o.actionname, o.actionurl);
         var parent = Csw.literals.factory($('#CenterTopDiv'));
-        
+
         Csw.ajax.post({
             urlMethod: 'SaveActionToQuickLaunch',
             'data': { 'ActionName': o.actionname }
@@ -933,13 +934,13 @@ window.initMain = window.initMain || function (undefined) {
                 }
             });
         }
-        
+
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                                      
-            //				break;                                                      
-            //			case 'Assign_Tests':                                                      
-            //				break;                                                      
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                      
+            //			case 'Assign_Inspection':                                                          
+            //				break;                                                          
+            //			case 'Assign_Tests':                                                          
+            //				break;                                                          
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                          
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -968,8 +969,8 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.nbt.createInspectionWizard(parent, designOpt);
 
                 break;
-            //			case 'Design':                                                      
-            //				break;                                                      
+            //			case 'Design':                                                          
+            //				break;                                                          
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -1011,8 +1012,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                                      
-            //				break;                                                      
+            //			case 'Enter_Results':                                                          
+            //				break;                                                          
 
             case 'Future_Scheduling':
                 clear({ 'all': true });
@@ -1024,10 +1025,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                      
-            //				break;                                                      
-            //			case 'Inspection_Design':                                                      
-            //				break;                                                      
+            //			case 'Import_Fire_Extinguisher_Data':                                                          
+            //				break;                                                          
+            //			case 'Inspection_Design':                                                          
+            //				break;                                                          
 
             case 'OOC_Inspections':
                 setupOocInspections();
@@ -1037,7 +1038,8 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ 'all': true });
                 Csw.actions.quotas(parent, {
                     onQuotaChange: function () {
-                        $('#header_quota').CswQuotaImage();
+                        var quotaHeader = Csw.literals.factory($('#header_quota'));
+                        Csw.actions.quotaImage(quotaHeader);
                     }
                 });
 
@@ -1058,17 +1060,17 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     menuRefresh: refreshSelected
                 };
-                
+
                 Csw.nbt.scheduledRulesWizard(parent, rulesOpt);
                 break;
-            //			case 'Load_Mobile_Data':                                                      
-            //				break;                                                      
-            //			case 'Receiving':                                                      
-            //				break;                                                      
-            //			case 'Split_Samples':                                                      
-            //				break;                                                      
-            //			case 'View_By_Location':                                                      
-            //				break;                                                      
+            //			case 'Load_Mobile_Data':                                                          
+            //				break;                                                          
+            //			case 'Receiving':                                                          
+            //				break;                                                          
+            //			case 'Split_Samples':                                                          
+            //				break;                                                          
+            //			case 'View_By_Location':                                                          
+            //				break;                                                          
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;
