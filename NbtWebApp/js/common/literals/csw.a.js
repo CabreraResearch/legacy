@@ -4,8 +4,8 @@
 (function () {
     'use strict';
 
-    Csw.literals.link = Csw.literals.link ||
-        Csw.literals.register('link', function(options) {
+    Csw.literals.a = Csw.literals.a ||
+        Csw.literals.register('a', function(options) {
             /// <summary> Create or extend an HTML <a /> and return a Csw.link object
             ///     &#10;1 - link(options)
             ///</summary>
