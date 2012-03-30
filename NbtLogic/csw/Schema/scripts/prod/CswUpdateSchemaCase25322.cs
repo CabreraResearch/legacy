@@ -13,11 +13,6 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            // usenumbering on the object_class_prop
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "usenumbering" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class_props", "usenumbering", "Whether the property should be numbered", false, false );
-            }
             
             // case 25322 - Finished and cancelled become buttons
 

@@ -42,6 +42,7 @@
             AjaxWatchGlobal: true,
             nodeTreeCheck: null,
             onEditView: null,
+            onAfterButtonClick: null,
             Config: false
         };
 
@@ -529,6 +530,7 @@
                     EditMode: o.EditMode,
                     Multi: o.Multi,
                     onEditView: o.onEditView,
+                    onAfterButtonClick: o.onAfterButtonClick,
                     ReadOnly: Csw.bool(propData.readonly) || o.Config
                 };
                 fieldOpt.propDiv.propNonDom({
@@ -700,7 +702,6 @@
                         saveBtn.enable();
 
                         if (doSave) {
-
                             // reload tab
                             if (o.ReloadTabOnSave) {
                                 getProps(tabContentDiv, tabid, function () {

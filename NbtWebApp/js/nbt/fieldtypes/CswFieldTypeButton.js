@@ -60,6 +60,7 @@
                                         break;
                                 }
                             }
+                            Csw.tryExec(o.onAfterButtonClick);
                         }, // ajax success()
                         error: function () {
                             button.enable();
