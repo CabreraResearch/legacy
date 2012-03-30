@@ -84,7 +84,7 @@
                 if (canedit) {
                     cell4 = table.cell(qRow, 4);
                     cell4.input({
-                        suffix: id + '_quota',
+                        ID: o.ID + '_' + id + '_quota',
                         name: o.ID + '_' + id + '_quota',
                         type: Csw.enums.inputTypes.text,
                         value: quota,
