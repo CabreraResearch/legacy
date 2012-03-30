@@ -206,7 +206,7 @@
                 // Filters to add
 
                 function makeFilterLink(thisFilter, div, filterCount) {
-                    var flink = div.link({
+                    var flink = div.a({
                         ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                         text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                         onClick: function () {

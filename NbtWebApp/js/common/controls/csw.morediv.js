@@ -28,7 +28,7 @@
                 ID: Csw.makeId(internal.ID, '', '_hddn')
             }).hide();
 
-            external.moreLink = internal.moreDiv.link({
+            external.moreLink = internal.moreDiv.a({
                 ID: Csw.makeId(internal.ID, '', '_more'),
                 text: internal.moretext,
                 cssclass: 'morelink',

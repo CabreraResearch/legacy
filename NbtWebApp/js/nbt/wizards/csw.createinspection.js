@@ -469,7 +469,7 @@
                             helpText.empty();
                             helpText.span({ text: 'Create a new <b>' + internal.selectedInspectionDesign.name + '</b> Design using the Excel template.' })
                                     .p()
-                                    .link({ href: '\"/NbtWebApp/etc/InspectionDesign.xls\"', text: 'Download Template' })
+                                    .a({ href: '\"/NbtWebApp/etc/InspectionDesign.xls\"', text: 'Download Template' })
                                     .$.button();
                         };
                         if (false === stepThreeComplete) {

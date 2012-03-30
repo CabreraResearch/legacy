@@ -274,7 +274,7 @@
                             isControl: internal.isControl,
                             align: 'right'
                         })
-                            .link({
+                            .a({
                                 href: 'javascript:void(0)',
                                 text: checkAllLinkText,
                                 onClick: function () {

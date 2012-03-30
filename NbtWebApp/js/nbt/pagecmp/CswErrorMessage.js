@@ -40,7 +40,7 @@
         cell21.append(o.detail);         // using append() on error messages can send the browser into an infinite loop!
         cell21.hide();
 
-        table.cell(1, 1).link({
+        table.cell(1, 1).a({
             ID: Csw.makeId({ ID: id, suffix: 'cell' }),
             text: o.message,
             onClick: function () { cell21.$.toggle(); }
