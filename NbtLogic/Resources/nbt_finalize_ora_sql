@@ -13,6 +13,17 @@ end alnumOnly;
 /
 commit;
 
+create or replace function safeSqlParam(inputStr in varchar2) return varchar2 is
+  Result varchar2(1000);
+begin
+  
+  Result := regexp_replace(inputStr,'''', '''''' );
+
+  return(Result);
+end safeSqlParam;
+/
+commit;
+
 create or replace function OraColLen(aprefix in varchar2,inputStr in varchar2,asuffix in varchar2) return varchar2 is
   Result varchar2(100);
   maxlen number(3);
@@ -111,7 +122,7 @@ begin
 
   for rec in props loop
       pcount:=pcount+1;
-      --dbms_output.put_line(to_char(pcount) || '|' || rec.propname || '|' || rec.subfieldname || '|' || rec.fieldtype || '|' || rec.objectclass || '|' || rec.nodetypename);
+      --dbms_output.put_line(to_char(pcount) || '|' || safeSqlParam(rec.propname) || '|' || rec.subfieldname || '|' || rec.fieldtype || '|' || rec.objectclass || '|' || rec.nodetypename);
       pname := to_char(rec.nodetypepropid);
       if(rec.is_default='1') then
         var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
@@ -166,9 +177,9 @@ commit;
 
 
 create or replace procedure createOCview(objid in number) is
-  cursor props is 
-  select v.* from vwObjProps v 
-    where v.objectclassid=objid order by lower(propname);
+  cursor props is select v.* 
+                    from vwObjProps v 
+                   where v.objectclassid=objid order by lower(propname);
   var_sql varchar2(20000);
   aline varchar(2000);
   pcount number;
@@ -186,14 +197,14 @@ begin
       pcount:=pcount+1;
       pname:=alnumOnly(rec.propname,'');
       
-      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' 
+      aline:=',(select ' || rec.subfieldname || ' from vwNpvname where nid=n.nodeid and propname=''' || safeSqlParam(rec.propname) || ''') ' || OraColLen('P' 
       --|| trim(to_char(pcount,'00')) 
       || '_',alnumonly(upper(pname),''),'');  
       --dbms_output.put_line(aline);
       var_sql:=var_sql || aline;
       
       if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
-        aline:=',(select field1_fk from vwNpvname where nid=n.nodeid and propname=''' || rec.propname || ''') ' || OraColLen('P' 
+        aline:=',(select field1_fk from vwNpvname where nid=n.nodeid and propname=''' || safeSqlParam(rec.propname) || ''') ' || OraColLen('P' 
         --|| trim(to_char(pcount,'00')) 
         || '_',alnumonly(upper(pname),''),'_FK');        
         var_sql:=var_sql || aline;
