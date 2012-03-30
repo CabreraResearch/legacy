@@ -196,7 +196,7 @@
                         if (nodeObj.allowedit) {
                             btntext = "Edit";
                         }
-                        btnTable.cell(1, btncol).link({
+                        btnTable.cell(1, btncol).a({
                             ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
                             text: btntext,
                             //disableOnClick: false,
@@ -214,7 +214,7 @@
                     } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                     if (nodeObj.allowdelete) {
-                        btnTable.cell(1, btncol).link({
+                        btnTable.cell(1, btncol).a({
                             ID: Csw.makeId(o.ID, nodeid, 'btn'),
                             text: 'Delete',
                             //disableOnClick: false,

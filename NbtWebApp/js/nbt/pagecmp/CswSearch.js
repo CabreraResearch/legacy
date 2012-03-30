@@ -316,7 +316,7 @@
 
             //Row i, Column 1 (1/2): advanced link
             var advancedLinkCell = clearPositionTable.cell(cellRow, advancedCellNumber);
-            var advancedLink = advancedLinkCell.link({
+            var advancedLink = advancedLinkCell.a({
                 ID: Csw.makeId(o.ID, 'advanced_options'),
                 href: 'javascript:void(0)',
                 value: (o.advancedIsHidden) ? 'Advanced' : 'Simple'

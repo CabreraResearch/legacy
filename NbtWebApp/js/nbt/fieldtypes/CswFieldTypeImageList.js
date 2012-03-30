@@ -71,7 +71,7 @@
                                     .css({ 'text-align': 'center',
                                         'padding-left': '10px'
                                     });
-                imageCell.link({
+                imageCell.a({
                     href: href,
                     target: '_blank'
                 })
@@ -94,7 +94,7 @@
 
 
                 if (name !== href) {
-                    nameCell.link({ href: href, target: '_blank', text: name });
+                    nameCell.a({ href: href, target: '_blank', text: name });
                 }
                 if (false === o.ReadOnly) {
                     nameCell.imageButton({

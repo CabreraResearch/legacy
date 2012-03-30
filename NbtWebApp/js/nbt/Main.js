@@ -1035,7 +1035,7 @@ window.initMain = window.initMain || function (undefined) {
                 break;
             case 'Quotas':
                 clear({ 'all': true });
-                $('#CenterTopDiv').CswQuotas({
+                Csw.actions.quotas(parent, {
                     onQuotaChange: function () {
                         $('#header_quota').CswQuotaImage();
                     }

@@ -65,7 +65,7 @@
                     row += 1;
                 });
 
-                internal.table.cell(row, 1).link({
+                internal.table.cell(row, 1).a({
                     text: internal.linkText,
                     onClick: internal.onLinkClick
                 });

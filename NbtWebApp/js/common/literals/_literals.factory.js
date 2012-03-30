@@ -79,6 +79,20 @@
 
             //#region Csw DOM classes
 
+            external.a = function (opts) {
+                /// <summary> Creates a Csw.a on this element</summary>
+                /// <param name="opts" type="Object">Options to define the a.</param>
+                /// <returns type="Csw.literals.a">A Csw.literals.a</returns> 
+                return internal.makeControlForChaining(opts, 'a');
+            };
+
+            external.b = function (opts) {
+                /// <summary> Creates a Csw.b on this element</summary>
+                /// <param name="opts" type="Object">Options to define the b.</param>
+                /// <returns type="Csw.literals.b">A Csw.literals.b</returns> 
+                return internal.makeControlForChaining(opts, 'b');
+            };
+
             external.br = function (opts) {
                 /// <summary> Creates a Csw.br on this element</summary>
                 /// <param name="opts" type="Object">Options to define the br.</param>
@@ -127,14 +141,7 @@
                 /// <returns type="Csw.literals.input">A Csw.literals.input</returns> 
                 return internal.makeControlForChaining(opts, 'input');
             };
-
-            external.link = function (opts) {
-                /// <summary> Creates a Csw.link on this element</summary>
-                /// <param name="opts" type="Object">Options to define the link.</param>
-                /// <returns type="Csw.literals.link">A Csw.literals.link</returns> 
-                return internal.makeControlForChaining(opts, 'link');
-            };
-
+            
             /* Case 25125: This literal is deprecated. Use composite instead. */
             external.moreDiv = function (opts) {
                 /// <summary> (Deprecated) Creates a Csw.moreDiv on this element</summary>

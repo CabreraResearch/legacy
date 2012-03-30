@@ -26,7 +26,7 @@
                 $parent: internal.$parent
             }).hide();
 
-            external.moreLink = Csw.literals.link({
+            external.moreLink = Csw.literals.a({
                 ID: Csw.makeId(internal.ID, '', '_more'),
                 $parent: internal.$parent,
                 text: internal.moretext,

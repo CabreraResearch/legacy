@@ -170,7 +170,7 @@
 
 //        var toggleLink;
 //        if (o.ShowToggleLink) {
-//            toggleLink = parent.link({
+//            toggleLink = parent.a({
 //                ID: idPrefix + 'toggle',
 //                value: 'Expand All',
 //                onClick: onToggleLinkClick

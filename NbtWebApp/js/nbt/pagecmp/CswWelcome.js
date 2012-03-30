@@ -79,7 +79,7 @@
                                 var textCell = cellSet[2][1].children('div');
                                 var link;
                                 if (false === Csw.isNullOrEmpty(thisItem.buttonicon)) {
-                                    link = imageCell.link({
+                                    link = imageCell.a({
                                         href: 'javascript:void(0);'
                                     });
                                     link.img({
@@ -100,7 +100,7 @@
                                     textCell.span(thisItem.text);
                                 } else {
                                     var onClick = Csw.makeDelegate(_clickItem, clickopts);
-                                    textCell.link({
+                                    textCell.a({
                                         href: 'javascript:void(0);',
                                         value: thisItem.text,
                                         onClick: onClick

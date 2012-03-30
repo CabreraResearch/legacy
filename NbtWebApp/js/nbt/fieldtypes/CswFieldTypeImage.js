@@ -38,7 +38,7 @@
 
                 if (false === Csw.isNullOrEmpty(fileName)) {
                     //Case 24389: IE interprets height and width absolutely, better not to use them at all.
-                    cell11.link({
+                    cell11.a({
                         href: href,
                         target: '_blank'
                     })
@@ -46,7 +46,7 @@
                             src: href, 
                             alt: fileName
                         });
-                    cell21.link({ 
+                    cell21.a({ 
                         href: href,
                         target: '_blank',
                         text: fileName

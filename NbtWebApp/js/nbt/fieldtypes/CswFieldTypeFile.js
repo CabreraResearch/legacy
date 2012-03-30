@@ -23,7 +23,7 @@
                 var table = propDiv.table({
                     ID: Csw.makeId(o.ID, 'tbl')
                 });
-                table.cell(1, 1).link({ href: href, target: '_blank', text: fileName });
+                table.cell(1, 1).a({ href: href, target: '_blank', text: fileName });
                 var cell12 = table.cell(1, 2).div();
                 var cell13 = table.cell(1, 3).div();
 

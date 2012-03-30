@@ -16,7 +16,7 @@
             var href = (false === o.Multi) ? Csw.string(propVals.href).trim() : Csw.enums.multiEditDefaultValue;
 
             if (o.ReadOnly) {
-                propDiv.link({
+                propDiv.a({
                     href: href,
                     text: text
                 });
@@ -25,7 +25,7 @@
                     ID: Csw.makeId(o.ID, 'tbl')
                 });
 
-                table.cell(1, 1).link({
+                table.cell(1, 1).a({
                     href: href,
                     text: text
                 });

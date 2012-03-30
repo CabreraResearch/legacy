@@ -60,7 +60,7 @@
         if (o.EditMode !== Csw.enums.editMode.PrintReport) {
             var linkDiv = parent.div({ ID: o.ID + '_linkdiv', align: 'right' });
             if (o.ShowAsReport && false === o.Multi) {
-                linkDiv.link({
+                linkDiv.a({
                     text: 'As Report',
                     onClick: function () {
                         Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(o.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(o.nodekeys, 0), 600, 800);
@@ -140,7 +140,7 @@
                             }
                             tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
                             tabUl = tabUl || tabDiv.ul();
-                            tabUl.li().link({ href: '#' + thisTabId, text: thisTab.name });
+                            tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name });
                             makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
                             if (thisTabId === o.tabid) {
                                 selectedtabno = tabno;
@@ -462,7 +462,7 @@
                 }
 
                 if (false === Csw.isNullOrEmpty(helpText)) {
-                    labelCell.link({
+                    labelCell.a({
                         cssclass: 'cswprop_helplink',
                         title: helpText,
                         onClick: function () {

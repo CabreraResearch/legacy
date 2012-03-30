@@ -101,7 +101,7 @@
                 });
             }
             else {
-                button = table.cell(1, 1).link({
+                button = table.cell(1, 1).a({
                     ID: o.ID,
                     value: value,
                     onClick: onClick

@@ -318,7 +318,7 @@
             internal.idPrefix = Csw.string(internal.ID) + '_';
 
             if (internal.ShowToggleLink) {
-                internal.toggleLink = internal.parent.link({
+                internal.toggleLink = internal.parent.a({
                     ID: internal.idPrefix + 'toggle',
                     value: 'Expand All',
                     onClick: external.expandAll
