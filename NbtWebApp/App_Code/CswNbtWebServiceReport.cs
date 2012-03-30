@@ -17,11 +17,8 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceReport
     {
-        
-
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtNode _reportNode = null;
-
 
         public CswNbtWebServiceReport( CswNbtResources CswNbtResources,CswNbtNode reportNode)
         {
@@ -34,36 +31,28 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassReport report = CswNbtNodeCaster.AsReport(_reportNode);
             JObject ret = new JObject();
 
-            //if we are not RPT, then just run the SQL
-            if( report.RPTFile.Empty )
+            if( string.Empty != report.SQL.Text )
             {
-                if( string.Empty != report.SQL.Text )
+
+                CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", report.SQL.Text );
+                DataTable rptDataTbl = cswRptSql.getTable();
+
+                if( "csv" == rformat.ToLower() )
                 {
-                    
-                    CswArbitrarySelect cswRptSql = _CswNbtResources.makeCswArbitrarySelect( "report_sql", report.SQL.Text );
-                    DataTable rptDataTbl = cswRptSql.getTable();
-                    
-                    if( "csv" == rformat.ToLower() )
-                    {
-                        wsTools.ReturnCSV( Context, rptDataTbl );
-                    }
-                    else
-                    {
-                        CswGridData cg = new CswGridData( _CswNbtResources );
-                        ret["griddata"] = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
-                    }
+                    wsTools.ReturnCSV( Context, rptDataTbl );
                 }
-                else throw ( new CswDniException( "Report has no SQL to run!" ) );
+                else
+                {
+                    CswGridData cg = new CswGridData( _CswNbtResources );
+                    ret["griddata"] = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
+                }
             }
             else
             {
-                //we are CRPE, run as such...
-                throw ( new CswDniException( "CRPE report not implemented yet." ) );
+                throw ( new CswDniException( "Report has no SQL to run!" ) );
             }
             return ret;
+        } // runReport()
 
-        }
-
-
-    } // class CswNbtWebServiceTable
+    } // class CswNbtWebServiceReport
 } // namespace ChemSW.Nbt.WebServices
