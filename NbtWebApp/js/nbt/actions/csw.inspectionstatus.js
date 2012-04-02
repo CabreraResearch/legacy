@@ -5,9 +5,10 @@
 
     Csw.actions.inspectionStatus = Csw.actions.inspectionStatus ||
         Csw.actions.register('inspectionStatus', function (cswParent, options) {
+            'use strict';
             var internal = {
                 urlMethod: 'getInspectionStatusGrid',
-                onEditNode: function() { },
+                onEditNode: function () { },
                 onAfterButtonClick: null,
                 ID: 'CswInspectionStatus',
                 /* Csw.grid specific options */
@@ -27,7 +28,7 @@
                     edittitle: "Edit row"
                 },
                 optNavEdit: {
-                    editfunc: function(rowid) {
+                    editfunc: function (rowid) {
                         var editOpt = {
                             nodeids: [],
                             onEditNode: internal.onEditNode,
@@ -58,9 +59,9 @@
                     var inspGridId = internal.ID + '_csw_inspGrid_outer';
 
                     external.gridParent = cswParent.div({ ID: inspGridId });
-                    
+
                     $.extend(internal.gridOpts, gridJson);
-                    
+
                     external.grid = external.gridParent.grid(internal);
                     external.grid.hideColumn('NODEID');
                     external.grid.hideColumn('NODEPK');

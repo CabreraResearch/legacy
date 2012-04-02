@@ -1,17 +1,9 @@
 ﻿using System;
-using System.Data;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Linq;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Sched;
+using System.Collections.ObjectModel;
 using ChemSW.Audit;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 
 
@@ -70,12 +62,12 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeType room = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
                 if( null != room )
                 {
-                    CswNbtMetaDataNodeTypeProp rdept = bldg.getNodeTypeProp( "Department" );
+                    CswNbtMetaDataNodeTypeProp rdept = room.getNodeTypeProp( "Department" );
                     if( null == rdept )
                     {
                         CswNbtMetaDataNodeTypeTab tab = room.getFirstNodeTypeTab();
                         CswNbtMetaDataNodeTypeProp deptProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( room, CswNbtMetaDataFieldType.NbtFieldType.Relationship, "Department", tab.TabId );
-                        deptProp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(),deptNT.NodeTypeId);
+                        deptProp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), deptNT.NodeTypeId );
                     }
                 }
             }
