@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.MetaData
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in DoomedProps )
             {
-                DeleteNodeTypeProp( Prop );
+                DeleteNodeTypeProp( Prop, true );
             }
 
             // Update MetaData
