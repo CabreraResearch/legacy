@@ -1428,8 +1428,14 @@ namespace ChemSW.Nbt.Schema
             }
             finally
             {
-                File.Delete( BatchFilePath );
-                File.Delete( SqlFilePath );
+                if( File.Exists( BatchFilePath ) )
+                {
+                    File.Delete( BatchFilePath );
+                }
+                if( File.Exists( SqlFilePath ) )
+                {
+                    File.Delete( SqlFilePath );
+                }
             }
 
         } // runExternalSqlScript
