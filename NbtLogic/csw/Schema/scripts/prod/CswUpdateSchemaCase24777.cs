@@ -32,11 +32,14 @@ namespace ChemSW.Nbt.Schema
                 if( PropRefNTP.FKType == NbtViewPropIdType.NodeTypePropId.ToString() &&
                     PropRefNTP.ValuePropType == NbtViewPropIdType.NodeTypePropId.ToString() )
                 {
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( PropRefNTP.FKValue );
-                    CswNbtMetaDataNodeTypeProp ReferenceProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( PropRefNTP.ValuePropId );
-                    if( RelationshipProp != null && ReferenceProp != null )
+                    if( false == PropRefNTP.getNodeType().IsLocked )
                     {
-                        PropRefNTP.SetFK( PropRefNTP.FKType, RelationshipProp.FirstPropVersionId, PropRefNTP.ValuePropType, ReferenceProp.FirstPropVersionId );
+                        CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( PropRefNTP.FKValue );
+                        CswNbtMetaDataNodeTypeProp ReferenceProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( PropRefNTP.ValuePropId );
+                        if( RelationshipProp != null && ReferenceProp != null )
+                        {
+                            PropRefNTP.SetFK( PropRefNTP.FKType, RelationshipProp.FirstPropVersionId, PropRefNTP.ValuePropType, ReferenceProp.FirstPropVersionId );
+                        }
                     }
                 }
             }
