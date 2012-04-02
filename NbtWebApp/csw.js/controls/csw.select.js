@@ -30,7 +30,7 @@
         };
 
         external.selectedText = function() {
-            return internal.$select.find('option:selected').text();
+            return external.$.find('option:selected').text();
         };
 
         external.makeOption = function (opt) {
@@ -71,14 +71,14 @@
             return opt;
         };
 
-        external.setOptions = function (values, selected, doEmpty) {
+        external.setOptions = function (values, doEmpty) {
             if (Csw.isArray(values) && values.length > 0) {
                 if (doEmpty) {
                     external.empty();
                 }
                 Csw.each(values, function (thisOpt) {
                     var opt = external.makeOption(thisOpt);
-                    external.addOption(opt, (opt.value === selected));
+                    external.addOption(opt, (opt.value === internal.selected));
                 });
             }
             return external;
@@ -101,15 +101,12 @@
             style.add('width', internal.width);
             
             html += '<select ';
-
             html += attr.get();
             html += style.get();
-            
             html += '>';
             html += '</select>';
-            internal.$select = $(html);
 
-            Csw.controls.factory(internal.$select, external);
+            Csw.controls.factory($(html), external);
 
             if (false === Csw.isNullOrEmpty(internal.$parent)) {
                 internal.$parent.append(external.$);
@@ -120,10 +117,10 @@
             }
 
             var values = external.makeOptions(internal.values);
-            external.setOptions(values, internal.selected, internal.$select);
+            external.setOptions(values);
 
             if (false === Csw.isNullOrEmpty(internal.value)) {
-                internal.$select.text(internal.value);
+                external.$.text(internal.value);
             }
 
             if (Csw.bool(internal.multiple)) {
