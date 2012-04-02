@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeType room = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
                 if( null != room )
                 {
-                    CswNbtMetaDataNodeTypeProp rdept = bldg.getNodeTypeProp( "Department" );
+                    CswNbtMetaDataNodeTypeProp rdept = room.getNodeTypeProp( "Department" );
                     if( null == rdept )
                     {
                         CswNbtMetaDataNodeTypeTab tab = room.getFirstNodeTypeTab();
