@@ -9,10 +9,9 @@
     <link rel="shortcut icon" href="images/favicon.ico" />
     <title>ChemSW Live</title>
     <!--#include file="MainIncludes.html" -->
-    <script type="text/javascript" src="js/ChemSW.min.js"></script>
-    <script type="text/javascript" src="js/CswAll.min.js"></script>
+    <script type="text/javascript" src="js/ChemSW.min.js"></script> 
+    <script type="text/javascript" src="js/CswAll.min.js"></script> 
     <script type="text/javascript">
-
 
         $(document).ready(function () {
 
@@ -20,14 +19,13 @@
                 $('#spinner').hide();
             }
 
-            function showCrystal(reportid)
-            {
+            function showCrystal(reportid) {
                 Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/doesReportSupportCrystal',
                     data: { reportid: reportid },
-                    success: function(data){
-                        if(Csw.bool(data.result)) {
-                            $('#btnCrystal').css('display','');
+                    success: function (data) {
+                        if (Csw.bool(data.result)) {
+                            $('#btnCrystal').css('display', '');
                         }
                     }
                 });
@@ -35,13 +33,12 @@
 
             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
-            var qs = $.CswQueryString();
+            var qs = Csw.queryString();
             if (false == Csw.isNullOrEmpty(qs.reportid)) {
                 showCrystal(qs.reportid);
                 if (false == Csw.isNullOrEmpty(qs.rformat)) {
                     runReport(qs.reportid, qs.rformat);
-                }
-                else {
+                } else {
                     $('#btnGrid').click(function () { runReport(qs.reportid, 'grid'); });
                     $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
                     $('#btnCrystal').click(function () { window.location = 'report.aspx?reportid=' + qs.reportid; });
@@ -71,20 +68,18 @@
                     success: function (data) {
                         //jobject data from the ws call
                         var gridOptions = {
-                            ID: Csw.controls.dom.makeId('reportGrid'),
-                            $parent: $('#rptDiv'),
-                            gridOpts: { }
+                            ID: Csw.makeId('reportGrid'),
+                            //$parent: $('#rptDiv'),
+                            gridOpts: {}
                         };
                         $.extend(gridOptions.gridOpts, data.griddata);
                         gridOptions.gridOpts.autowidth = true;
                         gridOptions.gridOpts.rowNum = 100000;
                         gridOptions.gridOpts.rowList = [100000];
-                        var grid = Csw.controls.grid(gridOptions);
+                        var parent = Csw.literals.factory($('#rptDiv'));
+                        var grid = parent.grid(gridOptions);
                     }
-                    });
-
-
-                    //$('#spinner').hide();
+                });
 
             }
         }

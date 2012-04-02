@@ -11,13 +11,13 @@ $.jgrid = {
 		recordtext: "Amosando {0} - {1} de {2}",
 	    emptyrecords: "Sen rexistros que amosar",
 		loadtext: "Cargando...",
-		pgtext : "Páxina {0} de {1}"
+		pgtext : "PÃ¡xina {0} de {1}"
 	},
 	search : {
-	    caption: "Búsqueda...",
+	    caption: "BÃºsqueda...",
 	    Find: "Buscar",
 	    Reset: "Limpar",
-	    odata : ['igual ', 'diferente a', 'menor que', 'menor ou igual que','maior que','maior ou igual a', 'empece por','non empece por','está en','non está en','termina por','non termina por','contén','non contén'],
+	    odata : ['igual ', 'diferente a', 'menor que', 'menor ou igual que','maior que','maior ou igual a', 'empece por','non empece por','estÃ¡ en','non estÃ¡ en','termina por','non termina por','contÃ©n','non contÃ©n'],
 	    groupOps: [	{ op: "AND", text: "todo" },	{ op: "OR",  text: "calquera" }	],
 		matchText: " match",
 		rulesText: " regras"
@@ -28,23 +28,23 @@ $.jgrid = {
 	    bSubmit: "Gardar",
 	    bCancel: "Cancelar",
 		bClose: "Pechar",
-		saveData: "Modificáronse os datos, quere gardar os cambios?",
+		saveData: "ModificÃ¡ronse os datos, quere gardar os cambios?",
 		bYes : "Si",
 		bNo : "Non",
 		bExit : "Cancelar",
 	    msg: {
 	        required:"Campo obrigatorio",
-	        number:"Introduza un número",
+	        number:"Introduza un nÃºmero",
 	        minValue:"O valor debe ser maior ou igual a ",
 	        maxValue:"O valor debe ser menor ou igual a ",
-	        email: "non é un enderezo de correo válido",
+	        email: "non Ã© un enderezo de correo vÃ¡lido",
 	        integer: "Introduza un valor enteiro",
 			date: "Introduza unha data correcta ",
-			url: "non é unha URL válida. Prefixo requerido ('http://' ou 'https://')",
-			nodefined : " non está definido.",
-			novalue : " o valor de retorno é obrigatorio.",
-			customarray : "A función persoalizada debe devolver un array.",
-			customfcheck : "A función persoalizada debe estar presente no caso de ter validación persoalizada."
+			url: "non Ã© unha URL vÃ¡lida. Prefixo requerido ('http://' ou 'https://')",
+			nodefined : " non estÃ¡ definido.",
+			novalue : " o valor de retorno Ã© obrigatorio.",
+			customarray : "A funciÃ³n persoalizada debe devolver un array.",
+			customfcheck : "A funciÃ³n persoalizada debe estar presente no caso de ter validaciÃ³n persoalizada."
 		}
 	},
 	view : {
@@ -65,7 +65,7 @@ $.jgrid = {
 	    deltext: " ",
 	    deltitle: "Eliminar a fila seleccionada",
 	    searchtext: " ",
-	    searchtitle: "Buscar información",
+	    searchtitle: "Buscar informaciÃ³n",
 	    refreshtext: "",
 	    refreshtitle: "Recargar datos",
 	    alertcap: "Aviso",
@@ -91,11 +91,11 @@ $.jgrid = {
 		date : {
 			dayNames:   [
 				"Do", "Lu", "Ma", "Me", "Xo", "Ve", "Sa",
-				"Domingo", "Luns", "Martes", "Mércoles", "Xoves", "Vernes", "Sábado"
+				"Domingo", "Luns", "Martes", "MÃ©rcoles", "Xoves", "Vernes", "SÃ¡bado"
 			],
 			monthNames: [
-				"Xan", "Feb", "Mar", "Abr", "Mai", "Xuñ", "Xul", "Ago", "Set", "Out", "Nov", "Dec",
-				"Xaneiro", "Febreiro", "Marzo", "Abril", "Maio", "Xuño", "Xullo", "Agosto", "Setembro", "Outubro", "Novembro", "Decembro"
+				"Xan", "Feb", "Mar", "Abr", "Mai", "XuÃ±", "Xul", "Ago", "Set", "Out", "Nov", "Dec",
+				"Xaneiro", "Febreiro", "Marzo", "Abril", "Maio", "XuÃ±o", "Xullo", "Agosto", "Setembro", "Outubro", "Novembro", "Decembro"
 			],
 			AmPm : ["am","pm","AM","PM"],
 			S: function (j) {return j < 11 || j > 13 ? ['st', 'nd', 'rd', 'th'][Math.min((j - 1) % 10, 3)] : 'th'},
