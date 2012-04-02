@@ -383,7 +383,7 @@
             var table = div.table();
             if (false === Csw.isNullOrEmpty(o.date) && false === o.Multi) {
                 myEditMode = Csw.enums.editMode.AuditHistoryInPopup;
-                table.cell(1, 1).$.CswAuditHistoryGrid({
+                Csw.actions.auditHistory(table.cell(1, 1), {
                     ID: o.nodeids[0] + '_history',
                     nodeid: o.nodeids[0],
                     cswnbtnodekey: o.nodekeys[0],

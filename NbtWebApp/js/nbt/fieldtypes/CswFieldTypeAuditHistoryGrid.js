@@ -11,7 +11,7 @@
             var propDiv = o.propDiv;
             var ret = '';
             if (false === o.Multi) {
-                ret = propDiv.$.CswAuditHistoryGrid({
+                ret = Csw.actions.auditHistory(propDiv, {
                     ID: o.ID,
                     nodeid: o.nodeid,
                     cswnbtnodekey: o.cswnbtnodekey,

@@ -16,7 +16,25 @@
                 onEditRow: null, //function (date) {},
                 onSelectRow: null, //function (date) {},
                 selectedDate: '',
-                allowEditRow: true
+                allowEditRow: true,
+                preventSelectTrigger: false,
+                canEdit: true,
+                pagermode: 'default',
+                gridOpts: {
+                    height: 180,
+                    rowNum: 10,
+                    onSelectRow: function (selRowid) {
+                        if (false === internal.preventSelectTrigger && false === Csw.isNullOrEmpty(selRowid)) {
+                            var cellVal = external.grid.getValueForColumn('CHANGEDATE', selRowid);
+                            Csw.tryExec(internal.onSelectRow, cellVal);
+                        }
+                    },
+                    add: false,
+                    view: false,
+                    del: false,
+                    refresh: false,
+                    search: false
+                }
             };
             if (options) {
                 $.extend(internal, options);
@@ -33,51 +51,22 @@
                 },
                 success: function (gridJson) {
 
-                    var preventSelectTrigger = false;
-
                     var auditGridId = internal.ID + '_csw_auditGrid_outer';
-                    var $auditGrid = $Div.find('#' + auditGridId);
-                    if (Csw.isNullOrEmpty($auditGrid) || $auditGrid.length === 0) {
-                        $auditGrid = $('<div id="' + internal.ID + '"></div>').appendTo($Div);
-                    } else {
-                        $auditGrid.empty();
-                    }
 
-                    var g = {
-                        ID: internal.ID,
-                        canEdit: Csw.bool(internal.allowEditRow),
-                        pagermode: 'default',
-                        gridOpts: {
-                            height: 180,
-                            rowNum: 10,
-                            onSelectRow: function (selRowid) {
-                                if (!preventSelectTrigger && false === Csw.isNullOrEmpty(selRowid)) {
-                                    var cellVal = grid.getValueForColumn('CHANGEDATE', selRowid);
-                                    if (Csw.isFunction(internal.onSelectRow)) {
-                                        internal.onSelectRow(cellVal);
-                                    }
-                                }
-                            },
-                            add: false,
-                            view: false,
-                            del: false,
-                            refresh: false,
-                            search: false
-                        }
-                    };
-
+                    internal.gridDiv = cswParent.div({ ID: auditGridId });
+                    
                     if (Csw.contains(gridJson, 'jqGridOpt')) {
 
-                        $.extend(g.gridOpts, gridJson.jqGridOpt);
+                        $.extend(internal.gridOpts, gridJson.jqGridOpt);
 
                         if (internal.EditMode === Csw.enums.editMode.PrintReport) {
-                            g.gridOpts.caption = '';
-                            g.hasPager = false;
+                            internal.gridOpts.caption = '';
+                            internal.hasPager = false;
                         } else {
-                            g.optNavEdit = {
+                            internal.optNavEdit = {
                                 editfunc: function (selRowid) {
                                     if (false === Csw.isNullOrEmpty(selRowid)) {
-                                        var cellVal = grid.getValueForColumn('CHANGEDATE', selRowid);
+                                        var cellVal = external.grid.getValueForColumn('CHANGEDATE', selRowid);
                                         if (Csw.isFunction(internal.onEditRow)) {
                                             internal.onEditRow(cellVal);
                                         }
@@ -87,18 +76,17 @@
                                 }
                             };
                         }
-                        //g.$parent = $auditGrid;
-                        var parent = Csw.literals.factory($auditGrid);
-                        var grid = parent.grid(g);
-                        grid.gridPager.css({ width: '100%', height: '20px' });
+                        
+                        external.grid = internal.gridDiv.grid(internal);
+                        external.grid.gridPager.css({ width: '100%', height: '20px' });
 
                         // set selected row by date
 
-                        if (!Csw.isNullOrEmpty(internal.selectedDate)) {
-                            preventSelectTrigger = true;
-                            var rowid = grid.getRowIdForVal('CHANGEDATE', internal.selectedDate.toString());
-                            grid.setSelection(rowid);
-                            preventSelectTrigger = false;
+                        if (false === Csw.isNullOrEmpty(internal.selectedDate)) {
+                            internal.preventSelectTrigger = true;
+                            var rowid = external.grid.getRowIdForVal('CHANGEDATE', internal.selectedDate.toString());
+                            external.grid.setSelection(rowid);
+                            internal.preventSelectTrigger = false;
                         }
                     }
                 }

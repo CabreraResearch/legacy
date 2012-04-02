@@ -114,7 +114,6 @@
     <Content Include="js\nbt\wizards\csw.createinspection.js" />
     <Content Include="js\_first-vsdoc.js" />
     <Content Include="js\_last-vsdoc.js" />
-    <Content Include="js\nbt\actions\CswAuditHistoryGrid.js" />
     <Content Include="js\nbt\literals\CswInput.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeBarcode.js" />
