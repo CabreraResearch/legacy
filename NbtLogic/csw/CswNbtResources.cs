@@ -884,6 +884,11 @@ namespace ChemSW.Nbt
         /// </summary>
         public ICswUser CurrentUser { get { return _CswResources.CurrentUser as ICswUser; } } //set { _CswResources.CurrentUser = (ICswUser) value; } }
         /// <summary>
+        /// Clear the current user (for reauthenticating)
+        /// </summary>
+        public void clearCurrentUser() { _CswResources.clearCurrentUser(); }
+
+        /// <summary>
         /// The SMTP interface
         /// </summary>
         public CswMail CswMail { get { return _CswResources.CswMail; } }
