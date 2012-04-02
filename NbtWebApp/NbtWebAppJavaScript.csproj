@@ -97,6 +97,8 @@
     <Content Include="js\common\layouts\csw.wizard.js" />
     <Content Include="js\CswCommon-vsdoc.js" />
     <Content Include="js\CswNbt-vsdoc.js" />
+    <Content Include="js\nbt\actions\csw.audithistory.js" />
+    <Content Include="js\nbt\actions\csw.inspectionstatus.js" />
     <Content Include="js\nbt\actions\csw.sessions.js" />
     <Content Include="js\nbt\actions\csw.quotaimage.js" />
     <Content Include="js\nbt\actions\csw.quotas.js" />
@@ -113,7 +115,6 @@
     <Content Include="js\_first-vsdoc.js" />
     <Content Include="js\_last-vsdoc.js" />
     <Content Include="js\nbt\actions\CswAuditHistoryGrid.js" />
-    <Content Include="js\nbt\actions\CswInspectionStatus.js" />
     <Content Include="js\nbt\literals\CswInput.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeAuditHistoryGrid.js" />
     <Content Include="js\nbt\fieldtypes\CswFieldTypeBarcode.js" />

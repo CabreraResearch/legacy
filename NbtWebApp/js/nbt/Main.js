@@ -928,7 +928,7 @@ window.initMain = window.initMain || function (undefined) {
         function setupOocInspections() {
             clear({ 'all': true });
 
-            $('#CenterTopDiv').CswInspectionStatus({
+            Csw.actions.inspectionStatus(centerTopDiv, {
                 onEditNode: function () {
                     setupOocInspections();
                 },

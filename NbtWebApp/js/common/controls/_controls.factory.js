@@ -17,11 +17,15 @@
                 }
 
                 internal.controlPreProcessing = function (opts, controlName) {
+                    var id = '';
                     opts = opts || {};
+                    if (external.getId) {
+                        id = external.getId();
+                    }
                     if (opts.suffix) {
-                        opts.ID = Csw.makeId(external.getId(), opts.suffix);
+                        opts.ID = Csw.makeId(id, opts.suffix);
                     } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(cswParent.getId())) {
-                        opts.ID = Csw.makeId(external.getId(), controlName);
+                        opts.ID = Csw.makeId(id, controlName);
                     }
                     return opts;
                 };
