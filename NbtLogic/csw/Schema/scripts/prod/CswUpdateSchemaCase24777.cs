@@ -34,7 +34,10 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( PropRefNTP.FKValue );
                     CswNbtMetaDataNodeTypeProp ReferenceProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( PropRefNTP.ValuePropId );
-                    PropRefNTP.SetFK( PropRefNTP.FKType, RelationshipProp.FirstPropVersionId, PropRefNTP.ValuePropType, ReferenceProp.FirstPropVersionId );
+                    if( RelationshipProp != null && ReferenceProp != null )
+                    {
+                        PropRefNTP.SetFK( PropRefNTP.FKType, RelationshipProp.FirstPropVersionId, PropRefNTP.ValuePropType, ReferenceProp.FirstPropVersionId );
+                    }
                 }
             }
 
