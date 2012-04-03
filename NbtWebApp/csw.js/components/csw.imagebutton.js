@@ -13,13 +13,11 @@
             ID: '',
             cssclass: '',
             Required: false,
-            onClick: function () {
-                return Csw.enums.imageButton_ButtonType.None;
-            }
+            onClick: null
         };
         var external = {};
 
-        internal.setButton = function (newButtonType) {
+        external.setButtonType = function (newButtonType) {
             var multiplier = -18;
             //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
             var port = document.location.port;
@@ -53,14 +51,17 @@
                     external.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                 });
             }
+            internal.ButtonType = newButtonType;
             return false;
         };
 
-        external.click = function (newButtonType, func) {
+        external.getButtonType = function() {
+            return internal.ButtonType;
+        };
+
+        external.click = function (func) {
             if (Csw.isFunction(func)) {
                 return external.bind('click', func);
-            } else {
-                return internal.setButton(newButtonType);
             }
         };
 
@@ -73,11 +74,7 @@
             external.addClass('divbutton');
             external.propNonDom('title', internal.AlternateText);
             external.css('display', 'inline-block');
-
-            internal.setButton(internal.ButtonType);
-            external.bind('click', function () {
-                return internal.setButton();
-            });
+            external.setButtonType(internal.ButtonType);
         } ());
 
         return external;
