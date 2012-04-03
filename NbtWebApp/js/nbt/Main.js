@@ -96,15 +96,40 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.actions.quotaImage(headerQuota);
 
                 $('#header_menu').CswMenuHeader({
-                    'onLogout': function () {
+                    onLogout: function () {
                         Csw.clientSession.logout();
                     },
-                    'onQuotas': function () {
+                    onQuotas: function () {
                         handleAction({ 'actionname': 'Quotas' });
                     },
-                    'onSessions': function () {
+                    onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
-                    }
+                    },
+                    onImpersonate: function(userid, username) {
+                        Csw.ajax.post({
+                            url: '/NbtWebApp/wsNBT.asmx/impersonate',
+                            data: { UserId: userid },
+                            success: function (data) {
+                                if(Csw.bool(data.result)) {
+                                    Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
+                                    Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
+                                    Csw.goHome();
+                                }
+                            } // success
+                        }); // ajax
+                    }, // onImpersonate
+                    onEndImpersonation: function() {
+                        Csw.ajax.post({
+                            url: '/NbtWebApp/wsNBT.asmx/endImpersonation',
+                            success: function (data) {
+                                if(Csw.bool(data.result)) {
+                                    Csw.cookie.set(Csw.cookie.cookieNames.Username, Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername));
+                                    Csw.cookie.clear(Csw.cookie.cookieNames.OriginalUsername);
+                                    Csw.goHome();
+                                }
+                            } // success
+                        }); // ajax
+                    } // onEndImpersonation
                 }); // CswMenuHeader
 
                 refreshViewSelect(function () {

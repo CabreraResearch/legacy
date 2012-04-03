@@ -994,6 +994,19 @@ namespace ChemSW.Nbt
         /// </summary>
         public string AuditContext { set { _CswResources.AuditContext = value; } }
 
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditUsername { set { _CswResources.AuditUsername = value; } }
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditFirstName { set { _CswResources.AuditFirstName = value; } }
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditLastName { set { _CswResources.AuditLastName = value; } }
+
         public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
 
         public void sendEmailNotification( Collection<CswMailMessage> MailMessages ) { _CswResources.sendEmailNotification( MailMessages ); }

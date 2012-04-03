@@ -12,6 +12,7 @@
             {
                 SessionId: 'CswSessionId',
                 Username: 'csw_username',
+            OriginalUsername: 'csw_orig_username',
                 LogoutPath: 'csw_logoutpath',
                 CurrentNodeId: 'csw_currentnodeid',
                 CurrentNodeKey: 'csw_currentnodekey',

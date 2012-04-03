@@ -29,6 +29,7 @@
                 onSaveView: null, //function (newviewid) { },
                 onQuotas: null, // function () { },
                 onSessions: null, // function () { },
+            onImpersonate: null,
                 Multi: false,
                 nodeTreeCheck: null
             };
@@ -180,6 +181,18 @@
                         break;
                     case 'Sessions':
                         $a.click(o.onSessions);
+                    break;
+                case 'Impersonate':
+                    $a.click(function () {
+                        $.CswDialog('ImpersonateDialog', { onImpersonate: o.onImpersonate });
+                        return false;
+                    });
+                    break;
+                case 'EndImpersonation':
+                    $a.click(function () {
+                        Csw.tryExec(o.onEndImpersonation);
+                        return false;
+                    });
                         break;
                 }
             } else {
