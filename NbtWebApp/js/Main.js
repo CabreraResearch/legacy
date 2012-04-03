@@ -923,7 +923,10 @@ window.initMain = window.initMain || function (undefined) {
             clear({ 'all': true });
 
             $('#CenterTopDiv').CswInspectionStatus({
-                'onEditNode': function () {
+                onEditNode: function () {
+                    setupOocInspections();
+                },
+                onAfterButtonClick: function () {
                     setupOocInspections();
                 }
             });

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -95,7 +96,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, string NodeTypePropName )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + NodeTypePropName.ToLower() + "'" );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( NodeTypePropName.ToLower() ) + "'" );
         }
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, Int32 ObjectClassPropId )
         {
@@ -103,15 +104,15 @@ namespace ChemSW.Nbt.MetaData
         }
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "')" );
         }
         public Int32 getNodeTypePropId( Int32 NodeTypeId, string PropName )
         {
-            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + PropName.ToLower() + "'" );
+            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( PropName.ToLower() ) + "'" );
         }
         public Int32 getNodeTypePropIdByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
         {
-            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + ObjectClassPropName.ToLower() + "')" );
+            return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "')" );
         }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropFirstVersion( Int32 NodeTypePropId )

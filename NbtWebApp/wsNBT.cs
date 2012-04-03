@@ -278,6 +278,9 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
+            
+            // case 25694 - clear the current user, or else it will be confused with nodes in the new schemata
+            _CswNbtResources.clearCurrentUser();
 
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 

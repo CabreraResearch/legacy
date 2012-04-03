@@ -1,12 +1,5 @@
-echo "Please connect the VPN to Fairfield."
-
-pause
-
-
-
 echo "Enter the release name tag to update to (For example, Horatio_2011.8.2.1):"
-set /p TagName=
-
+set TagName=%1
 
 
 echo "Stopping Services..."
@@ -15,9 +8,6 @@ net stop "ChemSW Log Service"
 net stop "ChemSW NBT Schedule Service"
 
 echo "Services stopped."
-
-pause
-
 
 
 echo "Pulling Source Code from Main..."
@@ -34,7 +24,6 @@ hg pull -R /kiln/ThirdParty/YUICompressor
 
 echo "Pull from Main Completed."
 
-pause
 
 echo "Updating working directories to tag..."
 
@@ -46,7 +35,7 @@ hg update -R /kiln/nbt/nbt -r "%TagName%"
 
 echo "Update completed."
 
-pause
+
 
 echo "Compiling new code..."
 
@@ -54,7 +43,7 @@ msbuild C:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release
 
 echo "Compile Finished."
 
-pause
+
 
 
 echo "Starting Schema updater..."
@@ -63,7 +52,7 @@ C:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
 echo "Schema update completed."
 
-pause
+
 
 echo "Restarting Services..."
 
@@ -75,4 +64,3 @@ echo "Services Restarted."
 
 echo "All done!"
 
-pause

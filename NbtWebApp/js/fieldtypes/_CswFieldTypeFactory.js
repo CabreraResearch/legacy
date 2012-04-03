@@ -19,7 +19,8 @@ $.CswFieldTypeFactory = function (method) {
         ReadOnly: '',
         EditMode: Csw.enums.editMode.Edit,
         Multi: false,
-        onEditView: function () { }
+        onEditView: function () { },
+        onAfterButtonClick: function () { }
     };
 
     var methods = {

@@ -607,6 +607,12 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
                 NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, NewProp );
 
+                // Handle setFk()
+                if( OCProp.FKValue != Int32.MinValue )
+                {
+                    NewProp.SetFK( OCProp.FKType, OCProp.FKValue, OCProp.ValuePropType, OCProp.ValuePropId );
+                }
+
                 // Handle default values
                 CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
 
