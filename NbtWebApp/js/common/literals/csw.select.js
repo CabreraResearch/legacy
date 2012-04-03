@@ -30,9 +30,9 @@
                 return external;
             };
 
-        external.selectedText = function() {
-            return external.$.find('option:selected').text();
-        };
+            external.selectedText = function () {
+                return external.$.find('option:selected').text();
+            };
 
             external.makeOption = function (opt) {
                 var ret, display, value;
@@ -72,20 +72,20 @@
                 return opt;
             };
 
-        external.setOptions = function (values, doEmpty) {
+            external.setOptions = function (values, doEmpty) {
                 if (Csw.isArray(values) && values.length > 0) {
                     if (doEmpty) {
                         external.empty();
                     }
                     Csw.each(values, function (thisOpt) {
                         var opt = external.makeOption(thisOpt);
-                    external.addOption(opt, (opt.value === internal.selected));
+                        external.addOption(opt, (opt.value === internal.selected));
                     });
                 }
                 return external;
             };
 
-            external.option = function(optionOpts) {
+            external.option = function (optionOpts) {
                 var optInternal = {
                     value: '',
                     display: '',
@@ -93,10 +93,10 @@
                     isDisabled: false
                 };
                 var optExternal = {
-                    
+
                 };
 
-                (function() {
+                (function () {
                     $.extend(optInternal, optionOpts);
 
                     var html = '<option ',
@@ -121,12 +121,12 @@
 
                     Csw.literals.factory($option, optExternal);
                     external.append($option);
-                }());
+                } ());
 
                 return optExternal;
             };
 
-            (function () {
+            (function() {
                 var html = '',
                     attr = Csw.makeAttr(),
                     style = Csw.makeStyle();
@@ -148,7 +148,7 @@
                 html += '>';
                 html += '</select>';
 
-            Csw.controls.factory($(html), external);
+                Csw.literals.factory($(html), external);
 
                 if (false === Csw.isNullOrEmpty(internal.$parent)) {
                     internal.$parent.append(external.$);
@@ -159,17 +159,17 @@
                 }
 
                 var values = external.makeOptions(internal.values);
-            external.setOptions(values);
+                external.setOptions(values);
 
                 if (false === Csw.isNullOrEmpty(internal.value)) {
-                external.$.text(internal.value);
+                    external.text(internal.value);
                 }
 
                 if (Csw.bool(internal.multiple)) {
                     external.propDom('multiple', 'multiple');
                 }
 
-            } ());
+            }());
 
             return external;
         });
