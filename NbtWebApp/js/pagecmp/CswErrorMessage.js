@@ -75,7 +75,7 @@
                     text: nodename,
                     onClick: function () {
                         $.CswDialog('EditNodeDialog', {
-                            nodepks: [nodeid],
+                            nodeids: [nodeid],
                             nodenames: [nodename]
                         }); // CswDialog
                     } // onClick
