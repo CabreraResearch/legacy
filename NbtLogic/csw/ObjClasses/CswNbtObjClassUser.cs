@@ -34,12 +34,6 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
 
-        public CswNbtObjClassUser( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }
-
         public CswNbtObjClassUser( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
