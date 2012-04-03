@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -229,7 +230,28 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//afterWriteNode()
 
-        public override void beforeDeleteNode() { }
+        public override void beforeDeleteNode() 
+        { 
+            // case 22486 - Don't allow deleting targets of required relationships
+            CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
+            string WhereClause = " where nodetypepropid in (select nodetypepropid from nodetype_props where isrequired = '1') and field1_fk = " + _CswNbtNode.NodeId.PrimaryKey.ToString();
+            CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodeid" };
+            DataTable MatchTable = JctSelect.getTable( SelectClause, WhereClause );
+
+            if( MatchTable.Rows.Count > 0 )
+            {
+                CswCommaDelimitedString InUseStr = new CswCommaDelimitedString();
+                foreach(DataRow MatchRow in MatchTable.Rows)
+                {
+                    CswPrimaryKey MatchNodePk = new CswPrimaryKey("nodes", CswConvert.ToInt32(MatchRow["nodeid"]));
+                    InUseStr.Add( _CswNbtResources.makeClientNodeReference( _CswNbtResources.Nodes[MatchNodePk] ) );
+                }
+                throw new CswDniException( ErrorType.Warning,
+                                           "This " + _CswNbtNode.getNodeType().NodeTypeName + " cannot be deleted because it is in use by: " + InUseStr,
+                                           "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a " + _CswNbtNode.getNodeType().NodeTypeName + " that is in use by: " + InUseStr );
+            }
+        } // beforeDeleteNode()
+
         public override void afterDeleteNode()
         {
             // BZ 10223 - Clear all cached trees.

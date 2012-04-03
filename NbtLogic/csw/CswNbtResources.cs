@@ -252,6 +252,12 @@ namespace ChemSW.Nbt
             return _CswNbtNodeCollection.GetNode( NodePk, Date );
         }
 
+
+        public string makeClientNodeReference( CswNbtNode Node )
+        {
+            return "[[" + Node.NodeId.ToString() + "][" + Node.NodeName + "]]";
+        }
+
         #endregion Nodes and Trees
 
 
@@ -993,6 +999,19 @@ namespace ChemSW.Nbt
         /// Set the context information for this audit transaction
         /// </summary>
         public string AuditContext { set { _CswResources.AuditContext = value; } }
+
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditUsername { set { _CswResources.AuditUsername = value; } }
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditFirstName { set { _CswResources.AuditFirstName = value; } }
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditLastName { set { _CswResources.AuditLastName = value; } }
 
         public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
 

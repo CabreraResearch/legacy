@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.IO;
 using System.Web;
@@ -12,6 +12,7 @@ namespace ChemSW.Nbt.WebServices
 
     public class wsTools //: System.Web.Services.WebService
     {
+        private CswNbtResources _CswNbtResources;
         /// <summary>
         /// These are files we do NOT want to keep around after temporarily using them.  There is a function that purges old files.  
         /// </summary>
@@ -33,14 +34,10 @@ namespace ChemSW.Nbt.WebServices
         }
 
         private static char _Delimiter = '_';
-        public wsTools( char Delimiter )
+        public wsTools( CswNbtResources CswNbtResources, char Delimiter = '_' )
         {
+            _CswNbtResources = CswNbtResources;
             _Delimiter = Delimiter;
-        } //ctor
-
-        public wsTools()
-        {
-
         } //ctor
 
         public static CswNbtNode getNode( CswNbtResources CswNbtResources, string NodeId, string NodeKey, CswDateTime Date )
@@ -68,7 +65,7 @@ namespace ChemSW.Nbt.WebServices
             }
             return Node;
         } // getNode()
-        
+
         /// <summary>
         /// Detertimes if a Node Type name exists.
         /// </summary>
@@ -148,7 +145,7 @@ namespace ChemSW.Nbt.WebServices
                 JavaScriptSerializer Serializer = new JavaScriptSerializer();
                 ReturnText = Serializer.Deserialize<string>( ReturnText );
             }
-            catch( Exception ){ }
+            catch( Exception ) { }
             return ReturnText;
         }
 
@@ -197,6 +194,16 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        private string _getFileNameForSchema( string UniqueFileId )
+        {
+            return _CswNbtResources.AccessId + "_" + UniqueFileId;
+        }
+
+        public string getFullFilePath( string UniqueFileId )
+        {
+            return Path.Combine( new string[] { _TempPath, _getFileNameForSchema( UniqueFileId ) } );
+        }
+
         public Stream getFileInputStream( HttpContext Context, string ParamName = "" )
         {
             Stream RetStream = null;
@@ -225,7 +232,7 @@ namespace ChemSW.Nbt.WebServices
             FullPath = string.Empty;
             if( false == string.IsNullOrEmpty( RelativePath ) )
             {
-                FullPath = Path.Combine( new string[] { _TempPath, RelativePath } );
+                FullPath = getFullFilePath( RelativePath );
                 FileStream = File.Create( FullPath );
             }
         } // _getFileStream
