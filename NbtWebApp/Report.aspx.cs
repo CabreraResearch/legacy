@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.WebPages
                     if( JctNodePropId > 0 )
                     {
                         wsTools Tools = new wsTools( Master.CswNbtResources );
-                        string ReportTempFileName = Server.MapPath( Tools.getFullFilePath( JctNodePropId.ToString() + ".rpt" ) );
+                        string ReportTempFileName = Tools.getFullFilePath( JctNodePropId.ToString() + ".rpt" );
                         if( !File.Exists( ReportTempFileName ) )
                         {
                             CswTableSelect JctSelect = Master.CswNbtResources.makeCswTableSelect( "getReportLayoutBlob_select", "jct_nodes_props" );

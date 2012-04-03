@@ -194,9 +194,14 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        private string _getFileNameForSchema( string UniqueFileId )
+        {
+            return _CswNbtResources.AccessId + "_" + UniqueFileId;
+        }
+
         public string getFullFilePath( string UniqueFileId )
         {
-            return Path.Combine( new string[] { _TempPath, _CswNbtResources.AccessId, UniqueFileId } );
+            return Path.Combine( new string[] { _TempPath, _getFileNameForSchema( UniqueFileId ) } );
         }
 
         public Stream getFileInputStream( HttpContext Context, string ParamName = "" )
