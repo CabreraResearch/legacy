@@ -448,7 +448,6 @@
                         ID: internal.ID + 'addbtn',
                         onClick: function() {
                             Csw.tryExec(internal.onAddClick);
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                     internal.addBtn.hide();
@@ -460,7 +459,6 @@
                         ID: internal.ID + 'rembtn',
                         onClick: function() {
                             internal.toggleRemove();
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                     internal.removeBtn.hide();
@@ -472,7 +470,6 @@
                         ID: internal.ID + 'addcolumnbtn',
                         onClick: function() {
                             internal.addColumn();
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                     internal.expandColBtn.hide();
@@ -484,7 +481,6 @@
                         ID: internal.ID + 'addrowbtn',
                         onClick: function() {
                             internal.addRow();
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                     internal.expandRowBtn.hide();
@@ -496,7 +492,6 @@
                         ID: internal.ID + 'configbtn',
                         onClick: function() {
                             external.toggleConfig();
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                 }

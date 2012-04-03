@@ -374,7 +374,6 @@
                                        ID: Csw.makeId({ 'prefix': o.ID, 'id': 'closebtn' }),
                                        onClick: function () {
                                            o.onSearchClose();
-                                           return Csw.enums.imageButton_ButtonType.None;
                                        }
                                    });
 

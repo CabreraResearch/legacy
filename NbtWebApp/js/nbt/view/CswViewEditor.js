@@ -773,7 +773,6 @@
                     var objUtil = Csw.object(currentViewJson);
                     objUtil.remove('arbitraryid', arbid);
                     _makeViewTree(stepno);
-                    return Csw.enums.imageButton_ButtonType.None;
                 });
             });
         }

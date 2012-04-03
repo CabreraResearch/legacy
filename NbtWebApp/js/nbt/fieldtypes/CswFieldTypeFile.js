@@ -43,7 +43,6 @@
                                         o.onReload();
                                     }
                                 });
-                                return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
                     //Clear button
@@ -65,7 +64,6 @@
                                         success: function () { o.onReload(); }
                                     });
                                 }
-                                return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
                 }

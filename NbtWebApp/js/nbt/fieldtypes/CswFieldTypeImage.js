@@ -72,7 +72,6 @@
                                         o.onReload();
                                     }
                                 });
-                                return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
                     if (false === Csw.isNullOrEmpty(fileName)) {
@@ -95,7 +94,6 @@
                                             success: function () { o.onReload(); }
                                         });
                                     }
-                                    return Csw.enums.imageButton_ButtonType.None;
                                 }
                             });
                     }

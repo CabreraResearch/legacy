@@ -35,7 +35,6 @@
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
 
                         window.location = Csw.getGlobalProp('homeUrl');
-                        return Csw.enums.imageButton_ButtonType.None;
                     }
                 });
                 if (false === o.ReadOnly) {
@@ -46,7 +45,6 @@
                         Required: o.Required,
                         onClick: function () {
                             o.onEditView(viewId);
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
                 }

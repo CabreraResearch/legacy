@@ -181,7 +181,6 @@
                             AlternateText: 'Remove Filter',
                             onClick: function () {
                                 internal.filter(thisFilter, 'remove');
-                                return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
                     }
