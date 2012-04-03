@@ -814,6 +814,14 @@ namespace ChemSW.Nbt.Schema
             return RetRuleId;
         }
 
+        /// <summary>
+        /// Convenience function for making new jct_module_objectclass records
+        /// </summary>
+        public void createModuleObjectClassJunction( CswNbtResources.CswNbtModule Module, Int32 ObjectClassId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            createModuleObjectClassJunction( ModuleId, ObjectClassId );
+        }
 
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records

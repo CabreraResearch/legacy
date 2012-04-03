@@ -10,34 +10,32 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass, "", true, false );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass, "contact.gif", true, false );
             CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
 
-            CswNbtMetaDataObjectClassProp MaterialOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
-                                                               CswNbtObjClassSize.MaterialPropertyName,
-                                                               CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                                                               false,
-                                                               false,
-                                                               true,
-                                                               NbtViewRelatedIdType.ObjectClassId.ToString(),
-                                                               MaterialOc.ObjectClassId );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
+                                                           CswNbtObjClassSize.MaterialPropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                           false,
+                                                           false,
+                                                           true,
+                                                           NbtViewRelatedIdType.ObjectClassId.ToString(),
+                                                           MaterialOc.ObjectClassId );
 
-            CswNbtMetaDataObjectClassProp CapacityOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
-                                                               CswNbtObjClassSize.CapacityPropertyName,
-                                                               CswNbtMetaDataFieldType.NbtFieldType.Quantity );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
+                                                           CswNbtObjClassSize.CapacityPropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Quantity );
 
-            CswNbtMetaDataObjectClassProp QuantityEditableOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
-                                                               CswNbtObjClassSize.QuantityEditablePropertyName,
-                                                               CswNbtMetaDataFieldType.NbtFieldType.Logical );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
+                                                           CswNbtObjClassSize.QuantityEditablePropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
-            CswNbtMetaDataObjectClassProp DispensableOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
-                                                               CswNbtObjClassSize.DispensablePropertyName,
-                                                               CswNbtMetaDataFieldType.NbtFieldType.Logical );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass,
+                                                           CswNbtObjClassSize.DispensablePropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
+            _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass.ToString(), "Size", "Materials" );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, SizeOc.ObjectClassId );
 
         }//Update()
 
