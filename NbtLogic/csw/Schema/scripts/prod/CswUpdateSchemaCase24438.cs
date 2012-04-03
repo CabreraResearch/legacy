@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtSchemaModTrnsctn.createObjectClass( WorkUnitClass, "folder.gif", false, false );
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass, "folder.gif", false, false );
 
             // Work Unit - Auditing Enabled
             _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass,
@@ -26,6 +26,21 @@ namespace ChemSW.Nbt.Schema
                                                            CswNbtObjClassWorkUnit.SignatureRequiredPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect );
 
+            // User - Default Location
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass,
+                                                           CswNbtObjClassUser.DefaultLocationPropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Location );
+
+            // User - Work Unit
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass,
+                                                           CswNbtObjClassUser.WorkUnitPropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                           false,
+                                                           false,
+                                                           true,
+                                                           NbtViewRelatedIdType.ObjectClassId.ToString(),
+                                                           WorkUnitOC.ObjectClassId,
+                                                           true );
 
         }//Update()
 

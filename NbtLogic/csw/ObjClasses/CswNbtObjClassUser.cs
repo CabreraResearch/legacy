@@ -28,6 +28,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string PageSizePropertyName { get { return "Page Size"; } }
         public static string DateFormatPropertyName { get { return "Date Format"; } }
         public static string TimeFormatPropertyName { get { return "Time Format"; } }
+        public static string DefaultLocationPropertyName { get { return "Default Location"; } }
+        public static string WorkUnitPropertyName { get { return "Work Unit"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -57,15 +59,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // _RoleNode
 
-        private CswNbtObjClassRole __RoleNodeObjClass= null;
-        private CswNbtObjClassRole _RoleNodeObjClass {
-            get {
+        private CswNbtObjClassRole __RoleNodeObjClass = null;
+        private CswNbtObjClassRole _RoleNodeObjClass
+        {
+            get
+            {
                 if( __RoleNodeObjClass == null )
                 {
                     _initRole();
                 }
                 return __RoleNodeObjClass;
-            } 
+            }
         } // _RoleNodeObjClass
 
         private void _initRole()
@@ -355,7 +359,8 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
-
+        public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[DefaultLocationPropertyName].AsLocation; } }
+        public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName].AsRelationship; } }
 
         #endregion
 
