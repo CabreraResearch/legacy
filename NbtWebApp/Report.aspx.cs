@@ -7,6 +7,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.WebServices;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Web;
 
@@ -33,8 +34,8 @@ namespace ChemSW.Nbt.WebPages
 
                 //if( Page.IsPostBack )
                 //{
-                    // this allows paging on the report control to work
-                    LoadReport();
+                // this allows paging on the report control to work
+                LoadReport();
                 //}
             }
             catch( Exception ex )
@@ -61,14 +62,14 @@ namespace ChemSW.Nbt.WebPages
 
         protected override void OnPreRender( EventArgs e )
         {
-//            string JS = @"  <script>
-//                            function LoadReport()
-//                            {
-//                                document.getElementById('" + LoadReportButton.ClientID + @"').click();
-//                            }
-//                            </script>";
+            //            string JS = @"  <script>
+            //                            function LoadReport()
+            //                            {
+            //                                document.getElementById('" + LoadReportButton.ClientID + @"').click();
+            //                            }
+            //                            </script>";
 
-//            System.Web.UI.ScriptManager.RegisterClientScriptBlock( this, this.GetType(), this.UniqueID + "_JS", JS, false );
+            //            System.Web.UI.ScriptManager.RegisterClientScriptBlock( this, this.GetType(), this.UniqueID + "_JS", JS, false );
 
             base.OnPreRender( e );
         }
@@ -98,22 +99,23 @@ namespace ChemSW.Nbt.WebPages
                 ////Tree.goToNthChild( 0 );
                 //if( Tree.getChildNodeCount() > 0 )
                 //{
-                    // BROKEN BY case 24709
-                    //Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
-                    //string TransformedXml = Tree.getTreeAsXml();
-                    //StringReader XmlReader = new StringReader( TransformedXml );
-                    //DataSet ReportData = new DataSet();
-                    //ReportData.ReadXml( XmlReader );
+                // BROKEN BY case 24709
+                //Tree.XmlTreeDestinationFormat = XmlTreeDestinationFormat.ReportingDataSet;
+                //string TransformedXml = Tree.getTreeAsXml();
+                //StringReader XmlReader = new StringReader( TransformedXml );
+                //DataSet ReportData = new DataSet();
+                //ReportData.ReadXml( XmlReader );
 
                 CswArbitrarySelect ReportSelect = Master.CswNbtResources.makeCswArbitrarySelect( "Report_" + ReportNode.NodeId.ToString() + "_Select", ReportNode.SQL.Text );
                 DataTable ReportTable = ReportSelect.getTable();
-                if(ReportTable.Rows.Count > 0) 
+                if( ReportTable.Rows.Count > 0 )
                 {
                     // Get the Report Layout File
                     Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
                     if( JctNodePropId > 0 )
                     {
-                        string ReportTempFileName = Server.MapPath( "" ) + @"\temp\" + JctNodePropId.ToString() + ".rpt";
+                        wsTools Tools = new wsTools( Master.CswNbtResources );
+                        string ReportTempFileName = Server.MapPath( Tools.getFullFilePath( JctNodePropId.ToString() + ".rpt" ) );
                         if( !File.Exists( ReportTempFileName ) )
                         {
                             CswTableSelect JctSelect = Master.CswNbtResources.makeCswTableSelect( "getReportLayoutBlob_select", "jct_nodes_props" );
@@ -134,7 +136,7 @@ namespace ChemSW.Nbt.WebPages
                                     BWriter.Write( BlobData );
                                 }
                                 else
-									throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
+                                    throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
                             }
                         }
 
