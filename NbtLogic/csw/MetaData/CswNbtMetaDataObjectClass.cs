@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.MetaData
             UnitOfMeasureClass,
             UserClass,
             VendorClass,
+            WorkUnitClass,
             UnitTypeClass
         };
 

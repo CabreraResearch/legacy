@@ -88,6 +88,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMaterial( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass:
+                    ReturnVal = new CswNbtObjClassMaterialComponent( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSubclassClass:
                     ReturnVal = new CswNbtObjClassMaterialSubclass( CswNbtResources, Node );
                     break;
@@ -172,8 +176,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassVendor( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass:
-                    ReturnVal = new CswNbtObjClassMaterialComponent( CswNbtResources, Node );
+                case CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass:
+                    ReturnVal = new CswNbtObjClassWorkUnit( CswNbtResources, Node );
                     break;
 
                 default:
@@ -247,6 +251,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass:
                     ReturnVal = new CswNbtObjClassMaterial( CswNbtResources );
+                    break;
+
+                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass:
+                    ReturnVal = new CswNbtObjClassMaterialComponent( CswNbtResources );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSubclassClass:
@@ -333,6 +341,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassVendor( CswNbtResources );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass:
+                    ReturnVal = new CswNbtObjClassWorkUnit( CswNbtResources );
+                    break;
 
                 default:
                     //ReturnVal = new CswNbtObjClassDefault( CswNbtResources, _CswNbtNode );

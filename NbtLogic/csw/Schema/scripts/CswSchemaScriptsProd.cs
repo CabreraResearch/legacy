@@ -23,7 +23,8 @@ namespace ChemSW.Nbt.Schema
 
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
-
+            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24438() ) ); // 01N-01
 
 
 
