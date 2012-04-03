@@ -76,7 +76,7 @@
                 }
 
                 internal.imageButton = cswParent.div(internal);
-                external = Csw.dom({}, internal.imageButton);
+                external = $.extend(external, Csw.dom({}, internal.imageButton));
 
                 //$.extend(external, Csw.literals.div(internal));
                 external.addClass('divbutton');
