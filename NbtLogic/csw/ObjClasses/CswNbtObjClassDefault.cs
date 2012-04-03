@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.ObjClasses
                 foreach(DataRow MatchRow in MatchTable.Rows)
                 {
                     CswPrimaryKey MatchNodePk = new CswPrimaryKey("nodes", CswConvert.ToInt32(MatchRow["nodeid"]));
-                    InUseStr.Add( _CswNbtResources.Nodes[MatchNodePk].NodeName);
+                    InUseStr.Add( _CswNbtResources.makeClientNodeReference( _CswNbtResources.Nodes[MatchNodePk] ) );
                 }
                 throw new CswDniException( ErrorType.Warning,
                                            "This " + _CswNbtNode.getNodeType().NodeTypeName + " cannot be deleted because it is in use by: " + InUseStr,
