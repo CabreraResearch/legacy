@@ -82,7 +82,9 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\ObjClasses\CswNbtObjClassSize.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24463.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />

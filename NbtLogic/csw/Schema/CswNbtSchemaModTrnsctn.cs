@@ -16,7 +16,6 @@ using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
@@ -851,22 +850,25 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public Int32 createObjectClass( string ObjectClassName, string IconFileName, bool AuditLevel, bool UseBatchEntry )
+        public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel, bool UseBatchEntry )
         {
-            if( !ObjectClassName.EndsWith( "Class" ) )
-                ObjectClassName += "Class";
-
-            CswTableUpdate ObjectClassTableUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class" );
-            DataTable NewObjectClassTable = ObjectClassTableUpdate.getEmptyTable();
-            DataRow NewOCRow = NewObjectClassTable.NewRow();
-            NewOCRow["objectclass"] = ObjectClassName;
-            NewOCRow["iconfilename"] = IconFileName;
-            NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
-            NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
-            NewObjectClassTable.Rows.Add( NewOCRow );
-            Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
-            ObjectClassTableUpdate.update( NewObjectClassTable );
-            return NewObjectClassId;
+            CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
+            if( null == NewObjectClass )
+            {
+                CswTableUpdate ObjectClassTableUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate",
+                                                                            "object_class" );
+                DataTable NewObjectClassTable = ObjectClassTableUpdate.getEmptyTable();
+                DataRow NewOCRow = NewObjectClassTable.NewRow();
+                NewOCRow["objectclass"] = ObjectClass.ToString();
+                NewOCRow["iconfilename"] = IconFileName;
+                NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
+                NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
+                NewObjectClassTable.Rows.Add( NewOCRow );
+                Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
+                ObjectClassTableUpdate.update( NewObjectClassTable );
+                NewObjectClass = _CswNbtResources.MetaData.getObjectClass( NewObjectClassId );
+            }
+            return NewObjectClass;
         }
 
         /// <summary>
