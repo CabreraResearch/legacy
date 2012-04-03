@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.MetaData
             ResultClass,
             RoleClass,
             SampleClass,
+            SizeClass,
             TaskClass,
             TestClass,
             //TestGroupClass,

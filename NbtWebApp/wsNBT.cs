@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -279,7 +279,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
-            
+
             // case 25694 - clear the current user, or else it will be confused with nodes in the new schemata
             _CswNbtResources.clearCurrentUser();
 
@@ -2438,9 +2438,8 @@ namespace ChemSW.Nbt.WebServices
 
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
-                    string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
-                    wsTools Tools = new wsTools();
+                    wsTools Tools = new wsTools( _CswNbtResources );
                     Stream MolStream = Tools.getFileInputStream( Context, "qqfile" );
 
                     if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
@@ -4157,7 +4156,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    wsTools Tools = new wsTools();
+                    wsTools Tools = new wsTools( _CswNbtResources );
                     Tools.purgeTempFiles( "xls" );
 
                     string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "MMddyyyy_HHmmss" ) + ".xls";
