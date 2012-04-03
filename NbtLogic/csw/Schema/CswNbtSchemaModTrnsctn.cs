@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.Schema
         {
             //_CswResourcesForTableCaddy.commitTransaction();
             _CswNbtResources.Rollback();
-            _CswNbtResources.refresh();
+            _CswNbtResources.refreshDataDictionary();
             _CswDdl.revert();
             _CswDdl.clear();
 
@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.Schema
 
         public void refreshDataDictionary()
         {
-            _CswNbtResources.refresh();
+            _CswNbtResources.refreshDataDictionary();
         }
 
 

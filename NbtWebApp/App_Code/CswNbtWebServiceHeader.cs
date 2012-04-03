@@ -90,7 +90,8 @@ namespace ChemSW.Nbt.WebServices
 
         private bool _SchemaHasDemoData()
         {
-            CswTableSelect DemoNodesSelect = new CswTableSelect( _CswNbtResources.CswResources, "AdminMenuDemoSelect", "nodes" );
+            CswTableSelect DemoNodesSelect = _CswNbtResources.makeCswTableSelect( "AdminMenuDemoSelect", "nodes" );
+            //CswTableSelect DemoNodesSelect = new CswTableSelect( _CswNbtResources.CswResources, "AdminMenuDemoSelect", "nodes" );
             DataTable DemoNodesTable = DemoNodesSelect.getTable( new CswCommaDelimitedString { "nodeid" }, " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
             return DemoNodesTable.Rows.Count > 0;
         }

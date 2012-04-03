@@ -37,16 +37,16 @@ namespace ChemSW.Nbt
                 RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
             }
 
-            CswSessionManager = new CswSessionManager( AppType.Nbt, 
-                                                       new CswWebClientStorageCookies( HttpRequest, HttpResponse ), 
+            CswSessionManager = new CswSessionManager( AppType.Nbt,
+                                                       new CswWebClientStorageCookies( HttpRequest, HttpResponse ),
                                                        LoginAccessId,
                                                        CswNbtResources.SetupVbls,
-                                                       CswNbtResources.CswDbCfgInfo, 
-                                                       true, 
-                                                       CswNbtResources, 
-                                                       new CswNbtSchemaAuthenticator( CswNbtResources ), 
-                                                       _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ), 
-                                                                                                  new CswNbtStatisticsStorageStateServer(), 
+                                                       CswNbtResources.CswDbCfgInfo,
+                                                       false,
+                                                       CswNbtResources,
+                                                       new CswNbtSchemaAuthenticator( CswNbtResources ),
+                                                       _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
+                                                                                                  new CswNbtStatisticsStorageStateServer(),
                                                                                                   RecordStatistics ) );
             CswNbtStatisticsEvents = _CswNbtStatistics.CswNbtStatisticsEvents;
             CswSessionManager.OnDeauthenticate += new CswSessionManager.DeathenticationHandler( OnDeauthenticate );
@@ -59,11 +59,11 @@ namespace ChemSW.Nbt
 
 
         public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
-        public void endSession() { CswSessionManager.updateLastAccess(false); }
+        public void endSession() { CswSessionManager.updateLastAccess( false ); }
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
 
-        public void OnDeauthenticate(string SessionId)
+        public void OnDeauthenticate( string SessionId )
         {
             CswNbtResources.SessionDataMgr.removeAllSessionData( SessionId );
         }//OnDeauthenticate()
