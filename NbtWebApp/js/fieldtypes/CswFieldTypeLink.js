@@ -38,7 +38,6 @@
                         Required: o.Required,
                         onClick: function () {
                             editTable.show();
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
 

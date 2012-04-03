@@ -48,7 +48,6 @@
                                     o.onReload();
                                 }
                             });
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
 
@@ -72,7 +71,6 @@
                                     success: function () { o.onReload(); }
                                 });
                             }
-                            return Csw.enums.imageButton_ButtonType.None;
                         }
                     });
             }

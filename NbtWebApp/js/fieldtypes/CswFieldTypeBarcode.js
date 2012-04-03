@@ -35,7 +35,6 @@
                              ID: Csw.controls.dom.makeId(o.ID, 'print'),
                              onClick: function () {
                                  $.CswDialog('PrintLabelDialog', { 'nodeid': o.nodeid, 'propid': o.ID });
-                                 return Csw.enums.imageButton_ButtonType.None;
                              }
                          });
                 }

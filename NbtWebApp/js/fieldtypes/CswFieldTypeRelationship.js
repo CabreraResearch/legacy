@@ -61,7 +61,6 @@
                                             o.onReload();
                                         }
                                     });
-                                    return Csw.enums.imageButton_ButtonType.None;
                                 }
                             });
                     }

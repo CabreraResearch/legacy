@@ -359,7 +359,6 @@
                             onClick: function () {
                                 clearTabs();
                                 $.CswDialog('EditLayoutDialog', editLayoutOpt);
-                                return Csw.enums.imageButton_ButtonType.None;
                             }
                         });
                     }
