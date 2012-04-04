@@ -3913,7 +3913,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMaterial( string MaterialName, string Supplier, string Tradename, string PartNo )
+        public string getMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3921,10 +3921,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                
-                
-                ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
-                
+
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources );
+                ReturnVal = ws.getMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo );
+
                 _deInitResources();
             }
             catch( Exception Ex )

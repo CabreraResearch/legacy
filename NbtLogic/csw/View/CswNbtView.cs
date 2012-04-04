@@ -289,8 +289,23 @@ namespace ChemSW.Nbt
         {
             CswNbtViewPropertyFilter NewFilter = new CswNbtViewPropertyFilter( _CswNbtResources, this, SubFieldName, FilterMode, Value, CaseSensitive );
             if( ParentViewProperty != null )
+            {
                 ParentViewProperty.addFilter( NewFilter );
+            }
             return NewFilter;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
+        /// </summary>
+        public void AddViewPropertyFilter( CswNbtViewRelationship ParentViewRelationship, CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
+        {
+            if( null != ParentViewRelationship && null != NodeTypeProp )
+            {
+                FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, NodeTypeProp );
+                AddViewPropertyFilter( ViewProp, NodeTypeProp.getFieldTypeRule().SubFields.Default.Name, FilterMode, Value, CaseSensitive );
+            }
         }
 
         #endregion Child constructors
