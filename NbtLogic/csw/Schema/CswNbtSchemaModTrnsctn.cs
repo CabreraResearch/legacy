@@ -622,6 +622,8 @@ namespace ChemSW.Nbt.Schema
             return NewActionId;
         }
 
+
+
         /// <summary>
         /// Convenience function for making new Configuration Variable
         /// </summary>
@@ -677,6 +679,26 @@ namespace ChemSW.Nbt.Schema
             ConfigVarTable.update( ConfigVarDataTable );
         }
 
+        public Int32 getActionId( CswNbtActionName ActionName )
+        {
+            Int32 RetActionId = Int32.MinValue;
+            CswTableSelect ActionsTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "actions" );
+            string WhereClause = " where lower(actionname)='" + CswNbtAction.ActionNameEnumToString( ActionName ).ToLower() + "'";
+            DataTable ActionsDataTable = ActionsTable.getTable( WhereClause, true );
+            if( ActionsDataTable.Rows.Count == 1 )
+            {
+                DataRow ActionRow = ActionsDataTable.Rows[0];
+                RetActionId = CswConvert.ToInt32( ActionRow["actionid"] );
+            }
+            return RetActionId;
+        }
+
+        public void createModuleActionJunction( CswNbtResources.CswNbtModule Module, CswNbtActionName ActionName )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            Int32 ActionId = getActionId( ActionName );
+            createModuleActionJunction( ModuleId, ActionId );
+        }
 
         /// <summary>
         /// Convenience function for making new jct_module_actions records
