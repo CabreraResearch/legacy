@@ -82,6 +82,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase10596.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaToCase25538_Part_2.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaToCase25538_Part_1.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
