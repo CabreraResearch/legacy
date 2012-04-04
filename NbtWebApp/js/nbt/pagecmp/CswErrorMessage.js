@@ -41,7 +41,6 @@
         var cell13 = table.cell(1, 3);
         var cell22 = table.cell(2, 2);
 
-
         // Look for node references in the error message
         var _handleNodeRef = function (message, parent) {
             var startmarker = '[[';
@@ -80,22 +79,9 @@
             }); // link
         };
 
-        var togglebtn = cell11.imageButton({
-            ButtonType: Csw.enums.imageButton_ButtonType.ToggleInactive,
-            AlternateText: 'Expand',
-            ID: Csw.makeId(id, 'expandbtn'),
-            onClick: function () {
-                cell22.$.toggle();
-                if (togglebtn.getButtonType() == Csw.enums.imageButton_ButtonType.ToggleActive) {
-                    togglebtn.setButtonType(Csw.enums.imageButton_ButtonType.ToggleInactive);
-                } else {
-                    togglebtn.setButtonType(Csw.enums.imageButton_ButtonType.ToggleActive);
-                }
-            }
-        });
-
         _handleNodeRef(o.message, cell12);
 
+        cell13.css({ width: '18px' });
         cell13.imageButton({
             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
             AlternateText: 'Hide',
@@ -107,8 +93,26 @@
             }
         });
 
-        cell22.append(o.detail);
-        cell22.hide();
+        if(false === Csw.isNullOrEmpty(o.detail))
+        {
+            cell11.css({ width: '18px' });
+            var togglebtn = cell11.imageButton({
+                ButtonType: Csw.enums.imageButton_ButtonType.ToggleInactive,
+                AlternateText: 'Expand',
+                ID: Csw.makeId(id, 'expandbtn'),
+                onClick: function () {
+                    cell22.$.toggle();
+                    if (togglebtn.getButtonType() == Csw.enums.imageButton_ButtonType.ToggleActive) {
+                        togglebtn.setButtonType(Csw.enums.imageButton_ButtonType.ToggleInactive);
+                    } else {
+                        togglebtn.setButtonType(Csw.enums.imageButton_ButtonType.ToggleActive);
+                    }
+                }
+            });
+
+            cell22.append(o.detail);
+            cell22.hide();
+        }
 
         $('html, body').animate({ scrollTop: 0 }, 0);
 
