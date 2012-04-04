@@ -691,7 +691,7 @@
                 }
             };
 
-            internal.onFinish = function () {
+            internal.onConfirmFinish = function () {
                 var designGrid = '';
 
                 internal.toggleButton(internal.buttons.prev, false);
@@ -761,7 +761,7 @@
                     onNext: internal.handleNext,
                     onPrevious: internal.handlePrevious,
                     onCancel: internal.onCancel,
-                    onFinish: internal.onFinish,
+                    onFinish: internal.onConfirmFinish,
                     doNextOnInit: false
                 });
 

@@ -42,8 +42,7 @@
         var cell22 = table.cell(2, 2);
 
         // Look for node references in the error message
-        var _handleNodeRef = function(message, parent)
-        {
+        var _handleNodeRef = function (message, parent) {
             var startmarker = '[[';
             var midmarker = '][';
             var endmarker = ']]';
@@ -65,22 +64,22 @@
                 endpos = msg.indexOf(endmarker);
             } // while (startpos > 0)
             parent.append(msg);
-        }
+        };
 
-        var _makeNodeLink = function(parent, nodeid, nodename)
-        {
+        var _makeNodeLink = function(parent, nodeid, nodename) {
             parent.link({
                     ID: Csw.makeId(id, nodeid),
-                    text: nodename,
-                    onClick: function () {
-                        $.CswDialog('EditNodeDialog', {
-                            nodeids: [nodeid],
-                            nodenames: [nodename]
-                        }); // CswDialog
-                    } // onClick
-                }); // link
-        }
+                text: nodename,
+                onClick: function() {
+                    $.CswDialog('EditNodeDialog', {
+                        nodeids: [nodeid],
+                        nodenames: [nodename]
+                    }); // CswDialog
+                } // onClick
+            }); // link
+        };
 
+            ID: Csw.makeId(id, 'expandbtn'),
         _handleNodeRef(o.message, cell12);
 
         cell13.css({ width: '18px' });

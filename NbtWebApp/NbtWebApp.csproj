@@ -1693,7 +1693,6 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="bin\" />
     <Folder Include="temp\" />
   </ItemGroup>
   <ItemGroup>
@@ -1743,7 +1742,7 @@
     </PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>REM %25SystemRoot%25\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp -p $(ProjectDir)</PostBuildEvent>
+    <PostBuildEvent>%25SystemRoot%25\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
