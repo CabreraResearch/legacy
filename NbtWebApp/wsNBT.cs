@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
     /// </summary>
     /// 
     [ScriptService]
-    [WebService( Namespace = "http://localhost/NbtWebApp" )]
+    [WebService( Namespace = "ChemSW.Nbt.WebServices" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
     public class wsNBT : WebService
     {
@@ -3908,6 +3908,36 @@ namespace ChemSW.Nbt.WebServices
         } // updateScheduledRule()
 
         #endregion Nbt Manager
+
+        #region CISPro
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getMaterial( string MaterialName, string Supplier, string Tradename, string PartNo )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                
+                
+                ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
+                
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // SaveActionToQuickLaunch()
+
+        #endregion CISPro
 
 
         #region Auditing
