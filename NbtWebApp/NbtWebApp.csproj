@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Code\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="App_Code\CswNbtWebServiceGenerators.cs" />
     <Compile Include="App_Code\CswNbtWebServiceReport.cs" />
     <Compile Include="App_Code\wsTreeOfView.cs">
