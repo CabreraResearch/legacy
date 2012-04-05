@@ -23,10 +23,10 @@ namespace ChemSW.Nbt.Welcome
             /// Link to a View, Report, or Action
             /// </summary>
             Link,
-            ///// <summary>
-            ///// Search on a View
-            ///// </summary>
-            //Search,
+            /// <summary>
+            /// Search on a View (deprecated)
+            /// </summary>
+            Search,
             /// <summary>
             /// Static text
             /// </summary>
