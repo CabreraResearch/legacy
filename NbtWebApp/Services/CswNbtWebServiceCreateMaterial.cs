@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -27,7 +28,6 @@ namespace ChemSW.Nbt.WebServices
 
 
         #region Public
-
 
         public JObject getMaterial( Int32 NodeTypeId, string Supplier, string Tradename, string PartNo )
         {
@@ -76,6 +76,42 @@ namespace ChemSW.Nbt.WebServices
 
             RetObj["succeeded"] = true;
             return RetObj;
+        }
+
+        public CswNbtView getMaterialSizes( CswPrimaryKey MaterialId )
+        {
+            CswNbtView RetView;
+
+            if( null == MaterialId )
+            {
+                throw new CswDniException( ErrorType.Error,
+                                           "Cannot get material's sizes without a valid materialid.",
+                                           "Attempted to call getMaterialSizes with invalid or empty paramters." );
+            }
+
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( MaterialId );
+
+            if( null == MaterialNode ||
+                 MaterialNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+            {
+                throw new CswDniException( ErrorType.Error,
+                                           "The provided node was not a valid material.",
+                                           "Attempted to call getMaterialSizes with a node that was not valid." );
+            }
+
+            RetView = new CswNbtView( _CswNbtResources );  //MaterialNode.getNodeType().CreateDefaultView();
+            RetView.ViewMode = NbtViewRenderingMode.Grid;
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+
+            CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+            CswNbtViewRelationship SizeRel = RetView.AddViewRelationship( SizeOc, false );
+
+            RetView.AddViewPropertyFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+            RetView.AddViewPropertyFilter( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
+            RetView.AddViewPropertyFilter( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
+            RetView.AddViewPropertyFilter( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
+
+            return RetView;
         }
 
         #endregion Public

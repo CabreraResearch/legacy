@@ -3935,7 +3935,38 @@ namespace ChemSW.Nbt.WebServices
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // SaveActionToQuickLaunch()
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getMaterialSizes( string MaterialId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources );
+                CswNbtView View = ws.getMaterialSizes( _getNodeId( MaterialId ) );
+                if( null != View )
+                {
+                    CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( _CswNbtResources, View );
+                    ReturnVal = wsG.runGrid( false );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
 
         #endregion CISPro
 

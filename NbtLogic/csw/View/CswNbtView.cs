@@ -298,13 +298,26 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
-        public void AddViewPropertyFilter( CswNbtViewRelationship ParentViewRelationship, CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
+        public void AddViewPropertyFilter( CswNbtViewRelationship ParentViewRelationship, object MetaDataProp, string Value = "", CswNbtSubField.SubFieldName SubFieldName = null, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
         {
-            if( null != ParentViewRelationship && null != NodeTypeProp )
+            if( null != ParentViewRelationship && null != MetaDataProp )
             {
-                FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
-                CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, NodeTypeProp );
-                AddViewPropertyFilter( ViewProp, NodeTypeProp.getFieldTypeRule().SubFields.Default.Name, FilterMode, Value, CaseSensitive );
+                if( MetaDataProp is CswNbtMetaDataNodeTypeProp )
+                {
+                    CswNbtMetaDataNodeTypeProp NodeTypeProp = (CswNbtMetaDataNodeTypeProp) MetaDataProp;
+                    FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                    SubFieldName = SubFieldName ?? NodeTypeProp.getFieldTypeRule().SubFields.Default.Name;
+                    CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, NodeTypeProp );
+                    AddViewPropertyFilter( ViewProp, SubFieldName, FilterMode, Value, CaseSensitive );
+                }
+                else if( MetaDataProp is CswNbtMetaDataObjectClassProp )
+                {
+                    CswNbtMetaDataObjectClassProp ObjectClassProp = (CswNbtMetaDataObjectClassProp) MetaDataProp;
+                    FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                    SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
+                    CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, ObjectClassProp );
+                    AddViewPropertyFilter( ViewProp, SubFieldName, FilterMode, Value, CaseSensitive );
+                }
             }
         }
 
