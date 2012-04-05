@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ChemSW.Nbt.WebPages
 {

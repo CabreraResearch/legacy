@@ -22,12 +22,6 @@ namespace ChemSW.Nbt.PropertySets
             _CswNbtNode = CswNbtNode;
         }
 
-        public CswNbtPropertySetSchedulerImpl( CswNbtResources CswNbtResources, ICswNbtPropertySetScheduler Scheduler )
-        {
-            _CswNbtResources = CswNbtResources;
-            _Scheduler = Scheduler;
-        }
-
         bool _UpdateFutureTasks = false;
 
         public void updateNextDueDate( bool DeleteFutureNodes = false )
