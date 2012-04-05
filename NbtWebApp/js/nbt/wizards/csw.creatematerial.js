@@ -40,21 +40,10 @@
 
                 internal.currentStepNo = internal.startingStep;
 
-                internal.handleNext = function (newStepNo) {
-                    internal.currentStepNo = newStepNo;
-                    switch (newStepNo) {
-                        case 2:
-                            internal.makeStepTwo();
-                            break;
-                    } // switch(newstepno)
-                }; // handleNext()
-
-                internal.handlePrevious = function (newStepNo) {
-                    internal.currentStepNo = newStepNo;
-                    switch (newStepNo) {
-                        case 1:
-                            internal.makeStepOne();
-                            break;
+                internal.handleStep = function (newStepNo) {
+                    if (Csw.contains(internal, 'makeStep' + newStepNo)) {
+                        internal.currentStepNo = newStepNo;
+                        internal['makeStep' + newStepNo]();
                     }
                 };
 
@@ -65,8 +54,8 @@
                     Steps: internal.wizardSteps,
                     StartingStep: internal.startingStep,
                     FinishText: 'Finish',
-                    onNext: internal.handleNext,
-                    onPrevious: internal.handlePrevious,
+                    onNext: internal.handleStep,
+                    onPrevious: internal.handleStep,
                     onCancel: internal.onCancel,
                     onFinish: internal.onFinish,
                     doNextOnInit: false
@@ -88,7 +77,7 @@
                 return false;
             };
 
-            internal.makeStepOne = (function () {
+            internal.makeStep1 = (function () {
                 var stepOneComplete = false;
 
                 return function () {
@@ -102,7 +91,7 @@
                     internal.toggleButton(internal.buttons.next, nextBtnEnabled());
 
                     if (false === stepOneComplete) {
-                        internal.divStep1 = internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step1.step);
+                        internal.divStep1 = internal.wizard.div(1);
 
                         internal.divStep1.br({ number: 2 });
 
@@ -132,12 +121,62 @@
             } ());
 
             //Step 2: 
-            internal.makeStepTwo = function () {
+            internal.makeStep2 = (function () {
+                var stepTwoComplete = false;
 
+                return function () {
+                    var nextBtnEnabled = function () {
+                        return false === Csw.isNullOrEmpty(internal.tradename) && false === Csw.isNullOrEmpty(internal.supplier);
+                    };
 
-            };
+                    internal.toggleButton(internal.buttons.prev, true);
+                    internal.toggleButton(internal.buttons.cancel, true);
+                    internal.toggleButton(internal.buttons.finish, false);
+                    internal.toggleButton(internal.buttons.next, nextBtnEnabled());
 
-            internal.makeStepOne();
+                    if (false === stepTwoComplete) {
+                        internal.divStep2 = internal.wizard.div(2);
+
+                        internal.divStep2.br({ number: 2 });
+
+                        /* TRADENAME */
+                        internal.tradeNameInput = internal.divStep2.input({
+                            ID: internal.wizard.makeStepId('tradename'),
+                            labelText: 'Tradename: ',
+                            onChange: function () {
+                                internal.tradename = internal.tradeNameInput.val();
+                                internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                            }
+                        });
+                        internal.divStep2.br({ number: 1 });
+
+                        /* SUPPLIER */
+                        internal.supplierSelect = internal.divStep2.nodeSelect({
+                            ID: internal.wizard.makeStepId('supplier'),
+                            objectClassName: 'VendorClass',
+                            labelText: 'Supplier: ',
+                            onChange: function () {
+                                internal.supplier = { name: internal.supplierSelect.text(), val: internal.supplierSelect.val() };
+                                internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                            }
+                        });
+                        internal.divStep2.br({ number: 1 });
+
+                        /* PARTNO */
+                        internal.partNoInput = internal.divStep2.input({
+                            ID: internal.wizard.makeStepId('partno'),
+                            labelText: 'Part No: ',
+                            onChange: function () {
+                                internal.partno = internal.partNoInput.val();
+                            }
+                        });
+                        
+                        stepTwoComplete = true;
+                    }
+                };
+            } ());
+
+            internal.makeStep1();
 
             return external;
         });
