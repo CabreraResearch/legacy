@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Error,
                                            "Cannot get material's sizes without a valid materialid.",
-                                           "Attempted to call getMaterialSizes with invalid or empty paramters." );
+                                           "Attempted to call getMaterialSizes with invalid or empty parameters." );
             }
 
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( MaterialId );
