@@ -147,6 +147,12 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassSample) Node.ObjClass );
         }//AsSample
 
+        public static CswNbtObjClassSize AsSize( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            return ( (CswNbtObjClassSize) Node.ObjClass );
+        }//AsSample
+
         public static CswNbtObjClassTask AsTask( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.TaskClass );

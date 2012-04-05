@@ -8,75 +8,75 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-	/// <summary>
-	/// Webservice for object class quota management
-	/// </summary>
-	public class CswNbtWebServiceQuotas
-	{
-		private CswNbtResources _CswNbtResources;
-		private CswNbtActQuotas _CswNbtActQuotas;
+    /// <summary>
+    /// Webservice for object class quota management
+    /// </summary>
+    public class CswNbtWebServiceQuotas
+    {
+        private CswNbtResources _CswNbtResources;
+        private CswNbtActQuotas _CswNbtActQuotas;
 
-		public CswNbtWebServiceQuotas( CswNbtResources CswNbtResources )
-		{
-			_CswNbtResources = CswNbtResources;
-			_CswNbtActQuotas = new CswNbtActQuotas( _CswNbtResources );
-		}
+        public CswNbtWebServiceQuotas( CswNbtResources CswNbtResources )
+        {
+            _CswNbtResources = CswNbtResources;
+            _CswNbtActQuotas = new CswNbtActQuotas( _CswNbtResources );
+        }
 
-		private bool _CanEditQuotas
-		{
-			get
-			{
-				return ( _CswNbtActQuotas.UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) );
-			}
-		}
+        private bool _CanEditQuotas
+        {
+            get
+            {
+                return ( _CswNbtActQuotas.UserCanEditQuotas( _CswNbtResources.CurrentNbtUser ) );
+            }
+        }
 
-		public JObject GetQuotas()
-		{
-			JObject ret = new JObject();
+        public JObject GetQuotas()
+        {
+            JObject ret = new JObject();
 
             Dictionary<Int32, Int32> NodeCountsForNodeType;
             Dictionary<Int32, Int32> NodeCountsForObjectClass;
-            _CswNbtActQuotas.GetNodeCounts(out NodeCountsForNodeType, out NodeCountsForObjectClass);
+            _CswNbtActQuotas.GetNodeCounts( out NodeCountsForNodeType, out NodeCountsForObjectClass );
 
-			ret["canedit"] = _CanEditQuotas.ToString().ToLower();
-			ret["objectclasses"] = new JObject();
-			foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
-			{
-				string OCId = "oc_" + ObjectClass.ObjectClassId.ToString();
-				ret["objectclasses"][OCId] = new JObject();
-				ret["objectclasses"][OCId]["objectclass"] = ObjectClass.ObjectClass.ToString();
-				ret["objectclasses"][OCId]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
-				if( NodeCountsForObjectClass.ContainsKey( ObjectClass.ObjectClassId ) )
-				{
+            ret["canedit"] = _CanEditQuotas.ToString().ToLower();
+            ret["objectclasses"] = new JObject();
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
+            {
+                string OCId = "oc_" + ObjectClass.ObjectClassId.ToString();
+                ret["objectclasses"][OCId] = new JObject();
+                ret["objectclasses"][OCId]["objectclass"] = ObjectClass.ObjectClass.ToString();
+                ret["objectclasses"][OCId]["objectclassid"] = ObjectClass.ObjectClassId.ToString();
+                if( NodeCountsForObjectClass.ContainsKey( ObjectClass.ObjectClassId ) )
+                {
                     ret["objectclasses"][OCId]["currentusage"] = NodeCountsForObjectClass[ObjectClass.ObjectClassId];
-				}
-				else
-				{
-					ret["objectclasses"][OCId]["currentusage"] = "0";
-				}
-				if( ObjectClass.Quota != Int32.MinValue )
-				{
-					ret["objectclasses"][OCId]["quota"] = ObjectClass.Quota;
-				}
-				else
-				{
-					ret["objectclasses"][OCId]["quota"] = "";
-				}
-				ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.getNodeTypes().Count().ToString();
+                }
+                else
+                {
+                    ret["objectclasses"][OCId]["currentusage"] = "0";
+                }
+                if( ObjectClass.Quota != Int32.MinValue )
+                {
+                    ret["objectclasses"][OCId]["quota"] = ObjectClass.Quota;
+                }
+                else
+                {
+                    ret["objectclasses"][OCId]["quota"] = "";
+                }
+                ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.getNodeTypes().Count().ToString();
 
-				ret["objectclasses"][OCId]["nodetypes"] = new JObject();
-				foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
-				{
-					if( NodeType.IsLatestVersion() )
-					{
+                ret["objectclasses"][OCId]["nodetypes"] = new JObject();
+                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                {
+                    if( NodeType.IsLatestVersion() )
+                    {
                         Int32 NodeTypeId = NodeType.FirstVersionNodeTypeId;
                         string NodeTypeName = NodeType.NodeTypeName;
-						Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
+                        Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
                         string NTId = "nt_" + NodeType.FirstVersionNodeTypeId.ToString();
-                        
-						ret["objectclasses"][OCId]["nodetypes"][NTId] = new JObject();
-						ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypename"] = NodeTypeName;
-						ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypeid"] = NodeTypeId;
+
+                        ret["objectclasses"][OCId]["nodetypes"][NTId] = new JObject();
+                        ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypename"] = NodeTypeName;
+                        ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypeid"] = NodeTypeId;
 
                         if( NodeCountsForNodeType.ContainsKey( NodeTypeId ) )
                         {
@@ -95,18 +95,18 @@ namespace ChemSW.Nbt.WebServices
                             ret["objectclasses"][OCId]["nodetypes"][NTId]["quota"] = "";
                         }
                     } // if( NodeType.IsLatestVersion )
-				} // foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
-			} // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+                } // foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.NodeTypes )
+            } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
 
-			return ret;
-		} // GetQuotas()
+            return ret;
+        } // GetQuotas()
 
 
-		public bool SaveQuotas( string inQuotas )
-		{
-			JObject inQuotasJson = JObject.Parse( inQuotas );
-			if( _CanEditQuotas )
-			{
+        public bool SaveQuotas( string inQuotas )
+        {
+            JObject inQuotasJson = JObject.Parse( inQuotas );
+            if( _CanEditQuotas )
+            {
                 foreach( JObject JObjClass in inQuotasJson["objectclasses"].Children().Values() )
                 {
                     Int32 ObjectClassId = CswConvert.ToInt32( JObjClass["objectclassid"] );
@@ -122,23 +122,28 @@ namespace ChemSW.Nbt.WebServices
 
                 } // foreach( DataRow OCRow in OCTable.Rows )
                 return true;
-			} // if( CanEditQuotas )
-			else
-			{
-				return false;
-			}
-		} // SaveQuotas()
+            } // if( CanEditQuotas )
+            else
+            {
+                return false;
+            }
+        } // SaveQuotas()
 
-		public Double GetQuotaPercent()
-		{
-			return _CswNbtActQuotas.GetQuotaPercent();
-		}
+        public Double GetQuotaPercent()
+        {
+            return _CswNbtActQuotas.GetQuotaPercent();
+        }
 
-		public bool CheckQuota( Int32 NodeTypeId )
-		{
-			return _CswNbtActQuotas.CheckQuotaNT( NodeTypeId );
-		}
+        public bool CheckQuota( Int32 NodeTypeId )
+        {
+            return _CswNbtActQuotas.CheckQuotaNT( NodeTypeId );
+        }
 
-	} // class CswNbtWebServiceInspections
+        public bool CheckQuota( CswNbtMetaDataNodeType NodeType )
+        {
+            return _CswNbtActQuotas.CheckQuotaNT( NodeType );
+        }
+
+    } // class CswNbtWebServiceInspections
 } // namespace ChemSW.Nbt.WebServices
 
