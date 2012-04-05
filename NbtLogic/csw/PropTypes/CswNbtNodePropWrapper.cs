@@ -323,6 +323,14 @@ namespace ChemSW.Nbt.PropTypes
                 case CswNbtMetaDataFieldType.NbtFieldType.Location:
                     // This will default to Top.  Setting the Parent might change this later.
                     this.AsLocation.SelectedNodeId = null;
+
+                    // case 24438 - Use user's default location
+                    if( _CswNbtResources.CurrentNbtUser != null &&
+                        _CswNbtResources.CurrentNbtUser.DefaultLocationProperty != null )
+                    {
+                        this.AsLocation.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationProperty.SelectedNodeId;
+                    }
+                    
                     DoCopy = true;
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:

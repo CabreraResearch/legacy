@@ -30,6 +30,8 @@ namespace ChemSW.Nbt.Security
         string Email { get; }
         CswNbtNodePropText EmailProperty { get; }
         Int32 PageSize { get; }
+        CswNbtNodePropLocation DefaultLocationProperty { get; }
+
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt
