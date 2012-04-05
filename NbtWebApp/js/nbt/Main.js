@@ -997,6 +997,34 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.nbt.createInspectionWizard(centerTopDiv, designOpt);
 
                 break;
+
+            case 'Create_Material':
+                clear({ 'all': true });
+
+                var createOpt = {
+                    viewid: o.ActionOptions.viewid,
+                    viewmode: o.ActionOptions.viewmode,
+                    onCancel: function () {
+                        clear({ 'all': true });
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                        refreshSelected();
+                    },
+                    onFinish: function (viewid) {
+                        clear({ 'all': true });
+                        refreshViewSelect(function () {
+                            handleItemSelect({
+                                type: 'view',
+                                viewmode: 'tree',
+                                viewid: viewid
+                            });
+                        });
+                    },
+                    startingStep: o.ActionOptions.startingStep,
+                    menuRefresh: refreshSelected
+                };
+                Csw.nbt.createMaterialWizard(centerTopDiv, createOpt);
+                break;
+
             //			case 'Design':                                                            
             //				break;                                                            
             case 'Edit_View':
