@@ -112,9 +112,9 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewRelationship SizeRel = RetView.AddViewRelationship( SizeOc, false );
 
             RetView.AddViewPropertyFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-            RetView.AddViewPropertyFilter( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
-            RetView.AddViewPropertyFilter( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
-            RetView.AddViewPropertyFilter( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
+            RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
+            RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
+            RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
 
             return RetView;
         }
