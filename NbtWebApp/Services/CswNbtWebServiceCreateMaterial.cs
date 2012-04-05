@@ -76,6 +76,7 @@ namespace ChemSW.Nbt.WebServices
                     MaterialObj["tradename"] = NodeAsMaterial.TradeName.Text;
                     MaterialObj["partno"] = NodeAsMaterial.PartNumber.Text;
                     MaterialObj["supplier"] = NodeAsMaterial.Supplier.Gestalt;
+                    MaterialObj["nodeid"] = Node.NodeId.ToString();
                 }
             }
 
