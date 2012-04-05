@@ -1268,9 +1268,10 @@ namespace ChemSW.Nbt.WebServices
                         View.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
 
                         var ws = new CswNbtWebServiceTree( _CswNbtResources, View, IdPrefix );
-                        ReturnVal = ws.getTree( true, null, null, false, false, false, false, true );
+                        //ReturnVal = ws.getTree( true, null, null, false, false, false, false, true );
+                        ReturnVal = ws.runTree( null, null, false, true, "firstchild" );
                         //CswNbtWebServiceQuickLaunchItems.addToQuickLaunch( View ); //, Session );
-                        View.SaveToCache( true );
+                        //View.SaveToCache( true );
                     }
                 }
 
