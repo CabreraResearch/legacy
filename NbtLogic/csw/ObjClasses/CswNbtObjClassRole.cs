@@ -34,12 +34,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassRole( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }//ctor()
-
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ); }
@@ -149,18 +143,18 @@ namespace ChemSW.Nbt.ObjClasses
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
             }
 
-            // case 22424
-            // Prevent deleting roles in use
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
-            {
-                CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
-                if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
-                {
-                    throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,
-                                                 "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
-                }
-            }
+            //// case 22424
+            //// Prevent deleting roles in use
+            //CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
+            //{
+            //    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+            //    if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
+            //    {
+            //        throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,
+            //                                     "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
+            //    }
+            //}
 
             ////prevent user from deleting ScheduleRunner
             //if (Name.Text.ToLower() == "schedulerunner")

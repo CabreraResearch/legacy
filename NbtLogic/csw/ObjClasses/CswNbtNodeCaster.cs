@@ -9,10 +9,10 @@ namespace ChemSW.Nbt.ObjClasses
         private static void _Validate( CswNbtNode Node, CswNbtMetaDataObjectClass.NbtObjectClass TargetObjectClass )
         {
             if( Node == null )
-				throw new CswDniException( ErrorType.Error, "Invalid node", "CswNbtNodeCaster was given a null node as a parameter" );
+                throw new CswDniException( ErrorType.Error, "Invalid node", "CswNbtNodeCaster was given a null node as a parameter" );
 
             if( !( Node.getObjectClass().ObjectClass == TargetObjectClass ) )
-				throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
+                throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
         }
 
         public static CswNbtObjClassAliquot AsAliquot( CswNbtNode Node )
@@ -159,10 +159,10 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassUnitOfMeasure) Node.ObjClass );
         }//AsUnitOfMeasure
 
-        public static CswNbtObjClassUnitType AsUnitType(CswNbtNode Node)
+        public static CswNbtObjClassUnitType AsUnitType( CswNbtNode Node )
         {
-            _Validate(Node, CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass);
-            return ((CswNbtObjClassUnitType)Node.ObjClass);
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass );
+            return ( (CswNbtObjClassUnitType) Node.ObjClass );
         }//AsUnitType
 
         public static CswNbtObjClassUser AsUser( CswNbtNode Node )
@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Node != null )
             {
                 if( !( Node.ObjClass is ICswNbtPropertySetGeneratorTarget ) )
-					throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetGeneratorTarget; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
+                    throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetGeneratorTarget; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
                 return ( (ICswNbtPropertySetGeneratorTarget) Node.ObjClass );
             }
             else
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Node != null )
             {
                 if( !( Node.ObjClass is ICswNbtPropertySetScheduler ) )
-					throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetScheduler; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
+                    throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetScheduler; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
                 return ( (ICswNbtPropertySetScheduler) Node.ObjClass );
             }
             else
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Node != null )
             {
                 if( !( Node.ObjClass is ICswNbtPropertySetInspectionParent ) )
-					throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetInspectionParent; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
+                    throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetInspectionParent; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
                 return ( (ICswNbtPropertySetInspectionParent) Node.ObjClass );
             }
             else

@@ -13,68 +13,21 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswSchemaScriptsProd : ICswSchemaScripts
     {
-        //private CswNbtResources _CswNbtResources;
-
         private Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> _UpdateDrivers = new Dictionary<CswSchemaVersion, CswSchemaUpdateDriver>();
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers { get { return _UpdateDrivers; } }
 
-        public CswSchemaScriptsProd() //CswNbtResources CswNbtResources )
+        public CswSchemaScriptsProd()
         {
-            //_CswNbtResources = CswNbtResources;
-
             // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'L', 21 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'M', 48 );
 
             // This is where you add new versions.
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M01() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M02() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M03() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M04() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M05() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M06() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M07() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M08() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M09() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M10() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M11() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M12() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaTo01M13() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988() ) );           //14
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25322() ) );           //15
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24914() ) );           //16
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25226() ) );           //17
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24515() ) );           //18
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25381() ) );           //19
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290() ) );           //20
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25377() ) );           //21
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24777() ) );           //22
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374() ) );           //23
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25374B() ) );          //24
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24520() ) );           //25
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426() ) );           //26
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25466() ) );           //27
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue01() ) ); //28
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24988Epilogue02() ) ); //29
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25426Redux() ) );      //30
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25290b() ) );          //31
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25253() ) );           //32
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaEmpty() ) );               //33
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaEmpty() ) );               //34
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaEmpty() ) );               //35
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25556() ) );           //36
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25559() ) );           //37
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25471() ) );           //38
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25519() ) );           //39
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25444() ) );           //40
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25580() ) );           //41
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25581() ) );           //42
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25515() ) );           //43
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25627() ) );           //44
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25634() ) );           //45
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaToCase25538_Part_1() ) );  //46
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaToCase25538_Part_2() ) );  //47
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24974() ) );           //48
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase10596() ) );           //49
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
+
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24463() ) ); // 01N-01
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24438() ) ); // 01N-02
+            
+
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

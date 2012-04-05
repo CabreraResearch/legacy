@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -120,8 +120,9 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtWebServiceMetaData wsMd = new CswNbtWebServiceMetaData( _CswNbtResources );
                 CswNbtResources NbtSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
 
-                CswTableSelect NodesSelect = new CswTableSelect( NbtSystemResources.CswResources, "delete_demodata_nodes",
-                                                                "nodes" );
+                //CswTableSelect NodesSelect = new CswTableSelect( NbtSystemResources.CswResources, "delete_demodata_nodes", "nodes" );
+                CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "delete_demodata_nodes", "nodes" );
+
                 DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
                                                             " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
                 foreach( DataRow NodeRow in NodesTable.Rows )
