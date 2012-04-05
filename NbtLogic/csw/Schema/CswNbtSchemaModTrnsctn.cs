@@ -619,6 +619,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
             }
+            _CswNbtResources.ClearActionsCache();
             return NewActionId;
         }
 
@@ -682,13 +683,9 @@ namespace ChemSW.Nbt.Schema
         public Int32 getActionId( CswNbtActionName ActionName )
         {
             Int32 RetActionId = Int32.MinValue;
-            CswTableSelect ActionsTable = makeCswTableSelect( "SchemaModTrnsctn_ModuleUpdate", "actions" );
-            string WhereClause = " where lower(actionname)='" + CswNbtAction.ActionNameEnumToString( ActionName ).ToLower() + "'";
-            DataTable ActionsDataTable = ActionsTable.getTable( WhereClause, true );
-            if( ActionsDataTable.Rows.Count == 1 )
+            if( null != Actions[ActionName] )
             {
-                DataRow ActionRow = ActionsDataTable.Rows[0];
-                RetActionId = CswConvert.ToInt32( ActionRow["actionid"] );
+                RetActionId = Actions[ActionName].ActionId;
             }
             return RetActionId;
         }
@@ -805,6 +802,7 @@ namespace ChemSW.Nbt.Schema
             ModulesDataTable.Rows.Add( ModuleRow );
             Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             ModulesTable.update( ModulesDataTable );
+            _CswNbtResources.ClearModulesCache();
             return NewModuleId;
         }
 
