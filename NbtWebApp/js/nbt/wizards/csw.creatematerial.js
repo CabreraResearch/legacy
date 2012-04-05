@@ -84,7 +84,10 @@
                     var nextBtnEnabled = function () {
                         return false === Csw.isNullOrEmpty(internal.materialType);
                     };
-
+                    function typeSelect() {
+                        internal.materialType = { name: internal.materialTypeSelect.text(), val: internal.materialTypeSelect.val() };
+                        internal.toggleButton(internal.buttons.next, true);
+                    }
                     internal.toggleButton(internal.buttons.prev, false);
                     internal.toggleButton(internal.buttons.cancel, true);
                     internal.toggleButton(internal.buttons.finish, false);
@@ -99,20 +102,14 @@
                             ID: internal.wizard.makeStepId('nodeTypeSelect'),
                             labelText: 'Select a Material Type: ',
                             objectClassName: 'MaterialClass',
-                            onSelect: function () {
-                                internal.materialType = { name: internal.materialTypeSelect.text(), val: internal.materialTypeSelect.val() };
-                                internal.toggleButton(internal.buttons.next, true);
+                            onSelect: typeSelect,
+                                
                                 //                                    var selected = internal.inspectionTargetSelect.find(':selected');
                                 //                                    internal.isNewTarget(selected.propNonDom('data-newNodeType'));
                                 //                                    internal.selectedInspectionTarget = selected.text();
                                 //                                    Csw.publish(internal.createInspectionEvents.targetNameChanged);
-                            },
-                            onSuccess: function (data) {
-                                //                                    onNodeTypeSelectSuccess(data);
-                                internal.materialType = { name: internal.materialTypeSelect.text(), val: internal.materialTypeSelect.val() };
-                                internal.toggleButton(internal.buttons.next, true);
-                                //                                    internal.selectedInspectionTarget = internal.inspectionTargetSelect.find(':selected').text();
-                            }
+                            
+                            onSuccess: typeSelect
                         });
 
                         stepOneComplete = true;
@@ -128,6 +125,10 @@
                     var nextBtnEnabled = function () {
                         return false === Csw.isNullOrEmpty(internal.tradename) && false === Csw.isNullOrEmpty(internal.supplier);
                     };
+                    function supplierSelect() {
+                        internal.supplier = { name: internal.supplierSelect.find(':selected').text(), val: internal.supplierSelect.val() };
+                        internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                    }
 
                     internal.toggleButton(internal.buttons.prev, true);
                     internal.toggleButton(internal.buttons.cancel, true);
@@ -155,10 +156,8 @@
                             ID: internal.wizard.makeStepId('supplier'),
                             objectClassName: 'VendorClass',
                             labelText: 'Supplier: ',
-                            onChange: function () {
-                                internal.supplier = { name: internal.supplierSelect.text(), val: internal.supplierSelect.val() };
-                                internal.toggleButton(internal.buttons.next, nextBtnEnabled());
-                            }
+                            onChange: supplierSelect,
+                            onSuccess: supplierSelect
                         });
                         internal.divStep2.br({ number: 1 });
 
