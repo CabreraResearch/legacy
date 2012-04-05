@@ -47,15 +47,11 @@
                     },
                     success: function (data) {
                         var ret = data;
-                        ret.nodecount = 0;
+                        var nodecount = 0;
                         //Case 24155
-                        Csw.each(ret, function (thisNode, nodeId) {
-                            var nodeName;
-                            if (Csw.contains(thisNode, nodeId)) {
-                                ret.nodecount += 1;
-                                nodeName = thisNode[nodeId];
-                                external.option({ value: nodeId, display: nodeName });
-                            }
+                        Csw.each(ret, function (nodeName, nodeId) {
+                            nodecount += 1;
+                            external.option({ value: nodeId, display: nodeName });
                         });
 
                         Csw.tryExec(internal.onSuccess, ret);
