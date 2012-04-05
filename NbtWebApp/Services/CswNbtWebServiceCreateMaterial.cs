@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 throw new CswDniException( ErrorType.Error,
                                            "Cannot get a material without a type, supplier and a tradename.",
-                                           "Attempted to call getMaterial with invalid or empty paramters." );
+                                           "Attempted to call getMaterial with invalid or empty parameters." );
             }
 
             _MaterialNt = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
