@@ -30,6 +30,9 @@
                 } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(external.getId())) {
                     opts.ID = Csw.makeId(external.getId(), controlName);
                 }
+                if (false === Csw.isNullOrEmpty(opts.labelText)) {
+                    external.label({ forAttr: opts.ID, text: opts.labelText });
+                }
                 opts.parent = function () {
                     return external;
                 };

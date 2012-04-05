@@ -45,7 +45,13 @@
                 attr.add('class', internal.cssclass);
                 attr.add('for', internal.forAttr);
                 attr.add('form', internal.form);
-
+                
+                style.add('clear', 'left');
+                style.add('float', 'left');
+                style.add('padding', '3px 10px 2px');
+                style.add('text-align', 'right');
+                style.add('width', '180px');
+                
                 html += attr.get();
                 html += style.get();
 

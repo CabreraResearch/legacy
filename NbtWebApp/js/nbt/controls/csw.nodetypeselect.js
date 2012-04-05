@@ -27,11 +27,8 @@
                     $.extend(internal, options);
                 }
                 internal.ID += '_sel';
-                if (internal.labelText) {
-                    cswParent.label({ text: internal.labelText, forAttr: internal.ID });
-                }
-                internal.select = cswParent.select(internal);
 
+                internal.select = cswParent.select(internal);
 
                 external = Csw.dom({}, internal.select);
 

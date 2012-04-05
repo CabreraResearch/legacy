@@ -24,6 +24,7 @@
             placeholder: '',
             cssclass: '',
             value: '',
+            labelText: null,
             width: '',
             maxlength: '',
             autofocus: false,
@@ -78,8 +79,10 @@
 
             $input = $(html);
             Csw.literals.factory($input, external);
-            internal.$parent.append(external.$);
-
+            
+            if (Csw.isJQuery(internal.$parent)) {
+                internal.$parent.append(external.$);
+            }
             if (Csw.isFunction(internal.onChange)) {
                 external.bind('change', internal.onChange);
             }
@@ -111,8 +114,8 @@
                     if (value) {
                         external.propDom({ 'checked': true });
                     } else {
-                        if(window.abandonHope) {
-                            external.$.removeAttr('checked');    
+                        if (window.abandonHope) {
+                            external.$.removeAttr('checked');
                         }
                     }
                 } else {
