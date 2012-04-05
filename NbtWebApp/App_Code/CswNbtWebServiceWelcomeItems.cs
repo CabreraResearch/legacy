@@ -151,7 +151,7 @@ namespace ChemSW.Nbt.WebServices
                         //        Ret[WelcomeId]["type"] = "view";
                         //    }
                         //}
-                        break;
+                        //break;
 
                     case CswNbtWelcomeTable.WelcomeComponentType.Text:
                         LinkText = WelcomeRow["displaytext"].ToString();
