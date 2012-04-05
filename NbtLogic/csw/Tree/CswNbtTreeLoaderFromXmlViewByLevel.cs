@@ -377,6 +377,13 @@ namespace ChemSW.Nbt
                         {
                             OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
                         }
+                        else if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                            SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+                            SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
+                            SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+                        {
+                            OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
+                        }
                         else
                         {
                             OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";

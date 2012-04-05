@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Welcome
             /// </summary>
             Link,
             /// <summary>
-            /// Search on a View
+            /// Search on a View (deprecated)
             /// </summary>
             Search,
             /// <summary>
@@ -101,8 +101,8 @@ namespace ChemSW.Nbt.Welcome
             }
 
             // Equipment
-            if( FindEquipmentViewId.isSet() )
-                _AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswNbtView.ViewType.View, FindEquipmentViewId.ToString(), Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
+            //if( FindEquipmentViewId.isSet() )
+            //    _AddWelcomeItem( WelcomeTable, WelcomeComponentType.Search, CswNbtView.ViewType.View, FindEquipmentViewId.ToString(), Int32.MinValue, string.Empty, 1, 1, "magglass.gif", RoleId );
             if( EquipmentNodeTypeId != Int32.MinValue )
                 _AddWelcomeItem( WelcomeTable, WelcomeComponentType.Add, CswNbtView.ViewType.View, string.Empty, EquipmentNodeTypeId, string.Empty, 5, 1, "", RoleId );
             if( EquipmentByTypeViewId.isSet() )
@@ -205,16 +205,16 @@ namespace ChemSW.Nbt.Welcome
                     NewWelcomeRow["buttonicon"] = ButtonIcon;
                     NewWelcomeRow["displaytext"] = DisplayText;
                     break;
-                case WelcomeComponentType.Search:
-                    if( ViewType == CswNbtView.ViewType.View )
-                    {
-                        NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
-                        NewWelcomeRow["buttonicon"] = ButtonIcon;
-                        NewWelcomeRow["displaytext"] = DisplayText;
-                    }
-                    else
-                        throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Search Welcome Page Component" );
-                    break;
+                //case WelcomeComponentType.Search:
+                //    if( ViewType == CswNbtView.ViewType.View )
+                //    {
+                //        NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
+                //        NewWelcomeRow["buttonicon"] = ButtonIcon;
+                //        NewWelcomeRow["displaytext"] = DisplayText;
+                //    }
+                //    else
+                //        throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Search Welcome Page Component" );
+                //    break;
                 case WelcomeComponentType.Text:
                     if( DisplayText != string.Empty )
                     {
