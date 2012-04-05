@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebServices
 
             _MaterialNodeView.AddViewPropertyFilter( MaterialRel, TradeNameNtp, Tradename );
             _MaterialNodeView.AddViewPropertyFilter( MaterialRel, SupplierNtp, Supplier );
-            _MaterialNodeView.AddViewPropertyFilter( MaterialRel, PartNoNtp, Tradename );
+            _MaterialNodeView.AddViewPropertyFilter( MaterialRel, PartNoNtp, PartNo );
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _MaterialNodeView, false );
             if( Tree.getChildNodeCount() > 0 )
