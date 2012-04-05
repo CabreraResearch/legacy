@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
 
         private readonly CswCommaDelimitedString _MenuItems = new CswCommaDelimitedString()
                                                         {
-                                                            "Search",
+                                                            //"Search",
                                                             "Add",
                                                             "Copy",
                                                             "Delete",
@@ -46,12 +46,12 @@ namespace ChemSW.Nbt.WebServices
             CopyNode,
             DeleteNode,
             editview,
-            GenericSearch,
+            //GenericSearch,
             multiedit,
             PrintView,
             PrintLabel,
-            SaveViewAs,
-            ViewSearch
+            SaveViewAs//,
+            //ViewSearch
         }
 
         private CswNbtResources _CswNbtResources;
@@ -106,48 +106,48 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            // SEARCH
-            if( _MenuItems.Contains( "Search" ) )
-            {
-                JObject SearchObj = new JObject();
-                bool HasChildren = false;
-                if( View != null )
-                {
-                    if( View.IsSearchable() )
-                    {
-                        View.SaveToCache( false );
-                        SearchObj["This View"] = new JObject();
-                        SearchObj["This View"]["text"] = "This View";
-                        SearchObj["This View"]["nodeid"] = NodeId;
-                        SearchObj["This View"]["nodetypeid"] = NodeTypeId;
-                        SearchObj["This View"]["sessionviewid"] = View.SessionViewId.ToString();
-                        SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
-                        HasChildren = true;
-                    }
-                    //if( View.Visibility != NbtViewVisibility.Property )
-                    //{
-                    //    SearchObj["Generic Search"] = new JObject();
-                    //    SearchObj["Generic Search"]["nodeid"] = NodeId;
-                    //    SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
-                    //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                    //    HasChildren = true;
-                    //}
-                    /* Case 24744: No Generic Search on Grid Props */
-                }
-                //else
-                //{
-                //    SearchObj["Generic Search"] = new JObject();
-                //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-                //    HasChildren = true;
-                //}
+            //// SEARCH
+            //if( _MenuItems.Contains( "Search" ) )
+            //{
+            //    JObject SearchObj = new JObject();
+            //    bool HasChildren = false;
+            //    if( View != null )
+            //    {
+            //        if( View.IsSearchable() )
+            //        {
+            //            View.SaveToCache( false );
+            //            SearchObj["This View"] = new JObject();
+            //            SearchObj["This View"]["text"] = "This View";
+            //            SearchObj["This View"]["nodeid"] = NodeId;
+            //            SearchObj["This View"]["nodetypeid"] = NodeTypeId;
+            //            SearchObj["This View"]["sessionviewid"] = View.SessionViewId.ToString();
+            //            SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
+            //            HasChildren = true;
+            //        }
+            //        //if( View.Visibility != NbtViewVisibility.Property )
+            //        //{
+            //        //    SearchObj["Generic Search"] = new JObject();
+            //        //    SearchObj["Generic Search"]["nodeid"] = NodeId;
+            //        //    SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
+            //        //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+            //        //    HasChildren = true;
+            //        //}
+            //        /* Case 24744: No Generic Search on Grid Props */
+            //    }
+            //    //else
+            //    //{
+            //    //    SearchObj["Generic Search"] = new JObject();
+            //    //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
+            //    //    HasChildren = true;
+            //    //}
 
-                if( HasChildren )
-                {
-                    SearchObj["haschildren"] = true;
-                    Ret["Search"] = SearchObj;
-                }
+            //    if( HasChildren )
+            //    {
+            //        SearchObj["haschildren"] = true;
+            //        Ret["Search"] = SearchObj;
+            //    }
 
-            }
+            //}
 
             if( View != null )
             {

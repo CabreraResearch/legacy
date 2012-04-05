@@ -195,12 +195,12 @@ window.initMain = window.initMain || function (undefined) {
 
         $('#CenterBottomDiv').CswWelcome('initTable', {
             'onLinkClick': handleItemSelect,
-            'onSearchClick': function (view) {
-                var viewid = view.viewid;
-                var viewmode = view.viewmode;
-                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
-                refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
-            },
+//            'onSearchClick': function (view) {
+//                var viewid = view.viewid;
+//                var viewmode = view.viewmode;
+//                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
+//                refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
+//            },
             'onAddClick': function (nodetypeid) {
                 $.CswDialog('AddNodeDialog', {
                     'nodetypeid': nodetypeid,
