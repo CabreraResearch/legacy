@@ -1,15 +1,18 @@
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMaterialComponent : CswNbtObjClass
+    public class CswNbtObjClassWorkUnit : CswNbtObjClass
     {
+        public static string AuditingEnabledPropertyName { get { return "Auditing Enabled"; } }
+        public static string SignatureRequiredPropertyName { get { return "Signature Required"; } }
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassMaterialComponent( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassWorkUnit( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
@@ -17,16 +20,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass ); }
         }
 
-        public static string PercentagePropertyName { get { return "Percentage"; } }
-        public static string MixturePropertyName { get { return "Mixture"; } }
-        public static string ConstituentPropertyName { get { return "Constituent"; } }
-
-
         #region Inherited Events
-
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
@@ -76,21 +73,29 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+
         #endregion
 
         #region Object class specific properties
 
-        public CswNbtNodePropNumber Percentage
+        public CswNbtNodePropNodeTypeSelect AuditingEnabled
         {
             get
             {
-                return ( _CswNbtNode.Properties[PercentagePropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[AuditingEnabledPropertyName].AsNodeTypeSelect );
+            }
+        }
+        public CswNbtNodePropNodeTypeSelect SignatureRequired
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[SignatureRequiredPropertyName].AsNodeTypeSelect );
             }
         }
 
         #endregion
 
 
-    }//CswNbtObjClassMaterialComponent
+    }//CswNbtObjClassWorkUnit
 
 }//namespace ChemSW.Nbt.ObjClasses

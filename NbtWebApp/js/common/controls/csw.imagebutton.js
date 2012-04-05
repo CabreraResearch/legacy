@@ -22,6 +22,15 @@
             };
             var external = { };
 
+            (function() {
+                if (options) {
+                    $.extend(internal, options);
+                }
+
+                internal.imageButton = cswParent.div(internal);
+                external = Csw.dom({ }, internal.imageButton);
+            }());
+
             external.setButtonType = function(newButtonType) {
                 var multiplier = -18;
                 //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
@@ -65,21 +74,6 @@
             };
 
 
-            (function() {
-                if (options) {
-                    $.extend(internal, options);
-                }
-
-                internal.imageButton = cswParent.div(internal);
-                external = Csw.dom({ }, internal.imageButton);
-
-                //$.extend(external, Csw.literals.div(internal));
-                external.addClass('divbutton');
-                external.propNonDom('title', internal.AlternateText);
-                external.css('display', 'inline-block');
-                external.setButtonType(internal.ButtonType);
-            }());
-
             external.click = function(newButtonType, func) {
                 if (Csw.isFunction(func)) {
                     return external.bind('click', func);
@@ -88,6 +82,12 @@
                 }
             };
 
+            (function() {
+                external.addClass('divbutton');
+                external.propNonDom('title', internal.AlternateText);
+                external.css('display', 'inline-block');
+                external.setButtonType(internal.ButtonType);
+            }());
 
             return external;
         });
