@@ -1002,8 +1002,8 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ 'all': true });
 
                 var createOpt = {
-                    viewid: o.ActionOptions.viewid,
-                    viewmode: o.ActionOptions.viewmode,
+//                    viewid: o.ActionOptions.viewid,
+//                    viewmode: o.ActionOptions.viewmode,
                     onCancel: function () {
                         clear({ 'all': true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
@@ -1011,16 +1011,16 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     onFinish: function (viewid) {
                         clear({ 'all': true });
-                        refreshViewSelect(function () {
-                            handleItemSelect({
-                                type: 'view',
-                                viewmode: 'tree',
-                                viewid: viewid
-                            });
-                        });
+//                        refreshViewSelect(function () {
+//                            handleItemSelect({
+//                                type: 'view',
+//                                viewmode: 'tree',
+//                                viewid: viewid
+//                            });
+//                        });
                     },
-                    startingStep: o.ActionOptions.startingStep,
-                    menuRefresh: refreshSelected
+                    startingStep: o.ActionOptions.startingStep
+//                    menuRefresh: refreshSelected
                 };
                 Csw.nbt.createMaterialWizard(centerTopDiv, createOpt);
                 break;
