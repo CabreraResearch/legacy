@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string RegulatoryListsPropName { get { return "Regulatory Lists"; } }
         public static string TradenamePropName { get { return "Tradename"; } }
         public static string StorageCapacityPropName { get { return "Storage Capacity"; } }
+        public static string ExpirationIntervalPropName { get { return "Expiration Interval"; } }
 
 
 
@@ -157,6 +158,13 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[StorageCapacityPropName].AsImageList );
+            }
+        }
+        public CswNbtNodePropQuantity ExpirationInterval
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[ExpirationIntervalPropName].AsQuantity );
             }
         }
 
