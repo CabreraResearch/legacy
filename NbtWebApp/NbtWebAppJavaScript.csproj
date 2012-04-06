@@ -90,6 +90,7 @@
     <Content Include="css\csw.table.layout.css" />
     <Content Include="js\common\composites\_composites.factory.js" />
     <Content Include="js\common\controls\_controls.factory.js" />
+    <Content Include="js\common\literals\csw.label.js" />
     <Content Include="js\common\literals\csw.b.js" />
     <Content Include="js\common\literals\csw.morediv.js" />
     <Content Include="js\common\literals\csw.table.js" />
@@ -101,6 +102,8 @@
     <Content Include="js\nbt\actions\csw.sessions.js" />
     <Content Include="js\nbt\actions\csw.quotaimage.js" />
     <Content Include="js\nbt\actions\csw.quotas.js" />
+    <Content Include="js\nbt\controls\csw.nodeselect.js" />
+    <Content Include="js\nbt\wizards\csw.creatematerial.js" />
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
     <Content Include="js\nbt\controls\csw.nodetypeselect.js" />
     <Content Include="js\common\composites\csw.tree.js" />

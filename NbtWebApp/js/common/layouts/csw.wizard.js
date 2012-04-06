@@ -192,6 +192,11 @@
                 internal.selectStep(stepno);
             };
 
+            external.makeStepId = function (suffix, stepNo) {
+                var step = stepNo || internal.currentStepNo;
+                return Csw.makeId('step_' + step, internal.ID, suffix);
+            };
+
             return external;
         });
 } ());

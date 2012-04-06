@@ -532,10 +532,29 @@ namespace ChemSW.Nbt
         public void ClearCache()
         {
             _clear();
-            initModules();
+            ClearModulesCache();
             //_initNotifications( true );
+            ClearActionsCache();
+        }
+
+        /// <summary>
+        /// Refresh the Actions Collection
+        /// </summary>
+        public void ClearActionsCache()
+        {
             _ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
         }
+
+        /// <summary>
+        /// Refresh the Modules Collection
+        /// </summary>
+        public void ClearModulesCache()
+        {
+            initModules();
+        }
+
+
+
         /// <summary>
         /// Stores the datetime that this class was cached
         /// </summary>

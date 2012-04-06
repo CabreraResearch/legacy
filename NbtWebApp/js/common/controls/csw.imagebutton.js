@@ -88,7 +88,6 @@
                 external.css('display', 'inline-block');
                 external.setButtonType(internal.ButtonType);
             }());
-
             return external;
         });
 

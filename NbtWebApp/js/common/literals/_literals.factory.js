@@ -30,6 +30,9 @@
                 } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(external.getId())) {
                     opts.ID = Csw.makeId(external.getId(), controlName);
                 }
+                if (false === Csw.isNullOrEmpty(opts.labelText)) {
+                    external.label({ forAttr: opts.ID, text: opts.labelText });
+                }
                 opts.parent = function () {
                     return external;
                 };
@@ -48,6 +51,7 @@
                     controlName === 'ol' ||
                     controlName === 'ul' ||
                     controlName === 'table' ||
+                    controlName === 'label' ||
                     controlName === 'tabDiv') {
                     Csw.controls.factory(componentParent, controlName);
                     Csw.composites.factory(componentParent, controlName);
@@ -141,7 +145,14 @@
                 /// <returns type="Csw.literals.input">A Csw.literals.input</returns> 
                 return internal.makeControlForChaining(opts, 'input');
             };
-            
+
+            external.label = function (opts) {
+                /// <summary> Creates a Csw.label on this element</summary>
+                /// <param name="opts" type="Object">Options to define the label.</param>
+                /// <returns type="Csw.literals.label">A Csw.literals.label</returns> 
+                return internal.makeControlForChaining(opts, 'label');
+            };
+
             /* Case 25125: This literal is deprecated. Use composite instead. */
             external.moreDiv = function (opts) {
                 /// <summary> (Deprecated) Creates a Csw.moreDiv on this element</summary>

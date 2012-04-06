@@ -68,7 +68,7 @@
 
         var _makeNodeLink = function(parent, nodeid, nodename) {
             parent.link({
-                    ID: Csw.makeId(id, nodeid),
+                ID: Csw.makeId(id, nodeid),
                 text: nodename,
                 onClick: function() {
                     $.CswDialog('EditNodeDialog', {

@@ -9,16 +9,17 @@
             var internal = {
                 $parent: '',
                 ID: '',
-                NodeTypesUrl: '/NbtWebApp/wsNBT.asmx/getNodeTypes',
+                nodeTypesUrlMethod: 'getNodeTypes',
                 nodetypeid: '',
                 objectClassName: '',
                 onSelect: null,
                 onSuccess: null,
                 width: '200px',
                 addNewOption: false,
+                labelText: null,
                 excludeNodeTypeIds: ''
             };
-            var external = { };
+            var external = {};
 
             (function () {
 
@@ -28,6 +29,7 @@
                 internal.ID += '_sel';
 
                 internal.select = cswParent.select(internal);
+
                 external = Csw.dom({}, internal.select);
 
                 //$.extend(external, Csw.literals.select(internal));
@@ -42,7 +44,7 @@
                 }
 
                 Csw.ajax.post({
-                    url: internal.NodeTypesUrl,
+                    urlMethod: internal.nodeTypesUrlMethod,
                     data: { ObjectClassName: Csw.string(internal.objectClassName), ExcludeNodeTypeIds: internal.excludeNodeTypeIds },
                     success: function (data) {
                         var ret = data;

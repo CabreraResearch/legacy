@@ -289,8 +289,36 @@ namespace ChemSW.Nbt
         {
             CswNbtViewPropertyFilter NewFilter = new CswNbtViewPropertyFilter( _CswNbtResources, this, SubFieldName, FilterMode, Value, CaseSensitive );
             if( ParentViewProperty != null )
+            {
                 ParentViewProperty.addFilter( NewFilter );
+            }
             return NewFilter;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
+        /// </summary>
+        public void AddViewPropertyFilter( CswNbtViewRelationship ParentViewRelationship, object MetaDataProp, string Value = "", CswNbtSubField.SubFieldName SubFieldName = null, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
+        {
+            if( null != ParentViewRelationship && null != MetaDataProp )
+            {
+                if( MetaDataProp is CswNbtMetaDataNodeTypeProp )
+                {
+                    CswNbtMetaDataNodeTypeProp NodeTypeProp = (CswNbtMetaDataNodeTypeProp) MetaDataProp;
+                    FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                    SubFieldName = SubFieldName ?? NodeTypeProp.getFieldTypeRule().SubFields.Default.Name;
+                    CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, NodeTypeProp );
+                    AddViewPropertyFilter( ViewProp, SubFieldName, FilterMode, Value, CaseSensitive );
+                }
+                else if( MetaDataProp is CswNbtMetaDataObjectClassProp )
+                {
+                    CswNbtMetaDataObjectClassProp ObjectClassProp = (CswNbtMetaDataObjectClassProp) MetaDataProp;
+                    FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                    SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
+                    CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, ObjectClassProp );
+                    AddViewPropertyFilter( ViewProp, SubFieldName, FilterMode, Value, CaseSensitive );
+                }
+            }
         }
 
         #endregion Child constructors
