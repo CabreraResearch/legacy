@@ -37,48 +37,56 @@ namespace ChemSW.Nbt.WebServices
                 {
                     throw new CswDniException( ErrorType.Error,
                                                "The provided material type was not a valid material.",
-                                               "Attempted to call getMaterial with a NodeType that was not valid." );
+                                               "Attempted to call _MaterialNt with a NodeType that was not valid." );
                 }
             }
             return __MaterialNt;
         }
 
         private CswNbtView __MaterialNodeView;
-        private CswNbtView _MaterialNodeView( bool ReInit = false)
+        private CswNbtView _MaterialNodeView( CswNbtMetaDataNodeType MaterialNt = null, string Tradename = "", string Supplier = "", string PartNo = "" )
         {
-            if( null == __MaterialNodeView || ReInit )
+            if( null == __MaterialNodeView && MaterialNt != null )
             {
-                __MaterialNodeView = new CswNbtView(_CswNbtResources);
+                if( string.IsNullOrEmpty( Supplier ) ||
+                    string.IsNullOrEmpty( Tradename ) )
+                {
+                    throw new CswDniException( ErrorType.Error,
+                                               "Cannot get a material without a supplier and a tradename.",
+                                               "Attempted to call doesMaterialExist with invalid or empty parameters." );
+                }
+                __MaterialNodeView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship MaterialRel = __MaterialNodeView.AddViewRelationship( MaterialNt, false );
+                CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropName );
+                CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
+                CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
+
+                __MaterialNodeView.AddViewPropertyFilter( MaterialRel, TradeNameNtp, Tradename );
+                __MaterialNodeView.AddViewPropertyFilter( MaterialRel, SupplierNtp, Supplier );
+                __MaterialNodeView.AddViewPropertyFilter( MaterialRel, PartNoNtp, PartNo );
             }
             return __MaterialNodeView;
         }
 
         #region Public
 
-        public bool getMaterial( Int32 NodeTypeId, string Supplier, string Tradename, string PartNo, JObject MaterialObj = null )
+        public bool doesMaterialExist( Int32 NodeTypeId, string Supplier, string Tradename, string PartNo, JObject MaterialObj = null )
         {
-            bool RetExists = false;
-
-            if( Int32.MinValue == NodeTypeId ||
-                 string.IsNullOrEmpty( Supplier ) ||
-                 string.IsNullOrEmpty( Tradename ) )
+            if( Int32.MinValue == NodeTypeId )
             {
                 throw new CswDniException( ErrorType.Error,
-                                           "Cannot get a material without a type, supplier and a tradename.",
-                                           "Attempted to call getMaterial with invalid or empty parameters." );
+                                           "Cannot get a material without a type.",
+                                           "Attempted to call doesMaterialExist with invalid or empty parameters." );
             }
             CswNbtMetaDataNodeType MaterialNt = _MaterialNt( NodeTypeId );
 
-            CswNbtView MaterialNodeView = _MaterialNodeView( true );
-            CswNbtViewRelationship MaterialRel = MaterialNodeView.AddViewRelationship( MaterialNt, false );
+            CswNbtView MaterialNodeView = _MaterialNodeView( MaterialNt, Tradename, Supplier, PartNo );
+            return _doesMaterialExist( MaterialNodeView, MaterialObj );
+        }
 
-            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropName );
-            CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
-            CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
-
-            MaterialNodeView.AddViewPropertyFilter( MaterialRel, TradeNameNtp, Tradename );
-            MaterialNodeView.AddViewPropertyFilter( MaterialRel, SupplierNtp, Supplier );
-            MaterialNodeView.AddViewPropertyFilter( MaterialRel, PartNoNtp, PartNo );
+        private bool _doesMaterialExist( CswNbtView MaterialNodeView, JObject MaterialObj = null )
+        {
+            bool RetExists = false;
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false );
             if( Tree.getChildNodeCount() > 0 )
@@ -158,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
 
             /* 4. Add possible secondary actions 
              * Recieve Material and Request Material workflows don't exist yet.
-                          
+             * For now, return a view of the new Node.             
              */
             CswNbtView MaterialNodeView = _MaterialNodeView();
             MaterialNodeView.SaveToCache( false );
@@ -169,7 +177,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-        /// Validate the new material node and out the material node properties and sizes
+        /// Validate the new material node, out the material node properties and sizes, and cache the material nodetype and material node view
         /// </summary>
         private void _getMaterialPropsAndSizes( string MaterialDefinition, out JArray SizesObj, out JObject PropertiesObj )
         {
@@ -201,7 +209,10 @@ namespace ChemSW.Nbt.WebServices
             string PartNo = MaterialObj["partno"].ToString();
             Int32 NodeTypeId = CswConvert.ToInt32( MaterialObj["nodetypeid"] );
 
-            bool MaterialExists = getMaterial( NodeTypeId, SupplierName, TradeName, PartNo );
+            CswNbtMetaDataNodeType MaterialNt = _MaterialNt( NodeTypeId );
+            CswNbtView MaterialNodeView = _MaterialNodeView( MaterialNt, TradeName, SupplierName, PartNo );
+
+            bool MaterialExists = _doesMaterialExist( MaterialNodeView );
             if( MaterialExists )
             {
                 throw new CswDniException( ErrorType.Error,

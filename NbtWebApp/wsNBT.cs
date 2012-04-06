@@ -3924,7 +3924,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources );
-                ws.getMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, ReturnVal );
+                ws.doesMaterialExist( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, ReturnVal );
 
                 _deInitResources();
             }
@@ -3966,7 +3966,7 @@ namespace ChemSW.Nbt.WebServices
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // getMaterial()
+        } // getMaterialSizes()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -3993,7 +3993,7 @@ namespace ChemSW.Nbt.WebServices
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // getMaterial()
+        } // createMaterial()
 
         #endregion CISPro
 
