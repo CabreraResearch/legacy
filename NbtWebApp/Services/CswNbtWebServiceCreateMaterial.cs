@@ -61,9 +61,9 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
                 CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
 
-                __MaterialNodeView.AddViewPropertyFilter( MaterialRel, TradeNameNtp, Tradename );
-                __MaterialNodeView.AddViewPropertyFilter( MaterialRel, SupplierNtp, Supplier );
-                __MaterialNodeView.AddViewPropertyFilter( MaterialRel, PartNoNtp, PartNo );
+                __MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
+                __MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, Supplier );
+                __MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
             }
             return __MaterialNodeView;
         }
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
             CswNbtViewRelationship SizeRel = RetView.AddViewRelationship( SizeOc, false );
 
-            RetView.AddViewPropertyFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+            RetView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
             RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
             RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
             RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );

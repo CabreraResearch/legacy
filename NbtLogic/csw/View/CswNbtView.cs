@@ -286,9 +286,9 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
-        public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp MetaDataProp, string Value = "", CswNbtSubField.SubFieldName SubFieldName = null, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
+        public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp MetaDataProp, string Value = "", CswNbtSubField.SubFieldName SubFieldName = null, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
         {
-            CswNbtViewPropertyFilter NewFilter  = null;
+            CswNbtViewPropertyFilter NewFilter = null;
             if( null != ParentViewRelationship && null != MetaDataProp )
             {
                 FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
