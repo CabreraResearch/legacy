@@ -3923,8 +3923,8 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources );
-                ws.doesMaterialExist( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, ReturnVal );
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo );
+                ws.doesMaterialExist( ReturnVal );
 
                 _deInitResources();
             }
@@ -3948,9 +3948,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources );
-                CswNbtView View = ws.getMaterialSizes( _getNodeId( MaterialId ) );
+                CswNbtView View = CswNbtWebServiceCreateMaterial.getMaterialSizes( _CswNbtResources, _getNodeId( MaterialId ) );
                 if( null != View )
                 {
                     CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( _CswNbtResources, View );
@@ -3978,10 +3976,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources );
+                JObject MaterialObj;
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, MaterialDefinition, out MaterialObj );
                 _setEditMode( NodeEditMode.Add );
-                ReturnVal = ws.createMaterial( MaterialDefinition );
+                ReturnVal = ws.createMaterial( MaterialObj );
 
                 _deInitResources();
             }
