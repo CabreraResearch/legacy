@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
@@ -9,6 +10,7 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassContainer : CswNbtObjClass
     {
         public static string BarcodePropertyName { get { return "Barcode"; } }
+        public static string MaterialPropertyName { get { return "Material"; } }
         public static string LocationPropertyName { get { return "Location"; } }
         public static string LocationVerifiedPropertyName { get { return "Location Verified"; } }
         public static string StatusPropertyName { get { return "Status"; } }
@@ -17,7 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string SourceContainerPropertyName { get { return "Source Container"; } }
         public static string QuantityPropertyName { get { return "Quantity"; } }
         public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
-        
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -45,6 +47,37 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
+            // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
+            if( ExpirationDate.DateTimeValue == DateTime.MinValue && Material.RelatedNodeId != null )
+            {
+                DateTime DefaultExpDate = DateTime.Now;
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                if( MaterialNode != null )
+                {
+                    CswNbtObjClassMaterial MaterialNodeAsMaterial = CswNbtNodeCaster.AsMaterial( MaterialNode );
+                    switch( MaterialNodeAsMaterial.ExpirationInterval.Units.ToLower() )
+                    {
+                        case "hours":
+                            DefaultExpDate = DefaultExpDate.AddHours( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
+                            break;
+                        case "days":
+                            DefaultExpDate = DefaultExpDate.AddDays( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
+                            break;
+                        case "months":
+                            DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
+                            break;
+                        case "years":
+                            DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
+                            break;
+                        default:
+                            DefaultExpDate = DateTime.MinValue;
+                            break;
+                    }
+                    ExpirationDate.DateTimeValue = DefaultExpDate;
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -93,6 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[LocationPropertyName].AsBarcode ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation ); } }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[LocationVerifiedPropertyName].AsDateTime ); } }
+        public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[MaterialPropertyName].AsRelationship ); } }
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[StatusPropertyName].AsList ); } }
         public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[MissingPropertyName].AsLogical ); } }
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName].AsLogical ); } }

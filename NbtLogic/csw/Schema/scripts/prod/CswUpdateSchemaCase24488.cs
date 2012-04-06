@@ -15,13 +15,25 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
 
             // Add junction from Container to CISPro
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, ContainerOC.ObjectClassId );
 
             // Add object class props to Container class
-            CswNbtMetaDataObjectClassProp BarcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( 
+            CswNbtMetaDataObjectClassProp MaterialOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                                                            CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+                                                            CswNbtObjClassContainer.MaterialPropertyName,
+                                                            CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                            false,
+                                                            false,
+                                                            true,
+                                                            NbtViewRelatedIdType.ObjectClassId.ToString(),
+                                                            MaterialOC.ObjectClassId, 
+                                                            true );
+
+            CswNbtMetaDataObjectClassProp BarcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                                                             CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                             CswNbtObjClassContainer.BarcodePropertyName,
                                                             CswNbtMetaDataFieldType.NbtFieldType.Barcode );
@@ -38,14 +50,20 @@ namespace ChemSW.Nbt.Schema
                                                            CswNbtObjClassContainer.LocationPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Location );
 
-            CswNbtMetaDataObjectClassProp LocationVerifiedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( 
+            CswNbtMetaDataObjectClassProp LocationVerifiedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                                                            CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.LocationVerifiedPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.DateTime );
-            
+
             CswNbtMetaDataObjectClassProp SourceContainerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.SourceContainerPropertyName,
-                                                           CswNbtMetaDataFieldType.NbtFieldType.Relationship );
+                                                           CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                           false,
+                                                           false,
+                                                           true,
+                                                           NbtViewRelatedIdType.ObjectClassId.ToString(),
+                                                           ContainerOC.ObjectClassId,
+                                                           false );
 
             CswNbtMetaDataObjectClassProp MissingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.MissingPropertyName,
@@ -56,9 +74,9 @@ namespace ChemSW.Nbt.Schema
                                                            CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
             CswNbtMetaDataObjectClassProp ExpirationDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
-                                               CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
-                                               CswNbtObjClassContainer.ExpirationDatePropertyName,
-                                               CswNbtMetaDataFieldType.NbtFieldType.DateTime );
+                                                           CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+                                                           CswNbtObjClassContainer.ExpirationDatePropertyName,
+                                                           CswNbtMetaDataFieldType.NbtFieldType.DateTime );
 
             // Location Verified - servermanaged
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationVerifiedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
@@ -78,17 +96,17 @@ namespace ChemSW.Nbt.Schema
             ContainerView.ViewMode = NbtViewRenderingMode.Grid;
 
             CswNbtViewRelationship ContainerRel = ContainerView.AddViewRelationship( ContainerOC, true );
-            
+
             CswNbtViewProperty BarcodeVP = ContainerView.AddViewProperty( ContainerRel, BarcodeOCP );
             CswNbtViewProperty StatusVP = ContainerView.AddViewProperty( ContainerRel, StatusOCP );
             CswNbtViewProperty QuantityVP = ContainerView.AddViewProperty( ContainerRel, QuantityOCP );
             CswNbtViewProperty LocationVP = ContainerView.AddViewProperty( ContainerRel, LocationOCP );
-            
+
             BarcodeVP.Order = 2;
             StatusVP.Order = 4;
             QuantityVP.Order = 6;
             LocationVP.Order = 8;
-            
+
             ContainerView.save();
 
         }//Update()
