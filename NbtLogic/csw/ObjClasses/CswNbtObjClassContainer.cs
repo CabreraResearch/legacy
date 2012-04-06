@@ -1,3 +1,5 @@
+using System;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
@@ -6,6 +8,14 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassContainer : CswNbtObjClass
     {
+        public static string LocationPropertyName { get { return "Location"; } }
+        public static string LocationVerifiedPropertyName { get { return "Location Verified"; } }
+        public static string StatusPropertyName { get { return "Status"; } }
+        public static string MissingPropertyName { get { return "Missing"; } }
+        public static string DisposedPropertyName { get { return "Disposed"; } }
+        public static string SourceContainerPropertyName { get { return "Source Container"; } }
+        public static string QuantityPropertyName { get { return "Quantity"; } }
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassContainer( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -73,29 +83,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-
-        //public CswNbtNodePropRelationship Assembly
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.AssemblyPropertyName].AsRelationship );
-        //    }
-        //}
-        //public CswNbtNodePropRelationship Type
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.TypePropertyName].AsRelationship );
-        //    }
-        //}
-        //public CswNbtNodePropLogicalSet Parts
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.PartsPropertyName].AsLogicalSet );
-        //    }
-        //}
-
+        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation ); } }
+        public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[LocationVerifiedPropertyName].AsDateTime ); } }
+        public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[StatusPropertyName].AsList ); } }
+        public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[MissingPropertyName].AsLogical ); } }
+        public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName].AsLogical ); } }
+        public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName].AsRelationship ); } }
+        public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName].AsQuantity ); } }
 
         #endregion
 
