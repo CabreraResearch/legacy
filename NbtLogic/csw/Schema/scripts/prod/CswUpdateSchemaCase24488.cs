@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -20,15 +21,20 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, ContainerOC.ObjectClassId );
 
             // Add object class props to Container class
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+            CswNbtMetaDataObjectClassProp BarcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( 
+                                                            CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+                                                            CswNbtObjClassContainer.BarcodePropertyName,
+                                                            CswNbtMetaDataFieldType.NbtFieldType.Barcode );
+
+            CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.StatusPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.List );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+            CswNbtMetaDataObjectClassProp QuantityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.QuantityPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Quantity );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+            CswNbtMetaDataObjectClassProp LocationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.LocationPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Location );
 
@@ -37,24 +43,49 @@ namespace ChemSW.Nbt.Schema
                                                            CswNbtObjClassContainer.LocationVerifiedPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.DateTime );
             
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+            CswNbtMetaDataObjectClassProp SourceContainerOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.SourceContainerPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Relationship );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+            CswNbtMetaDataObjectClassProp MissingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.MissingPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+            CswNbtMetaDataObjectClassProp DisposedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                                                            CswNbtObjClassContainer.DisposedPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationVerifiedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
             
+            // Location Verified - servermanaged
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationVerifiedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
 
-            // Add default Container nodetype to master data
-            _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( ContainerOC.ObjectClassId, "Container", "Materials" );
+            // Disposed required, default is false
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisposedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( DisposedOCP, CswNbtSubField.SubFieldName.Checked, false );
 
+            // Add default Container nodetype to master
+            CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( ContainerOC.ObjectClassId, "Container", "Materials" );
+            ContainerNT.IconFileName = "container.gif";
+
+            // Add default view to master
+            CswNbtView ContainerView = _CswNbtSchemaModTrnsctn.makeView();
+            ContainerView.makeNew( "Containers", NbtViewVisibility.Global, null, null, null );
+            ContainerView.Category = "Materials";
+            ContainerView.ViewMode = NbtViewRenderingMode.Grid;
+
+            CswNbtViewRelationship ContainerRel = ContainerView.AddViewRelationship( ContainerOC, true );
+            
+            CswNbtViewProperty BarcodeVP = ContainerView.AddViewProperty( ContainerRel, BarcodeOCP );
+            CswNbtViewProperty StatusVP = ContainerView.AddViewProperty( ContainerRel, StatusOCP );
+            CswNbtViewProperty QuantityVP = ContainerView.AddViewProperty( ContainerRel, QuantityOCP );
+            CswNbtViewProperty LocationVP = ContainerView.AddViewProperty( ContainerRel, LocationOCP );
+            
+            BarcodeVP.Order = 2;
+            StatusVP.Order = 4;
+            QuantityVP.Order = 6;
+            LocationVP.Order = 8;
+            
+            ContainerView.save();
 
         }//Update()
 

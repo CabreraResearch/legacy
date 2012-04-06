@@ -8,6 +8,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassContainer : CswNbtObjClass
     {
+        public static string BarcodePropertyName { get { return "Barcode"; } }
         public static string LocationPropertyName { get { return "Location"; } }
         public static string LocationVerifiedPropertyName { get { return "Location Verified"; } }
         public static string StatusPropertyName { get { return "Status"; } }
@@ -68,6 +69,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            // Disposed == false
+            CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( DisposedPropertyName );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, DisposedOCP, false.ToString() );
+
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
@@ -83,6 +88,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[LocationPropertyName].AsBarcode ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation ); } }
         public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[LocationVerifiedPropertyName].AsDateTime ); } }
         public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[StatusPropertyName].AsList ); } }
