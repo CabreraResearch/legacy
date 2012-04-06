@@ -374,7 +374,6 @@ namespace ChemSW.Nbt.Actions
         /// </summary>
         public bool CheckQuotaNT( Int32 NodeTypeId )
         {
-            bool ret = false;
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             return CheckQuotaNT( NodeType );
         } // CheckQuota()
