@@ -229,6 +229,44 @@
 
             } ());
 
+            internal.makeStep4 = (function () {
+                var stepFourComplete = false;
+
+                return function () {
+                    var div;
+                    
+                    internal.toggleButton(internal.buttons.prev, true);
+                    internal.toggleButton(internal.buttons.cancel, true);
+                    internal.toggleButton(internal.buttons.finish, false);
+                    internal.toggleButton(internal.buttons.next, true);
+
+                    if (false === stepFourComplete) {
+                        internal.divStep4 = internal.wizard.div(4);
+
+                        internal.divStep4.br({ number: 2 });
+
+                        div = internal.divStep4.div();
+                        Csw.layouts.tabsAndProps(div, {
+                            nodetypeid: internal.materialType.val,
+                            relatednodeid: '',
+                            relatednodetypeid: '',
+                            EditMode: Csw.enums.editMode.Add,
+                            ReloadTabOnSave: false,
+                            onSave: function (nodeid, cswnbtnodekey) {
+                                //
+                            },
+                            onInitFinish: function () {
+                                
+                            },
+                            ShowAsReport: false
+                        });
+
+                        stepFourComplete = true;
+                    }
+                };
+
+            } ());
+
             internal.makeStep1();
 
             return external;
