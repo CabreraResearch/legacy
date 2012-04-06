@@ -1,7 +1,5 @@
-﻿/// <reference path="/js/../Scripts/jquery-1.7.1-vsdoc.js" />
-/// <reference path="../../globals/Global.js" />
-/// <reference path="../../globals/CswGlobalTools.js" />
-/// <reference path="../../globals/CswEnums.js" />
+﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function ($) {
     "use strict";
@@ -18,8 +16,7 @@
             };
             if (options) $.extend(o, options);
 
-            function _fixDimensions()
-            {
+            function _fixDimensions() {
                 // Make sure preview div is within the window
                 var windowX = $(window).width() - 10;
                 var windowY = $(window).height() - 10;
@@ -39,10 +36,12 @@
                     left: X + 'px'
                 });
             } // _fixDimensions()
-            
+
             function _loadPreview() {
                 $div.show();
-                $div.CswNodeTabs({
+                var parent = Csw.literals.factory($div);
+                //$div.CswNodeTabs({
+                Csw.layouts.tabsAndProps(parent, {
                     ID: o.ID + 'tabs',
                     nodeids: [o.nodeid],
                     cswnbtnodekeys: [o.cswnbtnodekey],

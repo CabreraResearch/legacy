@@ -103,6 +103,7 @@
     <Content Include="js\nbt\actions\csw.quotaimage.js" />
     <Content Include="js\nbt\actions\csw.quotas.js" />
     <Content Include="js\nbt\controls\csw.nodeselect.js" />
+    <Content Include="js\nbt\layouts\csw.tabsandprops.js" />
     <Content Include="js\nbt\wizards\csw.creatematerial.js" />
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
     <Content Include="js\nbt\controls\csw.nodetypeselect.js" />
@@ -158,7 +159,6 @@
     <Content Include="js\nbt\nodes\CswNodePreview.js" />
     <Content Include="js\nbt\nodes\CswNodeSelect.js" />
     <Content Include="js\nbt\nodes\CswNodeTable.js" />
-    <Content Include="js\nbt\nodes\CswNodeTabs.js" />
     <Content Include="js\nbt\nodes\CswNodeTree.js" />
     <Content Include="js\nbt\pagecmp\CswDashboard.js" />
     <Content Include="js\nbt\pagecmp\CswDefaultContent.js" />

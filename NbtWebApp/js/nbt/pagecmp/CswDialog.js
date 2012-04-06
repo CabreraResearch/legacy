@@ -167,7 +167,8 @@
             var div = Csw.literals.div(),
                 title = 'New ' + o.text;
 
-            div.$.CswNodeTabs({
+            //            div.$.CswNodeTabs({
+            Csw.layouts.tabsAndProps(div, {
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
                 relatednodetypeid: o.relatednodetypeid,
@@ -324,7 +325,8 @@
 
             function _resetLayout() {
                 cell12.empty();
-                cell12.$.CswNodeTabs(cswNodeTabOptions);
+                //cell12.$.CswNodeTabs(cswNodeTabOptions);
+                Csw.layouts.tabsAndProps(cell12, cswNodeTabOptions);
                 _configAddOptions();
             }
 
@@ -400,7 +402,8 @@
 
             function setupTabs(date) {
                 tabCell.empty();
-                tabCell.$.CswNodeTabs({
+                //tabCell.$.CswNodeTabs({
+                Csw.layouts.tabsAndProps(tabCell, {
                     nodeids: o.nodeids,
                     nodekeys: o.nodekeys,
                     nodenames: o.nodenames,
@@ -508,7 +511,7 @@
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
                 var nodechecks = null;
-                if(false == Csw.isNullOrEmpty(o.nodeTreeCheck)) {
+                if (false == Csw.isNullOrEmpty(o.nodeTreeCheck)) {
                     nodechecks = o.nodeTreeCheck.checkedNodes();
                 }
                 if (false === Csw.isNullOrEmpty(nodechecks, true) && (o.nodeids.length === 0 || o.cswnbtnodekeys.length === 0)) {
@@ -804,21 +807,20 @@
             var o = {
                 onImpersonate: null
             };
-            if(options) $.extend(o, options);
+            if (options) $.extend(o, options);
 
             var div = Csw.controls.div();
-            
+
             Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/getUsers',
                 success: function (data) {
-                    if(Csw.bool(data.result))
-                    {
+                    if (Csw.bool(data.result)) {
                         var usersel = div.select({
                             ID: 'ImpersonateSelect',
                             selected: ''
                         });
 
-                        Csw.each( data.users, function(thisUser) {
+                        Csw.each(data.users, function (thisUser) {
                             usersel.addOption({ value: thisUser.userid, display: thisUser.username }, false);
                         });
 

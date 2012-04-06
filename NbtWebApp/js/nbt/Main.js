@@ -105,12 +105,12 @@ window.initMain = window.initMain || function (undefined) {
                     onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
                     },
-                    onImpersonate: function(userid, username) {
+                    onImpersonate: function (userid, username) {
                         Csw.ajax.post({
                             url: '/NbtWebApp/wsNBT.asmx/impersonate',
                             data: { UserId: userid },
                             success: function (data) {
-                                if(Csw.bool(data.result)) {
+                                if (Csw.bool(data.result)) {
                                     Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
                                     Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
                                     Csw.goHome();
@@ -118,11 +118,11 @@ window.initMain = window.initMain || function (undefined) {
                             } // success
                         }); // ajax
                     }, // onImpersonate
-                    onEndImpersonation: function() {
+                    onEndImpersonation: function () {
                         Csw.ajax.post({
                             url: '/NbtWebApp/wsNBT.asmx/endImpersonation',
                             success: function (data) {
-                                if(Csw.bool(data.result)) {
+                                if (Csw.bool(data.result)) {
                                     Csw.cookie.set(Csw.cookie.cookieNames.Username, Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername));
                                     Csw.cookie.clear(Csw.cookie.cookieNames.OriginalUsername);
                                     Csw.goHome();
@@ -221,12 +221,12 @@ window.initMain = window.initMain || function (undefined) {
 
         $('#CenterBottomDiv').CswWelcome('initTable', {
             'onLinkClick': handleItemSelect,
-//            'onSearchClick': function (view) {
-//                var viewid = view.viewid;
-//                var viewmode = view.viewmode;
-//                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
-//                refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
-//            },
+            //            'onSearchClick': function (view) {
+            //                var viewid = view.viewid;
+            //                var viewmode = view.viewmode;
+            //                handleItemSelect({ 'viewid': viewid, 'viewmode': viewmode, 'linktype': 'search' });
+            //                refreshSearchPanel({ 'viewid': viewid, 'searchType': 'view' });
+            //            },
             'onAddClick': function (nodetypeid) {
                 $.CswDialog('AddNodeDialog', {
                     'nodetypeid': nodetypeid,
@@ -751,7 +751,9 @@ window.initMain = window.initMain || function (undefined) {
         if (options) $.extend(o, options);
 
         clear({ right: true });
-        $('#RightDiv').CswNodeTabs({
+        var parent = Csw.literals.factory($('#RightDiv'));
+        //$('#RightDiv').CswNodeTabs({
+        Csw.layouts.tabsAndProps(parent, {
             ID: 'nodetabs',
             nodeids: [o.nodeid],
             nodekeys: [o.cswnbtnodekey],
@@ -964,11 +966,11 @@ window.initMain = window.initMain || function (undefined) {
         }
 
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                                            
-            //				break;                                                            
-            //			case 'Assign_Tests':                                                            
-            //				break;                                                            
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                            
+            //			case 'Assign_Inspection':                                                             
+            //				break;                                                             
+            //			case 'Assign_Tests':                                                             
+            //				break;                                                             
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                             
             case 'Create_Inspection':
                 clear({ 'all': true });
 
@@ -1002,8 +1004,8 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ 'all': true });
 
                 var createOpt = {
-//                    viewid: o.ActionOptions.viewid,
-//                    viewmode: o.ActionOptions.viewmode,
+                    //                    viewid: o.ActionOptions.viewid,
+                    //                    viewmode: o.ActionOptions.viewmode,
                     onCancel: function () {
                         clear({ 'all': true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());
@@ -1011,22 +1013,22 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     onFinish: function (viewid) {
                         clear({ 'all': true });
-//                        refreshViewSelect(function () {
-//                            handleItemSelect({
-//                                type: 'view',
-//                                viewmode: 'tree',
-//                                viewid: viewid
-//                            });
-//                        });
+                        //                        refreshViewSelect(function () {
+                        //                            handleItemSelect({
+                        //                                type: 'view',
+                        //                                viewmode: 'tree',
+                        //                                viewid: viewid
+                        //                            });
+                        //                        });
                     },
                     startingStep: o.ActionOptions.startingStep
-//                    menuRefresh: refreshSelected
+                    //                    menuRefresh: refreshSelected
                 };
                 Csw.nbt.createMaterialWizard(centerTopDiv, createOpt);
                 break;
 
-            //			case 'Design':                                                            
-            //				break;                                                            
+            //			case 'Design':                                                             
+            //				break;                                                             
             case 'Edit_View':
                 clear({ 'all': true });
 
@@ -1068,8 +1070,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                                            
-            //				break;                                                            
+            //			case 'Enter_Results':                                                             
+            //				break;                                                             
 
             case 'Future_Scheduling':
                 clear({ 'all': true });
@@ -1081,10 +1083,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                            
-            //				break;                                                            
-            //			case 'Inspection_Design':                                                            
-            //				break;                                                            
+            //			case 'Import_Fire_Extinguisher_Data':                                                             
+            //				break;                                                             
+            //			case 'Inspection_Design':                                                             
+            //				break;                                                             
 
             case 'OOC_Inspections':
                 setupOocInspections();
@@ -1119,14 +1121,14 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.nbt.scheduledRulesWizard(centerTopDiv, rulesOpt);
                 break;
-            //			case 'Load_Mobile_Data':                                                            
-            //				break;                                                            
-            //			case 'Receiving':                                                            
-            //				break;                                                            
-            //			case 'Split_Samples':                                                            
-            //				break;                                                            
-            //			case 'View_By_Location':                                                            
-            //				break;                                                            
+            //			case 'Load_Mobile_Data':                                                             
+            //				break;                                                             
+            //			case 'Receiving':                                                             
+            //				break;                                                             
+            //			case 'Split_Samples':                                                             
+            //				break;                                                             
+            //			case 'View_By_Location':                                                             
+            //				break;                                                             
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;
