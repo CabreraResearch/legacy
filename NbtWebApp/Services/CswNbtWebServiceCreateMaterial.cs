@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Ret = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( null == Ret ||
-                    Ret.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+                    Ret.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
                 {
                     throw new CswDniException( ErrorType.Error,
                                                "The provided material type was not a valid material.",
