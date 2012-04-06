@@ -87,6 +87,7 @@
     <Content Include="ConnectTest.html" />
     <Content Include="css\ChemSW.css" />
     <None Include="css\cssVariables.pm" />
+    <Content Include="css\csw.label.css" />
     <Content Include="css\csw.table.layout.css" />
     <Content Include="js\common\composites\_composites.factory.js" />
     <Content Include="js\common\controls\_controls.factory.js" />
