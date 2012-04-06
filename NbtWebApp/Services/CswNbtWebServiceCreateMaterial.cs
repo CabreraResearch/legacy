@@ -26,8 +26,32 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion ctor
 
-        private CswNbtMetaDataNodeType _MaterialNt;
-        private CswNbtView _MaterialNodeView;
+        private CswNbtMetaDataNodeType __MaterialNt;
+        private CswNbtMetaDataNodeType _MaterialNt( Int32 NodeTypeId = Int32.MinValue )
+        {
+            if( null == __MaterialNt || ( Int32.MinValue != NodeTypeId && __MaterialNt.NodeTypeId != NodeTypeId ) )
+            {
+                __MaterialNt = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                if( null == __MaterialNt ||
+                    __MaterialNt.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+                {
+                    throw new CswDniException( ErrorType.Error,
+                                               "The provided material type was not a valid material.",
+                                               "Attempted to call getMaterial with a NodeType that was not valid." );
+                }
+            }
+            return __MaterialNt;
+        }
+
+        private CswNbtView __MaterialNodeView;
+        private CswNbtView _MaterialNodeView( bool ReInit = false)
+        {
+            if( null == __MaterialNodeView || ReInit )
+            {
+                __MaterialNodeView = new CswNbtView(_CswNbtResources);
+            }
+            return __MaterialNodeView;
+        }
 
         #region Public
 
@@ -43,28 +67,20 @@ namespace ChemSW.Nbt.WebServices
                                            "Cannot get a material without a type, supplier and a tradename.",
                                            "Attempted to call getMaterial with invalid or empty parameters." );
             }
+            CswNbtMetaDataNodeType MaterialNt = _MaterialNt( NodeTypeId );
 
-            _MaterialNt = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            if( null == _MaterialNt ||
-                 _MaterialNt.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
-            {
-                throw new CswDniException( ErrorType.Error,
-                                           "The provided material type was not a valid material.",
-                                           "Attempted to call getMaterial with a NodeType that was not valid." );
-            }
+            CswNbtView MaterialNodeView = _MaterialNodeView( true );
+            CswNbtViewRelationship MaterialRel = MaterialNodeView.AddViewRelationship( MaterialNt, false );
 
-            _MaterialNodeView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship MaterialRel = _MaterialNodeView.AddViewRelationship( _MaterialNt, false );
+            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropName );
+            CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
+            CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
 
-            CswNbtMetaDataNodeTypeProp TradeNameNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropName );
-            CswNbtMetaDataNodeTypeProp SupplierNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
-            CswNbtMetaDataNodeTypeProp PartNoNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
+            MaterialNodeView.AddViewPropertyFilter( MaterialRel, TradeNameNtp, Tradename );
+            MaterialNodeView.AddViewPropertyFilter( MaterialRel, SupplierNtp, Supplier );
+            MaterialNodeView.AddViewPropertyFilter( MaterialRel, PartNoNtp, PartNo );
 
-            _MaterialNodeView.AddViewPropertyFilter( MaterialRel, TradeNameNtp, Tradename );
-            _MaterialNodeView.AddViewPropertyFilter( MaterialRel, SupplierNtp, Supplier );
-            _MaterialNodeView.AddViewPropertyFilter( MaterialRel, PartNoNtp, PartNo );
-
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _MaterialNodeView, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( MaterialNodeView, false );
             if( Tree.getChildNodeCount() > 0 )
             {
                 RetExists = true;
@@ -132,7 +148,8 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
             CswNbtNode MaterialNode;
             CswNbtNodeKey MaterialNodeKey;
-            wsTap.addNode( _MaterialNt, out MaterialNode, MaterialProperties, out MaterialNodeKey );
+            CswNbtMetaDataNodeType MaterialNt = _MaterialNt();
+            wsTap.addNode( MaterialNt, out MaterialNode, MaterialProperties, out MaterialNodeKey );
             RetObj["createdmaterial"] = true;
 
             /* 3. Add the sizes */
@@ -143,9 +160,10 @@ namespace ChemSW.Nbt.WebServices
              * Recieve Material and Request Material workflows don't exist yet.
                           
              */
-            _MaterialNodeView.SaveToCache( false );
+            CswNbtView MaterialNodeView = _MaterialNodeView();
+            MaterialNodeView.SaveToCache( false );
             RetObj["nextoptions"] = new JObject();
-            RetObj["nextoptions"]["nodeview"] = _MaterialNodeView.SessionViewId.get();
+            RetObj["nextoptions"]["nodeview"] = MaterialNodeView.SessionViewId.get();
 
             return RetObj;
         }
@@ -210,8 +228,8 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Tristate Dispensable = CswConvert.ToTristate( SizeObj["dispensable"] );
                         Tristate QuantityEditable = CswConvert.ToTristate( SizeObj["quantityeditable"] );
-
-                        CswNbtNode SizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _MaterialNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                        CswNbtMetaDataNodeType MaterialNt = _MaterialNt();
+                        CswNbtNode SizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                         CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
                         NodeAsSize.Material.RelatedNodeId = MaterialNode.NodeId;
                         NodeAsSize.Capacity.Quantity = CapacityQty;
