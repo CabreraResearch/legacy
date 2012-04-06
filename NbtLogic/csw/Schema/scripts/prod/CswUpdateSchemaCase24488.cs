@@ -55,7 +55,11 @@ namespace ChemSW.Nbt.Schema
                                                            CswNbtObjClassContainer.DisposedPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
-            
+            CswNbtMetaDataObjectClassProp ExpirationDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                                               CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+                                               CswNbtObjClassContainer.ExpirationDatePropertyName,
+                                               CswNbtMetaDataFieldType.NbtFieldType.DateTime );
+
             // Location Verified - servermanaged
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LocationVerifiedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
 

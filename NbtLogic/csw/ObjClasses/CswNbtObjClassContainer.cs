@@ -16,6 +16,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DisposedPropertyName { get { return "Disposed"; } }
         public static string SourceContainerPropertyName { get { return "Source Container"; } }
         public static string QuantityPropertyName { get { return "Quantity"; } }
+        public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
+        
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -96,6 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName].AsLogical ); } }
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName].AsRelationship ); } }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName].AsQuantity ); } }
+        public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[ExpirationDatePropertyName].AsDateTime ); } }
 
         #endregion
 
