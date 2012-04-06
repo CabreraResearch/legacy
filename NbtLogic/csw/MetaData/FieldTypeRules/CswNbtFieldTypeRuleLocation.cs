@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             foreach( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp in _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProps( NodeTypeProp.NodeTypeId ) )
             {
                 if( OtherNodeTypeProp != NodeTypeProp &&
-                    NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                    OtherNodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
                 {
                     throw ( new CswDniException( ErrorType.Warning, "Nodetype already has a location", "Unable to add location node type property because the nodetype (" + NodeTypeProp.NodeTypeId.ToString() + ") already has a location" ) );
                 }

@@ -137,19 +137,21 @@ namespace ChemSW.Nbt.WebServices
                             Ret[WelcomeId]["type"] = "report";
                         }
                         break;
-                    case CswNbtWelcomeTable.WelcomeComponentType.Search:
-                        if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
-                        {
-                            CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
-                            if( null != ThisView && ThisView.IsSearchable() )
-                            {
-                                LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
-                                Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
-                                Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
-                                Ret[WelcomeId]["type"] = "view";
-                            }
-                        }
-                        break;
+                    
+                    // case 25734 - no more search links
+                    // case CswNbtWelcomeTable.WelcomeComponentType.Search:
+                        //if( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) != Int32.MinValue )
+                        //{
+                        //    CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ) );
+                        //    if( null != ThisView && ThisView.IsSearchable() )
+                        //    {
+                        //        LinkText = WelcomeRow["displaytext"].ToString() != string.Empty ? WelcomeRow["displaytext"].ToString() : ThisView.ViewName;
+                        //        Ret[WelcomeId]["viewid"] = new CswNbtViewId( CswConvert.ToInt32( WelcomeRow["nodeviewid"] ) ).ToString();
+                        //        Ret[WelcomeId]["viewmode"] = ThisView.ViewMode.ToString().ToLower();
+                        //        Ret[WelcomeId]["type"] = "view";
+                        //    }
+                        //}
+                        //break;
 
                     case CswNbtWelcomeTable.WelcomeComponentType.Text:
                         LinkText = WelcomeRow["displaytext"].ToString();

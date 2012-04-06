@@ -79,6 +79,7 @@
             }); // link
         };
 
+            ID: Csw.makeId(id, 'expandbtn'),
         _handleNodeRef(o.message, cell12);
 
         cell13.css({ width: '18px' });

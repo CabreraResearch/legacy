@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -360,13 +359,11 @@ namespace ChemSW.Nbt.Schema
 
         public void makeMissingAuditTablesAndColumns()
         {
+            DataTable DataTable = execArbitraryPlatformNeutralSqlSelect( "query for all datadatable names","select distinct tablename from data_dictionary" );
 
-            ICollection TableNamesColl = (ICollection) _CswNbtResources.CswResources.DataDictionary.getTableNames();
-            string[] TableNames = new string[TableNamesColl.Count];
-            TableNamesColl.CopyTo( TableNames, 0 );
-
-            foreach( string CurrentTableName in TableNames )
+            foreach( DataRow CurrentRow in DataTable.Rows )
             {
+                string CurrentTableName = CurrentRow["tablename"].ToString().ToLower(); 
                 makeTableAuditable( CurrentTableName );
             }
 

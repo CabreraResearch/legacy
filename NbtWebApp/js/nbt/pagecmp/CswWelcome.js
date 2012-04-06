@@ -13,7 +13,7 @@
                 moveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/moveWelcomeItems',
                 RemoveWelcomeItemUrl: '/NbtWebApp/wsNBT.asmx/deleteWelcomeItem',
                 onLinkClick: null, //function (optSelect) { }, //viewid, actionid, reportid
-                onSearchClick: null, //function (optSelect) { }, //viewid
+                //onSearchClick: null, //function (optSelect) { }, //viewid
                 onAddClick: null, //function (nodetypeid) { },
                 onAddComponent: null //function () { }
             };
@@ -92,12 +92,12 @@
                                     itemData: thisItem,
                                     layoutTable: layoutTable,
                                     onAddClick: o.onAddClick,
-                                    onLinkClick: o.onLinkClick,
-                                    onSearchClick: o.onSearchClick
+                                    onLinkClick: o.onLinkClick//,
+                                    //onSearchClick: o.onSearchClick
                                 };
 
                                 if (Csw.string(thisItem.linktype).toLowerCase() === 'text') {
-                                    textCell.span(thisItem.text);
+                                    textCell.span({ text: thisItem.text });
                                 } else {
                                     var onClick = Csw.makeDelegate(_clickItem, clickopts);
                                     textCell.a({
@@ -144,7 +144,7 @@
             });
             typeSelect.option({ value: 'Add', display: 'Add', isSelected: true });
             typeSelect.option({ value: 'Link', display: 'Link' });
-            typeSelect.option({ value: 'Search', display: 'Search' });
+            //typeSelect.option({ value: 'Search', display: 'Search' });
             typeSelect.option({ value: 'Text', display: 'Text' });
 
 
@@ -163,14 +163,15 @@
             viewSelect.$.hide();
 
 //            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
-            var searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
-                $parent: viewSelectTable.cell(2, 1).$,
-                ID: 'welcome_searchviewsel',
-                issearchable: true,
-                usesession: false,
-                maxHeight: '275px'
-            });
-            searchViewSelect.$.hide();
+//            var searchViewSelect = Csw.controls.viewSelect({
+//            var searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
+//                $parent: viewSelectTable.cell(2, 1).$,
+//                ID: 'welcome_searchviewsel',
+//                issearchable: true,
+//                usesession: false,
+//                maxHeight: '275px'
+//            });
+//            searchViewSelect.$.hide();
 
             var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
             var ntSelect = table.cell(3, 2)
@@ -201,11 +202,11 @@
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
-                    else if (false == searchViewSelect.$.is(':hidden')) {
-                        selectedView = searchViewSelect.val();
-                        viewtype = selectedView.type;
-                        viewvalue = selectedView.value;
-                    }
+//                    else if (false == searchViewSelect.$.is(':hidden')) {
+//                        selectedView = searchViewSelect.val();
+//                        viewtype = selectedView.type;
+//                        viewvalue = selectedView.value;
+//                    }
 
                     _addItem({
                         AddWelcomeItemUrl: o.AddWelcomeItemUrl,
@@ -230,7 +231,7 @@
                     typeSelect: typeSelect,
                     viewSelectLabel: viewSelectLabel,
                     viewselect: viewSelect,
-                    searchviewselect: searchViewSelect,
+                    //searchviewselect: searchViewSelect,
                     ntSelectLabel: ntSelectLabel,
                     $ntselect: ntSelect,
                     buttonSelLabel: buttonselLabel,
@@ -274,8 +275,8 @@
             itemData: {},
             layoutTable: {},
             onAddClick: null,
-            onLinkClick: null,
-            onSearchClick: null
+            onLinkClick: null//,
+            //onSearchClick: null
         };
         if (clickopts) $.extend(c, clickopts);
 
@@ -301,9 +302,9 @@
                 case 'link':
                     Csw.tryExec(c.onLinkClick, optSelect);
                     break;
-                case 'search':
-                    Csw.tryExec(c.onSearchClick, optSelect);
-                    break;
+//                case 'search':
+//                    Csw.tryExec(c.onSearchClick, optSelect);
+//                    break;
                 case 'text':
                     break;
             }
@@ -424,7 +425,7 @@
             typeSelect: '',
             viewSelectLabel: '',
             viewselect: '',
-            searchviewselect: '',
+            //searchviewselect: '',
             ntSelectLabel: '',
             $ntselect: '',
             buttonSelLabel: '',
@@ -439,7 +440,7 @@
             case 'Add':
                 o.viewSelectLabel.hide();
                 o.viewselect.$.hide();
-                o.searchviewselect.$.hide();
+                //o.searchviewselect.$.hide();
                 o.ntSelectLabel.show();
                 o.$ntselect.show();
                 o.buttonSelLabel.show();
@@ -449,27 +450,27 @@
             case 'Link':
                 o.viewSelectLabel.show();
                 o.viewselect.$.show();
-                o.searchviewselect.$.hide();
+                //o.searchviewselect.$.hide();
                 o.ntSelectLabel.hide();
                 o.$ntselect.hide();
                 o.buttonSelLabel.show();
                 o.buttonSel.show();
                 o.buttonImg.show();
                 break;
-            case 'Search':
-                o.viewSelectLabel.show();
-                o.viewselect.$.hide();
-                o.searchviewselect.$.show();
-                o.ntSelectLabel.hide();
-                o.$ntselect.hide();
-                o.buttonSelLabel.show();
-                o.buttonSel.show();
-                o.buttonImg.show();
-                break;
+//            case 'Search':
+//                o.viewSelectLabel.show();
+//                o.viewselect.$.hide();
+//                o.searchviewselect.$.show();
+//                o.ntSelectLabel.hide();
+//                o.$ntselect.hide();
+//                o.buttonSelLabel.show();
+//                o.buttonSel.show();
+//                o.buttonImg.show();
+//                break;
             case 'Text':
                 o.viewSelectLabel.hide();
                 o.viewselect.$.hide();
-                o.searchviewselect.$.hide();
+                //o.searchviewselect.$.hide();
                 o.ntSelectLabel.hide();
                 o.$ntselect.hide();
                 o.buttonSelLabel.hide();

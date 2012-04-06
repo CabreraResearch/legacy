@@ -5,7 +5,7 @@
 
 
     Csw.controls.imageButton = Csw.controls.imageButton ||
-        Csw.controls.register('imageButton', function (cswParent, options) {
+        Csw.controls.register('imageButton', function(cswParent, options) {
             ///<summary>Generates an imageButton</summary>
             ///<param name="cswParent" type="Csw.literals">Parent element to attach imageButton to.</param>
             ///<param name="options" type="Object">Object defining paramaters for imageButton construction.</param>
@@ -20,7 +20,7 @@
                 Required: false,
                 onClick: null
             };
-            var external = {};
+            var external = { };
 
             (function() {
                 if (options) {
@@ -31,7 +31,7 @@
                 external = Csw.dom({ }, internal.imageButton);
             }());
 
-            external.setButtonType = function (newButtonType) {
+            external.setButtonType = function(newButtonType) {
                 var multiplier = -18;
                 //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
                 var port = document.location.port;
@@ -52,16 +52,16 @@
                     external.unbind('mouseout');
                     external.unbind('mousedown');
                     external.unbind('mouseup');
-                    external.bind('mouseover', function () {
+                    external.bind('mouseover', function() {
                         external.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                     });
-                    external.bind('mouseout', function () {
+                    external.bind('mouseout', function() {
                         external.css('background-position', offset + 'px ' + newButtonType * multiplier + 'px');
                     });
-                    external.bind('mousedown', function () {
+                    external.bind('mousedown', function() {
                         external.css('background-position', '-36px ' + newButtonType * multiplier + 'px');
                     });
-                    external.bind('mouseup', function () {
+                    external.bind('mouseup', function() {
                         external.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                     });
                 }
@@ -69,10 +69,11 @@
                 return false;
             };
 
-            external.getButtonType = function () {
+            external.getButtonType = function() {
                 return internal.ButtonType;
             };
-            
+
+
             external.click = function(newButtonType, func) {
                 if (Csw.isFunction(func)) {
                     return external.bind('click', func);
@@ -89,4 +90,6 @@
             }());
             return external;
         });
+
+
 } ());
