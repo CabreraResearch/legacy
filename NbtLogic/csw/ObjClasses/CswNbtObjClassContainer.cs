@@ -47,37 +47,48 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
-            // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
-            if( ExpirationDate.DateTimeValue == DateTime.MinValue && Material.RelatedNodeId != null )
+            if( Material.RelatedNodeId != null )
             {
-                DateTime DefaultExpDate = DateTime.Now;
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                 if( MaterialNode != null )
                 {
                     CswNbtObjClassMaterial MaterialNodeAsMaterial = CswNbtNodeCaster.AsMaterial( MaterialNode );
-                    switch( MaterialNodeAsMaterial.ExpirationInterval.Units.ToLower() )
+
+                    // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
+                    // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
+                    if( ExpirationDate.DateTimeValue == DateTime.MinValue )
                     {
-                        case "hours":
-                            DefaultExpDate = DefaultExpDate.AddHours( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
-                            break;
-                        case "days":
-                            DefaultExpDate = DefaultExpDate.AddDays( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
-                            break;
-                        case "months":
-                            DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
-                            break;
-                        case "years":
-                            DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
-                            break;
-                        default:
-                            DefaultExpDate = DateTime.MinValue;
-                            break;
+                        DateTime DefaultExpDate = DateTime.Now;
+                        switch( MaterialNodeAsMaterial.ExpirationInterval.Units.ToLower() )
+                        {
+                            case "hours":
+                                DefaultExpDate = DefaultExpDate.AddHours( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
+                                break;
+                            case "days":
+                                DefaultExpDate = DefaultExpDate.AddDays( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
+                                break;
+                            case "months":
+                                DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
+                                break;
+                            case "years":
+                                DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( MaterialNodeAsMaterial.ExpirationInterval.Quantity ) );
+                                break;
+                            default:
+                                DefaultExpDate = DateTime.MinValue;
+                                break;
+                        }
+                        ExpirationDate.DateTimeValue = DefaultExpDate;
                     }
-                    ExpirationDate.DateTimeValue = DefaultExpDate;
+
+                    // case 24488 - When Location is modified, verify that:
+                    //  the Material's Storage Compatibility is null,
+                    //  or the Material's Storage Compatibility is one the selected values in the new Location.
+                    if( Location.WasModified )
+                    {
+                        // Waiting on case 24441
+                    }
                 }
             }
-
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 

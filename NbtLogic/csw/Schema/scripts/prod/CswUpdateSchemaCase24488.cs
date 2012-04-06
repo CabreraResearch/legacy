@@ -88,6 +88,7 @@ namespace ChemSW.Nbt.Schema
             // Add default Container nodetype to master
             CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( ContainerOC.ObjectClassId, "Container", "Materials" );
             ContainerNT.IconFileName = "container.gif";
+            ContainerNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Barcode" ) );
 
             // Add default view to master
             CswNbtView ContainerView = _CswNbtSchemaModTrnsctn.makeView();
