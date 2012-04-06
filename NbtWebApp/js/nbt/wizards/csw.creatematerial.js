@@ -103,12 +103,12 @@
                             labelText: 'Select a Material Type: ',
                             objectClassName: 'MaterialClass',
                             onSelect: typeSelect,
-                                
-                                //                                    var selected = internal.inspectionTargetSelect.find(':selected');
-                                //                                    internal.isNewTarget(selected.propNonDom('data-newNodeType'));
-                                //                                    internal.selectedInspectionTarget = selected.text();
-                                //                                    Csw.publish(internal.createInspectionEvents.targetNameChanged);
-                            
+
+                            //                                    var selected = internal.inspectionTargetSelect.find(':selected');
+                            //                                    internal.isNewTarget(selected.propNonDom('data-newNodeType'));
+                            //                                    internal.selectedInspectionTarget = selected.text();
+                            //                                    Csw.publish(internal.createInspectionEvents.targetNameChanged);
+
                             onSuccess: typeSelect
                         });
 
@@ -169,10 +169,32 @@
                                 internal.partno = internal.partNoInput.val();
                             }
                         });
-                        
+
                         stepTwoComplete = true;
                     }
                 };
+            } ());
+
+            internal.makeStep3 = (function () {
+                var stepThreeComplete = false;
+
+                return function () {
+
+                    internal.toggleButton(internal.buttons.prev, true);
+                    internal.toggleButton(internal.buttons.cancel, true);
+                    internal.toggleButton(internal.buttons.finish, false);
+                    internal.toggleButton(internal.buttons.next, true);
+
+                    if (false === stepThreeComplete) {
+                        internal.divStep3 = internal.wizard.div(3);
+
+                        internal.divStep3.br({ number: 2 });
+
+
+                        stepThreeComplete = true;
+                    }
+                };
+
             } ());
 
             internal.makeStep1();
