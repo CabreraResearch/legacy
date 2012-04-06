@@ -85,6 +85,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassWorkUnit.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassSize.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_03.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25768.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25118.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24488.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24447.cs" />
