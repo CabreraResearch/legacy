@@ -9,6 +9,7 @@ my $param = "";
 $param .= extract("$dir\\js\\nbt");
 $param .= extract("$dir\\js\\nbt\\actions");
 $param .= extract("$dir\\js\\nbt\\controls");
+$param .= extract("$dir\\js\\nbt\\layouts");
 $param .= extract("$dir\\js\\nbt\\literals");
 $param .= extract("$dir\\js\\nbt\\fieldtypes");
 $param .= extract("$dir\\js\\nbt\\nodes");

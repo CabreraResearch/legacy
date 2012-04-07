@@ -20,7 +20,10 @@
                 },
                 divStep1: '', divStep2: '', divStep3: '', divStep4: '', divStep5: '',
                 materialTypeSelect: null,
-                materialType: ''
+                materialType: { name: '', val: '' },
+                tradeName: '',
+                supplier: { name: '', val: '' },
+                partNo: ''
             };
 
             var external = {};
@@ -85,7 +88,7 @@
                         return false === Csw.isNullOrEmpty(internal.materialType);
                     };
                     function typeSelect() {
-                        internal.materialType = { name: internal.materialTypeSelect.text(), val: internal.materialTypeSelect.val() };
+                        internal.materialType = { name: internal.materialTypeSelect.find(':selected').text(), val: internal.materialTypeSelect.val() };
                         internal.toggleButton(internal.buttons.next, true);
                     }
                     internal.toggleButton(internal.buttons.prev, false);
@@ -103,12 +106,6 @@
                             labelText: 'Select a Material Type: ',
                             objectClassName: 'MaterialClass',
                             onSelect: typeSelect,
-
-                            //                                    var selected = internal.inspectionTargetSelect.find(':selected');
-                            //                                    internal.isNewTarget(selected.propNonDom('data-newNodeType'));
-                            //                                    internal.selectedInspectionTarget = selected.text();
-                            //                                    Csw.publish(internal.createInspectionEvents.targetNameChanged);
-
                             onSuccess: typeSelect
                         });
 
@@ -123,7 +120,7 @@
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return false === Csw.isNullOrEmpty(internal.tradename) && false === Csw.isNullOrEmpty(internal.supplier);
+                        return false === Csw.isNullOrEmpty(internal.tradeName) && false === Csw.isNullOrEmpty(internal.supplier);
                     };
                     function supplierSelect() {
                         internal.supplier = { name: internal.supplierSelect.find(':selected').text(), val: internal.supplierSelect.val() };
@@ -145,7 +142,7 @@
                             ID: internal.wizard.makeStepId('tradename'),
                             labelText: 'Tradename: ',
                             onChange: function () {
-                                internal.tradename = internal.tradeNameInput.val();
+                                internal.tradeName = internal.tradeNameInput.val();
                                 internal.toggleButton(internal.buttons.next, nextBtnEnabled());
                             }
                         });
@@ -166,7 +163,7 @@
                             ID: internal.wizard.makeStepId('partno'),
                             labelText: 'Part No: ',
                             onChange: function () {
-                                internal.partno = internal.partNoInput.val();
+                                internal.partNo = internal.partNoInput.val();
                             }
                         });
 
@@ -179,6 +176,14 @@
                 var stepThreeComplete = false;
 
                 return function () {
+                    var div;
+                    function makeConfirmation() {
+                        div.p({ labelText: 'Tradename:', text: internal.tradeName });
+                        div.p({ labelText: 'Supplier: ', text: internal.supplier.name });
+                        if (false === Csw.isNullOrEmpty(internal.partNo)) {
+                            div.p({ labelText: 'Part No: ', text: internal.partNo });
+                        }
+                    }
 
                     internal.toggleButton(internal.buttons.prev, true);
                     internal.toggleButton(internal.buttons.cancel, true);
@@ -190,8 +195,73 @@
 
                         internal.divStep3.br({ number: 2 });
 
+                        div = internal.divStep3.div();
+
+
+                        Csw.ajax.post({
+                            urlMethod: 'getMaterial',
+                            data: {
+                                NodeTypeId: internal.materialType.val,
+                                Tradename: internal.tradeName,
+                                Supplier: internal.supplier.name,
+                                PartNo: internal.partNo
+                            },
+                            success: function (data) {
+                                var topText = '', bottomText = '';
+                                if (false === Csw.isNullOrEmpty(data.tradename)) {
+                                    topText = 'A material named ' + data.tradename + ' already exists as: ';
+                                    bottomText = 'Click next to use this existing material.';
+                                    internal.tradeName = data.tradename;
+                                    internal.supplier.name = data.supplier;
+                                    internal.partNo = data.partno;
+                                } else {
+                                    topText = 'Creating a new ' + internal.tradeName + ' material: ';
+                                }
+                                div.p({ text: topText });
+                                makeConfirmation();
+                                div.p({ text: bottomText });
+                            }
+                        });
 
                         stepThreeComplete = true;
+                    }
+                };
+
+            } ());
+
+            internal.makeStep4 = (function () {
+                var stepFourComplete = false;
+
+                return function () {
+                    var div;
+                    
+                    internal.toggleButton(internal.buttons.prev, true);
+                    internal.toggleButton(internal.buttons.cancel, true);
+                    internal.toggleButton(internal.buttons.finish, false);
+                    internal.toggleButton(internal.buttons.next, true);
+
+                    if (false === stepFourComplete) {
+                        internal.divStep4 = internal.wizard.div(4);
+
+                        internal.divStep4.br({ number: 2 });
+
+                        div = internal.divStep4.div();
+                        Csw.layouts.tabsAndProps(div, {
+                            nodetypeid: internal.materialType.val,
+                            relatednodeid: '',
+                            relatednodetypeid: '',
+                            EditMode: Csw.enums.editMode.Add,
+                            ReloadTabOnSave: false,
+                            onSave: function (nodeid, cswnbtnodekey) {
+                                //
+                            },
+                            onInitFinish: function () {
+                                
+                            },
+                            ShowAsReport: false
+                        });
+
+                        stepFourComplete = true;
                     }
                 };
 
