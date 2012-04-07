@@ -81,15 +81,18 @@ namespace ChemSW.Nbt.WebServices
                         if( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) != Int32.MinValue )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( WelcomeRow["nodetypeid"] ) );
-                            bool CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
-                            if( CanAdd )
+                            if( NodeType != null )
                             {
-                                if( WelcomeRow["displaytext"].ToString() != string.Empty )
-                                    LinkText = WelcomeRow["displaytext"].ToString();
-                                else
-                                    LinkText = "Add New " + NodeType.NodeTypeName;
-                                Ret[WelcomeId]["nodetypeid"] = WelcomeRow["nodetypeid"].ToString();
-                                Ret[WelcomeId]["type"] = "add_new_nodetype";
+                                bool CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                                if( CanAdd )
+                                {
+                                    if( WelcomeRow["displaytext"].ToString() != string.Empty )
+                                        LinkText = WelcomeRow["displaytext"].ToString();
+                                    else
+                                        LinkText = "Add New " + NodeType.NodeTypeName;
+                                    Ret[WelcomeId]["nodetypeid"] = WelcomeRow["nodetypeid"].ToString();
+                                    Ret[WelcomeId]["type"] = "add_new_nodetype";
+                                }
                             }
                         }
                         break;
