@@ -330,7 +330,7 @@ namespace ChemSW.Nbt
                                                         or (f.searchable = '1' 
                                                             and p.nodetypepropid in (select nodetypepropid 
                                                                                   from jct_nodes_props j 
-                                                                                 where (lower(j.gestalt) " + SafeLikeClause + @"))))
+                                                                                 where (lower(j.field1) " + SafeLikeClause + @"))))
                                                ) props on (props.nodetypeid = t.nodetypeid)
                                left outer join jct_nodes_props propvaljoin on (    props.nodetypepropid = propvaljoin.nodetypepropid 
                                                                                and propvaljoin.nodeid = n.nodeid)
@@ -341,7 +341,7 @@ namespace ChemSW.Nbt
                                                    join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) 
                                                    join field_types f on (p.fieldtypeid = f.fieldtypeid) 
                                                   where f.searchable = '1' 
-                                                    and lower(jnp.gestalt) " + SafeLikeClause + @" )";
+                                                    and lower(jnp.field1) " + SafeLikeClause + @" )";
 
                     if( CswTools.IsInteger( _SearchTerm ) )
                     {
