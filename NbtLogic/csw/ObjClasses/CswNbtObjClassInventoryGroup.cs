@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInventoryGroup : CswNbtObjClass
     {
-        private static string NamePropertyName { get { return "Name"; } }
+        public static string NamePropertyName { get { return "Name"; } }
         
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 

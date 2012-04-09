@@ -41,7 +41,6 @@ namespace ChemSW.Nbt.Schema
                 "Description",
                 InventoryGroupNT.getFirstNodeTypeTab().TabId );
 
-            // Inventory Group - Permissions Grid (nodetype)
 
 
 
