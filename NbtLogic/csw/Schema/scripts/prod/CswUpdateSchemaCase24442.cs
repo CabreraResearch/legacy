@@ -33,6 +33,8 @@ namespace ChemSW.Nbt.Schema
             if( InventoryGroupNT == null )
             {
                 InventoryGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( InventoryGroupOC.ObjectClassId, "Inventory Group", "System" );
+                InventoryGroupNT.IconFileName = "folder.gif";
+                InventoryGroupNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassInventoryGroup.NamePropertyName ) );
             }
 
             // Inventory Group - Description property (nodetype)
