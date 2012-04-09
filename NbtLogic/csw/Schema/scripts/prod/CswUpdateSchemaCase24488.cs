@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
                                                             false,
                                                             true,
                                                             NbtViewRelatedIdType.ObjectClassId.ToString(),
-                                                            MaterialOC.ObjectClassId, 
+                                                            MaterialOC.ObjectClassId,
                                                             true );
 
             CswNbtMetaDataObjectClassProp BarcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
@@ -86,9 +86,13 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( DisposedOCP, CswNbtSubField.SubFieldName.Checked, false );
 
             // Add default Container nodetype to master
-            CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( ContainerOC.ObjectClassId, "Container", "Materials" );
-            ContainerNT.IconFileName = "container.gif";
-            ContainerNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Barcode" ) );
+            CswNbtMetaDataNodeType ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container" );
+            if( ContainerNT == null )
+            {
+                ContainerNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( ContainerOC.ObjectClassId, "Container", "Materials" );
+                ContainerNT.IconFileName = "container.gif";
+                ContainerNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Barcode" ) );
+            }
 
             // Add default view to master
             CswNbtView ContainerView = _CswNbtSchemaModTrnsctn.makeView();
