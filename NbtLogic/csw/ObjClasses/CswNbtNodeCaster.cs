@@ -79,7 +79,19 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
             return ( (CswNbtObjClassInspectionTargetGroup) Node.ObjClass );
-        }//AsInspectionTarget
+        }//AsInspectionTargetGroup
+
+        public static CswNbtObjClassInventoryGroup AsInventoryGroup( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
+            return ( (CswNbtObjClassInventoryGroup) Node.ObjClass );
+        }//AsInventoryGroup
+
+        public static CswNbtObjClassInventoryGroupPermission AsInventoryGroupPermission( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass );
+            return ( (CswNbtObjClassInventoryGroupPermission) Node.ObjClass );
+        }//AsInventoryGroupPermission
 
         public static CswNbtObjClassLocation AsLocation( CswNbtNode Node )
         {

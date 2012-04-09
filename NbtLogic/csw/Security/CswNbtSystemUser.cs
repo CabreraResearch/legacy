@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.Security
         public CswNbtNodePropText LastNameProperty { get { return null; } }
         public CswNbtNodePropText EmailProperty { get { return null; } }
         public CswNbtNodePropLocation DefaultLocationProperty { get { return null; } }
+        public CswNbtNodePropRelationship WorkUnitProperty { get { return null; } }
 
         public Int32 RoleTimeout { get { return Int32.MinValue; } }
 
