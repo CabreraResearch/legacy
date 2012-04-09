@@ -631,9 +631,7 @@ namespace ChemSW.Nbt.WebServices
                                                             select Prop )
                 {
                     // case 24179
-                    if( Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ||
-                        ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview &&
-                          LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
+                    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) )
                     {
                         JObject ThisPropObj = new JObject();
                         ThisPropObj["propid"] = Prop.PropId.ToString();
