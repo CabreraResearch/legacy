@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab PermissionsTab = InventoryGroupNT.getNodeTypeTab( "Permissions" );
                 if( PermissionsTab == null )
                 {
-                    PermissionsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( InventoryGroupNT, "Permissions", 2 );
+                    PermissionsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( InventoryGroupNT, "Permissions", 3 );
                 }
                 CswNbtMetaDataNodeTypeProp PermissionsGripProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( InventoryGroupNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Permissions", PermissionsTab.TabId );
 
