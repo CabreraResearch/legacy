@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
 
             // Inventory Group - Description property (nodetype)
             CswNbtMetaDataNodeType InventoryGroupNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Inventory Group" );
-            if( InventoryGroupNT != null )
+            if( InventoryGroupNT == null )
             {
                 InventoryGroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( InventoryGroupOC.ObjectClassId, "Inventory Group", "System" );
             }
