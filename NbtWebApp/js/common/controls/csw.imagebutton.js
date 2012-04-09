@@ -78,7 +78,7 @@
                 if (Csw.isFunction(func)) {
                     return external.bind('click', func);
                 } else {
-                    return internal.setButton(newButtonType);
+                    return external.setButtonType(newButtonType);
                 }
             };
 
