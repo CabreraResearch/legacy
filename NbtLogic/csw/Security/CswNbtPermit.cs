@@ -495,9 +495,9 @@ namespace ChemSW.Nbt.Security
 
                     CswNbtMetaDataObjectClassProp ContainerLocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
                     CswNbtMetaDataObjectClassProp LocationInvGrpOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.InventoryGroupPropertyName );
-                    CswNbtMetaDataObjectClassProp PermInvGrpOCP = InvGrpOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.InventoryGroupPropertyName );
-                    CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.RolePropertyName );
-                    CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.WorkUnitPropertyName );
+                    CswNbtMetaDataObjectClassProp PermInvGrpOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.InventoryGroupPropertyName );
+                    CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.RolePropertyName );
+                    CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.WorkUnitPropertyName );
 
                     CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
                     InvGrpPermView.ViewName = "CswNbtPermit_InventoryGroupPermCheck";
