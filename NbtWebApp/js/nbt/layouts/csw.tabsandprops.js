@@ -221,14 +221,14 @@
                     data: jsonData,
                     success: function (data) {
                         internal.propertyData = data;
-                        var form = tabContentDiv.children('form');
-                        form.empty();
+                        internal.form = tabContentDiv.children('form');
+                        internal.form.empty();
 
                         if (false === Csw.isNullOrEmpty(internal.title)) {
-                            form.append(internal.title);
+                            internal.form.append(internal.title);
                         }
 
-                        var formTable = form.table({
+                        var formTable = internal.form.table({
                             ID: internal.ID + '_formtbl',
                             width: '100%'
                         });
@@ -236,7 +236,7 @@
                         //var formTblCell12 = formTable.cell(1, 2);
 
 
-                        var layoutTable = formTable.cell(1, 1).layoutTable({
+                        internal.layoutTable = formTable.cell(1, 1).layoutTable({
                             ID: internal.ID + '_props',
                             OddCellRightAlign: true,
                             ReadOnly: (internal.EditMode === Csw.enums.editMode.PrintReport || internal.ReadOnly),
@@ -266,10 +266,10 @@
                             var updOnSuccess = function (thisProp, key) {
                                 if (Csw.bool(thisProp.hassubprops)) {
                                     var propId = key; //key
-                                    var subTable = layoutTable[propId + '_subproptable'];
+                                    var subTable = internal.layoutTable[propId + '_subproptable'];
                                     var parentCell = subTable.parent().parent();
-                                    var cellSet = layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
-                                    layoutTable.addCellSetAttributes(cellSet, { propId: propId });
+                                    var cellSet = internal.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                    internal.layoutTable.addCellSetAttributes(cellSet, { propId: propId });
                                     var propCell = internal.getPropertyCell(cellSet);
 
                                     if (subTable.length > 0) {
@@ -291,7 +291,7 @@
                                             cswnbtnodekey: Csw.tryParseObjByIdx(internal.nodekeys, 0)
                                         };
 
-                                        internal.updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn, layoutTable, form, internal.propertyData);
+                                        internal.updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn);
                                     }
                                 }
                                 return false;
@@ -304,16 +304,16 @@
                                 ID: 'SaveTab',
                                 enabledText: 'Save Changes',
                                 disabledText: 'Saving...',
-                                onClick: function () { external.save(form, layoutTable, tabContentDiv, tabid); }
+                                onClick: function () { external.save(tabContentDiv, tabid); }
                             });
                         }
-                        internal.atLeastOne = internal.handleProperties(form, layoutTable, tabContentDiv, tabid, false);
-                        if (false === Csw.isNullOrEmpty(layoutTable.cellSet(1, 1)) &&
-                            false === Csw.isNullOrEmpty(layoutTable.cellSet(1, 1)[1][2])) {
-                            layoutTable.cellSet(1, 1)[1][2].trigger('focus');
+                        internal.atLeastOne = internal.handleProperties(tabContentDiv, tabid, false);
+                        if (false === Csw.isNullOrEmpty(internal.layoutTable.cellSet(1, 1)) &&
+                            false === Csw.isNullOrEmpty(internal.layoutTable.cellSet(1, 1)[1][2])) {
+                            internal.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                         }
                         // Validation
-                        form.$.validate({
+                        internal.form.$.validate({
                             highlight: function (element) {
                                 var $elm = $(element);
                                 $elm.attr('csw_invalid', '1');
@@ -331,7 +331,7 @@
                         }); // validate()
 
                         if (Csw.bool(internal.Config)) {
-                            layoutTable.configOn();
+                            internal.layoutTable.configOn();
                         } else if (!internal.Config &&
                             Csw.isNullOrEmpty(internal.date) &&
                                 internal.filterToPropId === '' &&
@@ -365,7 +365,7 @@
 
                         /* case 8494 */
                         if (!internal.Config && !internal.atLeastOne.Saveable && internal.EditMode === Csw.enums.editMode.Add) {
-                            external.save(form, layoutTable, tabContentDiv, tabid);
+                            external.save(tabContentDiv, tabid);
                         } else {
                             Csw.tryExec(internal.onInitFinish, internal.atLeastOne.Property);
                             Csw.tryExec(onSuccess);
@@ -433,12 +433,13 @@
                 return cellSet[1][2].children('div');
             };
 
-            internal.handleProperties = function (form, layoutTable, tabContentDiv, tabid, configMode) {
+            internal.handleProperties = function (layoutTable, tabContentDiv, tabid, configMode) {
                 'use strict';
+                layoutTable = layoutTable || internal.layoutTable;
                 internal.atLeastOne = { Property: false, Saveable: false };
                 var handleSuccess = function (propObj) {
                     internal.atLeastOne.Property = true;
-                    internal.handleProp(form, layoutTable, propObj, tabContentDiv, tabid, configMode);
+                    internal.handleProp(layoutTable, propObj, tabContentDiv, tabid, configMode);
                     return false;
                 };
                 Csw.crawlObject(internal.propertyData, handleSuccess, false);
@@ -455,7 +456,7 @@
 
             // _handleProperties()
 
-            internal.handleProp = function (form, layoutTable, propData, tabContentDiv, tabid, configMode) {
+            internal.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
                 var propid = propData.id,
                     cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol),
@@ -509,7 +510,7 @@
                 if (Csw.bool(propData.highlight)) {
                     propCell.addClass('ui-state-highlight');
                 }
-                internal.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable, form);
+                internal.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
             };
 
             internal.canDisplayProp = function (propData, configMode) {
@@ -522,7 +523,7 @@
                 return ret;
             };
 
-            internal.makeProp = function (propCell, propData, tabContentDiv, tabid, configMode, layoutTable, form) {
+            internal.makeProp = function (propCell, propData, tabContentDiv, tabid, configMode, layoutTable) {
                 'use strict';
                 propCell.empty();
                 if (internal.canDisplayProp(propData, configMode)) {
@@ -547,7 +548,7 @@
                                 onSuccess: null
                             };
                             if (saveopts) $.extend(s, saveopts);
-                            external.save(form, layoutTable, tabContentDiv, tabid, s.onSuccess);
+                            external.save(tabContentDiv, tabid, s.onSuccess);
                         },
                         cswnbtnodekey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
                         EditMode: internal.EditMode,
@@ -565,7 +566,7 @@
                     fieldOpt.onChange = function () { if (Csw.isFunction(internal.onPropertyChange)) internal.onPropertyChange(fieldOpt.propid, propName); };
                     if (Csw.bool(propData.hassubprops)) {
                         fieldOpt.onChange = function () {
-                            internal.updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable, form);
+                            internal.updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable);
                             if (Csw.isFunction(internal.onPropertyChange)) internal.onPropertyChange(fieldOpt.propid, propName);
                         };
                     } // if (Csw.bool(propData.hassubprops)) {
@@ -595,7 +596,7 @@
                         var subOnSuccess = function (subProp, key) {
                             subProp.propId = key;
                             if (Csw.bool(subProp.display) || configMode) {
-                                internal.handleProp(form, subLayoutTable, subProp, tabContentDiv, tabid, configMode);
+                                internal.handleProp(subLayoutTable, subProp, tabContentDiv, tabid, configMode);
                                 if (configMode) {
                                     subLayoutTable.configOn();
                                 } else {
@@ -611,7 +612,7 @@
 
             // _makeProp()
 
-            internal.updateSubProps = function (fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, layoutTable, form) {
+            internal.updateSubProps = function (fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, layoutTable) {
                 /// <summary>Update a properties sub props</summary>
                 /// <param name="fieldOpt" type="Object"> An object defining a prop's fieldtype </param>
                 /// <param name="propId" type="String"> A propertyid </param>
@@ -651,15 +652,24 @@
                             success: function (data) {
 
                                 data.wasmodified = true; // keep the fact that the parent property was modified
-                                internal.makeProp(propCell, data, tabContentDiv, tabid, configMode, layoutTable, form);
+                                internal.makeProp(propCell, data, tabContentDiv, tabid, configMode, layoutTable);
                             }
                         });
                     }
                 }, 150);
             }; // _updateSubProps()
 
-            internal.updatePropJsonFromForm = function (layoutTable, propData) {
+            internal.updatePropJsonFromLayoutTable = function (layoutTable, propData) {
+                /// <summary>
+                /// Update the prop JSON from the main LayoutTable or from a subProp LayoutTable
+                ///</summary>
+                /// <param name="layoutTable" type="Csw.composites.layoutTable">(Optional) a layoutTable containing the properties to parse.</param>
+                /// <param name="propData" type="Object">(Optional) an object representing CswNbt node properties.</param>
+                /// <returns type="Array">An array of propIds</returns>
                 'use strict';
+                layoutTable = layoutTable || internal.layoutTable;
+                propData = propData || internal.propertyData;
+
                 var propIds = [];
                 var updSuccess = function (thisProp) {
                     var propOpt = {
@@ -687,7 +697,7 @@
                         if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
                             var subTable = layoutTable[thisProp.id + '_subproptable'];
                             if (subTable.length() > 0) {
-                                internal.updatePropJsonFromForm(subTable, subProps);
+                                internal.updatePropJsonFromLayoutTable(subTable, subProps);
                             }
                         }
                     }
@@ -695,7 +705,7 @@
                 };
                 Csw.crawlObject(propData, updSuccess, false);
                 return propIds;
-            }; // _updatePropXmlFromForm()
+            }; // updatePropJsonFromLayoutTable()
 
             internal.enableSaveBtn = function () {
                 if (false === Csw.isNullOrEmpty(internal.saveBtn, true)) {
@@ -703,10 +713,15 @@
                 }
             };
 
-            external.save = function (form, layoutTable, tabContentDiv, tabid, onSuccess) {
+            external.getPropJson = function () {
+                internal.updatePropJsonFromLayoutTable();
+                return internal.propertyData;
+            };
+
+            external.save = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
-                if (form.$.valid()) {
-                    var propIds = internal.updatePropJsonFromForm(layoutTable, internal.propertyData);
+                if (internal.form.$.valid()) {
+                    var propIds = internal.updatePropJsonFromLayoutTable(layoutTable, internal.propertyData);
                     var data = {
                         EditMode: internal.EditMode,
                         NodeIds: Csw.tryParseObjByIdx(internal.nodeids, 0), // o.nodeids.join(','),
@@ -791,7 +806,7 @@
                         }, // success
                         error: internal.enableSaveBtn
                     }); // ajax
-                } // if($form.valid())
+                } // if(internal.form.$.valid())
                 else {
                     internal.enableSaveBtn();
                 }
