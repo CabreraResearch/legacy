@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtView LocationsGridView = _CswNbtSchemaModTrnsctn.restoreView( LocationsGridProp.ViewId );
             LocationsGridView.ViewMode = NbtViewRenderingMode.Grid;
+            LocationsGridView.Root.ChildRelationships.Clear();
             CswNbtViewRelationship InvGrpVR = LocationsGridView.AddViewRelationship( InventoryGroupNT, false );
             CswNbtViewRelationship LocationVR = LocationsGridView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, LocationInvGrpOCP, true );
 

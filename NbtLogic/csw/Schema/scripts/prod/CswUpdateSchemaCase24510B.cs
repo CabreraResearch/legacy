@@ -111,6 +111,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtView PermissionsGridView = _CswNbtSchemaModTrnsctn.restoreView( PermissionsGripProp.ViewId );
                 PermissionsGridView.ViewMode = NbtViewRenderingMode.Grid;
+                PermissionsGridView.Root.ChildRelationships.Clear();
                 CswNbtViewRelationship InvGrpVR = PermissionsGridView.AddViewRelationship( InventoryGroupNT, false );
                 CswNbtViewRelationship PermVR = PermissionsGridView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, true );
 
