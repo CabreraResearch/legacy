@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.WebServices
     {
         #region ctor
 
-        private CswNbtMetaDataNodeType __MaterialNt( Int32 NodeTypeId )
+        private CswNbtMetaDataNodeType _getMaterialNt( Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType Ret = null;
             if( Int32.MinValue != NodeTypeId )
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
         }
         private CswNbtMetaDataNodeType _MaterialNt;
 
-        private CswNbtView __MaterialNodeView( string Tradename, string Supplier, string PartNo = "" )
+        private CswNbtView _getMaterialNodeView( string Tradename, string Supplier, string PartNo = "" )
         {
             CswNbtView Ret = null;
             if( _MaterialNt != null )
@@ -48,9 +48,9 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeProp SupplierNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
                 CswNbtMetaDataNodeTypeProp PartNoNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
 
-                _MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
-                _MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, Supplier );
-                _MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
+                Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
+                Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, Supplier );
+                Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
             }
             return Ret;
         }
@@ -73,8 +73,8 @@ namespace ChemSW.Nbt.WebServices
                                            "Cannot get a material without a type.",
                                            "Attempted to call doesMaterialExist with invalid or empty parameters." );
             }
-            _MaterialNt = __MaterialNt( NodeTypeId );
-            _MaterialNodeView = __MaterialNodeView( Tradename, Supplier, PartNo );
+            _MaterialNt = _getMaterialNt( NodeTypeId );
+            _MaterialNodeView = _getMaterialNodeView( Tradename, Supplier, PartNo );
         }
 
         public CswNbtWebServiceCreateMaterial( CswNbtResources CswNbtResources, string MaterialDefinition, out JObject MaterialObj )
@@ -119,8 +119,8 @@ namespace ChemSW.Nbt.WebServices
                                            "Cannot get a material without a type.",
                                            "Attempted to call doesMaterialExist with invalid or empty parameters." );
             }
-            _MaterialNt = __MaterialNt( NodeTypeId );
-            _MaterialNodeView = __MaterialNodeView( TradeName, SupplierName, PartNo );
+            _MaterialNt = _getMaterialNt( NodeTypeId );
+            _MaterialNodeView = _getMaterialNodeView( TradeName, SupplierName, PartNo );
         }
 
         #endregion ctor
