@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
                 CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( Prop.EditLayout.TabId );
-                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node, Prop ) )
+                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop ) )
                 {
                     _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
                 }
@@ -426,7 +426,7 @@ namespace ChemSW.Nbt.WebServices
             if( wsQ.CheckQuota( NodeType ) )
             {
                 Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
                 if( CanEdit )
                 {
                     RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab, true );
@@ -468,7 +468,7 @@ namespace ChemSW.Nbt.WebServices
                         foreach( CswPrimaryKey NodePk in NodePks )
                         {
                             Node = _CswNbtResources.Nodes.GetNode( NodePk );
-                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
                             if( CanEdit )
                             {
                                 if( Node.PendingUpdate )
@@ -581,7 +581,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
                             if( CopyToNode != null &&
-                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode, null ) )
+                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
                             {
                                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
                                     .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )

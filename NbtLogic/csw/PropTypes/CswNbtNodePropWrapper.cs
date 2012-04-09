@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), false, _Tab, null, _Node, NodeTypeProp );
+                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), false, _Tab, null, _Node.NodeId, NodeTypeProp );
                 return Ret;
             }
         }
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), false, null, null, _Node, NodeTypeProp );
+                bool Ret = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), false, null, null, _Node.NodeId, NodeTypeProp );
                 return Ret;
             }
         }

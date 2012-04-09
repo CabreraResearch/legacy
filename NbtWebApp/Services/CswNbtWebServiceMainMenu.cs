@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.WebServices
                     null != Node &&
                     View.ViewMode != NbtViewRenderingMode.Grid &&
                     Node.NodeSpecies == NodeSpecies.Plain &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), false, null, null, Node, null ) )
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), false, null, null, Node.NodeId, null ) )
                 {
                     Ret["Delete"] = new JObject();
                     Ret["Delete"]["action"] = MenuActions.DeleteNode.ToString();
