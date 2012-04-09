@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNode MaterialNode = CswNbtResources.Nodes.GetNode( MaterialId );
 
             if( null == MaterialNode ||
-                 MaterialNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
+                 MaterialNode.getObjectClass().ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass )
             {
                 throw new CswDniException( ErrorType.Error,
                                            "The provided node was not a valid material.",
