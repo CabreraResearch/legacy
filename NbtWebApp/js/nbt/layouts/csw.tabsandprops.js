@@ -307,7 +307,7 @@
                                 onClick: function () { external.save(tabContentDiv, tabid); }
                             });
                         }
-                        internal.atLeastOne = internal.handleProperties(tabContentDiv, tabid, false);
+                        internal.atLeastOne = internal.handleProperties(null, tabContentDiv, tabid, false);
                         if (false === Csw.isNullOrEmpty(internal.layoutTable.cellSet(1, 1)) &&
                             false === Csw.isNullOrEmpty(internal.layoutTable.cellSet(1, 1)[1][2])) {
                             internal.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
