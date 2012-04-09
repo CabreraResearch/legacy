@@ -48,18 +48,19 @@
                 showSaveButton: true,
                 atLeastOne: {},
                 saveBtn: {},
-                propertyData: {}
+                propertyData: {},
+                excludeOcProps: []
             };
-            var external = { };
-            
-            (function() {
+            var external = {};
+
+            (function () {
                 if (options) {
                     $.extend(internal, options);
                 }
 
                 internal.outerTabDiv = cswParent.tabDiv({ ID: internal.ID + '_tabdiv' });
                 internal.tabcnt = 0;
-            }());
+            } ());
 
             internal.clearTabs = function () {
                 internal.outerTabDiv.empty();
@@ -234,7 +235,7 @@
                         //var formTblCell11 = formTable.cell(1, 1);
                         //var formTblCell12 = formTable.cell(1, 2);
 
-                        
+
                         var layoutTable = formTable.cell(1, 1).layoutTable({
                             ID: internal.ID + '_props',
                             OddCellRightAlign: true,
@@ -454,24 +455,23 @@
 
             // _handleProperties()
 
-            internal.handleProp = function (form, layoutTable, thisProp, tabContentDiv, tabid, configMode) {
+            internal.handleProp = function (form, layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
-                var propid = thisProp.id,
-                    cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol),
-                    helpText = Csw.string(thisProp.helptext),
-                    propName = Csw.string(thisProp.name),
+                var propid = propData.id,
+                    cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol),
+                    helpText = Csw.string(propData.helptext),
+                    propName = Csw.string(propData.name),
                     labelCell = {};
 
                 layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
-                if ((Csw.bool(thisProp.display, true) || configMode) &&
-                    Csw.bool(thisProp.showpropertyname) &&
-                        (internal.filterToPropId === '' || internal.filterToPropId === propid)) {
+                if (internal.canDisplayProp(propData, configMode) &&
+                    Csw.bool(propData.showpropertyname)) {
 
                     labelCell = internal.getLabelCell(cellSet);
 
                     labelCell.addClass('propertylabel');
-                    if (Csw.bool(thisProp.highlight)) {
+                    if (Csw.bool(propData.highlight)) {
                         labelCell.addClass('ui-state-highlight');
                     }
 
@@ -489,9 +489,9 @@
                         labelCell.append(propName);
                     }
                 }
-                if (false === Csw.bool(thisProp.readonly)) {
+                if (false === Csw.bool(propData.readonly)) {
                     internal.atLeastOne.Saveable = true;
-                    if (internal.ShowCheckboxes && Csw.bool(thisProp.copyable)) {
+                    if (internal.ShowCheckboxes && Csw.bool(propData.copyable)) {
                         var inpPropCheck = labelCell.input({
                             ID: 'check_' + propid,
                             type: Csw.enums.inputTypes.checkbox,
@@ -506,18 +506,26 @@
                 var propCell = internal.getPropertyCell(cellSet);
                 propCell.addClass('propertyvaluecell');
 
-                if (Csw.bool(thisProp.highlight)) {
+                if (Csw.bool(propData.highlight)) {
                     propCell.addClass('ui-state-highlight');
                 }
-                internal.makeProp(propCell, thisProp, tabContentDiv, tabid, configMode, layoutTable, form);
+                internal.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable, form);
+            };
+
+            internal.canDisplayProp = function (propData, configMode) {
+                /*The prop is set to display or we're in layout config mode*/
+                var ret = (Csw.bool(propData.display, true) || configMode);
+                /*And either no filter is set or the filter is set to this property */
+                ret = ret && (internal.filterToPropId === '' || internal.filterToPropId === propData.id);
+                /* We're not excluding any OC Props or this prop has not been excluded */
+                ret = ret && ((Csw.isNullOrEmpty(internal.excludeOcProps) || internal.excludeOcProps.length === 0) || false === Csw.contains(internal.excludeOcProps, Csw.string(propData.ocpname).toLowerCase()));
+                return ret;
             };
 
             internal.makeProp = function (propCell, propData, tabContentDiv, tabid, configMode, layoutTable, form) {
                 'use strict';
                 propCell.empty();
-                if ((Csw.bool(propData.display, true) || configMode) &&
-                    (internal.filterToPropId === '' || internal.filterToPropId === propData.id)) {
-
+                if (internal.canDisplayProp(propData, configMode)) {
                     var propId = propData.id;
                     var propName = propData.name;
 
@@ -641,7 +649,7 @@
                             urlMethod: internal.SinglePropUrlMethod,
                             data: jsonData,
                             success: function (data) {
-                                
+
                                 data.wasmodified = true; // keep the fact that the parent property was modified
                                 internal.makeProp(propCell, data, tabContentDiv, tabid, configMode, layoutTable, form);
                             }
@@ -649,11 +657,11 @@
                     }
                 }, 150);
             }; // _updateSubProps()
-            
-            internal.updatePropJsonFromForm = function(layoutTable, propData) {
+
+            internal.updatePropJsonFromForm = function (layoutTable, propData) {
                 'use strict';
                 var propIds = [];
-                var updSuccess = function(thisProp) {
+                var updSuccess = function (thisProp) {
                     var propOpt = {
                         propData: thisProp,
                         propDiv: '',
@@ -679,7 +687,7 @@
                         if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
                             var subTable = layoutTable[thisProp.id + '_subproptable'];
                             if (subTable.length() > 0) {
-                                internal.updatePropJsonFromForm(subTable, subProps) ;
+                                internal.updatePropJsonFromForm(subTable, subProps);
                             }
                         }
                     }
@@ -689,13 +697,13 @@
                 return propIds;
             }; // _updatePropXmlFromForm()
 
-            internal.enableSaveBtn = function() {
-                if(false === Csw.isNullOrEmpty(internal.saveBtn, true)) {
+            internal.enableSaveBtn = function () {
+                if (false === Csw.isNullOrEmpty(internal.saveBtn, true)) {
                     internal.saveBtn.enable();
                 }
             };
 
-            external.save = function(form, layoutTable, tabContentDiv, tabid, onSuccess) {
+            external.save = function (form, layoutTable, tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 if (form.$.valid()) {
                     var propIds = internal.updatePropJsonFromForm(layoutTable, internal.propertyData);
@@ -714,7 +722,7 @@
                         urlMethod: internal.SavePropUrlMethod,
                         async: (false === internal.Multi),
                         data: data,
-                        success: function(successData) {
+                        success: function (successData) {
                             var doSave = true;
                             var dataJson = {
                                 SourceNodeKey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
@@ -727,7 +735,7 @@
                                     watchGlobal: internal.AjaxWatchGlobal,
                                     urlMethod: internal.CopyPropValuesUrlMethod,
                                     data: dataJson,
-                                    success: function(copy) {
+                                    success: function (copy) {
                                         Csw.tryExec(onSuccess, copy);
                                     }
                                 }); // ajax						        
@@ -742,12 +750,12 @@
 
                                 if (nodechecks.length > 0 && $propchecks.length > 0) {
                                     //$nodechecks.each(function () {
-                                    Csw.each(nodechecks, function(thisObj) {
+                                    Csw.each(nodechecks, function (thisObj) {
                                         //var nodeid = $(this).attr('nodeid');
                                         dataJson.CopyNodeIds.push(thisObj.nodeid);
                                     });
 
-                                    $propchecks.each(function() {
+                                    $propchecks.each(function () {
                                         var propid = $(this).attr('propid');
                                         dataJson.PropIds.push(propid);
                                     });
@@ -761,7 +769,7 @@
                             else if (internal.Multi) {
                                 dataJson.CopyNodeIds = internal.nodeids;
                                 dataJson.PropIds = propIds;
-                                copyNodeProps(function() { window.location.reload(); });
+                                copyNodeProps(function () { window.location.reload(); });
                             }
 
                             internal.enableSaveBtn();
@@ -769,7 +777,7 @@
                             if (doSave) {
                                 // reload tab
                                 if (internal.ReloadTabOnSave) {
-                                    internal.getProps(tabContentDiv, tabid, function() {
+                                    internal.getProps(tabContentDiv, tabid, function () {
                                         Csw.tryExec(internal.onSave, successData.nodeid, successData.cswnbtnodekey, internal.tabcnt);
                                         Csw.tryExec(onSuccess);
                                     });
@@ -807,6 +815,6 @@
 
 
             return external;
-        }); 
+        });
 } ());
 

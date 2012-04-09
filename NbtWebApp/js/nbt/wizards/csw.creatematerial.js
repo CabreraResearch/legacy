@@ -246,19 +246,13 @@
                         internal.divStep4.br({ number: 2 });
 
                         div = internal.divStep4.div();
-                        Csw.layouts.tabsAndProps(div, {
+                        internal.tabsAndProps = Csw.layouts.tabsAndProps(div, {
                             nodetypeid: internal.materialType.val,
-                            relatednodeid: '',
-                            relatednodetypeid: '',
+                            showSaveButton: false,
                             EditMode: Csw.enums.editMode.Add,
                             ReloadTabOnSave: false,
-                            onSave: function (nodeid, cswnbtnodekey) {
-                                //
-                            },
-                            onInitFinish: function () {
-                                
-                            },
-                            ShowAsReport: false
+                            ShowAsReport: false,
+                            excludeOcProps: ['tradename', 'supplier', 'partno']
                         });
 
                         stepFourComplete = true;
