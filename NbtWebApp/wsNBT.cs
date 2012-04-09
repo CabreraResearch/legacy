@@ -2142,7 +2142,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ExcludeNodeTypeIds )
+        public string getNodeTypes( string ObjectClassName, string ExcludeNodeTypeIds, string RelatedToNodeTypeId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2165,7 +2165,7 @@ namespace ChemSW.Nbt.WebServices
 
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds );
+                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ) );
                 }
 
                 _deInitResources();
@@ -3952,7 +3952,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != View )
                 {
                     CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( _CswNbtResources, View );
-                    ReturnVal = wsG.runGrid( false );
+                    ReturnVal["rows"] = wsG.getThinGridRows( Int32.MinValue );
                 }
                 _deInitResources();
             }

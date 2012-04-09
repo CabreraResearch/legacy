@@ -50,7 +50,7 @@
                         internal.currentStepNo = newStepNo;
                         internal['makeStep' + newStepNo]();
 
-                        if (internal.currentStepNo === 4 && 
+                        if (internal.currentStepNo === 4 &&
                             internal.useExistingMaterial) {
                             if (internal.currentStepNo > internal.lastStepNo) {
                                 internal.toggleButton(internal.buttons.next, true, true);
@@ -227,6 +227,7 @@
                                     internal.tradeName = data.tradename;
                                     internal.supplier.name = data.supplier;
                                     internal.partNo = data.partno;
+                                    internal.materialId = data.nodeid;
                                 } else {
                                     topText = 'Creating a new ' + internal.tradeName + ' material: ';
                                 }
@@ -253,7 +254,7 @@
                     internal.toggleButton(internal.buttons.finish, false);
                     internal.toggleButton(internal.buttons.next, true);
 
-                    if (false === stepFourComplete && 
+                    if (false === stepFourComplete &&
                         false === internal.useExistingMaterial) {
                         internal.divStep4 = internal.wizard.div(4);
 
@@ -270,6 +271,84 @@
                         });
 
                         stepFourComplete = true;
+                    }
+                };
+
+            } ());
+
+            internal.makeStep5 = (function () {
+                var stepFiveComplete = false;
+
+                return function () {
+                    var div, addDiv, selectDiv;
+
+                    function sizeSelect(retObj, count) {
+                        internal.sizeNodeTypeId = internal.sizeSelect.val();
+                        if (count > 1) {
+                            selectDiv.show();
+                        }
+                        addDiv = addDiv || div.div();
+                        addDiv.empty();
+                        internal.addSizeNode = Csw.layouts.tabsAndProps(addDiv, {
+                            nodetypeid: internal.sizeNodeTypeId,
+                            showSaveButton: false,
+                            EditMode: Csw.enums.editMode.Add,
+                            ReloadTabOnSave: false,
+                            ShowAsReport: false,
+                            excludeOcProps: ['material']
+                        });
+                        internal.addSizeBtn = addDiv.button({
+                            enabledText: 'Add',
+                            onClick: function () {
+                                var sizeData = internal.addSizeNode.getPropJson();
+                                Csw.log(sizeData);
+                            }
+                        });
+                    }
+
+                    internal.toggleButton(internal.buttons.prev, true);
+                    internal.toggleButton(internal.buttons.cancel, true);
+                    internal.toggleButton(internal.buttons.finish, true);
+                    internal.toggleButton(internal.buttons.next, false);
+
+                    if (false === stepFiveComplete) {
+                        internal.divStep5 = internal.wizard.div(5);
+
+                        internal.divStep5.br({ number: 2 });
+
+                        div = internal.divStep5.div();
+
+                        /* Thin Grid of sizes */
+                        internal.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true });
+
+                        if (internal.useExistingMaterial) {
+                            Csw.ajax.post({
+                                urlMethod: 'getMaterialSizes',
+                                data: { MaterialId: internal.materialId },
+                                success: function (data) {
+                                    internal.sizeGrid.addRows(data.rows);
+                                }
+                            });
+                        }
+
+                        div.br();
+
+                        /* Size Select (hidden if only 1 NodeType present) */
+                        selectDiv = div.div();
+                        internal.sizeSelect = selectDiv.nodeTypeSelect({
+                            ID: internal.wizard.makeStepId('nodeTypeSelect'),
+                            labelText: 'Select a Material Size: ',
+                            objectClassName: 'SizeClass',
+                            onSelect: sizeSelect,
+                            onSuccess: sizeSelect,
+                            relatedToNodeTypeId: internal.materialType.val
+                        });
+                        selectDiv.hide();
+
+                        /* Populate this with onSuccess of internal.sizeSelect */
+                        internal.addSizeNode = {};
+
+                        //stepFiveComplete = true;
                     }
                 };
 
