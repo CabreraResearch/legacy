@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Security
                          bool CheckAllTabPermissions = false,
                          CswNbtMetaDataNodeTypeTab NodeTypeTab = null,
                          ICswNbtUser User = null,
-                         CswNbtNode Node = null,
+                         CswPrimaryKey NodeId = null,
                          CswNbtMetaDataNodeTypeProp MetaDataProp = null )
         {
             bool ret = false;
@@ -133,11 +133,11 @@ namespace ChemSW.Nbt.Security
                             ret = false;
                         }
 
-                        if( null != Node && null != Node.NodeId )
+                        if( null != NodeId && Int32.MinValue != NodeId.PrimaryKey )
                         {
                             // case 2209 - Users can edit their own profile without permissions to the User nodetype
                             if( !ret &&
-                                Node.NodeId == User.UserId )
+                                NodeId == User.UserId )
                             {
                                 ret = true;
                             }
@@ -145,21 +145,24 @@ namespace ChemSW.Nbt.Security
                             // Prevent users from deleting themselves or their own roles
                             if( ret &&
                                 Permission == NodeTypePermission.Delete &&
-                                ( ( Node.NodeId == User.UserId ||
-                                    Node.NodeId == User.RoleId ) ) )
+                                ( ( NodeId == User.UserId ||
+                                    NodeId == User.RoleId ) ) )
                             {
                                 ret = false;
                             }
 
                             // case 24510
-                            ret = ret && canContainer( Node, Permission, null, User );
+                            if( NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass )
+                            {
+                                ret = ret && canContainer( NodeId, Permission, null, User );
+                            }
 
                             if( MetaDataProp != null )
                             {
                                 // You can't edit readonly properties
                                 if( ret &&
                                     Permission != NodeTypePermission.View &&
-                                    Node.Properties[MetaDataProp].ReadOnly )   // don't use IsReadOnly() here
+                                    MetaDataProp.ReadOnly )
                                 {
                                     ret = false;
                                 }
@@ -168,7 +171,7 @@ namespace ChemSW.Nbt.Security
 
                                 // case 8218 - Certain properties on the user's preferences are not allowed to be edited
                                 if( ret &&
-                                    Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                                    NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
                                     !User.IsAdministrator() &&
                                     OCP != null &&
                                     ( OCP.PropName == CswNbtObjClassUser.UsernamePropertyName ||
@@ -181,9 +184,9 @@ namespace ChemSW.Nbt.Security
 
                                 // Only admins can change other people's passwords
                                 if( ret &&
-                                    Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
+                                    NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
                                     !User.IsAdministrator() &&
-                                    User.UserNode.NodeId != Node.NodeId &&
+                                    User.UserNode.NodeId != NodeId &&
                                     OCP != null &&
                                     OCP.PropName == CswNbtObjClassUser.PasswordPropertyName )
                                 {
@@ -198,7 +201,7 @@ namespace ChemSW.Nbt.Security
 
             return ret;
 
-        } // can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop )
+        } // can( NodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp Prop )
 
         /// <summary>
         /// Sets a permission for the given nodetype for the user
@@ -455,27 +458,26 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        public bool canContainer( CswNbtNode ContainerNode, NodeTypePermission Permission, CswNbtAction Action )
+        public bool canContainer( CswPrimaryKey ContainerNodeId, NodeTypePermission Permission, CswNbtAction Action )
         {
-            return canContainer( ContainerNode, Permission, Action, _CswNbtResources.CurrentNbtUser );
+            return canContainer( ContainerNodeId, Permission, Action, _CswNbtResources.CurrentNbtUser );
         }
 
         /// <summary>
         /// Check container permissions.  Provide one of Permission or Action.
         /// </summary>
-        public bool canContainer( CswNbtNode ContainerNode, NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
+        public bool canContainer( CswPrimaryKey ContainerNodeId, NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
         {
             bool ret = true;
-            if( null != ContainerNode && null != ContainerNode.NodeId )
+            if( null != ContainerNodeId && Int32.MinValue != ContainerNodeId.PrimaryKey )
             {
                 // case 24510
                 // Special container permissions, based on Inventory Group
-                if( ContainerNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass &&
-                    ( Permission != null // ||
-                      // restore this when 24508 and 24516 are implemented
-                      //( Action != null &&
-                      //  ( Action.Name == CswNbtActionName.DispenseContainer ||       // case 24508
-                      //    Action.Name == CswNbtActionName.RequestContainer ) )       // case 24516
+                if( ( Permission != null // ||
+                    // restore this when 24508 and 24516 are implemented
+                    //( Action != null &&
+                    //  ( Action.Name == CswNbtActionName.DispenseContainer ||       // case 24508
+                    //    Action.Name == CswNbtActionName.RequestContainer ) )       // case 24516
                     ) )
                 {
                     ret = false;
@@ -505,7 +507,7 @@ namespace ChemSW.Nbt.Security
                     CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, false );
 
                     // filter to container id
-                    ContainerVR.NodeIdsToFilterIn.Add( ContainerNode.NodeId );
+                    ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
                     // filter to role and workunit
                     InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
                     InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitProperty.RelatedNodeId.ToString(), CswNbtSubField.SubFieldName.NodeID );
