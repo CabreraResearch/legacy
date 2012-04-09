@@ -23,7 +23,8 @@
                 materialType: { name: '', val: '' },
                 tradeName: '',
                 supplier: { name: '', val: '' },
-                partNo: ''
+                partNo: '',
+                useExistingMaterial: false
             };
 
             var external = {};
@@ -45,8 +46,19 @@
 
                 internal.handleStep = function (newStepNo) {
                     if (Csw.contains(internal, 'makeStep' + newStepNo)) {
+                        internal.lastStepNo = internal.currentStepNo;
                         internal.currentStepNo = newStepNo;
                         internal['makeStep' + newStepNo]();
+
+                        if (internal.currentStepNo === 4 && 
+                            internal.useExistingMaterial) {
+                            if (internal.currentStepNo > internal.lastStepNo) {
+                                internal.toggleButton(internal.buttons.next, true, true);
+                            }
+                            else if (internal.currentStepNo < internal.lastStepNo) {
+                                internal.toggleButton(internal.buttons.prev, true, true);
+                            }
+                        }
                     }
                 };
 
@@ -209,6 +221,7 @@
                             success: function (data) {
                                 var topText = '', bottomText = '';
                                 if (false === Csw.isNullOrEmpty(data.tradename)) {
+                                    internal.useExistingMaterial = true;
                                     topText = 'A material named ' + data.tradename + ' already exists as: ';
                                     bottomText = 'Click next to use this existing material.';
                                     internal.tradeName = data.tradename;
@@ -234,13 +247,14 @@
 
                 return function () {
                     var div;
-                    
+
                     internal.toggleButton(internal.buttons.prev, true);
                     internal.toggleButton(internal.buttons.cancel, true);
                     internal.toggleButton(internal.buttons.finish, false);
                     internal.toggleButton(internal.buttons.next, true);
 
-                    if (false === stepFourComplete) {
+                    if (false === stepFourComplete && 
+                        false === internal.useExistingMaterial) {
                         internal.divStep4 = internal.wizard.div(4);
 
                         internal.divStep4.br({ number: 2 });
