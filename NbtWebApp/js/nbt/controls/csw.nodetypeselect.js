@@ -17,7 +17,8 @@
                 width: '200px',
                 addNewOption: false,
                 labelText: null,
-                excludeNodeTypeIds: ''
+                excludeNodeTypeIds: '',
+                relatedToNodeTypeId: ''
             };
             var external = {};
 
@@ -35,8 +36,8 @@
                 //$.extend(external, Csw.literals.select(internal));
 
                 external.bind('change', function () {
-                    Csw.tryExec(internal.onChange, external);
-                    Csw.tryExec(internal.onSelect, external.val());
+                    Csw.tryExec(internal.onChange, external, internal.nodetypecount);
+                    Csw.tryExec(internal.onSelect, external.val(), internal.nodetypecount);
                 });
 
                 if (Csw.bool(internal.addNewOption)) {
@@ -45,7 +46,7 @@
 
                 Csw.ajax.post({
                     urlMethod: internal.nodeTypesUrlMethod,
-                    data: { ObjectClassName: Csw.string(internal.objectClassName), ExcludeNodeTypeIds: internal.excludeNodeTypeIds },
+                    data: { ObjectClassName: Csw.string(internal.objectClassName), ExcludeNodeTypeIds: internal.excludeNodeTypeIds, RelatedToNodeTypeId: internal.relatedToNodeTypeId },
                     success: function (data) {
                         var ret = data;
                         ret.nodetypecount = 0;
@@ -66,8 +67,8 @@
                                 });
                             }
                         });
-
-                        Csw.tryExec(internal.onSuccess, ret);
+                        internal.nodetypecount = ret.nodetypecount;
+                        Csw.tryExec(internal.onSuccess, ret, internal.nodetypecount);
                         external.css('width', Csw.string(internal.width));
                     }
                 });

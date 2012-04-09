@@ -19,20 +19,20 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
         } //ctor
 
-        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass, string ExcludeNodeTypeIds )
+        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass, string ExcludeNodeTypeIds, Int32 RelatedNodeTypeId )
         {
             JObject ReturnVal = new JObject();
             CswCommaDelimitedString ExcludedNodeTypes = new CswCommaDelimitedString();
             ExcludedNodeTypes.FromString( ExcludeNodeTypeIds );
             Collection<Int32> ExcludedIds = ExcludedNodeTypes.ToIntCollection();
-
+            Int32 NodeTypeCount = 0;
             if( null == ObjectClass )
             {
                 foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
                     if( false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
                     {
-                        _addNodeTypeAttributes( NodeType, ReturnVal );
+                        NodeTypeCount += _filterNodeTypesByObjectClassPropRelationship( NodeType, RelatedNodeTypeId, ReturnVal );
                     }
                 } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
             }
@@ -42,12 +42,55 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( NodeType.IsLatestVersion() && false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
                     {
-                        _addNodeTypeAttributes( NodeType, ReturnVal );
+                        NodeTypeCount += _filterNodeTypesByObjectClassPropRelationship( NodeType, RelatedNodeTypeId, ReturnVal );
                     }
                 }
             }
+            ReturnVal["count"] = NodeTypeCount;
             return ReturnVal;
         } // getNodeTypes()
+
+        private Int32 _filterNodeTypesByObjectClassPropRelationship( CswNbtMetaDataNodeType NodeType, Int32 RelatedNodeTypeId, JObject RetObj )
+        {
+            Int32 NodeTypesAdded = 0;
+            if( null != NodeType )
+            {
+                switch( NodeType.getObjectClass().ObjectClass )
+                {
+                    case CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass:
+                        if( Int32.MinValue != RelatedNodeTypeId )
+                        {
+                            CswNbtMetaDataNodeTypeProp MaterialNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+                            if( MaterialNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() )
+                            {
+                                CswNbtMetaDataNodeType RelatedMaterialNt = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypeId );
+                                if( null != RelatedMaterialNt && MaterialNtp.FKValue == RelatedMaterialNt.getFirstVersionNodeType().NodeTypeId )
+                                {
+                                    _addNodeTypeAttributes( NodeType, RetObj );
+                                    NodeTypesAdded = 1;
+                                }
+                            }
+                            else
+                            {
+                                _addNodeTypeAttributes( NodeType, RetObj );
+                                NodeTypesAdded = 1;
+                            }
+                        }
+                        else
+                        {
+                            _addNodeTypeAttributes( NodeType, RetObj );
+                            NodeTypesAdded = 1;
+                        }
+                        break;
+
+                    default:
+                        _addNodeTypeAttributes( NodeType, RetObj );
+                        NodeTypesAdded = 1;
+                        break;
+                }
+            }
+            return NodeTypesAdded;
+        }
 
         private void _addNodeTypeAttributes( CswNbtMetaDataNodeType NodeType, JObject ReturnVal )
         {
