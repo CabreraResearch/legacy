@@ -48,9 +48,9 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeTypeProp SupplierNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
                 CswNbtMetaDataNodeTypeProp PartNoNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
 
-                __MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
-                __MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, Supplier );
-                __MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
+                _MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
+                _MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, Supplier );
+                _MaterialNodeView.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
             }
             return Ret;
         }
