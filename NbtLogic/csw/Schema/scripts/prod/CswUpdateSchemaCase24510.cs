@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
                 true,
                 false );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp PermInvGrpOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass,
                 CswNbtObjClassInventoryGroupPermission.InventoryGroupPropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -108,7 +108,13 @@ namespace ChemSW.Nbt.Schema
             // Inventory Group - Permissions Grid (nodetype)
             foreach( CswNbtMetaDataNodeType InventoryGroupNT in InventoryGroupOC.getNodeTypes() )
             {
+                CswNbtMetaDataNodeTypeProp PermissionsGripProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( InventoryGroupNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Permissions", InventoryGroupNT.getFirstNodeTypeTab().TabId );
 
+                CswNbtView PermissionsGridView = _CswNbtSchemaModTrnsctn.restoreView(PermissionsGripProp.ViewId);
+                PermissionsGridView.ViewMode = NbtViewRenderingMode.Grid;
+                CswNbtViewRelationship InvGrpVR = PermissionsGridView.AddViewRelationship( InventoryGroupNT, false );
+                CswNbtViewRelationship PermVR = PermissionsGridView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, true );
+                PermissionsGridView.save();
             }
 
         }//Update()
