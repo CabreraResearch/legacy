@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
                 InventoryGroupOC.ObjectClassId,
                 true );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp PermWorkUnitOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass,
                 CswNbtObjClassInventoryGroupPermission.WorkUnitPropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Schema
                 WorkUnitOC.ObjectClassId,
                 true );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp PermRoleOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass,
                 CswNbtObjClassInventoryGroupPermission.RolePropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Schema
                 RoleOC.ObjectClassId,
                 true );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp PermViewOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass,
                 CswNbtObjClassInventoryGroupPermission.ViewPropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Logical,
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Schema
                 Int32.MinValue,
                 true );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp PermEditOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass,
                 CswNbtObjClassInventoryGroupPermission.EditPropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Logical,
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.Schema
                 Int32.MinValue,
                 true );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp PermDispenseOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass,
                 CswNbtObjClassInventoryGroupPermission.DispensePropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Logical,
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Schema
                 Int32.MinValue,
                 true );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            CswNbtMetaDataObjectClassProp PermRequestOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass,
                 CswNbtObjClassInventoryGroupPermission.RequestPropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Logical,
@@ -108,12 +108,34 @@ namespace ChemSW.Nbt.Schema
             // Inventory Group - Permissions Grid (nodetype)
             foreach( CswNbtMetaDataNodeType InventoryGroupNT in InventoryGroupOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp PermissionsGripProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( InventoryGroupNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Permissions", InventoryGroupNT.getFirstNodeTypeTab().TabId );
+                CswNbtMetaDataNodeTypeTab PermissionsTab = InventoryGroupNT.getNodeTypeTab( "Permissions" );
+                if( PermissionsTab == null )
+                {
+                    PermissionsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( InventoryGroupNT, "Permissions", 2 );
+                }
+                CswNbtMetaDataNodeTypeProp PermissionsGripProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( InventoryGroupNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Permissions", PermissionsTab.TabId );
 
-                CswNbtView PermissionsGridView = _CswNbtSchemaModTrnsctn.restoreView(PermissionsGripProp.ViewId);
+                CswNbtView PermissionsGridView = _CswNbtSchemaModTrnsctn.restoreView( PermissionsGripProp.ViewId );
                 PermissionsGridView.ViewMode = NbtViewRenderingMode.Grid;
                 CswNbtViewRelationship InvGrpVR = PermissionsGridView.AddViewRelationship( InventoryGroupNT, false );
                 CswNbtViewRelationship PermVR = PermissionsGridView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, true );
+
+                CswNbtViewProperty PermInvGrpVP = PermissionsGridView.AddViewProperty( PermVR, PermInvGrpOCP );
+                CswNbtViewProperty PermWorkUnitVP = PermissionsGridView.AddViewProperty( PermVR, PermWorkUnitOCP );
+                CswNbtViewProperty PermRoleVP = PermissionsGridView.AddViewProperty( PermVR, PermRoleOCP );
+                CswNbtViewProperty PermViewVP = PermissionsGridView.AddViewProperty( PermVR, PermViewOCP );
+                CswNbtViewProperty PermEditVP = PermissionsGridView.AddViewProperty( PermVR, PermEditOCP );
+                CswNbtViewProperty PermDispenseVP = PermissionsGridView.AddViewProperty( PermVR, PermDispenseOCP );
+                CswNbtViewProperty PermRequestVP = PermissionsGridView.AddViewProperty( PermVR, PermRequestOCP );
+
+                PermInvGrpVP.Order = 2;
+                PermWorkUnitVP.Order = 4;
+                PermRoleVP.Order = 6;
+                PermViewVP.Order = 8;
+                PermEditVP.Order = 10;
+                PermDispenseVP.Order = 12;
+                PermRequestVP.Order = 14;
+
                 PermissionsGridView.save();
             }
 
