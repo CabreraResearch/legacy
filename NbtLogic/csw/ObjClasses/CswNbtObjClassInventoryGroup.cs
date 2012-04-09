@@ -1,10 +1,13 @@
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInventoryGroup : CswNbtObjClass
     {
+        private static string NamePropertyName { get { return "Name"; } }
+        
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassInventoryGroup( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -72,29 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-
-        //public CswNbtNodePropRelationship Assembly
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.AssemblyPropertyName].AsRelationship );
-        //    }
-        //}
-        //public CswNbtNodePropRelationship Type
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.TypePropertyName].AsRelationship );
-        //    }
-        //}
-        //public CswNbtNodePropLogicalSet Parts
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[_CswNbtObjClassRuleEquipment.PartsPropertyName].AsLogicalSet );
-        //    }
-        //}
-
+        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[NamePropertyName].AsText; } }
 
         #endregion
 
