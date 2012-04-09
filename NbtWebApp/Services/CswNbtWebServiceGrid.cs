@@ -265,6 +265,10 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Int32 NodeCount = Tree.getChildNodeCount();
+            if( MaxRows == Int32.MinValue )
+            {
+                MaxRows = NodeCount;
+            }
             bool IsTruncated = false;
             if( NodeCount > 0 )
             {

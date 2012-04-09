@@ -31,46 +31,56 @@
                 cellpadding: 2,
                 linkText: 'More...',
                 onLinkClick: null,
-                isControl: false
+                isControl: false,
+                hasHeader: false, /* Ignore the header row for now, by default */
+                rowCount: 0
             };
             var external = {};
 
             (function () {
-                var row = 1,
-                    col;
                 if (options) {
                     $.extend(internal, options);
                 }
 
                 internal.table = cswParent.table(internal);
                 external = Csw.dom({}, internal.table);
-                //$.extend(external, Csw.literals.table(internal));
+            } ());
 
-                /* Ignore the header row for now */
-                if (internal.rows.length > 0) {
+            external.addCell = function (value, row, col) {
+                internal.table.cell(row, col).append(Csw.string(value, '&nbsp;'));
+            };
+
+            external.addRows = function (dataRows, row, col) {
+                col = col || 0;
+                row = row || internal.rowCount;
+                if (Csw.isArray(dataRows)) {
+                    Csw.each(dataRows, function (cellVal) {
+                        if (Csw.isArray(cellVal)) {
+                            external.addRows(cellVal, row, col);
+                        } else {
+                            col += 1;
+                            external.addCell(cellVal, internal.rowCount, col);
+                        }
+                    });
+                }
+                internal.rowCount += 1;
+            };
+
+            (function () {
+                internal.rowCount = 1;
+                if (false === internal.hasHeader && internal.rows.length > 0) {
                     internal.rows.splice(0, 1);
                 }
 
-                Csw.each(internal.rows, function (value) {
-                    col = 1;
-                    if (Csw.isArray(value)) {
-                        Csw.each(value, function (subVal) {
-                            var valString = Csw.string(subVal, '&nbsp;');
-                            internal.table.cell(row, col).append(valString);
-                            col += 1;
-                        });
-                    } else {
-                        internal.table.cell(row, col).append(value);
-                    }
-                    row += 1;
-                });
+                external.addRows(internal.rows);
 
-                internal.table.cell(row, 1).a({
+                internal.table.cell(internal.rowCount, 1).a({
                     text: internal.linkText,
                     onClick: internal.onLinkClick
                 });
 
             } ());
+
 
             return external;
         });
