@@ -138,6 +138,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassGenerator( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass:
+                    ReturnVal = new CswNbtObjClassSize( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.TaskClass:
                     ReturnVal = new CswNbtObjClassTask( CswNbtResources, Node );
                     break;
