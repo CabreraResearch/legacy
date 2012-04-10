@@ -33,7 +33,9 @@
                 onLinkClick: null,
                 isControl: false,
                 hasHeader: false, /* Ignore the header row for now, by default */
-                rowCount: 0
+                rowCount: 0,
+                TableCssClass: 'CswThinGridTable',
+                CellCssClass: 'CswThinGridCells'
             };
             var external = {};
 
@@ -47,7 +49,15 @@
             } ());
 
             external.addCell = function (value, row, col) {
-                internal.table.cell(row, col).append(Csw.string(value, '&nbsp;'));
+                var cssClass = '';
+                if (row === 1) {
+                    if (internal.hasHeader) {
+                        cssClass = 'CswThinGridHeaderShow';
+                    } else {
+                        cssClass = 'CswThinGridHeaderHide';
+                    }
+                }
+                internal.table.cell(row, col).append(Csw.string(value, '&nbsp;')).addClass(cssClass);
             };
 
             external.addRows = function (dataRows, row, col) {
@@ -67,10 +77,7 @@
             };
 
             (function () {
-                internal.rowCount = 1;
-                if (false === internal.hasHeader && internal.rows.length > 0) {
-                    internal.rows.splice(0, 1);
-                }
+                internal.rowCount = 0;
 
                 external.addRows(internal.rows);
 
@@ -78,7 +85,7 @@
                     text: internal.linkText,
                     onClick: internal.onLinkClick
                 });
-
+                
             } ());
 
 
