@@ -721,7 +721,7 @@
             external.save = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 if (internal.form.$.valid()) {
-                    var propIds = internal.updatePropJsonFromLayoutTable(layoutTable, internal.propertyData);
+                    var propIds = internal.updatePropJsonFromLayoutTable();
                     var data = {
                         EditMode: internal.EditMode,
                         NodeIds: Csw.tryParseObjByIdx(internal.nodeids, 0), // o.nodeids.join(','),
