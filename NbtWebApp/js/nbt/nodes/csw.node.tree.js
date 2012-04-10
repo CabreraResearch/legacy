@@ -224,7 +224,7 @@
                     if (Csw.isNullOrEmpty(data)) {
                         Csw.error.showError(Csw.enums.errorType.error.name,
                                             'The requested view cannot be rendered as a Tree.',
-                                            'View with ViewId: ' + o.viewid + ' does not exists or is not a Tree view.');
+                                            'View with ViewId: ' + o.viewid + ' does not exist or is not a Tree view.');
                     } else {
 
                         var newviewid = data.newviewid;
