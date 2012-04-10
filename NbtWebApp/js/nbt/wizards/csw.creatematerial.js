@@ -100,7 +100,7 @@
                             createMaterialDef.supplierid = internal.supplier.val;
                             createMaterialDef.suppliername = internal.supplier.name;
                             if (false === Csw.isNullOrEmpty(internal.tabsAndProps)) {
-                                createMaterialDef.properties = internal.tabsAndProps.getPropJson;
+                                createMaterialDef.properties = internal.tabsAndProps.getPropJson();
                             }
                         } else {
                             createMaterialDef.materialnodeid = internal.materialNodeId;
@@ -172,7 +172,7 @@
                     if (false === internal.stepOneComplete) {
                         internal.divStep1 = internal.divStep1 || internal.wizard.div(1);
                         internal.divStep1.empty();
-                        
+
                         internal.divStep1.br({ number: 2 });
 
                         internal.materialTypeSelect = internal.divStep1.nodeTypeSelect({
@@ -420,9 +420,9 @@
                         /* Thin Grid of sizes */
                         internal.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true });
 
-                        /* We need the header regardless of whether the material exists
-                           if (internal.useExistingMaterial) {
-                        */
+
+                        if (internal.useExistingMaterial) {
+
                             Csw.ajax.post({
                                 urlMethod: 'getMaterialSizes',
                                 data: { MaterialId: internal.materialNodeId },
@@ -432,7 +432,9 @@
                                     internal.sizeGrid.addRows(sizes);
                                 }
                             });
-                        
+                        } else {
+                            internal.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable']);
+                        }
 
                         div.br();
 
