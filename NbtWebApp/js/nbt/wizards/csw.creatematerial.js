@@ -24,10 +24,34 @@
                 tradeName: '',
                 supplier: { name: '', val: '' },
                 partNo: '',
-                useExistingMaterial: false
+                useExistingMaterial: false,
+                materialProperies: {},
+                sizeNodes: [],
+                stepOneComplete: false,
+                stepTwoComplete: false,
+                stepThreeComplete: false,
+                stepFourComplete: false,
+                stepFiveComplete: false
             };
 
             var external = {};
+
+            internal.reinitSteps = function (startWithStep) {
+                internal.stepFiveComplete = false;
+                if (startWithStep <= 4) {
+                    internal.stepFourComplete = false;
+                }
+                else if (startWithStep <= 3) {
+                    internal.stepThreeComplete = false;
+                }
+                else if (startWithStep <= 2) {
+                    internal.stepTwoComplete = false;
+                }
+                else if (startWithStep <= 1) {
+                    /* This is mostly for debugging, you probably never need to reset step 1 in practice */
+                    internal.stepOneComplete = false;
+                }
+            };
 
             (function () {
                 if (options) {
@@ -62,6 +86,43 @@
                     }
                 };
 
+                internal.finalize = function () {
+                    function getMaterialDefinition() {
+                        var createMaterialDef = {
+                            useexistingmaterial: internal.useExistingMaterial,
+                            sizes: internal.sizeNodes
+                        };
+
+                        if (false === internal.useExistingMaterial) {
+                            createMaterialDef.materialnodetypeid = internal.materialType.val;
+                            createMaterialDef.tradename = internal.tradeName;
+                            createMaterialDef.partno = internal.partNo;
+                            createMaterialDef.supplierid = internal.supplier.val;
+                            createMaterialDef.suppliername = internal.supplier.name;
+                            if (false === Csw.isNullOrEmpty(internal.tabsAndProps)) {
+                                createMaterialDef.properties = internal.tabsAndProps.getPropJson;
+                            }
+                        } else {
+                            createMaterialDef.materialnodeid = internal.materialNodeId;
+                        }
+                        return JSON.stringify(createMaterialDef);
+                    }
+
+                    Csw.ajax.post({
+                        urlMethod: 'createMaterial',
+                        data: {
+                            MaterialDefinition: getMaterialDefinition()
+                        },
+                        success: function (data) {
+                            var viewid = '';
+                            if (Csw.contains(data, 'nextoptions')) {
+                                viewid = data.nextoptions.nodeview;
+                            }
+                            Csw.tryExec(internal.onFinish, viewid);
+                        }
+                    });
+                };
+
                 internal.wizard = Csw.layouts.wizard(cswParent.div(), {
                     ID: Csw.makeId(internal.ID, 'wizard'),
                     Title: 'Create Material',
@@ -72,7 +133,7 @@
                     onNext: internal.handleStep,
                     onPrevious: internal.handleStep,
                     onCancel: internal.onCancel,
-                    onFinish: internal.onFinish,
+                    onFinish: internal.finalize,
                     doNextOnInit: false
                 });
 
@@ -93,7 +154,6 @@
             };
 
             internal.makeStep1 = (function () {
-                var stepOneComplete = false;
 
                 return function () {
                     var nextBtnEnabled = function () {
@@ -102,15 +162,17 @@
                     function typeSelect() {
                         internal.materialType = { name: internal.materialTypeSelect.find(':selected').text(), val: internal.materialTypeSelect.val() };
                         internal.toggleButton(internal.buttons.next, true);
+                        internal.reinitSteps(2);
                     }
                     internal.toggleButton(internal.buttons.prev, false);
                     internal.toggleButton(internal.buttons.cancel, true);
                     internal.toggleButton(internal.buttons.finish, false);
                     internal.toggleButton(internal.buttons.next, nextBtnEnabled());
 
-                    if (false === stepOneComplete) {
-                        internal.divStep1 = internal.wizard.div(1);
-
+                    if (false === internal.stepOneComplete) {
+                        internal.divStep1 = internal.divStep1 || internal.wizard.div(1);
+                        internal.divStep1.empty();
+                        
                         internal.divStep1.br({ number: 2 });
 
                         internal.materialTypeSelect = internal.divStep1.nodeTypeSelect({
@@ -121,14 +183,13 @@
                             onSuccess: typeSelect
                         });
 
-                        stepOneComplete = true;
+                        internal.stepOneComplete = true;
                     }
                 };
             } ());
 
             //Step 2: 
             internal.makeStep2 = (function () {
-                var stepTwoComplete = false;
 
                 return function () {
                     var nextBtnEnabled = function () {
@@ -137,6 +198,7 @@
                     function supplierSelect() {
                         internal.supplier = { name: internal.supplierSelect.find(':selected').text(), val: internal.supplierSelect.val() };
                         internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                        internal.reinitSteps(3);
                     }
 
                     internal.toggleButton(internal.buttons.prev, true);
@@ -144,8 +206,9 @@
                     internal.toggleButton(internal.buttons.finish, false);
                     internal.toggleButton(internal.buttons.next, nextBtnEnabled());
 
-                    if (false === stepTwoComplete) {
-                        internal.divStep2 = internal.wizard.div(2);
+                    if (false === internal.stepTwoComplete) {
+                        internal.divStep2 = internal.divStep2 || internal.wizard.div(2);
+                        internal.divStep2.empty();
 
                         internal.divStep2.br({ number: 2 });
 
@@ -156,6 +219,7 @@
                             onChange: function () {
                                 internal.tradeName = internal.tradeNameInput.val();
                                 internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                                internal.reinitSteps(3);
                             }
                         });
                         internal.divStep2.br({ number: 1 });
@@ -176,16 +240,16 @@
                             labelText: 'Part No: ',
                             onChange: function () {
                                 internal.partNo = internal.partNoInput.val();
+                                internal.reinitSteps(3);
                             }
                         });
 
-                        stepTwoComplete = true;
+                        internal.stepTwoComplete = true;
                     }
                 };
             } ());
 
             internal.makeStep3 = (function () {
-                var stepThreeComplete = false;
 
                 return function () {
                     var div;
@@ -202,8 +266,9 @@
                     internal.toggleButton(internal.buttons.finish, false);
                     internal.toggleButton(internal.buttons.next, true);
 
-                    if (false === stepThreeComplete) {
-                        internal.divStep3 = internal.wizard.div(3);
+                    if (false === internal.stepThreeComplete) {
+                        internal.divStep3 = internal.divStep3 || internal.wizard.div(3);
+                        internal.divStep3.empty();
 
                         internal.divStep3.br({ number: 2 });
 
@@ -227,7 +292,7 @@
                                     internal.tradeName = data.tradename;
                                     internal.supplier.name = data.supplier;
                                     internal.partNo = data.partno;
-                                    internal.materialId = data.nodeid;
+                                    internal.materialNodeId = data.nodeid;
                                 } else {
                                     topText = 'Creating a new ' + internal.tradeName + ' material: ';
                                 }
@@ -237,14 +302,14 @@
                             }
                         });
 
-                        stepThreeComplete = true;
+                        internal.stepThreeComplete = true;
                     }
                 };
 
             } ());
 
             internal.makeStep4 = (function () {
-                var stepFourComplete = false;
+                internal.stepFourComplete = false;
 
                 return function () {
                     var div;
@@ -254,9 +319,10 @@
                     internal.toggleButton(internal.buttons.finish, false);
                     internal.toggleButton(internal.buttons.next, true);
 
-                    if (false === stepFourComplete &&
+                    if (false === internal.stepFourComplete &&
                         false === internal.useExistingMaterial) {
-                        internal.divStep4 = internal.wizard.div(4);
+                        internal.divStep4 = internal.divStep4 || internal.wizard.div(4);
+                        internal.divStep4.empty();
 
                         internal.divStep4.br({ number: 2 });
 
@@ -270,17 +336,29 @@
                             excludeOcProps: ['tradename', 'supplier', 'partno']
                         });
 
-                        stepFourComplete = true;
+                        internal.stepFourComplete = true;
                     }
                 };
 
             } ());
 
             internal.makeStep5 = (function () {
-                var stepFiveComplete = false;
+                internal.stepFiveComplete = false;
 
                 return function () {
-                    var div, addDiv, selectDiv;
+                    var div, addDiv, selectDiv, sizes = [];
+
+                    function isSizeNew(size) {
+                        var ret = true;
+                        Csw.each(sizes, function (sizeVal, sizeKey) {
+                            if (Csw.string(sizeVal[1]).toLowerCase() === Csw.string(size[1]).toLowerCase() &&
+                               Csw.string(sizeVal[2]).toLowerCase() === Csw.string(size[2]).toLowerCase() &&
+                                   Csw.string(sizeVal[3]).toLowerCase() === Csw.string(size[3]).toLowerCase()) {
+                                ret = false;
+                            }
+                        });
+                        return ret;
+                    }
 
                     function sizeSelect(retObj, count) {
                         internal.sizeNodeTypeId = internal.sizeSelect.val();
@@ -301,7 +379,27 @@
                             enabledText: 'Add',
                             onClick: function () {
                                 var sizeData = internal.addSizeNode.getPropJson();
-                                Csw.log(sizeData);
+
+                                Csw.ajax.post({
+                                    urlMethod: 'getSizeNodeProps',
+                                    data: {
+                                        SizeDefinition: JSON.stringify(sizeData),
+                                        SizeNodeTypeId: internal.sizeNodeTypeId
+                                    },
+                                    success: function (data) {
+                                        var size = data.row;
+                                        if (isSizeNew(size)) {
+                                            internal.sizeGrid.addRows(size);
+                                            internal.sizeNodes.push({
+                                                nodetypeid: internal.sizeNodeTypeId,
+                                                sizedef: sizeData
+                                            });
+                                            sizes.push(size);
+                                        } else {
+                                            $.CswDialog('AlertDialog', 'This size is already defined. Please define a new, unique size.');
+                                        }
+                                    }
+                                });
                             }
                         });
                     }
@@ -311,8 +409,9 @@
                     internal.toggleButton(internal.buttons.finish, true);
                     internal.toggleButton(internal.buttons.next, false);
 
-                    if (false === stepFiveComplete) {
-                        internal.divStep5 = internal.wizard.div(5);
+                    if (false === internal.stepFiveComplete) {
+                        internal.divStep5 = internal.divStep5 || internal.wizard.div(5);
+                        internal.divStep5.empty();
 
                         internal.divStep5.br({ number: 2 });
 
@@ -321,15 +420,19 @@
                         /* Thin Grid of sizes */
                         internal.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true });
 
-                        if (internal.useExistingMaterial) {
+                        /* We need the header regardless of whether the material exists
+                           if (internal.useExistingMaterial) {
+                        */
                             Csw.ajax.post({
                                 urlMethod: 'getMaterialSizes',
-                                data: { MaterialId: internal.materialId },
+                                data: { MaterialId: internal.materialNodeId },
                                 success: function (data) {
-                                    internal.sizeGrid.addRows(data.rows);
+                                    sizes = data.rows || [];
+                                    Csw.log(sizes);
+                                    internal.sizeGrid.addRows(sizes);
                                 }
                             });
-                        }
+                        
 
                         div.br();
 
@@ -348,7 +451,7 @@
                         /* Populate this with onSuccess of internal.sizeSelect */
                         internal.addSizeNode = {};
 
-                        //stepFiveComplete = true;
+                        internal.stepFiveComplete = true;
                     }
                 };
 

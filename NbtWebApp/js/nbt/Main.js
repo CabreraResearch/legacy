@@ -1013,13 +1013,11 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     onFinish: function (viewid) {
                         clear({ 'all': true });
-                        //                        refreshViewSelect(function () {
-                        //                            handleItemSelect({
-                        //                                type: 'view',
-                        //                                viewmode: 'tree',
-                        //                                viewid: viewid
-                        //                            });
-                        //                        });
+                        handleItemSelect({
+                            type: 'view',
+                            viewmode: 'tree',
+                            viewid: viewid
+                        });
                     },
                     startingStep: o.ActionOptions.startingStep
                     //                    menuRefresh: refreshSelected
