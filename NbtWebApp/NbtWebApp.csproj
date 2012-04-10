@@ -93,18 +93,19 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Code\CswNbtWebServiceGenerators.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceReport.cs" />
-    <Compile Include="App_Code\wsTreeOfView.cs">
+    <Compile Include="Services\CswNbtWebServiceCreateMaterial.cs" />
+    <Compile Include="Services\CswNbtWebServiceGenerators.cs" />
+    <Compile Include="Services\CswNbtWebServiceReport.cs" />
+    <Compile Include="Services\wsTreeOfView.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="App_Code\CswNbtWebServiceBinaryData.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceNbtManager.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceQuotas.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceTable.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceAuditing.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceInspectionDesign.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceInspections.cs" />
+    <Compile Include="Services\CswNbtWebServiceBinaryData.cs" />
+    <Compile Include="Services\CswNbtWebServiceNbtManager.cs" />
+    <Compile Include="Services\CswNbtWebServiceQuotas.cs" />
+    <Compile Include="Services\CswNbtWebServiceTable.cs" />
+    <Compile Include="Services\CswNbtWebServiceAuditing.cs" />
+    <Compile Include="Services\CswNbtWebServiceInspectionDesign.cs" />
+    <Compile Include="Services\CswNbtWebServiceInspections.cs" />
     <Content Include="CafLabelPrintUtil.cab" />
     <Content Include="ConfigVars.aspx" />
     <Content Include="Content\images\ajax-loader.png" />
@@ -1513,22 +1514,22 @@
     <Compile Include="MainLayout.master.designer.cs">
       <DependentUpon>MainLayout.master</DependentUpon>
     </Compile>
-    <Compile Include="App_Code\CswNbtWebServiceGrid.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceHeader.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceMainMenu.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceMetaData.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceMobile.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceNode.cs" />
-    <Compile Include="App_Code\CswNbtWebServicePrintLabels.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceQuickLaunchItems.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceSearch.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceTabsAndProps.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceTree.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceView.cs" />
-    <Compile Include="App_Code\CswNbtWebServiceWelcomeItems.cs" />
-    <Compile Include="App_Code\CswPropIdAttr.cs" />
-    <Compile Include="App_Code\TimingModule.cs" />
-    <Compile Include="App_Code\wsTools.cs" />
+    <Compile Include="Services\CswNbtWebServiceGrid.cs" />
+    <Compile Include="Services\CswNbtWebServiceHeader.cs" />
+    <Compile Include="Services\CswNbtWebServiceMainMenu.cs" />
+    <Compile Include="Services\CswNbtWebServiceMetaData.cs" />
+    <Compile Include="Services\CswNbtWebServiceMobile.cs" />
+    <Compile Include="Services\CswNbtWebServiceNode.cs" />
+    <Compile Include="Services\CswNbtWebServicePrintLabels.cs" />
+    <Compile Include="Services\CswNbtWebServiceQuickLaunchItems.cs" />
+    <Compile Include="Services\CswNbtWebServiceSearch.cs" />
+    <Compile Include="Services\CswNbtWebServiceTabsAndProps.cs" />
+    <Compile Include="Services\CswNbtWebServiceTree.cs" />
+    <Compile Include="Services\CswNbtWebServiceView.cs" />
+    <Compile Include="Services\CswNbtWebServiceWelcomeItems.cs" />
+    <Compile Include="Services\CswPropIdAttr.cs" />
+    <Compile Include="Services\TimingModule.cs" />
+    <Compile Include="Services\wsTools.cs" />
     <Compile Include="Base.master.cs">
       <DependentUpon>Base.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

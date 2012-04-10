@@ -69,6 +69,18 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassInspectionRoute) Node.ObjClass );
         }//AsInspectionRoute
 
+        public static CswNbtObjClassInspectionTarget AsInspectionTarget( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            return ( (CswNbtObjClassInspectionTarget) Node.ObjClass );
+        }//AsInspectionTarget
+
+        public static CswNbtObjClassInspectionTargetGroup AsInspectionTargetGroup( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
+            return ( (CswNbtObjClassInspectionTargetGroup) Node.ObjClass );
+        }//AsInspectionTarget
+
         public static CswNbtObjClassLocation AsLocation( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
@@ -81,17 +93,17 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassMailReport) Node.ObjClass );
         }//AsMailReport
 
-        public static CswNbtObjClassInspectionTarget AsInspectionTarget( CswNbtNode Node )
+        public static CswNbtObjClassMaterial AsMaterial( CswNbtNode Node )
         {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
-            return ( (CswNbtObjClassInspectionTarget) Node.ObjClass );
-        }//AsInspectionTarget
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+            return ( (CswNbtObjClassMaterial) Node.ObjClass );
+        }//AsMaterial
 
-        public static CswNbtObjClassInspectionTargetGroup AsInspectionTargetGroup( CswNbtNode Node )
+        public static CswNbtObjClassMaterialSynonym AsMaterialSynonym( CswNbtNode Node )
         {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass );
-            return ( (CswNbtObjClassInspectionTargetGroup) Node.ObjClass );
-        }//AsInspectionTarget
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass );
+            return ( (CswNbtObjClassMaterialSynonym) Node.ObjClass );
+        }//AsMaterialSynonym
 
         public static CswNbtObjClassNotification AsNotification( CswNbtNode Node )
         {
@@ -133,6 +145,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.SampleClass );
             return ( (CswNbtObjClassSample) Node.ObjClass );
+        }//AsSample
+
+        public static CswNbtObjClassSize AsSize( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            return ( (CswNbtObjClassSize) Node.ObjClass );
         }//AsSample
 
         public static CswNbtObjClassTask AsTask( CswNbtNode Node )

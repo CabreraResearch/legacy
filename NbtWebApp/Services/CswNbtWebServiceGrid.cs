@@ -92,10 +92,15 @@ namespace ChemSW.Nbt.WebServices
             _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
 
-        public JObject runGrid( bool IncludeInQuickLaunch )
+        public JObject runGrid( bool IncludeInQuickLaunch, bool GetAllRowsNow = false )
         {
             _View.SaveToCache( IncludeInQuickLaunch );
-            return _getGridOuterJson();
+            JObject RetObj = _getGridOuterJson();
+            if( GetAllRowsNow )
+            {
+                RetObj["data"] = getAllGridRows( false );
+            }
+            return RetObj;
         } // getGrid()
 
         private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
@@ -198,7 +203,7 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public void ExportCsv(HttpContext Context)
+        public void ExportCsv( HttpContext Context )
         {
             DataTable DT = new DataTable();
 
@@ -528,7 +533,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 foreach( CswViewBuilderProp VbProp in PropsInGrid )
                 {
-                    if( Prop != null && VbProp.PropNameUnique == CleanPropName && 
+                    if( Prop != null && VbProp.PropNameUnique == CleanPropName &&
                         ( VbProp.AssociatedPropIds.Contains( Prop.FirstPropVersionId ) ||
                           VbProp.AssociatedPropIds.Contains( Prop.ObjectClassPropId ) ) )
                     {

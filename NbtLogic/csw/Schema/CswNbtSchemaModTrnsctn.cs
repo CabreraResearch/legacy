@@ -616,8 +616,11 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
             }
+            _CswNbtResources.ClearActionsCache();
             return NewActionId;
         }
+
+
 
         /// <summary>
         /// Convenience function for making new Configuration Variable
@@ -674,6 +677,22 @@ namespace ChemSW.Nbt.Schema
             ConfigVarTable.update( ConfigVarDataTable );
         }
 
+        public Int32 getActionId( CswNbtActionName ActionName )
+        {
+            Int32 RetActionId = Int32.MinValue;
+            if( null != Actions[ActionName] )
+            {
+                RetActionId = Actions[ActionName].ActionId;
+            }
+            return RetActionId;
+        }
+
+        public void createModuleActionJunction( CswNbtResources.CswNbtModule Module, CswNbtActionName ActionName )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            Int32 ActionId = getActionId( ActionName );
+            createModuleActionJunction( ModuleId, ActionId );
+        }
 
         /// <summary>
         /// Convenience function for making new jct_module_actions records
@@ -780,6 +799,7 @@ namespace ChemSW.Nbt.Schema
             ModulesDataTable.Rows.Add( ModuleRow );
             Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             ModulesTable.update( ModulesDataTable );
+            _CswNbtResources.ClearModulesCache();
             return NewModuleId;
         }
 

@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
     /// </summary>
     /// 
     [ScriptService]
-    [WebService( Namespace = "http://localhost/NbtWebApp" )]
+    [WebService( Namespace = "ChemSW.Nbt.WebServices" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
     public class wsNBT : WebService
     {
@@ -3910,6 +3910,91 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Nbt Manager
 
+        #region CISPro
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo );
+                ws.doesMaterialExist( ReturnVal );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getMaterialSizes( string MaterialId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                CswNbtView View = CswNbtWebServiceCreateMaterial.getMaterialSizes( _CswNbtResources, _getNodeId( MaterialId ) );
+                if( null != View )
+                {
+                    CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( _CswNbtResources, View );
+                    ReturnVal = wsG.runGrid( false );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterialSizes()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string createMaterial( string MaterialDefinition )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                JObject MaterialObj;
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, MaterialDefinition, out MaterialObj );
+                _setEditMode( NodeEditMode.Add );
+                ReturnVal = ws.createMaterial( MaterialObj );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // createMaterial()
+
+        #endregion CISPro
+
 
         #region Auditing
 
@@ -4216,6 +4301,11 @@ namespace ChemSW.Nbt.WebServices
         private void _setEditMode( string EditModeStr )
         {
             _CswNbtResources.EditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditModeStr );
+        }
+
+        private void _setEditMode( NodeEditMode EditMode )
+        {
+            _CswNbtResources.EditMode = EditMode;
         }
 
         private CswNbtView _getView( string ViewId )

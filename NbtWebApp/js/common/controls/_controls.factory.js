@@ -78,8 +78,16 @@
                     return Csw.controls.multiSelect(cswParent, opts);
                 };
 
+                cswParent.nodeSelect = function (opts) {
+                    /// <summary> Creates a Csw.nodeSelect on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the nodeSelect.</param>
+                    /// <returns type="Csw.controls.nodeSelect">A Csw.controls.nodeSelect</returns>
+                    opts = internal.controlPreProcessing(opts, 'nodeSelect');
+                    return Csw.controls.nodeSelect(cswParent, opts);
+                };
+
                 cswParent.nodeTypeSelect = function (opts) {
-                    /// <summary> Creates a Csw.numberTextBox on this element</summary>
+                    /// <summary> Creates a Csw.nodeTypeSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the nodeTypeSelect.</param>
                     /// <returns type="Csw.controls.nodeTypeSelect">A Csw.controls.nodeTypeSelect</returns>
                     opts = internal.controlPreProcessing(opts, 'nodeTypeSelect');

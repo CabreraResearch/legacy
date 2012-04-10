@@ -87,9 +87,11 @@
     <Content Include="ConnectTest.html" />
     <Content Include="css\ChemSW.css" />
     <None Include="css\cssVariables.pm" />
+    <Content Include="css\csw.label.css" />
     <Content Include="css\csw.table.layout.css" />
     <Content Include="js\common\composites\_composites.factory.js" />
     <Content Include="js\common\controls\_controls.factory.js" />
+    <Content Include="js\common\literals\csw.label.js" />
     <Content Include="js\common\literals\csw.b.js" />
     <Content Include="js\common\literals\csw.morediv.js" />
     <Content Include="js\common\literals\csw.table.js" />
@@ -101,6 +103,9 @@
     <Content Include="js\nbt\actions\csw.sessions.js" />
     <Content Include="js\nbt\actions\csw.quotaimage.js" />
     <Content Include="js\nbt\actions\csw.quotas.js" />
+    <Content Include="js\nbt\controls\csw.nodeselect.js" />
+    <Content Include="js\nbt\layouts\csw.tabsandprops.js" />
+    <Content Include="js\nbt\wizards\csw.creatematerial.js" />
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
     <Content Include="js\nbt\controls\csw.nodetypeselect.js" />
     <Content Include="js\common\composites\csw.tree.js" />
@@ -155,7 +160,6 @@
     <Content Include="js\nbt\nodes\CswNodePreview.js" />
     <Content Include="js\nbt\nodes\CswNodeSelect.js" />
     <Content Include="js\nbt\nodes\CswNodeTable.js" />
-    <Content Include="js\nbt\nodes\CswNodeTabs.js" />
     <Content Include="js\nbt\nodes\CswNodeTree.js" />
     <Content Include="js\nbt\pagecmp\CswDashboard.js" />
     <Content Include="js\nbt\pagecmp\CswDefaultContent.js" />

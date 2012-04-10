@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( filterToPropId != string.Empty )
             return Ret;
         } // getTabs()
-        
+
         private Int32 _getTabOrder( CswNbtMetaDataNodeTypeTab Tab ) { return Tab.TabOrder; }
 
         private Int32 TabOrderModifier = 0;
@@ -418,6 +418,31 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // removeProp()
 
+        public bool addNode( CswNbtMetaDataNodeType NodeType, out CswNbtNode Node, JObject PropsObj, out CswNbtNodeKey RetNbtNodeKey, CswNbtView View = null, CswNbtMetaDataNodeTypeTab NodeTypeTab = null )
+        {
+            bool RetSucceeded = false;
+            RetNbtNodeKey = null;
+            CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
+            if( wsQ.CheckQuota( NodeType ) )
+            {
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                if( CanEdit )
+                {
+                    RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab, true );
+                    if( null != RetNbtNodeKey )
+                    {
+                        RetSucceeded = true;
+                    }
+                }
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
+            }
+            return RetSucceeded;
+        }
+
         public JObject saveProps( Collection<CswPrimaryKey> NodePks, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
         {
             JObject ret = new JObject();
@@ -437,24 +462,7 @@ namespace ChemSW.Nbt.WebServices
                 switch( _CswNbtResources.EditMode )
                 {
                     case NodeEditMode.Add:
-                        CswNbtWebServiceQuotas wsQ = new CswNbtWebServiceQuotas( _CswNbtResources );
-                        if( wsQ.CheckQuota( NodeTypeId ) )
-                        {
-                            Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
-                            if( CanEdit )
-                            {
-                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab, true );
-                                if( null != RetNbtNodeKey )
-                                {
-                                    AllSucceeded = true;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            throw new CswDniException( ErrorType.Warning, "Quota Exceeded", "You have used all of your purchased quota, and must purchase additional quota space in order to add" );
-                        }
+                        AllSucceeded = addNode( NodeType, out Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
                         break;
                     default:
                         foreach( CswPrimaryKey NodePk in NodePks )

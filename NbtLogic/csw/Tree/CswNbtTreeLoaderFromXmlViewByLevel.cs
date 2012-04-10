@@ -205,7 +205,7 @@ namespace ChemSW.Nbt
                 // case 24678 - Mark truncated results
                 if( NodesTable.Rows.Count == thisResultLimit )
                 {
-                    if( ParentNodeKeys.Count > 0 )
+                    if( ParentNodeKeys != null && ParentNodeKeys.Count > 0 )
                     {
                         foreach( CswNbtNodeKey ParentNodeKey in ParentNodeKeys )
                         {

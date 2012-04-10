@@ -21,24 +21,26 @@
     <div id="ReportContent"></div>
 
     <script type="text/javascript">
-    
+
         $(document).ready(function () {
-            var initReport = function() {
+            var initReport = function () {
                 if (Csw.queryString) {
                     var qs = Csw.queryString();
-                    $('#ReportContent').CswNodeTabs({
+                    var parent = Csw.literals.factory($('#ReportContent'));
+                    //$('#ReportContent').CswNodeTabs({
+                    Csw.layouts.tabsAndProps(parent, {
                         ID: 'nodereporttabs',
                         nodeids: [qs.nodeid],
                         nodekeys: [qs.cswnbtnodekey],
                         EditMode: Csw.enums.editMode.PrintReport
                     });
-                } 
+                }
             };
-            
-            $(window).load(function() {
-                initReport();    
+
+            $(window).load(function () {
+                initReport();
             });
-           
+
         });
 
     </script>
