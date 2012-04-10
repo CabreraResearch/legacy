@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -140,6 +141,49 @@ namespace ChemSW.Nbt.WebServices
             }
             return RetSuccess;
         }
+
+        public void addNodeProps( CswNbtNode Node, JObject PropsObj, CswNbtMetaDataNodeTypeTab Tab )
+        {
+            if( Node != null )
+            {
+                foreach( JObject PropObj in
+                    from PropJProp
+                        in PropsObj.Properties()
+                    where null != PropJProp.Value
+                    select (JObject) PropJProp.Value
+                        into PropObj
+                        where PropObj.HasValues
+                        select PropObj )
+                {
+                    addSingleNodeProp( Node, PropObj, Tab );
+                }
+            }
+        }
+
+        public void addSingleNodeProp( CswNbtNode Node, JObject PropObj, CswNbtMetaDataNodeTypeTab Tab )
+        {
+            CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
+
+            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
+            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
+
+            // Recurse on sub-props
+            if( null != PropObj["subprops"] )
+            {
+                JObject SubPropsObj = (JObject) PropObj["subprops"];
+                if( SubPropsObj.HasValues )
+                {
+                    foreach( JObject ChildPropObj in SubPropsObj.Properties()
+                                .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues )
+                                .Select( ChildProp => (JObject) ChildProp.Value )
+                                .Where( ChildPropObj => ChildPropObj.HasValues ) )
+                    {
+                        addSingleNodeProp( Node, ChildPropObj, Tab );
+                    }
+                }
+            }
+
+        } // _applyPropJson
 
     } // class CswNbtWebServiceNode
 

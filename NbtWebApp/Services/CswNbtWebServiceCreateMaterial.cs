@@ -4,6 +4,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -57,10 +58,12 @@ namespace ChemSW.Nbt.WebServices
         private CswNbtView _MaterialNodeView;
 
         private CswNbtResources _CswNbtResources;
+        private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
-        public CswNbtWebServiceCreateMaterial( CswNbtResources CswNbtResources, Int32 NodeTypeId, string Supplier, string Tradename, string PartNo )
+        public CswNbtWebServiceCreateMaterial( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 NodeTypeId, string Supplier, string Tradename, string PartNo )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
 
             if( false == _CswNbtResources.Permit.can( CswNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
             {
@@ -77,29 +80,17 @@ namespace ChemSW.Nbt.WebServices
             _MaterialNodeView = _getMaterialNodeView( Tradename, Supplier, PartNo );
         }
 
-        public CswNbtWebServiceCreateMaterial( CswNbtResources CswNbtResources, string MaterialDefinition, out JObject MaterialObj )
+        public CswNbtWebServiceCreateMaterial( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, string MaterialDefinition, out JObject MaterialObj )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
 
             if( false == _CswNbtResources.Permit.can( CswNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
             {
                 throw new CswDniException( ErrorType.Error, "You do not have permission to use the Create Material wizard.", "Attempted to access the Create Material wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
 
-            if( string.IsNullOrEmpty( MaterialDefinition ) )
-            {
-                throw new CswDniException( ErrorType.Error,
-                                           "Cannot create a new material without a definition.",
-                                           "Attempted to call createMaterial with a node definition that was not valid." );
-            }
-            MaterialObj = JObject.Parse( MaterialDefinition );
-
-            if( null == MaterialObj || false == MaterialObj.HasValues )
-            {
-                throw new CswDniException( ErrorType.Error,
-                                           "The material definition could not be parsed into an object.",
-                                           "Attempted to call createMaterial with a JSON object that was not valid." );
-            }
+            MaterialObj = CswConvert.ToJObject( MaterialDefinition, true, "material" );
 
             string TradeName = MaterialObj["tradename"].ToString();
             string SupplierName = MaterialObj["suppliername"].ToString();
@@ -169,6 +160,24 @@ namespace ChemSW.Nbt.WebServices
             return RetExists;
         }
 
+        public static JObject addSizeToGrid( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition )
+        {
+            JObject Ret = new JObject();
+            JObject SizeObj = CswConvert.ToJObject( SizeDefinition, true, "size" );
+
+            CswNbtNode SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
+            CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
+            NodeWs.addNodeProps( SizeNode, SizeObj, null );
+            CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
+            Ret[NodeAsSize.Capacity.PropName] = NodeAsSize.Capacity.Gestalt;
+            Ret[NodeAsSize.QuantityEditable.PropName] = NodeAsSize.QuantityEditable.Gestalt;
+            Ret[NodeAsSize.Dispensable.PropName] = NodeAsSize.Dispensable.Gestalt;
+
+            SizeNode.delete();
+
+            return Ret;
+        }
+
         public static CswNbtView getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
         {
             CswNbtView RetView;
@@ -215,7 +224,7 @@ namespace ChemSW.Nbt.WebServices
             _getMaterialPropsAndSizes( MaterialObj, out SizesArray, out MaterialProperties );
 
             /* 2. Create the node */
-            CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+            CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
             CswNbtNode MaterialNode;
             CswNbtNodeKey MaterialNodeKey;
             CswNbtMetaDataNodeType MaterialNt = _MaterialNt;
