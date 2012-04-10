@@ -40,16 +40,19 @@
                 internal.stepFiveComplete = false;
                 if (startWithStep <= 4) {
                     internal.stepFourComplete = false;
-                }
-                else if (startWithStep <= 3) {
-                    internal.stepThreeComplete = false;
-                }
-                else if (startWithStep <= 2) {
-                    internal.stepTwoComplete = false;
-                }
-                else if (startWithStep <= 1) {
-                    /* This is mostly for debugging, you probably never need to reset step 1 in practice */
-                    internal.stepOneComplete = false;
+
+                    if (startWithStep <= 3) {
+                        internal.stepThreeComplete = false;
+
+                        if (startWithStep <= 2) {
+                            internal.stepTwoComplete = false;
+
+                            if (startWithStep <= 1) {
+                                /* This is mostly for debugging, you probably never need to reset step 1 in practice */
+                                internal.stepOneComplete = false;
+                            }
+                        }
+                    }
                 }
             };
 
