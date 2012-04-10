@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.WebServices
 
         public void addNodeProps( CswNbtNode Node, JObject PropsObj, CswNbtMetaDataNodeTypeTab Tab )
         {
-            if( Node != null )
+            if( Node != null && null != PropsObj && PropsObj.HasValues )
             {
                 foreach( JObject PropObj in
                     from PropJProp

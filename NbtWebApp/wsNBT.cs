@@ -3948,12 +3948,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
-                CswNbtView View = CswNbtWebServiceCreateMaterial.getMaterialSizes( _CswNbtResources, _getNodeId( MaterialId ) );
-                if( null != View )
-                {
-                    CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( _CswNbtResources, View );
-                    ReturnVal["rows"] = wsG.getThinGridRows( Int32.MinValue );
-                }
+                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialSizes( _CswNbtResources, _getNodeId( MaterialId ) );
                 _deInitResources();
             }
             catch( Exception Ex )
@@ -3968,7 +3963,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string addSizeToGrid( string SizeDefinition, string SizeNodeTypeId )
+        public string getSizeNodeProps( string SizeDefinition, string SizeNodeTypeId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3976,6 +3971,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
+
                 ReturnVal = CswNbtWebServiceCreateMaterial.getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToInt32( SizeNodeTypeId ), SizeDefinition, false );
 
                 _deInitResources();
@@ -4001,9 +3997,10 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
                 JObject MaterialObj;
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents, MaterialDefinition, out MaterialObj );
+                CswNbtNode MaterialNode;
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents, MaterialDefinition, out MaterialObj, out MaterialNode );
                 _setEditMode( NodeEditMode.Add );
-                ReturnVal = ws.createMaterial( MaterialObj );
+                ReturnVal = ws.createMaterial( MaterialObj, MaterialNode );
 
                 _deInitResources();
             }

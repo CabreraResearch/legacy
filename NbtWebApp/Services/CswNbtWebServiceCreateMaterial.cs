@@ -31,6 +31,20 @@ namespace ChemSW.Nbt.WebServices
         }
         private CswNbtMetaDataNodeType _MaterialNt;
 
+        private CswNbtView _getMaterialNodeView( CswNbtNode MaterialNode )
+        {
+            CswNbtView Ret = null;
+            if( MaterialNode != null )
+            {
+                Ret = MaterialNode.getViewOfNode();
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+                Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
+                Ret.ViewName = "Create Material: " + MaterialNode.NodeName;
+            }
+            return Ret;
+        }
+
         private CswNbtView _getMaterialNodeView( string Tradename, string Supplier, string PartNo = "" )
         {
             CswNbtView Ret = null;
@@ -41,9 +55,12 @@ namespace ChemSW.Nbt.WebServices
                 {
                     throw new CswDniException( ErrorType.Error,
                                                "Cannot get a material without a supplier and a tradename.",
-                                               "Attempted to call doesMaterialExist with invalid or empty parameters." );
+                                               "Attempted to call _getMaterialNodeView with invalid or empty parameters." );
                 }
                 Ret = new CswNbtView( _CswNbtResources );
+                Ret.ViewMode = NbtViewRenderingMode.Tree;
+                Ret.Visibility = NbtViewVisibility.User;
+                Ret.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
                 CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( _MaterialNt, false );
                 CswNbtMetaDataNodeTypeProp TradeNameNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropName );
                 CswNbtMetaDataNodeTypeProp SupplierNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
@@ -52,6 +69,12 @@ namespace ChemSW.Nbt.WebServices
                 Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
                 Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, Supplier );
                 Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
+
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+                Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
+
+                Ret.ViewName = "Create Material: " + Tradename;
             }
             return Ret;
         }
@@ -80,7 +103,11 @@ namespace ChemSW.Nbt.WebServices
             _MaterialNodeView = _getMaterialNodeView( Tradename, Supplier, PartNo );
         }
 
-        public CswNbtWebServiceCreateMaterial( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, string MaterialDefinition, out JObject MaterialObj )
+        public CswNbtWebServiceCreateMaterial( CswNbtResources CswNbtResources,
+            CswNbtStatisticsEvents CswNbtStatisticsEvents,
+            string MaterialDefinition,
+            out JObject MaterialObj,
+            out CswNbtNode MaterialNode )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
@@ -91,27 +118,47 @@ namespace ChemSW.Nbt.WebServices
             }
 
             MaterialObj = CswConvert.ToJObject( MaterialDefinition, true, "material" );
+            MaterialNode = null;
+            bool UseExistingMaterial = CswConvert.ToBoolean( MaterialObj["useexistingmaterial"] );
 
-            string TradeName = MaterialObj["tradename"].ToString();
-            string SupplierName = MaterialObj["suppliername"].ToString();
-
-            if( string.IsNullOrEmpty( TradeName ) || string.IsNullOrEmpty( SupplierName ) )
+            if( UseExistingMaterial )
             {
-                throw new CswDniException( ErrorType.Error,
-                                           "Cannot create a new material without a Tradename and a Supplier.",
-                                           "Attempted to call createMaterial without tradename and supplier properties." );
+                string NodeId = CswConvert.ToString( MaterialObj["materialnodeid"] );
+                CswPrimaryKey NodePk = new CswPrimaryKey();
+                NodePk.FromString( NodeId );
+                MaterialNode = _CswNbtResources.Nodes.GetNode( NodePk );
+                if( null == MaterialNode )
+                {
+                    throw new CswDniException( ErrorType.Error,
+                                               "The provided material definition does not match an existing material.",
+                                               "Attempted to call CswNbtWebServiceCreateMaterial without tradename and supplier properties." );
+                }
+                _MaterialNodeView = _getMaterialNodeView( MaterialNode );
+                _MaterialNt = MaterialNode.getNodeType();
             }
-
-            string PartNo = MaterialObj["partno"].ToString();
-            Int32 NodeTypeId = CswConvert.ToInt32( MaterialObj["nodetypeid"] );
-            if( Int32.MinValue == NodeTypeId )
+            else
             {
-                throw new CswDniException( ErrorType.Error,
-                                           "Cannot get a material without a type.",
-                                           "Attempted to call doesMaterialExist with invalid or empty parameters." );
+                string TradeName = CswConvert.ToString( MaterialObj["tradename"] );
+                string SupplierName = CswConvert.ToString( MaterialObj["suppliername"] );
+
+                if( string.IsNullOrEmpty( TradeName ) || string.IsNullOrEmpty( SupplierName ) )
+                {
+                    throw new CswDniException( ErrorType.Error,
+                                               "Cannot create a new material without a Tradename and a Supplier.",
+                                               "Attempted to call CswNbtWebServiceCreateMaterial without tradename and supplier properties." );
+                }
+
+                string PartNo = CswConvert.ToString( MaterialObj["partno"] );
+                _MaterialNodeView = _getMaterialNodeView( TradeName, SupplierName, PartNo );
+                Int32 NodeTypeId = CswConvert.ToInt32( MaterialObj["materialnodetypeid"] );
+                if( Int32.MinValue == NodeTypeId )
+                {
+                    throw new CswDniException( ErrorType.Error,
+                                               "Cannot get a material without a type.",
+                                               "Attempted to call CswNbtWebServiceCreateMaterial with invalid or empty parameters." );
+                }
+                _MaterialNt = _getMaterialNt( NodeTypeId );
             }
-            _MaterialNt = _getMaterialNt( NodeTypeId );
-            _MaterialNodeView = _getMaterialNodeView( TradeName, SupplierName, PartNo );
         }
 
         #endregion ctor
@@ -160,27 +207,45 @@ namespace ChemSW.Nbt.WebServices
             return RetExists;
         }
 
-        public static JObject addSizeToGrid( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition )
+        public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
+        {
+            JObject SizeObj = CswConvert.ToJObject( SizeDefinition, true, "size" );
+            CswNbtNode SizeNode;
+            return getSizeNodeProps( CswNbtResources, CswNbtStatisticsEvents, SizeNodeTypeId, SizeObj, WriteNode, out SizeNode );
+        }
+
+        public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode, out CswNbtNode SizeNode )
+        {
+            JObject SizeObj = CswConvert.ToJObject( SizeDefinition, true, "size" );
+            return getSizeNodeProps( CswNbtResources, CswNbtStatisticsEvents, SizeNodeTypeId, SizeObj, WriteNode, out SizeNode );
+        }
+
+        public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, Int32 SizeNodeTypeId, JObject SizeObj, bool WriteNode, out CswNbtNode SizeNode )
         {
             JObject Ret = new JObject();
-            JObject SizeObj = CswConvert.ToJObject( SizeDefinition, true, "size" );
 
-            CswNbtNode SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
+            SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
             CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
             NodeWs.addNodeProps( SizeNode, SizeObj, null );
             CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
-            Ret[NodeAsSize.Capacity.PropName] = NodeAsSize.Capacity.Gestalt;
-            Ret[NodeAsSize.QuantityEditable.PropName] = NodeAsSize.QuantityEditable.Gestalt;
-            Ret[NodeAsSize.Dispensable.PropName] = NodeAsSize.Dispensable.Gestalt;
+            JArray Row = new JArray();
+            Ret["row"] = Row;
 
-            SizeNode.delete();
+            Row.Add( "(New Size)" );
+            Row.Add( NodeAsSize.Capacity.Gestalt );
+            Row.Add( NodeAsSize.Dispensable.Gestalt );
+            Row.Add( NodeAsSize.QuantityEditable.Gestalt );
 
+            if( WriteNode )
+            {
+                SizeNode.postChanges( true );
+            }
             return Ret;
         }
 
-        public static CswNbtView getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
+        public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
         {
-            CswNbtView RetView;
+            JObject Ret = new JObject();
 
             if( null == MaterialId )
             {
@@ -199,37 +264,44 @@ namespace ChemSW.Nbt.WebServices
                                            "Attempted to call getMaterialSizes with a node that was not valid." );
             }
 
-            RetView = new CswNbtView( CswNbtResources );  //MaterialNode.getNodeType().CreateDefaultView();
-            RetView.ViewMode = NbtViewRenderingMode.Grid;
+            CswNbtView SizesView = new CswNbtView( CswNbtResources );  //MaterialNode.getNodeType().CreateDefaultView();
+            SizesView.ViewMode = NbtViewRenderingMode.Grid;
             CswNbtMetaDataObjectClass SizeOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
 
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
-            CswNbtViewRelationship SizeRel = RetView.AddViewRelationship( SizeOc, false );
+            CswNbtViewRelationship SizeRel = SizesView.AddViewRelationship( SizeOc, false );
 
-            RetView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-            RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
-            RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
-            RetView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
+            SizesView.AddViewPropertyAndFilter( SizeRel, SizeMaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName ) );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
+            SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
 
-            return RetView;
+            CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( CswNbtResources, SizesView );
+            Ret["rows"] = wsG.getThinGridRows( Int32.MinValue, true );
+
+            return Ret;
         }
 
-        public JObject createMaterial( JObject MaterialObj )
+
+
+        public JObject createMaterial( JObject MaterialObj, CswNbtNode MaterialNode = null )
         {
             JObject RetObj = new JObject();
+            JArray SizesArray = (JArray) MaterialObj["sizes"];
 
-            /* 1. Validate the new material and get its properties and sizes */
-            JArray SizesArray;
-            JObject MaterialProperties;
-            _getMaterialPropsAndSizes( MaterialObj, out SizesArray, out MaterialProperties );
+            if( null == MaterialNode )
+            {
+                /* 1. Validate the new material and get its properties and sizes */
+                _doesMaterialExist( true );
+                JObject MaterialProperties = (JObject) MaterialObj["properties"];
 
-            /* 2. Create the node */
-            CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-            CswNbtNode MaterialNode;
-            CswNbtNodeKey MaterialNodeKey;
-            CswNbtMetaDataNodeType MaterialNt = _MaterialNt;
-            wsTap.addNode( MaterialNt, out MaterialNode, MaterialProperties, out MaterialNodeKey );
-            RetObj["createdmaterial"] = true;
+                /* 2. Create the node */
+                CswNbtWebServiceTabsAndProps wsTap = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                CswNbtNodeKey MaterialNodeKey;
+                CswNbtMetaDataNodeType MaterialNt = _MaterialNt;
+                wsTap.addNode( MaterialNt, out MaterialNode, MaterialProperties, out MaterialNodeKey );
+                RetObj["createdmaterial"] = true;
+            }
 
             /* 3. Add the sizes */
             _addMaterialSizes( SizesArray, MaterialNode );
@@ -241,19 +313,9 @@ namespace ChemSW.Nbt.WebServices
              */
             _MaterialNodeView.SaveToCache( false );
             RetObj["nextoptions"] = new JObject();
-            RetObj["nextoptions"]["nodeview"] = _MaterialNodeView.SessionViewId.get();
+            RetObj["nextoptions"]["nodeview"] = _MaterialNodeView.SessionViewId.ToString();
 
             return RetObj;
-        }
-
-        /// <summary>
-        /// Validate the new material node, out the material node properties and sizes, and cache the material nodetype and material node view
-        /// </summary>
-        private void _getMaterialPropsAndSizes( JObject MaterialObj, out JArray SizesObj, out JObject PropertiesObj )
-        {
-            _doesMaterialExist( true );
-            PropertiesObj = (JObject) MaterialObj["properties"];
-            SizesObj = (JArray) MaterialObj["sizes"];
         }
 
         /// <summary>
@@ -265,26 +327,47 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( SizeObj.HasValues )
                 {
-                    Int32 CapacityQty = CswConvert.ToInt32( SizeObj["capacityqty"] );
-                    string CapacityUnit = SizeObj["capacityunit"].ToString();
-                    if( Int32.MinValue != CapacityQty && false == string.IsNullOrEmpty( CapacityUnit ) )
+                    CswNbtNode SizeNode;
+                    JObject SizeDef = (JObject) SizeObj["sizedef"];
+                    Int32 SizeNtId = CswConvert.ToInt32( SizeObj["nodetypeid"] );
+                    if( Int32.MinValue != SizeNtId )
                     {
-                        Tristate Dispensable = CswConvert.ToTristate( SizeObj["dispensable"] );
-                        Tristate QuantityEditable = CswConvert.ToTristate( SizeObj["quantityeditable"] );
-                        CswNbtMetaDataNodeType MaterialNt = _MaterialNt;
-                        CswNbtNode SizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                        CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
-                        NodeAsSize.Material.RelatedNodeId = MaterialNode.NodeId;
-                        NodeAsSize.Capacity.Quantity = CapacityQty;
-                        NodeAsSize.Capacity.Units = CapacityUnit;
-                        NodeAsSize.Dispensable.Checked = Dispensable;
-                        NodeAsSize.QuantityEditable.Checked = QuantityEditable;
-                        SizeNode.postChanges( true );
+                        getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeDef, true, out SizeNode );
+                        if( null != SizeNode )
+                        {
+                            CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
+                            NodeAsSize.Material.RelatedNodeId = MaterialNode.NodeId;
+                            SizeNode.postChanges( true );
+                        }
+                        else
+                        {
+                            SizesArray.Remove( SizeObj );
+                        }
                     }
                     else
                     {
                         SizesArray.Remove( SizeObj );
                     }
+                    //Int32 CapacityQty = CswConvert.ToInt32( SizeObj["capacityqty"] );
+                    //string CapacityUnit = SizeObj["capacityunit"].ToString();
+                    //if( Int32.MinValue != CapacityQty && false == string.IsNullOrEmpty( CapacityUnit ) )
+                    //{
+                    //    Tristate Dispensable = CswConvert.ToTristate( SizeObj["dispensable"] );
+                    //    Tristate QuantityEditable = CswConvert.ToTristate( SizeObj["quantityeditable"] );
+                    //    CswNbtMetaDataNodeType MaterialNt = _MaterialNt;
+                    //    CswNbtNode SizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    //    CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
+                    //    NodeAsSize.Material.RelatedNodeId = MaterialNode.NodeId;
+                    //    NodeAsSize.Capacity.Quantity = CapacityQty;
+                    //    NodeAsSize.Capacity.Units = CapacityUnit;
+                    //    NodeAsSize.Dispensable.Checked = Dispensable;
+                    //    NodeAsSize.QuantityEditable.Checked = QuantityEditable;
+                    //    SizeNode.postChanges( true );
+                    //}
+                    //else
+                    //{
+                    //    SizesArray.Remove( SizeObj );
+                    //}
                 }
                 else
                 {

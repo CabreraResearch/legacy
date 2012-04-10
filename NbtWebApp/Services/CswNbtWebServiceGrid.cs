@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns a thin JArray of grid row values
         /// </summary>
-        public JArray getThinGridRows( Int32 MaxRows )
+        public JArray getThinGridRows( Int32 MaxRows, bool AlwaysShowHeader = false )
         {
             JArray RetRows = new JArray();
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.WebServices
                 MaxRows = NodeCount;
             }
             bool IsTruncated = false;
-            if( NodeCount > 0 )
+            if( AlwaysShowHeader || NodeCount > 0 )
             {
                 JArray HeaderRow = new JArray();
                 CswCommaDelimitedString HeaderCols = new CswCommaDelimitedString();
@@ -281,30 +281,33 @@ namespace ChemSW.Nbt.WebServices
                     HeaderCols.Add( VbProp.PropName );
                 }
 
-                for( Int32 C = 0; C < MaxRows && C < NodeCount; C += 1 )
+                if( NodeCount > 0 )
                 {
-                    Tree.goToNthChild( C );
-
-                    JArray ThisRow = new JArray();
-                    RetRows.Add( ThisRow );
-                    foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                    for( Int32 C = 0; C < MaxRows && C < NodeCount; C += 1 )
                     {
-                        Int32 ColumnIdx = HeaderCols.IndexOf( Prop["propname"].ToString() );
-                        if( ColumnIdx >= 0 )
+                        Tree.goToNthChild( C );
+
+                        JArray ThisRow = new JArray();
+                        RetRows.Add( ThisRow );
+                        foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
                         {
-                            _ensureIndex( ThisRow, ColumnIdx );
-                            ThisRow[ColumnIdx] = Prop["gestalt"];
+                            Int32 ColumnIdx = HeaderCols.IndexOf( Prop["propname"].ToString() );
+                            if( ColumnIdx >= 0 )
+                            {
+                                _ensureIndex( ThisRow, ColumnIdx );
+                                ThisRow[ColumnIdx] = Prop["gestalt"];
+                            }
                         }
+
+                        IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
+
+                        Tree.goToParentNode();
                     }
 
-                    IsTruncated = IsTruncated || Tree.getCurrentNodeChildrenTruncated();
-
-                    Tree.goToParentNode();
-                }
-
-                if( IsTruncated )
-                {
-                    RetRows.Add( new JArray( "Results Truncated" ) );
+                    if( IsTruncated )
+                    {
+                        RetRows.Add( new JArray( "Results Truncated" ) );
+                    }
                 }
             }
             return RetRows;

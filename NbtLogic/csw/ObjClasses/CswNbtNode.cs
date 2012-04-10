@@ -533,6 +533,19 @@ namespace ChemSW.Nbt.ObjClasses
         //    }//
         //}//afterWriteNode()
 
+        /// <summary>
+        /// Get a tree view of this node, visible to the current user
+        /// </summary>
+        /// <returns></returns>
+        public CswNbtView getViewOfNode()
+        {
+            CswNbtView Ret = getNodeType().CreateDefaultView();
+            Ret.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
+            Ret.ViewMode = NbtViewRenderingMode.Tree;
+            Ret.Visibility = NbtViewVisibility.User;
+            Ret.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
+            return Ret;
+        }
 
         //bz # 5943
         public void delete()
