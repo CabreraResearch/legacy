@@ -28,8 +28,10 @@ namespace ChemSW.Nbt.MetaData
 												CswNbtPermit.NodeTypePermission.Edit, 
 												CswNbtPermit.NodeTypePermission.View }; 
             
-            if( null != _CswNbtResources.CurrentNbtUser.RoleNode )
+            if( null != _CswNbtResources.CurrentNbtUser.RoleId )
             {
+                CswNbtNode RoleNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.RoleId];
+                CswNbtObjClassRole RoleNodeAsRole = CswNbtNodeCaster.AsRole( RoleNode );
 				//CswNbtNodePropLogicalSet PropPermissions = ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).NodeTypePermissions;
 				//PropPermissions.SetValue( NodeTypePermission.Delete.ToString(), NewNodeType.NodeTypeId.ToString(), true );
 				//PropPermissions.SetValue( NodeTypePermission.Create.ToString(), NewNodeType.NodeTypeId.ToString(), true );
@@ -39,9 +41,9 @@ namespace ChemSW.Nbt.MetaData
 				//_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
 
 				// case 23185 - reset permission options
-				_CswNbtResources.CurrentNbtUser.RoleNode.afterPopulateProps();
+                RoleNodeAsRole.afterPopulateProps();
 
-                _CswNbtResources.Permit.set( AllPerms, NewNodeType, _CswNbtResources.CurrentNbtUser.RoleNode, true );
+                _CswNbtResources.Permit.set( AllPerms, NewNodeType, RoleNodeAsRole, true );
 
 			}//if we have a current user
             else if( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )

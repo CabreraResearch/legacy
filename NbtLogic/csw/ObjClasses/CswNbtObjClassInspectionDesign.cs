@@ -356,7 +356,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( true == this.InspectionDate.Empty )
                         {
                             this.InspectionDate.DateTimeValue = DateTime.Now;
-                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
+                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         }
                         CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
                         if( ParentNode != null )

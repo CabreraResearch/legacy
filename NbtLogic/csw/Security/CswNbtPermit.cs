@@ -55,6 +55,13 @@ namespace ChemSW.Nbt.Security
             _CswNbtResources = Resources;
         }
 
+        // This is probably a performance problem!
+        private CswNbtObjClassRole _getRole( CswPrimaryKey RoleId )
+        {
+            CswNbtNode RoleNode = _CswNbtResources.Nodes[RoleId];
+            return CswNbtNodeCaster.AsRole( RoleNode );
+        }
+
         #region NodeTypes
 
         /// <summary>
@@ -84,7 +91,7 @@ namespace ChemSW.Nbt.Security
                 }
                 else
                 {
-                    CswNbtObjClassRole Role = User.RoleNode;
+                    CswNbtObjClassRole Role = _getRole( User.RoleId );
                     if( Role != null && NodeType != null )
                     {
                         // Base case
@@ -186,7 +193,7 @@ namespace ChemSW.Nbt.Security
                                 if( ret &&
                                     NodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass &&
                                     !User.IsAdministrator() &&
-                                    User.UserNode.NodeId != NodeId &&
+                                    User.UserId != NodeId &&
                                     OCP != null &&
                                     OCP.PropName == CswNbtObjClassUser.PasswordPropertyName )
                                 {
@@ -226,7 +233,7 @@ namespace ChemSW.Nbt.Security
         {
             if( User != null )
             {
-                set( Permission, NodeType, User.RoleNode, value );
+                set( Permission, NodeType, _getRole( User.RoleId ), value );
             }
         }
 
@@ -289,7 +296,7 @@ namespace ChemSW.Nbt.Security
         {
             if( User != null )
             {
-                set( Permissions, NodeType, User.RoleNode, value );
+                set( Permissions, NodeType, _getRole( User.RoleId ), value );
             }
         }
 
@@ -361,7 +368,7 @@ namespace ChemSW.Nbt.Security
             }
             else if( User != null )
             {
-                ret = can( Action, User.RoleNode );
+                ret = can( Action, _getRole( User.RoleId ) );
             }
             return ret;
         } // can( CswNbtAction Action, ICswNbtUser User )
@@ -426,7 +433,7 @@ namespace ChemSW.Nbt.Security
         {
             if( User != null )
             {
-                set( Action, User.RoleNode, value );
+                set( Action, _getRole( User.RoleId ), value );
             }
         }
 
@@ -510,7 +517,7 @@ namespace ChemSW.Nbt.Security
                     ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
                     // filter to role and workunit
                     InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitProperty.RelatedNodeId.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.ToString(), CswNbtSubField.SubFieldName.NodeID );
 
                     ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true );
 

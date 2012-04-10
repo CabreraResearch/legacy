@@ -10,25 +10,25 @@ namespace ChemSW.Nbt.Security
         private ICswResources _Resources;
         private string _Username;
 
-		public CswNbtSystemUser( ICswResources CswNbtResources, string Username )
+        public CswNbtSystemUser( ICswResources CswNbtResources, string Username )
         {
-			_Resources = CswNbtResources;
+            _Resources = CswNbtResources;
             _Username = Username;
         }
 
-		//public bool CheckCreatePermission( int NodeTypeId )
-		//{
-		//    return true;
-		//}
-		//public bool CheckActionPermission( CswNbtActionName ActionName )
-		//{
-		//    return true;
-		//}
+        //public bool CheckCreatePermission( int NodeTypeId )
+        //{
+        //    return true;
+        //}
+        //public bool CheckActionPermission( CswNbtActionName ActionName )
+        //{
+        //    return true;
+        //}
 
-		//public bool CheckPermission( NodeTypePermission Permission, int NodeTypeId, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp )
-		//{
-		//    return true;
-		//}
+        //public bool CheckPermission( NodeTypePermission Permission, int NodeTypeId, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp )
+        //{
+        //    return true;
+        //}
 
         public bool IsAdministrator() { return true; }
         //public bool canEditPassword( CswNbtNode UserNode = null ) { return true; }
@@ -38,6 +38,13 @@ namespace ChemSW.Nbt.Security
         public CswPrimaryKey RoleId { get { return null; } }
         public CswPrimaryKey UserId { get { return null; } }
 
+        public Int32 UserNodeTypeId { get { return Int32.MinValue; } }
+        public Int32 UserObjectClassId { get { return Int32.MinValue; } }
+        public Int32 RoleNodeTypeId { get { return Int32.MinValue; } }
+        public Int32 RoleObjectClassId { get { return Int32.MinValue; } }
+
+        public Int32 PasswordPropertyId { get { return Int32.MinValue; } }
+
         public CswNbtNodePropText UsernameProperty { get { return null; } }
         public CswNbtNodePropPassword PasswordProperty { get { return null; } }
         public CswNbtNodePropText FirstNameProperty { get { return null; } }
@@ -45,6 +52,8 @@ namespace ChemSW.Nbt.Security
         public CswNbtNodePropText EmailProperty { get { return null; } }
         public CswNbtNodePropLocation DefaultLocationProperty { get { return null; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return null; } }
+        public CswPrimaryKey DefaultLocationId { get { return null; } }
+        public CswPrimaryKey WorkUnitId { get { return null; } }
 
         public Int32 RoleTimeout { get { return Int32.MinValue; } }
 
@@ -53,9 +62,9 @@ namespace ChemSW.Nbt.Security
         public string FirstName { get { return string.Empty; } }
         public string LastName { get { return string.Empty; } }
         public string Email { get { return string.Empty; } }
-		public string DateFormat { get { return string.Empty; } }
-		public string TimeFormat { get { return string.Empty; } }
-		public Int32 PageSize { get { return 50; } }
+        public string DateFormat { get { return string.Empty; } }
+        public string TimeFormat { get { return string.Empty; } }
+        public Int32 PageSize { get { return 50; } }
 
         public void postChanges( bool ForceUpdate )
         {

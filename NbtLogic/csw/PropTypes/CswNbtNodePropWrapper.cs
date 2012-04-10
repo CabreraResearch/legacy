@@ -326,9 +326,9 @@ namespace ChemSW.Nbt.PropTypes
 
                     // case 24438 - Use user's default location
                     if( _CswNbtResources.CurrentNbtUser != null &&
-                        _CswNbtResources.CurrentNbtUser.DefaultLocationProperty != null )
+                        _CswNbtResources.CurrentNbtUser.DefaultLocationId != null )
                     {
-                        this.AsLocation.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationProperty.SelectedNodeId;
+                        this.AsLocation.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
                     }
                     
                     DoCopy = true;

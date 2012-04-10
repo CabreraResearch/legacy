@@ -116,6 +116,12 @@ namespace ChemSW.Nbt.ObjClasses
             _RoleNodeObjClass.postChanges( ForceUpdate );
         }
 
+        public Int32 UserNodeTypeId { get { return NodeTypeId; } }
+        public Int32 UserObjectClassId { get { return ObjectClass.ObjectClassId; } }
+        public Int32 RoleNodeTypeId { get { return RoleNode.NodeTypeId; } }
+        public Int32 RoleObjectClassId { get { return RoleNode.ObjectClass.ObjectClassId; } }
+
+        public Int32 PasswordPropertyId { get { return PasswordProperty.NodeTypePropId; } }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -354,7 +360,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[DefaultLocationPropertyName].AsLocation; } }
+        public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName].AsRelationship; } }
+        public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
 
         #endregion
 
