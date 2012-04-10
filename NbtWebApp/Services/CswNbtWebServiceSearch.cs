@@ -1,16 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.DB;
 using ChemSW.Nbt.Search;
+using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Logic;
 
 
 namespace ChemSW.Nbt.WebServices
@@ -18,6 +16,7 @@ namespace ChemSW.Nbt.WebServices
     public class CswNbtWebServiceSearch
     {
         private readonly CswNbtResources _CswNbtResources;
+        private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         //private readonly Int32 _ConstrainToObjectClassId = Int32.MinValue;
         private const string _NodeTypePrefix = "nt_";
         private const string _ObjectClassPrefix = "oc_";
@@ -44,9 +43,10 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        public CswNbtWebServiceSearch( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceSearch( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
             _ViewBuilder = new CswNbtViewBuilder( _CswNbtResources, _ProhibittedFieldTypes );
             //wsViewBuilder.CswViewBuilderProp 
         }//ctor
@@ -388,7 +388,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
             return _finishUniversalSearch( Search );
         }
-        
+
         public JObject restoreUniversalSearch( CswNbtSessionDataId SessionDataId )
         {
             JObject ret = new JObject();
@@ -423,7 +423,7 @@ namespace ChemSW.Nbt.WebServices
         private JObject _finishUniversalSearch( CswNbtSearch Search )
         {
             ICswNbtTree Tree = Search.Results();
-            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null );
+            CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, null );
 
             JObject ret = new JObject();
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );

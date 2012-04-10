@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -16,10 +15,11 @@ namespace ChemSW.Nbt.WebServices
 
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtView _View;
-
-        public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtView View )
+        private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
+        public CswNbtWebServiceTable( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, CswNbtView View )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
             _View = View;
             _CswNbtResources.EditMode = NodeEditMode.Table;
         }
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.WebServices
                             // which we don't need for Buttons.
                             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
-                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                             JProperty JpPropData = ws.makePropJson( NodeId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue );
                             JObject PropData = (JObject) JpPropData.Value;
 

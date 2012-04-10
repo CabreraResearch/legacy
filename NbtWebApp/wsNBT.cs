@@ -854,7 +854,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtView View = _getView( ViewId );
                     ReturnVal = ws.getDefaultContent( View );
                 }
@@ -1167,7 +1167,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != View )
                     {
                         CswNbtNode Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-                        CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, View );
+                        CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, _CswNbtStatisticsEvents, View );
                         ReturnVal = wsTable.getTable();
                         View.SaveToCache( true );
                     }
@@ -1875,7 +1875,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, CswConvert.ToBoolean( Multi ) );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ) );
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
@@ -1912,7 +1912,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, CswConvert.ToBoolean( Multi ) );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ) );
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
@@ -1949,7 +1949,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
                     ReturnVal = ws.getSingleProp( NodeId, SafeNodeKey, PropId, CswConvert.ToInt32( NodeTypeId ), NewPropJson );
                 }
@@ -2049,7 +2049,7 @@ namespace ChemSW.Nbt.WebServices
                     ParsedNodeIds.FromString( NodeIds );
                     Collection<CswPrimaryKey> NodePks = _getNodePks( ParsedNodeIds, ParsedNodeKeys );
 
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
                     CswNbtView View = _getView( ViewId );
                     ReturnVal = ws.saveProps( NodePks, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
@@ -2082,7 +2082,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     bool ret = ws.copyPropValues( SourceNodeKey, CopyNodeIds, PropIds );
                     ReturnVal.Add( new JProperty( "succeeded", ret ) );
                 }
@@ -2400,7 +2400,7 @@ namespace ChemSW.Nbt.WebServices
                             }
 
                             // Save the binary data
-                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                             bool ret = ws.SetPropBlobValue( FileData, FileName, ContentType, PropId, Column );
 
                             ReturnVal = new JObject( new JProperty( "success", ret.ToString().ToLower() ) );
@@ -2455,7 +2455,7 @@ namespace ChemSW.Nbt.WebServices
                         }
 
                         // Save the binary data
-                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                         string MolData = CswTools.ByteArrayToString( FileData ).Replace( "\r", "" );
                         bool Success = ws.saveMolProp( MolData, PropId );
 
@@ -2497,7 +2497,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( false == string.IsNullOrEmpty( molData ) && false == string.IsNullOrEmpty( PropId ) )
                     {
-                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                         bool Succeeded = ws.saveMolProp( molData, PropId );
                         ReturnVal["success"] = Succeeded;
                         if( Succeeded )
@@ -2606,7 +2606,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
                     bool ret = ws.moveProp( PropId, CswConvert.ToInt32( NewRow ), CswConvert.ToInt32( NewColumn ) );
                     ReturnVal.Add( new JProperty( "moveprop", ret.ToString().ToLower() ) );
@@ -2638,7 +2638,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
                     bool ret = ws.removeProp( PropId );
                     ReturnVal.Add( new JProperty( "removeprop", ret.ToString().ToLower() ) );
@@ -2673,7 +2673,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
                     Enum.TryParse<CswNbtMetaDataNodeTypeLayoutMgr.LayoutType>( LayoutType, out RealLayoutType );
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal["add"] = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, RealLayoutType );
                 }
 
@@ -2707,7 +2707,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Unknown;
                     Enum.TryParse<CswNbtMetaDataNodeTypeLayoutMgr.LayoutType>( LayoutType, out RealLayoutType );
 
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     bool ret = ws.addPropertyToLayout( PropId, TabId, RealLayoutType );
                     ReturnVal.Add( new JProperty( "result", ret.ToString().ToLower() ) );
                 }
@@ -2744,7 +2744,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtView View = _getView( ViewId );
                     ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NbtNodeKey );
                 }
@@ -2776,7 +2776,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
                 }
 
@@ -2842,7 +2842,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
                     if( null != SearchPair )
                     {
@@ -2879,7 +2879,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
                     if( null != SearchPair )
                     {
@@ -2915,7 +2915,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal = ws.doUniversalSearch( SearchTerm );
                 }
                 _deInitResources();
@@ -2943,7 +2943,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
                     ReturnVal = ws.restoreUniversalSearch( RealSessionDataId );
                 }
@@ -2972,7 +2972,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
                     ReturnVal = ws.filterUniversalSearch( RealSessionDataId, JObject.Parse( Filter ), Action );
                 }
@@ -3002,7 +3002,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView View = _getView( ViewId );
-                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources );
+                    CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
                     ReturnVal = ws.saveSearchAsView( RealSessionDataId, View );
                 }
@@ -3168,7 +3168,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     bool ret = ws.ClearPropValue( PropId, CswConvert.ToBoolean( IncludeBlob ) );
                     ReturnVal = new JObject( new JProperty( "Succeeded", ret.ToString().ToLower() ) );
                 }
@@ -3923,7 +3923,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo );
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo );
                 ws.doesMaterialExist( ReturnVal );
 
                 _deInitResources();
@@ -3968,6 +3968,30 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string addSizeToGrid( string SizeDefinition, string SizeNodeTypeId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                ReturnVal = CswNbtWebServiceCreateMaterial.getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToInt32( SizeNodeTypeId ), SizeDefinition, false );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterialSizes()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string createMaterial( string MaterialDefinition )
         {
             JObject ReturnVal = new JObject();
@@ -3977,7 +4001,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
                 JObject MaterialObj;
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, MaterialDefinition, out MaterialObj );
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents, MaterialDefinition, out MaterialObj );
                 _setEditMode( NodeEditMode.Add );
                 ReturnVal = ws.createMaterial( MaterialObj );
 

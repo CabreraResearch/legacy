@@ -11,6 +11,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -21,12 +22,14 @@ namespace ChemSW.Nbt.WebServices
         private readonly ICswNbtUser _ThisUser;
         private readonly bool _IsMultiEdit;
         private string HistoryTabPrefix = "history_";
+        private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
-        public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources, bool Multi = false )
+        public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, bool Multi = false )
         {
             _CswNbtResources = CswNbtResources;
             _ThisUser = _CswNbtResources.CurrentNbtUser;
             _IsMultiEdit = Multi;
+            _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
         }
 
         public JObject getTabs( string NodeId, string NodeKey, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
@@ -215,7 +218,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         /// <summary>
-        /// Returns XML for a single property and its conditional properties
+        /// Returns JObject for a single property and its conditional properties
         /// </summary>
         public JObject getSingleProp( string NodeId, string NodeKey, string PropIdFromJson, Int32 NodeTypeId, string NewPropJson )
         {
@@ -237,12 +240,11 @@ namespace ChemSW.Nbt.WebServices
                 //    Node.postChanges( false );
                 //}
 
-                if( false == string.IsNullOrEmpty( NewPropJson ) )
-                {
-                    // for prop filters, update node prop value but don't save the change
-                    JObject PropJson = JObject.Parse( NewPropJson );
-                    _applyPropJson( Node, PropJson, null );
-                }
+                // for prop filters, update node prop value but don't save the change
+                JObject PropJson = CswConvert.ToJObject( NewPropJson, true, "NewPropJson" );
+
+                CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                NodeWs.addSingleNodeProp( Node, PropJson, null );
 
                 CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdFromJson );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -529,17 +531,8 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey Ret = null;
             if( Node != null )
             {
-                foreach( JObject PropObj in
-                    from PropJProp
-                        in PropsObj.Properties()
-                    where null != PropJProp.Value
-                    select (JObject) PropJProp.Value
-                        into PropObj
-                        where PropObj.HasValues
-                        select PropObj )
-                {
-                    _applyPropJson( Node, PropObj, Tab );
-                }
+                CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                NodeWs.addNodeProps( Node, PropsObj, Tab );
 
                 /* Case 8517 - this sets sequences that have setvalonadd = 0 */
                 _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.setSequenceValues( Node );
@@ -653,31 +646,6 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, CswConvert.ToInt32( TabId ), Int32.MinValue, Int32.MinValue );
             return true;
         } // addPropertyToLayout()
-
-        private void _applyPropJson( CswNbtNode Node, JObject PropObj, CswNbtMetaDataNodeTypeTab Tab )
-        {
-            CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
-
-            CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-            Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
-
-            // Recurse on sub-props
-            if( null != PropObj["subprops"] )
-            {
-                JObject SubPropsObj = (JObject) PropObj["subprops"];
-                if( SubPropsObj.HasValues )
-                {
-                    foreach( JObject ChildPropObj in SubPropsObj.Properties()
-                                .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues )
-                                .Select( ChildProp => (JObject) ChildProp.Value )
-                                .Where( ChildPropObj => ChildPropObj.HasValues ) )
-                    {
-                        _applyPropJson( Node, ChildPropObj, Tab );
-                    }
-                }
-            }
-
-        } // _applyPropJson
 
         public bool ClearPropValue( string PropIdAttr, bool IncludeBlob )
         {
