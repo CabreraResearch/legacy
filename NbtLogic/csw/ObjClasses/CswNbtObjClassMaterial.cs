@@ -15,12 +15,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassMaterial( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }//ctor()
-
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ); }
@@ -36,6 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string RegulatoryListsPropName { get { return "Regulatory Lists"; } }
         public static string TradenamePropName { get { return "Tradename"; } }
         public static string StorageCapacityPropName { get { return "Storage Capacity"; } }
+        public static string ExpirationIntervalPropName { get { return "Expiration Interval"; } }
 
 
 
@@ -163,6 +158,13 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[StorageCapacityPropName].AsImageList );
+            }
+        }
+        public CswNbtNodePropQuantity ExpirationInterval
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[ExpirationIntervalPropName].AsQuantity );
             }
         }
 

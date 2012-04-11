@@ -261,20 +261,8 @@ namespace ChemSW.Nbt
 
         /// <summary>
         /// Creates a new <see cref="CswNbtViewProperty"/> for this view
-        /// For adding a new nodetype property
         /// </summary>
-        public CswNbtViewProperty AddViewProperty( CswNbtViewRelationship ParentViewRelationship, CswNbtMetaDataNodeTypeProp Prop )
-        {
-            CswNbtViewProperty NewProperty = new CswNbtViewProperty( _CswNbtResources, this, Prop );
-            if( ParentViewRelationship != null )
-                ParentViewRelationship.addProperty( NewProperty );
-            return NewProperty;
-        }
-        /// <summary>
-        /// Creates a new <see cref="CswNbtViewProperty"/> for this view
-        /// For adding a new object class property
-        /// </summary>
-        public CswNbtViewProperty AddViewProperty( CswNbtViewRelationship ParentViewRelationship, CswNbtMetaDataObjectClassProp Prop )
+        public CswNbtViewProperty AddViewProperty( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp Prop )
         {
             CswNbtViewProperty NewProperty = new CswNbtViewProperty( _CswNbtResources, this, Prop );
             if( ParentViewRelationship != null )
@@ -289,7 +277,25 @@ namespace ChemSW.Nbt
         {
             CswNbtViewPropertyFilter NewFilter = new CswNbtViewPropertyFilter( _CswNbtResources, this, SubFieldName, FilterMode, Value, CaseSensitive );
             if( ParentViewProperty != null )
+            {
                 ParentViewProperty.addFilter( NewFilter );
+            }
+            return NewFilter;
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
+        /// </summary>
+        public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataProp MetaDataProp, string Value = "", CswNbtSubField.SubFieldName SubFieldName = null, bool CaseSensitive = false, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
+        {
+            CswNbtViewPropertyFilter NewFilter = null;
+            if( null != ParentViewRelationship && null != MetaDataProp )
+            {
+                FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                SubFieldName = SubFieldName ?? MetaDataProp.getFieldTypeRule().SubFields.Default.Name;
+                CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, MetaDataProp );
+                NewFilter = AddViewPropertyFilter( ViewProp, SubFieldName, FilterMode, Value, CaseSensitive );
+            }
             return NewFilter;
         }
 
