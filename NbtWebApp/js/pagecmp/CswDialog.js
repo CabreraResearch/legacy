@@ -156,6 +156,7 @@
                 text: '',
                 nodetypeid: '',
                 relatednodeid: '',
+                relatednodename: '',
                 onAddNode: function () { }
             };
 
@@ -168,6 +169,7 @@
             $div.CswNodeTabs({
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
+                relatednodename: o.relatednodename,
                 relatednodetypeid: o.relatednodetypeid,
                 EditMode: Csw.enums.editMode.Add,
                 ReloadTabOnSave: false,

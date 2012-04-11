@@ -795,7 +795,7 @@ namespace ChemSW.Nbt.WebServices
             ParentObj["entries"] = new JObject();
             foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in ViewNode.AllowedChildNodeTypes( true ) )
             {
-                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty );
+                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty, string.Empty );
             }
 
             JObject ChildObj = new JObject();
