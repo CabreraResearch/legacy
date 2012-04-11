@@ -338,7 +338,7 @@ namespace ChemSW.Nbt.WebServices
                 CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
                 //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
 
-                if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
+                if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
@@ -391,15 +391,15 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
                 {
-                    CswNbtObjClassUser CurrentUser = _CswNbtResources.CurrentNbtUser.UserNode;
-                    ReturnVal.Add( new JProperty( "nodeid", CurrentUser.NodeId.ToString() ) );
+                    ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
+                    ReturnVal.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
                     CswNbtNodeKey FakeKey = new CswNbtNodeKey( _CswNbtResources );
-                    FakeKey.NodeId = CurrentUser.NodeId;
-                    FakeKey.NodeSpecies = CurrentUser.Node.NodeSpecies;
-                    FakeKey.NodeTypeId = CurrentUser.NodeTypeId;
-                    FakeKey.ObjectClassId = CurrentUser.ObjectClass.ObjectClassId;
+                    FakeKey.NodeId = CurrentUser.UserId;
+                    FakeKey.NodeSpecies = NodeSpecies.Plain;
+                    FakeKey.NodeTypeId = CurrentUser.UserNodeTypeId;
+                    FakeKey.ObjectClassId = CurrentUser.UserObjectClassId;
                     ReturnVal.Add( new JProperty( "cswnbtnodekey", FakeKey.ToString() ) );
-                    CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.Node, CurrentUser.PasswordProperty.NodeTypeProp );
+                    CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
                     ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
                 }
 

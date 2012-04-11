@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.MetaData
             var ret = ( ( !InPopUp || IsOnAdd ) &&
                         FilterNodeTypePropId == Int32.MinValue &&
                         !( Node.Properties[Prop].Hidden ) &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.getNodeType(), false, null, User, Node, Prop ) );
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.getNodeType(), false, null, User, Node.NodeId, Prop ) );
             return ret;
         }
 
@@ -481,7 +481,7 @@ namespace ChemSW.Nbt.MetaData
                 Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( Prop.EditLayout.TabId );
             }
             var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, User, Node, Prop ) );
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, User, Node.NodeId, Prop ) );
             return ret;
         }
 

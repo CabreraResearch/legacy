@@ -32,8 +32,14 @@ namespace ChemSW.Nbt.Schema
             #endregion case 21203
 
 
+            #region case 25780
 
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "gestaltsearch" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "jct_nodes_props", "gestaltsearch", "Searchable indexable copy of gestalt", false, false, 512 );
+            }
 
+            #endregion case 25780
 
 
 

@@ -77,7 +77,7 @@
                                 layoutTable.addCellSetAttributes(cellSet, {welcomeid: welcomeId});
                                 var imageCell = cellSet[1][1].children('div');
                                 var textCell = cellSet[2][1].children('div');
-                                var link;
+                                var link = null;
                                 if (false === Csw.isNullOrEmpty(thisItem.buttonicon)) {
                                     link = imageCell.a({
                                         href: 'javascript:void(0);'
@@ -105,7 +105,7 @@
                                         value: thisItem.text,
                                         onClick: onClick
                                     });
-                                    if (link) {
+                                    if (false === Csw.isNullOrEmpty(link)) {
                                         link.bind('click', onClick);
                                     }
                                 }
