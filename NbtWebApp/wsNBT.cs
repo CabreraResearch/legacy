@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
     /// </summary>
     /// 
     [ScriptService]
-    [WebService( Namespace = "http://localhost/NbtWebApp" )]
+    [WebService( Namespace = "ChemSW.Nbt.WebServices" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
     public class wsNBT : WebService
     {
@@ -239,7 +239,8 @@ namespace ChemSW.Nbt.WebServices
                     _CswSessionResources.CswSessionManager != null &&
                     !ForMobile )
                 {
-                    JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+                    CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+                    JObj.Add( new JProperty( "timeout", CswTimeout.ToClientAsJavascriptString() ) );
                 }
             }
         }//_jAuthenticationStatus()
@@ -278,7 +279,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
-            
+
             // case 25694 - clear the current user, or else it will be confused with nodes in the new schemata
             _CswNbtResources.clearCurrentUser();
 
@@ -390,15 +391,15 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
                 {
-                    CswNbtObjClassUser CurrentUser = _CswNbtResources.CurrentNbtUser.UserNode;
-                    ReturnVal.Add( new JProperty( "nodeid", CurrentUser.NodeId.ToString() ) );
+                    ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
+                    ReturnVal.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
                     CswNbtNodeKey FakeKey = new CswNbtNodeKey( _CswNbtResources );
-                    FakeKey.NodeId = CurrentUser.NodeId;
-                    FakeKey.NodeSpecies = CurrentUser.Node.NodeSpecies;
-                    FakeKey.NodeTypeId = CurrentUser.NodeTypeId;
-                    FakeKey.ObjectClassId = CurrentUser.ObjectClass.ObjectClassId;
+                    FakeKey.NodeId = CurrentUser.UserId;
+                    FakeKey.NodeSpecies = NodeSpecies.Plain;
+                    FakeKey.NodeTypeId = CurrentUser.UserNodeTypeId;
+                    FakeKey.ObjectClassId = CurrentUser.UserObjectClassId;
                     ReturnVal.Add( new JProperty( "cswnbtnodekey", FakeKey.ToString() ) );
-                    CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.Node, CurrentUser.PasswordProperty.NodeTypeProp );
+                    CswPropIdAttr PasswordPropIdAttr = new CswPropIdAttr( CurrentUser.UserId, CurrentUser.PasswordPropertyId );
                     ReturnVal.Add( new JProperty( "passwordpropid", PasswordPropIdAttr.ToString() ) );
                 }
 
@@ -476,6 +477,139 @@ namespace ChemSW.Nbt.WebServices
         }//RenewSession()
 
         #endregion Authentication
+
+        #region Impersonation
+
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string impersonate( string UserId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    {
+                        CswPrimaryKey UserPk = _getNodeId( UserId );
+                        CswNbtNode UserNode = _CswNbtResources.Nodes[UserPk];
+                        if( UserNode != null )
+                        {
+                            CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+
+                            // clear Recent 
+                            _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+
+                            _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
+
+                            ReturnVal.Add( new JProperty( "result", "true" ) );
+                        }
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                   "You do not have permission to use this feature.",
+                                                   "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
+                    }
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ( ReturnVal.ToString() );
+
+        } // impersonate()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string endImpersonation()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    // We don't check for admin permissions here because the impersonated user may not have them!
+
+                    // clear Recent 
+                    _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+
+                    _CswSessionResources.CswSessionManager.endImpersonation();
+                    ReturnVal.Add( new JProperty( "result", "true" ) );
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ( ReturnVal.ToString() );
+
+        } // endImpersonation()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getUsers()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    {
+                        JArray UsersArray = new JArray();
+                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+                        foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
+                        {
+                            CswNbtObjClassUser ThisUser = CswNbtNodeCaster.AsUser( UserNode );
+                            JObject ThisUserObj = new JObject();
+                            ThisUserObj["userid"] = ThisUser.NodeId.ToString();
+                            ThisUserObj["username"] = ThisUser.Username;
+                            UsersArray.Add( ThisUserObj );
+                        }
+                        ReturnVal["users"] = UsersArray;
+                        ReturnVal.Add( new JProperty( "result", "true" ) );
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                   "You do not have permission to use this feature.",
+                                                   "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to run getUsers()." );
+                    }
+                }
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ( ReturnVal.ToString() );
+
+        } // getUsers()
+
+        #endregion Impersonation
 
         #region Render Core UI
 
@@ -656,7 +790,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
-                    ReturnVal = ws.getHeaderMenu();
+                    ReturnVal = ws.getHeaderMenu( _CswSessionResources );
                 }
 
                 _deInitResources();
@@ -1575,7 +1709,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         // Remove from quick launch
                         _CswNbtResources.SessionDataMgr.removeSessionData( DoomedView );
-                        
+
                         DoomedView.Delete();
                         ReturnVal.Add( new JProperty( "succeeded", true ) );
                     }
@@ -2305,9 +2439,8 @@ namespace ChemSW.Nbt.WebServices
 
                     // putting these in the param list causes the webservice to fail with
                     // "System.InvalidOperationException: Request format is invalid: application/octet-stream"
-                    string FileName = Context.Request["qqfile"];
                     string PropId = Context.Request["propid"];
-                    wsTools Tools = new wsTools();
+                    wsTools Tools = new wsTools( _CswNbtResources );
                     Stream MolStream = Tools.getFileInputStream( Context, "qqfile" );
 
                     if( null != MolStream && false == string.IsNullOrEmpty( PropId ) )
@@ -3777,6 +3910,91 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Nbt Manager
 
+        #region CISPro
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo );
+                ws.doesMaterialExist( ReturnVal );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getMaterialSizes( string MaterialId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                CswNbtView View = CswNbtWebServiceCreateMaterial.getMaterialSizes( _CswNbtResources, _getNodeId( MaterialId ) );
+                if( null != View )
+                {
+                    CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( _CswNbtResources, View );
+                    ReturnVal = wsG.runGrid( false );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterialSizes()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string createMaterial( string MaterialDefinition )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+                JObject MaterialObj;
+                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, MaterialDefinition, out MaterialObj );
+                _setEditMode( NodeEditMode.Add );
+                ReturnVal = ws.createMaterial( MaterialObj );
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // createMaterial()
+
+        #endregion CISPro
+
 
         #region Auditing
 
@@ -4024,7 +4242,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    wsTools Tools = new wsTools();
+                    wsTools Tools = new wsTools( _CswNbtResources );
                     Tools.purgeTempFiles( "xls" );
 
                     string TempFileName = "excelupload_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "MMddyyyy_HHmmss" ) + ".xls";
@@ -4083,6 +4301,11 @@ namespace ChemSW.Nbt.WebServices
         private void _setEditMode( string EditModeStr )
         {
             _CswNbtResources.EditMode = (NodeEditMode) Enum.Parse( typeof( NodeEditMode ), EditModeStr );
+        }
+
+        private void _setEditMode( NodeEditMode EditMode )
+        {
+            _CswNbtResources.EditMode = EditMode;
         }
 
         private CswNbtView _getView( string ViewId )

@@ -142,25 +142,23 @@ namespace ChemSW.Nbt
 
 
         /// <summary>
-        /// For adding a nodetype property
+        /// View property constructor
         /// </summary>
-        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, CswNbtMetaDataNodeTypeProp Prop )
+        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, ICswNbtMetaDataProp Prop )
             : base( CswNbtResources, View )
         {
-            this.Type = NbtViewPropType.NodeTypePropId;
-            this.NodeTypePropId = Prop.FirstPropVersionId;
-            _setProp( Prop );
-        }
-
-        /// <summary>
-        /// For adding an object class property
-        /// </summary>
-        public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, CswNbtMetaDataObjectClassProp Prop )
-            : base( CswNbtResources, View )
-        {
-            this.Type = NbtViewPropType.ObjectClassPropId;
-            this.ObjectClassPropId = Prop.PropId;
-            _setProp( Prop );
+            if( Prop is CswNbtMetaDataNodeTypeProp )
+            {
+                this.Type = NbtViewPropType.NodeTypePropId;
+                this.NodeTypePropId = ( (CswNbtMetaDataNodeTypeProp) Prop ).FirstPropVersionId;
+            }
+            else if( Prop is CswNbtMetaDataObjectClassProp )
+            {
+                this.Type = NbtViewPropType.ObjectClassPropId;
+                this.ObjectClassPropId = ( (CswNbtMetaDataObjectClassProp) Prop ).PropId;
+            }
+            this.FieldType = Prop.getFieldType().FieldType;
+            this.Name = Prop.PropNameWithQuestionNo;
         }
 
         /// <summary>
@@ -544,11 +542,11 @@ namespace ChemSW.Nbt
         //    this.ObjectClassPropId = Prop.PropId;
         //    _setProp( Prop );
         //}
-        private void _setProp( ICswNbtMetaDataProp Prop )
-        {
-            this.FieldType = Prop.getFieldType().FieldType;
-            this.Name = Prop.PropNameWithQuestionNo;
-        }
+        //private void _setProp( ICswNbtMetaDataProp Prop )
+        //{
+        //    this.FieldType = Prop.getFieldType().FieldType;
+        //    this.Name = Prop.PropNameWithQuestionNo;
+        //}
 
 
 

@@ -2,7 +2,7 @@
 // -- kriskowal Kris Kowal Copyright (C) 2009-2011 MIT License
 // -- tlrobinson Tom Robinson Copyright (C) 2009-2010 MIT License (Narwhal Project)
 // -- dantman Daniel Friesen Copyright (C) 2010 XXX TODO License or CLA
-// -- fschaefer Florian Schäfer Copyright (C) 2010 MIT License
+// -- fschaefer Florian SchÃ¤fer Copyright (C) 2010 MIT License
 // -- Gozala Irakli Gozalishvili Copyright (C) 2010 MIT License
 // -- kitcambridge Kit Cambridge Copyright (C) 2011 MIT License
 // -- kossnocorp Sasha Koss XXX TODO License or CLA

@@ -1,163 +1,189 @@
-<!-- ChemSW 
- Globals: load first (because order matters) -->
-<script type="text/javascript" src="csw.js/ChemSW.js"></script>
-<script type="text/javascript" src="csw.js/_loadfirst/csw.core.enums.js"></script>
-<script type="text/javascript" src="csw.js/_loadfirst/csw.tools.pubsub.js"></script>
-<script type="text/javascript" src="csw.js/tools/csw.cookie.js"></script>
+<!-- CSS -->
 
-<script type="text/javascript" src="csw.js/core/csw.core.clientchanges.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.clientsession.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.clientstate.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.window.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.object.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.string.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.array.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.boolean.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.date.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.function.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.type.number.js"></script>
+<link rel="stylesheet" type="text/css" href="css/_dev.ChemSW.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.combobox.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.errormessage.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.fieldtypes.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.label.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.menu.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.search.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.table.layout.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.vieweditor.css" />
+<link rel="stylesheet" type="text/css" href="css/_dev.csw.wizard.css" />
 
-<script type="text/javascript" src="csw.js/core/csw.core.ajax.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.debug.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.error.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.events.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.menu.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.tbd.js"></script>
-<script type="text/javascript" src="csw.js/core/csw.core.tools.js"></script>
+<!-- ChemSW -->
+<script type="text/javascript" src="js/ChemSW.js"></script>
 
-<!-- Actions -->
-<script type="text/javascript" src="js/actions/CswAuditHistoryGrid.js"></script>
-<script type="text/javascript" src="js/actions/csw.futureScheduling.js"></script>
-<script type="text/javascript" src="js/actions/CswInspectionStatus.js"></script>
-<script type="text/javascript" src="js/actions/CswInspectionDesign.js"></script>
-<script type="text/javascript" src="js/actions/CswQuotas.js"></script>
-<script type="text/javascript" src="js/actions/CswQuotaImage.js"></script>
-<script type="text/javascript" src="js/actions/CswScheduledRulesGrid.js"></script>
-<script type="text/javascript" src="js/actions/CswSessions.js"></script>
+<!-- Common: Core -->
+<script type="text/javascript" src="js/common/core/csw.enums.js"></script>
+<script type="text/javascript" src="js/common/core/csw.clientchanges.js"></script>
+<script type="text/javascript" src="js/common/core/csw.clientsession.js"></script>
+<script type="text/javascript" src="js/common/core/csw.clientstate.js"></script>
+<script type="text/javascript" src="js/common/core/csw.ajax.js"></script>
+<script type="text/javascript" src="js/common/core/csw.debug.js"></script>
+<script type="text/javascript" src="js/common/core/csw.dom.js"></script>
+<script type="text/javascript" src="js/common/core/csw.error.js"></script>
+<script type="text/javascript" src="js/common/core/csw.events.js"></script>
+<script type="text/javascript" src="js/common/core/csw.menu.js"></script>
+<script type="text/javascript" src="js/common/core/csw.clientstate.js"></script>
 
-<!-- Controls -->
-<script type="text/javascript" src="csw.js/controls/_control.factory.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.dom.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.br.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.button.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.div.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.form.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.img.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.input.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.li.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.link.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.moreDiv.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.numbertextbox.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.p.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.select.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.span.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.tabdiv.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.table.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.textarea.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.thingrid.js"></script>
-<script type="text/javascript" src="csw.js/controls/csw.ul.js"></script>
+<!-- Common: JS Native Types -->
+<script type="text/javascript" src="js/common/types/csw.window.js"></script>
+<script type="text/javascript" src="js/common/types/csw.object.js"></script>
+<script type="text/javascript" src="js/common/types/csw.string.js"></script>
+<script type="text/javascript" src="js/common/types/csw.array.js"></script>
+<script type="text/javascript" src="js/common/types/csw.boolean.js"></script>
+<script type="text/javascript" src="js/common/types/csw.date.js"></script>
+<script type="text/javascript" src="js/common/types/csw.function.js"></script>
+<script type="text/javascript" src="js/common/types/csw.number.js"></script>
 
-<!-- Components -->
-<script type="text/javascript" src="csw.js/components/csw.checkboxarray.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.combobox.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.datetimepicker.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.grid.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.imagebutton.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.layouttable.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.multiselect.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.timeinterval.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.tristatecheckbox.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.visibilityselect.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.universalsearch.js"></script>
-<script type="text/javascript" src="csw.js/components/csw.viewselect.js"></script>
+<!-- Nbt: Actions -->
+<script type="text/javascript" src="js/nbt/actions/csw.audithistory.js"></script>
+<script type="text/javascript" src="js/nbt/actions/csw.inspectionstatus.js"></script>
+<script type="text/javascript" src="js/nbt/actions/csw.quotas.js"></script>
+<script type="text/javascript" src="js/nbt/actions/csw.quotaimage.js"></script>
+<script type="text/javascript" src="js/nbt/actions/csw.sessions.js"></script>
 
-<script type="text/javascript" src="js/controls/CswDiv.js"></script>
-<script type="text/javascript" src="js/controls/CswInput.js"></script>
-<script type="text/javascript" src="js/controls/CswButton.js"></script>
-<script type="text/javascript" src="js/controls/CswComboBox.js"></script>
+<!-- Nbt: Wizards -->
+<script type="text/javascript" src="js/nbt/wizards/csw.createinspection.js"></script>
+<script type="text/javascript" src="js/nbt/wizards/csw.creatematerial.js"></script>
+<script type="text/javascript" src="js/nbt/wizards/csw.futurescheduling.js"></script>
+<script type="text/javascript" src="js/nbt/wizards/csw.scheduledrules.js"></script>
 
-<script type="text/javascript" src="js/controls/CswList.js"></script>
-<script type="text/javascript" src="js/controls/CswImageButton.js"></script>
-<script type="text/javascript" src="js/controls/CswNodeTypeSelect.js"></script>
-<script type="text/javascript" src="js/controls/CswTristateCheckBox.js"></script>
+<!-- Common: Layouts -->
+<script type="text/javascript" src="js/common/layouts/csw.wizard.js"></script>
 
-<!-- Tools -->
-<script type="text/javascript" src="js/tools/CswAttr.js"></script>
-<script type="text/javascript" src="js/tools/CswTools.js"></script>
-<script type="text/javascript" src="js/tools/CswQueryString.js"></script>
+<!-- Common: Literal Controls -->
+<script type="text/javascript" src="js/common/literals/_literals.factory.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.a.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.b.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.br.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.button.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.div.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.form.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.img.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.input.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.label.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.morediv.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.ol.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.p.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.select.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.span.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.table.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.textarea.js"></script>
+<script type="text/javascript" src="js/common/literals/csw.ul.js"></script>
 
-<script src="csw.js/tools/csw.clientdb.js"></script>
-<script src="csw.js/tools/csw.newwindow.js"></script>
+<!-- Common: Basic Controls -->
+<script type="text/javascript" src="js/common/controls/_controls.factory.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.numbertextbox.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.morediv.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.checkboxarray.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.combobox.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.datetimepicker.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.imagebutton.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.multiselect.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.timeinterval.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.tabdiv.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.tristatecheckbox.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.visibilityselect.js"></script>
+<script type="text/javascript" src="js/common/controls/csw.viewselect.js"></script>
+
+<!-- Common: Composite Controls -->
+<script type="text/javascript" src="js/common/composites/_composites.factory.js"></script>
+<script type="text/javascript" src="js/common/composites/csw.grid.js"></script>
+<script type="text/javascript" src="js/common/composites/csw.thingrid.js"></script>
+<script type="text/javascript" src="js/common/composites/csw.layouttable.js"></script>
+<script type="text/javascript" src="js/common/composites/csw.tree.js"></script>
+<script type="text/javascript" src="js/common/composites/csw.universalsearch.js"></script>
+<script type="text/javascript" src="js/common/composites/csw.table.js"></script>
+
+<!-- Common: Events -->
+<script type="text/javascript" src="js/common/events/csw.onenter.js"></script>
+
+<!-- Common: Tools -->
+<script type="text/javascript" src="js/common/tools/csw.pubsub.js"></script>
+<script type="text/javascript" src="js/common/tools/csw.cookie.js"></script>
+<script type="text/javascript" src="js/common/tools/csw.querystring.js"></script>
+<script type="text/javascript" src="js/common/tools/csw.clientdb.js"></script>
+<script type="text/javascript" src="js/common/tools/csw.newwindow.js"></script>
+
+<!-- Nbt: Legacy -->
+<script type="text/javascript" src="js/nbt/tools/CswAttr.js"></script>
+<script type="text/javascript" src="js/nbt/literals/CswInput.js"></script>
+
+<!-- Nbt: Layouts -->
+<script type="text/javascript" src="js/nbt/layouts/csw.tabsandprops.js"></script>
 
 <!-- PageCmp  -->
-<script type="text/javascript" src="js/pagecmp/CswDashboard.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswDefaultContent.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswDialog.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswErrorMessage.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswLogin.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswMenu.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswMenuHeader.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswMenuMain.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswQuickLaunch.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswSearch.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswWelcome.js"></script>
-<script type="text/javascript" src="js/pagecmp/CswWizard.js"></script>
+<script type="text/javascript" src="js/nbt/controls/csw.nodetypeselect.js"></script>
+<script type="text/javascript" src="js/nbt/controls/csw.nodeselect.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswDashboard.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswDefaultContent.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswDialog.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswErrorMessage.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswLogin.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswMenu.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswMenuHeader.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswMenuMain.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswQuickLaunch.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswSearch.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswWelcome.js"></script>
+<script type="text/javascript" src="js/nbt/pagecmp/CswWizard.js"></script>
 
 <!-- Node -->
 
-<script src="csw.js/props/csw.props.js"></script>
-<script src="csw.js/nodes/csw.interaction.js"></script>
-<script src="csw.js/nodes/csw.preview.js"></script>
-<script src="csw.js/nodes/csw.nbt.nodeTree.js"></script>
-<script type="text/javascript" src="js/node/CswNodeGrid.js"></script>
-<script type="text/javascript" src="js/node/CswNodePreview.js"></script>
-<script type="text/javascript" src="js/node/CswNodeSelect.js"></script>
-<script type="text/javascript" src="js/node/CswNodeTabs.js"></script>
-<script type="text/javascript" src="js/node/CswNodeTable.js"></script>
+<script type="text/javascript" src="js/nbt/props/csw.props.js"></script>
+<script type="text/javascript" src="js/nbt/nodes/csw.node.interaction.js"></script>
+<script type="text/javascript" src="js/nbt/nodes/csw.node.preview.js"></script>
+<script type="text/javascript" src="js/nbt/nodes/csw.node.tree.js"></script>
+<script type="text/javascript" src="js/nbt/nodes/CswNodeGrid.js"></script>
+<script type="text/javascript" src="js/nbt/nodes/CswNodePreview.js"></script>
+<script type="text/javascript" src="js/nbt/nodes/CswNodeSelect.js"></script>
+<script type="text/javascript" src="js/nbt/nodes/CswNodeTable.js"></script>
 
 <!-- View -->
-<script type="text/javascript" src="js/view/CswViewContentTree.js"></script>
-<script type="text/javascript" src="js/view/CswViewEditor.js"></script>
-<script type="text/javascript" src="js/view/CswViewPropFilter.js"></script>
+<script type="text/javascript" src="js/nbt/view/CswViewContentTree.js"></script>
+<script type="text/javascript" src="js/nbt/view/CswViewEditor.js"></script>
+<script type="text/javascript" src="js/nbt/view/CswViewPropFilter.js"></script>
 
 <!-- Field Types -->
-<script type="text/javascript" src="js/Fieldtypes/_CswFieldTypeFactory.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeAuditHistoryGrid.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeBarcode.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeButton.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeComments.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeComposite.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeDateTime.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeFile.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeGrid.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeImage.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeImageList.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeLink.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeList.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeLocation.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeLocationContents.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeLogical.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeLogicalSet.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeMemo.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeMol.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeMultiList.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeMTBF.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeNFPA.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeNodeTypeSelect.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeNumber.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypePassword.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypePropertyReference.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeQuantity.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeQuestion.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeRelationship.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeScientific.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeSequence.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeStatic.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeText.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeTimeInterval.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeUserSelect.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeViewPickList.js"></script>
-<script type="text/javascript" src="js/Fieldtypes/CswFieldTypeViewReference.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/_CswFieldTypeFactory.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeAuditHistoryGrid.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeBarcode.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeButton.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeComments.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeComposite.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeDateTime.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeFile.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeGrid.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeImage.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeImageList.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeLink.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeList.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeLocation.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeLocationContents.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeLogical.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeLogicalSet.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeMemo.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeMol.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeMultiList.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeMTBF.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeNFPA.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeNodeTypeSelect.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeNumber.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypePassword.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypePropertyReference.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeQuantity.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeQuestion.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeRelationship.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeScientific.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeSequence.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeStatic.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeText.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeTimeInterval.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeUserSelect.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeViewPickList.js"></script>
+<script type="text/javascript" src="js/nbt/Fieldtypes/CswFieldTypeViewReference.js"></script>
 
 <!-- Main -->
-<script type="text/javascript" src="js/Main.js"></script>
+<script type="text/javascript" src="js/nbt/Main.js"></script>

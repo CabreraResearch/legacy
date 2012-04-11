@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Security;
@@ -7,29 +8,26 @@ namespace ChemSW.Nbt.Security
 {
     public interface ICswNbtUser : ICswUser
     {
-        //CswPrimaryKey UserId { get; }
-        //CswPrimaryKey RoleId { get; }
-        void postChanges( bool ForceUpdate ); //bz# 5446
-		//bool CheckPermission( NodeTypePermission Permission, Int32 NodeTypeId, CswNbtNode Node, CswNbtMetaDataNodeTypeProp MetaDataProp );
-		//bool CheckCreatePermission( Int32 NodeTypeId );
-		//bool CheckActionPermission( CswNbtActionName ActionName );
-        CswNbtNodePropText UsernameProperty { get; }
-        //string Username { get; }
-        CswNbtNodePropPassword PasswordProperty { get; }
-        //string Rolename { get; }
-        CswNbtObjClassRole RoleNode { get; }
-        CswNbtObjClassUser UserNode { get; }
+        //void postChanges( bool ForceUpdate ); //bz# 5446
+        //CswNbtNodePropText UsernameProperty { get; }
+        //CswNbtNodePropPassword PasswordProperty { get; }
+        //CswNbtObjClassRole RoleNode { get; }
+        //CswNbtObjClassUser UserNode { get; }
         bool IsAdministrator();
-        //bool canEditPassword( CswNbtNode UserNode );
-        //bool IsDesigner();
-        //Int32 DefaultViewId { get; }   // BZ 9934
-        CswNbtNodePropText FirstNameProperty { get; }
-        CswNbtNodePropText LastNameProperty { get; }
-        //string FirstName { get; }
-        //string LastName { get; }
+        //CswNbtNodePropText FirstNameProperty { get; }
+        //CswNbtNodePropText LastNameProperty { get; }
         string Email { get; }
-        CswNbtNodePropText EmailProperty { get; }
+        //CswNbtNodePropText EmailProperty { get; }
         Int32 PageSize { get; }
+        //CswNbtNodePropLocation DefaultLocationProperty { get; }
+        //CswNbtNodePropRelationship WorkUnitProperty { get; }
+        CswPrimaryKey DefaultLocationId { get; }
+        CswPrimaryKey WorkUnitId { get; }
+        Int32 UserNodeTypeId { get; }
+        Int32 UserObjectClassId { get; }
+        Int32 RoleNodeTypeId { get; }
+        Int32 RoleObjectClassId { get; }
+        Int32 PasswordPropertyId { get; }
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt

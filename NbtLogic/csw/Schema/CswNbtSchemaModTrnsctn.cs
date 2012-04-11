@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -16,7 +15,6 @@ using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
@@ -126,7 +124,7 @@ namespace ChemSW.Nbt.Schema
         {
             //_CswResourcesForTableCaddy.commitTransaction();
             _CswNbtResources.Rollback();
-            _CswNbtResources.refresh();
+            _CswNbtResources.refreshDataDictionary();
             _CswDdl.revert();
             _CswDdl.clear();
 
@@ -134,7 +132,7 @@ namespace ChemSW.Nbt.Schema
 
         public void refreshDataDictionary()
         {
-            _CswNbtResources.refresh();
+            _CswNbtResources.refreshDataDictionary();
         }
 
 
@@ -361,13 +359,11 @@ namespace ChemSW.Nbt.Schema
 
         public void makeMissingAuditTablesAndColumns()
         {
+            DataTable DataTable = execArbitraryPlatformNeutralSqlSelect( "query for all datadatable names","select distinct tablename from data_dictionary" );
 
-            ICollection TableNamesColl = (ICollection) _CswNbtResources.CswResources.DataDictionary.getTableNames();
-            string[] TableNames = new string[TableNamesColl.Count];
-            TableNamesColl.CopyTo( TableNames, 0 );
-
-            foreach( string CurrentTableName in TableNames )
+            foreach( DataRow CurrentRow in DataTable.Rows )
             {
+                string CurrentTableName = CurrentRow["tablename"].ToString().ToLower(); 
                 makeTableAuditable( CurrentTableName );
             }
 
@@ -620,8 +616,11 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
             }
+            _CswNbtResources.ClearActionsCache();
             return NewActionId;
         }
+
+
 
         /// <summary>
         /// Convenience function for making new Configuration Variable
@@ -678,6 +677,22 @@ namespace ChemSW.Nbt.Schema
             ConfigVarTable.update( ConfigVarDataTable );
         }
 
+        public Int32 getActionId( CswNbtActionName ActionName )
+        {
+            Int32 RetActionId = Int32.MinValue;
+            if( null != Actions[ActionName] )
+            {
+                RetActionId = Actions[ActionName].ActionId;
+            }
+            return RetActionId;
+        }
+
+        public void createModuleActionJunction( CswNbtResources.CswNbtModule Module, CswNbtActionName ActionName )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            Int32 ActionId = getActionId( ActionName );
+            createModuleActionJunction( ModuleId, ActionId );
+        }
 
         /// <summary>
         /// Convenience function for making new jct_module_actions records
@@ -784,6 +799,7 @@ namespace ChemSW.Nbt.Schema
             ModulesDataTable.Rows.Add( ModuleRow );
             Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             ModulesTable.update( ModulesDataTable );
+            _CswNbtResources.ClearModulesCache();
             return NewModuleId;
         }
 
@@ -815,6 +831,14 @@ namespace ChemSW.Nbt.Schema
             return RetRuleId;
         }
 
+        /// <summary>
+        /// Convenience function for making new jct_module_objectclass records
+        /// </summary>
+        public void createModuleObjectClassJunction( CswNbtResources.CswNbtModule Module, Int32 ObjectClassId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            createModuleObjectClassJunction( ModuleId, ObjectClassId );
+        }
 
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records
@@ -851,22 +875,25 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public Int32 createObjectClass( string ObjectClassName, string IconFileName, bool AuditLevel, bool UseBatchEntry )
+        public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel, bool UseBatchEntry )
         {
-            if( !ObjectClassName.EndsWith( "Class" ) )
-                ObjectClassName += "Class";
-
-            CswTableUpdate ObjectClassTableUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class" );
-            DataTable NewObjectClassTable = ObjectClassTableUpdate.getEmptyTable();
-            DataRow NewOCRow = NewObjectClassTable.NewRow();
-            NewOCRow["objectclass"] = ObjectClassName;
-            NewOCRow["iconfilename"] = IconFileName;
-            NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
-            NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
-            NewObjectClassTable.Rows.Add( NewOCRow );
-            Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
-            ObjectClassTableUpdate.update( NewObjectClassTable );
-            return NewObjectClassId;
+            CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
+            if( null == NewObjectClass )
+            {
+                CswTableUpdate ObjectClassTableUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate",
+                                                                            "object_class" );
+                DataTable NewObjectClassTable = ObjectClassTableUpdate.getEmptyTable();
+                DataRow NewOCRow = NewObjectClassTable.NewRow();
+                NewOCRow["objectclass"] = ObjectClass.ToString();
+                NewOCRow["iconfilename"] = IconFileName;
+                NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
+                NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
+                NewObjectClassTable.Rows.Add( NewOCRow );
+                Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
+                ObjectClassTableUpdate.update( NewObjectClassTable );
+                NewObjectClass = _CswNbtResources.MetaData.getObjectClass( NewObjectClassId );
+            }
+            return NewObjectClass;
         }
 
         /// <summary>

@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Windows.Forms;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.RscAdo;
 using ChemSW.DB;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Config;
@@ -14,6 +13,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.TreeEvents;
+using ChemSW.RscAdo;
 using Microsoft.VisualBasic.FileIO;
 
 namespace ChemSW.NbtSchemaDiff
@@ -194,7 +194,7 @@ namespace ChemSW.NbtSchemaDiff
 
                 // get all nodes
                 _CswNbtResourcesLeft.AccessId = _LeftAccessId;
-                _CswNbtResourcesLeft.refresh();
+                //                _CswNbtResourcesLeft.refreshDataDictionary();
                 _CswNbtResourcesLeft.MetaData.refreshAll();
                 CswTableSelect LeftNodesSelect = _CswNbtResourcesLeft.makeCswTableSelect( "NbtSchemaDiff_Left_nodes_select", "nodes" );
                 DataTable LeftNodesTable = LeftNodesSelect.getTable();
@@ -207,7 +207,7 @@ namespace ChemSW.NbtSchemaDiff
                 }
 
                 _CswNbtResourcesRight.AccessId = _RightAccessId;
-                _CswNbtResourcesRight.refresh();
+                //                _CswNbtResourcesRight.refreshDataDictionary();
                 _CswNbtResourcesRight.MetaData.refreshAll();
                 CswTableSelect RightNodesSelect = _CswNbtResourcesRight.makeCswTableSelect( "NbtSchemaDiff_Right_nodes_select", "nodes" );
                 DataTable RightNodesTable = RightNodesSelect.getTable();
