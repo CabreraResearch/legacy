@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.Security
         public Int32 RoleObjectClassId { get { return Int32.MinValue; } }
 
         public Int32 PasswordPropertyId { get { return Int32.MinValue; } }
+        public bool PasswordIsExpired { get { return false; } }
 
         public CswNbtNodePropText UsernameProperty { get { return null; } }
         public CswNbtNodePropPassword PasswordProperty { get { return null; } }

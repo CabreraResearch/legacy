@@ -258,7 +258,7 @@ commit;
 
 
 create or replace view vwNbtUser as 
-select n.nodeid, t.nodetypeid, oc.objectclassid, u.Username, ocp.propname, p.nodetypepropid, j.gestalt
+select n.nodeid, t.nodetypeid, oc.objectclassid, u.Username, ocp.propname, p.nodetypepropid, j.field1_fk, j.field1_date, j.gestalt
   from nodes n
   join nodetypes t on n.nodetypeid = t.nodetypeid
   join object_class oc on t.objectclassid = oc.objectclassid
@@ -279,7 +279,7 @@ select n.nodeid, t.nodetypeid, oc.objectclassid, u.Username, ocp.propname, p.nod
 commit;
   
 create or replace view vwNbtRole as 
-  select n.nodeid, t.nodetypeid, oc.objectclassid, ocp.propname, p.nodetypepropid, j.gestalt
+  select n.nodeid, t.nodetypeid, oc.objectclassid, u.Username, ocp.propname, p.nodetypepropid, j.field1_fk, j.field1_date, j.gestalt
   from nodes n
   join nodetypes t on n.nodetypeid = t.nodetypeid
   join object_class oc on t.objectclassid = oc.objectclassid

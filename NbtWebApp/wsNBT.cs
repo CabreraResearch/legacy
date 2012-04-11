@@ -338,7 +338,7 @@ namespace ChemSW.Nbt.WebServices
                 CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
                 //Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
 
-                if( _CswNbtResources.CurrentNbtUser.PasswordProperty.IsExpired )
+                if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                 {
                     // BZ 9077 - Password expired
                     AuthenticationStatus = AuthenticationStatus.ExpiredPassword;

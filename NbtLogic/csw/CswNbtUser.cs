@@ -12,6 +12,11 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
+    /// <summary>
+    /// This is a read-only store of current user information
+    /// To modify the user, you have to fetch the actual user Node using the UserId
+    /// </summary>
+
     public class CswNbtUser : ICswNbtUser
     {
         private CswNbtResources _CswNbtResources;
@@ -35,10 +40,8 @@ namespace ChemSW.Nbt
         public Int32 RoleObjectClassId { get { return _RoleObjectClassId; } }
 
         private const string _FkSuffix = "_fk";
+        private const string _DateSuffix = "_date";
 
-        /// <summary>
-        /// This is a readonly store of user information
-        /// </summary>
         public CswNbtUser( CswNbtResources Resources, string Username )
         {
             _CswNbtResources = Resources;
@@ -56,6 +59,7 @@ namespace ChemSW.Nbt
                     string ObjectClassPropName = Row["propname"].ToString();
                     string ObjectClassPropValue = Row["gestalt"].ToString();
                     string ObjectClassPropValueFk = Row["field1_fk"].ToString();
+                    string ObjectClassPropValueDate = Row["field1_date"].ToString();
 
                     if( ObjectClassPropName == CswNbtObjClassUser.RolePropertyName )
                     {
@@ -70,6 +74,10 @@ namespace ChemSW.Nbt
                     if( ObjectClassPropValueFk != string.Empty )
                     {
                         _UserPropDict[ObjectClassPropName + _FkSuffix] = ObjectClassPropValueFk;
+                    }
+                    if( ObjectClassPropValueDate != string.Empty )
+                    {
+                        _UserPropDict[ObjectClassPropName + _DateSuffix] = ObjectClassPropValueDate;
                     }
                 }
             }
@@ -163,6 +171,17 @@ namespace ChemSW.Nbt
         public Int32 PasswordPropertyId
         {
             get { return _PasswordPropertyId; }
+        }
+
+        public bool PasswordIsExpired
+        {
+            get
+            {
+                DateTime ChangedDate = CswConvert.ToDateTime( _UserPropDict[CswNbtObjClassUser.PasswordPropertyName + _DateSuffix] );
+                Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
+                return ( ChangedDate == DateTime.MinValue ||
+                         ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date );
+            }
         }
 
     } // CswNbtUser

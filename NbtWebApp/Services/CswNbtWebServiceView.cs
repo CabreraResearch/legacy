@@ -146,7 +146,8 @@ namespace ChemSW.Nbt.WebServices
             ICswNbtUser User = _CswNbtResources.CurrentNbtUser;
             if( User != null )
             {
-                CswNbtObjClassUser UserOc = User.UserNode;
+                CswNbtNode UserNode = _CswNbtResources.Nodes[User.UserId];
+                CswNbtObjClassUser UserOc = CswNbtNodeCaster.AsUser( UserNode );
 
                 // Recent
                 JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );

@@ -120,8 +120,9 @@ namespace ChemSW.Nbt.ObjClasses
         public Int32 UserObjectClassId { get { return ObjectClass.ObjectClassId; } }
         public Int32 RoleNodeTypeId { get { return RoleNode.NodeTypeId; } }
         public Int32 RoleObjectClassId { get { return RoleNode.ObjectClass.ObjectClassId; } }
-
+        
         public Int32 PasswordPropertyId { get { return PasswordProperty.NodeTypePropId; } }
+        public bool PasswordIsExpired { get { return PasswordProperty.IsExpired; } }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
