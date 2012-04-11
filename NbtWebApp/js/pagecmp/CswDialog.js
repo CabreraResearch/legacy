@@ -157,6 +157,8 @@
                 nodetypeid: '',
                 relatednodeid: '',
                 relatednodename: '',
+                relatednodetypeid: '',
+                relatedobjectclassid: '',
                 onAddNode: function () { }
             };
 
@@ -171,6 +173,7 @@
                 relatednodeid: o.relatednodeid,
                 relatednodename: o.relatednodename,
                 relatednodetypeid: o.relatednodetypeid,
+                relatedobjectclassid: o.relatedobjectclassid,
                 EditMode: Csw.enums.editMode.Add,
                 ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey) {

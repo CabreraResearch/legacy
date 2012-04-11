@@ -90,6 +90,7 @@ namespace ChemSW.Nbt.WebServices
             string RelatedNodeId = string.Empty;
             string RelatedNodeName = string.Empty;
             string RelatedNodeTypeId = string.Empty;
+            string RelatedObjectClassId = string.Empty;
             CswNbtNode Node = null;
             Int32 NodeTypeId = Int32.MinValue;
             Int32 NodeId = Int32.MinValue;
@@ -105,6 +106,7 @@ namespace ChemSW.Nbt.WebServices
                     RelatedNodeId = NodeId.ToString();
                     RelatedNodeName = Node.NodeName;
                     RelatedNodeTypeId = Node.NodeTypeId.ToString();
+                    RelatedObjectClassId = Node.getObjectClassId().ToString();
                 }
             }
 
@@ -167,7 +169,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
                         .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
-                                                         makeAddMenuItem( Entry, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId ) ) ) )
+                                                         makeAddMenuItem( Entry, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId ) ) ) )
                     {
                         AddObj.Add( AddNodeType );
                     }
@@ -326,13 +328,14 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getMenu()
 
-        public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, string RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId )
+        public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, string RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             return new JObject( new JProperty( "text", Entry.NodeType.NodeTypeName ),
                                 new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
                                 new JProperty( "relatednodeid", RelatedNodeId ),  //for Grid Props
                                 new JProperty( "relatednodename", RelatedNodeName ),  //for Grid Props
                                 new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
+                                new JProperty( "relatedobjectclassid", RelatedObjectClassId ),
                                 new JProperty( "action", CswNbtWebServiceMainMenu.MenuActions.AddNode.ToString() ) );
         } // makeAddMenuItem()
 
