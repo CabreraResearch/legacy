@@ -22,7 +22,7 @@
 //            relatednodeid: '',
 //            relatednodename: '',
 //            relatednodetypeid: '',
-            relatedobjectclassid: '',
+//            relatedobjectclassid: '',
 //            tabid: '',
 //            nodetypeid: '',
 //            filterToPropId: '',
@@ -34,8 +34,7 @@
 //            onSave: null,
 //            ReloadTabOnSave: true,
 //            Refresh: null,
-//            onBeforeTabSelect: null,
-            onBeforeTabSelect: function(){ return true; },
+//            onBeforeTabSelect: function(){ return true; },
 //            onTabSelect: null,
 //            onPropertyChange: null,
 //            onPropertyRemove: null,
@@ -216,7 +215,7 @@
 //                Date: o.date,
 //                Multi: o.Multi,
 //                filterToPropId: o.filterToPropId,
-                ConfigMode: o.Config
+//                ConfigMode: o.Config
 //            };
 
 //            Csw.ajax.post({
@@ -282,7 +281,7 @@
 //                                        relatednodeid: o.relatednodeid,
 //                                        relatednodename: o.relatednodename,
 //                                        relatednodetypeid: o.relatednodetypeid,
-                                        relatedobjectclassid: o.relatedobjectclassid,
+//                                        relatedobjectclassid: o.relatedobjectclassid,
 //                                        propid: propId,
 //                                        propDiv: propCell.children('div'),
 //                                        propData: thisProp,
@@ -519,7 +518,7 @@
 //                    relatednodeid: o.relatednodeid,
 //                    relatednodename: o.relatednodename,
 //                    relatednodetypeid: o.relatednodetypeid,
-                    relatedobjectclassid: o.relatedobjectclassid,
+//                    relatedobjectclassid: o.relatedobjectclassid,
 //                    propid: propId,
 //                    propDiv: propCell.div(),
 //                    saveBtn: saveBtn,
