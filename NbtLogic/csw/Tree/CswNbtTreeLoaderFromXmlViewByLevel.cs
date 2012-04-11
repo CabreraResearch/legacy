@@ -95,6 +95,7 @@ namespace ChemSW.Nbt
             foreach( DataRow NodesRow in NodesTable.Rows )
             {
                 Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
+                CswPrimaryKey ThisNodePk = new CswPrimaryKey( "nodes", ThisNodeId );
                 Int32 ThisParentNodeId = Int32.MinValue;
                 if( NodesTable.Columns.Contains( "parentnodeid" ) )
                 {
@@ -105,7 +106,7 @@ namespace ChemSW.Nbt
                 // Verify permissions
                 // this could be a performance problem
                 CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
+                if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeType, true, null, _RunAsUser, ThisNodePk ) )
                 {
                     // Handle property multiplexing
                     // This assumes that property rows for the same nodeid are next to one another

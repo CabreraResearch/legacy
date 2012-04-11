@@ -2,7 +2,7 @@
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01J-01
+    /// Post-schema update script
     /// </summary>
     public class RunAfterEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
