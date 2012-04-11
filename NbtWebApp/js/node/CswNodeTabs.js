@@ -214,7 +214,8 @@
                 NodeTypeId: o.nodetypeid,
                 Date: o.date,
                 Multi: o.Multi,
-                filterToPropId: o.filterToPropId
+                filterToPropId: o.filterToPropId,
+                ConfigMode: o.Config
             };
 
             Csw.ajax.post({
