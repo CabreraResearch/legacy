@@ -8,7 +8,6 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -32,12 +31,6 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
-
-        public CswNbtObjClassRole( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -86,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string ActionPermissionsOriginalValueStr = ActionPermissionsPropWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleMultiList) _CswNbtResources.MetaData.getFieldTypeRule( ActionPermissionsPropWrapper.getFieldType().FieldType ) ).ValueSubField.Column );
                 CswCommaDelimitedString ActionPermissionsOriginalValue = new CswCommaDelimitedString();
                 ActionPermissionsOriginalValue.FromString( ActionPermissionsOriginalValueStr );
-                
+
                 if( ActionPermissions.Value != ActionPermissionsOriginalValue )
                 {
                     // You can never grant your own action permissions
@@ -108,6 +101,28 @@ namespace ChemSW.Nbt.ObjClasses
                                 // case 23677
                                 throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role",
                                     "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+                            }
+                            /* Case 24447 */
+                            if( Action.Name == CswNbtActionName.Create_Material )
+                            {
+                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+
+                                bool HasOneMaterialCreate = false;
+                                foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+                                {
+                                    string NodeTypePermission = MakeNodeTypePermissionValue(
+                                        MaterialNt.FirstVersionNodeTypeId,
+                                        CswNbtPermit.NodeTypePermission.Create );
+
+                                    HasOneMaterialCreate = HasOneMaterialCreate ||
+                                                           NodeTypePermissions.CheckValue( NodeTypePermission );
+                                }
+                                if( false == HasOneMaterialCreate )
+                                {
+                                    throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role without first granting Create permission to at least one Material.",
+                                        "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+                                }
+
                             }
                             if( false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
                             {
@@ -149,18 +164,18 @@ namespace ChemSW.Nbt.ObjClasses
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
             }
 
-            // case 22424
-            // Prevent deleting roles in use
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
-            {
-                CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
-                if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
-                {
-                    throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,
-                                                 "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
-                }
-            }
+            //// case 22424
+            //// Prevent deleting roles in use
+            //CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
+            //{
+            //    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+            //    if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
+            //    {
+            //        throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,
+            //                                     "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
+            //    }
+            //}
 
             ////prevent user from deleting ScheduleRunner
             //if (Name.Text.ToLower() == "schedulerunner")

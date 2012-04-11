@@ -252,6 +252,12 @@ namespace ChemSW.Nbt
             return _CswNbtNodeCollection.GetNode( NodePk, Date );
         }
 
+
+        public string makeClientNodeReference( CswNbtNode Node )
+        {
+            return "[[" + Node.NodeId.ToString() + "][" + Node.NodeName + "]]";
+        }
+
         #endregion Nodes and Trees
 
 
@@ -526,10 +532,29 @@ namespace ChemSW.Nbt
         public void ClearCache()
         {
             _clear();
-            initModules();
+            ClearModulesCache();
             //_initNotifications( true );
+            ClearActionsCache();
+        }
+
+        /// <summary>
+        /// Refresh the Actions Collection
+        /// </summary>
+        public void ClearActionsCache()
+        {
             _ActionCollection = new CswNbtActionCollection( this, _ExcludeDisabledModules );
         }
+
+        /// <summary>
+        /// Refresh the Modules Collection
+        /// </summary>
+        public void ClearModulesCache()
+        {
+            initModules();
+        }
+
+
+
         /// <summary>
         /// Stores the datetime that this class was cached
         /// </summary>
@@ -943,7 +968,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Refreshes data dictionary content stored in cache
         /// </summary>
-        public void refresh() { _CswResources.refresh(); }
+        public void refreshDataDictionary() { _CswResources.refreshDataDictionary(); }
         /// <summary>
         /// Table factory used to create datatables
         /// </summary>
@@ -993,6 +1018,19 @@ namespace ChemSW.Nbt
         /// Set the context information for this audit transaction
         /// </summary>
         public string AuditContext { set { _CswResources.AuditContext = value; } }
+
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditUsername { set { _CswResources.AuditUsername = value; } }
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditFirstName { set { _CswResources.AuditFirstName = value; } }
+        /// <summary>
+        /// Set the context information for this audit transaction
+        /// </summary>
+        public string AuditLastName { set { _CswResources.AuditLastName = value; } }
 
         public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
 

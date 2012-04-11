@@ -28,15 +28,11 @@ namespace ChemSW.Nbt.ObjClasses
         public static string PageSizePropertyName { get { return "Page Size"; } }
         public static string DateFormatPropertyName { get { return "Date Format"; } }
         public static string TimeFormatPropertyName { get { return "Time Format"; } }
+        public static string DefaultLocationPropertyName { get { return "Default Location"; } }
+        public static string WorkUnitPropertyName { get { return "Work Unit"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-
-        public CswNbtObjClassUser( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }
 
         public CswNbtObjClassUser( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
@@ -57,15 +53,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // _RoleNode
 
-        private CswNbtObjClassRole __RoleNodeObjClass= null;
-        private CswNbtObjClassRole _RoleNodeObjClass {
-            get {
+        private CswNbtObjClassRole __RoleNodeObjClass = null;
+        private CswNbtObjClassRole _RoleNodeObjClass
+        {
+            get
+            {
                 if( __RoleNodeObjClass == null )
                 {
                     _initRole();
                 }
                 return __RoleNodeObjClass;
-            } 
+            }
         } // _RoleNodeObjClass
 
         private void _initRole()
@@ -118,6 +116,13 @@ namespace ChemSW.Nbt.ObjClasses
             _RoleNodeObjClass.postChanges( ForceUpdate );
         }
 
+        public Int32 UserNodeTypeId { get { return NodeTypeId; } }
+        public Int32 UserObjectClassId { get { return ObjectClass.ObjectClassId; } }
+        public Int32 RoleNodeTypeId { get { return RoleNode.NodeTypeId; } }
+        public Int32 RoleObjectClassId { get { return RoleNode.ObjectClass.ObjectClassId; } }
+        
+        public Int32 PasswordPropertyId { get { return PasswordProperty.NodeTypePropId; } }
+        public bool PasswordIsExpired { get { return PasswordProperty.IsExpired; } }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -355,7 +360,10 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
-
+        public CswNbtNodePropLocation DefaultLocationProperty { get { return _CswNbtNode.Properties[DefaultLocationPropertyName].AsLocation; } }
+        public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
+        public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[WorkUnitPropertyName].AsRelationship; } }
+        public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
 
         #endregion
 
