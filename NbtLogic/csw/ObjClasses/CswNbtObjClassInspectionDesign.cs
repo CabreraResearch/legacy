@@ -205,15 +205,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        /// <summary>
-        /// Constructor overload
-        /// </summary>
-        public CswNbtObjClassInspectionDesign( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }//ctor()
-
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ); }
@@ -365,7 +356,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( true == this.InspectionDate.Empty )
                         {
                             this.InspectionDate.DateTimeValue = DateTime.Now;
-                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserNode.NodeId;
+                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                         }
                         CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
                         if( ParentNode != null )

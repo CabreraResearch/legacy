@@ -12,83 +12,83 @@
 **/
 $.jgrid = {
 	defaults : {
-		recordtext: "{0} - {1}\u3000共 {2} 条",	// 共字前是全角空格
-		emptyrecords: "无数据显示",
-		loadtext: "读取中...",
-		pgtext : " {0} 共 {1} 页"
+		recordtext: "{0} - {1}\u3000å…± {2} æ¡",	// å…±å­—å‰æ˜¯å…¨è§’ç©ºæ ¼
+		emptyrecords: "æ— æ•°æ®æ˜¾ç¤º",
+		loadtext: "è¯»å–ä¸­...",
+		pgtext : " {0} å…± {1} é¡µ"
 	},
 	search : {
-		caption: "搜索...",
-		Find: "查找",
-		Reset: "重置",
-		odata : ['等于\u3000\u3000', '不等\u3000\u3000', '小于\u3000\u3000', '小于等于','大于\u3000\u3000','大于等于', 
-			'开始于','不开始于','属于\u3000\u3000','不属于','结束于','不结束于','包含\u3000\u3000','不包含'],
-		groupOps: [	{ op: "AND", text: "所有" },	{ op: "OR",  text: "任一" }	],
-		matchText: " 匹配",
-		rulesText: " 规则"
+		caption: "æœç´¢...",
+		Find: "æŸ¥æ‰¾",
+		Reset: "é‡ç½®",
+		odata : ['ç­‰äºŽ\u3000\u3000', 'ä¸ç­‰\u3000\u3000', 'å°äºŽ\u3000\u3000', 'å°äºŽç­‰äºŽ','å¤§äºŽ\u3000\u3000','å¤§äºŽç­‰äºŽ', 
+			'å¼€å§‹äºŽ','ä¸å¼€å§‹äºŽ','å±žäºŽ\u3000\u3000','ä¸å±žäºŽ','ç»“æŸäºŽ','ä¸ç»“æŸäºŽ','åŒ…å«\u3000\u3000','ä¸åŒ…å«'],
+		groupOps: [	{ op: "AND", text: "æ‰€æœ‰" },	{ op: "OR",  text: "ä»»ä¸€" }	],
+		matchText: " åŒ¹é…",
+		rulesText: " è§„åˆ™"
 	},
 	edit : {
-		addCaption: "添加记录",
-		editCaption: "编辑记录",
-		bSubmit: "提交",
-		bCancel: "取消",
-		bClose: "关闭",
-		saveData: "数据已改变，是否保存？",
-		bYes : "是",
-		bNo : "否",
-		bExit : "取消",
+		addCaption: "æ·»åŠ è®°å½•",
+		editCaption: "ç¼–è¾‘è®°å½•",
+		bSubmit: "æäº¤",
+		bCancel: "å–æ¶ˆ",
+		bClose: "å…³é—­",
+		saveData: "æ•°æ®å·²æ”¹å˜ï¼Œæ˜¯å¦ä¿å­˜ï¼Ÿ",
+		bYes : "æ˜¯",
+		bNo : "å¦",
+		bExit : "å–æ¶ˆ",
 		msg: {
-			required:"此字段必需",
-			number:"请输入有效数字",
-			minValue:"输值必须大于等于 ",
-			maxValue:"输值必须小于等于 ",
-			email: "这不是有效的e-mail地址",
-			integer: "请输入有效整数",
-			date: "请输入有效时间",
-			url: "无效网址。前缀必须为 ('http://' 或 'https://')",
-			nodefined : " 未定义！",
-			novalue : " 需要返回值！",
-			customarray : "自定义函数需要返回数组！",
+			required:"æ­¤å­—æ®µå¿…éœ€",
+			number:"è¯·è¾“å…¥æœ‰æ•ˆæ•°å­—",
+			minValue:"è¾“å€¼å¿…é¡»å¤§äºŽç­‰äºŽ ",
+			maxValue:"è¾“å€¼å¿…é¡»å°äºŽç­‰äºŽ ",
+			email: "è¿™ä¸æ˜¯æœ‰æ•ˆçš„e-mailåœ°å€",
+			integer: "è¯·è¾“å…¥æœ‰æ•ˆæ•´æ•°",
+			date: "è¯·è¾“å…¥æœ‰æ•ˆæ—¶é—´",
+			url: "æ— æ•ˆç½‘å€ã€‚å‰ç¼€å¿…é¡»ä¸º ('http://' æˆ– 'https://')",
+			nodefined : " æœªå®šä¹‰ï¼",
+			novalue : " éœ€è¦è¿”å›žå€¼ï¼",
+			customarray : "è‡ªå®šä¹‰å‡½æ•°éœ€è¦è¿”å›žæ•°ç»„ï¼",
 			customfcheck : "Custom function should be present in case of custom checking!"
 			
 		}
 	},
 	view : {
-		caption: "查看记录",
-		bClose: "关闭"
+		caption: "æŸ¥çœ‹è®°å½•",
+		bClose: "å…³é—­"
 	},
 	del : {
-		caption: "删除",
-		msg: "删除所选记录？",
-		bSubmit: "删除",
-		bCancel: "取消"
+		caption: "åˆ é™¤",
+		msg: "åˆ é™¤æ‰€é€‰è®°å½•ï¼Ÿ",
+		bSubmit: "åˆ é™¤",
+		bCancel: "å–æ¶ˆ"
 	},
 	nav : {
 		edittext: "",
-		edittitle: "编辑所选记录",
+		edittitle: "ç¼–è¾‘æ‰€é€‰è®°å½•",
 		addtext:"",
-		addtitle: "添加新记录",
+		addtitle: "æ·»åŠ æ–°è®°å½•",
 		deltext: "",
-		deltitle: "删除所选记录",
+		deltitle: "åˆ é™¤æ‰€é€‰è®°å½•",
 		searchtext: "",
-		searchtitle: "查找",
+		searchtitle: "æŸ¥æ‰¾",
 		refreshtext: "",
-		refreshtitle: "刷新表格",
-		alertcap: "注意",
-		alerttext: "请选择记录",
+		refreshtitle: "åˆ·æ–°è¡¨æ ¼",
+		alertcap: "æ³¨æ„",
+		alerttext: "è¯·é€‰æ‹©è®°å½•",
 		viewtext: "",
-		viewtitle: "查看所选记录"
+		viewtitle: "æŸ¥çœ‹æ‰€é€‰è®°å½•"
 	},
 	col : {
-		caption: "选择列",
-		bSubmit: "确定",
-		bCancel: "取消"
+		caption: "é€‰æ‹©åˆ—",
+		bSubmit: "ç¡®å®š",
+		bCancel: "å–æ¶ˆ"
 	},
 	errors : {
-		errcap : "错误",
-		nourl : "没有设置url",
-		norecords: "没有要处理的记录",
-		model : "colNames 和 colModel 长度不等！"
+		errcap : "é”™è¯¯",
+		nourl : "æ²¡æœ‰è®¾ç½®url",
+		norecords: "æ²¡æœ‰è¦å¤„ç†çš„è®°å½•",
+		model : "colNames å’Œ colModel é•¿åº¦ä¸ç­‰ï¼"
 	},
 	formatter : {
 		integer : {thousandsSeparator: " ", defaultValue: '0'},

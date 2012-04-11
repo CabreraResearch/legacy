@@ -8,21 +8,6 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassEquipment : CswNbtObjClass
     {
-        //public enum StatusOption
-        //{
-        //    Available,
-        //    In_Use,
-        //    Retired
-        //}
-        //public static string StatusOptionToDisplayString( StatusOption Opt )
-        //{
-        //    return Opt.ToString().Replace( '_', ' ' );
-        //}
-        //public static StatusOption StatusOptionFromDisplayString( string Opt )
-        //{
-        //    return (StatusOption) Enum.Parse( typeof( StatusOption ), Opt.Replace( ' ', '_' ), true );
-        //}
-
         public static string AssemblyPropertyName { get { return "Assembly"; } }
         public static string TypePropertyName { get { return "Type"; } }
 
@@ -30,10 +15,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static string PartsXValueName { get { return "Uses"; } }
 
         public static string StatusPropertyName { get { return "Status"; } }
-        //public static string StatusRetiredOption { get { return "Retired"; } }
-        //public static string StatusInUseOption { get { return "In Use"; } }
-        //public static string StatusAvailableOption { get { return "Available"; } }
-
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -41,12 +22,6 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
-
-        public CswNbtObjClassEquipment( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
