@@ -86,6 +86,8 @@
                                         border: 0,
                                         src: thisItem.buttonicon
                                     });
+                                } else {
+                                    link = null;
                                 }
 
                                 var clickopts = {
