@@ -33,7 +33,7 @@
             onSave: null,
             ReloadTabOnSave: true,
             Refresh: null,
-            onBeforeTabSelect: null,
+            onBeforeTabSelect: function(){ return true; },
             onTabSelect: null,
             onPropertyChange: null,
             onPropertyRemove: null,
