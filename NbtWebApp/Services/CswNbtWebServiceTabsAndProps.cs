@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPropIdAttr PropId = new CswPropIdAttr( filterToPropId );
                 CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
                 CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( Prop.EditLayout.TabId );
-                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node, Prop ) )
+                if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, _CswNbtResources.CurrentNbtUser, Node.NodeId, Prop ) )
                 {
                     _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, false );
                 }
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, bool ConfigMode )
         {
             JObject Ret = new JObject();
 
@@ -156,9 +156,10 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtNode Node = null;
                 bool CanCreate = false;
+                CswNbtMetaDataNodeType NodeType = null;
                 if( _CswNbtResources.EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                    NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                     if( null != NodeType )
                     {
                         CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
@@ -171,6 +172,11 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
+                    if( Node != null )
+                    {
+                        NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
+                        CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    }
                 }
 
                 if( Node != null )
@@ -187,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                         {
-                            if( _showProp( Prop, FilterPropIdAttr, Node ) )
+                            if( ConfigMode || _showProp( Prop, FilterPropIdAttr, Node ) )
                             {
                                 _addProp( Ret, Node, Prop );
                             }
@@ -428,7 +434,7 @@ namespace ChemSW.Nbt.WebServices
             if( wsQ.CheckQuota( NodeType ) )
             {
                 Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
                 if( CanEdit )
                 {
                     RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab, true );
@@ -470,7 +476,7 @@ namespace ChemSW.Nbt.WebServices
                         foreach( CswPrimaryKey NodePk in NodePks )
                         {
                             Node = _CswNbtResources.Nodes.GetNode( NodePk );
-                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node );
+                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
                             if( CanEdit )
                             {
                                 if( Node.PendingUpdate )
@@ -574,7 +580,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
                             if( CopyToNode != null &&
-                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode, null ) )
+                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
                             {
                                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
                                     .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
@@ -624,9 +630,7 @@ namespace ChemSW.Nbt.WebServices
                                                             select Prop )
                 {
                     // case 24179
-                    if( Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ||
-                        ( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview &&
-                          LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table ) )
+                    if( Prop.getFieldType().IsLayoutCompatible( LayoutType ) )
                     {
                         JObject ThisPropObj = new JObject();
                         ThisPropObj["propid"] = Prop.PropId.ToString();
@@ -771,7 +775,7 @@ namespace ChemSW.Nbt.WebServices
             ParentObj["entries"] = new JObject();
             foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in ViewNode.AllowedChildNodeTypes( true ) )
             {
-                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty );
+                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty, string.Empty, string.Empty );
             }
 
             JObject ChildObj = new JObject();

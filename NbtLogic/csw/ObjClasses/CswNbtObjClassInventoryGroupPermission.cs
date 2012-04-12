@@ -4,13 +4,19 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassInventoryGroup : CswNbtObjClass
+    public class CswNbtObjClassInventoryGroupPermission : CswNbtObjClass
     {
-        public static string NamePropertyName { get { return "Name"; } }
-        
+        public static string InventoryGroupPropertyName { get { return "Inventory Group"; } }
+        public static string WorkUnitPropertyName { get { return "WorkUnit"; } }
+        public static string RolePropertyName { get { return "Role"; } }
+        public static string ViewPropertyName { get { return "View"; } }
+        public static string EditPropertyName { get { return "Edit"; } }
+        public static string DispensePropertyName { get { return "Dispense"; } }
+        public static string RequestPropertyName { get { return "Request"; } }
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
-        public CswNbtObjClassInventoryGroup( CswNbtResources CswNbtResources, CswNbtNode Node )
+        public CswNbtObjClassInventoryGroupPermission( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
@@ -18,7 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass ); }
         }
 
         #region Inherited Events
@@ -75,10 +81,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[NamePropertyName].AsText; } }
+        public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[InventoryGroupPropertyName].AsRelationship; } }
+        public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[WorkUnitPropertyName].AsRelationship; } }
+        public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[RolePropertyName].AsRelationship; } }
+        public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[ViewPropertyName].AsLogical; } }
+        public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[EditPropertyName].AsLogical; } }
+        public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[DispensePropertyName].AsLogical; } }
+        public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[RequestPropertyName].AsLogical; } }
 
         #endregion
 
-    }//CswNbtObjClassInventoryGroup
+    }//CswNbtObjClassInventoryGroupPermission
 
 }//namespace ChemSW.Nbt.ObjClasses

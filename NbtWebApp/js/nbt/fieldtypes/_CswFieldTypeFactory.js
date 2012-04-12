@@ -14,6 +14,10 @@ $.CswFieldTypeFactory = function (method) {
         onChange: function () { },
         onReload: function () { },    // if a control needs to reload the tab
         cswnbtnodekey: '',
+        relatednodeid: '',
+        relatednodename: '',
+        relatednodetypeid: '',
+        relatedobjectclassid: '',
         ID: '',
         Required: '',
         ReadOnly: '',

@@ -70,7 +70,9 @@
                                 text: text,
                                 nodetypeid: Csw.string(json.nodetypeid),
                                 relatednodeid: Csw.string(json.relatednodeid), //for Grid Props
+                            relatednodename: Csw.string(json.relatednodename), //for Grid Props
                                 relatednodetypeid: Csw.string(json.relatednodetypeid), //for NodeTypeSelect
+                            relatedobjectclassid: Csw.string(json.relatedobjectclassid),
                                 onAddNode: o.onAlterNode
                             });
                             return false;

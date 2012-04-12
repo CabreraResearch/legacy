@@ -20,7 +20,9 @@
 //            nodepks: [],
 //            nodekeys: [],
 //            relatednodeid: '',
+//            relatednodename: '',
 //            relatednodetypeid: '',
+//            relatedobjectclassid: '',
 //            tabid: '',
 //            nodetypeid: '',
 //            filterToPropId: '',
@@ -32,7 +34,7 @@
 //            onSave: null,
 //            ReloadTabOnSave: true,
 //            Refresh: null,
-//            onBeforeTabSelect: null,
+//            onBeforeTabSelect: function(){ return true; },
 //            onTabSelect: null,
 //            onPropertyChange: null,
 //            onPropertyRemove: null,
@@ -212,7 +214,8 @@
 //                NodeTypeId: o.nodetypeid,
 //                Date: o.date,
 //                Multi: o.Multi,
-//                filterToPropId: o.filterToPropId
+//                filterToPropId: o.filterToPropId,
+//                ConfigMode: o.Config
 //            };
 
 //            Csw.ajax.post({
@@ -276,7 +279,9 @@
 //                                        fieldtype: thisProp.fieldtype,
 //                                        nodeid: Csw.tryParseObjByIdx(o.nodeids, 0),
 //                                        relatednodeid: o.relatednodeid,
+//                                        relatednodename: o.relatednodename,
 //                                        relatednodetypeid: o.relatednodetypeid,
+//                                        relatedobjectclassid: o.relatedobjectclassid,
 //                                        propid: propId,
 //                                        propDiv: propCell.children('div'),
 //                                        propData: thisProp,
@@ -511,7 +516,9 @@
 //                    nodeid: Csw.tryParseObjByIdx(o.nodeids, 0),
 //                    nodename: o.nodename,
 //                    relatednodeid: o.relatednodeid,
+//                    relatednodename: o.relatednodename,
 //                    relatednodetypeid: o.relatednodetypeid,
+//                    relatedobjectclassid: o.relatedobjectclassid,
 //                    propid: propId,
 //                    propDiv: propCell.div(),
 //                    saveBtn: saveBtn,

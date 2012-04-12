@@ -21,7 +21,9 @@
                 nodepks: [],
                 nodekeys: [],
                 relatednodeid: '',
+                relatednodename: '',
                 relatednodetypeid: '',
+                relatedobjectclassid: '',
                 tabid: '',
                 nodetypeid: '',
                 filterToPropId: '',
@@ -33,7 +35,7 @@
                 onSave: null,
                 ReloadTabOnSave: true,
                 Refresh: null,
-                onBeforeTabSelect: null,
+                onBeforeTabSelect: function(){ return true; },
                 onTabSelect: null,
                 onPropertyChange: null,
                 onPropertyRemove: null,
@@ -212,7 +214,8 @@
                     NodeTypeId: internal.nodetypeid,
                     Date: internal.date,
                     Multi: internal.Multi,
-                    filterToPropId: internal.filterToPropId
+                    filterToPropId: internal.filterToPropId,
+                    ConfigMode: internal.Config
                 };
 
                 Csw.ajax.post({
@@ -277,7 +280,9 @@
                                             fieldtype: thisProp.fieldtype,
                                             nodeid: Csw.tryParseObjByIdx(internal.nodeids, 0),
                                             relatednodeid: internal.relatednodeid,
+                                            relatednodename: internal.relatednodename,
                                             relatednodetypeid: internal.relatednodetypeid,
+                                            relatedobjectclassid: internal.relatedobjectclassid,
                                             propid: propId,
                                             propDiv: propCell.children('div'),
                                             propData: thisProp,
@@ -535,7 +540,9 @@
                         nodeid: Csw.tryParseObjByIdx(internal.nodeids, 0),
                         nodename: internal.nodename,
                         relatednodeid: internal.relatednodeid,
+                        relatednodename: internal.relatednodename,
                         relatednodetypeid: internal.relatednodetypeid,
+                        relatedobjectclassid: internal.relatedobjectclassid,
                         propid: propId,
                         propDiv: propCell.div(),
                         saveBtn: internal.saveBtn,

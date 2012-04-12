@@ -157,6 +157,9 @@
                 text: '',
                 nodetypeid: '',
                 relatednodeid: '',
+                relatednodename: '',
+                relatednodetypeid: '',
+                relatedobjectclassid: '',
                 onAddNode: function () { }
             };
 
@@ -171,7 +174,9 @@
             Csw.layouts.tabsAndProps(div, {
                 nodetypeid: o.nodetypeid,
                 relatednodeid: o.relatednodeid,
+                relatednodename: o.relatednodename,
                 relatednodetypeid: o.relatednodetypeid,
+                relatedobjectclassid: o.relatedobjectclassid,
                 EditMode: Csw.enums.editMode.Add,
                 ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey) {

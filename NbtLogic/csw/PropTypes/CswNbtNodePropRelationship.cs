@@ -301,6 +301,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }
+            else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
+            {
+                ParentObject["objectclassid"] = TargetId.ToString();
+            }
             if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
                 ParentObject["allowadd"] = "true";

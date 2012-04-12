@@ -79,15 +79,14 @@
                 var c = 1;
 
                 var pagenodelimit = Csw.number(20);
-                if(pagenodelimit <= 0) pagenodelimit = 20;
+                if (pagenodelimit <= 0) pagenodelimit = 20;
                 var currentpage = 1;
                 var pagenodecount = 0;
                 var totalpages = Math.ceil(results / pagenodelimit);
 
                 function _makeNodeCell(nodeObj) {
-                    if((pagenodecount >= pagenodelimit * (currentpage - 1)) &&
-                       (pagenodecount < pagenodelimit * currentpage))
-                    {                    
+                    if ((pagenodecount >= pagenodelimit * (currentpage - 1)) &&
+                       (pagenodecount < pagenodelimit * currentpage)) {
                         var nodeid = nodeObj.nodeid;
 
                         if (nodeObj.nodename === "Results Truncated") {
@@ -101,7 +100,7 @@
                         var verticalAlign = 'top';
                         var bborder = '1px solid #cccccc';
                         var cellpad = o.rowpadding + 'px';
-                        if(singleColumn) {
+                        if (singleColumn) {
                             thumbwidth = '25%';
                             textwidth = '75%';
                             verticalAlign = 'top';
@@ -111,7 +110,7 @@
                         var thumbnailCell = _getThumbnailCell(cellSet)
                                                 .css({
                                                     width: thumbwidth,
-                                                    verticalAlign: verticalAlign,   
+                                                    verticalAlign: verticalAlign,
                                                     paddingTop: cellpad
                                                 });
                         var textCell = _getTextCell(cellSet)
@@ -119,7 +118,7 @@
                                                     width: textwidth,
                                                     paddingTop: cellpad
                                                 });
-                    if (singleColumn) {
+                        if (singleColumn) {
                             cellSet[2][1].css({
                                 borderBottom: bborder,
                                 paddingBottom: cellpad
@@ -136,14 +135,14 @@
                         var texttable = textCell.table({ width: '100%', cellpadding: 0, cellspacing: 0 });
 
                         if (false === Csw.isNullOrEmpty(nodeObj.thumbnailurl)) {
-                            thumbtable.cell(1,1).img({
+                            thumbtable.cell(1, 1).img({
                                 src: nodeObj.thumbnailurl
                             }).css({ width: imgwidth });
                         }
-                        var moreinfoimg = thumbtable.cell(1,2).css({ width: '25px' })
+                        var moreinfoimg = thumbtable.cell(1, 2).css({ width: '25px' })
                             .img({
-                               src: 'Images/info.png',
-                               title: 'More Info'
+                                src: 'Images/info.png',
+                                title: 'More Info'
                             });
                         moreinfoimg.propNonDom({ valign: 'top' });
                         moreinfoimg.$.hover(function (event) { Csw.nodeHoverIn(event, nodeid, '', 0); }, Csw.nodeHoverOut);
@@ -151,7 +150,7 @@
                         thumbnailCell.br();
 
                         // Name
-                        var maintextcell = texttable.cell(1,1);
+                        var maintextcell = texttable.cell(1, 1);
                         maintextcell.append('<b>' + nodeObj.nodename + '</b>');
 
                         if (Csw.bool(nodeObj.locked)) {
@@ -163,7 +162,7 @@
                         maintextcell.br();
 
                         var btnTable = btncell.table({
-                        ID: Csw.makeId(o.ID, nodeid + '_btntbl'),
+                            ID: Csw.makeId(o.ID, nodeid + '_btntbl'),
                             cellspacing: '5px'
                         });
                         var btncol = 1;
@@ -173,7 +172,7 @@
                             if (propObj.fieldtype === "Button") {
 
                                 // Object Class Buttons
-                                var propDiv = btnTable.cell(1,btncol).div();
+                                var propDiv = btnTable.cell(1, btncol).div();
                                 propObj.propData.values.mode = 'link';      // force link
                                 $.CswFieldTypeFactory('make', {
                                     nodeid: nodeid,
@@ -181,12 +180,12 @@
                                     propid: propObj.propid,
                                     propDiv: propDiv,
                                     propData: propObj.propData,
-                                ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
+                                    ID: Csw.makeId({ ID: o.ID, suffix: propObj.id }),
                                     EditMode: Csw.enums.editMode.Table,
-                                    doSave: function(saveoptions) { 
+                                    doSave: function (saveoptions) {
                                         // Nothing to save in this case, so just call onSuccess
                                         var s = { onSuccess: null };
-                                        if(saveoptions) $.extend(s, saveoptions);
+                                        if (saveoptions) $.extend(s, saveoptions);
                                         Csw.tryExec(s.onSuccess);
                                     },
                                     onReload: null
@@ -194,7 +193,7 @@
                                 btncol += 1;
 
                             } else {
-                                maintextcell.span({text: propObj.propname + ': ' + propObj.gestalt});
+                                maintextcell.span({ text: propObj.propname + ': ' + propObj.gestalt });
                                 maintextcell.br();
                             }
                         });
@@ -205,8 +204,8 @@
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
                             }
-                        btnTable.cell(1, btncol).a({
-                            ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
+                            btnTable.cell(1, btncol).a({
+                                ID: Csw.makeId(o.ID, nodeid, 'editbtn'),
                                 text: btntext,
                                 //disableOnClick: false,
                                 onClick: function () {
@@ -223,8 +222,8 @@
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
                         if (nodeObj.allowdelete) {
-                        btnTable.cell(1, btncol).a({
-                            ID: Csw.makeId(o.ID, nodeid, 'btn'),
+                            btnTable.cell(1, btncol).a({
+                                ID: Csw.makeId(o.ID, nodeid, 'btn'),
                                 text: 'Delete',
                                 //disableOnClick: false,
                                 onClick: function () {
@@ -245,8 +244,7 @@
                     pagenodecount += 1;
                 } // _makeNodeCell()
 
-                function _makeTable()
-                {
+                function _makeTable() {
                     var i;
                     tableDiv.$.empty();
                     r = 1;
@@ -272,11 +270,9 @@
 
                     Csw.crawlObject(data.nodes, _makeNodeCell);
 
-                    if(pagenodelimit < results)
-                    {
-                        if(currentpage > 1)
-                        {
-                            tableDiv.link({
+                    if (pagenodelimit < results) {
+                        if (currentpage > 1) {
+                            tableDiv.a({
                                 ID: 'tableprev',
                                 text: 'Previous Page',
                                 onClick: function () {
@@ -285,25 +281,23 @@
                                 }
                             });
                         }
-                        
+
                         var pageoptions = [];
-                        for(i = 0; i < totalpages; i++)
-                        {
-                            pageoptions[i] = { value: Csw.string(i+1), display: Csw.string(i+1) };
+                        for (i = 0; i < totalpages; i++) {
+                            pageoptions[i] = { value: Csw.string(i + 1), display: Csw.string(i + 1) };
                         }
                         var pagesel = tableDiv.select({
                             ID: 'pageselect',
                             values: pageoptions,
                             selected: Csw.string(currentpage),
-                            onChange: function() {
+                            onChange: function () {
                                 currentpage = Csw.number(pagesel.val());
                                 _makeTable();
                             }
                         });
-                        
-                        if(currentpage < totalpages)
-                        {
-                            tableDiv.link({
+
+                        if (currentpage < totalpages) {
+                            tableDiv.a({
                                 ID: 'tablenext',
                                 text: 'Next Page',
                                 onClick: function () {
@@ -312,7 +306,7 @@
                                 }
                             });
                         }
-                    }                
+                    }
                 }
 
                 if (results === 0) {

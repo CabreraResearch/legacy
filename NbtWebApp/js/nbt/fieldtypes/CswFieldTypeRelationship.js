@@ -16,20 +16,35 @@
                     selectedNodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : Csw.enums.multiEditDefaultValue,
                     selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue,
                     nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
+                    objectClassId = Csw.string(propVals.objectclassid).trim(),
                     allowAdd = Csw.bool(propVals.allowadd),
                     options = propVals.options,
                     relationships = [];
 
-                if (false === Csw.isNullOrEmpty(o.relatednodeid) && Csw.isNullOrEmpty(selectedNodeId) && false === o.Multi) {
+                if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
+                    Csw.isNullOrEmpty(selectedNodeId) &&
+                    false === o.Multi &&
+                    (o.relatednodetypeid === nodeTypeId ||
+                      o.relatedobjectclassid === objectClassId)) {
+
                     selectedNodeId = o.relatednodeid;
+                    selectedName = o.relatednodename;
                 }
 
                 if (o.Multi) {
                     relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
+                var foundSelected = false;
                 Csw.crawlObject(options, function (relatedObj) {
+                    if (relatedObj.id === selectedNodeId) {
+                        foundSelected = true;
+                    }
                     relationships.push({ value: relatedObj.id, display: relatedObj.value });
                 }, false);
+                if (false === o.Multi && false === foundSelected) {
+                    // case 25820 - guarantee selected option appears
+                    relationships.push({ value: selectedNodeId, display: selectedName });
+                }
 
                 if (o.ReadOnly) {
                     propDiv.append(selectedName);

@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.WebServices
             }
             if( _NbtManagerResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
             {
-                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Attempted to authenticate as " + _NbtManagerResources.CurrentNbtUser.UserNode + " on a privileged method." );
+                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Attempted to authenticate as " + _NbtManagerResources.CurrentNbtUser.Username + " on a privileged method." );
             }
         }
 

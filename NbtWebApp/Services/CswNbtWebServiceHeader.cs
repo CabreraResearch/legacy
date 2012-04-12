@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.WebServices
                                     new JProperty( "haschildren", true ),
                                     new JProperty( "Profile", new JObject(
                                         new JProperty( "action", "Profile" ),
-                                        new JProperty( "userid", _CswNbtResources.CurrentNbtUser.UserNode.NodeId.ToString() )
+                                        new JProperty( "userid", _CswNbtResources.CurrentNbtUser.UserId.ToString() )
                                     ) ),
                                     new JProperty( "Subscriptions", new JObject(
                                         new JProperty( "href", "Subscriptions.aspx" )
