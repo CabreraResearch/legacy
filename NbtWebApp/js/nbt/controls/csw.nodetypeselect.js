@@ -18,7 +18,8 @@
                 addNewOption: false,
                 labelText: null,
                 excludeNodeTypeIds: '',
-                relatedToNodeTypeId: ''
+                relatedToNodeTypeId: '',
+                relatedObjectClassPropName: ''
             };
             var external = {};
 
@@ -46,7 +47,12 @@
 
                 Csw.ajax.post({
                     urlMethod: internal.nodeTypesUrlMethod,
-                    data: { ObjectClassName: Csw.string(internal.objectClassName), ExcludeNodeTypeIds: internal.excludeNodeTypeIds, RelatedToNodeTypeId: internal.relatedToNodeTypeId },
+                    data: {
+                        ObjectClassName: Csw.string(internal.objectClassName),
+                        ExcludeNodeTypeIds: internal.excludeNodeTypeIds, 
+                        RelatedToNodeTypeId: internal.relatedToNodeTypeId,
+                        RelatedObjectClassPropName: internal.relatedObjectClassPropName
+                    },
                     success: function (data) {
                         var ret = data;
                         ret.nodetypecount = 0;

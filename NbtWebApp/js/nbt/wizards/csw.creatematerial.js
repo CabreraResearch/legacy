@@ -449,7 +449,8 @@
                             objectClassName: 'SizeClass',
                             onSelect: sizeSelect,
                             onSuccess: sizeSelect,
-                            relatedToNodeTypeId: internal.materialType.val
+                            relatedToNodeTypeId: internal.materialType.val,
+                            relatedObjectClassPropName: 'Material'
                         });
                         selectDiv.hide();
 
