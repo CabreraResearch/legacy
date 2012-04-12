@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, bool ConfigMode )
         {
             JObject Ret = new JObject();
 
@@ -153,9 +153,10 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtNode Node = null;
                 bool CanCreate = false;
+                CswNbtMetaDataNodeType NodeType = null;
                 if( _CswNbtResources.EditMode == NodeEditMode.Add && NodeTypeId != Int32.MinValue )
                 {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                    NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                     if( null != NodeType )
                     {
                         CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
@@ -168,6 +169,11 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     Node = wsTools.getNode( _CswNbtResources, NodeId, NodeKey, Date );
+                    if( Node != null )
+                    {
+                        NodeType = _CswNbtResources.MetaData.getNodeType( Node.NodeTypeId );
+                        CanCreate = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    }
                 }
 
                 if( Node != null )
@@ -184,7 +190,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                         {
-                            if( _showProp( Prop, FilterPropIdAttr, Node ) )
+                            if( ConfigMode || _showProp( Prop, FilterPropIdAttr, Node ) )
                             {
                                 _addProp( Ret, Node, Prop );
                             }
@@ -801,7 +807,7 @@ namespace ChemSW.Nbt.WebServices
             ParentObj["entries"] = new JObject();
             foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in ViewNode.AllowedChildNodeTypes( true ) )
             {
-                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty, string.Empty );
+                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty, string.Empty, string.Empty );
             }
 
             JObject ChildObj = new JObject();
