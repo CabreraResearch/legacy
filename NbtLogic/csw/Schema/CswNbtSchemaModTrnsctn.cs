@@ -359,11 +359,11 @@ namespace ChemSW.Nbt.Schema
 
         public void makeMissingAuditTablesAndColumns()
         {
-            DataTable DataTable = execArbitraryPlatformNeutralSqlSelect( "query for all datadatable names","select distinct tablename from data_dictionary" );
+            DataTable DataTable = execArbitraryPlatformNeutralSqlSelect( "query for all datadatable names", "select distinct tablename from data_dictionary" );
 
             foreach( DataRow CurrentRow in DataTable.Rows )
             {
-                string CurrentTableName = CurrentRow["tablename"].ToString().ToLower(); 
+                string CurrentTableName = CurrentRow["tablename"].ToString().ToLower();
                 makeTableAuditable( CurrentTableName );
             }
 
@@ -985,6 +985,8 @@ namespace ChemSW.Nbt.Schema
             }
             return RetProp;
         }
+
+
 
         /// <summary>
         /// Convenience function for making new Object Class Props

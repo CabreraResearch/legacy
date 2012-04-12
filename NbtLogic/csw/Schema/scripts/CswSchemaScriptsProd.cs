@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24510() ) );  // 01N-12
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24510B() ) ); // 01N-13
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24488B() ) ); // 01N-14
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25763() ) );  // 01N-15
 
 
             // This automatically detects the latest version
