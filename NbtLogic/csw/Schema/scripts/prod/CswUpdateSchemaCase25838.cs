@@ -23,6 +23,15 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp TaskDoneOnOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.DoneOnPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( TaskDoneOnOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, false );
 
+            // Same with Problem Open/Closed
+            CswNbtMetaDataObjectClass ProblemOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass );
+            CswNbtMetaDataObjectClassProp ProblemDateOpenedOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.DateOpenedPropertyName );
+            CswNbtMetaDataObjectClassProp ProblemDateClosedOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.DateClosedPropertyName );
+            CswNbtMetaDataObjectClassProp ProblemReportedByOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.ReportedByPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ProblemDateOpenedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ProblemDateClosedOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ProblemReportedByOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, false );
+
         }//Update()
 
     }//class CswUpdateSchemaCase25838
