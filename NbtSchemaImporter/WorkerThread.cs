@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 _CswNbtResources.AccessId = value;
-                _CswNbtResources.refresh();
+                //_CswNbtResources.refreshDataDictionary();
 
             }
         }

@@ -22,8 +22,16 @@ namespace ChemSW.Nbt.MetaData
         public void OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
         {
             // Give the current user's role full permissions to the new nodetype
-            if( null != _CswNbtResources.CurrentNbtUser.RoleNode )
+            CswNbtPermit.NodeTypePermission[] AllPerms = new CswNbtPermit.NodeTypePermission[] {
+												CswNbtPermit.NodeTypePermission.Delete, 
+												CswNbtPermit.NodeTypePermission.Create, 
+												CswNbtPermit.NodeTypePermission.Edit, 
+												CswNbtPermit.NodeTypePermission.View }; 
+            
+            if( null != _CswNbtResources.CurrentNbtUser.RoleId )
             {
+                CswNbtNode RoleNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.RoleId];
+                CswNbtObjClassRole RoleNodeAsRole = CswNbtNodeCaster.AsRole( RoleNode );
 				//CswNbtNodePropLogicalSet PropPermissions = ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).NodeTypePermissions;
 				//PropPermissions.SetValue( NodeTypePermission.Delete.ToString(), NewNodeType.NodeTypeId.ToString(), true );
 				//PropPermissions.SetValue( NodeTypePermission.Create.ToString(), NewNodeType.NodeTypeId.ToString(), true );
@@ -33,18 +41,25 @@ namespace ChemSW.Nbt.MetaData
 				//_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
 
 				// case 23185 - reset permission options
-				_CswNbtResources.CurrentNbtUser.RoleNode.afterPopulateProps();
+                RoleNodeAsRole.afterPopulateProps();
 
-				_CswNbtResources.Permit.set( new CswNbtPermit.NodeTypePermission[] {
-												CswNbtPermit.NodeTypePermission.Delete, 
-												CswNbtPermit.NodeTypePermission.Create, 
-												CswNbtPermit.NodeTypePermission.Edit, 
-												CswNbtPermit.NodeTypePermission.View }, 
-											NewNodeType, 
-											_CswNbtResources.CurrentNbtUser.RoleNode,
-											true );
+                _CswNbtResources.Permit.set( AllPerms, NewNodeType, RoleNodeAsRole, true );
 
 			}//if we have a current user
+            else if( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
+            {
+                // Grant permission to Administrator
+                CswNbtNode RoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+                if( RoleNode != null )
+                {
+                    _CswNbtResources.Permit.set( AllPerms, NewNodeType, CswNbtNodeCaster.AsRole( RoleNode ), true ); 
+                }
+                CswNbtNode RoleNode2 = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                if( RoleNode2 != null )
+                {
+                    _CswNbtResources.Permit.set( AllPerms, NewNodeType, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
+                }
+            }
 
             if( NewNodeType.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass )
 				OnMakeNewInspectionDesignNodeType( NewNodeType, IsCopy );

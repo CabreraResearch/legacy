@@ -253,7 +253,20 @@ namespace ChemSW.Nbt.PropTypes
                 }
 
             }//if IsUnique
+
+            // case 25780 - copy first 512 characters of gestalt to gestaltsearch
+            if( _CswNbtNodePropData.WasModified )
+            {
+                string GestaltSearchValue = _CswNbtNodePropData.Gestalt;
+                if( GestaltSearchValue.Length > 512 )
+                {
+                    GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
+                }
+                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.GestaltSearch, GestaltSearchValue );
+            }
+
         }
+
         /// <summary>
         /// Event which fires when the property value is retrieved from the database
         /// </summary>

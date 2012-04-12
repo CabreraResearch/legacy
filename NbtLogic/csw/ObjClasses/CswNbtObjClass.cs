@@ -22,14 +22,6 @@ namespace ChemSW.Nbt.ObjClasses
         }//ctor()
 
         /// <summary>
-        /// Constructor for when we don't have a node instance
-        /// </summary>
-        public CswNbtObjClass( CswNbtResources CswNbtResources )
-        {
-            _CswNbtResources = CswNbtResources;
-        }//ctor()
-
-        /// <summary>
         /// Post node property changes to the database
         /// </summary>
         /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>

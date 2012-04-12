@@ -60,73 +60,73 @@ namespace ChemSW.NbtWebControls
 
         public override void DataBind()
         {
-            if( _CswNbtResources.CurrentUser != null && _CswNbtResources.CurrentNbtUser.UserNode != null )
-            {
-                Clear();
+            //if( _CswNbtResources.CurrentUser != null && _CswNbtResources.CurrentNbtUser.UserNode != null )
+            //{
+            //    Clear();
 
-                CswNbtNodePropViewPickList UsersViews = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).FavoriteViews;
-                CswNbtNodePropLogicalSet UsersActions = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).FavoriteActions;
+            //    CswNbtNodePropViewPickList UsersViews = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).FavoriteViews;
+            //    CswNbtNodePropLogicalSet UsersActions = ( (CswNbtObjClassUser) _CswNbtResources.CurrentNbtUser.UserNode ).FavoriteActions;
 
-                // First user specified ones
-                Collection<Int32> SelectedViewIds = UsersViews.SelectedViewIds.ToIntCollection();
-                foreach( Int32 ViewId in SelectedViewIds )
-                {
-                    if( ViewId > 0 )
-                    {
-						CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( ViewId ) );
-                        _AddQuickLaunchLinkView( ThisView, true );
-                    }
-                }
-                DataTable ActionTable = UsersActions.GetDataAsTable( "actionname", "actionid" );
-                foreach( int ThisActionId in from DataRow ActionRow in ActionTable.Rows 
-											 where CswConvert.ToBoolean( ActionRow["Include"] ) 
-											 select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() )].ActionId into ThisActionId 
-											 where ThisActionId > 0 
-											 select ThisActionId )
-                {
-                    _AddQuickLaunchLinkAction( ThisActionId, true );
-                }
+            //    // First user specified ones
+            //    Collection<Int32> SelectedViewIds = UsersViews.SelectedViewIds.ToIntCollection();
+            //    foreach( Int32 ViewId in SelectedViewIds )
+            //    {
+            //        if( ViewId > 0 )
+            //        {
+            //            CswNbtView ThisView = _CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( ViewId ) );
+            //            _AddQuickLaunchLinkView( ThisView, true );
+            //        }
+            //    }
+            //    DataTable ActionTable = UsersActions.GetDataAsTable( "actionname", "actionid" );
+            //    foreach( int ThisActionId in from DataRow ActionRow in ActionTable.Rows 
+            //                                 where CswConvert.ToBoolean( ActionRow["Include"] ) 
+            //                                 select _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() )].ActionId into ThisActionId 
+            //                                 where ThisActionId > 0 
+            //                                 select ThisActionId )
+            //    {
+            //        _AddQuickLaunchLinkAction( ThisActionId, true );
+            //    }
 
-                // Now recent ones
-                if( PreviousView1 != null )
-                {
-                    if( PreviousView1 is CswNbtView )
-                        _AddQuickLaunchLinkView( (CswNbtView) PreviousView1, false );
-                    else
-                        _AddQuickLaunchLinkAction( (Int32) PreviousView1, false );
-                }
-                if( PreviousView2 != null )
-                {
-                    if( PreviousView2 is CswNbtView )
-                        _AddQuickLaunchLinkView( (CswNbtView) PreviousView2, false );
-                    else
-                        _AddQuickLaunchLinkAction( (Int32) PreviousView2, false );
-                }
-                if( PreviousView3 != null )
-                {
-                    if( PreviousView3 is CswNbtView )
-                        _AddQuickLaunchLinkView( (CswNbtView) PreviousView3, false );
-                    else
-                        _AddQuickLaunchLinkAction( (Int32) PreviousView3, false );
-                }
-                if( PreviousView4 != null )
-                {
-                    if( PreviousView4 is CswNbtView )
-                        _AddQuickLaunchLinkView( (CswNbtView) PreviousView4, false );
-                    else
-                        _AddQuickLaunchLinkAction( (Int32) PreviousView4, false );
-                }
-                if( PreviousView5 != null )
-                {
-                    if( PreviousView5 is CswNbtView )
-                        _AddQuickLaunchLinkView( (CswNbtView) PreviousView5, false );
-                    else
-                        _AddQuickLaunchLinkAction( (Int32) PreviousView5, false );
-                }
+            //    // Now recent ones
+            //    if( PreviousView1 != null )
+            //    {
+            //        if( PreviousView1 is CswNbtView )
+            //            _AddQuickLaunchLinkView( (CswNbtView) PreviousView1, false );
+            //        else
+            //            _AddQuickLaunchLinkAction( (Int32) PreviousView1, false );
+            //    }
+            //    if( PreviousView2 != null )
+            //    {
+            //        if( PreviousView2 is CswNbtView )
+            //            _AddQuickLaunchLinkView( (CswNbtView) PreviousView2, false );
+            //        else
+            //            _AddQuickLaunchLinkAction( (Int32) PreviousView2, false );
+            //    }
+            //    if( PreviousView3 != null )
+            //    {
+            //        if( PreviousView3 is CswNbtView )
+            //            _AddQuickLaunchLinkView( (CswNbtView) PreviousView3, false );
+            //        else
+            //            _AddQuickLaunchLinkAction( (Int32) PreviousView3, false );
+            //    }
+            //    if( PreviousView4 != null )
+            //    {
+            //        if( PreviousView4 is CswNbtView )
+            //            _AddQuickLaunchLinkView( (CswNbtView) PreviousView4, false );
+            //        else
+            //            _AddQuickLaunchLinkAction( (Int32) PreviousView4, false );
+            //    }
+            //    if( PreviousView5 != null )
+            //    {
+            //        if( PreviousView5 is CswNbtView )
+            //            _AddQuickLaunchLinkView( (CswNbtView) PreviousView5, false );
+            //        else
+            //            _AddQuickLaunchLinkAction( (Int32) PreviousView5, false );
+            //    }
 
-            } // if( _CswNbtResources.CurrentUser != null && _CswNbtResources.CurrentUser.UserNode != null )
+            //} // if( _CswNbtResources.CurrentUser != null && _CswNbtResources.CurrentUser.UserNode != null )
 
-            base.DataBind();
+            //base.DataBind();
         } // DataBind()
 
 

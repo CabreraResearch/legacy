@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -191,6 +192,29 @@ namespace ChemSW.Nbt.MetaData
                      FieldType != CswNbtMetaDataFieldType.NbtFieldType.LocationContents &&
                      FieldType != CswNbtMetaDataFieldType.NbtFieldType.Static );
         }
+
+        public bool IsLayoutCompatible(CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType)
+        {
+            bool ret = true;
+            switch( LayoutType )
+            {
+                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add:
+                    ret = (FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid );
+                    break;
+                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit:
+                    break;
+                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview:
+                    ret = (FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid );
+                    break;
+                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table:
+                    ret = ( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid );
+                    break;
+                default:
+                    throw new CswDniException( ErrorType.Error, "Unrecognized Layout Type", "CswNbtMetaDataFieldType.IsLayoutCompatible has not been updated with the following layout: " + LayoutType.ToString() );
+            }
+            return ret;
+        } // IsLayoutCompatible()
+
 
         #region IComparable
 

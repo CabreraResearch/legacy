@@ -23,9 +23,10 @@ namespace ChemSW.Nbt.MetaData
             EquipmentTypeClass,
             GeneratorClass,
             GenericClass,
-            InventoryGroupClass,
             InspectionDesignClass,
             InspectionRouteClass,
+            InventoryGroupClass,
+            InventoryGroupPermissionClass,
             LocationClass,
             MailReportClass,
             MaterialClass,
@@ -41,12 +42,14 @@ namespace ChemSW.Nbt.MetaData
             ResultClass,
             RoleClass,
             SampleClass,
+            SizeClass,
             TaskClass,
             TestClass,
             //TestGroupClass,
             UnitOfMeasureClass,
             UserClass,
             VendorClass,
+            WorkUnitClass,
             UnitTypeClass
         };
 
