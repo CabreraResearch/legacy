@@ -18,7 +18,8 @@
                 width: '200px',
                 addNewOption: false,
                 labelText: null,
-                excludeNodeTypeIds: ''
+                excludeNodeTypeIds: '',
+                canAdd: false
             };
             var external = {};
 
@@ -29,7 +30,8 @@
                 }
                 internal.ID += '_nodesel';
 
-                internal.select = cswParent.select(internal);
+                internal.table = cswParent.table();
+                internal.select = internal.table.cell(1, 1).select(internal);
 
                 external = Csw.dom({}, internal.select);
 
@@ -37,7 +39,7 @@
                     Csw.tryExec(internal.onChange, external);
                     Csw.tryExec(internal.onSelect, external.val());
                 });
-                
+
                 Csw.ajax.post({
                     urlMethod: internal.nodesUrlMethod,
                     data: {
@@ -47,6 +49,9 @@
                     },
                     success: function (data) {
                         var ret = data;
+                        var canAdd = Csw.bool(ret.canadd);
+                        delete ret.canadd;
+
                         var nodecount = 0;
                         //Case 24155
                         Csw.each(ret, function (nodeName, nodeId) {
@@ -56,6 +61,23 @@
 
                         Csw.tryExec(internal.onSuccess, ret);
                         external.css('width', Csw.string(internal.width));
+                        
+                        if (canAdd) {
+                            internal.table.cell(1, 2)
+                                .imageButton({
+                                    ButtonType: Csw.enums.imageButton_ButtonType.Add,
+                                    AlternateText: 'Add New',
+                                    onClick: function() {
+                                        $.CswDialog('AddNodeDialog', {
+                                            nodetypeid: internal.nodeTypeId,
+                                            onAddNode: function(nodeid, nodekey, nodename) {
+                                                external.option({ value: nodeid, display: nodename, selected: true });
+                                            }
+                                        });
+                                    }
+                                });
+                        }
+
                     }
                 });
             } ());

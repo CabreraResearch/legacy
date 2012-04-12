@@ -1441,14 +1441,15 @@ namespace ChemSW.Nbt.WebServices
 
                     Int32 RealNodeTypeId = CswConvert.ToInt32( NodeTypeId );
                     Int32 RealObjectClassId = CswConvert.ToInt32( ObjectClassId );
-                    CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass = CswNbtMetaDataObjectClass.NbtObjectClass.Unknown;
-                    Enum.TryParse<CswNbtMetaDataObjectClass.NbtObjectClass>( ObjectClass, true, out RealObjectClass );
-
+                    CswNbtMetaDataObjectClass.NbtObjectClass RealObjectClass;
+                    Enum.TryParse( ObjectClass, true, out RealObjectClass );
+                    bool CanAdd;
                     Collection<CswNbtNode> Nodes = new Collection<CswNbtNode>();
                     if( RealNodeTypeId != Int32.MinValue )
                     {
                         CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( RealNodeTypeId );
                         Nodes = MetaDataNodeType.getNodes( true, false );
+                        CanAdd = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
                     }
                     else
                     {
@@ -1465,15 +1466,14 @@ namespace ChemSW.Nbt.WebServices
                         {
                             Nodes = MetaDataObjectClass.getNodes( true, false );
                         }
+                        CanAdd = false;
                     }
 
                     foreach( CswNbtNode Node in Nodes )
                     {
-                        ReturnVal.Add(
-                            new JProperty( Node.NodeId.ToString(), Node.NodeName )
-                        );
+                        ReturnVal[Node.NodeId.ToString()] = Node.NodeName;
                     }
-
+                    ReturnVal["canadd"] = CanAdd;
                 }
 
                 _deInitResources();

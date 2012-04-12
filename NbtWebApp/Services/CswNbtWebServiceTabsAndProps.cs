@@ -504,6 +504,7 @@ namespace ChemSW.Nbt.WebServices
                     ret["result"] = "Succeeded";
                     ret["nodeid"] = RetNodeId;
                     ret["cswnbtnodekey"] = RetNodeKey;
+                    ret["nodename"] = Node.NodeName;
                 } //if( AllSucceeded && null != RetNbtNodeKey )
                 else
                 {

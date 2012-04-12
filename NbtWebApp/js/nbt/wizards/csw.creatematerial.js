@@ -196,7 +196,7 @@
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return false === Csw.isNullOrEmpty(internal.tradeName) && false === Csw.isNullOrEmpty(internal.supplier);
+                        return false === Csw.isNullOrEmpty(internal.tradeName) && false === Csw.isNullOrEmpty(internal.supplier.val);
                     };
                     function supplierSelect() {
                         internal.supplier = { name: internal.supplierSelect.find(':selected').text(), val: internal.supplierSelect.val() };
@@ -219,6 +219,7 @@
                         internal.tradeNameInput = internal.divStep2.input({
                             ID: internal.wizard.makeStepId('tradename'),
                             labelText: 'Tradename: ',
+                            cssclass: 'required',
                             onChange: function () {
                                 internal.tradeName = internal.tradeNameInput.val();
                                 internal.toggleButton(internal.buttons.next, nextBtnEnabled());
@@ -230,6 +231,7 @@
                         /* SUPPLIER */
                         internal.supplierSelect = internal.divStep2.nodeSelect({
                             ID: internal.wizard.makeStepId('supplier'),
+                            cssclass: 'required',
                             objectClassName: 'VendorClass',
                             labelText: 'Supplier: ',
                             onChange: supplierSelect,

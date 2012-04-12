@@ -142,6 +142,9 @@ namespace ChemSW.Nbt.WebServices
             return RetSuccess;
         }
 
+        /// <summary>
+        /// Create a new node
+        /// </summary>
         public void addNodeProps( CswNbtNode Node, JObject PropsObj, CswNbtMetaDataNodeTypeTab Tab )
         {
             if( Node != null && null != PropsObj && PropsObj.HasValues )

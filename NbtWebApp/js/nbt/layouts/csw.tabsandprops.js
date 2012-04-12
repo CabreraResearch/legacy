@@ -800,12 +800,12 @@
                                 // reload tab
                                 if (internal.ReloadTabOnSave) {
                                     internal.getProps(tabContentDiv, tabid, function () {
-                                        Csw.tryExec(internal.onSave, successData.nodeid, successData.cswnbtnodekey, internal.tabcnt);
+                                        Csw.tryExec(internal.onSave, successData.nodeid, successData.cswnbtnodekey, internal.tabcnt, successData.nodename);
                                         Csw.tryExec(onSuccess);
                                     });
                                 } else {
                                     // external events
-                                    Csw.tryExec(internal.onSave, successData.nodeid, successData.cswnbtnodekey, internal.tabcnt);
+                                    Csw.tryExec(internal.onSave, successData.nodeid, successData.cswnbtnodekey, internal.tabcnt, successData.nodename);
                                     Csw.tryExec(onSuccess);
                                 }
                             }
