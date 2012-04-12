@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropImageList StorageCompatibilityCapacity
+        public CswNbtNodePropImageList StorageCompatibility
         {
             get
             {
