@@ -1,5 +1,4 @@
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.PropTypes;
 
 
@@ -29,7 +28,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string CasNoPropertyName { get { return "CAS No"; } }
         public static string RegulatoryListsPropName { get { return "Regulatory Lists"; } }
         public static string TradenamePropName { get { return "Tradename"; } }
-        public static string StorageCapacityPropName { get { return "Storage Capacity"; } }
+        public static string StorageCompatibilityPropName { get { return "Storage Compatibility"; } }
         public static string ExpirationIntervalPropName { get { return "Expiration Interval"; } }
 
 
@@ -153,11 +152,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropImageList StorageCapacity
+        public CswNbtNodePropImageList StorageCompatibilityCapacity
         {
             get
             {
-                return ( _CswNbtNode.Properties[StorageCapacityPropName].AsImageList );
+                return ( _CswNbtNode.Properties[StorageCompatibilityPropName].AsImageList );
             }
         }
         public CswNbtNodePropQuantity ExpirationInterval
