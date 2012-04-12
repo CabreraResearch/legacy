@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Web.UI;
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.WebPages
                 EnableViewState = false;
                 _ThisUser = Master.CswNbtResources.CurrentNbtUser.UserId;
 
-                if( ( Master.CswNbtResources.CurrentNbtUser.UserNode ).EmailProperty.Empty )
+                if( Master.CswNbtResources.CurrentNbtUser.Email == string.Empty )
 					throw new CswDniException( ErrorType.Warning, "Email address required for subscriptions", "Current user has no email address defined" );
 
                 CswCenteredDiv Div = new CswCenteredDiv();

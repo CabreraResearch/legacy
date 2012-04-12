@@ -11,14 +11,14 @@ $.jgrid = {
 	defaults : {
 		recordtext: "Pregled {0} - {1} od {2}",
 		emptyrecords: "Ne postoji nijedan zapis",
-		loadtext: "Učitivanje...",
+		loadtext: "UÄitivanje...",
 		pgtext : "Strana {0} od {1}"
 	},
 	search : {
-		caption: "Traženje...",
-		Find: "Traži",
+		caption: "TraÅ¾enje...",
+		Find: "TraÅ¾i",
 		Reset: "Resetuj",
-		odata : ['jednako', 'nije jednako', 'manje', 'manje ili jednako','veće','veće ili jednako', 'počinje sa','ne počinje sa','je u','nije u','završava sa','ne završava sa','sadrži','ne sadrži'],
+		odata : ['jednako', 'nije jednako', 'manje', 'manje ili jednako','veÄ‡e','veÄ‡e ili jednako', 'poÄinje sa','ne poÄinje sa','je u','nije u','zavrÅ¡ava sa','ne zavrÅ¡ava sa','sadrÅ¾i','ne sadrÅ¾i'],
 		groupOps: [	{ op: "AND", text: "sva" },	{ op: "OR",  text: "bilo koje" }	],
 		matchText: " primjeni",
 		rulesText: " pravila"
@@ -26,26 +26,26 @@ $.jgrid = {
 	edit : {
 		addCaption: "Dodaj zapis",
 		editCaption: "Izmjeni zapis",
-		bSubmit: "Pošalji",
+		bSubmit: "PoÅ¡alji",
 		bCancel: "Odustani",
 		bClose: "Zatvori",
-		saveData: "Podatak je izmjenjen! Sačuvaj izmjene?",
+		saveData: "Podatak je izmjenjen! SaÄuvaj izmjene?",
 		bYes : "Da",
 		bNo : "Ne",
 		bExit : "Odustani",
 		msg: {
 			required:"Polje je obavezno",
 			number:"Unesite ispravan broj",
-			minValue:"vrijednost mora biti veća od ili jednaka sa ",
+			minValue:"vrijednost mora biti veÄ‡a od ili jednaka sa ",
 			maxValue:"vrijednost mora biti manja ili jednaka sa",
-			email: "nije ispravna email adresa, nije valjda da ne umiješ ukucati mail!?",
+			email: "nije ispravna email adresa, nije valjda da ne umijeÅ¡ ukucati mail!?",
 			integer: "Ne zajebaji se unesi cjelobrojnu vrijednost ",
 			date: "Unesite ispravan datum",
 			url: "nije ispravan URL. Potreban je prefiks ('http://' or 'https://')",
 			nodefined : " nije definisan!",
 			novalue : " zahtjevana je povratna vrijednost!",
-			customarray : "Prilagođena funkcija treba da vrati niz!",
-			customfcheck : "Prilagođena funkcija treba da bude prisutana u slučaju prilagođene provjere!"
+			customarray : "PrilagoÄ‘ena funkcija treba da vrati niz!",
+			customfcheck : "PrilagoÄ‘ena funkcija treba da bude prisutana u sluÄaju prilagoÄ‘ene provjere!"
 			
 		}
 	},
@@ -56,7 +56,7 @@ $.jgrid = {
 	del : {
 		caption: "Izbrisi",
 		msg: "Izbrisi izabran(e) zapise(e)?",
-		bSubmit: "Izbriši",
+		bSubmit: "IzbriÅ¡i",
 		bCancel: "Odbaci"
 	},
 	nav : {
@@ -65,11 +65,11 @@ $.jgrid = {
 		addtext:"",
 		addtitle: "Dodaj novi red",
 		deltext: "",
-		deltitle: "Izbriši izabran red",
+		deltitle: "IzbriÅ¡i izabran red",
 		searchtext: "",
-		searchtitle: "Nađi zapise",
+		searchtitle: "NaÄ‘i zapise",
 		refreshtext: "",
-		refreshtitle: "Ponovo učitaj podatke",
+		refreshtitle: "Ponovo uÄitaj podatke",
 		alertcap: "Upozorenje",
 		alerttext: "Izaberite red",
 		viewtext: "",
@@ -81,10 +81,10 @@ $.jgrid = {
 		bCancel: "Odbaci"
 	},
 	errors : {
-		errcap : "Greška",
+		errcap : "GreÅ¡ka",
 		nourl : "Nije postavljen URL",
 		norecords: "Nema zapisa za obradu",
-		model : "Dužina modela colNames <> colModel!"
+		model : "DuÅ¾ina modela colNames <> colModel!"
 	},
 	formatter : {
 		integer : {thousandsSeparator: " ", defaultValue: '0'},
@@ -92,8 +92,8 @@ $.jgrid = {
 		currency : {decimalSeparator:".", thousandsSeparator: " ", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0.00'},
 		date : {
 			dayNames:   [
-				"Ned", "Pon", "Uto", "Sre", "Čet", "Pet", "Sub",
-				"Nedelja", "Ponedeljak", "Utorak", "Srijeda", "Četvrtak", "Petak", "Subota"
+				"Ned", "Pon", "Uto", "Sre", "ÄŒet", "Pet", "Sub",
+				"Nedelja", "Ponedeljak", "Utorak", "Srijeda", "ÄŒetvrtak", "Petak", "Subota"
 			],
 			monthNames: [
 				"Jan", "Feb", "Mar", "Apr", "Maj", "Jun", "Jul", "Avg", "Sep", "Okt", "Nov", "Dec",

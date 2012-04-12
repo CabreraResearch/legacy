@@ -5,6 +5,7 @@ namespace ChemSW.Nbt.Actions
     public enum CswNbtActionName
     {
         Unknown,
+        Create_Material,
         Design,
         Edit_View,
         Future_Scheduling,

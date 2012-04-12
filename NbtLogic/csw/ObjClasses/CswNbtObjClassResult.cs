@@ -18,12 +18,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassResult( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }//ctor()
-
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ResultClass ); }
