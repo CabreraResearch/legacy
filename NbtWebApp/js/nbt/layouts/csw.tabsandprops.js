@@ -214,7 +214,7 @@
                     Date: internal.date,
                     Multi: internal.Multi,
                     filterToPropId: internal.filterToPropId,
-                    ConfigMode: o.Config
+                    ConfigMode: internal.Config
                 };
 
                 Csw.ajax.post({
@@ -281,7 +281,7 @@
                                             relatednodeid: internal.relatednodeid,
                                             relatednodename: internal.relatednodename,
                                             relatednodetypeid: internal.relatednodetypeid,
-                                            relatedobjectclassid: o.relatedobjectclassid,
+                                            relatedobjectclassid: internal.relatedobjectclassid,
                                             propid: propId,
                                             propDiv: propCell.children('div'),
                                             propData: thisProp,
@@ -533,7 +533,7 @@
                         relatednodeid: internal.relatednodeid,
                         relatednodename: internal.relatednodename,
                         relatednodetypeid: internal.relatednodetypeid,
-                        relatedobjectclassid: o.relatedobjectclassid,
+                        relatedobjectclassid: internal.relatedobjectclassid,
                         propid: propId,
                         propDiv: propCell.div(),
                         saveBtn: internal.saveBtn,
