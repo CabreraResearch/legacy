@@ -15,6 +15,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ColumnsPropertyName { get { return "Columns"; } }
         public static string BarcodePropertyName { get { return "Barcode"; } }
         public static string NamePropertyName { get { return "Name"; } }
+        public static string InventoryGroupPropertyName { get { return "Inventory Group"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -22,13 +23,6 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-
-        }//ctor()
-
-        public CswNbtObjClassLocation( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
 
         }//ctor()
 
@@ -164,6 +158,15 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[NamePropertyName].AsText );
             }
         }
+        public CswNbtNodePropRelationship InventoryGroup
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[InventoryGroupPropertyName].AsRelationship );
+            }
+        }
+
+        
 
         #endregion
 

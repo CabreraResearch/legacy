@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.MetaData
             public static readonly PropColumn Field4 = new PropColumn( "Field4" );
             public static readonly PropColumn Field5 = new PropColumn( "Field5" );
             public static readonly PropColumn Gestalt = new PropColumn( "Gestalt" ); //bz # 6628
+            public static readonly PropColumn GestaltSearch = new PropColumn( "GestaltSearch" ); // case 25780
             public static readonly PropColumn ClobData = new PropColumn( "ClobData" );
             public static readonly PropColumn ReadOnly = new PropColumn( "ReadOnly" );
             public static readonly PropColumn PendingUpdate = new PropColumn( "PendingUpdate" );

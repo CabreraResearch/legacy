@@ -10,81 +10,81 @@
 **/
 $.jgrid = {
 	defaults : {
-		recordtext: "Zobrazeno {0} - {1} z {2} záznamů",
-	    emptyrecords: "Nenalezeny žádné záznamy",
-		loadtext: "Načítám...",
+		recordtext: "Zobrazeno {0} - {1} z {2} zÃ¡znamÅ¯",
+	    emptyrecords: "Nenalezeny Å¾Ã¡dnÃ© zÃ¡znamy",
+		loadtext: "NaÄÃ­tÃ¡m...",
 		pgtext : "Strana {0} z {1}"
 	},
 	search : {
-		caption: "Vyhledávám...",
+		caption: "VyhledÃ¡vÃ¡m...",
 		Find: "Hledat",
 		Reset: "Reset",
-	    odata : ['rovno', 'nerovono', 'menší', 'menší nebo rovno','větší', 'větší nebo rovno', 'začíná s', 'nezačíná s', 'je v', 'není v', 'končí s', 'nekončí s', 'obahuje', 'neobsahuje'],
-	    groupOps: [	{ op: "AND", text: "všech" },	{ op: "OR",  text: "některého z" }	],
+	    odata : ['rovno', 'nerovono', 'menÅ¡Ã­', 'menÅ¡Ã­ nebo rovno','vÄ›tÅ¡Ã­', 'vÄ›tÅ¡Ã­ nebo rovno', 'zaÄÃ­nÃ¡ s', 'nezaÄÃ­nÃ¡ s', 'je v', 'nenÃ­ v', 'konÄÃ­ s', 'nekonÄÃ­ s', 'obahuje', 'neobsahuje'],
+	    groupOps: [	{ op: "AND", text: "vÅ¡ech" },	{ op: "OR",  text: "nÄ›kterÃ©ho z" }	],
 		matchText: " hledat podle",
 		rulesText: " pravidel"
 	},
 	edit : {
-		addCaption: "Přidat záznam",
-		editCaption: "Editace záznamu",
-		bSubmit: "Uložit",
+		addCaption: "PÅ™idat zÃ¡znam",
+		editCaption: "Editace zÃ¡znamu",
+		bSubmit: "UloÅ¾it",
 		bCancel: "Storno",
-		bClose: "Zavřít",
-		saveData: "Data byla změněna! Uložit změny?",
+		bClose: "ZavÅ™Ã­t",
+		saveData: "Data byla zmÄ›nÄ›na! UloÅ¾it zmÄ›ny?",
 		bYes : "Ano",
 		bNo : "Ne",
-		bExit : "Zrušit",
+		bExit : "ZruÅ¡it",
 		msg: {
-		    required:"Pole je vyžadováno",
-		    number:"Prosím, vložte validní číslo",
-		    minValue:"hodnota musí být větší než nebo rovná ",
-		    maxValue:"hodnota musí být menší než nebo rovná ",
-		    email: "není validní e-mail",
-		    integer: "Prosím, vložte celé číslo",
-			date: "Prosím, vložte validní datum",
-			url: "není platnou URL. Vyžadován prefix ('http://' or 'https://')",
-			nodefined : " není definován!",
-			novalue : " je vyžadována návratová hodnota!",
-			customarray : "Custom function mělá vrátit pole!",
-			customfcheck : "Custom function by měla být přítomna v případě custom checking!"
+		    required:"Pole je vyÅ¾adovÃ¡no",
+		    number:"ProsÃ­m, vloÅ¾te validnÃ­ ÄÃ­slo",
+		    minValue:"hodnota musÃ­ bÃ½t vÄ›tÅ¡Ã­ neÅ¾ nebo rovnÃ¡ ",
+		    maxValue:"hodnota musÃ­ bÃ½t menÅ¡Ã­ neÅ¾ nebo rovnÃ¡ ",
+		    email: "nenÃ­ validnÃ­ e-mail",
+		    integer: "ProsÃ­m, vloÅ¾te celÃ© ÄÃ­slo",
+			date: "ProsÃ­m, vloÅ¾te validnÃ­ datum",
+			url: "nenÃ­ platnou URL. VyÅ¾adovÃ¡n prefix ('http://' or 'https://')",
+			nodefined : " nenÃ­ definovÃ¡n!",
+			novalue : " je vyÅ¾adovÃ¡na nÃ¡vratovÃ¡ hodnota!",
+			customarray : "Custom function mÄ›lÃ¡ vrÃ¡tit pole!",
+			customfcheck : "Custom function by mÄ›la bÃ½t pÅ™Ã­tomna v pÅ™Ã­padÄ› custom checking!"
 		}
 	},
 	view : {
-	    caption: "Zobrazit záznam",
-	    bClose: "Zavřít"
+	    caption: "Zobrazit zÃ¡znam",
+	    bClose: "ZavÅ™Ã­t"
 	},
 	del : {
 		caption: "Smazat",
-		msg: "Smazat vybraný(é) záznam(y)?",
+		msg: "Smazat vybranÃ½(Ã©) zÃ¡znam(y)?",
 		bSubmit: "Smazat",
 		bCancel: "Storno"
 	},
 	nav : {
 		edittext: " ",
-		edittitle: "Editovat vybraný řádek",
+		edittitle: "Editovat vybranÃ½ Å™Ã¡dek",
 		addtext:" ",
-		addtitle: "Přidat nový řádek",
+		addtitle: "PÅ™idat novÃ½ Å™Ã¡dek",
 		deltext: " ",
-		deltitle: "Smazat vybraný záznam ",
+		deltitle: "Smazat vybranÃ½ zÃ¡znam ",
 		searchtext: " ",
-		searchtitle: "Najít záznamy",
+		searchtitle: "NajÃ­t zÃ¡znamy",
 		refreshtext: "",
 		refreshtitle: "Obnovit tabulku",
-		alertcap: "Varování",
-		alerttext: "Prosím, vyberte řádek",
+		alertcap: "VarovÃ¡nÃ­",
+		alerttext: "ProsÃ­m, vyberte Å™Ã¡dek",
 		viewtext: "",
-		viewtitle: "Zobrazit vybraný řádek"
+		viewtitle: "Zobrazit vybranÃ½ Å™Ã¡dek"
 	},
 	col : {
-		caption: "Zobrazit/Skrýt sloupce",
-		bSubmit: "Uložit",
+		caption: "Zobrazit/SkrÃ½t sloupce",
+		bSubmit: "UloÅ¾it",
 		bCancel: "Storno"	
 	},
 	errors : {
 		errcap : "Chyba",
-		nourl : "Není nastavena url",
-		norecords: "Žádné záznamy ke zpracování",
-		model : "Délka colNames <> colModel!"
+		nourl : "NenÃ­ nastavena url",
+		norecords: "Å½Ã¡dnÃ© zÃ¡znamy ke zpracovÃ¡nÃ­",
+		model : "DÃ©lka colNames <> colModel!"
 	},
 	formatter : {
 		integer : {thousandsSeparator: " ", defaultValue: '0'},
@@ -92,12 +92,12 @@ $.jgrid = {
 		currency : {decimalSeparator:".", thousandsSeparator: " ", decimalPlaces: 2, prefix: "", suffix:"", defaultValue: '0.00'},
 		date : {
 			dayNames:   [
-				"Ne", "Po", "Út", "St", "Čt", "Pá", "So",
-				"Neděle", "Pondělí", "Úterý", "Středa", "Čtvrtek", "Pátek", "Sobota"
+				"Ne", "Po", "Ãšt", "St", "ÄŒt", "PÃ¡", "So",
+				"NedÄ›le", "PondÄ›lÃ­", "ÃšterÃ½", "StÅ™eda", "ÄŒtvrtek", "PÃ¡tek", "Sobota"
 			],
 			monthNames: [
-				"Led", "Úno", "Bře", "Dub", "Kvě", "Čer", "Čvc", "Srp", "Zář", "Říj", "Lis", "Pro",
-				"Leden", "Únor", "Březen", "Duben", "Květen", "Červen", "Červenec", "Srpen", "Září", "Říjen", "Listopad", "Prosinec"
+				"Led", "Ãšno", "BÅ™e", "Dub", "KvÄ›", "ÄŒer", "ÄŒvc", "Srp", "ZÃ¡Å™", "Å˜Ã­j", "Lis", "Pro",
+				"Leden", "Ãšnor", "BÅ™ezen", "Duben", "KvÄ›ten", "ÄŒerven", "ÄŒervenec", "Srpen", "ZÃ¡Å™Ã­", "Å˜Ã­jen", "Listopad", "Prosinec"
 			],
 			AmPm : ["do","od","DO","OD"],
 			S: function (j) {return j < 11 || j > 13 ? ['st', 'nd', 'rd', 'th'][Math.min((j - 1) % 10, 3)] : 'th'},
