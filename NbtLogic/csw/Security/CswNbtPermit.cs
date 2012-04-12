@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.Security
 {
@@ -480,86 +480,86 @@ namespace ChemSW.Nbt.Security
             {
                 // case 24510
                 // Special container permissions, based on Inventory Group
-                if( ( Permission != null // ||
-                    // restore this when 24508 and 24516 are implemented
-                    //( Action != null &&
-                    //  ( Action.Name == CswNbtActionName.DispenseContainer ||       // case 24508
-                    //    Action.Name == CswNbtActionName.RequestContainer ) )       // case 24516
-                    ) )
+                //if( ( Permission != null // ||
+                //    // restore this when 24508 and 24516 are implemented
+                //    //( Action != null &&
+                //    //  ( Action.Name == CswNbtActionName.DispenseContainer ||       // case 24508
+                //    //    Action.Name == CswNbtActionName.RequestContainer ) )       // case 24516
+                //    ) )
+                //{
+                ret = false;
+
+                // We find the matching InventoryGroupPermission based on:
+                //   the Container's Location's Inventory Group
+                //   the User's WorkUnit
+                //   the User's Role
+                // We allow or deny permission to perform the action using the appropriate Logical
+
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass InvGrpOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
+                CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass );
+
+                CswNbtMetaDataObjectClassProp ContainerLocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
+                CswNbtMetaDataObjectClassProp LocationInvGrpOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.InventoryGroupPropertyName );
+                CswNbtMetaDataObjectClassProp PermInvGrpOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.InventoryGroupPropertyName );
+                CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.RolePropertyName );
+                CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.WorkUnitPropertyName );
+
+                CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
+                InvGrpPermView.ViewName = "CswNbtPermit_InventoryGroupPermCheck";
+                CswNbtViewRelationship ContainerVR = InvGrpPermView.AddViewRelationship( ContainerOC, false );
+                CswNbtViewRelationship LocationVR = InvGrpPermView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, ContainerLocationOCP, false );
+                CswNbtViewRelationship InvGrpVR = InvGrpPermView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.First, LocationInvGrpOCP, false );
+                CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, false );
+
+                // filter to container id
+                ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
+                // filter to role and workunit
+                InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.ToString(), CswNbtSubField.SubFieldName.NodeID );
+
+                ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true );
+
+                if( InvGrpPermTree.getChildNodeCount() > 0 )
                 {
-                    ret = false;
-
-                    // We find the matching InventoryGroupPermission based on:
-                    //   the Container's Location's Inventory Group
-                    //   the User's WorkUnit
-                    //   the User's Role
-                    // We allow or deny permission to perform the action using the appropriate Logical
-
-                    CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-                    CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                    CswNbtMetaDataObjectClass InvGrpOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass );
-                    CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass );
-
-                    CswNbtMetaDataObjectClassProp ContainerLocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
-                    CswNbtMetaDataObjectClassProp LocationInvGrpOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.InventoryGroupPropertyName );
-                    CswNbtMetaDataObjectClassProp PermInvGrpOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.InventoryGroupPropertyName );
-                    CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.RolePropertyName );
-                    CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.WorkUnitPropertyName );
-
-                    CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
-                    InvGrpPermView.ViewName = "CswNbtPermit_InventoryGroupPermCheck";
-                    CswNbtViewRelationship ContainerVR = InvGrpPermView.AddViewRelationship( ContainerOC, false );
-                    CswNbtViewRelationship LocationVR = InvGrpPermView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, ContainerLocationOCP, false );
-                    CswNbtViewRelationship InvGrpVR = InvGrpPermView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.First, LocationInvGrpOCP, false );
-                    CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpVR, NbtViewPropOwnerType.Second, PermInvGrpOCP, false );
-
-                    // filter to container id
-                    ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
-                    // filter to role and workunit
-                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.ToString(), CswNbtSubField.SubFieldName.NodeID );
-
-                    ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true );
-
+                    InvGrpPermTree.goToNthChild( 0 ); // container
                     if( InvGrpPermTree.getChildNodeCount() > 0 )
                     {
-                        InvGrpPermTree.goToNthChild( 0 ); // container
+                        InvGrpPermTree.goToNthChild( 0 ); // location
                         if( InvGrpPermTree.getChildNodeCount() > 0 )
                         {
-                            InvGrpPermTree.goToNthChild( 0 ); // location
+                            InvGrpPermTree.goToNthChild( 0 ); // inventory group
                             if( InvGrpPermTree.getChildNodeCount() > 0 )
                             {
-                                InvGrpPermTree.goToNthChild( 0 ); // inventory group
-                                if( InvGrpPermTree.getChildNodeCount() > 0 )
-                                {
-                                    InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
-                                    CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                                    CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = CswNbtNodeCaster.AsInventoryGroupPermission( PermNode );
-                                    if( Permission != null )
+                                InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
+                                CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
+                                CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = CswNbtNodeCaster.AsInventoryGroupPermission( PermNode );
+                                //if( Permission != null )
+                                //{
+                                    if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
+                                        ( Permission == NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
+                                        ( Permission == NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
+                                        ( Permission == NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
                                     {
-                                        if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
-                                            ( Permission == NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                            ( Permission == NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                            ( Permission == NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
-                                        {
-                                            ret = true;
-                                        }
+                                        ret = true;
                                     }
-                                    else
-                                    {
-                                        // restore this when 24508 and 24516 are implemented
-                                        //if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
-                                        //    ( Action.Name == CswNbtActionName.RequestContainer && PermNodeAsPerm.Request.Checked == Tristate.True ) )
-                                        //{
-                                        //    ret = true;
-                                        //}
-                                    }
-                                } // if( InvGrpPermTree.getChildNodeCount() > 0 )
+                                //}
+                                //else
+                                //{
+                                //    // restore this when 24508 and 24516 are implemented
+                                //    //if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
+                                //    //    ( Action.Name == CswNbtActionName.RequestContainer && PermNodeAsPerm.Request.Checked == Tristate.True ) )
+                                //    //{
+                                //    //    ret = true;
+                                //    //}
+                                //}
                             } // if( InvGrpPermTree.getChildNodeCount() > 0 )
                         } // if( InvGrpPermTree.getChildNodeCount() > 0 )
                     } // if( InvGrpPermTree.getChildNodeCount() > 0 )
-                } // if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass )
-            } // if( null != ContainerNode && null != ContainerNode.NodeId )
+                } // if( InvGrpPermTree.getChildNodeCount() > 0 )
+            } // if( Node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass )
+            //} // if( null != ContainerNode && null != ContainerNode.NodeId )
             return ret;
         } // canContainer
 
