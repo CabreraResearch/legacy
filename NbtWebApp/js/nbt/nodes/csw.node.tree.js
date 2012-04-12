@@ -172,6 +172,10 @@
             };
 
             internal.clearChecks();
+
+            // case 25844 - open children
+            external.treeDiv.$.jstree( 'open_node', selected.$item );
+
             Csw.tryExec(m.onSelectNode, optSelect);
         }; // internal.handleSelectNode()
 

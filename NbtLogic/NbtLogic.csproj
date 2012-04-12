@@ -102,6 +102,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24438B.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24438.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24463.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25763.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_04.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_03.cs" />

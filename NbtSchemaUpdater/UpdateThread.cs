@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Windows.Forms;
 using ChemSW.Config;
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Schema
                     DbInstances.Columns.Add( _ColName_Deactivated, typeof( bool ) );
                     DbInstances.Columns.Add( _ColName_Display, typeof( string ) );
                     DbInstances.Rows.Clear();
-                    foreach( string CurrentAccessId in CswNbtResources.CswDbCfgInfo.AccessIds )
+                    foreach( string CurrentAccessId in CswNbtResources.CswDbCfgInfo.ActiveAccessIds )
                     {
                         CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CurrentAccessId );
                         DataRow CurrentRow = DbInstances.NewRow();
