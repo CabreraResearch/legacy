@@ -122,6 +122,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypes( ObjectClassId );
         }
 
+        public IEnumerable<CswNbtMetaDataNodeType> getLatestVersionNodeTypes()
+        {
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypesLatestVersion( ObjectClassId );
+        }
+
         public CswNbtMetaDataNodeType FirstNodeType
         {
             get

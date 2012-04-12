@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -30,7 +32,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, string ExcludeNodeTypeIds = "", Int32 RelatedNodeTypeId = Int32.MinValue, string RelatedObjectClassPropName = "" )
         {
             JObject ReturnVal = new JObject();
-
+            
             CswCommaDelimitedString ExcludedNodeTypes = new CswCommaDelimitedString();
             Collection<Int32> ExcludedIds = new Collection<Int32>();
             if( false == string.IsNullOrEmpty( ExcludeNodeTypeIds ) )
@@ -39,67 +41,57 @@ namespace ChemSW.Nbt.WebServices
                 ExcludedIds = ExcludedNodeTypes.ToIntCollection();
             }
 
-            Int32 NodeTypeCount = 0;
+            IEnumerable<CswNbtMetaDataNodeType> NodeTypes;
             if( null == ObjectClass )
             {
-                foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
-                {
-                    if( false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
-                    {
-                        NodeTypeCount += _filterNodeTypesByObjectClassPropRelationship( NodeType, ReturnVal, RelatedNodeTypeId, RelatedObjectClassPropName );
-                    }
-                } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.LatestVersionNodeTypes )
+                NodeTypes = _CswNbtResources.MetaData.getNodeTypesLatestVersion();
             }
             else
             {
-                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                NodeTypes = ObjectClass.getLatestVersionNodeTypes();
+            }
+
+            Int32 NodeTypeCount = 0;
+            foreach( CswNbtMetaDataNodeType RetNodeType in NodeTypes )
+            {
+                bool AddThisNodeType = false;
+                if( false == ExcludedIds.Contains( RetNodeType.NodeTypeId ) )
                 {
-                    if( NodeType.IsLatestVersion() && false == ExcludedIds.Contains( NodeType.NodeTypeId ) )
+                    AddThisNodeType = true;
+                    //NodeTypeCount += _filterNodeTypesByObjectClassPropRelationship( NodeType, ReturnVal, RelatedNodeTypeId, RelatedObjectClassPropName );
+                    if ( Int32.MinValue != RelatedNodeTypeId &&
+                         false == string.IsNullOrEmpty( RelatedObjectClassPropName ) )
                     {
-                        NodeTypeCount += _filterNodeTypesByObjectClassPropRelationship( NodeType, ReturnVal, RelatedNodeTypeId, RelatedObjectClassPropName );
+                        /* We are going to try to constrain the return nodetypes according to the target of the relationship */
+                        CswNbtMetaDataNodeTypeProp RelationshipNtp = RetNodeType.getNodeTypePropByObjectClassProp( RelatedObjectClassPropName );
+                        /* We don't have a way (yet) to validate the prop name against the object class, so validate afterward */
+                        if ( null != RelationshipNtp &&
+                             Int32.MinValue != RelationshipNtp.ObjectClassPropId &&
+                            RelationshipNtp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
+                             /* If the FKType is ObjectClassId, we're going to include it in the return */
+                             RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                        {
+                            
+                            CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypeId );
+                            if ( null == RelatedNodeType || RelationshipNtp.FKValue != RelatedNodeType.getFirstVersionNodeType().NodeTypeId )
+                            {
+                                AddThisNodeType = false;
+                            }
+                        }
                     }
                 }
+                if( AddThisNodeType )
+                {
+                    _addNodeTypeAttributes( RetNodeType, ReturnVal );
+                    NodeTypeCount += 1;
+                }
             }
+            
+
             ReturnVal["count"] = NodeTypeCount;
             return ReturnVal;
         } // getNodeTypes()
-
-        private Int32 _filterNodeTypesByObjectClassPropRelationship( CswNbtMetaDataNodeType NodeType, JObject RetObj, Int32 RelatedNodeTypeId = Int32.MinValue, string RelatedObjectClassPropName = "" )
-        {
-            Int32 NodeTypesAdded = 0;
-            if( null != NodeType )
-            {
-                if( Int32.MinValue != RelatedNodeTypeId &&
-                    false == string.IsNullOrEmpty( RelatedObjectClassPropName ) )
-                {
-                    /* We don't have a way (yet) to validate the prop name against the object class, so validate afterward */
-                    CswNbtMetaDataNodeTypeProp RelatedNtp = NodeType.getNodeTypePropByObjectClassProp( RelatedObjectClassPropName );
-                    if( null != RelatedNtp &&
-                        RelatedNtp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                        RelatedNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() )
-                    {
-                        CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypeId );
-                        if( null != RelatedNodeType && RelatedNtp.FKValue == RelatedNodeType.getFirstVersionNodeType().NodeTypeId )
-                        {
-                            _addNodeTypeAttributes( NodeType, RetObj );
-                            NodeTypesAdded = 1;
-                        }
-                    }
-                    else
-                    {
-                        _addNodeTypeAttributes( NodeType, RetObj );
-                        NodeTypesAdded = 1;
-                    }
-                }
-                else
-                {
-                    _addNodeTypeAttributes( NodeType, RetObj );
-                    NodeTypesAdded = 1;
-                }
-            }
-            return NodeTypesAdded;
-        }
-
+        
         private void _addNodeTypeAttributes( CswNbtMetaDataNodeType NodeType, JObject ReturnVal )
         {
             CswNbtMetaDataObjectClass ObjectClass = NodeType.getObjectClass();
