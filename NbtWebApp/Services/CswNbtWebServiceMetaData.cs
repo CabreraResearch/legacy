@@ -26,13 +26,18 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         /// <param name="ObjectClass">(Optional) An Object Class to constrain results.</param>
         /// <param name="ExcludeNodeTypeIds">(Optional) A comma-delimited string of NodeTypeIds to exclude from the return.</param>
-        /// <param name="RelatedNodeTypeId">(Optional) A related NodeTypeId to further constrain the results</param>
-        /// <param name="RelatedObjectClassPropName">(Required if RelatedNodeTypeId is supplied) The name of the Object Class Prop which defines the relationship to RelatedNodeTypeId</param>
+        /// <param name="RelationshipTargetNodeTypeId">(Optional [Requires RelationshipObjectClassPropName]) 
+        /// <para>A related NodeTypeId to further constrain the results to nodetypes whose relationship targets the supplied RelationshipTargetNodeTypeId</para>
+        /// <para>Use case: get all nodetypes of Size object class whose Material relationships target Chemicals.</para>
+        /// </param>
+        /// <param name="RelationshipObjectClassPropName">(Optional [Requires RelationshipObjectClassPropName]) 
+        /// <para>The name of the Object Class Prop which defines the relationship to RelationshipTargetNodeTypeId</para>
+        /// </param>
         /// <returns></returns>
-        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, string ExcludeNodeTypeIds = "", Int32 RelatedNodeTypeId = Int32.MinValue, string RelatedObjectClassPropName = "" )
+        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, string ExcludeNodeTypeIds = "", Int32 RelationshipTargetNodeTypeId = Int32.MinValue, string RelationshipObjectClassPropName = "" )
         {
             JObject ReturnVal = new JObject();
-            
+
             CswCommaDelimitedString ExcludedNodeTypes = new CswCommaDelimitedString();
             Collection<Int32> ExcludedIds = new Collection<Int32>();
             if( false == string.IsNullOrEmpty( ExcludeNodeTypeIds ) )
@@ -52,28 +57,26 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Int32 NodeTypeCount = 0;
+
             foreach( CswNbtMetaDataNodeType RetNodeType in NodeTypes )
             {
                 bool AddThisNodeType = false;
                 if( false == ExcludedIds.Contains( RetNodeType.NodeTypeId ) )
                 {
                     AddThisNodeType = true;
-                    //NodeTypeCount += _filterNodeTypesByObjectClassPropRelationship( NodeType, ReturnVal, RelatedNodeTypeId, RelatedObjectClassPropName );
-                    if ( Int32.MinValue != RelatedNodeTypeId &&
-                         false == string.IsNullOrEmpty( RelatedObjectClassPropName ) )
+                    if( Int32.MinValue != RelationshipTargetNodeTypeId &&
+                         false == string.IsNullOrEmpty( RelationshipObjectClassPropName ) )
                     {
-                        /* We are going to try to constrain the return nodetypes according to the target of the relationship */
-                        CswNbtMetaDataNodeTypeProp RelationshipNtp = RetNodeType.getNodeTypePropByObjectClassProp( RelatedObjectClassPropName );
-                        /* We don't have a way (yet) to validate the prop name against the object class, so validate afterward */
-                        if ( null != RelationshipNtp &&
-                             Int32.MinValue != RelationshipNtp.ObjectClassPropId &&
-                            RelationshipNtp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                             /* If the FKType is ObjectClassId, we're going to include it in the return */
-                             RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                        CswNbtMetaDataNodeTypeProp RelationshipNtp = RetNodeType.getNodeTypePropByObjectClassProp( RelationshipObjectClassPropName );
+                        if( null != RelationshipNtp &&
+                             RelationshipNtp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                         {
-                            
-                            CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelatedNodeTypeId );
-                            if ( null == RelatedNodeType || RelationshipNtp.FKValue != RelatedNodeType.getFirstVersionNodeType().NodeTypeId )
+                            CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
+                            if( null == RelatedNodeType ||
+                                 false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                                              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
+                                            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
                             {
                                 AddThisNodeType = false;
                             }
@@ -86,12 +89,12 @@ namespace ChemSW.Nbt.WebServices
                     NodeTypeCount += 1;
                 }
             }
-            
+
 
             ReturnVal["count"] = NodeTypeCount;
             return ReturnVal;
         } // getNodeTypes()
-        
+
         private void _addNodeTypeAttributes( CswNbtMetaDataNodeType NodeType, JObject ReturnVal )
         {
             CswNbtMetaDataObjectClass ObjectClass = NodeType.getObjectClass();
