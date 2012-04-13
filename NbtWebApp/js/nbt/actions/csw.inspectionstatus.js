@@ -35,7 +35,7 @@
                             onAfterButtonClick: internal.onAfterButtonClick
                         };
                         if (false === Csw.isNullOrEmpty(rowid)) {
-                            editOpt.nodeids.push(grid.getValueForColumn('NODEPK', rowid));
+                            editOpt.nodeids.push(external.grid.getValueForColumn('NODEPK', rowid));
                             $.CswDialog('EditNodeDialog', editOpt);
                         } else {
                             $.CswDialog('AlertDialog', 'Please select a row to edit');
