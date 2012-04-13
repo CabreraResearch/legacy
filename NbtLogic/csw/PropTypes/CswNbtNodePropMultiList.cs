@@ -115,32 +115,40 @@ namespace ChemSW.Nbt.PropTypes
             Value = myValue;
         }
 
+        public delegate Dictionary<string, string> InitOptionsHandler();
+        public InitOptionsHandler InitOptions = null;
+
         private Dictionary<string, string> _Options = null;
         public Dictionary<string, string> Options
         {
             get
             {
-                Dictionary<string, string> ret = null;
-                if( _Options != null )
+                if( _Options == null )
                 {
-                    ret = _Options;
-                }
-                else
-                {
-                    ret = new Dictionary<string, string>();
-                    CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
-                    ListOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
-                    foreach( string ListOption in ListOptions )
+                    if( InitOptions != null )
                     {
-                        ret.Add( ListOption, ListOption );
+                        // Override, usually from CswNbtObjClass*
+                        _Options = InitOptions();
                     }
-                }
-                return ret;
+                    if( _Options == null )
+                    {
+                        // Default
+                        _Options = new Dictionary<string, string>();
+                        CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
+                        ListOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
+                        foreach( string ListOption in ListOptions )
+                        {
+                            _Options.Add( ListOption, ListOption );
+                        }
+                    }
+                } // if( _Options == null )
+                return _Options;
             } // get
-            set
-            {
-                _Options = value;
-            }
+            // Use InitOptions handler for performance instead
+            //set
+            //{
+            //    _Options = value;
+            //}
         } // Options
 
         private void _setGestalt()

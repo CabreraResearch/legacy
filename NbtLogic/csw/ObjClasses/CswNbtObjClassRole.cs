@@ -225,11 +225,12 @@ namespace ChemSW.Nbt.ObjClasses
             return Action.DisplayName;
         }
 
-        public override void afterPopulateProps()
+
+        private Dictionary<string, string> InitNodeTypePermissionOptions()
         {
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
-            {
+            //if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            //{
                 // set NodeType Permissions options
                 // Could be a performance problem!!!
                 Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
@@ -253,13 +254,15 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
                 } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
-                NodeTypePermissions.Options = NodeTypeOptions;
-            } // if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+                return NodeTypeOptions;
+            //} // if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+        } // InitNodeTypePermissionOptions()
 
-
+        private Dictionary<string, string> InitActionPermissionOptions()
+        {
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[ActionPermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
-            {
+            //if( _CswNbtNode.Properties[ActionPermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            //{
                 // set Action Permissions options
                 Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
                 foreach( CswNbtAction Action in _CswNbtResources.Actions )
@@ -268,8 +271,14 @@ namespace ChemSW.Nbt.ObjClasses
                     string Value = MakeActionPermissionText( Action );
                     ActionOptions.Add( Key, Value );
                 }
-                ActionPermissions.Options = ActionOptions;
-            }
+                return ActionOptions;
+            //}
+        } // InitActionPermissionOptions()
+
+        public override void afterPopulateProps()
+        {
+            NodeTypePermissions.InitOptions = InitNodeTypePermissionOptions;
+            ActionPermissions.InitOptions = InitActionPermissionOptions;
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
