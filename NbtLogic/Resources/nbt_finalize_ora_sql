@@ -265,7 +265,7 @@ select n.nodeid, t.nodetypeid, oc.objectclassid, u.Username, ocp.propname, p.nod
   join object_class_props ocp on oc.objectclassid = ocp.objectclassid
   join nodetype_props p on p.objectclasspropid = ocp.objectclasspropid
                        and t.nodetypeid = p.nodetypeid
-  join jct_nodes_props j on p.nodetypepropid = j.nodetypepropid
+  left outer join jct_nodes_props j on p.nodetypepropid = j.nodetypepropid
                         and j.nodeid = n.nodeid
   join (select j.nodeid, j.field1 as username
           from jct_nodes_props j
@@ -279,14 +279,14 @@ select n.nodeid, t.nodetypeid, oc.objectclassid, u.Username, ocp.propname, p.nod
 commit;
   
 create or replace view vwNbtRole as 
-  select n.nodeid, t.nodetypeid, oc.objectclassid, u.Username, ocp.propname, p.nodetypepropid, j.field1_fk, j.field1_date, j.gestalt
+  select n.nodeid, t.nodetypeid, oc.objectclassid, ocp.propname, p.nodetypepropid, j.field1_fk, j.field1_date, j.gestalt
   from nodes n
   join nodetypes t on n.nodetypeid = t.nodetypeid
   join object_class oc on t.objectclassid = oc.objectclassid
   join object_class_props ocp on oc.objectclassid = ocp.objectclassid
   join nodetype_props p on p.objectclasspropid = ocp.objectclasspropid 
                        and t.nodetypeid = p.nodetypeid
-  join jct_nodes_props j on p.nodetypepropid = j.nodetypepropid 
+  left outer join jct_nodes_props j on p.nodetypepropid = j.nodetypepropid 
                         and j.nodeid = n.nodeid
   where oc.objectclass = 'RoleClass';
   

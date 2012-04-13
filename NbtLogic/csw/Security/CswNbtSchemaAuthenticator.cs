@@ -16,9 +16,10 @@ namespace ChemSW.Nbt.Security
         private ICswUser _User = null;
         public ICswUser getUser( string UserName )
         {
-            if( _User == null || _User.Username != UserName )
-                _User = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes.makeUserNodeFromUsername( UserName, false ) ) as ICswUser;    // can't require permissions if we are fetching the current user context
-            return _User;
+            //if( _User == null || _User.Username != UserName )
+            //    _User = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes.makeUserNodeFromUsername( UserName, false ) ) as ICswUser;    // can't require permissions if we are fetching the current user context
+            //return _User;
+            return new CswNbtUser( _CswNbtResources, UserName );
         }
 
         public AuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, string username, string password, string IPAddress, out ICswUser AuthenticatedUser )
