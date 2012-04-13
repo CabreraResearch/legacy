@@ -39,6 +39,10 @@ namespace ChemSW.Nbt.Schema
             WorkUnitView.AddViewRelationship( WorkUnitOC, true );
             WorkUnitView.save();
 
+            // Add inventory group object classes to CISPro
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, InventoryGroupOC.ObjectClassId );
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, InventoryGroupPermOC.ObjectClassId );
+
         }//Update()
 
     }//class CswUpdateSchemaCase24510C
