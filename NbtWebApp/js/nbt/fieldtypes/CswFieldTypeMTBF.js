@@ -75,7 +75,7 @@
                 units: null
             };
 
-            var startDate = o.propDiv.find('#' + o.ID + '_sd').find('input'),
+            var startDate = o.propDiv.find('#' + o.ID + '_sd_date'),
                 dateVal;
 
             if (false === Csw.isNullOrEmpty(startDate)) {
