@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
                                                            CswNbtMetaDataFieldType.NbtFieldType.Location );
 
             // User - Work Unit
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.WorkUnitClass,
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass,
                                                            CswNbtObjClassUser.WorkUnitPropertyName,
                                                            CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                            false,
