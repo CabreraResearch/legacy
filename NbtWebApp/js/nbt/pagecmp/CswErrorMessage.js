@@ -67,7 +67,7 @@
         };
 
         var _makeNodeLink = function(parent, nodeid, nodename) {
-            parent.link({
+            parent.a({
                 ID: Csw.makeId(id, nodeid),
                 text: nodename,
                 onClick: function() {
