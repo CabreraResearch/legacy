@@ -10,7 +10,7 @@ using ChemSW.Nbt.Security;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
 
-namespace ChemSW.Nbt
+namespace ChemSW.Nbt.Security
 {
     /// <summary>
     /// This is a read-only store of current user information
