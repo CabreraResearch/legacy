@@ -703,7 +703,7 @@
                         var subProps = thisProp.subprops;
                         if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
                             var subTable = layoutTable[thisProp.id + '_subproptable'];
-                            if (subTable.length() > 0) {
+                            if (false === Csw.isNullOrEmpty(subTable)) {
                                 internal.updatePropJsonFromLayoutTable(subTable, subProps);
                             }
                         }
