@@ -83,8 +83,8 @@ namespace ChemSW.Nbt.Security
                     {
                         _UserPropDict[ObjectClassPropName + _DateSuffix] = ObjectClassPropValueDate;
                     }
-                }
-            }
+                } // foreach( DataRow Row in UserTable.Rows )
+            } // if( UserTable.Rows.Count > 0 )
 
             //CswTableSelect RoleSelect = _CswNbtResources.makeCswTableSelect( "CswNbtUser_Role_Select", "vwNbtRole" );
             //DataTable RoleTable = RoleSelect.getTable( "where roleid = '" + _RoleId.ToString() + "'" );
@@ -166,12 +166,28 @@ namespace ChemSW.Nbt.Security
 
         public CswPrimaryKey DefaultLocationId
         {
-            get { return new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.DefaultLocationPropertyName + _FkSuffix] ) ); }
+            get
+            {
+                CswPrimaryKey ret = null;
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.DefaultLocationPropertyName + _FkSuffix ) )
+                {
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.DefaultLocationPropertyName + _FkSuffix] ) );
+                }
+                return ret;
+            }
         }
 
         public CswPrimaryKey WorkUnitId
         {
-            get { return new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.WorkUnitPropertyName + _FkSuffix] ) ); }
+            get
+            {
+                CswPrimaryKey ret = null;
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.WorkUnitPropertyName + _FkSuffix ) )
+                {
+                    ret = new CswPrimaryKey( "nodes", CswConvert.ToInt32( _UserPropDict[CswNbtObjClassUser.WorkUnitPropertyName + _FkSuffix] ) );
+                }
+                return ret;
+            }
         }
 
         public Int32 PasswordPropertyId
