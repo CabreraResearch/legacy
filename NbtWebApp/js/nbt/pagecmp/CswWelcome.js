@@ -155,8 +155,8 @@
             });
 
 //            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
-            var viewSelect = Csw.controls.viewSelect({
-                $parent: viewSelectTable.cell(1, 1).$,
+            var viewSelect = viewSelectTable.cell(1, 1).viewSelect({
+                //$parent: viewSelectTable.cell(1, 1).$,
                 ID: 'welcome_viewsel',
                 maxHeight: '275px'
             });
