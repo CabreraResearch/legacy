@@ -814,7 +814,7 @@
             };
             if (options) $.extend(o, options);
 
-            var div = Csw.controls.div();
+            var div = Csw.literals.div();
 
             Csw.ajax.post({
                 url: '/NbtWebApp/wsNBT.asmx/getUsers',
@@ -849,7 +849,7 @@
                 } // success
             }); // ajax
 
-            openDialog(div.$, 400, 300, null, 'Impersonate');
+            openDialog(div, 400, 300, null, 'Impersonate');
         }, // ImpersonateDialog
 
         ErrorDialog: function (error) {
