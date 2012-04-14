@@ -30,24 +30,31 @@ namespace ChemSW.Nbt.WebServices
                     SelectColumns.Add( "field1" );
                     DataTable JctTable = JctSelect.getTable( SelectColumns, "jctnodepropid", JctNodePropId, "", true );
 
-                    if( JctTable.Rows.Count > 0 )
+                    byte[] BlobData;
+                    string ContentType;
+                    string FileName;
+                    if( JctTable.Rows.Count > 0 && false == JctTable.Rows[0].IsNull( "blobdata" ) )
                     {
-                        if( !JctTable.Rows[0].IsNull( "blobdata" ) )
-                        {
-                            string FileName = JctTable.Rows[0]["field1"].ToString();
-                            byte[] BlobData = JctTable.Rows[0]["blobdata"] as byte[];
-                            string ContentType = JctTable.Rows[0]["field2"].ToString();
-                            MemoryStream mem = new MemoryStream();
-                            BinaryWriter BWriter = new BinaryWriter( mem, System.Text.Encoding.Default );
-                            BWriter.Write( BlobData );
-
-                            Context.Response.ClearContent();
-                            Context.Response.ContentType = ContentType;
-                            Context.Response.BinaryWrite( mem.ToArray() );
-                            Context.Response.AddHeader( "Content-Disposition", "attachment;filename=" + FileName + ";" );
-                            Context.Response.End();
-                        } //if we actually have blob data
+                        FileName = JctTable.Rows[0]["field1"].ToString();
+                        ContentType = JctTable.Rows[0]["field2"].ToString();
+                        BlobData = JctTable.Rows[0]["blobdata"] as byte[];
                     }
+                    else
+                    {
+                        FileName = "empty";
+                        ContentType = "image/gif";
+                        BlobData = File.ReadAllBytes( Context.Request.PhysicalApplicationPath + "/Images/icons/300/_placeholder.gif" );
+                    }
+
+                    MemoryStream mem = new MemoryStream();
+                    BinaryWriter BWriter = new BinaryWriter( mem, System.Text.Encoding.Default );
+                    BWriter.Write( BlobData );
+
+                    Context.Response.ClearContent();
+                    Context.Response.ContentType = ContentType;
+                    Context.Response.BinaryWrite( mem.ToArray() );
+                    Context.Response.AddHeader( "Content-Disposition", "attachment;filename=" + FileName + ";" );
+                    Context.Response.End();
                 }
             }
         }//if we got any result

@@ -49,10 +49,13 @@ namespace ChemSW.Nbt.ObjClasses
         private void setDoneOnDate()
         {
             if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
+            {
                 DoneOn.DateTimeValue = DateTime.Now;
+            }
 
-            if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
-                DoneOn.DateTimeValue = DateTime.MinValue;
+            // case 25838 - don't clear existing values
+            //if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
+            //    DoneOn.DateTimeValue = DateTime.MinValue;
         }
 
         #region Inherited Events
