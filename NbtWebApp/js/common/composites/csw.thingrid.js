@@ -77,7 +77,11 @@
             };
 
             (function () {
-                internal.rowCount = 1;
+                if (internal.rows.length > 0) {
+                    internal.rowCount = 1;
+                } else {
+                    internal.rowCount = 0;
+                }
 
                 external.addRows(internal.rows);
 
@@ -85,7 +89,7 @@
                     text: internal.linkText,
                     onClick: internal.onLinkClick
                 });
-                
+
             } ());
 
 

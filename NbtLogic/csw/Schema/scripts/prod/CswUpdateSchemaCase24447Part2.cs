@@ -13,9 +13,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
 
             CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
             CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
             CswNbtMetaDataObjectClassProp QuantityEditableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName );
