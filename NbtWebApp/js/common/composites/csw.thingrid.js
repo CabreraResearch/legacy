@@ -28,7 +28,7 @@
                 rows: [],
                 width: '',
                 height: '',
-                cellpadding: 2,
+                cellpadding: 5,
                 linkText: 'More...',
                 onLinkClick: null,
                 isControl: false,
