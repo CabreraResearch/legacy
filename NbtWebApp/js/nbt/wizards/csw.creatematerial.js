@@ -395,9 +395,10 @@
                                         var size = data.row;
                                         if (isSizeNew(size)) {
                                             internal.sizeGrid.addRows(size);
+                                            Csw.log(internal.sizeNodes);
                                             internal.sizeNodes.push({
                                                 nodetypeid: internal.sizeNodeTypeId,
-                                                sizedef: sizeData
+                                                sizedef: Csw.clone(sizeData) 
                                             });
                                             sizes.push(size);
                                         } else {
@@ -433,7 +434,7 @@
                                 data: { MaterialId: internal.materialNodeId },
                                 success: function (data) {
                                     sizes = data.rows || [];
-                                    Csw.log(sizes);
+
                                     internal.sizeGrid.addRows(sizes);
                                 }
                             });
