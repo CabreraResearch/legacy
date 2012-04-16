@@ -182,7 +182,7 @@ namespace ChemSW.Nbt
             }
             set
             {
-				if( value != null && value.PrimaryKey != Int32.MinValue )
+                if( value != null && value.PrimaryKey != Int32.MinValue )
                     _RootString[11] = value.ToString();
                 else
                     _RootString[11] = string.Empty;
@@ -204,10 +204,10 @@ namespace ChemSW.Nbt
             }
             set
             {
-				if( value != null && value.PrimaryKey != Int32.MinValue )
-					_RootString[12] = value.ToString();
-				else
-					_RootString[12] = string.Empty;
+                if( value != null && value.PrimaryKey != Int32.MinValue )
+                    _RootString[12] = value.ToString();
+                else
+                    _RootString[12] = string.Empty;
             }
         } // VisibilityUserId
 
@@ -569,32 +569,38 @@ namespace ChemSW.Nbt
             JObject Ret = new JObject();
 
             JObject RootPropObj = new JObject();
-            JProperty RootProperty = new JProperty( NbtViewXmlNodeName.TreeView.ToString(), RootPropObj );
+            Ret[NbtViewXmlNodeName.TreeView.ToString()] = RootPropObj;
 
-            Ret.Add( RootProperty );
-
-            RootPropObj.Add( new JProperty( "nodename", NbtViewXmlNodeName.TreeView.ToString().ToLower() ) );
-            RootPropObj.Add( new JProperty( "viewname", ViewName ) );
-            RootPropObj.Add( new JProperty( "version", "1.0" ) );
-            RootPropObj.Add( new JProperty( "iconfilename", IconFileName ) );
-            RootPropObj.Add( new JProperty( "selectable", Selectable.ToString().ToLower() ) );
-            RootPropObj.Add( new JProperty( "mode", ViewMode.ToString() ) );
-            RootPropObj.Add( new JProperty( "width", ( Width > 0 ) ? Width.ToString() : "" ) );
-            RootPropObj.Add( new JProperty( "viewid", ( ViewId.isSet() ) ? ViewId.get().ToString() : "" ) );
-            RootPropObj.Add( new JProperty( "category", Category.ToString() ) );
-            RootPropObj.Add( new JProperty( "visibility", Visibility.ToString() ) );
-            RootPropObj.Add( new JProperty( "visibilityroleid", ( VisibilityRoleId != null ) ? VisibilityRoleId.PrimaryKey.ToString() : "" ) );
-            RootPropObj.Add( new JProperty( "visibilityuserid", ( VisibilityUserId != null ) ? VisibilityUserId.PrimaryKey.ToString() : "" ) );
-            RootPropObj.Add( new JProperty( "formobile", ForMobile.ToString().ToLower() ) );
+            RootPropObj["nodename"] = NbtViewXmlNodeName.TreeView.ToString().ToLower();
+            RootPropObj["viewname"] = ViewName;
+            RootPropObj["version"] = "1.0";
+            RootPropObj["iconfilename"] = IconFileName;
+            RootPropObj["selectable"] = Selectable.ToString().ToLower();
+            RootPropObj["mode"] = ViewMode.ToString();
+            RootPropObj["width"] = ( Width > 0 ) ? Width.ToString() : "";
+            RootPropObj["viewid"] = ( ViewId.isSet() ) ? ViewId.get().ToString() : "";
+            RootPropObj["category"] = Category;
+            RootPropObj["visibility"] = Visibility.ToString();
+            RootPropObj["visibilityroleid"] = ( VisibilityRoleId != null ) ? VisibilityRoleId.PrimaryKey.ToString() : "";
+            RootPropObj["visibilityuserid"] = ( VisibilityUserId != null ) ? VisibilityUserId.PrimaryKey.ToString() : "";
+            RootPropObj["formobile"] = ForMobile.ToString().ToLower();
 
             JObject ChildObject = new JObject();
-            RootPropObj.Add( new JProperty( _ChildRelationshipsName, ChildObject ) );
-            // Recurse on child ViewNodes
-            foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
+            if( null == RootPropObj[_ChildRelationshipsName] ||
+                RootPropObj[_ChildRelationshipsName].Type != JTokenType.Object )
             {
-                ChildObject.Add( ChildRelationship.ToJson() );
-            }
+                RootPropObj[_ChildRelationshipsName] = ChildObject;
 
+                // Recurse on child ViewNodes
+                foreach( CswNbtViewRelationship ChildRelationship in ChildRelationships )
+                {
+                    JProperty ChildRelationshipProp = ChildRelationship.ToJson();
+                    if( null == ChildObject[ChildRelationshipProp.Name] )
+                    {
+                        ChildObject.Add( ChildRelationshipProp );
+                    }
+                }
+            }
             return Ret;
         }//ToXml()
 

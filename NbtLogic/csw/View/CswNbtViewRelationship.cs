@@ -1102,7 +1102,11 @@ namespace ChemSW.Nbt
                 RelationshipObj[_PropertiesName] = PropObj;
                 foreach( CswNbtViewProperty Prop in this.Properties )
                 {
-                    PropObj.Add( Prop.ToJson() );
+                    JProperty PropProperty = Prop.ToJson();
+                    if( null == PropObj[PropProperty.Name] )
+                    {
+                        PropObj.Add( PropProperty );
+                    }
                 }
 
                 // Recurse on child ViewNodes
@@ -1110,7 +1114,11 @@ namespace ChemSW.Nbt
                 RelationshipObj[_ChildRelationshipsName] = ChildObj;
                 foreach( CswNbtViewRelationship ChildRelationship in this.ChildRelationships )
                 {
-                    ChildObj.Add( ChildRelationship.ToJson() );
+                    JProperty ChildRelationshipProperty = ChildRelationship.ToJson();
+                    if( null == ChildObj[ChildRelationshipProperty.Name] )
+                    {
+                        ChildObj.Add( ChildRelationshipProperty );
+                    }
                 }
                 if( string.IsNullOrEmpty( RPropName ) )
                 {

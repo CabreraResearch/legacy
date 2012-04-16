@@ -77,7 +77,7 @@
             };
 
             (function () {
-                internal.rowCount = 0;
+                internal.rowCount = 1;
 
                 external.addRows(internal.rows);
 

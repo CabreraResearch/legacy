@@ -203,7 +203,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
         /// </summary>
-        public CswNbtViewRelationship CopyViewRelationship( CswNbtViewNode ParentViewNode, CswNbtViewRelationship CopyFrom, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship CopyViewRelationship( CswNbtViewNode ParentViewNode, CswNbtViewRelationship CopyFrom, bool IncludeDefaultFilters = false )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, CopyFrom, IncludeDefaultFilters );
             if( ParentViewNode != null )
@@ -215,7 +215,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For adding a nodetype to the root level of the view.
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataNodeType NodeType, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataNodeType NodeType, bool IncludeDefaultFilters = false )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, NodeType, IncludeDefaultFilters );
             if( this.Root != null )
@@ -227,7 +227,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For adding an object class to the root level of the view
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataObjectClass ObjectClass, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataObjectClass ObjectClass, bool IncludeDefaultFilters = false )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, ObjectClass, IncludeDefaultFilters );
             if( this.Root != null )
@@ -239,7 +239,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by a nodetype property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataNodeTypeProp Prop, bool IncludeDefaultFilters = false )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -251,7 +251,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by an object class property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, CswNbtMetaDataObjectClassProp Prop, bool IncludeDefaultFilters = false )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -468,7 +468,7 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyViewId">Primary key of view to copy</param>
-        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, Int32 CopyViewId )
+        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView CopyView = null;
             if( CopyViewId > 0 )
