@@ -2903,7 +2903,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm )
+        public string doUniversalSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2915,7 +2915,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm );
+                    ReturnVal = ws.doUniversalSearch( SearchTerm, CswConvert.ToInt32(NodeTypeId), CswConvert.ToInt32(ObjectClassId) );
                 }
                 _deInitResources();
             }

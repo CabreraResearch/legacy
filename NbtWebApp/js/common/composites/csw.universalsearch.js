@@ -12,6 +12,8 @@
                 $searchbox_parent: null,
                 $searchresults_parent: null,
                 $searchfilters_parent: null,
+                nodetypeid: '',       // automatically filter results to this nodetype
+                objectclassid: '',    // automatically filter results to this objectclass
                 onBeforeSearch: null,
                 onAfterSearch: null,
                 onAfterNewSearch: null,
@@ -39,7 +41,7 @@
             // Constructor
             // Adds a searchbox to the form
             (function () {
-                /* NO! Refactor to use cswParent and more wholesome methods. */ 
+                
                 var cswtable = Csw.literals.table({
                     ID: Csw.makeId(internal.ID, '', '_div'),
                     $parent: internal.$searchbox_parent
@@ -71,7 +73,11 @@
 
                 Csw.ajax.post({
                     url: internal.newsearchurl,
-                    data: { SearchTerm: internal.searchterm },
+                    data: { 
+                        SearchTerm: internal.searchterm,
+                        NodeTypeId: internal.nodetypeid,
+                        ObjectClassId: internal.objectclassid
+                    },
                     success: function (data) {
                         internal.handleResults(data);
                         Csw.tryExec(internal.onAfterNewSearch, internal.sessiondataid);
@@ -274,9 +280,7 @@
                             url: internal.saveurl,
                             data: {
                                 SessionDataId: internal.sessiondataid,
-                                ViewId: newviewid//,
-                                //                            SearchTerm: internal.searchterm,
-                                //                            Filters: JSON.stringify(internal.filters)
+                                ViewId: newviewid
                             },
                             success: function (data) {
                             Csw.tryExec(internal.onAddView, newviewid, viewmode);

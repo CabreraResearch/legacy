@@ -383,9 +383,19 @@ namespace ChemSW.Nbt.WebServices
 
         #region UniversalSearch
 
-        public JObject doUniversalSearch( string SearchTerm )
+        public JObject doUniversalSearch( string SearchTerm, Int32 NodeTypeId, Int32 ObjectClassId )
         {
             CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
+            if(Int32.MinValue != NodeTypeId)
+            {
+                //CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType(NodeTypeId);
+                //    CswNbtSearchFilterWrapper NodeTypeFilter = new CswNbtSearchFilterWrapper(
+                //Search.addFilter(Search
+            }
+            if(Int32.MinValue != ObjectClassId)
+            {
+                //Search.addFilter(
+            }
             return _finishUniversalSearch( Search );
         }
 
