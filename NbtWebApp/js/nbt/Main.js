@@ -964,16 +964,15 @@ window.initMain = window.initMain || function (undefined) {
                 }
             });
         }
-
+        clear({ 'all': true });
+        refreshMainMenu();
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                                             
-            //				break;                                                             
-            //			case 'Assign_Tests':                                                             
-            //				break;                                                             
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                             
+            //			case 'Assign_Inspection':                                                              
+            //				break;                                                              
+            //			case 'Assign_Tests':                                                              
+            //				break;                                                              
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                              
             case 'Create_Inspection':
-                clear({ 'all': true });
-
                 var designOpt = {
                     ID: 'cswInspectionDesignWizard',
                     viewid: o.ActionOptions.viewid,
@@ -1001,8 +1000,6 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case 'Create_Material':
-                clear({ 'all': true });
-
                 var createOpt = {
                     //                    viewid: o.ActionOptions.viewid,
                     //                    viewmode: o.ActionOptions.viewmode,
@@ -1025,11 +1022,9 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.nbt.createMaterialWizard(centerTopDiv, createOpt);
                 break;
 
-            //			case 'Design':                                                             
-            //				break;                                                             
+            //			case 'Design':                                                              
+            //				break;                                                              
             case 'Edit_View':
-                clear({ 'all': true });
-
                 var editViewOptions = {
                     'viewid': o.ActionOptions.viewid,
                     'viewmode': o.ActionOptions.viewmode,
@@ -1068,11 +1063,10 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                                             
-            //				break;                                                             
+            //			case 'Enter_Results':                                                              
+            //				break;                                                              
 
             case 'Future_Scheduling':
-                clear({ 'all': true });
                 Csw.nbt.futureSchedulingWizard(centerTopDiv, {
                     onCancel: refreshSelected,
                     onFinish: function (viewid, viewmode) {
@@ -1081,17 +1075,16 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                             
-            //				break;                                                             
-            //			case 'Inspection_Design':                                                             
-            //				break;                                                             
+            //			case 'Import_Fire_Extinguisher_Data':                                                              
+            //				break;                                                              
+            //			case 'Inspection_Design':                                                              
+            //				break;                                                              
 
             case 'OOC_Inspections':
                 setupOocInspections();
 
                 break;
             case 'Quotas':
-                clear({ 'all': true });
                 Csw.actions.quotas(centerTopDiv, {
                     onQuotaChange: function () {
                         var quotaHeader = Csw.literals.factory($('#header_quota'));
@@ -1101,13 +1094,10 @@ window.initMain = window.initMain || function (undefined) {
 
                 break;
             case 'Sessions':
-                clear({ 'all': true });
                 Csw.actions.sessions(centerTopDiv);
-
                 break;
-            case 'View_Scheduled_Rules':
-                clear({ 'all': true });
 
+            case 'View_Scheduled_Rules':
                 var rulesOpt = {
                     exitFunc: function () {
                         clear({ 'all': true });
@@ -1119,14 +1109,14 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.nbt.scheduledRulesWizard(centerTopDiv, rulesOpt);
                 break;
-            //			case 'Load_Mobile_Data':                                                             
-            //				break;                                                             
-            //			case 'Receiving':                                                             
-            //				break;                                                             
-            //			case 'Split_Samples':                                                             
-            //				break;                                                             
-            //			case 'View_By_Location':                                                             
-            //				break;                                                             
+            //			case 'Load_Mobile_Data':                                                              
+            //				break;                                                              
+            //			case 'Receiving':                                                              
+            //				break;                                                              
+            //			case 'Split_Samples':                                                              
+            //				break;                                                              
+            //			case 'View_By_Location':                                                              
+            //				break;                                                              
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     window.location = o.actionurl;
