@@ -514,6 +514,9 @@ namespace ChemSW.Nbt.WebServices
         public string getDueInspectionsForDateRange( string beginDate, string endDate )
         {
             JObject ReturnVal = new JObject();
+            JObject jDesigns = new JObject();
+            JObject jInspects = new JObject();
+
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -522,8 +525,6 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    DateTime begins = CswConvert.ToDateTime( beginDate );
-                    DateTime ends = CswConvert.ToDateTime( endDate );
 
                     CswNbtMetaDataObjectClass InspectionOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                     CswNbtMetaDataObjectClassProp InspectionStatusOCP = InspectionOC.getObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName );
@@ -537,42 +538,52 @@ namespace ChemSW.Nbt.WebServices
 
 
                     //only Pending and ActionRequired within the date range 
-                    OOCView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
+                    DueView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
                     CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ),
                     false );
-                    OOCView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
+                    DueView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
                     CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late ),
                     false );
-                    OOCView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
+                    DueView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
                     CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed ),
                     false );
-                    OOCView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
+                    DueView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
                     CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
                     CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled ),
                     false );
 
-                    OOCView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
-                    CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                    CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ),
+                    DueView.AddViewPropertyFilter( DueViewProp, InspectionDueOCP.getFieldTypeRule().SubFields.Default.Name,
+                    CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals,
+                    beginDate,
                     false );
-                    OOCView.AddViewPropertyFilter( StatusViewProp, InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
-                    CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                    CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed ),
+                    DueView.AddViewPropertyFilter( DueViewProp, InspectionDueOCP.getFieldTypeRule().SubFields.Default.Name,
+                    CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals,
+                    endDate,
                     false );
 
+                    Collection<Int32> ntIds = new Collection<Int32>();
 
+                    ICswNbtTree DueTree = _CswNbtResources.Trees.getTreeFromView( DueView, false, true, false, false );
+                    for( Int32 i = 0; i < DueTree.getChildNodeCount(); i++ )
+                    {
+                        DueTree.goToNthChild( i );
 
-                    /*    
-                           CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, CswConvert.ToBoolean( Multi ) );
-                           _setEditMode( EditMode );
-                           CswDateTime InDate = new CswDateTime( _CswNbtResources );
-                           InDate.FromClientDateTimeString( Date );
-                      */
-                    ReturnVal = ws.getTabs( NodeId, SafeNodeKey, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId );
+                        CswNbtNode InspectionNode = DueTree.getNodeForCurrentPosition();
+                        CswNbtObjClassInspectionDesign NodeAsInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                        if( ntIds.IndexOf( NodeAsInspection.NodeTypeId ) < 0 )
+                        {
+                            ntIds.Add( NodeAsInspection.NodeTypeId );
+                            addDesign( jDesigns, NodeAsInspection.NodeType );
+                        }
+                        addInspection( jInspects, NodeAsInspection );
+
+                        DueTree.goToParentNode();
+                    } // for( Int32 i = 0; i < OOCTree.getChildNodeCount(); i++ )
                 }
+
 
                 _deInitResources();
             }
@@ -587,6 +598,65 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // getDueInspectionsForUser()
+
+
+        void addInspection( JObject theInspections, CswNbtObjClassInspectionDesign anInspection )
+        {
+            string aname = "inspection" + ( theInspections.Count + 1 ).ToString();
+            JObject thisInspect = new JObject();
+            thisInspect.Add( "designid", anInspection.NodeTypeId.ToString() );
+            thisInspect.Add( "duedate", anInspection.Date.ToString() );
+            thisInspect.Add( "inspectionid", anInspection.NodeId.ToString() );
+            thisInspect.Add( "inspectionpointname", anInspection.Target.Gestalt );
+            thisInspect.Add( "locationpath", anInspection.Location.ToString() );
+?addDesign the answer data?
+        }
+
+        void addSection( JObject theSections, CswNbtMetaDataNodeTypeTab aTab )
+        {
+            JObject thisSection = new JObject();
+            JObject properties = new JObject();
+            thisSection.Add( "name", aTab.TabName );
+            thisSection.Add( "order", aTab.TabOrder.ToString() );
+            int acount = 0;
+            foreach( CswNbtMetaDataNodeTypeProp prop in aTab.getNodeTypePropsByDisplayOrder() )
+            {
+                if( prop.FieldTypeId == CswNbtMetaDataFieldType.NbtFieldType.Question )
+                {
+                    ++acount;
+                    JObject thisProp = new JObject();
+                    JObject choices = new JObject();
+                    string[] opts = question.ListOptions.Split( new char[] { ',' } );
+                    int cnt = 0;
+                    foreach( string opt in opts )
+                    {
+                        ++cnt;
+                        choices.Add( "choice" + cnt.ToString(), opt );
+                    }
+                    thisProp.Add( "choices", choices );
+                    thisProp.Add( "questionid", question.PropId.ToString() );
+                    thisProp.Add( "text", question.PropNameWithQuestionNo );
+                    thisProp.Add( "type", "question" );
+                    properties.Add( "property" + acount.ToString(), thisProp );
+                }
+            }
+            thisSection.Add( "properties", properties );
+        }
+
+        void addDesign( JObject jDesigns, CswNbtMetaDataNodeType aDesign )
+        {
+            string aname = "design" + ( jDesigns.Count + 1 ).ToString();
+            JObject thisDesign = new JObject();
+            thisDesign.Add( "designid", aDesign.NodeTypeId.ToString() );
+            thisDesign.Add( "name", aDesign.NodeTypeName );
+
+            JObject theSections = new JObject();
+            foreach( CswNbtMetaDataNodeTypeTab aTab in DestNodeType.getNodeTypeTabs() )
+            {
+                addSection( theSections, aTab );
+            }
+
+        }
 
         #endregion SI mobile methods
 
