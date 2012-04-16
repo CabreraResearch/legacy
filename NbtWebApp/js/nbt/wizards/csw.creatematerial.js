@@ -290,8 +290,8 @@
                             },
                             success: function (data) {
                                 var topText = '', bottomText = '';
-                                if (false === Csw.isNullOrEmpty(data.tradename)) {
-                                    internal.useExistingMaterial = true;
+                                internal.useExistingMaterial = (false === Csw.isNullOrEmpty(data.tradename));
+                                if (internal.useExistingMaterial) {
                                     topText = 'A material named ' + data.tradename + ' already exists as: ';
                                     bottomText = 'Click next to use this existing material.';
                                     internal.tradeName = data.tradename;
