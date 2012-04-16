@@ -26,12 +26,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassProblem( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }//ctor()
-
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass ); }
@@ -41,10 +35,15 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             // BZ 10051 - Set the Date Opened to today
-            DateOpened.DateTimeValue = DateTime.Now;
-            ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-            ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
-
+            if( DateOpened.DateTimeValue == DateTime.MinValue )
+            {
+                DateOpened.DateTimeValue = DateTime.Now;
+            }
+            if( ReportedBy.RelatedNodeId == null )
+            {
+                ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;
+            }
             _checkClosed();
 
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
@@ -68,9 +67,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( Closed.Checked == Tristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
                 DateClosed.DateTimeValue = DateTime.Today;
 
-            // BZ 10051 - If we're reopening the Problem, clear the Date Closed
-            if( Closed.Checked == Tristate.False && DateClosed.DateTimeValue != DateTime.MinValue )
-                DateClosed.DateTimeValue = DateTime.MinValue;
+            // case 25838 - don't clear existing values
+            //// BZ 10051 - If we're reopening the Problem, clear the Date Closed
+            //if( Closed.Checked == Tristate.False && DateClosed.DateTimeValue != DateTime.MinValue )
+            //    DateClosed.DateTimeValue = DateTime.MinValue;
         }
 
         public override void afterWriteNode()

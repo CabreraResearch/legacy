@@ -1,8 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -121,7 +124,7 @@ namespace ChemSW.Nbt.Schema
         {
             //_CswResourcesForTableCaddy.commitTransaction();
             _CswNbtResources.Rollback();
-            _CswNbtResources.refresh();
+            _CswNbtResources.refreshDataDictionary();
             _CswDdl.revert();
             _CswDdl.clear();
 
@@ -129,7 +132,7 @@ namespace ChemSW.Nbt.Schema
 
         public void refreshDataDictionary()
         {
-            _CswNbtResources.refresh();
+            _CswNbtResources.refreshDataDictionary();
         }
 
 
@@ -356,13 +359,11 @@ namespace ChemSW.Nbt.Schema
 
         public void makeMissingAuditTablesAndColumns()
         {
+            DataTable DataTable = execArbitraryPlatformNeutralSqlSelect( "query for all datadatable names", "select distinct tablename from data_dictionary" );
 
-            ICollection TableNamesColl = (ICollection) _CswNbtResources.CswResources.DataDictionary.getTableNames();
-            string[] TableNames = new string[TableNamesColl.Count];
-            TableNamesColl.CopyTo( TableNames, 0 );
-
-            foreach( string CurrentTableName in TableNames )
+            foreach( DataRow CurrentRow in DataTable.Rows )
             {
+                string CurrentTableName = CurrentRow["tablename"].ToString().ToLower();
                 makeTableAuditable( CurrentTableName );
             }
 
@@ -371,7 +372,7 @@ namespace ChemSW.Nbt.Schema
 
         public void makeTableAuditable( string TableName )
         {
-            if( ( false == _CswAuditMetaData.isAuditTable( TableName ) ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
+            if( _CswAuditMetaData.shouldBeAudited( TableName ) && ( false == _CswNbtResources.CswResources.DataDictionary.isColumnDefined( TableName, _CswAuditMetaData.AuditLevelColName ) ) )
             {
                 addStringColumn( TableName, _CswAuditMetaData.AuditLevelColName, _CswAuditMetaData.AuditLevelColDescription, false, _CswAuditMetaData.AuditLevelColIsRequired, _CswAuditMetaData.AuditLevelColLength );
             }
@@ -379,9 +380,11 @@ namespace ChemSW.Nbt.Schema
             //datetime stamp column
 
 
-            if( false == _CswAuditMetaData.isAuditTable( TableName ) )
+            if( _CswAuditMetaData.shouldBeAudited( TableName ) )
             {
                 string AuditTableName = _CswAuditMetaData.makeAuditTableName( TableName );
+
+                //create the audit table if necessary
                 if( false == _CswNbtResources.CswResources.DataDictionary.isTableDefined( AuditTableName ) )
                 {
                     copyTable( TableName, AuditTableName, false );
@@ -390,9 +393,40 @@ namespace ChemSW.Nbt.Schema
                     addDateColumn( AuditTableName, _CswAuditMetaData.AuditRecordCreatedColName, _CswAuditMetaData.AuditRecordCreatedColDescription, false, true );
                     addLongColumn( AuditTableName, _CswNbtResources.DataDictionary.getPrimeKeyColumn( TableName ), "prime key of audited record", false, true );
 
-                }//if the audit table does not yet exist
+                }
+                else //if it does exist, maybe the target table has new columns to be added to the audit table?
+                {
 
-            }//if it isn't already an audit table
+                    string[] AuditTableColumnNameArray = new string[_CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).Count];
+                    _CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).CopyTo( AuditTableColumnNameArray, 0 );
+                    List<string> AuditColumnNames = new List<string>( AuditTableColumnNameArray );
+
+                    List<string> MissingAuditTableColumnNames = new List<string>();
+
+                    foreach( string CurrentTargetColumnName in _CswNbtResources.DataDictionary.getColumnNames( TableName ) )
+                    {
+                        if( ( _CswAuditMetaData.AuditLevelColName != CurrentTargetColumnName.ToLower() ) &&
+                            ( false == AuditColumnNames.Contains( CurrentTargetColumnName ) ) )
+                        {
+                            MissingAuditTableColumnNames.Add( CurrentTargetColumnName );
+                        }
+                    }
+
+
+                    if( MissingAuditTableColumnNames.Count > 0 )
+                    {
+                        foreach( string CurrentMissingColumnName in MissingAuditTableColumnNames )
+                        {
+                            _CswNbtResources.DataDictionary.setCurrentColumn( TableName, CurrentMissingColumnName );
+                            addColumn( CurrentMissingColumnName, _CswNbtResources.DataDictionary.ColumnType, _CswNbtResources.DataDictionary.DataTypeSize, _CswNbtResources.DataDictionary.DblPrecision, _CswNbtResources.DataDictionary.DefaultValue, _CswNbtResources.DataDictionary.Description, _CswNbtResources.DataDictionary.ForeignKeyColumn, _CswNbtResources.DataDictionary.ForeignKeyTable, false, _CswNbtResources.DataDictionary.IsView, _CswNbtResources.DataDictionary.LogicalDelete, _CswNbtResources.DataDictionary.LowerRangeValue, _CswNbtResources.DataDictionary.LowerRangeValueInclusive, _CswNbtResources.DataDictionary.PortableDataType, _CswNbtResources.DataDictionary.ReadOnly, _CswNbtResources.DataDictionary.Required, AuditTableName, _CswNbtResources.DataDictionary.UniqueType, _CswNbtResources.DataDictionary.UpperRangeValueInclusive, _CswNbtResources.DataDictionary.UpperRangeValue );
+                        }
+
+                    }//if the audit table is missing columns
+
+                }//if-else the audit table did not yet exist
+
+
+            }//if-else it's an audited table
 
         }//makeTableAuditable() 
 
@@ -582,8 +616,11 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
             }
+            _CswNbtResources.ClearActionsCache();
             return NewActionId;
         }
+
+
 
         /// <summary>
         /// Convenience function for making new Configuration Variable
@@ -640,6 +677,22 @@ namespace ChemSW.Nbt.Schema
             ConfigVarTable.update( ConfigVarDataTable );
         }
 
+        public Int32 getActionId( CswNbtActionName ActionName )
+        {
+            Int32 RetActionId = Int32.MinValue;
+            if( null != Actions[ActionName] )
+            {
+                RetActionId = Actions[ActionName].ActionId;
+            }
+            return RetActionId;
+        }
+
+        public void createModuleActionJunction( CswNbtResources.CswNbtModule Module, CswNbtActionName ActionName )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            Int32 ActionId = getActionId( ActionName );
+            createModuleActionJunction( ModuleId, ActionId );
+        }
 
         /// <summary>
         /// Convenience function for making new jct_module_actions records
@@ -746,6 +799,7 @@ namespace ChemSW.Nbt.Schema
             ModulesDataTable.Rows.Add( ModuleRow );
             Int32 NewModuleId = CswConvert.ToInt32( ModuleRow["moduleid"] );
             ModulesTable.update( ModulesDataTable );
+            _CswNbtResources.ClearModulesCache();
             return NewModuleId;
         }
 
@@ -777,6 +831,14 @@ namespace ChemSW.Nbt.Schema
             return RetRuleId;
         }
 
+        /// <summary>
+        /// Convenience function for making new jct_module_objectclass records
+        /// </summary>
+        public void createModuleObjectClassJunction( CswNbtResources.CswNbtModule Module, Int32 ObjectClassId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            createModuleObjectClassJunction( ModuleId, ObjectClassId );
+        }
 
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records
@@ -813,22 +875,25 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public Int32 createObjectClass( string ObjectClassName, string IconFileName, bool AuditLevel, bool UseBatchEntry )
+        public CswNbtMetaDataObjectClass createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel, bool UseBatchEntry )
         {
-            if( !ObjectClassName.EndsWith( "Class" ) )
-                ObjectClassName += "Class";
-
-            CswTableUpdate ObjectClassTableUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class" );
-            DataTable NewObjectClassTable = ObjectClassTableUpdate.getEmptyTable();
-            DataRow NewOCRow = NewObjectClassTable.NewRow();
-            NewOCRow["objectclass"] = ObjectClassName;
-            NewOCRow["iconfilename"] = IconFileName;
-            NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
-            NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
-            NewObjectClassTable.Rows.Add( NewOCRow );
-            Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
-            ObjectClassTableUpdate.update( NewObjectClassTable );
-            return NewObjectClassId;
+            CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
+            if( null == NewObjectClass )
+            {
+                CswTableUpdate ObjectClassTableUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate",
+                                                                            "object_class" );
+                DataTable NewObjectClassTable = ObjectClassTableUpdate.getEmptyTable();
+                DataRow NewOCRow = NewObjectClassTable.NewRow();
+                NewOCRow["objectclass"] = ObjectClass.ToString();
+                NewOCRow["iconfilename"] = IconFileName;
+                NewOCRow["auditlevel"] = CswConvert.ToDbVal( AuditLevel );
+                NewOCRow["use_batch_entry"] = CswConvert.ToDbVal( UseBatchEntry );
+                NewObjectClassTable.Rows.Add( NewOCRow );
+                Int32 NewObjectClassId = CswConvert.ToInt32( NewOCRow["objectclassid"] );
+                ObjectClassTableUpdate.update( NewObjectClassTable );
+                NewObjectClass = _CswNbtResources.MetaData.getObjectClass( NewObjectClassId );
+            }
+            return NewObjectClass;
         }
 
         /// <summary>
@@ -920,6 +985,8 @@ namespace ChemSW.Nbt.Schema
             }
             return RetProp;
         }
+
+
 
         /// <summary>
         /// Convenience function for making new Object Class Props
@@ -1346,6 +1413,61 @@ namespace ChemSW.Nbt.Schema
         public string getUniqueConstraintName( string TableName, string ColumName ) { return ( _CswNbtResources.getUniqueConstraintName( TableName, ColumName ) ); }
 
 
+        /// <summary>
+        /// Run an external SQL script stored in Resources
+        /// </summary>
+        /// <param name="SqlFileName">Name of file</param>
+        /// <param name="ResourceSqlFile">File contents from Resources</param>
+        /// <param name="Block">Whether to wait for the script to finish</param>
+        public void runExternalSqlScript( string SqlFileName, byte[] ResourceSqlFile )
+        {
+            string FileLocations = Application.StartupPath;
+            string BatchFilePath = FileLocations + "\\runscript.bat";
+            string SqlFilePath = FileLocations + "\\" + SqlFileName;
+            try
+            {
+                //Retrieve files from resource
+                File.WriteAllBytes( BatchFilePath, ChemSW.Nbt.Properties.Resources.runscript_bat );
+                File.WriteAllBytes( SqlFilePath, ResourceSqlFile );
+
+                while( ( false == File.Exists( BatchFilePath ) ) && ( false == File.Exists( SqlFilePath ) ) )
+                {
+                    Thread.Sleep( 100 );
+                }
+
+                CswDbCfgInfo.makeConfigurationCurrent( Accessid );
+                string serverName = CswDbCfgInfo.CurrentServerName;
+                string userName = CswDbCfgInfo.CurrentUserName;
+                string passWord = CswDbCfgInfo.CurrentPlainPwd;
+
+                // Start external process
+                System.Diagnostics.Process p = new System.Diagnostics.Process();
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.FileName = BatchFilePath;
+                p.StartInfo.Arguments = " " + serverName + " " + userName + " " + passWord + " " + FileLocations + " " + SqlFileName;
+                p.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
+                p.StartInfo.UseShellExecute = false;
+                p.StartInfo.RedirectStandardOutput = false;
+
+                Process SpawnedProcess = System.Diagnostics.Process.Start( p.StartInfo );
+                if( false == SpawnedProcess.WaitForExit( UpdtShellWaitMsec ) )
+                {
+                    CswLogger.reportAppState( "Timed out will running " + SqlFileName + " prior to updates." );
+                }
+            }
+            finally
+            {
+                if( File.Exists( BatchFilePath ) )
+                {
+                    File.Delete( BatchFilePath );
+                }
+                if( File.Exists( SqlFilePath ) )
+                {
+                    File.Delete( SqlFilePath );
+                }
+            }
+
+        } // runExternalSqlScript
 
     }//class CswNbtSchemaModTrnsctn
 

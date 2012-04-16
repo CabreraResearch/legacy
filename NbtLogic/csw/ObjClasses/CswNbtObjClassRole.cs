@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -30,12 +31,6 @@ namespace ChemSW.Nbt.ObjClasses
             : base( CswNbtResources, Node )
         {
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
-
-        public CswNbtObjClassRole( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
         }//ctor()
 
         public override CswNbtMetaDataObjectClass ObjectClass
@@ -69,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
             // case 22512
             // also case 22557 - use the original name, not the new one
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule(NamePropWrapper.getFieldType().FieldType).SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule( NamePropWrapper.getFieldType().FieldType ).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
@@ -79,33 +74,64 @@ namespace ChemSW.Nbt.ObjClasses
             // case 22437
             if( ActionPermissions.WasModified )
             {
-                // You can never grant your own action permissions
-                if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId && this.Name.Text != ChemSWAdminRoleName )
+                // case 25444 - was it *really* modified?
+                CswNbtNodePropWrapper ActionPermissionsPropWrapper = Node.Properties[ActionPermissionsPropertyName];
+                string ActionPermissionsOriginalValueStr = ActionPermissionsPropWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleMultiList) _CswNbtResources.MetaData.getFieldTypeRule( ActionPermissionsPropWrapper.getFieldType().FieldType ) ).ValueSubField.Column );
+                CswCommaDelimitedString ActionPermissionsOriginalValue = new CswCommaDelimitedString();
+                ActionPermissionsOriginalValue.FromString( ActionPermissionsOriginalValueStr );
+
+                if( ActionPermissions.Value != ActionPermissionsOriginalValue )
                 {
-                    throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
-                        "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
-                }
-                // You can only grant action permissions on other roles to which you have access
-                foreach( CswNbtAction Action in _CswNbtResources.Actions )
-                {
-                    if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
+                    // You can never grant your own action permissions
+                    if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId && this.Name.Text != ChemSWAdminRoleName )
                     {
-                        if( ( Action.Name == CswNbtActionName.Design ||
-                                Action.Name == CswNbtActionName.Create_Inspection ) && //Case 24288
-                              this.Name.Text != ChemSWAdminRoleName &&
-                                false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+                        throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
+                            "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
+                    }
+                    // You can only grant action permissions on other roles to which you have access
+                    foreach( CswNbtAction Action in _CswNbtResources.Actions )
+                    {
+                        if( true == _CswNbtResources.Permit.can( Action, this ) ) // permission is being granted
                         {
-                            // case 23677
-                            throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role",
-                                "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
-                        }
-                        if( false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
-                        {
-                            throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
-                                "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
-                        }
-                    } // if( true == _CswNbtResources.Permit.can( Action, this ) )
-                } // foreach( string ActionNameString in ActionPermissions.YValues )
+                            if( ( Action.Name == CswNbtActionName.Design ||
+                                    Action.Name == CswNbtActionName.Create_Inspection ) && //Case 24288
+                                  this.Name.Text != ChemSWAdminRoleName &&
+                                    false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
+                            {
+                                // case 23677
+                                throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role",
+                                    "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+                            }
+                            /* Case 24447 */
+                            if( Action.Name == CswNbtActionName.Create_Material )
+                            {
+                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
+
+                                bool HasOneMaterialCreate = false;
+                                foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+                                {
+                                    string NodeTypePermission = MakeNodeTypePermissionValue(
+                                        MaterialNt.FirstVersionNodeTypeId,
+                                        CswNbtPermit.NodeTypePermission.Create );
+
+                                    HasOneMaterialCreate = HasOneMaterialCreate ||
+                                                           NodeTypePermissions.CheckValue( NodeTypePermission );
+                                }
+                                if( false == HasOneMaterialCreate )
+                                {
+                                    throw new CswDniException( ErrorType.Warning, "You may not grant access to " + Action.DisplayName + " to this role without first granting Create permission to at least one Material.",
+                                        "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+                                }
+
+                            }
+                            if( false == _CswNbtResources.Permit.can( Action, _CswNbtResources.CurrentNbtUser ) )
+                            {
+                                throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
+                                    "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to grant access to action " + Action.DisplayName + " to role " + _CswNbtNode.NodeName );
+                            }
+                        } // if( true == _CswNbtResources.Permit.can( Action, this ) )
+                    } // foreach( string ActionNameString in ActionPermissions.YValues )
+                } // if( ActionPermissions.Value != ActionPermissionsOriginalValue )
             } // if( ActionPermissions.WasModified )
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -132,24 +158,24 @@ namespace ChemSW.Nbt.ObjClasses
 
             // case 22635 - prevent deleting the chemsw admin role
             CswNbtNodePropWrapper NamePropWrapper = Node.Properties[NamePropertyName];
-            if( NamePropWrapper.GetOriginalPropRowValue(  _CswNbtResources.MetaData.getFieldTypeRule(NamePropWrapper.getFieldType().FieldType).SubFields.Default.Column ) == ChemSWAdminRoleName &&
+            if( NamePropWrapper.GetOriginalPropRowValue( _CswNbtResources.MetaData.getFieldTypeRule( NamePropWrapper.getFieldType().FieldType ).SubFields.Default.Column ) == ChemSWAdminRoleName &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
                 throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminRoleName + "' role cannot be deleted", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to delete the '" + ChemSWAdminRoleName + "' role." );
             }
 
-            // case 22424
-            // Prevent deleting roles in use
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-            foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
-            {
-                CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
-                if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
-                {
-                    throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,
-                                                 "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
-                }
-            }
+            //// case 22424
+            //// Prevent deleting roles in use
+            //CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
+            //foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
+            //{
+            //    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+            //    if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
+            //    {
+            //        throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,
+            //                                     "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a role that is in use (" + _CswNbtNode.NodeName + ") by user: " + UserNodeAsUser.Username ) );
+            //    }
+            //}
 
             ////prevent user from deleting ScheduleRunner
             //if (Name.Text.ToLower() == "schedulerunner")
@@ -185,7 +211,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             return LatestVersionNodeTypeName +
                    ", " +
-                   //NodeTypeTab.NodeType.LatestVersionNodeType.getNodeTypeTabByFirstVersionId( NodeTypeTab.FirstTabVersionId ).TabName +
+                //NodeTypeTab.NodeType.LatestVersionNodeType.getNodeTypeTabByFirstVersionId( NodeTypeTab.FirstTabVersionId ).TabName +
                    LatestVersionTabName +
                    ": " +
                    Permission.ToString();
@@ -199,11 +225,12 @@ namespace ChemSW.Nbt.ObjClasses
             return Action.DisplayName;
         }
 
-        public override void afterPopulateProps()
+
+        private Dictionary<string, string> InitNodeTypePermissionOptions()
         {
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
-            {
+            //if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            //{
                 // set NodeType Permissions options
                 // Could be a performance problem!!!
                 Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
@@ -227,13 +254,15 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
                 } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
-                NodeTypePermissions.Options = NodeTypeOptions;
-            } // if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+                return NodeTypeOptions;
+            //} // if( _CswNbtNode.Properties[NodeTypePermissionsPropertyName].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+        } // InitNodeTypePermissionOptions()
 
-
+        private Dictionary<string, string> InitActionPermissionOptions()
+        {
             // case 8411 - for backwards compatibility
-            if( _CswNbtNode.Properties[ActionPermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
-            {
+            //if( _CswNbtNode.Properties[ActionPermissionsPropertyName].getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.MultiList )
+            //{
                 // set Action Permissions options
                 Dictionary<string, string> ActionOptions = new Dictionary<string, string>();
                 foreach( CswNbtAction Action in _CswNbtResources.Actions )
@@ -242,8 +271,14 @@ namespace ChemSW.Nbt.ObjClasses
                     string Value = MakeActionPermissionText( Action );
                     ActionOptions.Add( Key, Value );
                 }
-                ActionPermissions.Options = ActionOptions;
-            }
+                return ActionOptions;
+            //}
+        } // InitActionPermissionOptions()
+
+        public override void afterPopulateProps()
+        {
+            NodeTypePermissions.InitOptions = InitNodeTypePermissionOptions;
+            ActionPermissions.InitOptions = InitActionPermissionOptions;
 
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()

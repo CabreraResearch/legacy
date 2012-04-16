@@ -1177,22 +1177,22 @@ namespace ChemSW.Nbt
             return _getChildNodes( _getParentNode() ).Count();
         }
 
-        public CswNbtNodeKey getNodeKeyByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
+        public Collection<CswNbtNodeKey> getNodeKeysByNodeIdAndViewNode( CswPrimaryKey NodeId, CswNbtViewNode ViewNode )
         {
-            CswNbtNodeKey ret = null;
+            Collection<CswNbtNodeKey> ret = new Collection<CswNbtNodeKey>();
             if( NodesById.ContainsKey( NodeId ) )
             {
                 foreach( CswNbtNodeKey NodeKey in NodesById[NodeId] )
                 {
                     if( NodeKey.ViewNodeUniqueId == ViewNode.UniqueId )
                     {
-                        ret = NodeKey;
-                        break;
+                        ret.Add( NodeKey );
                     }
                 }
             }
             return ret;
-        }
+        } // getNodeKeysByNodeIdAndViewNode()
+
         public Collection<CswNbtNodeKey> getKeysForNodeId( CswPrimaryKey NodeId )
         {
             Collection<CswNbtNodeKey> Ret = new Collection<CswNbtNodeKey>();

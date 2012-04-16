@@ -607,6 +607,12 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
                 NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, NewProp );
 
+                // Handle setFk()
+                if( OCProp.FKValue != Int32.MinValue )
+                {
+                    NewProp.SetFK( OCProp.FKType, OCProp.FKValue, OCProp.ValuePropType, OCProp.ValuePropId );
+                }
+
                 // Handle default values
                 CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
 
@@ -904,12 +910,18 @@ namespace ChemSW.Nbt.MetaData
             if( InsertAfterProp != null )
             {
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp, InsertAfterProp );
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp );
+                if( FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
+                {
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp );
+                }
             }
             else //if( NodeTypeTabs.Rows.Count > 0 )
             {
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                if( FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
+                {
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                }
             }
 
             NewProp.getFieldTypeRule().afterCreateNodeTypeProp( NewProp );

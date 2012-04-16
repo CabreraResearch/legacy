@@ -115,17 +115,17 @@ namespace ChemSW.Nbt.Schema
 
         private void _SetUpdateButtonVisible( UpdateThread.SchemaInfoEventArgs e )
         {
-            if( e.CurrentSchemaVersion == e.MinimumSchemaVersion ||
-                ( e.LatestSchemaVersion.CycleIteration == e.CurrentSchemaVersion.CycleIteration &&
-                  e.LatestSchemaVersion.ReleaseIdentifier == e.CurrentSchemaVersion.ReleaseIdentifier &&
-                  e.LatestSchemaVersion.ReleaseIteration > e.CurrentSchemaVersion.ReleaseIteration ) )
-            {
-                updatebutton.Visible = true;
-            }
-            else
-            {
-                updatebutton.Visible = false;
-            }
+            //if( e.CurrentSchemaVersion == e.MinimumSchemaVersion ||
+            //    ( e.LatestSchemaVersion.CycleIteration == e.CurrentSchemaVersion.CycleIteration &&
+            //      e.LatestSchemaVersion.ReleaseIdentifier == e.CurrentSchemaVersion.ReleaseIdentifier &&
+            //      e.LatestSchemaVersion.ReleaseIteration > e.CurrentSchemaVersion.ReleaseIteration ) )
+            //{
+            //    updatebutton.Visible = true;
+            //}
+            //else
+            //{
+            updatebutton.Visible = true;
+            //}
         }
 
         private delegate void SetStatusHandler( string Message );

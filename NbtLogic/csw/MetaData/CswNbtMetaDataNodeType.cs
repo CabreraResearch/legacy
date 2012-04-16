@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.MetaData
                         _CswNbtMetaDataResources.CswNbtMetaData.OnEditNodeTypeName( this );
 
                     //refresh view
-                    _CswNbtMetaDataResources.CswNbtMetaData._RefreshViewForNodetypeId.Add(this.NodeTypeId);
+                    _CswNbtMetaDataResources.CswNbtMetaData._RefreshViewForNodetypeId.Add( this.NodeTypeId );
                 }
             }
         }
@@ -158,6 +158,10 @@ namespace ChemSW.Nbt.MetaData
         public void setNameTemplateText( string value )
         {
             NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
+        }
+        public void addNameTemplateText( string value )
+        {
+            NameTemplateValue += CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
         }
 
         public Int32 PriorVersionNodeTypeId
@@ -607,7 +611,7 @@ namespace ChemSW.Nbt.MetaData
         {
             int ret = 0;
             CswNbtMetaDataNodeType ThisFirstVersionNT = this.getFirstVersionNodeType();
-            CswNbtMetaDataNodeType OtherFirstVersionNT =  OtherNodeType.getFirstVersionNodeType();
+            CswNbtMetaDataNodeType OtherFirstVersionNT = OtherNodeType.getFirstVersionNodeType();
 
             if( this.FirstVersionNodeTypeId == OtherNodeType.FirstVersionNodeTypeId )
             {

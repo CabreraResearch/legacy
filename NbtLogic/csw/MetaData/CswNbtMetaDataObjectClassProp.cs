@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.MetaData
             numberprecision,
             listoptions,
             viewxml,
+            isfk,
             fktype,
             fkvalue,
             multi,

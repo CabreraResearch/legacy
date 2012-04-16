@@ -432,12 +432,15 @@ namespace ChemSW.Nbt
         /// not sure if this belongs here in CswNbtNodeCollection
         /// </remarks>
         /// <param name="Username">Username of User</param>
-        public CswNbtNode makeUserNodeFromUsername( string Username )
+        public CswNbtNode makeUserNodeFromUsername( string Username, bool RequireViewPermissions = true )
         {
+            CswTimer Timer = new CswTimer();
             CswNbtNode UserNode = null;
 
             CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.UsernamePropertyName );
+
+            _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 1", Timer );
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );
@@ -446,14 +449,19 @@ namespace ChemSW.Nbt
             CswNbtViewProperty Prop = View.AddViewProperty( UserRelationship, UserName_ObjectClassProp );
             CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, Username, false );
 
+            _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
+
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, true, true, true, true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true );
+
+            _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 3", Timer );
 
             // get user node
             UserTree.goToRoot();
             if( UserTree.getChildNodeCount() > 0 )
             {
                 UserTree.goToNthChild( 0 );
+                _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 4", Timer );
                 UserNode = UserTree.getNodeForCurrentPosition();
             }
             //else
@@ -469,7 +477,7 @@ namespace ChemSW.Nbt
             //            }
             //        }
             //    }
-
+            _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 5", Timer );
             return UserNode;
         }
 

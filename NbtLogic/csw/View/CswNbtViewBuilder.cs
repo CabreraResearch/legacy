@@ -204,8 +204,11 @@ namespace ChemSW.Nbt.Logic
                 {
                     ParentObj["filtersoptions"] = new JObject();
                     ParentObj["filtersoptions"]["name"] = ViewBuilderProp.MetaDataPropName;
-                    ParentObj["filtersoptions"]["selected"] = ViewBuilderProp.ListOptions.First();
-                    ParentObj["filtersoptions"]["options"] = _getListPropFilterOptions( ViewBuilderProp );
+                    if( ViewBuilderProp.ListOptions.Count() > 0 )
+                    {
+                        ParentObj["filtersoptions"]["selected"] = ViewBuilderProp.ListOptions.First();
+                        ParentObj["filtersoptions"]["options"] = _getListPropFilterOptions( ViewBuilderProp );
+                    }
                 }
             }
         } // _getVbPropData()
@@ -500,12 +503,16 @@ namespace ChemSW.Nbt.Logic
             Type = NbtViewPropType.NodeTypePropId;
             PropName = MetaDataPropName;
             AssociatedPropIds.Add( MetaDataPropId.ToString() );
+            if( NodeTypeProp.ObjectClassPropId != Int32.MinValue )
+            {
+                AssociatedPropIds.Add( NodeTypeProp.ObjectClassPropId.ToString() );
+            }
         } //ctor Ntp
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
         {
             FieldType = ObjectClassProp.getFieldType().FieldType;
-            ListOptions.FromString( ObjectClassProp.ListOptions );
+            setObjectClassPropListOptions( ObjectClassProp );
             RelatedIdType = NbtViewRelatedIdType.NodeTypeId;
             MetaDataPropNameWithQuestionNo = ObjectClassProp.PropNameWithQuestionNo;
             MetaDataPropId = ObjectClassProp.ObjectClassPropId;
@@ -530,18 +537,24 @@ namespace ChemSW.Nbt.Logic
                 MetaDataPropName = ViewProperty.NodeTypeProp.PropName;
                 MetaDataTypeName = ViewProperty.NodeTypeProp.getNodeType().NodeTypeName;
                 FieldTypeRule = ViewProperty.NodeTypeProp.getFieldTypeRule();
+                AssociatedPropIds.Add( MetaDataPropId.ToString() );
+                if( ViewProperty.NodeTypeProp.ObjectClassPropId != Int32.MinValue )
+                {
+                    AssociatedPropIds.Add( ViewProperty.NodeTypeProp.ObjectClassPropId.ToString() );
+                }
             }
             else if( ViewProperty.Type == NbtViewPropType.ObjectClassPropId &&
                 null != ViewProperty.ObjectClassProp )
             {
                 FieldType = ViewProperty.ObjectClassProp.getFieldType().FieldType;
-                ListOptions.FromString( ViewProperty.ObjectClassProp.ListOptions );
+                setObjectClassPropListOptions( ViewProperty.ObjectClassProp );
                 RelatedIdType = NbtViewRelatedIdType.ObjectClassId;
                 MetaDataPropNameWithQuestionNo = ViewProperty.ObjectClassProp.PropNameWithQuestionNo;
                 MetaDataPropId = ViewProperty.ObjectClassProp.ObjectClassPropId;
                 MetaDataPropName = ViewProperty.ObjectClassProp.PropName;
                 MetaDataTypeName = ViewProperty.ObjectClassProp.getObjectClass().ObjectClass.ToString().Replace( "Class", "" );
                 FieldTypeRule = ViewProperty.ObjectClassProp.getFieldTypeRule();
+                AssociatedPropIds.Add( MetaDataPropId.ToString() );
             }
             ViewProp = ViewProperty;
             FieldType = ViewProperty.FieldType;
@@ -551,8 +564,29 @@ namespace ChemSW.Nbt.Logic
             SortBy = ViewProperty.SortBy;
             SortMethod = ViewProperty.SortMethod;
             PropName = ViewProperty.Name ?? MetaDataPropName;
-            AssociatedPropIds.Add( MetaDataPropId.ToString() );
         } //ctor Vp
+
+        private void setObjectClassPropListOptions( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        {
+            if( ObjectClassProp.ListOptions != string.Empty )
+            {
+                ListOptions.FromString( ObjectClassProp.ListOptions );
+            }
+            else
+            {
+                // Get all options from all nodetypes
+                foreach( CswNbtMetaDataNodeTypeProp VPNodeTypeProp in ObjectClassProp.getNodeTypeProps() )
+                {
+                    CswCommaDelimitedString NTPListOptions = new CswCommaDelimitedString();
+                    NTPListOptions.FromString( VPNodeTypeProp.ListOptions );
+
+                    foreach( string Option in NTPListOptions )
+                    {
+                        ListOptions.Add( Option, false, true );
+                    }
+                }
+            }
+        } // setObjectClassPropListOptions()
 
     }// CswViewBuilderProp
     #endregion CswViewBuilderProp Class

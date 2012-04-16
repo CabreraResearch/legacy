@@ -1,74 +1,62 @@
-using System;
-using ChemSW.Nbt;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Updates the schema to version 01J-01
+    /// Updates the schema for DDL changes
     /// </summary>
     public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
-        public static string Title = "Pre-Script: DML";
+        public static string Title = "Pre-Script: DDL";
 
         public override void update()
         {
+            // This script is for changes to schema structure,
+            // or other changes that must take place before any other schema script.
 
-            #region case 24481
+            // NOTE: This script will be run many times, so make sure your changes are safe!
 
-            // Also in 01M-06
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "field_types", "searchable" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "field_types", "searchable", "Whether the field type is searchable", false, true );
-            }
 
-            #endregion case 24481
-
-            #region case 25322
-
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "usenumbering" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "object_class_props", "usenumbering", "Whether the property should be numbered", false, false );
-            }
-
-            #endregion case 25322
-
-            #region case 24520
-
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "audit_transactions", "transactionfirstname" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "audit_transactions", "transactionfirstname", "First name of transaction user", false, false, 50 );
-            }
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "audit_transactions", "transactionlastname" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addStringColumn( "audit_transactions", "transactionlastname", "Last name of transaction user", false, false, 50 );
-            }
-
-            #endregion case 24520
-
-            #region case 25518
-            // This needs to be run before any execution because it breaks CswNbtObjClassUser
+            #region case 21203
             
-            // Rename 'Quick Launch' views and actions to 'Favorite'
-            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-
-            CswNbtMetaDataObjectClassProp UserQLAProp = UserOC.getObjectClassProp( "Quick Launch Actions" );
-            if( UserQLAProp != null )
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "sessionlist", "originaluserid" ) )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( UserQLAProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassUser.FavoriteActionsPropertyName );
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "originaluserid", "If admin is impersonating, original admin user pk", false, false, 50 );
+            }
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "sessionlist", "originalusername" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "originalusername", "If admin is impersonating, original admin username", false, false, 50 );
+            }
+            
+            #endregion case 21203
+
+
+            #region case 25780
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "jct_nodes_props", "gestaltsearch" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "jct_nodes_props", "gestaltsearch", "Searchable indexable copy of gestalt", false, false, 512 );
             }
 
-            CswNbtMetaDataObjectClassProp UserQLVProp = UserOC.getObjectClassProp( "Quick Launch Views" );
-            if( UserQLVProp != null )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( UserQLVProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname, CswNbtObjClassUser.FavoriteViewsPropertyName );
-            }
-            #endregion case 25518
+            #endregion case 25780
+
+
+
+
+
+
+
+
+
+
+            // this should always be here, and always be last
+            // see case 21989
+            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
 
         }//Update()
 
-    }//class CswUpdateSchema_Infr_TakeDump
+    }//class RunBeforeEveryExecutionOfUpdater_01
 
 }//namespace ChemSW.Nbt.Schema
 

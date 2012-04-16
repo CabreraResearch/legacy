@@ -34,12 +34,6 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
-        public CswNbtObjClassTask( CswNbtResources CswNbtResources )
-            : base( CswNbtResources )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources );
-        }//ctor()
-
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.TaskClass ); }
@@ -49,10 +43,13 @@ namespace ChemSW.Nbt.ObjClasses
         private void setDoneOnDate()
         {
             if( Completed.Checked == Tristate.True && DoneOn.DateTimeValue == DateTime.MinValue )
+            {
                 DoneOn.DateTimeValue = DateTime.Now;
+            }
 
-            if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
-                DoneOn.DateTimeValue = DateTime.MinValue;
+            // case 25838 - don't clear existing values
+            //if( Completed.Checked == Tristate.False && DoneOn.DateTimeValue != DateTime.MinValue )
+            //    DoneOn.DateTimeValue = DateTime.MinValue;
         }
 
         #region Inherited Events

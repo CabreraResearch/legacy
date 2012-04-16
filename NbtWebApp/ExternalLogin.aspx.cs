@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Web.UI.WebControls;
 
 namespace ChemSW.Nbt.WebPages
@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.WebPages
                                     Password: '" + password + @"',
                                     ForMobile: false,
                                     onAuthenticate: function() { window.location = 'Main.html'; },
-                                    onFail: function(error) { alert(error); window.location = 'Main.html'; },
-                                    LogoutPath: '" + logoutpath + @"'
+                                    onFail: function(error) { window.location = '" + logoutpath + @"?error=' + error; },
+                                    logoutpath: '" + logoutpath + @"'
                                 });
                             });";
                 JSPlaceHolder.Controls.Add( JSLiteral );

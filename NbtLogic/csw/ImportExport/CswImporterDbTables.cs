@@ -403,7 +403,7 @@ namespace ChemSW.Nbt.ImportExport
                         {
                             _CswNbtResources.finalize();
                             _CswNbtResources.clearUpdates();
-                            _CswNbtResources.releaseDbResources();
+                            //                            _CswNbtResources.releaseDbResources();
                         }
 
                     }//if we're not on the first iteration
@@ -689,7 +689,7 @@ namespace ChemSW.Nbt.ImportExport
                                                             if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
                                                             {
 
-                                                                Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ); 
+                                                                Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] );
                                                                 if( Int32.MinValue != NodeIdOfDestinationNode )
                                                                 {
                                                                     string CandidateValidationErrorMessage = string.Empty;
@@ -714,47 +714,58 @@ namespace ChemSW.Nbt.ImportExport
                                                             }
                                                             else //_ColName_ImportNodeId did not specify a row in the target schema that provides the nodeid of an imported node; so perhaps it specifies the nbtnodeid of a node that already exists in the schema
                                                             {
-
-                                                                CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
-                                                                DataTable ExistingNodeDataTable = CswTableSelectFromNodes.getTable( " where nodeid=" + CurrentImportTargetNodeId );
-
-              
-                                                                if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
+                                                                if( Int32.MinValue != CswConvert.ToInt32( CurrentImportTargetNodeId ) )
                                                                 {
-                                                                    Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); //review 24884
-                                                                    if( Int32.MinValue != ExistingNbtNodeId )
-                                                                    {
+                                                                    CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
+                                                                    DataTable ExistingNodeDataTable = CswTableSelectFromNodes.getTable( " where nodeid=" + CurrentImportTargetNodeId );
 
-                                                                        string CandidateValidationErrorMessage = string.Empty;
-                                                                        if( _validateTargetNodeType( CurrentNodeTypeProp, ExistingNbtNodeId, ref CandidateValidationErrorMessage ) )
+
+                                                                    if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
+                                                                    {
+                                                                        Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); //review 24884
+                                                                        if( Int32.MinValue != ExistingNbtNodeId )
                                                                         {
 
-                                                                            ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
-                                                                            RelationshipPropAddCounter++;
+                                                                            string CandidateValidationErrorMessage = string.Empty;
+                                                                            if( _validateTargetNodeType( CurrentNodeTypeProp, ExistingNbtNodeId, ref CandidateValidationErrorMessage ) )
+                                                                            {
+
+                                                                                ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
+                                                                                RelationshipPropAddCounter++;
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                                CurrentErrorStatus = ImportProcessStati.Error;
+                                                                            }
                                                                         }
                                                                         else
                                                                         {
-                                                                            CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                            CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
                                                                             CurrentErrorStatus = ImportProcessStati.Error;
                                                                         }
                                                                     }
-                                                                    else
+                                                                    else //it is neither in the import data nor in the target schema
                                                                     {
-                                                                        CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
+                                                                        //having eliminated null node IDs, this condition would be a true error
+                                                                        //(as a opposed to a who-knew-from-null-nodeids error . . . 
+                                                                        CurrentRowError += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
                                                                         CurrentErrorStatus = ImportProcessStati.Error;
-                                                                    }
+                                                                    }//if-else we were able to find the target node in the destination schema
+
                                                                 }
-                                                                else //it is neither in the import data nor in the target schema
+                                                                else
                                                                 {
-                                                                    //having eliminated null node IDs, this condition would be a true error
-                                                                    //(as a opposed to a who-knew-from-null-nodeids error . . . 
                                                                     CurrentRowError += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
                                                                     CurrentErrorStatus = ImportProcessStati.Error;
-                                                                }//if-else we were able to find the target node in the destination schema
+
+                                                                }//if-else the node id is numeric (and a thus a candidate to be an NBT node ID)
 
                                                             }//if-else we found the target node in the import data
 
+
                                                         }//if the target node id is not null
+
 
                                                     }//if our property references a node (i.e., its a relation nodetype) 
 
@@ -868,7 +879,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         _CswNbtResources.finalize();
                         _CswNbtResources.clearUpdates();
-                        _CswNbtResources.releaseDbResources();
+                        //                        _CswNbtResources.releaseDbResources();
                         _CswImportExportStatusReporter.reportTiming( CommitNNodesTimer, "Add and commit props for " + _CswNbtImportOptions.NodeAddPropsPageSize.ToString() + " nodes" );
 
 
@@ -1042,7 +1053,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         _CswNbtResources.finalize();
                         _CswNbtResources.clearUpdates();
-                        _CswNbtResources.releaseDbResources();
+                        //                        _CswNbtResources.releaseDbResources();
                         _CswImportExportStatusReporter.reportTiming( PostProcessNodesAndPropsTimer, "Post processing of " + _CswNbtImportOptions.NodeAddPropsPageSize.ToString() + " Nodes" );
 
                     }//if we have node records to process

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -56,10 +56,10 @@ namespace ChemSW.Nbt.MetaData
             return _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() ).Cast<CswNbtMetaDataNodeType>();
         }
 
-        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypesLatestVersion()
+        private IEnumerable<CswNbtMetaDataNodeType> _getNodeTypesLatestVersion( Collection<ICswNbtMetaDataObject> NodeTypeCollection )
         {
             Dictionary<Int32, CswNbtMetaDataNodeType> Dict = new Dictionary<Int32, CswNbtMetaDataNodeType>();
-            foreach( CswNbtMetaDataNodeType NT in _CollImpl.getAll().Cast<CswNbtMetaDataNodeType>() )
+            foreach( CswNbtMetaDataNodeType NT in NodeTypeCollection.Cast<CswNbtMetaDataNodeType>() )
             {
                 if( false == Dict.ContainsKey( NT.FirstVersionNodeTypeId ) ||
                     Dict[NT.FirstVersionNodeTypeId] == null ||
@@ -69,6 +69,16 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             return Dict.Values;
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypesLatestVersion( Int32 ObjectClassId )
+        {
+            return _getNodeTypesLatestVersion( _CollImpl.getWhere( "where objectclassid = " + ObjectClassId.ToString() ) );
+        }
+
+        public IEnumerable<CswNbtMetaDataNodeType> getNodeTypesLatestVersion()
+        {
+            return _getNodeTypesLatestVersion( _CollImpl.getAll() );
         }
 
         public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
@@ -107,7 +117,7 @@ namespace ChemSW.Nbt.MetaData
                                                                                              from nodetypes 
                                                                                             where firstversionid = (select firstversionid 
                                                                                                                       from nodetypes
-                                                                                                                     where lower(nodetypename) = '" + NodeTypeName.ToLower() + "'))" );
+                                                                                                                     where lower(nodetypename) = '" + CswTools.SafeSqlParam( NodeTypeName.ToLower() ) + "'))" );
         }
 
         private string _makeModuleWhereClause()
