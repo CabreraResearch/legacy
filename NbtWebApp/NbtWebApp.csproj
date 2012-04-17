@@ -160,6 +160,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Content Include="perf.html" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
