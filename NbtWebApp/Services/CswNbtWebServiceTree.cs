@@ -130,7 +130,11 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
         {
+            CswTimer StatsTimer = new CswTimer();
+
             JObject ReturnObj = new JObject();
+            ReturnObj["timer"] = new JObject();
+
             //_wsTreeOfView.deleteTreeFromCache();
 
             if( null != _View && ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
@@ -139,6 +143,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
                 _View.SaveToCache( IncludeInQuickLaunch );
+                
+                ReturnObj["timer"]["sql"] = new JArray();
+                foreach( double TimerResult in Tree.SqlPerformance )
+                {
+                    ( (JArray) ReturnObj["timer"]["sql"] ).Add( TimerResult );
+                }
 
                 if( IncludeNodeId != null && IncludeNodeId.PrimaryKey != Int32.MinValue && IncludeNodeKey == null )
                 {
@@ -248,6 +258,8 @@ namespace ChemSW.Nbt.WebServices
                 //_CswNbtResources.CswSuperCycleCache.put( CacheTreeName, Tree );
                 //View.SaveToCache( IncludeInQuickLaunch );
             }
+
+            ReturnObj["timer"]["runTree"] = StatsTimer.ElapsedDurationInMilliseconds;
             return ReturnObj;
         } // runTree()
 

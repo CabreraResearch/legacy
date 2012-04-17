@@ -1,0 +1,193 @@
+<!--#include file="MainHeader.html" -->
+<script language="javascript">
+
+    function login() {
+
+        var div = Csw.literals.factory($('#div1'));
+        clearerror();
+
+        function cleardiv() {
+            div.$.contents().remove();
+            clearerror();
+        }
+
+        $.CswLogin({
+            AccessId: $('#accessid').val(),
+            UserName: $('#username').val(),
+            Password: $('#password').val(),
+            onAuthenticate: function () {
+
+                var to = null;
+                cleardiv();
+                
+                var outertable = div.table({
+                    ID: 'outertable'
+                });
+
+                var cell11 = outertable.cell(1,1);
+                var cell12 = outertable.cell(1,2);
+
+                cell11.span({ text: 'Test Delay (ms):' });
+                cell11.append('<br/>');
+                var delaytb = cell11.input({ ID: 'delay', value: '500' });
+                cell11.append('<br/>');
+                cell11.append('<br/>');
+
+                cell11.span({ text: 'Please select a View to test:' });
+                var vs = cell11.viewSelect({
+                    onSelect: function (itemobj) {
+                        if (itemobj.type.toLowerCase() != 'view') {
+                            error('Please select a View (not a Report or Action)');
+                            startBtn.disable();
+                        }
+                        else {
+                            startBtn.enable();
+                        }
+                    }
+                });
+
+                var startBtn = cell11.button({
+                    ID: 'start',
+                    enabledText: 'Start',
+                    disableOnClick: false,
+                    onClick: function () {
+                        test();
+                    }
+                });
+                startBtn.disable();
+
+                var stopBtn = cell11.button({
+                    ID: 'stop',
+                    enabledText: 'Stop',
+                    disableOnClick: false,
+                    onClick: function () {
+                        if (to !== null) {
+                            clearTimeout(to);
+                        }
+                        startBtn.enable();
+                        stopBtn.disable();
+                    }
+                });
+                stopBtn.disable();
+
+                var tbl = cell12.table({
+                    ID: 'resultstbl',
+                    cellpadding: '5px'
+                });
+
+                var row = 1;
+
+                // Header row
+                tbl.cell(row, 1).append('<b>View</b>');
+                tbl.cell(row, 2).append('<b>Web Request (ms)</b>');
+                tbl.cell(row, 3).append('<b>Server (ms)</b>');
+                tbl.cell(row, 4).append('<b>Database (ms)</b>');
+                row++;
+
+                function test() {
+                    var starttime = new Date();
+                    startBtn.disable();
+                    stopBtn.enable();
+
+                    Csw.ajax.post({
+                        url: '/NbtWebApp/wsNBT.asmx/runTree',
+                        data: {
+                            ViewId: vs.value().value,
+                            IdPrefix: 'test',
+                            IncludeNodeRequired: false,
+                            IncludeNodeKey: '',
+                            IncludeNodeId: '',
+                            NodePk: '',
+                            IncludeInQuickLaunch: false,
+                            DefaultSelect: ''
+                        },
+                        stringify: false,
+                        success: function (data) {
+                            var endtime = new Date();
+
+                            var servertime = data.timer.runTree;
+                            var sqltime = 0;
+                            Csw.each(data.timer.sql, function (thisval) {
+                                //if (sqltime !== '') sqltime += '<br/>';
+                                sqltime += Csw.number(thisval);
+                            });
+                            var webtime = endtime - starttime;
+
+                            tbl.cell(row, 1).append(vs.value().name);
+                            tbl.cell(row, 2).append(webtime);
+                            tbl.cell(row, 3).append(servertime);
+                            tbl.cell(row, 4).append(sqltime);
+                            row++;
+
+                            to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                        } // success
+                    }); // ajax.post()
+                }
+
+            }, // onAuthenticate
+            onFail: function (msg) {
+                error(msg);
+            } // onFail
+        }); // CswLogin
+    } // login()
+
+    function error(msg) {
+        $('#ErrorDiv').text(msg)
+            .show();
+    }
+    function clearerror() {
+        $('#ErrorDiv').hide();
+    }
+
+</script>
+<tr>
+    <td id="Td5" class="PageTable_LeftColumn">
+        <img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450" />
+    </td>
+    <td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2" valign="top">
+        <div id="div1">
+            <h1>
+                NBT Performance Test
+            </h1>
+            <table>
+                <tr>
+                    <td>
+                        Accessid:
+                    </td>
+                    <td>
+                        <input type="text" id="accessid" value="1" size="8" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        User:
+                    </td>
+                    <td>
+                        <input type="text" id="username" value="admin" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Password:
+                    </td>
+                    <td>
+                        <input type="password" id="password" value="admin" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        &nbsp;
+                    </td>
+                    <td>
+                        <input type="button" id="loginbtn" value="Login" onclick="login();" />
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div id="ErrorDiv" class="error" style="display: none;">
+        </div>
+    </td>
+    <td id="Td6" class="PageTable_RightColumn">
+    </td>
+</tr>
+<!--#include file="MainFooter.html" -->
