@@ -388,13 +388,19 @@ namespace ChemSW.Nbt.WebServices
             CswNbtSearch Search = new CswNbtSearch( _CswNbtResources, SearchTerm );
             if(Int32.MinValue != NodeTypeId)
             {
-                //CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType(NodeTypeId);
-                //    CswNbtSearchFilterWrapper NodeTypeFilter = new CswNbtSearchFilterWrapper(
-                //Search.addFilter(Search
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType(NodeTypeId);
+                if( null != NodeType )
+                {
+                    Search.addFilter( Search.makeFilter( NodeType, Int32.MinValue, false ) );
+                }
             }
             if(Int32.MinValue != ObjectClassId)
             {
-                //Search.addFilter(
+                CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+                if( null != ObjectClass )
+                {
+                    Search.addFilter( Search.makeFilter( ObjectClass, Int32.MinValue, false ) );
+                }
             }
             return _finishUniversalSearch( Search );
         }

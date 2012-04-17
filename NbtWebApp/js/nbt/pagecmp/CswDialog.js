@@ -871,6 +871,8 @@
                     $searchbox_parent: searchdiv.$,
                     $searchresults_parent: resultsdiv.$,
                     $searchfilters_parent: filtersdiv.$,
+                    nodetypeid: o.nodetypeid,
+                    objectclassid: o.objectclassid,
                     onBeforeSearch: function () {},
                     onAfterSearch: function () {},
                     onAfterNewSearch: function (searchid) {},
