@@ -36,6 +36,8 @@ namespace ChemSW.Nbt.WebServices
     {
         // case 25887
         CswTimer Timer = new CswTimer();
+        double ServerInitTime = 0;
+
 
         #region Session and Resource Management
 
@@ -95,6 +97,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
             }
+            ServerInitTime = Timer.ElapsedDurationInMilliseconds;
             return ret;
         } // _attemptRefresh()
 
@@ -245,11 +248,12 @@ namespace ChemSW.Nbt.WebServices
                     JObj["timeout"] = _CswSessionResources.CswSessionManager.TimeoutDate.ToString();
                 }
                 JObj["timer"] = new JObject();
-                JObj["timer"]["server"] = Timer.ElapsedDurationInMilliseconds;
+                JObj["timer"]["serverinit"] = ServerInitTime;
                 JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
                 JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
                 JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
                 JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+                JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
             }
         }//_jAuthenticationStatus()
 

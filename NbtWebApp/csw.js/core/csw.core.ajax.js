@@ -91,7 +91,8 @@ if(Csw.isNullOrEmpty(internal.perflogheaders)) {
     Csw.log( "timestamp\t" + 
              "url\t" + 
              "client\t" + 
-             "server\t" + 
+             "serverinit\t" + 
+             "servertotal\t" + 
              "dbinit\t" + 
              "dbquery\t" + 
              "dbcommit\t" + 
@@ -104,7 +105,8 @@ while (ms.length < 3) {
 Csw.log( endTime.toLocaleTimeString() + "." + ms + "\t" + 
          o.url + "\t" + 
          (endTime - startTime) + "\t" + 
-         result.timer.server + "\t" + 
+         result.timer.serverinit + "\t" + 
+         result.timer.servertotal + "\t" + 
          result.timer.dbinit + "\t" + 
          result.timer.dbquery + "\t" + 
          result.timer.dbcommit + "\t" + 
