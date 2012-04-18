@@ -34,6 +34,9 @@ namespace ChemSW.Nbt.WebServices
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
     public class wsNBT : WebService
     {
+        // case 25887
+        CswTimer Timer = new CswTimer();
+
         #region Session and Resource Management
 
         private CswSessionResourcesNbt _CswSessionResources;
@@ -234,13 +237,19 @@ namespace ChemSW.Nbt.WebServices
         {
             if( JObj != null )
             {
-                JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
+                JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
                 if( _CswSessionResources != null &&
                     _CswSessionResources.CswSessionManager != null &&
                     !ForMobile )
                 {
-                    JObj.Add( new JProperty( "timeout", _CswSessionResources.CswSessionManager.TimeoutDate.ToString() ) );
+                    JObj["timeout"] = _CswSessionResources.CswSessionManager.TimeoutDate.ToString();
                 }
+                JObj["timer"] = new JObject();
+                JObj["timer"]["server"] = Timer.ElapsedDurationInMilliseconds;
+                JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
+                JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
+                JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
+                JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
             }
         }//_jAuthenticationStatus()
 
