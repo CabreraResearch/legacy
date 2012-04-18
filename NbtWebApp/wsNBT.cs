@@ -34,6 +34,11 @@ namespace ChemSW.Nbt.WebServices
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
     public class wsNBT : WebService
     {
+        // case 25887
+        CswTimer Timer = new CswTimer();
+        double ServerInitTime = 0;
+
+
         #region Session and Resource Management
 
         private CswSessionResourcesNbt _CswSessionResources;
@@ -92,6 +97,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
             }
+            ServerInitTime = Timer.ElapsedDurationInMilliseconds;
             return ret;
         } // _attemptRefresh()
 
@@ -234,14 +240,21 @@ namespace ChemSW.Nbt.WebServices
         {
             if( JObj != null )
             {
-                JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
+                JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
                 if( _CswSessionResources != null &&
                     _CswSessionResources.CswSessionManager != null &&
                     !ForMobile )
                 {
                     CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-                    JObj.Add( new JProperty( "timeout", CswTimeout.ToClientAsJavascriptString() ) );
+                    JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
                 }
+                JObj["timer"] = new JObject();
+                JObj["timer"]["serverinit"] = ServerInitTime;
+                JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
+                JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
+                JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
+                JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+                JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
             }
         }//_jAuthenticationStatus()
 

@@ -48,7 +48,8 @@
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
-
+            
+            var startTime = new Date();
         $.ajax({
             type: 'POST',
             async: o.async,
@@ -58,6 +59,7 @@
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(o.data),
             success: function (data) {
+                    var endTime = new Date();
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
                 var result = $.parseJSON(data.d);
 
@@ -77,9 +79,37 @@
                     if (false === o.formobile) {
                         Csw.clientSession.setExpireTime(Csw.string(result.timeout, ''));
                     }
+		            
+
+if(Csw.isNullOrEmpty(internal.perflogheaders)) {
+    internal.perflogheaders = true;
+    Csw.log( "timestamp\t" + 
+             "url\t" + 
+             "client\t" + 
+             "serverinit\t" + 
+             "servertotal\t" + 
+             "dbinit\t" + 
+             "dbquery\t" + 
+             "dbcommit\t" + 
+             "dbdeinit" );
+}
+var ms = Csw.string(endTime.getMilliseconds());
+while (ms.length < 3) { 
+    ms = "0" + ms;
+}
+Csw.log( endTime.toLocaleTimeString() + "." + ms + "\t" + 
+         o.url + "\t" + 
+         (endTime - startTime) + "\t" + 
+         result.timer.serverinit + "\t" + 
+         result.timer.servertotal + "\t" + 
+         result.timer.dbinit + "\t" + 
+         result.timer.dbquery + "\t" + 
+         result.timer.dbcommit + "\t" + 
+         result.timer.dbdeinit );
 
                     delete result.AuthenticationStatus;
                     delete result.timeout;
+                        delete result.timer;
 
                     Csw.clientSession.handleAuthenticationStatus({
                         status: auth,
