@@ -857,6 +857,37 @@
 
             openDialog(div, 400, 300, null, 'Impersonate');
         }, // ImpersonateDialog
+        
+        SearchDialog: function (options) {
+            var o = {
+                propname: '',
+                nodetypeid: '',
+                objectclassid: '',
+                onFindNode: null
+            };
+            if (options) $.extend(o, options);
+
+            var div = Csw.literals.div();
+
+            var searchdiv = div.div({ ID: 'searchdialog_searchdiv' });
+            var resultsdiv = div.div({ ID: 'searchdialog_resultsdiv' });
+            var filtersdiv = div.div({ ID: 'searchdialog_filtersdiv' });
+
+            var universalsearch = Csw.composites.universalSearch({}, {
+                    $searchbox_parent: searchdiv.$,
+                    $searchresults_parent: resultsdiv.$,
+                    $searchfilters_parent: filtersdiv.$,
+                    nodetypeid: o.nodetypeid,
+                    objectclassid: o.objectclassid,
+                    onBeforeSearch: function () {},
+                    onAfterSearch: function () {},
+                    onAfterNewSearch: function (searchid) {},
+                    onAddView: function (viewid, viewmode) {},
+                    onLoadView: function (viewid, viewmode) {}
+                });
+
+            openDialog(div, 400, 300, null, 'Find '+ o.propname);
+        }, // SearchDialog
 
         ErrorDialog: function (error) {
             var div = Csw.literals.div();

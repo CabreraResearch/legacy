@@ -26,6 +26,7 @@ namespace ChemSW.Nbt.Search
         public static readonly CswNbtSearchFilterType Unknown = new CswNbtSearchFilterType( "Unknown" );
 
         public static readonly CswNbtSearchFilterType nodetype = new CswNbtSearchFilterType( "nodetype" );
+        public static readonly CswNbtSearchFilterType objectclass = new CswNbtSearchFilterType( "objectclass" );
         public static readonly CswNbtSearchFilterType propval = new CswNbtSearchFilterType( "propval" );
     }
 
@@ -111,6 +112,16 @@ namespace ChemSW.Nbt.Search
         }
 
         #endregion for NodeType Filters
+
+        #region for Object Class Filters
+
+        public Int32 ObjectClassId
+        {
+            get { return CswConvert.ToInt32( _FilterObj["objectclassid"] ); }
+            set { _FilterObj["objectclassid"] = value.ToString(); }
+        }
+
+        #endregion for Object Class Filters
 
         #region for PropVal Filters
 
