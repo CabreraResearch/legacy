@@ -97,7 +97,6 @@
 
                 internal.comboBox.topContent($newTopContent);
                 internal.div.propNonDom('selectedType', itemobj.type);
-                internal.div.propNonDom('selectedName', itemobj.name);
                 switch (itemobj.type.toLowerCase()) {
                     case 'view':
                         internal.div.propNonDom('selectedValue', itemobj.viewid);
@@ -148,8 +147,7 @@
             external.value = function () {
                 return {
                     type: internal.div.propNonDom('selectedType'),
-                    value: internal.div.propNonDom('selectedValue'),
-                    name: internal.div.propNonDom('selectedName')
+                    value: internal.div.propNonDom('selectedValue')
                 };
             };
 
