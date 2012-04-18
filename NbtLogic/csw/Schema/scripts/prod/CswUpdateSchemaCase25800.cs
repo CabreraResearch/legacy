@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
                     }
                 }
 
-                CswNbtView SynonymsView = _CswNbtSchemaModTrnsctn.makeView();
+                CswNbtView SynonymsView = _CswNbtSchemaModTrnsctn.restoreView( SynonymProp.ViewId );
                 SynonymsView.makeNew( "Synonyms_" + MaterialNt.NodeTypeName, NbtViewVisibility.Property );
                 SynonymsView.ViewMode = NbtViewRenderingMode.Grid;
 
@@ -49,8 +49,6 @@ namespace ChemSW.Nbt.Schema
 
                 SynonymProp.Extended = CswNbtNodePropGrid.GridPropMode.Small.ToString();
                 SynonymProp.MaxValue = 10;
-                SynonymProp.ViewId = SynonymsView.ViewId;
-
             }
         }//Update()
 
