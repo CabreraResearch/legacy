@@ -29,21 +29,13 @@ namespace ChemSW.Nbt.Schema
                 {
                     SynonymProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MaterialNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Synonyms", "Identity" );
                 }
-                else
-                {
-                    CswNbtView OldSynonymsView = _CswNbtSchemaModTrnsctn.restoreView( SynonymProp.ViewId );
-                    if( null != OldSynonymsView )
-                    {
-                        OldSynonymsView.Delete();
-                    }
-                }
 
                 CswNbtView SynonymsView = _CswNbtSchemaModTrnsctn.restoreView( SynonymProp.ViewId );
-                SynonymsView.makeNew( "Synonyms_" + MaterialNt.NodeTypeName, NbtViewVisibility.Property );
+                SynonymsView.Root.ChildRelationships.Clear();
                 SynonymsView.ViewMode = NbtViewRenderingMode.Grid;
 
                 CswNbtViewRelationship MaterialRelationship = SynonymsView.AddViewRelationship( MaterialNt, false );
-                CswNbtViewRelationship SynonymRelationship = SynonymsView.AddViewRelationship( MaterialRelationship, NbtViewPropOwnerType.Second, MaterialSynonymMaterialOcp );
+                CswNbtViewRelationship SynonymRelationship = SynonymsView.AddViewRelationship( MaterialRelationship, NbtViewPropOwnerType.Second, MaterialSynonymMaterialOcp, false );
                 SynonymsView.AddViewProperty( SynonymRelationship, MaterialSynonymNameOcp );
                 SynonymsView.save();
 
