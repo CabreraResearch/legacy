@@ -29,40 +29,25 @@ my @components = (
 );
 
 my $orclserver = "golem";
-my $orcldumpdir = "MADEYE_DUMPS";
-my $masterdumpdir = "NBTDUMPS";
-
-my %schemata;  
-# $schemata{name} = password
-$schemata{"nbt_master"} = "nbt";   # master
-$schemata{"nbt_schema1"} = "nbt";  # 1
-$schemata{"nbt_schema2"} = "nbt";  # 2
-$schemata{"nbt_schema3"} = "nbt";  # 3
-$schemata{"sales"} = "nbt";        # sales
-$schemata{"nbt_manager"} = "nbt";  # nbt_manager
-$schemata{"cispro"} = "nbt";       # CISPro
-$schemata{"darryl"} = "darryl";    # Darryl
-$schemata{"judy"} = "judy";        # judy
-
-# this one will always be reset to the master
-my $masterschema = "nbt_master";
+my $orcldumpdir = "ChemSWDumpDirectory";
+my $masterdumpdir = "ChemSWDumpDirectory";
 
 my %repopaths;
 foreach my $component (@components)
 {
 	if($component eq "NbtHelp")
 	{
-		$repopaths{$component} = "c:/kiln/Nbt/Nbt/NbtWebApp/help";
+		$repopaths{$component} = "d:/kiln/Nbt/Nbt/NbtWebApp/help";
 	}
 	elsif($component eq "Nbt" || $component eq "NbtImport")
 	{
-		$repopaths{$component} = "c:/kiln/Nbt/$component";
+		$repopaths{$component} = "d:/kiln/Nbt/$component";
 	}
 	elsif($component eq "DailyBuildTools")
 	{
-		$repopaths{$component} = "c:/kiln/$component";
+		$repopaths{$component} = "d:/kiln/$component";
 	} else {
-		$repopaths{$component} = "c:/kiln/Common/$component";
+		$repopaths{$component} = "d:/kiln/Common/$component";
 	}
 }
 
@@ -74,10 +59,6 @@ printf "%4d-%02d-%02d %02d:%02d:%02d\n", $year+1900, $mon+1, $mday, $hour, $min,
 
 #---------------------------------------------------------------------------------
 # 1. pull from Main
-
-&runCommand( "net stop \"ChemSW Log Service\"");
-
-&runCommand( "net stop \"NbtSchedService\"");
 
 foreach my $component (@components)
 {
@@ -173,24 +154,9 @@ foreach my $component (@components)
 	}
 }  # foreach my $component (@components)
 
-#---------------------------------------------------------------------------------
-# 3. compile
-
-
-&runCommand( "taskkill /F /IM NbtSchedService.exe");  # force kill outstanding threads
-
-#&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
-
-&runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
-            "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Rebuild \"Release\"");
-
-&runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
-            "devenv ". $repopaths{"DailyBuildTools"} ."/DailyBuildweb/DailyBuildWeb.sln /Rebuild \"Release\"");
-
-&runCommand( "net start \"ChemSW Log Service\"");
 
 #---------------------------------------------------------------------------------
-# 4. tags
+# 3. tags
 
 foreach my $component (@components)
 {
@@ -246,34 +212,3 @@ sub runCommand
 	my $result = `$_[0]`;
 	printf $result;
 }
-
-
-#---------------------------------------------------------------------------------
-# 5. back up existing schemata
-
-foreach my $schema (keys %schemata)
-{
-	my $password = $schemata{$schema};
-	&runCommand( "C:/app/client64/product/11.2.0/client_1/BIN/expdp.exe ". $schema ."/". $password ."\@". $orclserver ." DUMPFILE=". $schema ."_". $datestr .".". $increment .".dmp DIRECTORY=". $orcldumpdir );
-}
-
-#---------------------------------------------------------------------------------
-# 6. reset master schema
-
-my $masterpassword = $schemata{$masterschema};
-
-&runCommand( "echo exit | sqlplus ". $masterschema ."/". $masterpassword ."\@". $orclserver ." \@". $repopaths{"Nbt"} ."/Schema/nbt_nuke.sql" );
-
-&runCommand( "impdp.exe ". $masterschema ."/". $masterpassword ."@". $orclserver ." DUMPFILE=NBT_MASTER_11G.dmp DIRECTORY=". $masterdumpdir );
-
-#---------------------------------------------------------------------------------
-# 7. run command line schema updater
-
-&runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
-
-
-#---------------------------------------------------------------------------------
-# 8. start schedule service
-
-&runCommand( "net start \"NbtSchedService\"");
-
