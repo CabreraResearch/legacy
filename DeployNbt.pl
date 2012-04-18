@@ -60,12 +60,6 @@ printf "%4d-%02d-%02d %02d:%02d:%02d\n", $year+1900, $mon+1, $mday, $hour, $min,
 #---------------------------------------------------------------------------------
 # 1. pull from Main
 
-&runCommand( "net stop \"ChemSW Log Service\"");
-
-&runCommand( "net stop \"ChemSW NBT Schedule Service\"");
-
-&runCommand( "taskkill -f /IM nbtschedservice.exe" );
-
 foreach my $component (@components)
 {
 	&runCommand("hg pull -u -R ". $repopaths{$component});
@@ -160,24 +154,9 @@ foreach my $component (@components)
 	}
 }  # foreach my $component (@components)
 
-#---------------------------------------------------------------------------------
-# 3. compile
-
-
-&runCommand( "taskkill /F /IM NbtSchedService.exe");  # force kill outstanding threads
-
-#&runCommand( $repopaths{"Nbt"} ."/nbtwebapp/js/_compile.pl");
-
-&runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
-            "devenv ". $repopaths{"Nbt"} ."/Nbt.sln /Rebuild \"Release\"");
-
-&runCommand("\"c:/Program Files (x86)/Microsoft Visual Studio 10.0/Common7/Tools/vsvars32.bat\" && ".
-            "devenv ". $repopaths{"DailyBuildTools"} ."/DailyBuildweb/DailyBuildWeb.sln /Rebuild \"Release\"");
-
-&runCommand( "net start \"ChemSW Log Service\"");
 
 #---------------------------------------------------------------------------------
-# 4. tags
+# 3. tags
 
 foreach my $component (@components)
 {
@@ -233,16 +212,3 @@ sub runCommand
 	my $result = `$_[0]`;
 	printf $result;
 }
-
-
-#---------------------------------------------------------------------------------
-# 5. run command line schema updater
-
-&runCommand( $repopaths{"Nbt"} ."/NbtSchemaUpdaterCmdLn/bin/Release/NbtUpdt.exe -all");
-
-
-#---------------------------------------------------------------------------------
-# 6. start schedule service
-
-&runCommand( "net start \"ChemSW NBT Schedule Service\"");
-

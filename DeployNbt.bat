@@ -1,3 +1,5 @@
+net stop W3SVC
+
 net stop "ChemSW Log Service" > D:\log\dailylog.txt
 
 net stop "ChemSW NBT Schedule Service" >> D:\log\dailylog.txt
@@ -19,5 +21,7 @@ D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all >> D:\log\dai
 net start "ChemSW NBT Schedule Service" >> D:\log\dailylog.txt
 
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp -p d:\kiln\Nbt\Nbt\NbtWebApp >> D:\log\dailylog.txt
+
+iisreset
 
 echo "ASP Precompile Finished" >> D:\log\dailylog.txt
