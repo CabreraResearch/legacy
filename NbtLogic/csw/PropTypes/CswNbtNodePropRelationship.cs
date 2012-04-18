@@ -25,6 +25,8 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtFieldTypeRuleRelationship _FieldTypeRule;
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIDSubField;
+        
+        private const Int32 _SearchThreshold = 100;
 
         override public bool Empty
         {
@@ -310,26 +312,32 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["allowadd"] = "true";
             }
 
-            JArray JOptions = new JArray();
-            ParentObject["options"] = JOptions;
-
             Dictionary<CswPrimaryKey, string> Options = getOptions();
-            foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+            if( Options.Count > _SearchThreshold )
             {
-                JObject JOption = new JObject();
-                if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
-                {
-                    JOption["id"] = NodePk.PrimaryKey.ToString().ToLower();
-                    JOption["value"] = Options[NodePk];
-                }
-                else
-                {
-                    JOption["id"] = "";
-                    JOption["value"] = "";
-                }
-                JOptions.Add( JOption );
+                ParentObject["usesearch"] = "true";
             }
+            else
+            {
+                JArray JOptions = new JArray();
+                ParentObject["options"] = JOptions;
 
+                foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+                {
+                    JObject JOption = new JObject();
+                    if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
+                    {
+                        JOption["id"] = NodePk.PrimaryKey.ToString().ToLower();
+                        JOption["value"] = Options[NodePk];
+                    }
+                    else
+                    {
+                        JOption["id"] = "";
+                        JOption["value"] = "";
+                    }
+                    JOptions.Add( JOption );
+                }
+            }
         } // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
