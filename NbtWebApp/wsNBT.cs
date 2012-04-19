@@ -241,20 +241,25 @@ namespace ChemSW.Nbt.WebServices
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
-                if( _CswSessionResources != null &&
-                    _CswSessionResources.CswSessionManager != null &&
-                    !ForMobile )
+                if( false == ForMobile )
                 {
-                    CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-                    JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                    if( _CswSessionResources != null &&
+                         _CswSessionResources.CswSessionManager != null )
+                    {
+                        CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+                        JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                    }
+                    JObj["timer"] = new JObject();
+                    JObj["timer"]["serverinit"] = ServerInitTime;
+                    if( null != _CswNbtResources )
+                    {
+                        JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
+                        JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
+                        JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
+                        JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+                    }
+                    JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
                 }
-                JObj["timer"] = new JObject();
-                JObj["timer"]["serverinit"] = ServerInitTime;
-                JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
-                JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
-                JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
-                JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
-                JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
             }
         }//_jAuthenticationStatus()
 
