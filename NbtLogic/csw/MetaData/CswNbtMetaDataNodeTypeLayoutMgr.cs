@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -51,7 +50,7 @@ namespace ChemSW.Nbt.MetaData
             public Int32 DisplayRow = Int32.MinValue;
             public Int32 DisplayColumn = Int32.MinValue;
         }
-        
+
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
 
         public CswNbtMetaDataNodeTypeLayoutMgr( CswNbtMetaDataResources CswNbtMetaDataResources )
@@ -59,9 +58,9 @@ namespace ChemSW.Nbt.MetaData
             _CswNbtMetaDataResources = CswNbtMetaDataResources;
         }
 
-        public NodeTypeLayout getLayout(LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop)
+        public NodeTypeLayout getLayout( LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop )
         {
-            return getLayout( LayoutType, Prop.PropId );      
+            return getLayout( LayoutType, Prop.PropId );
         }
         public NodeTypeLayout getLayout( LayoutType LayoutType, Int32 PropId )
         {
@@ -70,7 +69,7 @@ namespace ChemSW.Nbt.MetaData
             NodeTypeLayout Layout = null;
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
             DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
-            if(LayoutTable.Rows.Count > 0)
+            if( LayoutTable.Rows.Count > 0 )
             {
                 Layout = new NodeTypeLayout();
                 Layout.LayoutType = LayoutType;
@@ -134,7 +133,6 @@ namespace ChemSW.Nbt.MetaData
                 NodeTypeLayout InsertAfterPropLayout = getLayout( LayoutType, InsertAfterProp );
                 if( InsertAfterPropLayout != null )
                 {
-                    Collection<CswNbtMetaDataNodeTypeProp> PropsToPush = new Collection<CswNbtMetaDataNodeTypeProp>();
                     CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "makeSpaceForProp_Update", "nodetype_layout" );
                     DataTable LayoutTable = LayoutUpdate.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + InsertAfterProp.NodeTypeId.ToString() );
                     foreach( DataRow Row in LayoutTable.Rows )
@@ -233,7 +231,7 @@ namespace ChemSW.Nbt.MetaData
             //return ret;
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeType.NodeTypeId, TabId, LayoutType, false );
         } // getPropsNotInLayout()
-        
+
 
         //public void makeSpaceForProp(CswNbtMetaDataNodeTypeLayout.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
         //    // NodeTypeTab, Int32 DisplayColumn, Int32 DisplayRow)

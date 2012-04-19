@@ -619,9 +619,13 @@ namespace ChemSW.Nbt.MetaData
                 NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
 
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, DisplayRow, 1 );
-                if( OCProp.IsRequired && false == OCProp.HasDefaultValue() )
+                if( (OCProp.IsRequired && 
+                    false == OCProp.HasDefaultValue()) || 
+                    ( OCProp.SetValueOnAdd ||  
+                    ( Int32.MinValue != OCProp.DisplayColAdd && 
+                    Int32.MinValue != OCProp.DisplayRowAdd ) ))
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, Int32.MinValue, Int32.MinValue );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
                 }
                 DisplayRow++;
             }//iterate object class props

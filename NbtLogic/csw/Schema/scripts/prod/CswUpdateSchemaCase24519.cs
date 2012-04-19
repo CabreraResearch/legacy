@@ -83,11 +83,18 @@ namespace ChemSW.Nbt.Schema
                                                                       CswNbtObjClassDocument.FilePropertyName,
                                                                       CswNbtMetaDataFieldType.NbtFieldType.File,
                                                                       SetValOnAdd: true, DisplayRowAdd: 4, DisplayColAdd: 1 );
+            FileOcp.FilterObjectClassPropId = FileTypeOcp.PropId;
+            char FilterDelimiter = '|';
+            string FileFilterString = CswNbtSubField.PropColumn.Field1.ToString() + FilterDelimiter + CswNbtPropFilterSql.PropertyFilterMode.Equals + FilterDelimiter + "File";
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( FileOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, FileFilterString );
 
             LinkOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass,
                                                                       CswNbtObjClassDocument.LinkPropertyName,
                                                                       CswNbtMetaDataFieldType.NbtFieldType.Link,
                                                                       SetValOnAdd: true, DisplayRowAdd: 5, DisplayColAdd: 1 );
+            LinkOcp.FilterObjectClassPropId = FileTypeOcp.PropId;
+            string LinkFilterString = CswNbtSubField.PropColumn.Field1.ToString() + FilterDelimiter + CswNbtPropFilterSql.PropertyFilterMode.Equals + FilterDelimiter + "Link";
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LinkOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter, LinkFilterString );
 
             DocumentClassOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass,
                                                                       CswNbtObjClassDocument.DocumentClassPropertyName,
