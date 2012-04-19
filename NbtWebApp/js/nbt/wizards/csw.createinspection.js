@@ -206,15 +206,15 @@
                 var stepTwoComplete = false;
 
                 return function () {
-                    var inspectionTable, $newDesignLabel, newDesignNameDisplay,
-                        tempInspectionName = internal.selectedInspectionTarget + ' Inspection',
+                    var inspectionTable, $newDesignLabel, 
+                        tempInspectionName = internal.selectedInspectionTarget,
                         tempCategoryName = internal.selectedInspectionTarget;
 
                     var makeInspectionDesignName = function (name) {
                         var ret = Csw.string(name).trim();
-                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
-                            ret += ' Inspection';
-                        }
+//                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
+//                            ret += ' Inspection';
+//                        }
                         return ret;
                     };
 
@@ -222,11 +222,9 @@
                         if (internal.isNewInspectionDesign()) {
                             internal.newDesignName.$.show();
                             $newDesignLabel.show();
-                            newDesignNameDisplay.show();
                         } else {
                             internal.newDesignName.$.hide();
                             $newDesignLabel.hide();
-                            newDesignNameDisplay.hide();
                         }
                     };
                     var nextBtnEnabled = function () {
@@ -234,11 +232,10 @@
                     };
 
                     var targetChangedHandle = function () {
-                        internal.newDesignName.val(internal.selectedInspectionTarget + ' Inspection');
-                        newDesignNameDisplay.text(internal.selectedInspectionTarget + ' Inspection');
+                        internal.newDesignName.val(internal.selectedInspectionTarget);
                         internal.categoryNameInput.val(internal.selectedInspectionTarget);
                         if (internal.isNewInspectionDesign()) {
-                            internal.selectedInspectionDesign.name = internal.selectedInspectionTarget + ' Inspection';
+                            internal.selectedInspectionDesign.name = internal.selectedInspectionTarget;
                         }
                         Csw.publish(internal.createInspectionEvents.designNameChanged);
                     };
@@ -302,22 +299,17 @@
                                 cssclass: 'required',
                                 maxlength: 50,
                                 width: (50 * 7) + 'px',
-                                value: tempInspectionName
+                                value: tempInspectionName + ' Inspection'
                             })
                             .bind('change keypress keydown keyup', function () {
                                 setTimeout(function () {
                                     var newInspectionDesignName = makeInspectionDesignName(internal.newDesignName.val());
                                     internal.selectedInspectionDesign.id = '[Create New]';
                                     internal.selectedInspectionDesign.name = newInspectionDesignName;
-                                    newDesignNameDisplay.text(newInspectionDesignName);
                                     internal.toggleButton(internal.buttons.next, nextBtnEnabled());
                                     Csw.publish(internal.createInspectionEvents.designNameChanged);
                                 }, 10);
                             });
-
-                        newDesignNameDisplay = inspectionTable.cell(4, 2)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ text: tempInspectionName });
 
                         inspectionTable.cell(5, 1).br();
 
