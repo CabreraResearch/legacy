@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
         private CswNbtMetaDataObjectClassProp LinkOcp;
         private CswNbtMetaDataObjectClassProp FileTypeOcp;
         private CswNbtMetaDataObjectClassProp DocumentClassOcp;
-        private CswNbtMetaDataObjectClassProp OpenOcp;
+        //private CswNbtMetaDataObjectClassProp OpenOcp;
         private CswNbtMetaDataObjectClassProp OwnerOcp;
         private CswNbtMetaDataObjectClassProp ArchivedOcp;
 
@@ -101,9 +101,9 @@ namespace ChemSW.Nbt.Schema
                                                                       CswNbtMetaDataFieldType.NbtFieldType.List,
                                                                       SetValOnAdd: true, DisplayRowAdd: 6, DisplayColAdd: 1 );
 
-            OpenOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass,
-                                                          CswNbtObjClassDocument.OpenPropertyName,
-                                                          CswNbtMetaDataFieldType.NbtFieldType.Button );
+            //OpenOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass,
+            //                                              CswNbtObjClassDocument.OpenPropertyName,
+            //                                              CswNbtMetaDataFieldType.NbtFieldType.Button );
 
             OwnerOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass,
                                                                       CswNbtObjClassDocument.OwnerPropertyName,

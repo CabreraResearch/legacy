@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -13,7 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string LinkPropertyName { get { return "Link "; } }
         public static string DocumentClassPropertyName { get { return "Document Class"; } }
         public static string FileTypePropertyName { get { return "File Type"; } }
-        public static string OpenPropertyName { get { return "Open"; } }
+        //public static string OpenPropertyName { get { return "Open"; } }
         public static string OwnerPropertyName { get { return "Owner"; } }
         public static string ArchivedPropertyName { get { return "Archived"; } }
 
@@ -46,6 +47,48 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+
+            if( false == string.IsNullOrEmpty( File.FileName ) || false == string.IsNullOrEmpty( Link.Href ) )
+            {
+                AcquiredDate.DateTimeValue = DateTime.Now;
+            }
+            if( Owner.RelatedNodeId != null &&
+                false == string.IsNullOrEmpty( DocumentClass.Value ) )
+            {
+                CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
+                if( null != OwnerNode )
+                {
+                    CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
+                    CswNbtMetaDataNodeType OwnerNT = OwnerNode.getNodeType();
+                    //CswNbtViewRelationship OwnerVr = ExistingDocsView.AddViewRelationship( OwnerNT, false );
+                    //OwnerVr.NodeIdsToFilterIn.Add( OwnerNode.NodeId );
+                    CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, DocumentClass.NodeTypeProp, DocumentClass.Value );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false );
+                    //this.Owner
+                    Int32 DocCount = Tree.getChildNodeCount();
+                    if( DocCount > 0 )
+                    {
+                        for( Int32 I = 0; I < DocCount; I += 1 )
+                        {
+                            Tree.goToNthChild( I );
+                            CswNbtNode DocNode = Tree.getNodeForCurrentPosition();
+                            if( DocNode.NodeId != NodeId )
+                            {
+                                CswNbtObjClassDocument DocNodeAsDocument = CswNbtNodeCaster.AsDocument( DocNode );
+                                DocNodeAsDocument.Archived.Checked = Tristate.True;
+                                DocNode.postChanges( true );
+                            }
+                            Tree.goToParentNode();
+                        }
+                    }
+
+                }
+            }
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -121,10 +164,10 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[DocumentClassPropertyName].AsList; }
         }
 
-        public CswNbtNodePropButton Open
-        {
-            get { return _CswNbtNode.Properties[OpenPropertyName].AsButton; }
-        }
+        //public CswNbtNodePropButton Open
+        //{
+        //    get { return _CswNbtNode.Properties[OpenPropertyName].AsButton; }
+        //}
 
         public CswNbtNodePropRelationship Owner
         {
