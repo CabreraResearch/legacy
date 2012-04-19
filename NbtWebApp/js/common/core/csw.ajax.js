@@ -80,10 +80,11 @@
                         Csw.clientSession.setExpireTime(Csw.string(result.timeout, ''));
                     }
 		            
-
+try // ie compatibility for console.log
+{
 if(Csw.isNullOrEmpty(internal.perflogheaders)) {
     internal.perflogheaders = true;
-    Csw.log( "timestamp\t" + 
+    console.log( "timestamp\t" + 
              "url\t" + 
              "client\t" + 
              "serverinit\t" + 
@@ -98,7 +99,7 @@ var ms = Csw.string(endTime.getMilliseconds());
 while (ms.length < 3) { 
     ms = "0" + ms;
 }
-Csw.log( endTime.toLocaleTimeString() + "." + ms + "\t" + 
+console.log( endTime.toLocaleTimeString() + "." + ms + "\t" + 
          url + "\t" + 
          (endTime - startTime) + "\t" + 
          result.timer.serverinit + "\t" + 
@@ -108,7 +109,10 @@ Csw.log( endTime.toLocaleTimeString() + "." + ms + "\t" +
          result.timer.dbcommit + "\t" + 
          result.timer.dbdeinit + "\t" +
          result.timer.treeloadersql );
-
+}
+catch(e)
+{
+}
                     delete result.AuthenticationStatus;
                     delete result.timeout;
                         delete result.timer;
