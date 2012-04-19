@@ -91,21 +91,23 @@ if(Csw.isNullOrEmpty(internal.perflogheaders)) {
              "dbinit\t" + 
              "dbquery\t" + 
              "dbcommit\t" + 
-             "dbdeinit" );
+             "dbdeinit\t" +
+             "treeloadersql" );
 }
 var ms = Csw.string(endTime.getMilliseconds());
 while (ms.length < 3) { 
     ms = "0" + ms;
 }
 Csw.log( endTime.toLocaleTimeString() + "." + ms + "\t" + 
-         o.url + "\t" + 
+         url + "\t" + 
          (endTime - startTime) + "\t" + 
          result.timer.serverinit + "\t" + 
          result.timer.servertotal + "\t" + 
          result.timer.dbinit + "\t" + 
          result.timer.dbquery + "\t" + 
          result.timer.dbcommit + "\t" + 
-         result.timer.dbdeinit );
+         result.timer.dbdeinit + "\t" +
+         result.timer.treeloadersql );
 
                     delete result.AuthenticationStatus;
                     delete result.timeout;

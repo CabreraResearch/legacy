@@ -254,6 +254,7 @@ namespace ChemSW.Nbt.WebServices
                 JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
                 JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
                 JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+                JObj["timer"]["treeloadersql"] = _CswNbtResources.CswLogger.TreeLoaderSQLTime;
                 JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
             }
         }//_jAuthenticationStatus()
