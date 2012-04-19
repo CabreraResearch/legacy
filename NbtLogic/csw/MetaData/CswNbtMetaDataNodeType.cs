@@ -173,6 +173,7 @@ namespace ChemSW.Nbt.MetaData
                 _PriorVersionNodeType = null;
             }
         }
+
         public Int32 FirstVersionNodeTypeId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["firstversionid"] ); }

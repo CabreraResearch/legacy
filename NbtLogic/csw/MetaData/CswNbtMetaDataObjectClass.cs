@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.MetaData
             MaterialComponentClass,
             ContainerClass,
             CustomerClass,
+            DocumentClass,
             EquipmentAssemblyClass,
             EquipmentClass,
             EquipmentTypeClass,
