@@ -28,7 +28,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Create a new CswNbtResources
         /// </summary>
-        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.PooledConnectionState PooledConnectionState = RscAdo.PooledConnectionState.Open )
+        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.PooledConnectionState PooledConnectionState = RscAdo.PooledConnectionState.Open, ICswResources CswResourcesMaster = null )
         {
 
             if( SetupMode.NbtWeb == SetupMode )
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt
 
             string FilesPath = CswTools.getConfigurationFilePath( SetupMode );
 
-            CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache );
+            CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster );
             ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ), PooledConnectionState );
 
             //bz # 9896: This events must only be assigned when we first instance the class;
