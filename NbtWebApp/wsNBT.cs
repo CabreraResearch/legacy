@@ -241,20 +241,21 @@ namespace ChemSW.Nbt.WebServices
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
-                if( _CswSessionResources != null &&
-                    _CswSessionResources.CswSessionManager != null &&
-                    !ForMobile )
-                {
-                    CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-                    JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
-                }
-                JObj["timer"] = new JObject();
-                JObj["timer"]["serverinit"] = ServerInitTime;
-                JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
-                JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
-                JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
-                JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
-                JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
+                if(false == ForMobile) {
+					if( _CswSessionResources != null &&
+						_CswSessionResources.CswSessionManager != null )
+					{
+						CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+						JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+					}
+					JObj["timer"] = new JObject();
+					JObj["timer"]["serverinit"] = ServerInitTime;
+					JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
+					JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
+					JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
+					JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+					JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
+				}
             }
         }//_jAuthenticationStatus()
 
@@ -3471,7 +3472,7 @@ namespace ChemSW.Nbt.WebServices
             // no session needed here
             JObject Connected = new JObject();
             Connected["result"] = "OK";
-            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
+            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
         }
 
