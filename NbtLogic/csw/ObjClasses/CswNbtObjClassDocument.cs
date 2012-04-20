@@ -53,7 +53,8 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 AcquiredDate.DateTimeValue = DateTime.Now;
             }
-            if( Owner.WasModified &&
+            if( Archived.Checked != Tristate.True &&
+                Owner.WasModified &&
                 Owner.RelatedNodeId != null &&
                 false == string.IsNullOrEmpty( DocumentClass.Value ) )
             {
@@ -61,16 +62,12 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != OwnerNode )
                 {
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
-                    CswNbtMetaDataNodeType OwnerNT = OwnerNode.getNodeType();
-                    //CswNbtViewRelationship OwnerVr = ExistingDocsView.AddViewRelationship( OwnerNT, false );
-                    //OwnerVr.NodeIdsToFilterIn.Add( OwnerNode.NodeId );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, DocumentClass.NodeTypeProp, DocumentClass.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, Tristate.True.ToString(), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false );
-                    //this.Owner
                     Int32 DocCount = Tree.getChildNodeCount();
                     if( DocCount > 0 )
                     {
