@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // case 22512
-            if( this.Username == ChemSWAdminUsername &&
+            if( Username == ChemSWAdminUsername &&
                 _CswNbtResources.CurrentNbtUser != null &&
                 _CswNbtResources.CurrentNbtUser.Username != ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
