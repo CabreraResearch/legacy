@@ -45,7 +45,6 @@
             $parent.listenForEnter()
                 .bind('pressedEnter', function () {
                     $target.click();
-                    $parent.unbind('pressedEnter');
                 });
         });
     };
