@@ -260,6 +260,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
                 }
+				}
             }
         }//_jAuthenticationStatus()
 
@@ -3476,7 +3477,7 @@ namespace ChemSW.Nbt.WebServices
             // no session needed here
             JObject Connected = new JObject();
             Connected["result"] = "OK";
-            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
+            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
         }
 
