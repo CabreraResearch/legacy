@@ -1,6 +1,7 @@
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Log;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.TreeEvents;
@@ -22,13 +23,15 @@ namespace ChemSW.Nbt
                                         OtherResources.SetupVbls.SetupMode,
                                         OtherResources.ExcludeDisabledModules,
                                         OtherResources.IsDeleteModeLogical,
-                                        OtherResources.CswSuperCycleCache );
+                                        OtherResources.CswSuperCycleCache,
+                                        OtherResources.PooledConnectionState,
+                                        null, OtherResources.CswLogger );
         }
 
         /// <summary>
         /// Create a new CswNbtResources
         /// </summary>
-        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.PooledConnectionState PooledConnectionState = RscAdo.PooledConnectionState.Open, ICswResources CswResourcesMaster = null )
+        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.PooledConnectionState PooledConnectionState = RscAdo.PooledConnectionState.Open, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
 
             if( SetupMode.NbtWeb == SetupMode )
@@ -48,7 +51,7 @@ namespace ChemSW.Nbt
 
             string FilesPath = CswTools.getConfigurationFilePath( SetupMode );
 
-            CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster );
+            CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
             ReturnVal.SetDbResources( new CswNbtTreeFactory( FilesPath ), PooledConnectionState );
 
             //bz # 9896: This events must only be assigned when we first instance the class;

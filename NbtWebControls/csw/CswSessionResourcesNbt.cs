@@ -7,6 +7,7 @@ using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
 
+
 namespace ChemSW.Nbt
 {
     public class CswSessionResourcesNbt
@@ -35,7 +36,7 @@ namespace ChemSW.Nbt
             CswResourcesMaster.SetDbResources( ChemSW.RscAdo.PooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
 
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.PooledConnectionState.Open, CswResourcesMaster );
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.PooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
 
 
 
@@ -64,6 +65,8 @@ namespace ChemSW.Nbt
 
             CswNbtResources.AccessId = CswSessionManager.AccessId;
         }//ctor()
+
+
 
 
         public AuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }
