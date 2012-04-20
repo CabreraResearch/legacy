@@ -112,8 +112,7 @@ namespace ChemSW.Nbt.Schema
 
             AcquiredDateOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass,
                                                                       CswNbtObjClassDocument.AcquiredDatePropertyName,
-                                                                      CswNbtMetaDataFieldType.NbtFieldType.DateTime,
-                                                                      ServerManaged: true );
+                                                                      CswNbtMetaDataFieldType.NbtFieldType.DateTime );
 
             ExpirationDateOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass,
                                                                       CswNbtObjClassDocument.ExpirationDatePropertyName,

@@ -48,7 +48,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
-            if( false == string.IsNullOrEmpty( File.FileName ) || false == string.IsNullOrEmpty( Link.Href ) )
+            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
+                false == string.IsNullOrEmpty( File.FileName ) || false == string.IsNullOrEmpty( Link.Href ) )
             {
                 AcquiredDate.DateTimeValue = DateTime.Now;
             }
