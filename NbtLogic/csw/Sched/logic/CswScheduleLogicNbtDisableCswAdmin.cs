@@ -71,11 +71,8 @@ namespace ChemSW.Nbt.Sched
                     {
                         CswAdminAsUser.AccountLocked.Checked = Tristate.False;
                         CswAdminAsUser.FailedLoginCount.Value = 0;
-                        if( DateTime.Now.Day == 1 )
-                        {
-                            /* Expire the Csw Admin password on the 1st of each month */
-                            CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
-                        }
+                        _CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.password_length.ToString(), "16" );
+                        _CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.passwordexpiry_days.ToString(), "30" );
                     }
                     ChemSWAdminUserNode.postChanges( true );
 

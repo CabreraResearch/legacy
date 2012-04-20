@@ -2,9 +2,9 @@
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
-    
+
     Csw.literals.button = Csw.literals.button ||
-        Csw.literals.register('button', function(options) {
+        Csw.literals.register('button', function (options) {
             'use strict';
             /// <summary> Create or extend an HTML <button /> and return a Csw.button object
             ///     &#10;1 - button(options)
@@ -31,13 +31,15 @@
                 disableOnClick: true,
                 primaryicon: '',
                 secondaryicon: '',
-                onClick: null
+                onClick: null,
+                isEnabled: true
             };
-            var external = { };
+            var external = {};
 
-            external.enable = function() {
+            external.enable = function () {
                 /// <summary>Enable the button.</summary>
                 /// <returns type="button">The button object.</returns>
+                internal.isEnabled = true;
                 if (external.length() > 0) {
                     external.$.button({
                         label: external.propNonDom('enabledText'),
@@ -46,9 +48,10 @@
                 }
                 return external;
             };
-            external.disable = function() {
+            external.disable = function () {
                 /// <summary>Disable the button.</summary>
                 /// <returns type="button">The button object.</returns>
+                internal.isEnabled = false;
                 if (external.length() > 0) {
                     external.$.button({
                         label: external.propNonDom('disabledText'),
@@ -58,19 +61,21 @@
                 return external;
             };
 
-            external.click = function(func) {
+            external.click = function (func) {
                 /// <summary>Trigger or assign a button click event.</summary>
                 /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
                 /// <returns type="button">The button object.</returns>
                 if (Csw.isFunction(func)) {
                     external.bind('click', func);
                 } else {
-                    external.trigger('click');
+                    if (internal.isEnabled) {
+                        external.trigger('click');
+                    }
                 }
                 return external;
             };
 
-            (function() {
+            (function () {
                 if (options) {
                     $.extend(internal, options);
                 }
@@ -79,15 +84,18 @@
                 var internalOnClick = Csw.makeDelegate(internal.onClick);
 
                 function onClick() {
-                    var doEnable = function() {
+                    var doEnable = function () {
                         external.enable();
                         Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
                     };
-                    if (internal.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
-                        external.disable();
-                        Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
+                    /* Case 25810 */
+                    if (internal.isEnabled) {
+                        if (internal.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
+                            external.disable();
+                            Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
+                        }
+                        Csw.tryExec(internalOnClick, arguments);
                     }
-                    Csw.tryExec(internalOnClick, arguments);
                 }
 
                 internal.onClick = onClick;
@@ -118,7 +126,7 @@
                 }
                 external.$.button(buttonOpt);
 
-            }());
+            } ());
 
             return external;
         });
