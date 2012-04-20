@@ -399,7 +399,6 @@
                                         var size = data.row;
                                         if (isSizeNew(size)) {
                                             internal.sizeGrid.addRows(size);
-                                            Csw.log(internal.sizeNodes);
                                             internal.sizeNodes.push({
                                                 nodetypeid: internal.sizeNodeTypeId,
                                                 sizedef: Csw.clone(sizeData) 
