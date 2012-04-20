@@ -260,7 +260,6 @@ namespace ChemSW.Nbt.WebServices
                     }
                     JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
                 }
-				}
             }
         }//_jAuthenticationStatus()
 
@@ -295,12 +294,9 @@ namespace ChemSW.Nbt.WebServices
         private AuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, true );
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
-
-            // case 25694 - clear the current user, or else it will be confused with nodes in the new schemata
-            _CswNbtResources.clearCurrentUser();
 
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
@@ -316,7 +312,6 @@ namespace ChemSW.Nbt.WebServices
         private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-
 
             try
             {
