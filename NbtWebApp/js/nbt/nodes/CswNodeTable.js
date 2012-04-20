@@ -24,7 +24,11 @@
                 columns: 3,      // number of columns to use
                 rowpadding: 25,  // padding between table rows, in pixels
                 //maxheight: 600,   // maximum display height of table, in pixels
-                tabledata: null
+                tabledata: null,
+                allowEdit: true,
+                allowDelete: true,
+                extraAction: null,
+                onExtraAction: null  // function(nodeObj) {}
             };
             if (options) $.extend(o, options);
 
@@ -199,7 +203,7 @@
                         });
 
                         // System Buttons
-                        if (nodeObj.allowview || nodeObj.allowedit) {
+                        if (o.allowEdit && ( nodeObj.allowview || nodeObj.allowedit ) ) {
                             var btntext = "View";
                             if (nodeObj.allowedit) {
                                 btntext = "Edit";
@@ -221,9 +225,9 @@
                             btncol += 1;
                         } // if (nodeObj.allowview || nodeObj.allowedit) 
 
-                        if (nodeObj.allowdelete) {
+                        if (o.allowDelete && nodeObj.allowdelete) {
                             btnTable.cell(1, btncol).a({
-                                ID: Csw.makeId(o.ID, nodeid, 'btn'),
+                                ID: Csw.makeId(o.ID, nodeid, 'delbtn'),
                                 text: 'Delete',
                                 //disableOnClick: false,
                                 onClick: function () {
@@ -233,6 +237,18 @@
                                         cswnbtnodekeys: [nodeObj.nodekey],
                                         onDeleteNode: o.onDeleteNode
                                     }); // CswDialog
+                                } // onClick
+                            }); // CswButton
+                            btncol += 1;
+                        } // if (nodeObj.allowdelete)
+                        
+                        if (false === Csw.isNullOrEmpty(o.extraAction)) {
+                            btnTable.cell(1, btncol).a({
+                                ID: Csw.makeId(o.ID, nodeid, 'extrabtn'),
+                                text: o.extraAction,
+                                //disableOnClick: false,
+                                onClick: function () {
+                                    Csw.tryExec(o.onExtraAction, nodeObj);
                                 } // onClick
                             }); // CswButton
                             btncol += 1;

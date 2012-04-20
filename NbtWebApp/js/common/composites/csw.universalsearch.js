@@ -21,6 +21,11 @@
                 onAddView: null,
                 //searchresults_maxheight: '600',
                 searchbox_width: '200px',
+                showSaveAsView: true,
+                allowEdit: true,
+                allowDelete: true,
+                extraAction: null,
+                onExtraAction: null,  // function(nodeObj) {}
 
                 newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
                 filtersearchurl: '/NbtWebApp/wsNBT.asmx/filterUniversalSearch',
@@ -146,7 +151,11 @@
                         },
                         tabledata: data.table,
                         //maxheight: internal.searchresults_maxheight
-                        columns: columns
+                        columns: columns,
+                        allowEdit: internal.allowEdit,
+                        allowDelete: internal.allowEdit,
+                        extraAction: internal.extraAction,
+                        onExtraAction: internal.onExtraAction
                     });
                 }
 
@@ -197,7 +206,7 @@
 
                 Csw.each(data.filtersapplied, showFilter);
 
-                if (hasFilters) {
+                if (hasFilters && internal.showSaveAsView) {
                     fdiv.br();
                     fdiv.button({
                         ID: Csw.makeId(filtersdivid, '', "saveview"),

@@ -59,17 +59,25 @@
                         });
                         cellCol++;
 
-                        var dialogLink = table.cell(1, cellCol).a({
-                            ID: Csw.makeId(o.ID, '', 'searchlink'),
-                            text: 'Find',
-                            onClick: function () {
-                                $.CswDialog('SearchDialog', {
-                                    propname: o.propData.name,
-                                    nodetypeid: nodeTypeId,
-                                    objectclassid: objectClassId
-                                });
-                            }
-                        });
+//                        var dialogLink = table.cell(1, cellCol).a({
+//                            ID: Csw.makeId(o.ID, '', 'searchlink'),
+//                            text: 'Find',
+                        table.cell(1, cellCol).imageButton({
+                                ButtonType: Csw.enums.imageButton_ButtonType.View,
+                                AlternateText: "Search " + o.propData.name,
+                                onClick: function () {
+                                    $.CswDialog('SearchDialog', {
+                                        propname: o.propData.name,
+                                        nodetypeid: nodeTypeId,
+                                        objectclassid: objectClassId,
+                                        onSelectNode: function(nodeObj)
+                                        {
+                                            nameSpan.text(nodeObj.nodename);
+                                            hiddenValue.val(nodeObj.nodeid);
+                                        }
+                                    });
+                                }
+                            });
                         cellCol++;
 
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
@@ -113,7 +121,7 @@
                             .div()
                             .imageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Add,
-                                AlternateText: "Add New",
+                                AlternateText: "Add New " + o.propData.name,
                                 onClick: function () {
                                     $.CswDialog('AddNodeDialog', {
                                         'nodetypeid': nodeTypeId,

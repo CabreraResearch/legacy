@@ -863,15 +863,22 @@
                 propname: '',
                 nodetypeid: '',
                 objectclassid: '',
-                onFindNode: null
+                onSelectNode: null
             };
             if (options) $.extend(o, options);
 
-            var div = Csw.literals.div();
+            var div = Csw.literals.div({ ID: 'searchdialog_div' });
+            var table = div.table({ ID: 'searchdialog_table', cellpadding: '2px' });
+            
+            var cell11 = table.cell(1,1);
+            var cell21 = table.cell(2,1);
+            var cell22 = table.cell(2,2);
 
-            var searchdiv = div.div({ ID: 'searchdialog_searchdiv' });
-            var resultsdiv = div.div({ ID: 'searchdialog_resultsdiv' });
-            var filtersdiv = div.div({ ID: 'searchdialog_filtersdiv' });
+            cell11.propDom('colspan', 2);
+
+            var searchdiv = cell11.div({ ID: 'searchdialog_searchdiv' });
+            var resultsdiv = cell22.div({ ID: 'searchdialog_resultsdiv' });
+            var filtersdiv = cell21.div({ ID: 'searchdialog_filtersdiv' });
 
             var universalsearch = Csw.composites.universalSearch({}, {
                     $searchbox_parent: searchdiv.$,
@@ -883,10 +890,18 @@
                     onAfterSearch: function () {},
                     onAfterNewSearch: function (searchid) {},
                     onAddView: function (viewid, viewmode) {},
-                    onLoadView: function (viewid, viewmode) {}
+                    onLoadView: function (viewid, viewmode) {},
+                    showSaveAsView: false,
+                    allowEdit: false,
+                    allowDelete: false,
+                    extraAction: 'Select',
+                    onExtraAction: function(nodeObj) {
+                        div.$.dialog('close');
+                        Csw.tryExec(o.onSelectNode, nodeObj);
+                    }
                 });
 
-            openDialog(div, 400, 300, null, 'Find '+ o.propname);
+            openDialog(div, 800, 600, null, 'Search '+ o.propname);
         }, // SearchDialog
 
         ErrorDialog: function (error) {
