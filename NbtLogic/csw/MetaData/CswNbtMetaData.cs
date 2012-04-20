@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using ChemSW.RscAdo;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -619,11 +619,12 @@ namespace ChemSW.Nbt.MetaData
                 NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
 
                 NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, DisplayRow, 1 );
-                if( (OCProp.IsRequired && 
-                    false == OCProp.HasDefaultValue()) || 
-                    ( OCProp.SetValueOnAdd ||  
-                    ( Int32.MinValue != OCProp.DisplayColAdd && 
-                    Int32.MinValue != OCProp.DisplayRowAdd ) ))
+                if( OCProp.getFieldType().IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) &&
+                    ( ( OCProp.IsRequired &&
+                    false == OCProp.HasDefaultValue() ) ||
+                    ( OCProp.SetValueOnAdd ||
+                    ( Int32.MinValue != OCProp.DisplayColAdd &&
+                    Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
                 {
                     NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
                 }
