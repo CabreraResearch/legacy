@@ -206,15 +206,15 @@
                 var stepTwoComplete = false;
 
                 return function () {
-                    var inspectionTable, $newDesignLabel, 
+                    var inspectionTable, $newDesignLabel,
                         tempInspectionName = internal.selectedInspectionTarget,
                         tempCategoryName = internal.selectedInspectionTarget;
 
                     var makeInspectionDesignName = function (name) {
                         var ret = Csw.string(name).trim();
-//                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
-//                            ret += ' Inspection';
-//                        }
+                        //                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
+                        //                            ret += ' Inspection';
+                        //                        }
                         return ret;
                     };
 
@@ -460,9 +460,9 @@
 
                             helpText.empty();
                             helpText.span({ text: 'Create a new <b>' + internal.selectedInspectionDesign.name + '</b> Design using the Excel template.' })
-                                    .p()
-                                    .a({ href: '\"/NbtWebApp/etc/InspectionDesign.xls\"', text: 'Download Template' })
-                                    .$.button();
+                                .p()
+                                .a({ href: '/NbtWebApp/etc/InspectionDesign.xls', text: 'Download Template' })
+                                .$.button();
                         };
                         if (false === stepThreeComplete) {
                             internal.divStep3 = internal.divStep3 || internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step3.step);
