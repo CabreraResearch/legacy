@@ -53,7 +53,8 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 AcquiredDate.DateTimeValue = DateTime.Now;
             }
-            if( Owner.RelatedNodeId != null &&
+            if( Owner.WasModified &&
+                Owner.RelatedNodeId != null &&
                 false == string.IsNullOrEmpty( DocumentClass.Value ) )
             {
                 CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
