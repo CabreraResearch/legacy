@@ -24,6 +24,7 @@
                 forAttr: '',
                 form: '',
                 text: '',
+                useWide: false,
                 onClick: null //function () {}
             };
             var external = {};
@@ -33,16 +34,20 @@
                     style = Csw.makeStyle(),
                     attr = Csw.makeAttr();
                 var $label;
-
+                
                 if (options) {
                     $.extend(internal, options);
                 }
-
+                var cssClass = 'CswLabel ' + internal.cssclass;
+                if(internal.useWide) {
+                    cssClass += ' CswLabelWide';
+                }
+                
                 internal.ID = Csw.string(internal.ID, internal.name);
 
                 html += '<label ';
                 attr.add('id', internal.ID);
-                attr.add('class', 'CswLabel ' + internal.cssclass);
+                attr.add('class', cssClass);
                 attr.add('for', internal.forAttr);
                 attr.add('form', internal.form);
 

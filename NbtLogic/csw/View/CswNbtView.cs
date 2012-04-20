@@ -468,7 +468,7 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyViewId">Primary key of view to copy</param>
-        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, Int32 CopyViewId )
+        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView CopyView = null;
             if( CopyViewId > 0 )

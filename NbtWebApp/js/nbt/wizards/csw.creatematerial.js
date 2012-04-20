@@ -180,6 +180,7 @@
 
                         internal.materialTypeSelect = internal.divStep1.nodeTypeSelect({
                             ID: internal.wizard.makeStepId('nodeTypeSelect'),
+                            useWide: true,
                             labelText: 'Select a Material Type: ',
                             objectClassName: 'MaterialClass',
                             onSelect: typeSelect,
@@ -218,6 +219,7 @@
                         /* TRADENAME */
                         internal.tradeNameInput = internal.divStep2.input({
                             ID: internal.wizard.makeStepId('tradename'),
+                            useWide: true,
                             labelText: 'Tradename: ',
                             cssclass: 'required',
                             onChange: function () {
@@ -233,6 +235,7 @@
                             ID: internal.wizard.makeStepId('supplier'),
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
+                            useWide: true,
                             labelText: 'Supplier: ',
                             onChange: supplierSelect,
                             onSuccess: supplierSelect
@@ -242,6 +245,7 @@
                         /* PARTNO */
                         internal.partNoInput = internal.divStep2.input({
                             ID: internal.wizard.makeStepId('partno'),
+                            useWide: true,
                             labelText: 'Part No: ',
                             onChange: function () {
                                 internal.partNo = internal.partNoInput.val();
@@ -259,10 +263,10 @@
                 return function () {
                     var div;
                     function makeConfirmation() {
-                        div.p({ labelText: 'Tradename:', text: internal.tradeName });
-                        div.p({ labelText: 'Supplier: ', text: internal.supplier.name });
+                        div.p({ useWide: true, labelText: 'Tradename:', text: internal.tradeName });
+                        div.p({ useWide: true, labelText: 'Supplier: ', text: internal.supplier.name });
                         if (false === Csw.isNullOrEmpty(internal.partNo)) {
-                            div.p({ labelText: 'Part No: ', text: internal.partNo });
+                            div.p({ useWide: true, labelText: 'Part No: ', text: internal.partNo });
                         }
                     }
 
@@ -290,8 +294,8 @@
                             },
                             success: function (data) {
                                 var topText = '', bottomText = '';
-                                if (false === Csw.isNullOrEmpty(data.tradename)) {
-                                    internal.useExistingMaterial = true;
+                                internal.useExistingMaterial = (false === Csw.isNullOrEmpty(data.tradename));
+                                if (internal.useExistingMaterial) {
                                     topText = 'A material named ' + data.tradename + ' already exists as: ';
                                     bottomText = 'Click next to use this existing material.';
                                     internal.tradeName = data.tradename;
@@ -397,7 +401,7 @@
                                             internal.sizeGrid.addRows(size);
                                             internal.sizeNodes.push({
                                                 nodetypeid: internal.sizeNodeTypeId,
-                                                sizedef: sizeData
+                                                sizedef: Csw.clone(sizeData) 
                                             });
                                             sizes.push(size);
                                         } else {
@@ -433,7 +437,7 @@
                                 data: { MaterialId: internal.materialNodeId },
                                 success: function (data) {
                                     sizes = data.rows || [];
-                                    Csw.log(sizes);
+
                                     internal.sizeGrid.addRows(sizes);
                                 }
                             });
@@ -447,6 +451,7 @@
                         selectDiv = div.div();
                         internal.sizeSelect = selectDiv.nodeTypeSelect({
                             ID: internal.wizard.makeStepId('nodeTypeSelect'),
+                            useWide: true,
                             labelText: 'Select a Material Size: ',
                             objectClassName: 'SizeClass',
                             onSelect: sizeSelect,

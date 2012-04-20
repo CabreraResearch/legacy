@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using ChemSW.Core;
@@ -230,9 +229,6 @@ namespace ChemSW.Nbt
         }//getNodeForCurrentPosition()
 
 
-        // Stores SQL and Timer results
-        private Collection<double> _SqlPerformance = new Collection<double>();
-        public Collection<double> SqlPerformance { get { return _SqlPerformance; } }
 
         //Navigation and interrogation methods*****************************************
         #region Navigation and interrogation methods

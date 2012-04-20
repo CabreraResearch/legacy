@@ -236,11 +236,6 @@ namespace ChemSW.Nbt
         /// <returns>Collection of Node Keys</returns>
         JArray getChildNodePropsOfNode();
 
-        /// <summary>
-        /// Stores Timer results
-        /// </summary>
-        Collection<double> SqlPerformance { get; }
-
         //Navigation and interrogation methods*****************************************
         #region Navigation and interrogation methods
         /// <summary>

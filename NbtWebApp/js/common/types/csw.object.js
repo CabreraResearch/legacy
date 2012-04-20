@@ -52,17 +52,17 @@
         /// <summary> Returns true if the input is null or undefined</summary>
         /// <param name="obj" type="Object"> Object to test</param>
         /// <returns type="Boolean" />
-        
+
         /* Don't attempt to evaluate validity of functions--they're not null */
         var ret = (false === Csw.isFunction(obj));
-        
+
         if (ret) {
             /* Not a function */
-            ret = (obj === null || 
-                  obj === undefined || 
+            ret = (obj === null ||
+                  obj === undefined ||
                   ( /* Plain object is an object literal: {} */
                    $.isPlainObject(obj) && (
-                      $.isEmptyObject(obj)) || 
+                      $.isEmptyObject(obj)) ||
                       false === obj.isValid)
             );
         }
@@ -75,23 +75,23 @@
         /// <summary> Returns true if a value can be evaluated as true or false.</summary>
         /// <returns type="Boolean" />
         return (
-            obj === true || 
+            obj === true ||
             obj === false ||
             obj === 1 ||
             obj === 0 ||
-            obj === 'true' || 
+            obj === 'true' ||
             obj === 'false'
         );
     }
     Csw.register('isTrueOrFalse', isTrueOrFalse);
     Csw.isTrueOrFalse = Csw.isTrueOrFalse || isTrueOrFalse;
-    
+
     function isNullOrEmpty(obj, checkLength) {
         /// <summary> Returns true if the input is null, undefined, or ''</summary>
         /// <param name="obj" type="Object"> Object to test</param>
         /// <returns type="Boolean" />
         var ret = true;
-        
+
         /* if(obj) is faster, but it coerces type. We also have to check if obj is a truthy value. */
         if (obj || isTrueOrFalse(obj)) {
             ret = isNullOrUndefined(obj);
@@ -307,5 +307,12 @@
     Csw.register('object', object);
     Csw.object = Csw.object || object;
 
+    Csw.clone = Csw.clone ||
+        Csw.register('clone', function (data) {
+            /// <summary>Get a dereferenced copy of an object</summary>
+            /// <param name="data" type="Object"> An object </param>
+            /// <returns type="Object"> An identical copy of the object. </returns>
+            return JSON.parse(JSON.stringify(data));
+        });
 
 } ());
