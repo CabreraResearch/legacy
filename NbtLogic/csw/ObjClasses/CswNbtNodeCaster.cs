@@ -33,6 +33,12 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassCustomer) Node.ObjClass );
         }//AsCustomer
 
+        public static CswNbtObjClassDocument AsDocument( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass );
+            return ( (CswNbtObjClassDocument) Node.ObjClass );
+        }//AsCustomer
+
         public static CswNbtObjClassEquipmentAssembly AsEquipmentAssembly( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass );

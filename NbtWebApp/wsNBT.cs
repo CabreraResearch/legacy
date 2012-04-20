@@ -241,21 +241,25 @@ namespace ChemSW.Nbt.WebServices
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
-                if(false == ForMobile) {
-					if( _CswSessionResources != null &&
-						_CswSessionResources.CswSessionManager != null )
-					{
-						CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-						JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
-					}
-					JObj["timer"] = new JObject();
-					JObj["timer"]["serverinit"] = ServerInitTime;
-					JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
-					JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
-					JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
-					JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
-					JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
-				}
+                if( false == ForMobile )
+                {
+                    if( _CswSessionResources != null &&
+                         _CswSessionResources.CswSessionManager != null )
+                    {
+                        CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+                        JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                    }
+                    JObj["timer"] = new JObject();
+                    JObj["timer"]["serverinit"] = ServerInitTime;
+                    if( null != _CswNbtResources )
+                    {
+                        JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
+                        JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
+                        JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
+                        JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+                    }
+                    JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
+                }
             }
         }//_jAuthenticationStatus()
 
@@ -290,12 +294,9 @@ namespace ChemSW.Nbt.WebServices
         private AuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, true );
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
-
-            // case 25694 - clear the current user, or else it will be confused with nodes in the new schemata
-            _CswNbtResources.clearCurrentUser();
 
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
@@ -311,7 +312,6 @@ namespace ChemSW.Nbt.WebServices
         private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-
 
             try
             {

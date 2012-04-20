@@ -1,13 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Security;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Security
@@ -136,7 +130,7 @@ namespace ChemSW.Nbt.Security
 
         public string Rolename
         {
-            get { return _UserPropDict[CswNbtObjClassRole.NamePropertyName]; }
+            get { return _RolePropDict[CswNbtObjClassRole.NamePropertyName]; }
         }
 
         public Int32 RoleTimeout
