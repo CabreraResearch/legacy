@@ -203,6 +203,20 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
         /// </summary>
+        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
+        {
+            if( NbtObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
+            }
+            ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass );
+            return AddViewRelationship( ObjectClass, IncludeDefaultFilters );
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
+        /// For copying an existing relationship
+        /// </summary>
         public CswNbtViewRelationship CopyViewRelationship( CswNbtViewNode ParentViewNode, CswNbtViewRelationship CopyFrom, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, CopyFrom, IncludeDefaultFilters );

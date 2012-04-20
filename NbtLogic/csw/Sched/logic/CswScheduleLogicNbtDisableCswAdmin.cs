@@ -76,6 +76,8 @@ namespace ChemSW.Nbt.Sched
                             /* Expire the Csw Admin password on the 1st of each month */
                             CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
                         }
+                        _CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.password_length.ToString(), "16" );
+                        _CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.passwordexpiry_days.ToString(), "30" );
                     }
                     ChemSWAdminUserNode.postChanges( true );
 
