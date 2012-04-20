@@ -21,10 +21,10 @@
                 }
             } catch (e) {
                 // because IE 8 doesn't support console.log unless the console is open (*duh*)
-                alert(s);
-                if (false === Csw.isNullOrEmpty(extendedLog)) {
-                    alert(extendedLog);
-                }
+//                alert(s);
+//                if (false === Csw.isNullOrEmpty(extendedLog)) {
+//                    alert(extendedLog);
+//                }
             }
         });
 
