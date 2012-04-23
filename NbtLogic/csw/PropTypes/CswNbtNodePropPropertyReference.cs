@@ -170,15 +170,17 @@ namespace ChemSW.Nbt.PropTypes
                         //            Value = Prop.Gestalt;
                         //    }
                         //}
-                        
+
                         // Match by propname
                         CswNbtMetaDataNodeTypeProp StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
-                        CswNbtMetaDataNodeTypeProp ActualRelatedProp = RelatedNode.getNodeType().getNodeTypeProp( StoredRelatedProp.PropName );
-                        if( ActualRelatedProp != null )
+                        if( null != StoredRelatedProp )
                         {
-                            Value = RelatedNode.Properties[ActualRelatedProp].Gestalt;
+                            CswNbtMetaDataNodeTypeProp ActualRelatedProp = RelatedNode.getNodeType().getNodeTypeProp( StoredRelatedProp.PropName );
+                            if( ActualRelatedProp != null )
+                            {
+                                Value = RelatedNode.Properties[ActualRelatedProp].Gestalt;
+                            }
                         }
-                        
                     }
                 }
             } // if (RelationshipId > 0 && RelatedPropId > 0)

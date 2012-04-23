@@ -181,7 +181,18 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewProperty SortProp = _View.getSortProperty();
             if( SortProp != null )
             {
-                _CswGridData.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                if( null != SortProp.NodeTypeProp )
+                {
+                    _CswGridData.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                }
+                else if( null != SortProp.ObjectClassProp )
+                {
+                    _CswGridData.GridSortName = SortProp.ObjectClassProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                }
+                else
+                {
+                    _CswGridData.GridSortName = "nodename";
+                }
             }
             else
             {

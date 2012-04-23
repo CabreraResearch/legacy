@@ -360,54 +360,56 @@ namespace ChemSW.Nbt
                     {
                         // Case 10530
                         sortAlias++;
-                        CswNbtSubField.PropColumn SubFieldColumn = Prop.NodeTypeProp.getFieldTypeRule().SubFields.Default.Column;
-                        if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-                            SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
-                            SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
-                            SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+                        if( null != Prop.MetaDataProp )
                         {
-                            Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
-                        }
-                        else
-                        {
-                            Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
-                        }
-
-                        // Case 10533
-                        if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
-                            SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
-                        {
-                            OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
-                        }
-                        else if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
-                            SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
-                            SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
-                            SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
-                        {
-                            OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
-                        }
-                        else
-                        {
-                            OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
-                        }
-                        From += " left outer join jct_nodes_props j" + sortAlias + " ";
-                        From += "   on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
-
-                        Int32 OrderByOrder = Prop.Order;
-                        if( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
-                        {
-                            if( OrderByProps.Count == 0 )
+                            CswNbtSubField.PropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
+                            if ( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                                 SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+                                 SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
+                                 SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
                             {
-                                OrderByOrder = 0;
+                                Select += ", j" + sortAlias + "." + SubFieldColumn.ToString() + " mssqlorder" + sortAlias;
                             }
                             else
                             {
-                                OrderByOrder = OrderByProps.Count - 1;
+                                Select += ",lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ") mssqlorder" + sortAlias;
                             }
+
+                            // Case 10533
+                            if ( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
+                                 SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
+                            {
+                                OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
+                            }
+                            else if ( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                                      SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
+                                      SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
+                                      SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
+                            {
+                                OrderByString = "j" + sortAlias + "." + SubFieldColumn.ToString();
+                            }
+                            else
+                            {
+                                OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
+                            }
+                            From += " left outer join jct_nodes_props j" + sortAlias + " ";
+                            From += "   on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
+
+                            Int32 OrderByOrder = Prop.Order;
+                            if ( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
+                            {
+                                if ( OrderByProps.Count == 0 )
+                                {
+                                    OrderByOrder = 0;
+                                }
+                                else
+                                {
+                                    OrderByOrder = OrderByProps.Count - 1;
+                                }
+                            }
+
+                            OrderByProps.Insert( OrderByOrder, OrderByString );
                         }
-
-                        OrderByProps.Insert( OrderByOrder, OrderByString );
-
                     } // if( Prop.SortBy )
                 } // foreach( CswNbtViewProperty Prop in Relationship.Properties )
 
