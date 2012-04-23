@@ -257,6 +257,7 @@ namespace ChemSW.Nbt.WebServices
                         JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
                         JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
                         JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+                JObj["timer"]["treeloadersql"] = _CswNbtResources.CswLogger.TreeLoaderSQLTime;
                     }
                     JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
                 }
@@ -2917,7 +2918,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm )
+        public string doUniversalSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2929,7 +2930,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm );
+                    ReturnVal = ws.doUniversalSearch( SearchTerm, CswConvert.ToInt32(NodeTypeId), CswConvert.ToInt32(ObjectClassId) );
                 }
                 _deInitResources();
             }

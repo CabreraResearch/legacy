@@ -26,6 +26,8 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIDSubField;
 
+        private const Int32 _SearchThreshold = 100;
+
         override public bool Empty
         {
             get
@@ -310,26 +312,32 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["allowadd"] = "true";
             }
 
-            JArray JOptions = new JArray();
-            ParentObject["options"] = JOptions;
-
             Dictionary<CswPrimaryKey, string> Options = getOptions();
-            foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+            if( Options.Count > _SearchThreshold )
             {
-                JObject JOption = new JObject();
-                if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
-                {
-                    JOption["id"] = NodePk.PrimaryKey.ToString().ToLower();
-                    JOption["value"] = Options[NodePk];
-                }
-                else
-                {
-                    JOption["id"] = "";
-                    JOption["value"] = "";
-                }
-                JOptions.Add( JOption );
+                ParentObject["usesearch"] = "true";
             }
+            else
+            {
+                JArray JOptions = new JArray();
+                ParentObject["options"] = JOptions;
 
+                foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+                {
+                    JObject JOption = new JObject();
+                    if( NodePk != null && NodePk.PrimaryKey != Int32.MinValue )
+                    {
+                        JOption["id"] = NodePk.ToString();
+                        JOption["value"] = Options[NodePk];
+                    }
+                    else
+                    {
+                        JOption["id"] = "";
+                        JOption["value"] = "";
+                    }
+                    JOptions.Add( JOption );
+                }
+            }
         } // ToJSON()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -355,14 +363,21 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( null != XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ) )
             {
-                Int32 NodeId = CswConvert.ToInt32( XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ).Value );
-                if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
+                string NodePkString = XmlNode.Element( _NodeIDSubField.ToXmlNodeName( true ) ).Value;
+                CswPrimaryKey thisRelatedNodeId = new CswPrimaryKey();
+                bool validPk = thisRelatedNodeId.FromString( NodePkString );
+                if( false == validPk )
                 {
-                    NodeId = NodeMap[NodeId];
+                    thisRelatedNodeId.TableName = "nodes";
+                    thisRelatedNodeId.PrimaryKey = CswConvert.ToInt32( NodePkString );
                 }
-                RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
-                if( null != RelatedNodeId )
+                if( thisRelatedNodeId.PrimaryKey != Int32.MinValue )
                 {
+                    if( NodeMap != null && NodeMap.ContainsKey( thisRelatedNodeId.PrimaryKey ) )
+                    {
+                        thisRelatedNodeId.PrimaryKey = NodeMap[thisRelatedNodeId.PrimaryKey];
+                    }
+                    RelatedNodeId = thisRelatedNodeId;
                     XmlNode.Add( new XElement( "destnodeid", RelatedNodeId.PrimaryKey.ToString() ) );
                     PendingUpdate = true;
                 }
@@ -401,14 +416,21 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( null != JObject[_NodeIDSubField.ToXmlNodeName( true )] )
             {
-                Int32 NodeId = CswConvert.ToInt32( JObject[_NodeIDSubField.ToXmlNodeName( true )] );
-                if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
+                string NodePkString = JObject[_NodeIDSubField.ToXmlNodeName( true )].ToString();
+                CswPrimaryKey thisRelatedNodeId = new CswPrimaryKey();
+                bool validPk = thisRelatedNodeId.FromString( NodePkString );
+                if( false == validPk )
                 {
-                    NodeId = NodeMap[NodeId];
+                    thisRelatedNodeId.TableName = "nodes";
+                    thisRelatedNodeId.PrimaryKey = CswConvert.ToInt32( NodePkString );
                 }
-                RelatedNodeId = new CswPrimaryKey( "nodes", NodeId );
-                if( null != RelatedNodeId )
+                if( thisRelatedNodeId.PrimaryKey != Int32.MinValue )
                 {
+                    if( NodeMap != null && NodeMap.ContainsKey( thisRelatedNodeId.PrimaryKey ) )
+                    {
+                        thisRelatedNodeId.PrimaryKey = NodeMap[thisRelatedNodeId.PrimaryKey];
+                    }
+                    RelatedNodeId = thisRelatedNodeId;
                     JObject["destnodeid"] = RelatedNodeId.PrimaryKey.ToString();
                     PendingUpdate = true;
                 }

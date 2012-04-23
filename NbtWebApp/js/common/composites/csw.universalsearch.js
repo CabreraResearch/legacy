@@ -12,6 +12,8 @@
                 $searchbox_parent: null,
                 $searchresults_parent: null,
                 $searchfilters_parent: null,
+                nodetypeid: '',       // automatically filter results to this nodetype
+                objectclassid: '',    // automatically filter results to this objectclass
                 onBeforeSearch: null,
                 onAfterSearch: null,
                 onAfterNewSearch: null,
@@ -19,6 +21,11 @@
                 onAddView: null,
                 //searchresults_maxheight: '600',
                 searchbox_width: '200px',
+                showSaveAsView: true,
+                allowEdit: true,
+                allowDelete: true,
+                extraAction: null,
+                onExtraAction: null,  // function(nodeObj) {}
 
                 newsearchurl: '/NbtWebApp/wsNBT.asmx/doUniversalSearch',
                 filtersearchurl: '/NbtWebApp/wsNBT.asmx/filterUniversalSearch',
@@ -39,7 +46,7 @@
             // Constructor
             // Adds a searchbox to the form
             (function () {
-                /* NO! Refactor to use cswParent and more wholesome methods. */ 
+                
                 var cswtable = Csw.literals.table({
                     ID: Csw.makeId(internal.ID, '', '_div'),
                     $parent: internal.$searchbox_parent
@@ -71,7 +78,11 @@
 
                 Csw.ajax.post({
                     url: internal.newsearchurl,
-                    data: { SearchTerm: internal.searchterm },
+                    data: { 
+                        SearchTerm: internal.searchterm,
+                        NodeTypeId: internal.nodetypeid,
+                        ObjectClassId: internal.objectclassid
+                    },
                     success: function (data) {
                         internal.handleResults(data);
                         Csw.tryExec(internal.onAfterNewSearch, internal.sessiondataid);
@@ -87,9 +98,10 @@
                 // Search results
 
                 function _renderResultsTable(columns) {
-                    /* NO! Refactor to use Csw.literals and more wholesome methods. */
+                    
+                    internal.$searchresults_parent.contents().remove();
                     internal.$searchresults_parent.css({ paddingTop: '15px' });
-                    /* NO! Refactor to use Csw.literals and more wholesome methods. */
+
                     var resultstable = Csw.literals.table({
                         ID: Csw.makeId(internal.ID, '', 'resultstbl'),
                         $parent: internal.$searchresults_parent,
@@ -105,7 +117,6 @@
                         Active: (columns === 1),
                         AlternateText: 'Single Column',
                         onClick: function () {
-                            internal.$searchresults_parent.contents().remove();
                             setTimeout(function () { // so we see the clear immediately
                                 _renderResultsTable(1);
                             }, 0);
@@ -119,7 +130,6 @@
                         Active: (columns !== 1),
                         AlternateText: 'Multi Column',
                         onClick: function () {
-                            internal.$searchresults_parent.contents().remove();
                             setTimeout(function () { // so we see the clear immediately
                                 _renderResultsTable(3);
                             }, 0);
@@ -141,13 +151,19 @@
                         },
                         tabledata: data.table,
                         //maxheight: internal.searchresults_maxheight
-                        columns: columns
+                        columns: columns,
+                        allowEdit: internal.allowEdit,
+                        allowDelete: internal.allowEdit,
+                        extraAction: internal.extraAction,
+                        onExtraAction: internal.onExtraAction
                     });
                 }
 
                 _renderResultsTable(1);
 
                 // Filter panel
+                internal.$searchfilters_parent.contents().remove();
+
                 filtersdivid = Csw.makeId(internal.ID, '', 'filtersdiv');
                 fdiv = Csw.literals.div({
                     ID: filtersdivid,
@@ -190,7 +206,7 @@
 
                 Csw.each(data.filtersapplied, showFilter);
 
-                if (hasFilters) {
+                if (hasFilters && internal.showSaveAsView) {
                     fdiv.br();
                     fdiv.button({
                         ID: Csw.makeId(filtersdivid, '', "saveview"),
@@ -274,9 +290,7 @@
                             url: internal.saveurl,
                             data: {
                                 SessionDataId: internal.sessiondataid,
-                                ViewId: newviewid//,
-                                //                            SearchTerm: internal.searchterm,
-                                //                            Filters: JSON.stringify(internal.filters)
+                                ViewId: newviewid
                             },
                             success: function (data) {
                             Csw.tryExec(internal.onAddView, newviewid, viewmode);

@@ -134,9 +134,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             //We're changing the relationship
             if( NewFkPropIdType != CurrentFkPropIdType ||
-                NewPropTypePropIdType != CurrentPropTypePropIdType ||
-                inFKValue != MetaDataProp.FKValue ||
-                inValuePropId != MetaDataProp.ValuePropId
+                //NewPropTypePropIdType != CurrentPropTypePropIdType ||
+                inFKValue != MetaDataProp.FKValue //||
+                //inValuePropId != MetaDataProp.ValuePropId
                 )
             {
                 bool ClearValueProp = _validateFkTarget( NewFkPropIdType, inFKValue, inValuePropId );
@@ -152,8 +152,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OutValuePropType = NewPropTypePropIdType.ToString();
                     OutValuePropId = inValuePropId;
                 }
-                doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
             }
+            doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

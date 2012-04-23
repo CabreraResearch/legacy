@@ -101,6 +101,11 @@ namespace ChemSW.Nbt.Search
 
         #region Search Functions
 
+        public void addFilter( CswNbtSearchFilterWrapper Filter )
+        {
+            addFilter( Filter.ToJObject() );
+        } // addFilter()
+
         public void addFilter( JObject FilterObj )
         {
             FiltersApplied.Add( FilterObj );
@@ -119,9 +124,9 @@ namespace ChemSW.Nbt.Search
             {
                 Collection<JObject> FiltersToRemove = new Collection<JObject>();
                 foreach( JObject MatchingFilterObj in ( from JObject AppliedFilterObj in FiltersApplied
-                                                      select new CswNbtSearchFilterWrapper( AppliedFilterObj ) into AppliedFilter
-                                                       where AppliedFilter == Filter
-                                                      select AppliedFilter.ToJObject() ) )
+                                                        select new CswNbtSearchFilterWrapper( AppliedFilterObj ) into AppliedFilter
+                                                        where AppliedFilter == Filter
+                                                        select AppliedFilter.ToJObject() ) )
                 {
                     FiltersToRemove.Add( MatchingFilterObj );
                 }
@@ -151,7 +156,15 @@ namespace ChemSW.Nbt.Search
                     if( NodeTypeFirstVersionId != Int32.MinValue )
                     {
                         WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where firstversionid = " + NodeTypeFirstVersionId.ToString() + @") ";
-                        //SingleNodeType = true;
+                    }
+                }
+                else if( Filter.Type == CswNbtSearchFilterType.objectclass )
+                {
+                    // Object Class filter
+                    Int32 ObjectClassId = Filter.ObjectClassId;
+                    if( ObjectClassId != Int32.MinValue )
+                    {
+                        WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where objectclassid = " + ObjectClassId.ToString() + @") ";
                     }
                 }
                 else if( Filter.Type == CswNbtSearchFilterType.propval )
@@ -179,8 +192,6 @@ namespace ChemSW.Nbt.Search
                                                                                                                     from nodetype_props 
                                                                                                                    where nodetypepropid = " + NodeTypePropFirstVersionId.ToString() + @" ))
                                                               and gestalt " + FilterStr + @") ";
-                        //FilteredPropIds.Add( NodeTypePropFirstVersionId );
-                        //SingleNodeType = true;
                     }
                 }
             } // foreach(JObject FilterObj in FiltersApplied)
@@ -226,9 +237,8 @@ namespace ChemSW.Nbt.Search
                         // add the filter to the filters list for display
                         Int32 NodeTypeId = NodeTypeIds.Keys.First();
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        CswNbtSearchFilterWrapper NodeTypeFilter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.nodetype, "NT_" + NodeType.NodeTypeId.ToString(), NodeType.NodeTypeName, NodeTypeIds[NodeTypeId], NodeType.IconFileName, false );
-                        NodeTypeFilter.FirstVersionId = NodeType.FirstVersionNodeTypeId;
-                        addFilter( NodeTypeFilter.ToJObject() );
+                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, NodeTypeIds[NodeTypeId], false );
+                        addFilter( NodeTypeFilter );
                     }
                     SingleNodeType = true;
                 }
@@ -247,10 +257,7 @@ namespace ChemSW.Nbt.Search
                     {
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                         Int32 Count = sortedDict[NodeTypeId];
-
-                        CswNbtSearchFilterWrapper NodeTypeFilter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.nodetype, "NT_" + NodeType.NodeTypeId.ToString(), NodeType.NodeTypeName, Count, NodeType.IconFileName, true );
-                        NodeTypeFilter.FirstVersionId = NodeType.FirstVersionNodeTypeId;
-
+                        CswNbtSearchFilterWrapper NodeTypeFilter = makeFilter( NodeType, Count, true );
                         FilterSet.Add( NodeTypeFilter.ToJObject() );
                     }
                 }
@@ -310,10 +317,7 @@ namespace ChemSW.Nbt.Search
                     foreach( string Value in sortedDict.Keys )
                     {
                         Int32 Count = sortedDict[Value];
-
-                        CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterName, CswNbtSearchFilterType.propval, NodeTypePropId.ToString() + "_" + Value, Value, Count, string.Empty, true );
-                        Filter.FirstPropVersionId = NodeTypeProp.FirstPropVersionId;
-
+                        CswNbtSearchFilterWrapper Filter = makeFilter( NodeTypeProp, Value, Count, true );
                         FilterSet.Add( Filter.ToJObject() );
                     }
                 }
@@ -329,18 +333,25 @@ namespace ChemSW.Nbt.Search
             View.Root.ChildRelationships.Clear();
 
             // NodeType filter becomes Relationship
-            Int32 NodeTypeId = Int32.MinValue;
-            CswNbtMetaDataNodeType NodeType = null;
             CswNbtViewRelationship ViewRel = null;
             foreach( JObject FilterObj in FiltersApplied )
             {
                 CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
                 if( Filter.Type == CswNbtSearchFilterType.nodetype )
                 {
-                    NodeTypeId = Filter.FirstVersionId;
-                    NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                    if( ViewRel != null )
+                    {
+                        // nodetype should override object class
+                        View.Root.ChildRelationships.Clear();
+                    }
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Filter.FirstVersionId );
                     ViewRel = View.AddViewRelationship( NodeType, false );
                     break;
+                }
+                if( Filter.Type == CswNbtSearchFilterType.objectclass )
+                {
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Filter.ObjectClassId );
+                    ViewRel = View.AddViewRelationship( ObjectClass, false );
                 }
             } // foreach( JObject FilterObj in FiltersApplied )
 
@@ -352,7 +363,7 @@ namespace ChemSW.Nbt.Search
                     CswNbtSearchFilterWrapper Filter = new CswNbtSearchFilterWrapper( FilterObj );
                     if( Filter.Type == CswNbtSearchFilterType.propval )
                     {
-                        CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByFirstVersionId( Filter.FirstPropVersionId );
+                        CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Filter.FirstPropVersionId );
                         CswNbtViewProperty ViewProp = View.AddViewProperty( ViewRel, NodeTypeProp );
 
                         CswNbtSubField DefaultSubField = NodeTypeProp.getFieldTypeRule().SubFields.Default;
@@ -388,6 +399,46 @@ namespace ChemSW.Nbt.Search
             } // if(ViewRel != null)
             return ret;
         } // saveSearchAsView()
+
+        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable )
+        {
+            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
+                                                  CswNbtSearchFilterType.nodetype,
+                                                  "NT_" + NodeType.NodeTypeId.ToString(),
+                                                  NodeType.NodeTypeName,
+                                                  ResultCount,
+                                                  NodeType.IconFileName,
+                                                  Removeable );
+            ret.FirstVersionId = NodeType.FirstVersionNodeTypeId;
+            return ret;
+        }
+
+        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable )
+        {
+            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( "Filter To",
+                                                  CswNbtSearchFilterType.objectclass,
+                                                  "OC_" + ObjectClass.ObjectClassId.ToString(),
+                                                  "All " + ObjectClass.ObjectClass.ToString(),
+                                                  ResultCount,
+                                                  ObjectClass.IconFileName,
+                                                  Removeable );
+            ret.ObjectClassId = ObjectClass.ObjectClassId;
+            return ret;
+        }
+
+        public CswNbtSearchFilterWrapper makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable )
+        {
+            CswNbtSearchFilterWrapper ret = new CswNbtSearchFilterWrapper( NodeTypeProp.PropName,
+                                                  CswNbtSearchFilterType.propval,
+                                                  NodeTypeProp.PropId.ToString() + "_" + Value,
+                                                  Value,
+                                                  ResultCount,
+                                                  string.Empty,
+                                                  Removeable );
+            ret.FirstPropVersionId = NodeTypeProp.FirstPropVersionId;
+            return ret;
+        }
+
 
         #endregion Search Functions
 

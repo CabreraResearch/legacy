@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Web;
 using System.Web.UI;
@@ -2111,8 +2112,11 @@ namespace ChemSW.Nbt.WebPages
                             RelationshipValue.Items.Add( new ListItem( string.Empty, string.Empty ) );
                             foreach( CswNbtMetaDataNodeTypeProp OtherProp in SelectedNodeTypeProp.getOtherNodeTypeProps() )
                             {
-                                if( OtherProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                                if( OtherProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship ||
+                                    OtherProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                                {
                                     RelationshipValue.Items.Add( new ListItem( OtherProp.PropName, OtherProp.FirstPropVersionId.ToString() ) );
+                                }
                             }
                             RelationshipValue.CssClass = "selectinput";
                             RelationshipValue.ID = "EditProp_FkValueValue" + SelectedNodeTypeProp.PropId.ToString();
@@ -2134,9 +2138,24 @@ namespace ChemSW.Nbt.WebPages
                                 RelatedPropType.ID = "EditProp_RelatedPropType" + SelectedNodeTypeProp.PropId.ToString();
                                 RelatedPropRow.Cells[1].Controls.Add( RelatedPropType );
 
+                                IEnumerable<CswNbtMetaDataNodeType> NodeTypeCol = null;
                                 if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
                                 {
-                                    CswNbtMetaDataNodeType RelatedNodeType = Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue );
+                                    NodeTypeCol = new Collection<CswNbtMetaDataNodeType>() { 
+                                        Master.CswNbtResources.MetaData.getNodeType( RelationshipProp.FKValue ) 
+                                    };
+                                }
+                                else
+                                {
+                                    CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
+                                    if( RelatedObjectClass != null )
+                                    {
+                                        NodeTypeCol = RelatedObjectClass.getNodeTypes();
+                                    }
+                                }
+
+                                foreach( CswNbtMetaDataNodeType RelatedNodeType in NodeTypeCol )
+                                {
                                     if( RelatedNodeType != null )
                                     {
                                         RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
@@ -2145,27 +2164,15 @@ namespace ChemSW.Nbt.WebPages
                                         {
                                             foreach( CswNbtMetaDataNodeTypeProp RelatedProp in RelatedProps )
                                             {
-                                                RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.FirstPropVersionId.ToString() ) );
+                                                if( null == RelatedPropValue.Items.FindByText( RelatedProp.PropName ) )
+                                                {
+                                                    RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.FirstPropVersionId.ToString() ) );
+                                                }
                                             }
                                         }
                                     }
                                 }
-                                else
-                                {
-                                    CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
-                                    if( RelatedObjectClass != null )
-                                    {
-                                        RelatedPropType.Value = NbtViewPropIdType.ObjectClassPropId.ToString();
-                                        IEnumerable<CswNbtMetaDataObjectClassProp> RelatedProps = RelatedObjectClass.getObjectClassProps();
-                                        if( RelatedProps != null )
-                                        {
-                                            foreach( CswNbtMetaDataObjectClassProp RelatedProp in RelatedProps )
-                                            {
-                                                RelatedPropValue.Items.Add( new ListItem( RelatedProp.PropName, RelatedProp.PropId.ToString() ) );
-                                            }
-                                        }
-                                    }
-                                }
+
                                 RelatedPropValue.CssClass = "selectinput";
                                 RelatedPropValue.ID = "EditProp_RelatedPropValue" + SelectedNodeTypeProp.PropId.ToString();
                                 if( SelectedNodeTypeProp.ValuePropId != Int32.MinValue )
