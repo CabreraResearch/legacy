@@ -159,12 +159,15 @@
 
             internal.makeGrid = function () {
                 internal.multiEdit = internal.gridOpts.multiselect;
-
+                /* Case 25809 */
+                internal.gridDiv.empty();
+                
                 external.gridTable = internal.gridDiv.table({
                     ID: internal.gridTableId
                 });
-
+                
                 external.gridPager = internal.gridDiv.div({ ID: internal.gridPagerId });
+                
                 internal.gridOpts.pager = external.gridPager.$;
 
                 if (internal.canEdit) {
@@ -455,9 +458,9 @@
                         break;
                 }
 
-                internal.gridPagerId = internal.gridPagerId || Csw.makeId( 'cswGridPager', internal.ID );
-                internal.gridTableId = internal.gridTableId || Csw.makeId('cswGridTable', internal.ID );
-                
+                internal.gridPagerId = internal.gridPagerId || Csw.makeId('cswGridPager', internal.ID);
+                internal.gridTableId = internal.gridTableId || Csw.makeId('cswGridTable', internal.ID);
+
                 cswParent.empty();
                 internal.gridDiv = cswParent.div({
                     isControl: internal.isControl,
