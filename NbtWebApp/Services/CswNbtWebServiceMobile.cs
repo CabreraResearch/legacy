@@ -1,6 +1,6 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                foreach ( CswNbtView MobileView in MobileViews.Values )
+                foreach( CswNbtView MobileView in MobileViews.Values )
                 {
                     RetJson[MobileView.ViewId.ToString()] = MobileView.ViewName;
                 }
@@ -236,7 +236,9 @@ namespace ChemSW.Nbt.WebServices
         private void _runProperties( CswNbtNode Node, JObject SubItemsJProp )
         {
             Collection<CswNbtMetaDataNodeTypeTab> Tabs = new Collection<CswNbtMetaDataNodeTypeTab>();
-            foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId ) )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in from _Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
+                                                      orderby _Tab.TabOrder
+                                                      select _Tab )
             {
                 Tabs.Add( Tab );
             }
@@ -244,41 +246,36 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataNodeTypeTab CurrentTab = Tabs[i];
 
-                JProperty TabProp = new JProperty( CurrentTab.TabName );
-                SubItemsJProp.Add( TabProp );
-
-                JObject TabObj = new JObject();
-                TabProp.Value = TabObj;
+                SubItemsJProp[CurrentTab.TabName] = new JObject();
 
                 //if( i > 1 )
                 //{
                 //    CswNbtMetaDataNodeTypeTab PrevTab = Tabs[i - 1];
                 //    TabObj.Add( new JProperty( "prevtab", PrevTab.TabName ) );
                 //}
-                TabObj["currenttab"] = Tabs[i].TabName;
+                SubItemsJProp[CurrentTab.TabName]["currenttab"] = Tabs[i].TabName;
                 if( i < Tabs.Count - 1 )
                 {
-                    TabObj["nexttab"] = Tabs[i + 1].TabName;
+                    SubItemsJProp[CurrentTab.TabName]["nexttab"] = Tabs[i + 1].TabName;
                 }
 
-                foreach( CswNbtMetaDataNodeTypeProp Prop in CurrentTab.getNodeTypePropsByDisplayOrder()
-                                                                .Cast<CswNbtMetaDataNodeTypeProp>()
-                                                                .Where( Prop => !Prop.HideInMobile &&
-                                                                        Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
-                                                                        Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid ) )
+                foreach( CswNbtMetaDataNodeTypeProp Prop in from _Prop in CurrentTab.getNodeTypePropsByDisplayOrder()
+                                                            where false == _Prop.HideInMobile &&
+                                                                 _Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Password &&
+                                                                 _Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid
+                                                            select _Prop )
                 {
                     CswNbtNodePropWrapper PropWrapper = Node.Properties[Prop];
 
                     string PropId = PropIdPrefix + Prop.PropId + "_" + NodeIdPrefix + Node.NodeId;
-                    TabObj[PropId] = new JObject();
-                    TabObj[PropId]["prop_name"] = CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo );
-                    TabObj[PropId]["fieldtype"] = Prop.getFieldType().FieldType.ToString();
-                    TabObj[PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
-                    TabObj[PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
+                    SubItemsJProp[CurrentTab.TabName][PropId] = new JObject();
+                    SubItemsJProp[CurrentTab.TabName][PropId]["prop_name"] = CswTools.SafeJavascriptParam( Prop.PropNameWithQuestionNo );
+                    SubItemsJProp[CurrentTab.TabName][PropId]["fieldtype"] = Prop.getFieldType().FieldType.ToString();
+                    SubItemsJProp[CurrentTab.TabName][PropId]["gestalt"] = CswTools.SafeJavascriptParam( PropWrapper.Gestalt );
+                    SubItemsJProp[CurrentTab.TabName][PropId]["ocpname"] = CswTools.SafeJavascriptParam( PropWrapper.ObjectClassPropName );
 
-                    PropWrapper.ToJSON( (JObject) TabObj[PropId], Tabs[i] );
+                    PropWrapper.ToJSON( (JObject) SubItemsJProp[CurrentTab.TabName][PropId], Tabs[i] );
                 }
-
             }
         }
 
