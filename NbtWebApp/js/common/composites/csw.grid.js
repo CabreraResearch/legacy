@@ -169,7 +169,6 @@
                 external.gridPager = internal.gridDiv.div({ ID: internal.gridPagerId });
                 
                 internal.gridOpts.pager = external.gridPager.$;
-
                 if (internal.canEdit) {
                     $.extend(true, internal.optNav, internal.optNavEdit);
                 }
@@ -440,8 +439,8 @@
                 switch (internal.pagermode) {
                     case 'none':
                         delete internal.gridOpts.pager;
-                        delete internal.gridOpts.rowNum;
-                        delete internal.gridOpts.rowList;
+                        //delete internal.gridOpts.rowNum;
+                        //delete internal.gridOpts.rowList;
                         delete internal.gridOpts.pgbuttons;
                         delete internal.gridOpts.viewrecords;
                         delete internal.gridOpts.pgtext;
