@@ -1,3 +1,5 @@
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -17,7 +19,7 @@ namespace ChemSW.Nbt.Schema
 
 
             #region case 21203
-
+            
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "sessionlist", "originaluserid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "originaluserid", "If admin is impersonating, original admin user pk", false, false, 50 );
@@ -26,7 +28,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "originalusername", "If admin is impersonating, original admin username", false, false, 50 );
             }
-
+            
             #endregion case 21203
 
 
@@ -41,6 +43,16 @@ namespace ChemSW.Nbt.Schema
 
 
 
+
+
+
+
+
+
+
+            // this should always be here, and always be last
+            // see case 21989
+            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
 
         }//Update()
 
