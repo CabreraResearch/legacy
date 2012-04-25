@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.Actions
 
         private Dictionary<string, CswNbtMetaDataNodeTypeTab> _getTabsForInspection( JArray Grid, CswNbtMetaDataNodeType NodeType )
         {
-            int qtab_order = 0;
+            Int32 TabCount = 0;
             Dictionary<string, CswNbtMetaDataNodeTypeTab> RetDict = new Dictionary<string, CswNbtMetaDataNodeTypeTab>();
             for( Int32 Index = 0; Index < Grid.Count; Index += 1 )
             {
@@ -194,13 +194,25 @@ namespace ChemSW.Nbt.Actions
                         CswNbtMetaDataNodeTypeTab ThisTab = NodeType.getNodeTypeTab( TabName );
                         if( null == ThisTab )
                         {
-                            ++qtab_order;
+                            TabCount += 1;
                             //                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
-                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, qtab_order );
+                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabCount );
                         }
                         RetDict.Add( TabName, ThisTab );
                     }
                 }
+            }
+            CswNbtMetaDataNodeTypeTab ActionTab = NodeType.getNodeTypeTab( "Action" );
+            if( null != ActionTab )
+            {
+                TabCount += 1;
+                ActionTab.TabOrder = TabCount;
+            }
+            CswNbtMetaDataNodeTypeTab DetailTab = NodeType.getNodeTypeTab( "Detail" );
+            if( null != DetailTab )
+            {
+                TabCount += 1;
+                DetailTab.TabOrder = TabCount;
             }
             return RetDict;
         }
@@ -929,6 +941,7 @@ namespace ChemSW.Nbt.Actions
 
             //Get distinct tabs
             Dictionary<string, CswNbtMetaDataNodeTypeTab> Tabs = _getTabsForInspection( GridArray, InspectionDesignNt );
+
             //Create the props
             Int32 PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
             //Delete or rename the "Section 1" tab

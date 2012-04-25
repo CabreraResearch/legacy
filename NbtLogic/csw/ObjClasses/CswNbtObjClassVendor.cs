@@ -1,10 +1,13 @@
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
-
+using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassVendor : CswNbtObjClass
     {
+
+        public static string VendorNamePropertyName { get { return "Vendor Name"; } }
+
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassVendor( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -72,6 +75,14 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Object class specific properties
+
+        public CswNbtNodePropText VendorName
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[VendorNamePropertyName].AsText );
+            }
+        }
 
         #endregion
 

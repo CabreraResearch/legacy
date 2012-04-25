@@ -76,15 +76,22 @@ namespace ChemSW.Nbt.WebServices
                 case NodeSpecies.More:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = NodeSpecies.More.ToString() + "...";
-                    ThisNodeIcon = "triangle_blueS.gif";
+                    ThisNodeIcon = "Images/icons/triangle_blueS.gif";
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                     break;
                 case NodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
-                    ThisNodeIcon = ThisNodeType.IconFileName;
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
+                    if( ThisNodeLocked )
+                    {
+                        ThisNodeIcon = "Images/quota/lock.gif";
+                    }
+                    else
+                    {
+                        ThisNodeIcon = "Images/icons/" + ThisNodeType.IconFileName;
+                    }
                     break;
                 case NodeSpecies.Group:
                     ThisNodeRel = "group";
@@ -103,7 +110,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             ThisNodeObj["data"] = ThisNodeName;
-            ThisNodeObj["icon"] = "Images/icons/" + ThisNodeIcon;
+            ThisNodeObj["icon"] = ThisNodeIcon;
             ThisNodeObj["attr"] = new JObject();
             ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeKeyString;   // This is the only unique string for this node in this tree
             //ThisNodeObj["attr"]["id"] = _IdPrefix + ThisNodeId;

@@ -482,7 +482,9 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        //g.$parent = $viewgrid;
+                        g.gridOpts.rowNum = 100000;
+                        
+
                         var parent = Csw.literals.factory($viewgrid);
                         cswViewGrid = parent.grid(g);
                         cswViewGrid.gridPager.css({ width: '100%', height: '20px' });

@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
 using ChemSW.Core;
@@ -86,6 +85,26 @@ namespace ChemSW.Nbt
                 }
             }
         }
+
+        public ICswNbtMetaDataProp MetaDataProp
+        {
+            get
+            {
+                ICswNbtMetaDataProp Ret = null;
+                if( Type == NbtViewPropType.NodeTypePropId &&
+                    Int32.MinValue != _NodeTypePropId )
+                {
+                    Ret = NodeTypeProp;
+                }
+                else if( Type == NbtViewPropType.ObjectClassPropId &&
+                         Int32.MinValue != _ObjectClassPropId )
+                {
+                    Ret = ObjectClassProp;
+                }
+                return Ret;
+            }
+        }
+
         public CswNbtMetaDataObjectClassProp ObjectClassProp
         {
             get { return _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ); }
