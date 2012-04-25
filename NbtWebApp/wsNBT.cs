@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Web;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
@@ -257,7 +258,7 @@ namespace ChemSW.Nbt.WebServices
                         JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
                         JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
                         JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
-                JObj["timer"]["treeloadersql"] = _CswNbtResources.CswLogger.TreeLoaderSQLTime;
+                        JObj["timer"]["treeloadersql"] = _CswNbtResources.CswLogger.TreeLoaderSQLTime;
                     }
                     JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
                 }
@@ -495,6 +496,13 @@ namespace ChemSW.Nbt.WebServices
 
         #region Impersonation
 
+        private bool _validateImpersonation( CswNbtObjClassUser UserToImpersonate )
+        {
+            return ( UserToImpersonate.Username != _CswNbtResources.CurrentNbtUser.Username &&
+                     UserToImpersonate.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName &&
+                     UserToImpersonate.Username != CswNbtObjClassUser.ChemSWAdminUsername );
+
+        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -515,13 +523,21 @@ namespace ChemSW.Nbt.WebServices
                         if( UserNode != null )
                         {
                             CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+                            if( _validateImpersonation( UserNodeAsUser ) )
+                            {
+                                // clear Recent 
+                                _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
 
-                            // clear Recent 
-                            _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+                                _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
 
-                            _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
-
-                            ReturnVal.Add( new JProperty( "result", "true" ) );
+                                ReturnVal.Add( new JProperty( "result", "true" ) );
+                            }
+                            else
+                            {
+                                throw new CswDniException( ErrorType.Warning,
+                                                   "You do not have permission to use this feature.",
+                                                   "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
+                            }
                         }
                     }
                     else
@@ -593,13 +609,16 @@ namespace ChemSW.Nbt.WebServices
                     {
                         JArray UsersArray = new JArray();
                         CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                        foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
+                        foreach( CswNbtObjClassUser ThisUser in ( from _UserNode in UserOC.getNodes( false, false )
+                                                                  select _UserNode ).Select( CswNbtNodeCaster.AsUser ) )
                         {
-                            CswNbtObjClassUser ThisUser = CswNbtNodeCaster.AsUser( UserNode );
-                            JObject ThisUserObj = new JObject();
-                            ThisUserObj["userid"] = ThisUser.NodeId.ToString();
-                            ThisUserObj["username"] = ThisUser.Username;
-                            UsersArray.Add( ThisUserObj );
+                            if( _validateImpersonation( ThisUser ) )
+                            {
+                                JObject ThisUserObj = new JObject();
+                                ThisUserObj["userid"] = ThisUser.NodeId.ToString();
+                                ThisUserObj["username"] = ThisUser.Username;
+                                UsersArray.Add( ThisUserObj );
+                            }
                         }
                         ReturnVal["users"] = UsersArray;
                         ReturnVal.Add( new JProperty( "result", "true" ) );
@@ -927,6 +946,15 @@ namespace ChemSW.Nbt.WebServices
 
         #region Grid Views
 
+        private void _clearGroupBy( CswNbtViewRelationship Relationship )
+        {
+            Relationship.clearGroupBy();
+            foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
+            {
+                _clearGroupBy( ChildRelationship );
+            }
+        }
+
         private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey )
         {
             bool IsQuickLaunch = false;
@@ -948,6 +976,12 @@ namespace ChemSW.Nbt.WebServices
                         IsQuickLaunch = false;
                     }
                 }
+
+                foreach( CswNbtViewRelationship ChildRelationship in RetView.Root.ChildRelationships )
+                {
+                    _clearGroupBy( ChildRelationship );
+                }
+                RetView.save();
             }
             return RetView;
         }
@@ -2930,7 +2964,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm, CswConvert.ToInt32(NodeTypeId), CswConvert.ToInt32(ObjectClassId) );
+                    ReturnVal = ws.doUniversalSearch( SearchTerm, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ) );
                 }
                 _deInitResources();
             }

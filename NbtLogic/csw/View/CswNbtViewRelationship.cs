@@ -64,16 +64,24 @@ namespace ChemSW.Nbt
         public void overrideFirst( CswNbtMetaDataNodeType NodeType )
         {
             if( NodeType != null )
+            {
                 setFirst( NbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName );
+            }
             else
+            {
                 setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
+            }
         }
         public void overrideFirst( CswNbtMetaDataObjectClass ObjectClass )
         {
             if( ObjectClass != null )
+            {
                 setFirst( NbtViewRelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString() );
+            }
             else
+            {
                 setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
+            }
         }
         private void setFirst( NbtViewRelatedIdType InFirstType, Int32 InFirstId, string InFirstName )
         {
@@ -90,11 +98,25 @@ namespace ChemSW.Nbt
 
         public void overrideSecond( CswNbtMetaDataNodeType NodeType )
         {
-            setSecond( NbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
+            if( null != NodeType ) /* Case 25943 */
+            {
+                setSecond( NbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
+            }
+            else
+            {
+                setSecond( NbtViewRelatedIdType.NodeTypeId, Int32.MinValue, string.Empty, string.Empty );
+            }
         }
         public void overrideSecond( CswNbtMetaDataObjectClass ObjectClass )
         {
-            setSecond( NbtViewRelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString(), ObjectClass.IconFileName );
+            if( null != ObjectClass ) /* Case 25943 */
+            {
+                setSecond( NbtViewRelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString(), ObjectClass.IconFileName );
+            }
+            else
+            {
+                setSecond( NbtViewRelatedIdType.ObjectClassId, Int32.MinValue, string.Empty, string.Empty );
+            }
         }
         private void setSecond( NbtViewRelatedIdType InSecondType, Int32 InSecondId, string InSecondName, string InIconFileName )
         {
@@ -113,7 +135,7 @@ namespace ChemSW.Nbt
             {
                 _SecondIconFileName = InIconFileName;
             }
-            else
+            else if( false == string.IsNullOrEmpty( InIconFileName ) )
             {
                 _SecondIconFileName = IconFileNamePrefix + InIconFileName;
             }
@@ -139,16 +161,40 @@ namespace ChemSW.Nbt
             {
                 overrideFirst( Prop.getNodeType() );
                 if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
-                    overrideSecond( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
+                {
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Prop.FKValue );
+                    if( null != NodeType )
+                    {
+                        overrideSecond( NodeType );
+                    }
+                }
                 else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
-                    overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
+                {
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
+                    if( null != ObjectClass )
+                    {
+                        overrideSecond( ObjectClass );
+                    }
+                }
             }
             else if( InOwnerType == NbtViewPropOwnerType.Second )
             {
                 if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
-                    overrideFirst( _CswNbtResources.MetaData.getNodeType( Prop.FKValue ) );
+                {
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Prop.FKValue );
+                    if( null != NodeType )
+                    {
+                        overrideFirst( NodeType );
+                    }
+                }
                 else if( Prop.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
-                    overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
+                {
+                    CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
+                    if( null != ObjectClass )
+                    {
+                        overrideFirst( ObjectClass );
+                    }
+                }
                 overrideSecond( Prop.getNodeType() );
             }
             else
