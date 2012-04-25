@@ -84,14 +84,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-                    if( ThisNodeLocked )
-                    {
-                        ThisNodeIcon = "Images/quota/lock.gif";
-                    }
-                    else
-                    {
-                        ThisNodeIcon = "Images/icons/" + ThisNodeType.IconFileName;
-                    }
+                    ThisNodeIcon = "Images/icons/" + ThisNodeType.IconFileName;
                     break;
                 case NodeSpecies.Group:
                     ThisNodeRel = "group";
