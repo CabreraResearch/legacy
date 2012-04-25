@@ -135,7 +135,7 @@ namespace ChemSW.Nbt
             {
                 _SecondIconFileName = InIconFileName;
             }
-            else
+            else if( false == string.IsNullOrEmpty( InIconFileName ) )
             {
                 _SecondIconFileName = IconFileNamePrefix + InIconFileName;
             }

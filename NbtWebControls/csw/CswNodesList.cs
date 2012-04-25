@@ -118,7 +118,14 @@ namespace ChemSW.NbtWebControls
                                 Int32 ThisRow = _Table.Rows.Count;
 
                                 Image IconImage = new Image();
-                                IconImage.ImageUrl = "Images/icons/" + Tree.getNodeForCurrentPosition().IconFileName;
+                                string IconSuffix = Tree.getNodeForCurrentPosition().IconFileName;
+                                string IconName = default( string );
+                                if( false == string.IsNullOrEmpty( IconSuffix ) )
+                                {
+                                    IconName = "Images/icons/" + IconSuffix;
+                                }
+
+                                IconImage.ImageUrl = IconName;
                                 _Table.addControl( ThisRow, 0, IconImage );
 
                                 _Table.addControl( ThisRow, 1, new CswLiteralNbsp() );
