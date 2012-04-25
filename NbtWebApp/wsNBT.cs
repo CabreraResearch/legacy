@@ -946,6 +946,15 @@ namespace ChemSW.Nbt.WebServices
 
         #region Grid Views
 
+        private void _clearGroupBy( CswNbtViewRelationship Relationship )
+        {
+            Relationship.clearGroupBy();
+            foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
+            {
+                _clearGroupBy( ChildRelationship );
+            }
+        }
+
         private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey )
         {
             bool IsQuickLaunch = false;
@@ -967,6 +976,12 @@ namespace ChemSW.Nbt.WebServices
                         IsQuickLaunch = false;
                     }
                 }
+
+                foreach( CswNbtViewRelationship ChildRelationship in RetView.Root.ChildRelationships )
+                {
+                    _clearGroupBy( ChildRelationship );
+                }
+                RetView.save();
             }
             return RetView;
         }
