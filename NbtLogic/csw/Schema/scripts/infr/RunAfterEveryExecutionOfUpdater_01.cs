@@ -11,7 +11,9 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-
+            #region 26011
+            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
+            #endregion
         }//Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01
