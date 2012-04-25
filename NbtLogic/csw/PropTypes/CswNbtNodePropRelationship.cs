@@ -21,12 +21,19 @@ namespace ChemSW.Nbt.PropTypes
             _FieldTypeRule = (CswNbtFieldTypeRuleRelationship) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _NameSubField = _FieldTypeRule.NameSubField;
             _NodeIDSubField = _FieldTypeRule.NodeIDSubField;
+
+            // case 25956
+            _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.RelationshipOptionLimit ) );
+            if( _SearchThreshold <= 0 )
+            {
+                _SearchThreshold = 100;
+            }
         }
         private CswNbtFieldTypeRuleRelationship _FieldTypeRule;
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIDSubField;
 
-        private const Int32 _SearchThreshold = 100;
+        private Int32 _SearchThreshold;
 
         override public bool Empty
         {
