@@ -498,7 +498,7 @@ namespace ChemSW.Nbt.WebServices
 
         private bool _validateImpersonation( CswNbtObjClassUser UserToImpersonate )
         {
-            return ( UserToImpersonate.Rolename != _CswNbtResources.CurrentNbtUser.Rolename &&
+            return ( UserToImpersonate.Username != _CswNbtResources.CurrentNbtUser.Username &&
                      UserToImpersonate.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName &&
                      UserToImpersonate.Username != CswNbtObjClassUser.ChemSWAdminUsername );
 
