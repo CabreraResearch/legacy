@@ -1,4 +1,7 @@
 ﻿
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -8,10 +11,31 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            if( false == _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.CISPro ) )
+            CswNbtView MSDSView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( "MSDS Expiring Next Month" );
+            if( null == MSDSView )
             {
-                _CswNbtSchemaModTrnsctn.ViewSelect.deleteViewByName( "MSDS Expiring Next Month" );
+                MSDSView = _CswNbtSchemaModTrnsctn.makeView();
+                MSDSView.makeNew( "MSDS Expiring Next Month", NbtViewVisibility.Global );
+                MSDSView.ViewMode = NbtViewRenderingMode.Tree;
+                MSDSView.Category = "Materials";
             }
+            MSDSView.Root.ChildRelationships.Clear();
+
+            CswNbtMetaDataNodeType MaterialDocumentNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
+            if( null != MaterialDocumentNt )
+            {
+                CswNbtViewRelationship DocumentVr = MSDSView.AddViewRelationship( MaterialDocumentNt, true );
+                CswNbtMetaDataNodeTypeProp ExpirationDateNtp = MaterialDocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.ExpirationDatePropertyName );
+                MSDSView.AddViewPropertyAndFilter( DocumentVr, ExpirationDateNtp, "today+30", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+                CswNbtMetaDataNodeTypeProp DocumentClassNtp = MaterialDocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.DocumentClassPropertyName );
+                MSDSView.AddViewPropertyAndFilter( DocumentVr, DocumentClassNtp, "MSDS" );
+                MSDSView.save();
+            }
+            else
+            {
+                MSDSView.Delete();
+            }
+
         }//Update()
 
     }//class CswUpdateSchemaCase26016

@@ -181,9 +181,10 @@ namespace ChemSW.Nbt.Schema
                 MSDSView.ViewMode = NbtViewRenderingMode.Tree;
                 MSDSView.Category = "Materials";
 
-                CswNbtViewRelationship DocumentVr = MSDSView.AddViewRelationship( DocumentOc, true );
-                MSDSView.AddViewPropertyAndFilter( DocumentVr, ExpirationDateOcp, "today+30", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-                MSDSView.AddViewPropertyAndFilter( DocumentVr, DocumentClassOcp, "MSDS" );
+                CswNbtViewRelationship DocumentVr = MSDSView.AddViewRelationship( MaterialDocumentNt, true );
+                CswNbtMetaDataNodeTypeProp ExpirationDateNtp = MaterialDocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.ExpirationDatePropertyName );
+                MSDSView.AddViewPropertyAndFilter( DocumentVr, ExpirationDateNtp, "today+30", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+                MSDSView.AddViewPropertyAndFilter( DocumentVr, DocumentClassNtp, "MSDS" );
 
                 MSDSView.save();
             }
