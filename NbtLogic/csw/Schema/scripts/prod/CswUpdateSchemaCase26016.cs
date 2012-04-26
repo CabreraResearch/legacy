@@ -11,15 +11,11 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtView MSDSView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( "MSDS Expiring Next Month" );
-            if( null == MSDSView )
-            {
-                MSDSView = _CswNbtSchemaModTrnsctn.makeView();
-                MSDSView.makeNew( "MSDS Expiring Next Month", NbtViewVisibility.Global );
-                MSDSView.ViewMode = NbtViewRenderingMode.Tree;
-                MSDSView.Category = "Materials";
-            }
-            MSDSView.Root.ChildRelationships.Clear();
+            _CswNbtSchemaModTrnsctn.ViewSelect.deleteViewByName( "MSDS Expiring Next Month" );
+            CswNbtView MSDSView = _CswNbtSchemaModTrnsctn.makeView();
+            MSDSView.makeNew( "MSDS Expiring Next Month", NbtViewVisibility.Global );
+            MSDSView.ViewMode = NbtViewRenderingMode.Tree;
+            MSDSView.Category = "Materials";
 
             CswNbtMetaDataNodeType MaterialDocumentNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
             if( null != MaterialDocumentNt )
