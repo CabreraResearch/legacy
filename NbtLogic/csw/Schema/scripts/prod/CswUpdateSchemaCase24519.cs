@@ -174,16 +174,19 @@ namespace ChemSW.Nbt.Schema
 
             #region MSDS View
 
-            CswNbtView MSDSView = _CswNbtSchemaModTrnsctn.makeView();
-            MSDSView.makeNew( "MSDS Expiring Next Month", NbtViewVisibility.Global );
-            MSDSView.ViewMode = NbtViewRenderingMode.Tree;
-            MSDSView.Category = "Materials";
+            if( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.CISPro ) )
+            {
+                CswNbtView MSDSView = _CswNbtSchemaModTrnsctn.makeView();
+                MSDSView.makeNew( "MSDS Expiring Next Month", NbtViewVisibility.Global );
+                MSDSView.ViewMode = NbtViewRenderingMode.Tree;
+                MSDSView.Category = "Materials";
 
-            CswNbtViewRelationship DocumentVr = MSDSView.AddViewRelationship( DocumentOc, true );
-            MSDSView.AddViewPropertyAndFilter( DocumentVr, ExpirationDateOcp, "today+30", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            MSDSView.AddViewPropertyAndFilter( DocumentVr, DocumentClassOcp, "MSDS" );
+                CswNbtViewRelationship DocumentVr = MSDSView.AddViewRelationship( DocumentOc, true );
+                MSDSView.AddViewPropertyAndFilter( DocumentVr, ExpirationDateOcp, "today+30", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+                MSDSView.AddViewPropertyAndFilter( DocumentVr, DocumentClassOcp, "MSDS" );
 
-            MSDSView.save();
+                MSDSView.save();
+            }
 
             #endregion
 

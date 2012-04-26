@@ -190,6 +190,17 @@ namespace ChemSW.Nbt
             _CswNbtResources.SessionDataMgr.removeSessionData( SessionViewId );
         } // removeSessionView()
 
+        public void deleteViewByName( string ViewName )
+        {
+            CswTableUpdate ViewDelete = _CswNbtResources.makeCswTableUpdate( "CswNbtViewDelete_" + ViewName, "node_views" );
+            DataTable ViewTable = ViewDelete.getTable( "where viewname = '" + ViewName + "'" );
+            foreach( DataRow Row in ViewTable.Rows )
+            {
+                Row.Delete();
+            }
+            ViewDelete.update( ViewTable );
+        }
+
         /// <summary>
         /// Get a DataTable with a single view, by name and visibility
         /// </summary>
