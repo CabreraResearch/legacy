@@ -291,12 +291,12 @@
                 ID: 'EditLayoutDialog_table',
                 width: '100%'
             });
-            
+
             /* Keep the add content in the same space */
             var table2 = table.cell(1, 1).table();
             var cell11 = table2.cell(1, 1);
             //cell11.append('Configure:');
-            
+
             var cell12 = table.cell(1, 2);
 
             var layoutSelect = cell11.select({
@@ -460,6 +460,7 @@
             var o = {
                 'nodename': '',
                 'nodeid': '',
+                'nodetypeid': '',
                 'cswnbtnodekey': '',
                 'onCopyNode': function () { }
             };
@@ -468,28 +469,48 @@
                 $.extend(o, options);
             }
 
-            var div = Csw.literals.div({ text: 'Copying: ' + o.nodename });
-            div.br().br();
+            // Prevent copy if quota is reached
+            var div = Csw.literals.div({ ID: 'CopyNodeDialogDiv' });
+            var tbl = div.table({ ID: 'CopyNodeDialogDiv_table' });
+            var cell11 = tbl.cell(1,1).propDom('colspan', '2');
+            var cell21 = tbl.cell(2,1);
+            var cell22 = tbl.cell(2,2);
 
-            var copyBtn = div.button({ ID: 'copynode_submit',
-                enabledText: 'Copy',
-                disabledText: 'Copying',
-                onClick: function () {
-                    Csw.copyNode({
-                        'nodeid': o.nodeid,
-                        'nodekey': o.nodekey,
-                        'onSuccess': function (nodeid, nodekey) {
-                            div.$.dialog('close');
-                            o.onCopyNode(nodeid, nodekey);
-                        },
-                        'onError': function () {
-                            copyBtn.enable();
-                        }
-                    });
-                }
-            });
+            Csw.ajax.post({
+                urlMethod: 'checkQuota',
+                data: { NodeTypeId: o.nodetypeid },
+                success: function (data) {
+                    if (Csw.bool(data.result)) {
+
+                        cell11.append('Copying: ' + o.nodename);
+                        cell11.br().br();
+
+                        var copyBtn = cell21.button({ ID: 'copynode_submit',
+                            enabledText: 'Copy',
+                            disabledText: 'Copying',
+                            onClick: function () {
+                                Csw.copyNode({
+                                    'nodeid': o.nodeid,
+                                    'nodekey': o.nodekey,
+                                    'onSuccess': function (nodeid, nodekey) {
+                                        div.$.dialog('close');
+                                        o.onCopyNode(nodeid, nodekey);
+                                    },
+                                    'onError': function () {
+                                        copyBtn.enable();
+                                    }
+                                });
+                            }
+                        });
+
+                    } else {
+                        cell11.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
+                    } // if-else (Csw.bool(data.result)) {
+                } // success()
+            }); // ajax
+
             /* Cancel Button */
-            div.button({ ID: 'copynode_cancel',
+            cell22.button({ ID: 'copynode_cancel',
                 enabledText: 'Cancel',
                 disabledText: 'Canceling',
                 onClick: function () {
@@ -857,7 +878,7 @@
 
             openDialog(div, 400, 300, null, 'Impersonate');
         }, // ImpersonateDialog
-        
+
         SearchDialog: function (options) {
             var o = {
                 propname: '',
@@ -869,10 +890,10 @@
 
             var div = Csw.literals.div({ ID: 'searchdialog_div' });
             var table = div.table({ ID: 'searchdialog_table', cellpadding: '2px' });
-            
-            var cell11 = table.cell(1,1);
-            var cell21 = table.cell(2,1);
-            var cell22 = table.cell(2,2);
+
+            var cell11 = table.cell(1, 1);
+            var cell21 = table.cell(2, 1);
+            var cell22 = table.cell(2, 2);
 
             cell11.propDom('colspan', 2);
 
@@ -881,27 +902,27 @@
             var filtersdiv = cell21.div({ ID: 'searchdialog_filtersdiv' });
 
             var universalsearch = Csw.composites.universalSearch({}, {
-                    $searchbox_parent: searchdiv.$,
-                    $searchresults_parent: resultsdiv.$,
-                    $searchfilters_parent: filtersdiv.$,
-                    nodetypeid: o.nodetypeid,
-                    objectclassid: o.objectclassid,
-                    onBeforeSearch: function () {},
-                    onAfterSearch: function () {},
-                    onAfterNewSearch: function (searchid) {},
-                    onAddView: function (viewid, viewmode) {},
-                    onLoadView: function (viewid, viewmode) {},
-                    showSaveAsView: false,
-                    allowEdit: false,
-                    allowDelete: false,
-                    extraAction: 'Select',
-                    onExtraAction: function(nodeObj) {
-                        div.$.dialog('close');
-                        Csw.tryExec(o.onSelectNode, nodeObj);
-                    }
-                });
+                $searchbox_parent: searchdiv.$,
+                $searchresults_parent: resultsdiv.$,
+                $searchfilters_parent: filtersdiv.$,
+                nodetypeid: o.nodetypeid,
+                objectclassid: o.objectclassid,
+                onBeforeSearch: function () { },
+                onAfterSearch: function () { },
+                onAfterNewSearch: function (searchid) { },
+                onAddView: function (viewid, viewmode) { },
+                onLoadView: function (viewid, viewmode) { },
+                showSaveAsView: false,
+                allowEdit: false,
+                allowDelete: false,
+                extraAction: 'Select',
+                onExtraAction: function (nodeObj) {
+                    div.$.dialog('close');
+                    Csw.tryExec(o.onSelectNode, nodeObj);
+                }
+            });
 
-            openDialog(div, 800, 600, null, 'Search '+ o.propname);
+            openDialog(div, 800, 600, null, 'Search ' + o.propname);
         }, // SearchDialog
 
         ErrorDialog: function (error) {

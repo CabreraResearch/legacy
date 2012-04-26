@@ -55,6 +55,7 @@
                 var $a = $li.children('a');
                 var nodeid = Csw.string(json.nodeid);
                 var nodename = Csw.string(json.nodename);
+                var nodetypeid = Csw.string(json.nodetypeid);
                 var viewid = Csw.string(json.viewid);
 
                 switch (action) {
@@ -115,6 +116,7 @@
                             $.CswDialog('CopyNodeDialog', {
                                 nodename: nodename,
                                 nodeid: nodeid,
+                                nodetypeid: nodetypeid,
                                 onCopyNode: o.onAlterNode
                             });
                             return false;
