@@ -393,7 +393,15 @@ namespace ChemSW.Nbt
                                 OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
                             }
                             From += " left outer join jct_nodes_props j" + sortAlias + " ";
-                            From += "   on (j" + sortAlias + ".nodeid = n.nodeid and j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
+                            From += "   on (j" + sortAlias + ".nodeid = n.nodeid and ";
+                            if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                            {
+                                From += " j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
+                            }
+                            else
+                            {
+                                From += " j" + sortAlias + ".nodetypepropid in (select nodetypepropid from nodetype_props where objectclasspropid = " + Prop.ObjectClassPropId + ")) ";
+                            }
 
                             Int32 OrderByOrder = Prop.Order;
                             if ( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
