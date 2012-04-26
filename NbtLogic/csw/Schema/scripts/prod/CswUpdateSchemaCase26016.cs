@@ -35,6 +35,18 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.CISPro, ContainerDocumentNt.NodeTypeId );
             }
 
+            CswNbtMetaDataNodeType EquipmentDocumentNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Equipment Document" );
+            if( null != EquipmentDocumentNt )
+            {
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.IMCS, EquipmentDocumentNt.NodeTypeId );
+            }
+
+            CswNbtMetaDataNodeType AssemblyDocumentNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Assembly Document" );
+            if( null != AssemblyDocumentNt )
+            {
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.IMCS, AssemblyDocumentNt.NodeTypeId );
+            }
+
         }//Update()
 
     }//class CswUpdateSchemaCase26016
