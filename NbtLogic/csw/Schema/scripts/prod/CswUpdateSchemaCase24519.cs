@@ -172,24 +172,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
-            #region MSDS View
-
-            if( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.CISPro ) )
-            {
-                CswNbtView MSDSView = _CswNbtSchemaModTrnsctn.makeView();
-                MSDSView.makeNew( "MSDS Expiring Next Month", NbtViewVisibility.Global );
-                MSDSView.ViewMode = NbtViewRenderingMode.Tree;
-                MSDSView.Category = "Materials";
-
-                CswNbtViewRelationship DocumentVr = MSDSView.AddViewRelationship( MaterialDocumentNt, true );
-                CswNbtMetaDataNodeTypeProp ExpirationDateNtp = MaterialDocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.ExpirationDatePropertyName );
-                MSDSView.AddViewPropertyAndFilter( DocumentVr, ExpirationDateNtp, "today+30", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-                MSDSView.AddViewPropertyAndFilter( DocumentVr, DocumentClassNtp, "MSDS" );
-
-                MSDSView.save();
-            }
-
-            #endregion
 
 
         }//Update()
