@@ -862,6 +862,15 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
+        /// Convenience function for making new jct_module_nodetype records
+        /// </summary>
+        public void createModuleNodeTypeJunction( CswNbtResources.CswNbtModule Module, Int32 NodeTypeId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            createModuleNodeTypeJunction( ModuleId, NodeTypeId );
+        }
+
+        /// <summary>
         /// Convenience function for making new jct_module_nodetypes records
         /// </summary>
         public void createModuleNodeTypeJunction( Int32 ModuleId, Int32 NodeTypeId )

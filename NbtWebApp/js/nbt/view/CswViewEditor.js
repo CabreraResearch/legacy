@@ -820,6 +820,14 @@
 
                 $span.find('.ViewPropFilterLogical').each(function () {
                     var $this = $(this);
+                    var id = $this.prop('id');
+                    var $parent = $this.parent();
+                    $parent.empty();
+                    var parent = Csw.literals.factory($parent);
+                    parent.triStateCheckBox({ ID: id,
+                        Checked: 'false',
+                        cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
+                    });
                     /* This may not be necessary */
                     //$this.CswTristateCheckBox('reBindClick');
                 });

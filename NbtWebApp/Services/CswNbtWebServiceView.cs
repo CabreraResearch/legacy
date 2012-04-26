@@ -8,11 +8,11 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Logic;
 
 
 namespace ChemSW.Nbt.WebServices
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.WebServices
                     ActionObj["actionname"] = Action.Name.ToString();   // not using CswNbtAction.ActionNameEnumToString here
                 }
             }
-            
+
             // Views
             Dictionary<CswNbtViewId, CswNbtView> Views = _CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", _CswNbtResources.CurrentNbtUser, false, false, IsSearchable, NbtViewRenderingMode.Any );
 
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( All )
                 {
-                    ViewsTable = _CswNbtResources.ViewSelect.getAllViews();
+                    ViewsTable = _CswNbtResources.ViewSelect.getAllEnabledViews();
                     ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
                     foreach( DataRow Row in ViewsTable.Rows )
                     {
@@ -280,28 +280,31 @@ namespace ChemSW.Nbt.WebServices
                 gd.makeJqColumn( null, "USERNAME", JColumnNames, JColumnDefs, false, false );
                 foreach( CswNbtView View in Views.Values )
                 {
-                    string RoleName = string.Empty;
-                    CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
-                    if( null != Role )
+                    if( View.IsFullyEnabled() )
                     {
-                        RoleName = Role.NodeName;
+                        string RoleName = string.Empty;
+                        CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
+                        if( null != Role )
+                        {
+                            RoleName = Role.NodeName;
+                        }
+                        string UserName = string.Empty;
+                        CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
+                        if( null != User )
+                        {
+                            UserName = User.NodeName;
+                        }
+                        JObject RowObj = new JObject();
+                        JRows.Add( RowObj );
+                        gd.makeJqCell( RowObj, "NODEVIEWID", View.ViewId.get().ToString() );
+                        gd.makeJqCell( RowObj, "VIEWID", View.ViewId.ToString() );
+                        gd.makeJqCell( RowObj, "VIEWNAME", View.ViewName );
+                        gd.makeJqCell( RowObj, "VIEWMODE", View.ViewMode.ToString() );
+                        gd.makeJqCell( RowObj, "VISIBILITY", View.Visibility.ToString() );
+                        gd.makeJqCell( RowObj, "CATEGORY", View.Category );
+                        gd.makeJqCell( RowObj, "ROLENAME", RoleName );
+                        gd.makeJqCell( RowObj, "USERNAME", UserName );
                     }
-                    string UserName = string.Empty;
-                    CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
-                    if( null != User )
-                    {
-                        UserName = User.NodeName;
-                    }
-                    JObject RowObj = new JObject();
-                    JRows.Add( RowObj );
-                    gd.makeJqCell( RowObj, "NODEVIEWID", View.ViewId.get().ToString() );
-                    gd.makeJqCell( RowObj, "VIEWID", View.ViewId.ToString() );
-                    gd.makeJqCell( RowObj, "VIEWNAME", View.ViewName );
-                    gd.makeJqCell( RowObj, "VIEWMODE", View.ViewMode.ToString() );
-                    gd.makeJqCell( RowObj, "VISIBILITY", View.Visibility.ToString() );
-                    gd.makeJqCell( RowObj, "CATEGORY", View.Category );
-                    gd.makeJqCell( RowObj, "ROLENAME", RoleName );
-                    gd.makeJqCell( RowObj, "USERNAME", UserName );
                 }
                 ReturnVal = gd.makeJqGridJSON( JColumnNames, JColumnDefs, JRows );
             }
