@@ -237,6 +237,31 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Get a DataTable of all enabled views in the database
+        /// </summary>
+        public DataTable getAllEnabledViews()
+        {
+            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getAllViews_select", "getAllViewInfo" );
+            DataTable AllViews = ViewsSelect.getTable();
+            Collection<DataRow> DoomedRows = new Collection<DataRow>();
+            foreach( DataRow Row in AllViews.Rows )
+            {
+                CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                if( false == View.IsFullyEnabled() )
+                {
+                    DoomedRows.Add( Row );
+                }
+            }
+            foreach( DataRow DoomedRow in DoomedRows )
+            {
+                DoomedRow.Delete();
+            }
+            AllViews.AcceptChanges();
+            return AllViews;
+        }
+
+        /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
         public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( NbtViewRenderingMode ViewRenderingMode )
