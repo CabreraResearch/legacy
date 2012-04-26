@@ -41,19 +41,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion case 25780
 
-
-
-
-
-
-
-
-
-
-            // this should always be here, and always be last
-            // see case 21989
-            _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
-
         }//Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01
