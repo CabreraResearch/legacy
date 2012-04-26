@@ -42,6 +42,9 @@ namespace ChemSW.Nbt.WebServices
                     case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
                         NewNode = CswNbtActCopyNode.CopyInspectionTargetNode( OriginalNode );
                         break;
+                    case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass:
+                        NewNode = CswNbtActCopyNode.CopyInspectionDesignNode( OriginalNode );
+                        break;
                     default:
                         NewNode = CswNbtActCopyNode.CopyNode( OriginalNode );
                         break;
