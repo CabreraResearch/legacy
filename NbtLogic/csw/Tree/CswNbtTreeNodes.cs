@@ -639,7 +639,13 @@ namespace ChemSW.Nbt
 
             if( NodeSpecies.Plain == NodeKey.NodeSpecies )
             {
-                ReturnVal.IconFileName = "Images/icons/" + _getAttr( NodeObj, _AttrName_IconFileName );
+                string IconName = default( string );
+                string PotentialIconSuffix = _getAttr( NodeObj, _AttrName_IconFileName );
+                if( false == string.IsNullOrEmpty( PotentialIconSuffix ) )
+                {
+                    IconName = "Images/icons/" + PotentialIconSuffix;
+                }
+                ReturnVal.IconFileName = IconName;
                 ReturnVal.NodeName = _getAttr( NodeObj, _AttrName_NodeName );
                 ReturnVal.NodeTypeId = CswConvert.ToInt32( _getAttr( NodeObj, _AttrName_NodeTypeId ) );
             }

@@ -84,11 +84,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                     ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-                    if( ThisNodeLocked )
-                    {
-                        ThisNodeIcon = "Images/quota/lock.gif";
-                    }
-                    else
+                    if( false == string.IsNullOrEmpty( ThisNodeType.IconFileName ) )
                     {
                         ThisNodeIcon = "Images/icons/" + ThisNodeType.IconFileName;
                     }
@@ -514,7 +510,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 TypesJson["nt_" + NodeType.Key] = new JObject();
                 TypesJson["nt_" + NodeType.Key]["icon"] = new JObject();
-                TypesJson["nt_" + NodeType.Key]["icon"]["image"] = "Images/icons/" + NodeType.Value;
+                if( false == string.IsNullOrEmpty( NodeType.Value ) )
+                {
+                    TypesJson["nt_" + NodeType.Key]["icon"]["image"] = "Images/icons/" + NodeType.Value;
+                }
             }
             return TypesJson;
         } // getTypes()

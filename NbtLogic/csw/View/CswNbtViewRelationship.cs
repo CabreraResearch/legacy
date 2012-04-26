@@ -64,16 +64,24 @@ namespace ChemSW.Nbt
         public void overrideFirst( CswNbtMetaDataNodeType NodeType )
         {
             if( NodeType != null )
+            {
                 setFirst( NbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName );
+            }
             else
+            {
                 setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
+            }
         }
         public void overrideFirst( CswNbtMetaDataObjectClass ObjectClass )
         {
             if( ObjectClass != null )
+            {
                 setFirst( NbtViewRelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString() );
+            }
             else
+            {
                 setFirst( NbtViewRelatedIdType.Unknown, Int32.MinValue, string.Empty );
+            }
         }
         private void setFirst( NbtViewRelatedIdType InFirstType, Int32 InFirstId, string InFirstName )
         {
@@ -94,12 +102,20 @@ namespace ChemSW.Nbt
             {
                 setSecond( NbtViewRelatedIdType.NodeTypeId, NodeType.FirstVersionNodeTypeId, NodeType.getNodeTypeLatestVersion().NodeTypeName, NodeType.getNodeTypeLatestVersion().IconFileName );
             }
+            else
+            {
+                setSecond( NbtViewRelatedIdType.NodeTypeId, Int32.MinValue, string.Empty, string.Empty );
+            }
         }
         public void overrideSecond( CswNbtMetaDataObjectClass ObjectClass )
         {
             if( null != ObjectClass ) /* Case 25943 */
             {
                 setSecond( NbtViewRelatedIdType.ObjectClassId, ObjectClass.ObjectClassId, ObjectClass.ObjectClass.ToString(), ObjectClass.IconFileName );
+            }
+            else
+            {
+                setSecond( NbtViewRelatedIdType.ObjectClassId, Int32.MinValue, string.Empty, string.Empty );
             }
         }
         private void setSecond( NbtViewRelatedIdType InSecondType, Int32 InSecondId, string InSecondName, string InIconFileName )
@@ -119,7 +135,7 @@ namespace ChemSW.Nbt
             {
                 _SecondIconFileName = InIconFileName;
             }
-            else
+            else if( false == string.IsNullOrEmpty( InIconFileName ) )
             {
                 _SecondIconFileName = IconFileNamePrefix + InIconFileName;
             }
