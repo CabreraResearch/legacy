@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.PropTypes
             _NodeIDSubField = _FieldTypeRule.NodeIDSubField;
 
             // case 25956
-            _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.RelationshipOptionLimit ) );
+            _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( _SearchThreshold <= 0 )
             {
                 _SearchThreshold = 100;

@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Schema
         {
             // create the RelationshipOptionLimit config var
 
-            _CswNbtSchemaModTrnsctn.createConfigurationVariable( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.RelationshipOptionLimit, "Maximum number of options for relationships before search is required", "250", false );
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswNbtResources.ConfigurationVariables.relationshipoptionlimit, "Maximum number of options for relationships before search is required", "250", false );
 
         }//Update()
 

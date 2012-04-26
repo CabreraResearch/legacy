@@ -107,7 +107,11 @@ namespace ChemSW.Nbt
             /// <summary>
             /// Maximum number of results per tree level
             /// </summary>
-            treeview_resultlimit
+            treeview_resultlimit,
+            /// <summary>
+            /// Limit at which relationship values must be searched for
+            /// </summary>
+            relationshipoptionlimit
         }
 
         /// <summary>
