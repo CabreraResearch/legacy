@@ -26,10 +26,13 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp DocumentClassNtp = MaterialDocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.DocumentClassPropertyName );
                 MSDSView.AddViewPropertyAndFilter( DocumentVr, DocumentClassNtp, "MSDS" );
                 MSDSView.save();
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.CISPro, MaterialDocumentNt.NodeTypeId );
             }
-            else
+
+            CswNbtMetaDataNodeType ContainerDocumentNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Container Document" );
+            if( null != ContainerDocumentNt )
             {
-                MSDSView.Delete();
+                _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.CISPro, ContainerDocumentNt.NodeTypeId );
             }
 
         }//Update()
