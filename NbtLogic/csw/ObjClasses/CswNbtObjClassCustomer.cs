@@ -200,6 +200,9 @@ namespace ChemSW.Nbt.ObjClasses
                     Modules.Add( Module );
                 }
 
+                // case 25960
+                string OtherSchemaVersion = OtherResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.schemaversion.ToString() );
+
                 // reconnect to original schema
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
@@ -208,6 +211,8 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
                 }
+
+                this.SchemaVersion.StaticText = OtherSchemaVersion;
             }
 
             _CswNbtObjClassDefault.afterPopulateProps();
