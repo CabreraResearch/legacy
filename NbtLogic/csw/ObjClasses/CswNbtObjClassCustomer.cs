@@ -21,6 +21,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string UserCountPropertyName { get { return "User Count"; } }
         public static string ModulesEnabledPropertyName { get { return "Modules Enabled"; } }
         public static string LoginPropertyName { get { return "Login"; } }
+        public static string SchemaNamePropertyName { get { return "Schema Name"; } }
+        public static string SchemaVersionPropertyName { get { return "Schema Version"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -286,6 +288,21 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[LoginPropertyName].AsButton );
             }
         }
+        public CswNbtNodePropStatic SchemaVersion
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[SchemaVersionPropertyName].AsStatic );
+            }
+        }
+        public CswNbtNodePropStatic SchemaName
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[SchemaNamePropertyName].AsStatic );
+            }
+        }
+
 
         #endregion
 
