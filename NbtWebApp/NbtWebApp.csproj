@@ -173,7 +173,6 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
-    <Content Include="wsNBTmobile.asmx" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
@@ -1502,10 +1501,6 @@
     </Compile>
     <Compile Include="ConfigVars.aspx.designer.cs">
       <DependentUpon>ConfigVars.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="wsNBTmobile.asmx.cs">
-      <DependentUpon>wsNBTmobile.asmx</DependentUpon>
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Design.aspx.designer.cs">
       <DependentUpon>Design.aspx</DependentUpon>
