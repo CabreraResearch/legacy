@@ -81,9 +81,8 @@ namespace ChemSW.Nbt.WebServices
                 if( Node != null )
                 {
                     foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtResources.MetaData.getNodeTypeTabs( Node.NodeTypeId )
-                                                                .Cast<CswNbtMetaDataNodeTypeTab>()
                                                                 .Where( Tab => _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Node.getNodeType(), false, Tab ) )
-                                                                .OrderBy<CswNbtMetaDataNodeTypeTab, Int32>( _getTabOrder ) )
+                                                                .OrderBy( _getTabOrder ) )
                     {
                         _makeTab( Ret, Tab.TabOrder, Tab.TabId.ToString(), Tab.TabName, _canEditLayout() );
                     }
@@ -310,6 +309,25 @@ namespace ChemSW.Nbt.WebServices
             } // if-else( _CswNbtResources.EditMode == NodeEditMode.Add )
         } // addProp()
 
+        private Dictionary<Int32, Collection<Int32>> _DisplayRowsAndCols = new Dictionary<Int32, Collection<Int32>>();
+
+        private Int32 _getUniqueRow( Int32 ProposedRow, Int32 Column )
+        {
+            Int32 Ret = ProposedRow;
+            if( false == _DisplayRowsAndCols.ContainsKey( Column ) )
+            {
+                _DisplayRowsAndCols.Add( Column, new Collection<Int32> { ProposedRow } );
+            }
+            else if( false == _DisplayRowsAndCols[Column].Contains( ProposedRow ) )
+            {
+                _DisplayRowsAndCols[Column].Add( ProposedRow );
+            }
+            else
+            {
+                Ret = _getUniqueRow( ProposedRow + 1, Column );
+            }
+            return Ret;
+        }
 
         public JProperty makePropJson( CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, Int32 Row, Int32 Column )
         {
@@ -329,7 +347,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 PropObj["ocpname"] = OCP.PropName;
             }
-            PropObj["displayrow"] = Row.ToString();
+            Int32 DisplayRow = _getUniqueRow( Row, Column );
+
+            PropObj["displayrow"] = DisplayRow.ToString();
             PropObj["displaycol"] = Column.ToString();
             PropObj["required"] = Prop.IsRequired.ToString().ToLower();
             PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
