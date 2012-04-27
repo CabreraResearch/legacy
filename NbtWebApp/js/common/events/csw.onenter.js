@@ -37,13 +37,13 @@
         });
     };
 
-    $.fn.clickOnEnter = function($target) {
+    $.fn.clickOnEnter = function ($target) {
         'use strict';
         var $parents = this;
-        return $parents.each(function() {
+        return $parents.each(function () {
             var $parent = $(this);
             $parent.listenForEnter()
-                .bind('pressedEnter', function() {
+                .bind('pressedEnter', function () {
                     $target.click();
                 });
         });

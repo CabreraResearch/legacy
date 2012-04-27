@@ -8,6 +8,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -180,7 +181,18 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewProperty SortProp = _View.getSortProperty();
             if( SortProp != null )
             {
-                _CswGridData.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                if( null != SortProp.NodeTypeProp )
+                {
+                    _CswGridData.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                }
+                else if( null != SortProp.ObjectClassProp )
+                {
+                    _CswGridData.GridSortName = SortProp.ObjectClassProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                }
+                else
+                {
+                    _CswGridData.GridSortName = "nodename";
+                }
             }
             else
             {
@@ -446,28 +458,38 @@ namespace ChemSW.Nbt.WebServices
             CswNbtNodeKey ThisNodeKey = Tree.getNodeKeyForCurrentPosition();
             string ThisNodeName = Tree.getNodeNameForCurrentPosition();
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
-            string ThisNodeIcon = ThisNodeType.IconFileName;
-            string ThisNodeKeyString = ThisNodeKey.ToString();
-            string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
-            bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-
-            ThisNodeObj["jqgridid"] = ThisNodeId;
-            ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
-            string Icon = "<img src=\'";
-            if( ThisNodeLocked )
+            if( null == ThisNodeType )
             {
-                Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
+                CswNbtNode ThisNode = Tree.getNodeForCurrentPosition();
+                if( null != ThisNode )
+                {
+                    ThisNodeType = ThisNode.getNodeType();
+                }
             }
-            else
+            if( null != ThisNodeType )
             {
-                Icon += "Images/icons/" + ThisNodeIcon;
+                string ThisNodeIcon = ThisNodeType.IconFileName;
+                string ThisNodeKeyString = ThisNodeKey.ToString();
+                string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
+                bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
+
+                ThisNodeObj["jqgridid"] = ThisNodeId;
+                ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
+                string Icon = "<img src=\'";
+                if( ThisNodeLocked )
+                {
+                    Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
+                }
+                else
+                {
+                    Icon += "Images/icons/" + ThisNodeIcon;
+                }
+                Icon += "\'/>";
+                ThisNodeObj["Icon"] = Icon;
+                ThisNodeObj["nodename"] = ThisNodeName;
+
+                _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid );
             }
-            Icon += "\'/>";
-            ThisNodeObj["Icon"] = Icon;
-            ThisNodeObj["nodename"] = ThisNodeName;
-
-            _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid );
-
             return ThisNodeObj;
 
         } // _treeNodeJObject()

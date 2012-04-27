@@ -158,16 +158,27 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         ReferenceTree.goToNthChild( 0 );
                         CswNbtNode RelatedNode = ReferenceTree.getNodeForCurrentPosition();
-                        if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
+                        //if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
+                        //{
+                        //    Value = ( (CswNbtNodePropWrapper) RelatedNode.Properties[_CswNbtResources.MetaData.getNodeTypePropVersion( RelatedNode.NodeTypeId, RelatedPropId )] ).Gestalt;
+                        //}
+                        //else
+                        //{
+                        //    foreach( CswNbtNodePropWrapper Prop in RelatedNode.Properties )
+                        //    {
+                        //        if( Prop.ObjectClassPropId == RelatedPropId )
+                        //            Value = Prop.Gestalt;
+                        //    }
+                        //}
+
+                        // Match by propname
+                        CswNbtMetaDataNodeTypeProp StoredRelatedProp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
+                        if( null != StoredRelatedProp )
                         {
-                            Value = ( (CswNbtNodePropWrapper) RelatedNode.Properties[_CswNbtResources.MetaData.getNodeTypePropVersion( RelatedNode.NodeTypeId, RelatedPropId )] ).Gestalt;
-                        }
-                        else
-                        {
-                            foreach( CswNbtNodePropWrapper Prop in RelatedNode.Properties )
+                            CswNbtMetaDataNodeTypeProp ActualRelatedProp = RelatedNode.getNodeType().getNodeTypeProp( StoredRelatedProp.PropName );
+                            if( ActualRelatedProp != null )
                             {
-                                if( Prop.ObjectClassPropId == RelatedPropId )
-                                    Value = Prop.Gestalt;
+                                Value = RelatedNode.Properties[ActualRelatedProp].Gestalt;
                             }
                         }
                     }

@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Web;
 using System.Web.Script.Services;   // supports ScriptService attribute
 using System.Web.Services;
@@ -34,6 +35,11 @@ namespace ChemSW.Nbt.WebServices
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
     public class wsNBT : WebService
     {
+        // case 25887
+        CswTimer Timer = new CswTimer();
+        double ServerInitTime = 0;
+
+
         #region Session and Resource Management
 
         private CswSessionResourcesNbt _CswSessionResources;
@@ -92,6 +98,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
             }
+            ServerInitTime = Timer.ElapsedDurationInMilliseconds;
             return ret;
         } // _attemptRefresh()
 
@@ -234,13 +241,26 @@ namespace ChemSW.Nbt.WebServices
         {
             if( JObj != null )
             {
-                JObj.Add( new JProperty( "AuthenticationStatus", AuthenticationStatusIn.ToString() ) );
-                if( _CswSessionResources != null &&
-                    _CswSessionResources.CswSessionManager != null &&
-                    !ForMobile )
+                JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
+                if( false == ForMobile )
                 {
-                    CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-                    JObj.Add( new JProperty( "timeout", CswTimeout.ToClientAsJavascriptString() ) );
+                    if( _CswSessionResources != null &&
+                         _CswSessionResources.CswSessionManager != null )
+                    {
+                        CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+                        JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                    }
+                    JObj["timer"] = new JObject();
+                    JObj["timer"]["serverinit"] = ServerInitTime;
+                    if( null != _CswNbtResources )
+                    {
+                        JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
+                        JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
+                        JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
+                        JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
+                        JObj["timer"]["treeloadersql"] = _CswNbtResources.CswLogger.TreeLoaderSQLTime;
+                    }
+                    JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
                 }
             }
         }//_jAuthenticationStatus()
@@ -276,12 +296,9 @@ namespace ChemSW.Nbt.WebServices
         private AuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources );
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, true );
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
-
-            // case 25694 - clear the current user, or else it will be confused with nodes in the new schemata
-            _CswNbtResources.clearCurrentUser();
 
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
@@ -297,7 +314,6 @@ namespace ChemSW.Nbt.WebServices
         private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
         {
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-
 
             try
             {
@@ -480,6 +496,13 @@ namespace ChemSW.Nbt.WebServices
 
         #region Impersonation
 
+        private bool _validateImpersonation( CswNbtObjClassUser UserToImpersonate )
+        {
+            return ( UserToImpersonate.Username != _CswNbtResources.CurrentNbtUser.Username &&
+                     UserToImpersonate.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName &&
+                     UserToImpersonate.Username != CswNbtObjClassUser.ChemSWAdminUsername );
+
+        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -500,13 +523,21 @@ namespace ChemSW.Nbt.WebServices
                         if( UserNode != null )
                         {
                             CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+                            if( _validateImpersonation( UserNodeAsUser ) )
+                            {
+                                // clear Recent 
+                                _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
 
-                            // clear Recent 
-                            _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+                                _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
 
-                            _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
-
-                            ReturnVal.Add( new JProperty( "result", "true" ) );
+                                ReturnVal.Add( new JProperty( "result", "true" ) );
+                            }
+                            else
+                            {
+                                throw new CswDniException( ErrorType.Warning,
+                                                   "You do not have permission to use this feature.",
+                                                   "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
+                            }
                         }
                     }
                     else
@@ -578,13 +609,16 @@ namespace ChemSW.Nbt.WebServices
                     {
                         JArray UsersArray = new JArray();
                         CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
-                        foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
+                        foreach( CswNbtObjClassUser ThisUser in ( from _UserNode in UserOC.getNodes( false, false )
+                                                                  select _UserNode ).Select( CswNbtNodeCaster.AsUser ) )
                         {
-                            CswNbtObjClassUser ThisUser = CswNbtNodeCaster.AsUser( UserNode );
-                            JObject ThisUserObj = new JObject();
-                            ThisUserObj["userid"] = ThisUser.NodeId.ToString();
-                            ThisUserObj["username"] = ThisUser.Username;
-                            UsersArray.Add( ThisUserObj );
+                            if( _validateImpersonation( ThisUser ) )
+                            {
+                                JObject ThisUserObj = new JObject();
+                                ThisUserObj["userid"] = ThisUser.NodeId.ToString();
+                                ThisUserObj["username"] = ThisUser.Username;
+                                UsersArray.Add( ThisUserObj );
+                            }
                         }
                         ReturnVal["users"] = UsersArray;
                         ReturnVal.Add( new JProperty( "result", "true" ) );
@@ -912,6 +946,15 @@ namespace ChemSW.Nbt.WebServices
 
         #region Grid Views
 
+        private void _clearGroupBy( CswNbtViewRelationship Relationship )
+        {
+            Relationship.clearGroupBy();
+            foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
+            {
+                _clearGroupBy( ChildRelationship );
+            }
+        }
+
         private CswNbtView _prepGridView( string ViewId, string CswNbtNodeKey, ref CswNbtNodeKey RealNodeKey )
         {
             bool IsQuickLaunch = false;
@@ -933,6 +976,12 @@ namespace ChemSW.Nbt.WebServices
                         IsQuickLaunch = false;
                     }
                 }
+
+                foreach( CswNbtViewRelationship ChildRelationship in RetView.Root.ChildRelationships )
+                {
+                    _clearGroupBy( ChildRelationship );
+                }
+                RetView.save();
             }
             return RetView;
         }
@@ -2903,7 +2952,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doUniversalSearch( string SearchTerm )
+        public string doUniversalSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2915,7 +2964,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.doUniversalSearch( SearchTerm );
+                    ReturnVal = ws.doUniversalSearch( SearchTerm, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ) );
                 }
                 _deInitResources();
             }
@@ -3458,7 +3507,7 @@ namespace ChemSW.Nbt.WebServices
             // no session needed here
             JObject Connected = new JObject();
             Connected["result"] = "OK";
-            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
+            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
         }
 

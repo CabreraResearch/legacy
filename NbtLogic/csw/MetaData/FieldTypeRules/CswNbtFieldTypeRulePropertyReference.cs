@@ -44,7 +44,48 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
-            return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
+            //return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
+
+            CswNbtSubField.SubFieldName OldSubfieldName = CswNbtViewPropertyFilterIn.SubfieldName;
+            CswNbtPropFilterSql.PropertyFilterMode OldFilterMode = CswNbtViewPropertyFilterIn.FilterMode;
+            string OldValue = CswNbtViewPropertyFilterIn.Value;
+
+            // BZ 8558
+            if( OldSubfieldName == CachedValueSubField.Name && OldValue.ToLower() == "me" )
+            {
+                CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
+
+                ICswNbtMetaDataProp MetaDataProp = null;
+                if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                    MetaDataProp = Prop.NodeTypeProp;
+                else if( Prop.Type == NbtViewPropType.ObjectClassPropId )
+                    MetaDataProp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( Prop.ObjectClassPropId );
+
+                // Could be a propref of a propref, so we can't look at the relationship
+
+                //ICswNbtMetaDataProp RelationshipProp = null;
+                //if( MetaDataProp.FKType == NbtViewPropType.NodeTypePropId.ToString() )
+                //    RelationshipProp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.FKValue);
+                //else if( MetaDataProp.FKType == NbtViewPropType.ObjectClassPropId.ToString() )
+                //    RelationshipProp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( MetaDataProp.FKValue );
+
+                //if( RelationshipProp != null && RelationshipProp.IsUserRelationship() )
+                //{
+                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
+                    {
+                        CswNbtViewPropertyFilterIn.SubfieldName = CachedValueSubField.Name;
+                        CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                        CswNbtViewPropertyFilterIn.Value = _CswNbtFieldResources.CswNbtResources.Nodes[RunAsUser.UserId].NodeName;
+                    }
+                //}
+            }
+            string ret = _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, false );
+
+            CswNbtViewPropertyFilterIn.SubfieldName = OldSubfieldName;
+            CswNbtViewPropertyFilterIn.FilterMode = OldFilterMode;
+            CswNbtViewPropertyFilterIn.Value = OldValue;
+
+            return ret;
         }//makeWhereClause()
 
         public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
@@ -134,9 +175,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             //We're changing the relationship
             if( NewFkPropIdType != CurrentFkPropIdType ||
-                NewPropTypePropIdType != CurrentPropTypePropIdType ||
-                inFKValue != MetaDataProp.FKValue ||
-                inValuePropId != MetaDataProp.ValuePropId
+                //NewPropTypePropIdType != CurrentPropTypePropIdType ||
+                inFKValue != MetaDataProp.FKValue //||
+                //inValuePropId != MetaDataProp.ValuePropId
                 )
             {
                 bool ClearValueProp = _validateFkTarget( NewFkPropIdType, inFKValue, inValuePropId );
@@ -152,8 +193,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OutValuePropType = NewPropTypePropIdType.ToString();
                     OutValuePropId = inValuePropId;
                 }
-                doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
             }
+            doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

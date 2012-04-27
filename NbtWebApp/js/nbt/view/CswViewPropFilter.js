@@ -340,7 +340,7 @@
 
             switch (fieldtype) {
                 case Csw.enums.subFieldsMap.Logical.name:
-                    filterValue = $filtInput.attr('alt');
+                    filterValue = $filtInput.val();
                     break;
                 case Csw.enums.subFieldsMap.List.name:
                     filterValue = $filtInput.find(':selected').val();

@@ -1,13 +1,27 @@
-@REM set /p ThisVersionNo=
+net stop W3SVC
 
-DeployNbt.pl 1 > C:\nbtlog\dailylog.txt 2>&1
+net stop "ChemSW Log Service" > D:\log\dailylog.txt
 
-echo "Deploy Finished"
+net stop "ChemSW NBT Schedule Service" >> D:\log\dailylog.txt
 
-@REM pause
+taskkill -f /IM "nbtschedservice.exe" >> D:\log\dailylog.txt
 
-"C:\Windows\Microsoft.NET\Framework\v4.0.30319\aspnet_compiler.exe" -v /NbtWebApp -p "c:\kiln\Nbt\Nbt\NbtWebApp"
+DeployNbt.pl 1 >> D:\log\dailylog.txt 2>&1
 
-echo "ASP Precompile Finished"
+echo "Deploy Finished" >> D:\log\dailylog.txt
 
-@REM pause     
+msbuild D:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release >> D:\log\dailylog.txt
+
+msbuild D:\kiln\DailyBuildTools\DailyBuildWeb\DailyBuildWeb.sln /p:Configuration=Release >> D:\log\dailylog.txt
+
+net start "ChemSW Log Service" >> D:\log\dailylog.txt
+
+D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all >> D:\log\dailylog.txt
+
+net start "ChemSW NBT Schedule Service" >> D:\log\dailylog.txt
+
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp -p d:\kiln\Nbt\Nbt\NbtWebApp >> D:\log\dailylog.txt
+
+iisreset
+
+echo "ASP Precompile Finished" >> D:\log\dailylog.txt

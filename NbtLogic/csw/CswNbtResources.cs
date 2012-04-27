@@ -107,7 +107,11 @@ namespace ChemSW.Nbt
             /// <summary>
             /// Maximum number of results per tree level
             /// </summary>
-            treeview_resultlimit
+            treeview_resultlimit,
+            /// <summary>
+            /// Limit at which relationship values must be searched for
+            /// </summary>
+            relationshipoptionlimit
         }
 
         /// <summary>
@@ -125,6 +129,9 @@ namespace ChemSW.Nbt
         private ICswNbtTreeFactory _CswNbtTreeFactory;
         private bool _ExcludeDisabledModules = true;
         public bool ExcludeDisabledModules { get { return _ExcludeDisabledModules; } }
+
+        public PooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
+
 
         /// <summary>
         /// Provides a means to get lists of views
@@ -166,10 +173,10 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache )
+        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
 
-            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache );
+            _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
 
             _DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
             logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
@@ -592,6 +599,13 @@ namespace ChemSW.Nbt
                 }
             }
         } // AccessId
+
+
+        public void SetDbResources( PooledConnectionState PooledConnectionState )
+        {
+            _CswResources.SetDbResources( PooledConnectionState );
+        }//SetDbResources
+
 
         /// <summary>
         /// During initialization, allows setting database resources

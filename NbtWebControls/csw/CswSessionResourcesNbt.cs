@@ -7,11 +7,13 @@ using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
 
+
 namespace ChemSW.Nbt
 {
     public class CswSessionResourcesNbt
     {
         public CswNbtResources CswNbtResources = null;
+        public ICswResources CswResourcesMaster = null;
         //private CswNbtMetaDataEvents _CswNbtMetaDataEvents;
         public CswSessionManager CswSessionManager = null;
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
@@ -28,7 +30,15 @@ namespace ChemSW.Nbt
             // Set the cache to drop anything 10 minutes old
             CswSuperCycleCache.CacheDirtyThreshold = DateTime.Now.Subtract( new TimeSpan( 0, 10, 0 ) );
 
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache );
+
+            CswDbCfgInfo CswDbCfgInfo = new ChemSW.Config.CswDbCfgInfo( SetupMode.NbtWeb );
+            CswResourcesMaster = new CswResources( AppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
+            CswResourcesMaster.SetDbResources( ChemSW.RscAdo.PooledConnectionState.Open );
+            CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
+
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.PooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
+
+
 
             string RecordStatisticsVblName = "RecordUserStatistics";
             bool RecordStatistics = false;
@@ -37,6 +47,7 @@ namespace ChemSW.Nbt
                 RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
             }
 
+
             CswSessionManager = new CswSessionManager( AppType.Nbt,
                                                        new CswWebClientStorageCookies( HttpRequest, HttpResponse ),
                                                        LoginAccessId,
@@ -44,6 +55,7 @@ namespace ChemSW.Nbt
                                                        CswNbtResources.CswDbCfgInfo,
                                                        false,
                                                        CswNbtResources,
+                                                       CswResourcesMaster,
                                                        new CswNbtSchemaAuthenticator( CswNbtResources ),
                                                        _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
                                                                                                   new CswNbtStatisticsStorageStateServer(),
@@ -53,6 +65,8 @@ namespace ChemSW.Nbt
 
             CswNbtResources.AccessId = CswSessionManager.AccessId;
         }//ctor()
+
+
 
 
         public AuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }

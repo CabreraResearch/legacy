@@ -482,7 +482,9 @@
                             }
                         };
                         $.extend(g.gridOpts, gridJson);
-                        //g.$parent = $viewgrid;
+                        g.gridOpts.rowNum = 100000;
+
+
                         var parent = Csw.literals.factory($viewgrid);
                         cswViewGrid = parent.grid(g);
                         cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
@@ -578,13 +580,14 @@
                 _makeAllowCB(row, 'editrel_del', 'Delete', Csw.bool(viewnodejson.allowdelete), function (checked) { viewnodejson.allowdelete = checked; });
                 row += 1;
 
-                subTable.cell(row, 1).text('Group By');
+                if (viewmode === 'Tree') {
+                    subTable.cell(row, 1).text('Group By');
+                }
                 var groupBySelect = subTable.cell(row, 2)
                                             .select({ ID: o.ID + '_gbs',
                                                 onChange: function () {
                                                     var selected = groupBySelect.find(':selected');
                                                     var selval = selected.val();
-                                                    var propData;
 
                                                     if (false === Csw.isNullOrEmpty(selval)) {
                                                         viewnodejson.groupbypropid = Csw.string(selected.val());
@@ -593,6 +596,9 @@
                                                     } // if (false === Csw.isNullOrEmpty(selval)) {
                                                 } // onChange
                                             }); // 
+                if (viewmode !== 'Tree') {
+                    groupBySelect.hide();
+                }
                 row += 1;
 
                 var jsonData = {
@@ -814,6 +820,14 @@
 
                 $span.find('.ViewPropFilterLogical').each(function () {
                     var $this = $(this);
+                    var id = $this.prop('id');
+                    var $parent = $this.parent();
+                    $parent.empty();
+                    var parent = Csw.literals.factory($parent);
+                    parent.triStateCheckBox({ ID: id,
+                        Checked: 'false',
+                        cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
+                    });
                     /* This may not be necessary */
                     //$this.CswTristateCheckBox('reBindClick');
                 });

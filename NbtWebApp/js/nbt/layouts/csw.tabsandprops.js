@@ -35,7 +35,7 @@
                 onSave: null,
                 ReloadTabOnSave: true,
                 Refresh: null,
-                onBeforeTabSelect: function(){ return true; },
+                onBeforeTabSelect: function () { return true; },
                 onTabSelect: null,
                 onPropertyChange: null,
                 onPropertyRemove: null,
@@ -485,7 +485,7 @@
                         labelCell.a({
                             cssclass: 'cswprop_helplink',
                             title: helpText,
-                            onClick: function () {
+                            onClick: function() {
                                 return false;
                             },
                             value: propName
@@ -494,20 +494,21 @@
                     } else {
                         labelCell.append(propName);
                     }
-                }
-                if (false === Csw.bool(propData.readonly)) {
-                    internal.atLeastOne.Saveable = true;
-                    if (internal.ShowCheckboxes && Csw.bool(propData.copyable)) {
-                        var inpPropCheck = labelCell.input({
-                            ID: 'check_' + propid,
-                            type: Csw.enums.inputTypes.checkbox,
-                            value: false, // Value --not defined?,
-                            cssclass: internal.ID + '_check'
-                        });
-                        inpPropCheck.propNonDom('propid', propid);
+
+                    /* Case 25936 */
+                    if (false === Csw.bool(propData.readonly)) {
+                        internal.atLeastOne.Saveable = true;
+                        if (internal.ShowCheckboxes && Csw.bool(propData.copyable)) {
+                            var inpPropCheck = labelCell.input({
+                                ID: 'check_' + propid,
+                                type: Csw.enums.inputTypes.checkbox,
+                                value: false, // Value --not defined?,
+                                cssclass: internal.ID + '_check'
+                            });
+                            inpPropCheck.propNonDom('propid', propid);
+                        }
                     }
                 }
-
 
                 var propCell = internal.getPropertyCell(cellSet);
                 propCell.addClass('propertyvaluecell');

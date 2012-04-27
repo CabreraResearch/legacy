@@ -277,6 +277,7 @@
             cswNodeTabOptions.ID = cswNodeTabOptions.ID + '_editlayout';
             cswNodeTabOptions.Config = true;
             cswNodeTabOptions.ShowAsReport = false;
+            cswNodeTabOptions.EditMode = 'Edit';
             cswNodeTabOptions.onTabSelect = function (tabid) {
                 cswNodeTabOptions.tabid = tabid;
                 _configAddOptions();
@@ -290,13 +291,17 @@
                 ID: 'EditLayoutDialog_table',
                 width: '100%'
             });
-
-            var cell11 = table.cell(1, 1);
-            cell11.append('Configure:');
+            
+            /* Keep the add content in the same space */
+            var table2 = table.cell(1, 1).table();
+            var cell11 = table2.cell(1, 1);
+            //cell11.append('Configure:');
+            
             var cell12 = table.cell(1, 2);
 
             var layoutSelect = cell11.select({
                 ID: 'EditLayoutDialog_layoutselect',
+                labelText: 'Configure: ',
                 selected: 'Edit',
                 values: ['Add', 'Edit', 'Preview', 'Table'],
                 onChange: function () {
@@ -305,28 +310,7 @@
                 }
             });
 
-            cell11.br({ number: 2 });
-            cell11.append('Add: ');
-            var addSelect = cell11.select({
-                ID: 'EditLayoutDialog_addselect',
-                selected: '',
-                values: [],
-                onChange: function () {
-
-                    var ajaxdata = {
-                        PropId: Csw.string(addSelect.val()),
-                        TabId: Csw.string(cswNodeTabOptions.tabid),
-                        LayoutType: layoutSelect.val()
-                    };
-                    Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
-                        data: ajaxdata,
-                        success: function () {
-                            _resetLayout();
-                        }
-                    }); // Csw.ajax
-                } // onChange
-            }); // 
+            var cell21 = table2.cell(2, 1);
 
             function _resetLayout() {
                 cell12.empty();
@@ -336,6 +320,28 @@
             }
 
             function _configAddOptions() {
+                cell21.empty();
+                cell21.br({ number: 2 });
+
+                var addSelect = cell21.select({
+                    ID: 'EditLayoutDialog_addselect',
+                    labelText: 'Add: ',
+                    selected: '',
+                    values: [],
+                    onChange: function () {
+                        Csw.ajax.post({
+                            url: '/NbtWebApp/wsNBT.asmx/addPropertyToLayout',
+                            data: {
+                                PropId: Csw.string(addSelect.val()),
+                                TabId: Csw.string(cswNodeTabOptions.tabid),
+                                LayoutType: layoutSelect.val()
+                            },
+                            success: function () {
+                                _resetLayout();
+                            }
+                        }); // Csw.ajax
+                    } // onChange
+                }); // 
                 var ajaxdata = {
                     NodeId: Csw.string(cswNodeTabOptions.nodeids[0]),
                     NodeKey: Csw.string(cswNodeTabOptions.nodekeys[0]),
@@ -851,6 +857,52 @@
 
             openDialog(div, 400, 300, null, 'Impersonate');
         }, // ImpersonateDialog
+        
+        SearchDialog: function (options) {
+            var o = {
+                propname: '',
+                nodetypeid: '',
+                objectclassid: '',
+                onSelectNode: null
+            };
+            if (options) $.extend(o, options);
+
+            var div = Csw.literals.div({ ID: 'searchdialog_div' });
+            var table = div.table({ ID: 'searchdialog_table', cellpadding: '2px' });
+            
+            var cell11 = table.cell(1,1);
+            var cell21 = table.cell(2,1);
+            var cell22 = table.cell(2,2);
+
+            cell11.propDom('colspan', 2);
+
+            var searchdiv = cell11.div({ ID: 'searchdialog_searchdiv' });
+            var resultsdiv = cell22.div({ ID: 'searchdialog_resultsdiv' });
+            var filtersdiv = cell21.div({ ID: 'searchdialog_filtersdiv' });
+
+            var universalsearch = Csw.composites.universalSearch({}, {
+                    $searchbox_parent: searchdiv.$,
+                    $searchresults_parent: resultsdiv.$,
+                    $searchfilters_parent: filtersdiv.$,
+                    nodetypeid: o.nodetypeid,
+                    objectclassid: o.objectclassid,
+                    onBeforeSearch: function () {},
+                    onAfterSearch: function () {},
+                    onAfterNewSearch: function (searchid) {},
+                    onAddView: function (viewid, viewmode) {},
+                    onLoadView: function (viewid, viewmode) {},
+                    showSaveAsView: false,
+                    allowEdit: false,
+                    allowDelete: false,
+                    extraAction: 'Select',
+                    onExtraAction: function(nodeObj) {
+                        div.$.dialog('close');
+                        Csw.tryExec(o.onSelectNode, nodeObj);
+                    }
+                });
+
+            openDialog(div, 800, 600, null, 'Search '+ o.propname);
+        }, // SearchDialog
 
         ErrorDialog: function (error) {
             var div = Csw.literals.div();

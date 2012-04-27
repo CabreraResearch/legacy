@@ -39,7 +39,7 @@
             if (options) {
                 $.extend(internal, options);
             }
-
+            var external = { };
             cswParent.empty();
 
             Csw.ajax.post({
@@ -54,7 +54,7 @@
                     var auditGridId = internal.ID + '_csw_auditGrid_outer';
 
                     internal.gridDiv = cswParent.div({ ID: auditGridId });
-                    
+
                     if (Csw.contains(gridJson, 'jqGridOpt')) {
 
                         $.extend(internal.gridOpts, gridJson.jqGridOpt);
@@ -76,7 +76,7 @@
                                 }
                             };
                         }
-                        
+
                         external.grid = internal.gridDiv.grid(internal);
                         external.grid.gridPager.css({ width: '100%', height: '20px' });
 

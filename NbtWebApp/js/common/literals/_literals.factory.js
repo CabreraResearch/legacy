@@ -31,7 +31,7 @@
                     opts.ID = Csw.makeId(external.getId(), controlName);
                 }
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
-                    external.label({ forAttr: opts.ID, text: opts.labelText });
+                    external.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
                 }
                 opts.parent = function () {
                     return external;

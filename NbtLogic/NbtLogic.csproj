@@ -82,6 +82,17 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26016.cs" />
+    <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25956.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25894.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25991.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25875.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24519.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24447Part3.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25148.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25800.cs" />
     <Compile Include="csw\Security\CswNbtUser.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryGroupPermission.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassWorkUnit.cs" />

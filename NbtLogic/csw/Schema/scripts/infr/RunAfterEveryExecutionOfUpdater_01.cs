@@ -10,8 +10,6 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-
-
         }//Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01

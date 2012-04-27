@@ -256,6 +256,7 @@
     <None Include="js\common\_compileCommon.pl" />
     <None Include="js\common\_concatCswVsDoc.pl" />
     <None Include="js\nbt\_compileNbt.pl" />
+	<Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />

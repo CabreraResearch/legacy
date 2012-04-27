@@ -190,6 +190,17 @@ namespace ChemSW.Nbt
             _CswNbtResources.SessionDataMgr.removeSessionData( SessionViewId );
         } // removeSessionView()
 
+        public void deleteViewByName( string ViewName )
+        {
+            CswTableUpdate ViewDelete = _CswNbtResources.makeCswTableUpdate( "CswNbtViewDelete_" + ViewName, "node_views" );
+            DataTable ViewTable = ViewDelete.getTable( "where viewname = '" + ViewName + "'" );
+            foreach( DataRow Row in ViewTable.Rows )
+            {
+                Row.Delete();
+            }
+            ViewDelete.update( ViewTable );
+        }
+
         /// <summary>
         /// Get a DataTable with a single view, by name and visibility
         /// </summary>
@@ -234,6 +245,31 @@ namespace ChemSW.Nbt
         {
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getAllViews_select", "getAllViewInfo" );
             return ViewsSelect.getTable();
+        }
+
+        /// <summary>
+        /// Get a DataTable of all enabled views in the database
+        /// </summary>
+        public DataTable getAllEnabledViews()
+        {
+            CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getAllViews_select", "getAllViewInfo" );
+            DataTable AllViews = ViewsSelect.getTable();
+            Collection<DataRow> DoomedRows = new Collection<DataRow>();
+            foreach( DataRow Row in AllViews.Rows )
+            {
+                CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
+                if( false == View.IsFullyEnabled() )
+                {
+                    DoomedRows.Add( Row );
+                }
+            }
+            foreach( DataRow DoomedRow in DoomedRows )
+            {
+                DoomedRow.Delete();
+            }
+            AllViews.AcceptChanges();
+            return AllViews;
         }
 
         /// <summary>

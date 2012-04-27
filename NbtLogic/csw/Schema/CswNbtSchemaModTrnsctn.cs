@@ -397,13 +397,18 @@ namespace ChemSW.Nbt.Schema
                 else //if it does exist, maybe the target table has new columns to be added to the audit table?
                 {
 
+                    string[] TargetTableColumnNameArray = new string[_CswNbtResources.DataDictionary.getColumnNames( TableName ).Count];
+                    _CswNbtResources.DataDictionary.getColumnNames( TableName ).CopyTo( TargetTableColumnNameArray, 0 );
+                    List<string> TargetColumnNames = new List<string>( TargetTableColumnNameArray );
+
+
                     string[] AuditTableColumnNameArray = new string[_CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).Count];
                     _CswNbtResources.DataDictionary.getColumnNames( AuditTableName ).CopyTo( AuditTableColumnNameArray, 0 );
                     List<string> AuditColumnNames = new List<string>( AuditTableColumnNameArray );
 
                     List<string> MissingAuditTableColumnNames = new List<string>();
 
-                    foreach( string CurrentTargetColumnName in _CswNbtResources.DataDictionary.getColumnNames( TableName ) )
+                    foreach( string CurrentTargetColumnName in TargetColumnNames )
                     {
                         if( ( _CswAuditMetaData.AuditLevelColName != CurrentTargetColumnName.ToLower() ) &&
                             ( false == AuditColumnNames.Contains( CurrentTargetColumnName ) ) )
@@ -421,7 +426,7 @@ namespace ChemSW.Nbt.Schema
                             addColumn( CurrentMissingColumnName, _CswNbtResources.DataDictionary.ColumnType, _CswNbtResources.DataDictionary.DataTypeSize, _CswNbtResources.DataDictionary.DblPrecision, _CswNbtResources.DataDictionary.DefaultValue, _CswNbtResources.DataDictionary.Description, _CswNbtResources.DataDictionary.ForeignKeyColumn, _CswNbtResources.DataDictionary.ForeignKeyTable, false, _CswNbtResources.DataDictionary.IsView, _CswNbtResources.DataDictionary.LogicalDelete, _CswNbtResources.DataDictionary.LowerRangeValue, _CswNbtResources.DataDictionary.LowerRangeValueInclusive, _CswNbtResources.DataDictionary.PortableDataType, _CswNbtResources.DataDictionary.ReadOnly, _CswNbtResources.DataDictionary.Required, AuditTableName, _CswNbtResources.DataDictionary.UniqueType, _CswNbtResources.DataDictionary.UpperRangeValueInclusive, _CswNbtResources.DataDictionary.UpperRangeValue );
                         }
 
-                    }//if the audit table is missing columns
+                    }//if the audit table is missing columns                                                                  
 
                 }//if-else the audit table did not yet exist
 
@@ -854,6 +859,15 @@ namespace ChemSW.Nbt.Schema
             JctModulesOCDataTable.Rows.Add( JctRow );
             //Int32 NewJctModuleObjectClassId = CswConvert.ToInt32(ModuleRow["jctmoduleobjectclassid"]);
             JctModulesOCTable.update( JctModulesOCDataTable );
+        }
+
+        /// <summary>
+        /// Convenience function for making new jct_module_nodetype records
+        /// </summary>
+        public void createModuleNodeTypeJunction( CswNbtResources.CswNbtModule Module, Int32 NodeTypeId )
+        {
+            Int32 ModuleId = getModuleId( Module );
+            createModuleNodeTypeJunction( ModuleId, NodeTypeId );
         }
 
         /// <summary>

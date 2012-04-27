@@ -5,12 +5,12 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Logic;
 
 
 namespace ChemSW.Nbt.WebServices
@@ -22,29 +22,29 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtResources _OtherResources;
         private readonly CswNbtResources _NbtManagerResources = null;
 
-        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId )
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId, bool AllowAnyAdmin = false )
         {
             _NbtManagerResources = NbtManagerResources;
-            _checkNbtManagerPermission();
+            _checkNbtManagerPermission( AllowAnyAdmin );
             _OtherResources = makeOtherResources( AccessId );
         } //ctor
 
-        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources )
+        public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, bool AllowAnyAdmin = false )
         {
             _NbtManagerResources = NbtManagerResources;
-            _checkNbtManagerPermission();
+            _checkNbtManagerPermission( AllowAnyAdmin );
         } //ctor
         #endregion ctor
 
         #region private
 
-        private void _checkNbtManagerPermission()
+        private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
             if( false == _NbtManagerResources.IsModuleEnabled( CswNbtResources.CswNbtModule.NBTManager ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use NBT Manager web services if the NBT Manager module is not enabled.", "Attempted to instance CswNbtWebServiceNbtManager, while the NBT Manager module is not enabled." );
             }
-            if( _NbtManagerResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
+            if( false == _NbtManagerResources.CurrentNbtUser.IsAdministrator() && ( false == AllowAnyAdmin || _NbtManagerResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername ) )
             {
                 throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Attempted to authenticate as " + _NbtManagerResources.CurrentNbtUser.Username + " on a privileged method." );
             }
@@ -279,6 +279,13 @@ namespace ChemSW.Nbt.WebServices
             AdminNodeAsUser.PasswordProperty.Password = TempPassword;
             AdminNodeAsUser.postChanges( true );
             _finalize( OtherResources );
+
+            /* 
+             * case 25694 - clear the current user, or else it will be confused with nodes in the new schemata 
+             * case 25206
+             */
+            _NbtManagerResources.clearCurrentUser();
+            _NbtManagerResources.InitCurrentUser = InitUser;
 
             return RetNodeAsCustomer;
         }

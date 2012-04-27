@@ -203,6 +203,20 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
         /// </summary>
+        public CswNbtViewRelationship AddViewRelationship( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
+        {
+            if( NbtObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
+            }
+            ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass );
+            return AddViewRelationship( ObjectClass, IncludeDefaultFilters );
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
+        /// For copying an existing relationship
+        /// </summary>
         public CswNbtViewRelationship CopyViewRelationship( CswNbtViewNode ParentViewNode, CswNbtViewRelationship CopyFrom, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, CopyFrom, IncludeDefaultFilters );
@@ -468,7 +482,7 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyViewId">Primary key of view to copy</param>
-        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, Int32 CopyViewId )
+        public void makeNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView CopyView = null;
             if( CopyViewId > 0 )
