@@ -31,11 +31,13 @@
                     editfunc: function (rowid) {
                         var editOpt = {
                             nodeids: [],
+                            nodenames: [],
                             onEditNode: internal.onEditNode,
                             onAfterButtonClick: internal.onAfterButtonClick
                         };
                         if (false === Csw.isNullOrEmpty(rowid)) {
                             editOpt.nodeids.push(external.grid.getValueForColumn('NODEPK', rowid));
+                            editOpt.nodenames.push(external.grid.getValueForColumn('INSPECTION', rowid));
                             $.CswDialog('EditNodeDialog', editOpt);
                         } else {
                             $.CswDialog('AlertDialog', 'Please select a row to edit');
