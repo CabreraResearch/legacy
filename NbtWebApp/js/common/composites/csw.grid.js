@@ -345,8 +345,7 @@
                         };
 
                         /* Case 26020 */
-                        printOpts = Csw.clone(internal);
-                        //$.extend(printOpts, internal);
+                        $.extend(true, printOpts, internal);
 
                         /* Nuke anything that might be holding onto a reference */
                         Csw.each(printOpts, function (thisObj, name) {
@@ -390,7 +389,7 @@
                         jqGrid cannot seem to handle the communication of the data property between window objects.
                         Just delete it and rebuild instead.
                         */
-                        data = printOpts.gridOpts.data;
+                        data = internal.gridOpts.data;
 
                         Csw.each(printOpts.gridOpts.colModel, function (column) {
                             /* This provides text wrapping in cells */
