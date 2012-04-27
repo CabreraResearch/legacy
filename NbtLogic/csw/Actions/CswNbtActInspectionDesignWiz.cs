@@ -352,6 +352,7 @@ namespace ChemSW.Nbt.Actions
             ItDescriptionNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ItInspectionGroupNtp );
 
             CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.BarcodePropertyName );
+            ItBarcodeNtp.ReadOnly = true; /* Case 25044 */
             ItBarcodeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, ItDescriptionNtp );
 
             //Inspection Target has a tab to host a grid view of Inspections
