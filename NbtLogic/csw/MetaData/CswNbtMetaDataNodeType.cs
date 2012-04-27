@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -406,10 +407,11 @@ namespace ChemSW.Nbt.MetaData
         public Int32 GetMaximumTabOrder()
         {
             Int32 MaximumTabOrder = 0;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
+            foreach( CswNbtMetaDataNodeTypeTab Tab in from _Tab in getNodeTypeTabs()
+                                                      where _Tab.TabName != "History" && _Tab.TabOrder > MaximumTabOrder
+                                                      select _Tab )
             {
-                if( Tab.TabOrder > MaximumTabOrder )
-                    MaximumTabOrder = Tab.TabOrder;
+                MaximumTabOrder = Tab.TabOrder;
             }
             return MaximumTabOrder;
         }

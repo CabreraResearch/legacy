@@ -710,6 +710,10 @@ namespace ChemSW.Nbt.MetaData
             DataRow Row = TabsTable.NewRow();
             Row["nodetypeid"] = CswConvert.ToDbVal( NodeType.NodeTypeId );
             Row["tabname"] = TabName;
+            if( Int32.MinValue == TabOrder )
+            {
+                TabOrder = NodeType.GetMaximumTabOrder() + 1;
+            }
             Row["taborder"] = CswConvert.ToDbVal( TabOrder );
             Row["includeinnodereport"] = CswConvert.ToDbVal( true );
             TabsTable.Rows.Add( Row );
