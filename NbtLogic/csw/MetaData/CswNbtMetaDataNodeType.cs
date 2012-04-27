@@ -406,13 +406,12 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 GetMaximumTabOrder()
         {
-            Int32 MaximumTabOrder = 0;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in from _Tab in getNodeTypeTabs()
-                                                      where _Tab.TabName != "History" && _Tab.TabOrder > MaximumTabOrder
-                                                      select _Tab )
-            {
-                MaximumTabOrder = Tab.TabOrder;
-            }
+            Int32 MaximumTabOrder = ( from _Tab in getNodeTypeTabs()
+                                      where _Tab.TabName != "History"
+                                      orderby _Tab.TabOrder descending
+                                      select _Tab )
+                                      .First()
+                                      .TabOrder;
             return MaximumTabOrder;
         }
 
