@@ -177,7 +177,9 @@ namespace ChemSW.Nbt.ObjClasses
                     UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
                 else
                     UserCount.Value = Double.NaN;
-
+                
+                // case 25960
+                this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
                 foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
