@@ -161,13 +161,13 @@
                 internal.multiEdit = internal.gridOpts.multiselect;
                 /* Case 25809 */
                 internal.gridDiv.empty();
-                
+
                 external.gridTable = internal.gridDiv.table({
                     ID: internal.gridTableId
                 });
-                
+
                 external.gridPager = internal.gridDiv.div({ ID: internal.gridPagerId });
-                
+
                 internal.gridOpts.pager = external.gridPager.$;
                 if (internal.canEdit) {
                     $.extend(true, internal.optNav, internal.optNavEdit);
@@ -329,89 +329,95 @@
 
             external.print = function (onSuccess) {
 
-                Csw.newWindow(function (newDiv) {
-                    var printOpts = {},
-                        printTableId = Csw.makeId(internal.gridTableId, 'printTable'),
-                        newGrid, data, i;
+                try {
+                    Csw.newWindow(function (newDiv) {
+                        var printOpts = {},
+                           printTableId = Csw.makeId(internal.gridTableId, 'printTable'),
+                           newGrid, data, i;
 
-                    var addRowsToGrid = function (rowData) {
-                        if (rowData) {
-                            /* Add the rows to the new newGrid */
-                            for (i = 0; i <= rowData.length; i += 1) {
-                                newGrid.gridTable.$.jqGrid('addRowData', i + 1, rowData[i]);
+                        var addRowsToGrid = function (rowData) {
+                            if (rowData) {
+                                /* Add the rows to the new newGrid */
+                                for (i = 0; i <= rowData.length; i += 1) {
+                                    newGrid.gridTable.$.jqGrid('addRowData', i + 1, rowData[i]);
+                                }
                             }
-                        }
-                    };
-
-                    $.extend(printOpts, internal);
-
-                    /* Nuke anything that might be holding onto a reference */
-                    Csw.each(printOpts, function (thisObj, name) {
-                        if (Csw.isFunction(thisObj) || Csw.isJQuery(thisObj)) {
-                            delete printOpts[name];
-                        }
-                    });
-
-                    printOpts.ID = printTableId;
-
-                    /* 
-                    Nuke any existing options with vanilla defaults.
-                    Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
-                    */
-                    delete printOpts.gridOpts.canEdit;
-                    delete printOpts.gridOpts.canDelete;
-                    delete printOpts.canEdit;
-                    delete printOpts.canDelete;
-
-                    printOpts.gridPagerId += '_print';
-                    printOpts.gridTableId += '_print';
-                    printOpts.gridOpts.rowNum = 100000;
-                    printOpts.gridOpts.rowList = [100000];
-                    printOpts.gridOpts.add = false;
-                    printOpts.gridOpts.del = false;
-                    printOpts.gridOpts.edit = false;
-                    printOpts.gridOpts.autoencode = true;
-                    //printOpts.gridOpts.autowidth = true;
-                    printOpts.gridOpts.width = $(window).width() - 40;
-                    printOpts.gridOpts.altRows = false;
-                    printOpts.gridOpts.datatype = 'local';
-                    delete printOpts.gridOpts.url;
-                    printOpts.gridOpts.emptyrecords = 'No Results';
-                    printOpts.gridOpts.height = 'auto';
-                    printOpts.gridOpts.multiselect = false;
-                    printOpts.gridOpts.toppager = false;
-                    //printOpts.gridOpts.forceFit = true;
-                    //printOpts.gridOpts.shrinkToFit = true;
-
-                    /*
-                    jqGrid cannot seem to handle the communication of the data property between window objects.
-                    Just delete it and rebuild instead.
-                    */
-                    data = printOpts.gridOpts.data;
-
-                    Csw.each(printOpts.gridOpts.colModel, function (column) {
-                        /* This provides text wrapping in cells */
-                        column.cellattr = function () {
-                            return 'style="white-space: normal;"';
                         };
-                    });
-                    Csw.tryExec(onSuccess, newDiv);
-                    /* Get a new Csw.newGrid */
-                    newGrid = newDiv.grid(printOpts);
 
-                    if (Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
-                        Csw.ajax.get({
-                            url: printOpts.printUrl,
-                            success: function (rows) {
-                                addRowsToGrid(rows.rows);
+                        /* Case 26020 */
+                        printOpts = Csw.clone(internal);
+                        //$.extend(printOpts, internal);
+
+                        /* Nuke anything that might be holding onto a reference */
+                        Csw.each(printOpts, function (thisObj, name) {
+                            if (Csw.isFunction(thisObj) || Csw.isJQuery(thisObj)) {
+                                delete printOpts[name];
                             }
                         });
-                    } else {
-                        /* Get the data (rows) from the current grid */
-                        addRowsToGrid(data);
-                    }
 
-                });
+                        printOpts.ID = printTableId;
+
+                        /* 
+                        Nuke any existing options with vanilla defaults.
+                        Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
+                        */
+                        delete printOpts.gridOpts.canEdit;
+                        delete printOpts.gridOpts.canDelete;
+                        delete printOpts.canEdit;
+                        delete printOpts.canDelete;
+
+                        printOpts.gridPagerId += '_print';
+                        printOpts.gridTableId += '_print';
+                        printOpts.gridOpts.rowNum = 100000;
+                        printOpts.gridOpts.rowList = [100000];
+                        printOpts.gridOpts.add = false;
+                        printOpts.gridOpts.del = false;
+                        printOpts.gridOpts.edit = false;
+                        printOpts.gridOpts.autoencode = true;
+                        //printOpts.gridOpts.autowidth = true;
+                        printOpts.gridOpts.width = $(window).width() - 40;
+                        printOpts.gridOpts.altRows = false;
+                        printOpts.gridOpts.datatype = 'local';
+                        delete printOpts.gridOpts.url;
+                        printOpts.gridOpts.emptyrecords = 'No Results';
+                        printOpts.gridOpts.height = 'auto';
+                        printOpts.gridOpts.multiselect = false;
+                        printOpts.gridOpts.toppager = false;
+                        //printOpts.gridOpts.forceFit = true;
+                        //printOpts.gridOpts.shrinkToFit = true;
+
+                        /*
+                        jqGrid cannot seem to handle the communication of the data property between window objects.
+                        Just delete it and rebuild instead.
+                        */
+                        data = printOpts.gridOpts.data;
+
+                        Csw.each(printOpts.gridOpts.colModel, function (column) {
+                            /* This provides text wrapping in cells */
+                            column.cellattr = function () {
+                                return 'style="white-space: normal;"';
+                            };
+                        });
+                        Csw.tryExec(onSuccess, newDiv);
+                        /* Get a new Csw.newGrid */
+                        newGrid = newDiv.grid(printOpts);
+
+                        if (Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
+                            Csw.ajax.get({
+                                url: printOpts.printUrl,
+                                success: function (rows) {
+                                    addRowsToGrid(rows.rows);
+                                }
+                            });
+                        } else {
+                            /* Get the data (rows) from the current grid */
+                            addRowsToGrid(data);
+                        }
+
+                    });
+                } catch (e) {
+                    Csw.log(e);
+                }
 
             };
 
