@@ -382,7 +382,7 @@ namespace ChemSW.Nbt.Actions
             return RetInspectionTargetNt;
         }
 
-        private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt )
+        private void _setInspectionDesignTabsAndProps( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType InspectionTargetNt )
         {
             _validateNodeType( InspectionDesignNt, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
 
@@ -398,25 +398,15 @@ namespace ChemSW.Nbt.Actions
                 InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtpId.ToString() );
             }
 
-            //Inspection Design Target is Inspection Target OC
-            CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+            //Inspection Design Target is Inspection Target NT
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName );
             IdTargetNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             IdTargetNtp.IsRequired = true;
-            if( false == IdTargetNtp.IsFK ||
-                IdTargetNtp.FKType != NbtViewRelatedIdType.ObjectClassId.ToString() ||
-                IdTargetNtp.FKValue != InspectionTargetOc.ObjectClassId )
-            {
-                IdTargetNtp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), InspectionTargetOc.ObjectClassId );
-            }
+            IdTargetNtp.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.NodeTypeId );
 
-            CswNbtMetaDataObjectClassProp IdLocationOcp = InspectionTargetOc.getObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
-            CswNbtMetaDataNodeTypeProp IdLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
-            if( IdLocationNtp.FKType != NbtViewPropIdType.NodeTypePropId.ToString() ||
-               IdLocationNtp.FKValue != IdTargetNtp.PropId )
-            {
-                IdLocationNtp.SetFK( NbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, NbtViewPropIdType.ObjectClassPropId.ToString(), IdLocationOcp.ObjectClassPropId );
-            }
+            CswNbtMetaDataNodeTypeProp ITargetLocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
+            CswNbtMetaDataNodeTypeProp IDesignLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
+            IDesignLocationNtp.SetFK( NbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, NbtViewPropIdType.NodeTypePropId.ToString(), ITargetLocationNtp.PropId );
 
             //Inspection Design Generator is SI Inspection Schedule
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
@@ -898,9 +888,9 @@ namespace ChemSW.Nbt.Actions
         public JObject recycleInspectionDesign( string InspectionDesignName, string InspectionTargetName, string Category )
         {
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.getNodeType( InspectionDesignName );
-            _setInspectionDesignTabsAndProps( InspectionDesignNt );
 
             CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
+            _setInspectionDesignTabsAndProps( InspectionDesignNt, InspectionTargetNt );
             _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
             JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
@@ -936,7 +926,6 @@ namespace ChemSW.Nbt.Actions
             Int32 TotalRows = GridArray.Count;
 
             CswNbtMetaDataNodeType InspectionDesignNt = _CswNbtResources.MetaData.makeNewNodeType( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass.ToString(), InspectionDesignName, string.Empty );
-            _setInspectionDesignTabsAndProps( InspectionDesignNt );
             _setNodeTypePermissions( InspectionDesignNt );
 
             //Get distinct tabs
@@ -948,6 +937,7 @@ namespace ChemSW.Nbt.Actions
             _pruneSectionOneTab( InspectionDesignNt );
             //Build the MetaData
             CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
+            _setInspectionDesignTabsAndProps( InspectionDesignNt, InspectionTargetNt );
             _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
             //The Category name is now set

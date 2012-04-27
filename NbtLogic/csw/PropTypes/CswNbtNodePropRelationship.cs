@@ -318,7 +318,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["allowadd"] = "true";
             }
-
+            if( null != RelatedNodeId )
+            {
+                ParentObject["relatednodeid"] = RelatedNodeId.ToString();
+            }
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             if( Options.Count > _SearchThreshold )
             {

@@ -207,7 +207,7 @@
 
                 return function () {
                     var inspectionTable, $newDesignLabel,
-                        tempInspectionName = internal.selectedInspectionTarget,
+                        tempInspectionName = internal.selectedInspectionTarget + ' Inspection',
                         tempCategoryName = internal.selectedInspectionTarget;
 
                     var makeInspectionDesignName = function (name) {
@@ -220,10 +220,10 @@
 
                     var toggleNewDesignName = function () {
                         if (internal.isNewInspectionDesign()) {
-                            internal.newDesignName.$.show();
+                            internal.newDesignName.show();
                             $newDesignLabel.show();
                         } else {
-                            internal.newDesignName.$.hide();
+                            internal.newDesignName.hide();
                             $newDesignLabel.hide();
                         }
                     };

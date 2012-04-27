@@ -13,7 +13,7 @@
                 var propDiv = o.propDiv;
                 propDiv.empty();
                 var propVals = o.propData.values,
-                    selectedNodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : Csw.enums.multiEditDefaultValue,
+                    selectedNodeId = (false === o.Multi) ? Csw.string(propVals.relatednodeid).trim() : Csw.enums.multiEditDefaultValue,
                     selectedName = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue,
                     nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
                     objectClassId = Csw.string(propVals.objectclassid).trim(),
@@ -70,8 +70,7 @@
                                         propname: o.propData.name,
                                         nodetypeid: nodeTypeId,
                                         objectclassid: objectClassId,
-                                        onSelectNode: function(nodeObj)
-                                        {
+                                        onSelectNode: function(nodeObj) {
                                             nameSpan.text(nodeObj.nodename);
                                             hiddenValue.val(nodeObj.nodeid);
                                         }
