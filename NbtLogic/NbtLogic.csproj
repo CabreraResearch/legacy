@@ -83,6 +83,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25719.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25960.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26016.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25956.cs" />

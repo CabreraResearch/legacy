@@ -15,6 +15,7 @@
                 onSuccess: null,
                 //ClickDelay: 300,
                 issearchable: false,
+                includeRecent: true,
                 //usesession: true,
                 hidethreshold: 5,
                 maxHeight: '',
@@ -118,7 +119,7 @@
             (function () {
                 internal.div = cswParent.div();
                 external = Csw.dom({}, internal.div);
-                
+
                 internal.vsdiv = Csw.literals.div({ ID: Csw.makeId(internal.ID, '', 'vsdiv') });
                 if (false == Csw.isNullOrEmpty(internal.maxHeight)) {
                     internal.vsdiv.css({ maxHeight: internal.maxHeight });
@@ -134,7 +135,10 @@
 
                 Csw.ajax.post({
                     url: internal.viewurl,
-                    data: { IsSearchable: internal.issearchable },
+                    data: {
+                        IsSearchable: internal.issearchable,
+                        IncludeRecent: internal.includeRecent
+                    },
                     stringify: false,
                     success: function (data) {
                         Csw.each(data.viewselectitems, internal.addCategory);
@@ -154,13 +158,15 @@
             external.val = external.value;
 
             external.refreshRecent = function () {
-                Csw.ajax.post({
-                    url: internal.recenturl,
-                    success: function (data) {
-                        Csw.each(data.viewselectitems, internal.addCategory);
-                    }
-                });
-            };
+                if (internal.includeRecent) {
+                    Csw.ajax.post({
+                        url: internal.recenturl,
+                        success: function (data) {
+                            Csw.each(data.viewselectitems, internal.addCategory);
+                        }
+                    });
+                }
+            }; // refreshRecent()
 
             return external;
         });

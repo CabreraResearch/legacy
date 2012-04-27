@@ -194,6 +194,7 @@ namespace ChemSW.Nbt.WebServices
                         Ret["Copy"]["action"] = MenuActions.CopyNode.ToString();
                         Ret["Copy"]["nodeid"] = Node.NodeId.ToString();
                         Ret["Copy"]["nodename"] = Node.NodeName;
+                        Ret["Copy"]["nodetypeid"] = Node.NodeTypeId.ToString();
                     }
                 }
 

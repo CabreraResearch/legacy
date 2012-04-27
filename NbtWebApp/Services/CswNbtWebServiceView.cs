@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.WebServices
         } // getViewSelectRecent()
 
 
-        public JArray getViewSelect( bool IsSearchable )
+        public JArray getViewSelect( bool IsSearchable, bool IncludeRecent )
         {
             JArray ret = new JArray();
 
@@ -150,8 +150,11 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtObjClassUser UserOc = CswNbtNodeCaster.AsUser( UserNode );
 
                 // Recent
-                JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
-                _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
+                if( IncludeRecent )
+                {
+                    JObject RecentItemsJObj = _getCategory( ref ret, "Recent" );
+                    _CswNbtResources.SessionDataMgr.getQuickLaunchJson( ref RecentItemsJObj );
+                }
 
                 //Add the user's stored views to Favorites
                 foreach( CswNbtView View in UserOc.FavoriteViews.SelectedViews.Values.Where( View => View.IsFullyEnabled() ) )

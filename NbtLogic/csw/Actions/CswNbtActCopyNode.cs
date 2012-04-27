@@ -100,6 +100,20 @@ namespace ChemSW.Nbt.Actions
             return CopiedInspectionTargetNode;
         }
 
+        public CswNbtNode CopyInspectionDesignNode( CswNbtNode OriginalIDNode )
+        {
+            CswNbtNode CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalIDNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.copyPropertyValues( OriginalIDNode );
+
+            // case 24454
+            CswNbtObjClassInspectionDesign CopiedIDNodeAsID = CswNbtNodeCaster.AsInspectionDesign( CopiedIDNode );
+            CopiedIDNodeAsID.Generator.RelatedNodeId = null;
+            CopiedIDNodeAsID.Generator.RefreshNodeName();
+
+            CopiedIDNode.postChanges( true, true );  // sets the PK
+            return CopiedIDNode;
+        } // CopyInspectionDesignNode()
+
         public CswNbtNode CopyNode( CswNbtNode OriginalNode )
         {
             CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );

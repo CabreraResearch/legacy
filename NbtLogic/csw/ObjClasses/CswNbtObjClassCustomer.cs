@@ -21,6 +21,8 @@ namespace ChemSW.Nbt.ObjClasses
         public static string UserCountPropertyName { get { return "User Count"; } }
         public static string ModulesEnabledPropertyName { get { return "Modules Enabled"; } }
         public static string LoginPropertyName { get { return "Login"; } }
+        public static string SchemaNamePropertyName { get { return "Schema Name"; } }
+        public static string SchemaVersionPropertyName { get { return "Schema Version"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -175,7 +177,9 @@ namespace ChemSW.Nbt.ObjClasses
                     UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
                 else
                     UserCount.Value = Double.NaN;
-
+                
+                // case 25960
+                this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
                 foreach( CswNbtResources.CswNbtModule Module in Enum.GetValues( typeof( CswNbtResources.CswNbtModule ) ) )
@@ -196,6 +200,9 @@ namespace ChemSW.Nbt.ObjClasses
                     Modules.Add( Module );
                 }
 
+                // case 25960
+                string OtherSchemaVersion = OtherResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.schemaversion.ToString() );
+
                 // reconnect to original schema
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
@@ -204,6 +211,8 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ModulesEnabled.SetValue( ModulesEnabledXValue, Module.ToString(), Modules.Contains( Module ) );
                 }
+
+                this.SchemaVersion.StaticText = OtherSchemaVersion;
             }
 
             _CswNbtObjClassDefault.afterPopulateProps();
@@ -286,6 +295,21 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[LoginPropertyName].AsButton );
             }
         }
+        public CswNbtNodePropStatic SchemaVersion
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[SchemaVersionPropertyName].AsStatic );
+            }
+        }
+        public CswNbtNodePropStatic SchemaName
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[SchemaNamePropertyName].AsStatic );
+            }
+        }
+
 
         #endregion
 

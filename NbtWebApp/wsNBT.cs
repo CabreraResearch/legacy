@@ -722,7 +722,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getViewSelect( bool IsSearchable )
+        public string getViewSelect( bool IsSearchable, bool IncludeRecent )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -734,7 +734,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
-                    ReturnVal["viewselectitems"] = ws.getViewSelect( IsSearchable );
+                    ReturnVal["viewselectitems"] = ws.getViewSelect( IsSearchable, IncludeRecent );
                     _deInitResources();
                 }
             }
