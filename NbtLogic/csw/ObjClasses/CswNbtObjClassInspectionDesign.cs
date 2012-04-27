@@ -214,9 +214,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Set any existing pending or overdue inspections on the same parent to missed
         /// </summary>
-        public override void beforeCreateNode( bool OverrideUniqueValidation )
+        public override void beforeCreateNode( bool OverrideUniqueValidation ) 
         {
-            if( Tristate.True != this.IsFuture.Checked )
+            if( Tristate.True != this.IsFuture.Checked &&
+                null != this.Generator.RelatedNodeId )
             {
                 String NodeStatus = String.Empty;
                 CswNbtMetaDataNodeType ThisInspectionNT = this.Node.getNodeTypeLatestVersion();
