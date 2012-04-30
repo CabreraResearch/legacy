@@ -289,15 +289,15 @@ namespace ChemSW.Nbt.PropTypes
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();
 
-            if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
-            {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-                CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
-                if( NodeKey != null )
-                {
-                    ParentObject["nodekey"] = NodeKey.ToString();
-                }
-            }
+            //if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
+            //{
+            //    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
+            //    CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
+            //    if( NodeKey != null )
+            //    {
+            //        ParentObject["nodekey"] = NodeKey.ToString();
+            //    }
+            //}
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
