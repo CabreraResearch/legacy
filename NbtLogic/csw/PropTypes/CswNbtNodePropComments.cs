@@ -129,17 +129,31 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if(false == String.IsNullOrEmpty( JObject["newmessage"].ToString() ) )
+            AddComment( JObject["newmessage"].ToString(), JObject["commenter"].ToString() );
+        }
+
+        public void AddComment( string message, string commenter = "" )
+        {
+            if( false == String.IsNullOrEmpty( message ) )
             {
+                if( _CswNbtResources.CurrentNbtUser != null && false == String.IsNullOrEmpty( commenter ) )
+                {
+                    commenter = _CswNbtResources.CurrentNbtUser.LastName;
+                    if( _CswNbtResources.CurrentNbtUser.FirstName != null )
+                    {
+                        commenter += "," + _CswNbtResources.CurrentNbtUser.FirstName;
+                    }
+                }
                 JArray _CommentsJson = CommentsJson;
                 //comments:  [ { datetime: '12/31/2012', commenter: 'david', message: 'yuck' }, { ... } ]
-   
+
                 _CommentsJson.Add( new JObject(
                     new JProperty( "datetime", CswConvert.ToDbVal( DateTime.Now ) ),
-                    new JProperty( "commenter", _CswNbtResources.CurrentNbtUser.LastName + "," + _CswNbtResources.CurrentNbtUser.FirstName ),
-                    new JProperty( "message", JObject["newmessage"] ) ) );
+                    new JProperty( "commenter", commenter ),
+                    new JProperty( "message", message ) ) );
                 CommentsJson = _CommentsJson;
             }
+
         }
     }//CswNbtNodePropComments
 
