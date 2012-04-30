@@ -136,10 +136,10 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( false == String.IsNullOrEmpty( message ) )
             {
-                if( _CswNbtResources.CurrentNbtUser != null && false == String.IsNullOrEmpty( commenter ) )
+                if( _CswNbtResources.CurrentNbtUser != null && true == String.IsNullOrEmpty( commenter ) )
                 {
                     commenter = _CswNbtResources.CurrentNbtUser.LastName;
-                    if( _CswNbtResources.CurrentNbtUser.FirstName != null )
+                    if( false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.FirstName ) )
                     {
                         commenter += "," + _CswNbtResources.CurrentNbtUser.FirstName;
                     }
