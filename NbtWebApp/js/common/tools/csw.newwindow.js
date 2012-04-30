@@ -24,7 +24,7 @@
             printDoc.write('<html>');
             printDoc.write('<head>');
             printDoc.write('<link rel="stylesheet" type="text/css" href="Content/themes/base/jquery.ui.all.css" />');
-            printDoc.write('<link rel="stylesheet" type="text/css" href="js/thirdparty/jquery/themes/theme-aristo/css/Aristo/Aristo.css" />');
+            printDoc.write('<link rel="stylesheet" type="text/css" href="js/thirdparty/theme-aristo/css/Aristo/Aristo.css" />');
             printDoc.write('<link rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />');
             printDoc.write('<title>');
             printDoc.write(printDoc.title);
