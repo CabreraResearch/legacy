@@ -88,10 +88,10 @@
                     } else {
                         switch (internal.value) {
                             case 'true':
-                                internal.value = 'Yes';
+                                internal.text = 'Yes';
                                 break;
                             case 'false':
-                                internal.value = 'No';
+                                internal.text = 'No';
                                 break;
                         }
                     }
