@@ -48,7 +48,6 @@ sub extractFile
        $filename !~ /.min\.css/) 
     {
         open(CSSFILE, "$path\\$filename") or die("Cannot open css file: $filename ; $!");        
-        printf("Compiled $filename into ChemSW.min.css\n");
         `java -jar "$dir\\..\\..\\..\\ThirdParty\\YUICompressor\\build\\yuicompressor-2.4.7.jar" $path\\$filename >> $destfile`;
         postProcessor($filename, "_dev.$filename");
         close(CSSFILE);

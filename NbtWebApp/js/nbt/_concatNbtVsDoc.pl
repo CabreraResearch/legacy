@@ -58,7 +58,6 @@ sub extractFile
             $ret .= $line;         
         }
     }
-    printf("Assembled $filename into CswNbt-vsdoc.js\n");
     close(JSFILE);
     return $ret;
 }

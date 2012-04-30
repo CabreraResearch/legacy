@@ -34,7 +34,6 @@ sub extract
            $filename !~ /_last/ &&
            $filename !~ /.min\.js/) 
         {
-            printf("Compiling: $path\\$filename\n");
             $filelist .= "--js $path\\$filename ";
         }
     }

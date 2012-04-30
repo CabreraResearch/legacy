@@ -55,7 +55,6 @@ sub extractFile
             $ret .= $line;         
         }
     }
-    printf("Assembled $filename into CswCommon-vsdoc.js\n");
     close(JSFILE);
     return $ret;
 }

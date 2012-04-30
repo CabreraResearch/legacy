@@ -30,7 +30,6 @@ sub extract
            $filename !~ /-vsdoc/ &&
            $filename !~ /.min./ ) 
         {
-            printf("Compiling: $path\\$filename\n");
             $filelist .= "--js $path\\$filename ";
         }
     }
