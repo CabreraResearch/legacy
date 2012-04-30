@@ -124,7 +124,14 @@ namespace ChemSW.Nbt.PropTypes
                     }
                 }
                 else
+                {
                     _CswNbtNodePropData.SetPropRowValue( _NodeIDSubField.Column, Int32.MinValue );
+                }
+
+                if( WasModified )
+                {
+                    PendingUpdate = true;
+                }
             }
         }
 
@@ -442,7 +449,11 @@ namespace ChemSW.Nbt.PropTypes
                     }
                     RelatedNodeId = thisRelatedNodeId;
                     JObject["destnodeid"] = RelatedNodeId.PrimaryKey.ToString();
-                    PendingUpdate = true;
+                    //PendingUpdate = true;
+                }
+                else
+                {
+                    RelatedNodeId = null;
                 }
             }
         }
