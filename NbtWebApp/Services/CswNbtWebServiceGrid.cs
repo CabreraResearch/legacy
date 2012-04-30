@@ -330,15 +330,21 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         public JObject getAllGridRows( bool IsReport )
         {
+            JObject Ret = new JObject();
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
             Int32 StartingNode = 0;
             Int32 EndingNode = Tree.getChildNodeCount();
-            if( _View.Visibility == NbtViewVisibility.Property )
+            if( _View.Visibility == NbtViewVisibility.Property &&
+                EndingNode > 0 )
             {
                 Tree.goToNthChild( 0 );
                 EndingNode = Tree.getChildNodeCount();
             }
-            return _getGridRows( Tree, 1, _CswGridData.PageSize, StartingNode, EndingNode, IsReport );
+            if( EndingNode > 0 )
+            {
+                Ret = _getGridRows( Tree, 1, _CswGridData.PageSize, StartingNode, EndingNode, IsReport );
+            }
+            return Ret;
         } // getGridOuterJson()
 
         /// <summary>
