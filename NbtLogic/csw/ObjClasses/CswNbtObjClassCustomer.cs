@@ -117,6 +117,8 @@ namespace ChemSW.Nbt.ObjClasses
                             ModulesRow["enabled"] = CswConvert.ToDbVal( NewModulesEnabled.Contains( ModulesRow["name"].ToString() ) );
                         }
                         ModulesUpdate.update( ModulesTable );
+
+                        OtherResources.MetaData.ResetEnabledNodeTypes();    // case 26029
                     }
 
                     // reconnect to original schema
