@@ -88,47 +88,35 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( _CompanyIDDefined() )
             {
-
                 if( ModulesEnabled.WasModified )
                 {
-                    CswCommaDelimitedString NewModulesEnabled = new CswCommaDelimitedString();
-                    if( ModulesEnabled.WasModified )
+                    Collection<CswNbtResources.CswNbtModule> ModulesToEnable = new Collection<CswNbtResources.CswNbtModule>();
+                    Collection<CswNbtResources.CswNbtModule> ModulesToDisable = new Collection<CswNbtResources.CswNbtModule>();
+
+                    foreach( string ModuleName in ModulesEnabled.YValues )
                     {
-                        foreach( string ModuleName in ModulesEnabled.YValues )
+                        CswNbtResources.CswNbtModule Module;
+                        Enum.TryParse( ModuleName, true, out Module );
+                        if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
                         {
-                            if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
-                            {
-                                NewModulesEnabled.Add( ModuleName );
-                            }
+                            ModulesToEnable.Add( Module );
+                        }
+                        else
+                        {
+                            ModulesToDisable.Add( Module );
                         }
                     }
 
                     // switch to target schema
-                    //string OriginalAccessId = _CswNbtResources.AccessId;
-                    //_CswNbtResources.AccessId = CompanyID.Text;
                     CswNbtResources OtherResources = makeOtherResources();
-
-                    if( NewModulesEnabled.Count > 0 )
-                    {
-                        CswTableUpdate ModulesUpdate = OtherResources.makeCswTableUpdate( "CswNbtObjClassCustomer_modules_update", "modules" );
-                        DataTable ModulesTable = ModulesUpdate.getTable();
-                        foreach( DataRow ModulesRow in ModulesTable.Rows )
-                        {
-                            ModulesRow["enabled"] = CswConvert.ToDbVal( NewModulesEnabled.Contains( ModulesRow["name"].ToString() ) );
-                        }
-                        ModulesUpdate.update( ModulesTable );
-
-                        OtherResources.MetaData.ResetEnabledNodeTypes();    // case 26029
-                    }
-
-                    // reconnect to original schema
-                    //_CswNbtResources.AccessId = OriginalAccessId;
+                    OtherResources.UpdateModules( ModulesToEnable, ModulesToDisable );
                     finalizeOtherResources( OtherResources );
-                } // if( ChemSWAdminPassword.WasModified || ModulesEnabled.WasModified )
+
+                } // if( ModulesEnabled.WasModified )
             } // if( _CompanyIDDefined() )
 
             _CswNbtObjClassDefault.afterWriteNode();
-        }
+        } // afterWriteNode()
 
         bool UpdateConfigFile = false;
         private void _checkForConfigFileUpdate()
@@ -179,7 +167,7 @@ namespace ChemSW.Nbt.ObjClasses
                     UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
                 else
                     UserCount.Value = Double.NaN;
-                
+
                 // case 25960
                 this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 

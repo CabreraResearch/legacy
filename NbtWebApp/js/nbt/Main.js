@@ -102,6 +102,9 @@ window.initMain = window.initMain || function (undefined) {
                     onQuotas: function () {
                         handleAction({ 'actionname': 'Quotas' });
                     },
+                    onModules: function () {
+                        handleAction({ 'actionname': 'Modules' });
+                    },
                     onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
                     },
@@ -1092,6 +1095,9 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 });
 
+                break;
+            case 'Modules':
+                Csw.actions.modules(centerTopDiv);
                 break;
             case 'Sessions':
                 Csw.actions.sessions(centerTopDiv);
