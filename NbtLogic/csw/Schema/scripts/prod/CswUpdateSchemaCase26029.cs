@@ -18,6 +18,9 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.ResetEnabledNodeTypes();
 
 
+            _CswNbtSchemaModTrnsctn.createAction( Actions.CswNbtActionName.Modules, false, "", "System" );
+
+
         }//Update()
 
     }//class CswUpdateSchemaCase26029
