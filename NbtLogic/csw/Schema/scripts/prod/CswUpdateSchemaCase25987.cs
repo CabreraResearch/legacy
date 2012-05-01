@@ -44,7 +44,14 @@ namespace ChemSW.Nbt.Schema
             }
             foreach( string DoomedTable in DoomedTables )
             {
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "drop table " + DoomedTable );
+                if( LegacyTables.Contains( DoomedTable ) )
+                {
+                    _CswNbtSchemaModTrnsctn.dropTable( DoomedTable );
+                }
+                else
+                {
+                    _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "drop table " + DoomedTable );
+                }
             }
         }//Update()
 
