@@ -9,35 +9,72 @@
             var internal = {
                 urlMethod: 'getModules',
                 saveUrlMethod: 'saveModules',
-                ID: 'action_modules'
+                ID: 'action_modules',
+                onModuleChange: null // function() {}
             };
             if (options) $.extend(internal, options);
 
             // constructor
-            (function () {
+            internal.init = function () {
+
+                cswParent.$.empty();
 
                 internal.table = cswParent.table({
-                    ID: internal.ID
-                });
+                    ID: internal.ID,
+                    cellpadding: '3px',
+                    FirstCellRightAlign: true
+                }).css({ 'padding-top': '5px' });
 
                 Csw.ajax.post({
                     urlMethod: internal.urlMethod,
                     data: {},
                     success: function (result) {
                         var row = 1;
+                        internal.table.cell(row, 1).css({ 'font-weight': 'bold' }).append('Enabled');
+                        internal.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
+                        row++;
+
+                        var checkboxes = [];
+
                         Csw.each(result, function (thisValue, thisModule) {
-                            internal.table.cell(row, 1).append(thisModule);
-                            internal.table.cell(row, 2).input({
+                            checkboxes.push(internal.table.cell(row, 1).input({
                                 ID: thisModule,
+                                name: thisModule,
                                 type: Csw.enums.inputTypes.checkbox,
                                 checked: Csw.bool(thisValue)
-                            });
+                            }));
+                            internal.table.cell(row, 2).append(thisModule);
                             row++;
                         }); //each()
+
+                        internal.table.cell(row, 2).button({
+                            ID: 'savebtn',
+                            enabledText: 'Save',
+                            disabledText: 'Saving...',
+                            onClick: function () {
+                                var changes = result;
+                                Csw.each(checkboxes, function (thisCheckbox) {
+                                    changes[thisCheckbox.propDom('name')] = thisCheckbox.checked();
+                                }); // each
+
+                                Csw.ajax.post({
+                                    urlMethod: internal.saveUrlMethod,
+                                    data: { Modules: JSON.stringify(changes) },
+                                    success: function (result) {
+                                        Csw.tryExec(internal.onModuleChange);
+                                        internal.init();
+                                    } // success
+                                }); // ajax
+
+                            } // onClick()
+                        }); // button()
+
                     } // success
                 }); // ajax()
 
-            }()); // constructor
-        }); // register()
+            } // internal.init()
 
+            internal.init();
+
+        }); // register()
 } ());
