@@ -114,13 +114,13 @@
                 }
             }
             if (isCompliant) {
-                answerSel.removeClass('CswFieldTypeQuestion_OOC');
+                answerSel.removeClass('CswFieldTypeQuestion_Deficient');
                 if (correctiveAction === '') {
                     correctiveActionLabel.hide();
                     correctiveActionTextBox.hide();
                 }
             } else {
-                answerSel.addClass('CswFieldTypeQuestion_OOC');
+                answerSel.addClass('CswFieldTypeQuestion_Deficient');
                 correctiveActionLabel.show();
                 correctiveActionTextBox.show();
             }

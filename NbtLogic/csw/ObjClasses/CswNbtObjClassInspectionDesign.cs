@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -87,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             Overdue,
             /// <summary>
-            /// Inspection finished, some answers OOC
+            /// Inspection finished, some answers Deficient
             /// </summary>
             Action_Required,
             /// <summary>
@@ -123,9 +122,9 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             OK,
             /// <summary>
-            /// Out of compliance
+            /// Deficient, Out of compliance
             /// </summary>
-            OOC,
+            Deficient,
             /// <summary>
             /// For unset values
             /// </summary>
@@ -214,7 +213,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Set any existing pending or overdue inspections on the same parent to missed
         /// </summary>
-        public override void beforeCreateNode( bool OverrideUniqueValidation ) 
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             if( Tristate.True != this.IsFuture.Checked &&
                 null != this.Generator.RelatedNodeId )
@@ -280,7 +279,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//beforeWriteNode()
 
         /// <summary>
-        /// Update Parent Status (OK,OOC) if Inspection is submitted
+        /// Update Parent Status (OK,Deficient) if Inspection is submitted
         /// </summary>
         public override void afterWriteNode()
         {
@@ -319,8 +318,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp ButtonOCP = NodeTypeProp.getObjectClassProp();
                 if( ButtonOCP.PropName == FinishPropertyName )
                 {
-                    
-                    bool _OOC = false;
+
+                    bool _Deficient = false;
                     bool _allAnswered = true;
                     bool _allAnsweredinTime = true;
 
@@ -330,7 +329,7 @@ namespace ChemSW.Nbt.ObjClasses
                     foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                     {
                         CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-                        _OOC = ( _OOC || !QuestionProp.IsCompliant );
+                        _Deficient = ( _Deficient || !QuestionProp.IsCompliant );
                         if( QuestionProp.Answer.Trim() == string.Empty )
                         {
 
@@ -342,7 +341,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     if( _allAnswered )
                     {
-                        if( _OOC )
+                        if( _Deficient )
                         {
                             Message = "Inspection is out of compliance and requires further action.";
                             this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
@@ -363,7 +362,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( ParentNode != null )
                         {
                             ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-                            Parent.Status.Value = _OOC ? "OOC" : "OK";
+                            Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
                             //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                             ParentNode.postChanges( false );
                         }
@@ -374,14 +373,14 @@ namespace ChemSW.Nbt.ObjClasses
                         Message = "Inspection can not be finished until all questions are answered.  Questions remaining: " + UnansweredQuestions.ToString();
                     }
                 } // if( ButtonOCP.PropName == FinishPropertyName )
-                
+
                 else if( ButtonOCP.PropName == CancelPropertyName )
                 {
                     Message = "Inspection has been cancelled.";
                     ButtonAction = NbtButtonAction.refresh;
                     this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
                 }
-                
+
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;

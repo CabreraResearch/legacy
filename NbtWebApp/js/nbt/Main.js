@@ -952,15 +952,15 @@ window.initMain = window.initMain || function (undefined) {
             'data': { 'ActionName': o.actionname }
         });
 
-        function setupOocInspections() {
+        function setupDeficientInspections() {
             clear({ 'all': true });
 
             Csw.actions.inspectionStatus(centerTopDiv, {
                 onEditNode: function () {
-                    setupOocInspections();
+                    setupDeficientInspections();
                 },
                 onAfterButtonClick: function () {
-                    setupOocInspections();
+                    setupDeficientInspections();
                 }
             });
         }
@@ -1080,8 +1080,8 @@ window.initMain = window.initMain || function (undefined) {
             //			case 'Inspection_Design':                                                               
             //				break;                                                               
 
-            case 'OOC_Inspections':
-                setupOocInspections();
+            case 'Deficient_Inspections':
+                setupDeficientInspections();
 
                 break;
             case 'Quotas':
