@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Data;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
@@ -22,17 +24,22 @@ namespace ChemSW.Nbt.Schema
                             StatusListOptions );
 
             //Update 'OOC Inspections' Action
-            string ActionUpdate = "update actions set actionname = 'Deficient Inspections' where actionname = 'OOC Inspections'";
-            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( ActionUpdate );
+            CswTableUpdate ActionUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "Action_Update", "actions" );
+            DataTable ActionTable = ActionUpdate.getTable( "where actionname = 'OOC Inspections'" );
+            foreach( DataRow ActionRow in ActionTable.Rows )
+            {
+                ActionRow["actionname"] = "Deficient Inspections";
+            }
+            ActionUpdate.update( ActionTable );
 
             //Update all nodes with Inspection Status 'OOC'
             IEnumerable<CswNbtNode> InspectionTargetNodes = InspectionTargetOC.getNodes( false, true );
             foreach( CswNbtNode Node in InspectionTargetNodes )
             {
-                string nodeStatus = Node.Properties[CswNbtObjClassInspectionTarget.StatusPropertyName].AsList.Value;
+                string nodeStatus = CswNbtNodeCaster.AsInspectionTarget( Node ).Status.Value;
                 if( nodeStatus == OOCStatus )
                 {
-                    Node.Properties[CswNbtObjClassInspectionTarget.StatusPropertyName].AsList.Value = DeficientStatus;
+                    CswNbtNodeCaster.AsInspectionTarget( Node ).Status.Value = DeficientStatus;
                     Node.postChanges( true );
                 }
             }
@@ -42,12 +49,11 @@ namespace ChemSW.Nbt.Schema
             IEnumerable<CswNbtNode> ReportNodes = ReportOC.getNodes( false, true );
             foreach( CswNbtNode Node in ReportNodes )
             {
-                string nodeName = Node.Properties[CswNbtObjClassReport.ReportNamePropertyName].AsText.Text;
+                string nodeName = CswNbtNodeCaster.AsReport( Node ).ReportName.Text;
                 if( nodeName.Contains( OOCStatus ) )
                 {
-                    Node.NodeName = Node.NodeName.Replace( OOCStatus, DeficientStatus );
-                    Node.Properties[CswNbtObjClassReport.ReportNamePropertyName].AsText.Text =
-                        Node.Properties[CswNbtObjClassReport.ReportNamePropertyName].AsText.Text.Replace( OOCStatus, DeficientStatus );
+                    //Node.NodeName = Node.NodeName.Replace( OOCStatus, DeficientStatus ); //Not Necessary
+                    CswNbtNodeCaster.AsReport( Node ).ReportName.Text = CswNbtNodeCaster.AsReport( Node ).ReportName.Text.Replace( OOCStatus, DeficientStatus );
                     Node.postChanges( true );
                 }
             }
