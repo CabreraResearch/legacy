@@ -5,7 +5,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -327,7 +326,9 @@ namespace ChemSW.Nbt.ObjClasses
                 if( RunNowPropertyName == OCP.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
-                    RunStatus.StaticText = string.Empty;
+                    //case 25702 - empty comment?
+                    //RunStatus.StaticText = string.Empty;
+                    //RunStatus_new.a
                     Node.postChanges( false );
                     ButtonAction = NbtButtonAction.refresh;
                 }
@@ -400,11 +401,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropStatic RunStatus
+        public CswNbtNodePropComments RunStatus
         {
             get
             {
-                return ( _CswNbtNode.Properties[RunStatusPropertyName].AsStatic );
+                return ( _CswNbtNode.Properties[RunStatusPropertyName].AsComments );
             }
         }
 

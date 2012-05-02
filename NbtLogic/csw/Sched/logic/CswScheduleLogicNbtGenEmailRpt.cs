@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.Sched
                                         //if the report type is specified 
 
                                         // might be redundant with CswNbtDbBasedSchdEvents.handleOnSchdItemWasRun()
-                                        CurrentMailReport.RunStatus.StaticText = CswNbtMailReportStatus.Message;
+                                        CurrentMailReport.RunStatus.AddComment( CswNbtMailReportStatus.Message );
                                         CurrentMailReport.postChanges( true );
 
                                     }
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.Sched
                             {
                                 _CswScheduleLogicDetail.StatusMessage = Exception.Message;
 
-                                CurrentMailReport.RunStatus.StaticText = "An exception occured: " + Exception.Message;
+                                CurrentMailReport.RunStatus.AddComment( "An exception occured: " + Exception.Message );
                                 CurrentMailReport.postChanges( true );
 
                             }
