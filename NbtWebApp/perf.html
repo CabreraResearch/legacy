@@ -29,12 +29,14 @@
                 var cell11 = outertable.cell(1, 1);
                 var cell12 = outertable.cell(1, 2);
 
+                // Delay
                 cell11.span({ text: 'Test Delay (ms):' });
                 cell11.append('<br/>');
                 var delaytb = cell11.input({ ID: 'delay', value: '500' });
-                cell11.append('<br/>');
-                cell11.append('<br/>');
 
+                cell11.append('<br/><br/>');
+
+                // View Select
                 cell11.span({ text: 'Please select a Tree View to test:' });
                 var vs = cell11.viewSelect({
                     onSelect: function (itemobj) {
@@ -48,11 +50,25 @@
                     }
                 });
 
+                cell11.append('<br/><br/>');
+
+                // Webservice Checkboxes
+                cell11.span({ text: 'Include Webservices:' });
+                cell11.append('<br/>');
+                var wssel = cell11.select({
+                    ID: 'webservice_sel',
+                    values: ['runTree', 'runTree, getTabs', 'runTree, getTabs, getProps'],
+                    selected: 'runTree, getTabs, getProps'
+                });
+
+                cell11.append('<br/><br/>');
+
                 var startBtn = cell11.button({
                     ID: 'start',
                     enabledText: 'Start',
                     disableOnClick: false,
                     onClick: function () {
+                        clearerror();
                         test();
                     }
                 });
@@ -108,44 +124,55 @@
                     };
 
                     doAjax(tbl, vs.value().name, 'runTree', runTreeData, function (result) {
+                        if (wssel.val() === 'runTree, getTabs' || wssel.val() === 'runTree, getTabs, getProps') {
 
-                        var nodeid = '';
-                        var nodekey = result.selectid;
-                        var nodetypeid = '';
-                        var editmode = Csw.enums.editMode.Edit;
+                            var nodeid = '';
+                            var nodekey = result.selectid;
+                            var nodetypeid = '';
+                            var editmode = Csw.enums.editMode.Edit;
 
-                        var getTabsData = {
-                            EditMode: editmode,
-                            NodeId: nodeid,
-                            SafeNodeKey: nodekey,
-                            NodeTypeId: nodetypeid,
-                            Date: '',
-                            filterToPropId: '',
-                            Multi: false
-                        };
-
-                        doAjax(tbl, vs.value().name, 'getTabs', getTabsData, function (result) {
-
-                            var tabid = result[1]['id'];
-
-                            var getPropsData = {
+                            var getTabsData = {
                                 EditMode: editmode,
                                 NodeId: nodeid,
-                                TabId: tabid,
                                 SafeNodeKey: nodekey,
                                 NodeTypeId: nodetypeid,
                                 Date: '',
-                                Multi: false,
                                 filterToPropId: '',
-                                ConfigMode: false
+                                Multi: false
                             };
 
-                            doAjax(tbl, vs.value().name, 'getProps', getPropsData, function (result) {
+                            doAjax(tbl, vs.value().name, 'getTabs', getTabsData, function (result) {
 
-                                to = setTimeout(test, Csw.number(delaytb.val(), 500));
-                            });
-                        });
-                    });
+                                if (wssel.val() === 'runTree, getTabs, getProps') {
+                                    var tabid = result[1]['id'];
+
+                                    var getPropsData = {
+                                        EditMode: editmode,
+                                        NodeId: nodeid,
+                                        TabId: tabid,
+                                        SafeNodeKey: nodekey,
+                                        NodeTypeId: nodetypeid,
+                                        Date: '',
+                                        Multi: false,
+                                        filterToPropId: '',
+                                        ConfigMode: false
+                                    };
+
+                                    doAjax(tbl, vs.value().name, 'getProps', getPropsData, function (result) {
+
+                                        to = setTimeout(test, Csw.number(delaytb.val(), 500));
+
+                                    }); // doAjax getProps
+                                } // if (wssel.val() === 'runTree, getTabs, getProps') {
+                                else {
+                                    to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                                }
+                            }); // doAjax getTabs
+                        } // if (wssel.val() === 'runTree, getTabs' || wssel.val() === 'runTree, getTabs, getProps') {
+                        else {
+                            to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                        }
+                    }); // doAjax runTree
                 } // test()
 
             }, // onAuthenticate
@@ -162,7 +189,6 @@
             data: data,
             removeTimer: false,
             success: function (result) {
-                Csw.log(result);
                 var endtime = new Date();
                 tbl.cell(row, 1).append(view + ': ' + methodname);
                 var stms = Csw.string(starttime.getMilliseconds());
