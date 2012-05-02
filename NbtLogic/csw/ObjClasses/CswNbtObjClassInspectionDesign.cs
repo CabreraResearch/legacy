@@ -362,6 +362,10 @@ namespace ChemSW.Nbt.ObjClasses
                         if( ParentNode != null )
                         {
                             ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
+                            if( false == _Deficient )//case 25041
+                            {
+                                _Deficient = areMoreActionsRequired();
+                            }
                             Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
                             //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                             ParentNode.postChanges( false );
@@ -385,6 +389,33 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( null != NodeTypeProp )
             return true;
         } // onButtonClick()
+
+        private bool areMoreActionsRequired()//case 25041
+        {
+            CswNbtView SiblingView = new CswNbtView( _CswNbtResources );
+            SiblingView.ViewName = "SiblingView";
+            CswNbtViewRelationship ParentRelationship = SiblingView.AddViewRelationship( this.NodeType, false );
+            SiblingView.AddViewPropertyAndFilter(
+                ParentRelationship,
+                this.NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName ),
+                InspectionStatusAsString( InspectionStatus.Action_Required ),
+                CswNbtSubField.SubFieldName.Value,
+                false,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                );
+            SiblingView.AddViewPropertyAndFilter(
+                ParentRelationship,
+                this.NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName ),
+                this.Parent.RelatedNodeId.PrimaryKey.ToString(),
+                CswNbtSubField.SubFieldName.NodeID,
+                false,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                );
+            ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( SiblingView, true, true, false, false );
+            int NumOfSiblings = SiblingTree.getChildNodeCount();
+
+            return 1 < NumOfSiblings;
+        }
         #endregion
 
         #region Object class specific properties
