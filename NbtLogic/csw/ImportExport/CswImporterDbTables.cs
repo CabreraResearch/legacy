@@ -784,6 +784,7 @@ namespace ChemSW.Nbt.ImportExport
                                                         {
 
                                                             CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
+                                                            CurrentNbtNode.PendingUpdate = true;
                                                             PropAddCounter++;
                                                         }
 
