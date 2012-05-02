@@ -66,10 +66,10 @@
                                 ID: o.ID,
                                 parent: comboBox.pickList,
                                 onInitialSelectNode: function (optSelect) {
-                                    onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
+                                    onTreeSelect(selectDiv, comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, function () { });
                                 },
                                 onSelectNode: function (optSelect) {
-                                    onTreeSelect(comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
+                                    onTreeSelect(selectDiv, comboBox, optSelect.nodeid, optSelect.nodename, optSelect.iconurl, o.onChange);
                                 },
                                 UseScrollbars: false,
                                 ShowToggleLink: false
@@ -93,23 +93,20 @@
             save: function (o) { //($propdiv, $xml
                 var attributes = { nodeid: null };
                 var selectDiv = o.propDiv.find('.locationselect');
-                if (false === Csw.isNullOrEmpty(selectDiv.children())) {
-                    attributes.nodeid = selectDiv.children().val();
-                } else {
-                    attributes.nodeid = selectDiv.propNonDom('value');
-                }
+                attributes.nodeid = selectDiv.propNonDom('value');
                 Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
         };
 
 
-        function onTreeSelect(comboBox, itemid, text, iconurl, onChange) {
-            if (itemid === 'root') itemid = '';   // case 21046
+        function onTreeSelect(selectDiv, comboBox, itemid, text, iconurl, onChange) {
+            if (itemid === 'root' || itemid === undefined) itemid = '';   // case 21046
             comboBox.topContent(text, itemid);
             if (comboBox.val() !== itemid) {
                 comboBox.val(itemid);
                 onChange();
             }
+            selectDiv.propNonDom('value', itemid);
             setTimeout(function () { comboBox.close(); }, 100);
         }
 

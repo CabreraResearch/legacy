@@ -984,6 +984,49 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Reevaluates what nodetypes should be enabled
+        /// </summary>
+        public void ResetEnabledNodeTypes()
+        {
+            CswTableSelect NTSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "MetaData.ResetEnabledNodeTypes", "nodetypes" );
+
+            CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodetypeid" };
+
+            string WhereClause = @"where ((exists (select j.jctmoduleobjectclassid
+                                              from jct_modules_objectclass j
+                                              join modules m on j.moduleid = m.moduleid
+                                             where j.objectclassid = nodetypes.objectclassid
+                                               and m.enabled = '1')
+                                or not exists (select j.jctmoduleobjectclassid
+                                                 from jct_modules_objectclass j
+                                                 join modules m on j.moduleid = m.moduleid
+                                                where j.objectclassid = nodetypes.objectclassid) )
+                               and (exists (select j.jctmodulenodetypeid
+                                              from jct_modules_nodetypes j
+                                              join modules m on j.moduleid = m.moduleid
+                                             where j.nodetypeid = nodetypes.firstversionid
+                                               and m.enabled = '1')
+                                or not exists (select j.jctmodulenodetypeid
+                                                 from jct_modules_nodetypes j
+                                                 join modules m on j.moduleid = m.moduleid
+                                                where j.nodetypeid = nodetypes.firstversionid) ) )";
+
+            DataTable NTTable = NTSelect.getTable( SelectClause, WhereClause );
+            foreach( CswNbtMetaDataNodeType NodeType in getNodeTypes() )
+            {
+                NodeType.Enabled = false;
+                foreach( DataRow NTRow in NTTable.Rows )
+                {
+                    if( CswConvert.ToInt32( NTRow["nodetypeid"] ) == NodeType.NodeTypeId )
+                    {
+                        NodeType.Enabled = true;
+                    }
+                }
+            }
+        } // ResetEnabledNodeTypes()
+
+
+        /// <summary>
         /// Converts a Generic nodetype to another Object Class
         /// Returns either the same nodetype or a new version of the nodetype if versioning was required
         /// </summary>

@@ -99,6 +99,7 @@
     <Content Include="js\common\layouts\csw.wizard.js" />
     <Content Include="js\CswCommon-vsdoc.js" />
     <Content Include="js\CswNbt-vsdoc.js" />
+    <Content Include="js\nbt\actions\csw.modules.js" />
     <Content Include="js\nbt\actions\csw.audithistory.js" />
     <Content Include="js\nbt\actions\csw.inspectionstatus.js" />
     <Content Include="js\nbt\actions\csw.sessions.js" />
@@ -256,14 +257,12 @@
     <None Include="js\common\_compileCommon.pl" />
     <None Include="js\common\_concatCswVsDoc.pl" />
     <None Include="js\nbt\_compileNbt.pl" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

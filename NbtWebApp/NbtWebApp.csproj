@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\CswNbtWebServiceModules.cs" />
     <Compile Include="Services\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="Services\CswNbtWebServiceGenerators.cs" />
     <Compile Include="Services\CswNbtWebServiceReport.cs" />
@@ -910,6 +911,7 @@
     <Content Include="js\thirdparty\theme-aristo\demo.html" />
     <Content Include="js\thirdparty\theme-aristo\index.html" />
     <Content Include="NodeTypeTreeService.asmx" />
+    <Content Include="perf.html" />
     <Content Include="Report.aspx" />
     <Content Include="Report.html" />
     <Content Include="Scripts\es5-shim.js" />

@@ -193,7 +193,11 @@ namespace ChemSW.Nbt.Security
         {
             get
             {
-                DateTime ChangedDate = CswConvert.ToDateTime( _UserPropDict[CswNbtObjClassUser.PasswordPropertyName + _DateSuffix] );
+                DateTime ChangedDate = DateTime.MinValue;
+                if( _UserPropDict.ContainsKey( CswNbtObjClassUser.PasswordPropertyName + _DateSuffix ) )
+                {
+                    ChangedDate = CswConvert.ToDateTime( _UserPropDict[CswNbtObjClassUser.PasswordPropertyName + _DateSuffix] );
+                }
                 Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
                 return ( ChangedDate == DateTime.MinValue ||
                          ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date );

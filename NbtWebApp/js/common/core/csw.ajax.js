@@ -41,7 +41,8 @@
             overrideError: false,
             formobile: false,
             async: true,
-            watchGlobal: true
+            watchGlobal: true,
+            removeTimer: true
         };
         if (options) {
             $.extend(o, options);
@@ -50,6 +51,12 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
 
         var startTime = new Date();
+        var stms = Csw.string(startTime.getMilliseconds());
+        while (stms.length < 3) {
+            stms = "0" + stms;
+        }
+        Csw.log(startTime.toLocaleTimeString() + "." + stms + "\t" +
+                url + "\tstarted\t");
         $.ajax({
             type: 'POST',
             async: o.async,
@@ -93,24 +100,27 @@
                                  "dbdeinit\t" +
                                  "treeloadersql");
                     }
-                    var ms = Csw.string(endTime.getMilliseconds());
-                    while (ms.length < 3) {
-                        ms = "0" + ms;
+                    var etms = Csw.string(endTime.getMilliseconds());
+                    while (etms.length < 3) {
+                        etms = "0" + etms;
                     }
-                    Csw.log(endTime.toLocaleTimeString() + "." + ms + "\t" +
-                             url + "\t" +
-                             (endTime - startTime) + "\t" +
-                             result.timer.serverinit + "\t" +
-                             result.timer.servertotal + "\t" +
-                             result.timer.dbinit + "\t" +
-                             result.timer.dbquery + "\t" +
-                             result.timer.dbcommit + "\t" +
-                             result.timer.dbdeinit + "\t" +
-                             result.timer.treeloadersql);
-
+                    if (false === Csw.isNullOrEmpty(result.timer)) {
+                    Csw.log(endTime.toLocaleTimeString() + "." + etms + "\t" +
+                            url + "\t" +
+                            (endTime - startTime) + "\t" +
+                            result.timer.serverinit + "\t" +
+                            result.timer.servertotal + "\t" +
+                            result.timer.dbinit + "\t" +
+                            result.timer.dbquery + "\t" +
+                            result.timer.dbcommit + "\t" +
+                            result.timer.dbdeinit + "\t" +
+                            result.timer.treeloadersql);
+                    }
                     delete result.AuthenticationStatus;
                     delete result.timeout;
-                    delete result.timer;
+                    if (Csw.bool(o.removeTimer)) {
+                        delete result.timer;
+                    }
 
                     Csw.clientSession.handleAuthenticationStatus({
                         status: auth,
