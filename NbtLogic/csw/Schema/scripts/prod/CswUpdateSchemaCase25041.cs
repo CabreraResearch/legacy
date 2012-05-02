@@ -36,11 +36,11 @@ namespace ChemSW.Nbt.Schema
             IEnumerable<CswNbtNode> InspectionTargetNodes = InspectionTargetOC.getNodes( false, true );
             foreach( CswNbtNode Node in InspectionTargetNodes )
             {
-                string nodeStatus = CswNbtNodeCaster.AsInspectionTarget( Node ).Status.Value;
-                if( nodeStatus == OOCStatus )
+                CswNbtObjClassInspectionTarget InspectionTargetNode = CswNbtNodeCaster.AsInspectionTarget( Node );
+                if( InspectionTargetNode.Status.Value == OOCStatus )
                 {
-                    CswNbtNodeCaster.AsInspectionTarget( Node ).Status.Value = DeficientStatus;
-                    Node.postChanges( true );
+                    InspectionTargetNode.Status.Value = DeficientStatus;
+                    InspectionTargetNode.postChanges( true );
                 }
             }
 
