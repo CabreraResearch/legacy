@@ -104,17 +104,18 @@
                     while (etms.length < 3) {
                         etms = "0" + etms;
                     }
+                    if (false === Csw.isNullOrEmpty(result.timer)) {
                     Csw.log(endTime.toLocaleTimeString() + "." + etms + "\t" +
-                             url + "\t" +
-                             (endTime - startTime) + "\t" +
-                             result.timer.serverinit + "\t" +
-                             result.timer.servertotal + "\t" +
-                             result.timer.dbinit + "\t" +
-                             result.timer.dbquery + "\t" +
-                             result.timer.dbcommit + "\t" +
-                             result.timer.dbdeinit + "\t" +
-                             result.timer.treeloadersql);
-
+                            url + "\t" +
+                            (endTime - startTime) + "\t" +
+                            result.timer.serverinit + "\t" +
+                            result.timer.servertotal + "\t" +
+                            result.timer.dbinit + "\t" +
+                            result.timer.dbquery + "\t" +
+                            result.timer.dbcommit + "\t" +
+                            result.timer.dbdeinit + "\t" +
+                            result.timer.treeloadersql);
+                    }
                     delete result.AuthenticationStatus;
                     delete result.timeout;
                     if (Csw.bool(o.removeTimer)) {
