@@ -1,6 +1,8 @@
 <!--#include file="MainHeader.html" -->
 <script language="javascript">
 
+    var row = 1;
+
     function login() {
 
         var div = Csw.literals.factory($('#div1'));
@@ -33,11 +35,11 @@
                 cell11.append('<br/>');
                 cell11.append('<br/>');
 
-                cell11.span({ text: 'Please select a View to test:' });
+                cell11.span({ text: 'Please select a Tree View to test:' });
                 var vs = cell11.viewSelect({
                     onSelect: function (itemobj) {
-                        if (itemobj.type.toLowerCase() != 'view') {
-                            error('Please select a View (not a Report or Action)');
+                        if (itemobj.type.toLowerCase() != 'view' || itemobj.viewmode.toLowerCase() != 'tree') {
+                            error('Please select a Tree View (not a Grid, List, Report, or Action)');
                             startBtn.disable();
                         }
                         else {
@@ -75,8 +77,6 @@
                     cellpadding: '5px'
                 });
 
-                var row = 1;
-
                 // Header row
                 tbl.cell(row, 1).append('<b>View</b>');
                 tbl.cell(row, 2).append('<b>Client Start</b>');
@@ -96,48 +96,57 @@
                     startBtn.disable();
                     stopBtn.enable();
 
-                    Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/runTree',
-                        data: {
-                            ViewId: vs.value().value,
-                            IdPrefix: 'test',
-                            IncludeNodeRequired: false,
-                            IncludeNodeKey: '',
-                            IncludeNodeId: '',
-                            NodePk: '',
-                            IncludeInQuickLaunch: false,
-                            DefaultSelect: ''
-                        },
-                        stringify: false,
-                        removeTimer: false,
-                        success: function (result) {
-                            var endtime = new Date();
+                    var runTreeData = {
+                        ViewId: vs.value().value,
+                        IdPrefix: 'test',
+                        IncludeNodeRequired: false,
+                        IncludeNodeKey: '',
+                        IncludeNodeId: '',
+                        NodePk: '',
+                        IncludeInQuickLaunch: false,
+                        DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name
+                    };
 
-                            tbl.cell(row, 1).append(vs.value().name);
-                            var stms = Csw.string(starttime.getMilliseconds());
-                            while (stms.length < 3) {
-                                stms = "0" + stms;
-                            }
-                            tbl.cell(row, 2).append(starttime.toLocaleTimeString() + "." + stms);
-                            var etms = Csw.string(endtime.getMilliseconds());
-                            while (etms.length < 3) {
-                                etms = "0" + etms;
-                            }
-                            tbl.cell(row, 3).append(endtime.toLocaleTimeString() + "." + etms);
-                            tbl.cell(row, 4).append(Csw.number(endtime - starttime));
-                            tbl.cell(row, 5).append(result.timer.serverinit);
-                            tbl.cell(row, 6).append(result.timer.servertotal);
-                            tbl.cell(row, 7).append(result.timer.dbinit);
-                            tbl.cell(row, 8).append(result.timer.dbquery);
-                            tbl.cell(row, 9).append(result.timer.dbcommit);
-                            tbl.cell(row, 10).append(result.timer.dbdeinit);
-                            tbl.cell(row, 11).append(result.timer.treeloadersql);
-                            row++;
+                    doAjax(tbl, vs.value().name, 'runTree', runTreeData, function (result) {
 
-                            to = setTimeout(test, Csw.number(delaytb.val(), 500));
-                        } // success
-                    }); // ajax.post()
-                }
+                        var nodeid = '';
+                        var nodekey = result.selectid;
+                        var nodetypeid = '';
+                        var editmode = Csw.enums.editMode.Edit;
+
+                        var getTabsData = {
+                            EditMode: editmode,
+                            NodeId: nodeid,
+                            SafeNodeKey: nodekey,
+                            NodeTypeId: nodetypeid,
+                            Date: '',
+                            filterToPropId: '',
+                            Multi: false
+                        };
+
+                        doAjax(tbl, vs.value().name, 'getTabs', getTabsData, function (result) {
+
+                            var tabid = result[1]['id'];
+
+                            var getPropsData = {
+                                EditMode: editmode,
+                                NodeId: nodeid,
+                                TabId: tabid,
+                                SafeNodeKey: nodekey,
+                                NodeTypeId: nodetypeid,
+                                Date: '',
+                                Multi: false,
+                                filterToPropId: '',
+                                ConfigMode: false
+                            };
+
+                            doAjax(tbl, vs.value().name, 'getProps', getPropsData, function (result) {
+
+                                to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                            });
+                        });
+                    });
+                } // test()
 
             }, // onAuthenticate
             onFail: function (msg) {
@@ -145,6 +154,41 @@
             } // onFail
         }); // CswLogin
     } // login()
+
+    function doAjax(tbl, view, methodname, data, onSuccess) {
+        var starttime = new Date();
+        Csw.ajax.post({
+            urlMethod: methodname,
+            data: data,
+            removeTimer: false,
+            success: function (result) {
+                Csw.log(result);
+                var endtime = new Date();
+                tbl.cell(row, 1).append(view + ': ' + methodname);
+                var stms = Csw.string(starttime.getMilliseconds());
+                while (stms.length < 3) {
+                    stms = "0" + stms;
+                }
+                tbl.cell(row, 2).append(starttime.toLocaleTimeString() + "." + stms);
+                var etms = Csw.string(endtime.getMilliseconds());
+                while (etms.length < 3) {
+                    etms = "0" + etms;
+                }
+                tbl.cell(row, 3).append(endtime.toLocaleTimeString() + "." + etms);
+                tbl.cell(row, 4).append(Csw.number(endtime - starttime));
+                tbl.cell(row, 5).append(result.timer.serverinit);
+                tbl.cell(row, 6).append(result.timer.servertotal);
+                tbl.cell(row, 7).append(result.timer.dbinit);
+                tbl.cell(row, 8).append(result.timer.dbquery);
+                tbl.cell(row, 9).append(result.timer.dbcommit);
+                tbl.cell(row, 10).append(result.timer.dbdeinit);
+                tbl.cell(row, 11).append(result.timer.treeloadersql);
+                row++;
+
+                Csw.tryExec(onSuccess, result);
+            } // success
+        }); // ajax.post()
+    } // doAjax()
 
     function error(msg) {
         $('#ErrorDiv').text(msg)
