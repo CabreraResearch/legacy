@@ -395,6 +395,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView SiblingView = new CswNbtView( _CswNbtResources );
             SiblingView.ViewName = "SiblingView";
             CswNbtViewRelationship ParentRelationship = SiblingView.AddViewRelationship( this.NodeType, false );
+            ParentRelationship.NodeIdsToFilterOut.Add( this.NodeId );
             SiblingView.AddViewPropertyAndFilter(
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName ),
@@ -414,7 +415,7 @@ namespace ChemSW.Nbt.ObjClasses
             ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( SiblingView, true, true, false, false );
             int NumOfSiblings = SiblingTree.getChildNodeCount();
 
-            return 1 < NumOfSiblings;
+            return 0 < NumOfSiblings;
         }
         #endregion
 
