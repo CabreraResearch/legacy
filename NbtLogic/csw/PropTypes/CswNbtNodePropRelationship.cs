@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = ( RelatedNodeId != null ) ?
-                                RelatedNodeId.PrimaryKey.ToString() : string.Empty;
+                                RelatedNodeId.ToString() : string.Empty;
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
             if( TargetType == NbtViewRelatedIdType.NodeTypeId )

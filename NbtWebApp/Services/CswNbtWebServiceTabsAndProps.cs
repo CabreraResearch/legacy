@@ -314,6 +314,14 @@ namespace ChemSW.Nbt.WebServices
         private Int32 _getUniqueRow( Int32 ProposedRow, Int32 Column )
         {
             Int32 Ret = ProposedRow;
+            if( ProposedRow < 1 )
+            {
+                ProposedRow = 1;
+            }
+            if( Column < 1 )
+            {
+                Column = 1;
+            }
             if( false == _DisplayRowsAndCols.ContainsKey( Column ) )
             {
                 _DisplayRowsAndCols.Add( Column, new Collection<Int32> { ProposedRow } );
@@ -796,7 +804,7 @@ namespace ChemSW.Nbt.WebServices
             ParentObj["entries"] = new JObject();
             foreach( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry in ViewNode.AllowedChildNodeTypes( true ) )
             {
-                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, string.Empty, string.Empty, string.Empty, string.Empty );
+                ParentObj["entries"][Entry.NodeType.NodeTypeName] = CswNbtWebServiceMainMenu.makeAddMenuItem( Entry, new CswPrimaryKey(), string.Empty, string.Empty, string.Empty );
             }
 
             JObject ChildObj = new JObject();

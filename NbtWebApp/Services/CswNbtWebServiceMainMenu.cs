@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -87,13 +86,11 @@ namespace ChemSW.Nbt.WebServices
 
             JObject Ret = new JObject();
 
-            string RelatedNodeId = string.Empty;
+            CswPrimaryKey RelatedNodeId = new CswPrimaryKey();
             string RelatedNodeName = string.Empty;
             string RelatedNodeTypeId = string.Empty;
             string RelatedObjectClassId = string.Empty;
             CswNbtNode Node = null;
-            Int32 NodeTypeId = Int32.MinValue;
-            Int32 NodeId = Int32.MinValue;
 
             if( false == string.IsNullOrEmpty( SafeNodeKey ) )
             {
@@ -101,9 +98,7 @@ namespace ChemSW.Nbt.WebServices
                 Node = _CswNbtResources.Nodes[NbtNodeKey];
                 if( null != Node )
                 {
-                    NodeId = Node.NodeId.PrimaryKey;
-                    NodeTypeId = Node.NodeTypeId;
-                    RelatedNodeId = NodeId.ToString();
+                    RelatedNodeId = Node.NodeId;
                     RelatedNodeName = Node.NodeName;
                     RelatedNodeTypeId = Node.NodeTypeId.ToString();
                     RelatedObjectClassId = Node.getObjectClassId().ToString();
@@ -290,19 +285,19 @@ namespace ChemSW.Nbt.WebServices
                     }
                     //else // tree or list
                     //{
-                        //ExportObj["haschildren"] = true;
-                        //ExportObj["Report XML"] = "";
-                        //if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-                        //{
-                        //    if( null == View.SessionViewId )
-                        //    {
-                        //        View.SaveToCache( false, false );
-                        //    }
-                        //    string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
-                        //                   ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
-                        //    ExportObj["Mobile XML"] = new JObject();
-                        //    ExportObj["Mobile XML"]["popup"] = PopUp;
-                        //}
+                    //ExportObj["haschildren"] = true;
+                    //ExportObj["Report XML"] = "";
+                    //if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                    //{
+                    //    if( null == View.SessionViewId )
+                    //    {
+                    //        View.SaveToCache( false, false );
+                    //    }
+                    //    string PopUp = "Popup_Export.aspx?sessionviewid=" + View.SessionViewId.ToString() + "&format=" +
+                    //                   ExportOutputFormat.MobileXML.ToString().ToLower() + "&renderingmode=" + View.ViewMode;
+                    //    ExportObj["Mobile XML"] = new JObject();
+                    //    ExportObj["Mobile XML"]["popup"] = PopUp;
+                    //}
                     //}
                 }
             } // if( null != View )
@@ -329,11 +324,11 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getMenu()
 
-        public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, string RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, CswPrimaryKey RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             return new JObject( new JProperty( "text", Entry.NodeType.NodeTypeName ),
                                 new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                new JProperty( "relatednodeid", RelatedNodeId ),  //for Grid Props
+                                new JProperty( "relatednodeid", RelatedNodeId.ToString() ),  //for Grid Props
                                 new JProperty( "relatednodename", RelatedNodeName ),  //for Grid Props
                                 new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
                                 new JProperty( "relatedobjectclassid", RelatedObjectClassId ),
