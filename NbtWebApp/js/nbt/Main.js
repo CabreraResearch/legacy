@@ -65,7 +65,7 @@ window.initMain = window.initMain || function (undefined) {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
-                $('#header_dashboard').CswDashboard();
+                refreshDashboard();
 
                 universalsearch = Csw.composites.universalSearch({}, {
                     $searchbox_parent: $('#SearchDiv'),
@@ -101,6 +101,9 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     onQuotas: function () {
                         handleAction({ 'actionname': 'Quotas' });
+                    },
+                    onModules: function () {
+                        handleAction({ 'actionname': 'Modules' });
                     },
                     onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
@@ -163,6 +166,10 @@ window.initMain = window.initMain || function (undefined) {
             } // onAuthenticate
         }); // CswLogin
 
+    }
+    
+    function refreshDashboard() {
+        $('#header_dashboard').empty().CswDashboard();
     }
 
     // initAll()
@@ -1093,6 +1100,14 @@ window.initMain = window.initMain || function (undefined) {
                 });
 
                 break;
+            case 'Modules':
+                Csw.actions.modules(centerTopDiv, {
+                    onModuleChange: function() {
+                        refreshDashboard();
+                        refreshViewSelect();
+                    }
+                });
+                break;
             case 'Sessions':
                 Csw.actions.sessions(centerTopDiv);
                 break;
@@ -1127,3 +1142,4 @@ window.initMain = window.initMain || function (undefined) {
 
     // _handleAction()
 };
+
