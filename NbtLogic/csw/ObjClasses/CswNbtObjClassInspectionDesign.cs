@@ -304,7 +304,6 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
                 QuestionsFlt.Reset();
-                CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
                 foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                 {
                     CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;

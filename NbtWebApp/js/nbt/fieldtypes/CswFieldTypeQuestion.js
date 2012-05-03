@@ -20,7 +20,7 @@
             var dateAnswered = (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : '';
             var dateCorrected = (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
 
-            var isActionRequired = "True" === propVals.isactionrequired;//case 25035
+            var isActionRequired = Csw.bool(propVals.isactionrequired);//case 25035
 
             if (o.ReadOnly) {
                 propDiv.append('Answer: ' + answer);
