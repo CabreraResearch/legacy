@@ -299,6 +299,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            //case 25035
+            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Action_Required ) )
+            {
+                CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                QuestionsFlt.Reset();
+                CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
+                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                {
+                    CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
+                    QuestionProp.IsActionRequired = true;
+                }
+            }
             _CswNbtObjClassDefault.afterPopulateProps();
             this.Status.ReadOnly = ( true != _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }//afterPopulateProps()
@@ -332,7 +344,6 @@ namespace ChemSW.Nbt.ObjClasses
                         _Deficient = ( _Deficient || !QuestionProp.IsCompliant );
                         if( QuestionProp.Answer.Trim() == string.Empty )
                         {
-
                             UnansweredQuestions.Add( Prop.NodeTypeProp.FullQuestionNo );
                             _allAnswered = false;
                         }

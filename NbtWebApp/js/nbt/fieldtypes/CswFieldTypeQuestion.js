@@ -7,7 +7,6 @@
     var multi = false;
     var methods = {
         init: function (o) {
-
             var propDiv = o.propDiv;
             propDiv.empty();
             var propVals = o.propData.values;
@@ -20,6 +19,8 @@
 
             var dateAnswered = (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : '';
             var dateCorrected = (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
+
+            var isActionRequired = "True" === propVals.isactionrequired;//case 25035
 
             if (o.ReadOnly) {
                 propDiv.append('Answer: ' + answer);
@@ -51,7 +52,7 @@
                                       .select({
                                           ID: o.ID + '_ans',
                                           onChange: function () {
-                                              checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                                              checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
                                               o.onChange();
                                           },
                                           values: splitAnswers,
@@ -63,7 +64,7 @@
                     ID: o.ID + '_cor',
                     text: correctiveAction,
                     onChange: function () {
-                        checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                        checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
                         o.onChange();
                     }
                 });
@@ -75,7 +76,7 @@
                     onChange: o.onChange
                 });
 
-                checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
             }
         },
         save: function (o) {
@@ -100,7 +101,7 @@
         }
     };
 
-    function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox) {
+    function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired) {
         if (false === multi) {
             var splitCompliantAnswers = compliantAnswers.split(',');
             var isCompliant = true;
@@ -113,7 +114,8 @@
                     isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
                 }
             }
-            if (isCompliant) {
+            if (isCompliant || false === isActionRequired) {//case 25035
+
                 answerSel.removeClass('CswFieldTypeQuestion_Deficient');
                 if (correctiveAction === '') {
                     correctiveActionLabel.hide();
