@@ -717,8 +717,8 @@
                     'ID': o.ID + '_editfilt',
                     'FirstCellRightAlign': true
                 });
-                filterTable.cell(1, 1).text('Case Sensitive');
 
+                filterTable.cell(1, 1).text('Case Sensitive');
                 filterTable.cell(1, 2)
                     .input({
                         ID: o.ID + '_casecb',
@@ -728,6 +728,18 @@
                             viewNodeData.casesensitive = $this.is(':checked');
                         },
                         checked: Csw.bool(viewNodeData.casesensitive)
+                    });
+
+                filterTable.cell(2, 1).text('Show At Runtime');
+                filterTable.cell(2, 2)
+                    .input({
+                        ID: o.ID + '_showcb',
+                        type: Csw.enums.inputTypes.checkbox,
+                        onChange: function () {
+                            var $this = $(this);
+                            viewNodeData.showatruntime = $this.is(':checked');
+                        },
+                        checked: Csw.bool(viewNodeData.showatruntime)
                     });
             });
         }
