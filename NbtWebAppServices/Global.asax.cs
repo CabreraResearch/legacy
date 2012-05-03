@@ -2,9 +2,8 @@
 using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
-using NbtWebAppServices.WebServices;
 
-namespace StudentService
+namespace NbtWebAppServices
 {
     public class Global : HttpApplication
     {
