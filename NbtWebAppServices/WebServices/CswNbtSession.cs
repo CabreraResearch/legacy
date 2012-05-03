@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System;
+using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
@@ -18,7 +19,7 @@ namespace NbtWebAppServices.WebServices
         CswTimer Timer = new CswTimer();
         double ServerInitTime = 0;
         private HttpContext Context = HttpContext.Current;
-        public CswNbtSessionResources CswNbtSessionResources;
+        public static CswNbtSessionResources CswNbtSessionResources;
 
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "Session/init" )]
@@ -115,5 +116,73 @@ namespace NbtWebAppServices.WebServices
 
             return CswSessionAuthentication;
         }
+
+        //[OperationContract]
+        //[WebInvoke( Method = "POST", UriTemplate = "Session/all" )]
+        //public string getSessions()
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+
+        //            SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
+        //            foreach( CswSessionsListEntry Entry in SessionList.Values )
+        //            {
+        //                // Filter to the administrator's access id only
+        //                if( Entry.AccessId == _CswNbtResources.AccessId || _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+        //                {
+        //                    JObject JSession = new JObject();
+        //                    JSession["sessionid"] = Entry.SessionId;
+        //                    JSession["username"] = Entry.UserName;
+        //                    JSession["logindate"] = Entry.LoginDate.ToString();
+        //                    JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
+        //                    JSession["accessid"] = Entry.AccessId;
+        //                    ReturnVal[Entry.SessionId] = JSession;
+        //                } // if (Entry.AccessId == Master.AccessID)
+        //            } // foreach (CswAuthenticator.SessionListEntry Entry in SessionList.Values)
+        //        }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception Ex )
+        //    {
+        //        ReturnVal = jError( Ex );
+        //    }
+
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+        //    return ReturnVal.ToString();
+
+        //} // getSessions()
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "Session/end" )]
+        public CswSessionRequest end( string SessionId )
+        {
+            CswSessionRequest Ret = new CswSessionRequest();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                CswNbtSessionResources Resources = CswNbtSessionResources.initResources( Context );
+                AuthenticationStatus = Resources.attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtSessionResources.CswSessionManager.clearSession( SessionId );
+                }
+                Resources.deInitResources();
+                ServerInitTime = Timer.ElapsedDurationInMilliseconds;
+            }
+            catch( Exception Ex )
+            {
+                //ReturnVal = jError( Ex );
+            }
+
+            return Ret;
+
+        } // endSession()
     }
 }
