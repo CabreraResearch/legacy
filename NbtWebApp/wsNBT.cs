@@ -943,6 +943,35 @@ namespace ChemSW.Nbt.WebServices
 
         } // runTree()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getRuntimeViewFilters( string ViewId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtView View = _getView( ViewId );
+                    var ws = new CswNbtWebServiceView( _CswNbtResources );
+                    ReturnVal = ws.getRuntimeViewFilters( View );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getRuntimeViewFilters()
 
         #region Grid Views
 
@@ -1848,7 +1877,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getViewPropFilterUI( string ViewJson, string PropArbitraryId )
+        public string getViewPropFilterUI( string ViewJson, string ViewId, string PropArbitraryId )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1860,7 +1889,18 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtViewBuilder( _CswNbtResources );
-                    ReturnVal = ws.getVbProp( ViewJson, PropArbitraryId );
+                    if( ViewJson != string.Empty )
+                    {
+                        ReturnVal = ws.getVbProp( ViewJson, PropArbitraryId );
+                    }
+                    else if( ViewId != string.Empty )
+                    {
+                        CswNbtView View = _getView( ViewId );
+                        if( View != null )
+                        {
+                            ReturnVal = ws.getVbProp( View, PropArbitraryId );
+                        }
+                    }
                 }
 
                 _deInitResources();

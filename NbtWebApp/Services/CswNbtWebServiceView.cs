@@ -514,7 +514,24 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // getViewChildOptions()
 
-
+        public JObject getRuntimeViewFilters( CswNbtView View )
+        {
+            JObject ret = new JObject();
+            if( View != null )
+            {
+                // We need the property arbitrary id, so we're doing this by property, not by filter.  
+                // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
+                foreach( CswNbtViewProperty Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) )
+                {
+                    JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
+                    if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
+                    {
+                        ret.Add( PropertyJson );
+                    }
+                }
+            }
+            return ret;
+        } // getRuntimeViewFilters()
 
         #region Helper Functions
 

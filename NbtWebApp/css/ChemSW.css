@@ -1316,3 +1316,9 @@ ul li div {
     background-color: &cswbgcolorhilite;
     cursor: pointer;
 }
+
+.viewfilterstbl
+{
+    background-color: &cswheaderbgcolor;
+    padding: 3px;
+}

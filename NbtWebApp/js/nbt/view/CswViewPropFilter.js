@@ -60,6 +60,7 @@
                 includePropertyName: false,
                 advancedIsHidden: false,
                 selectedSubfieldVal: '',
+                selectedFilterMode: '',
                 selectedFilterVal: '',
                 autoFocusInput: false
             };
@@ -71,9 +72,14 @@
 
             if (Csw.isNullOrEmpty(o.propsData) && false === Csw.isNullOrEmpty(o.proparbitraryid)) {
                 var jsonData = {
-                    ViewJson: JSON.stringify(o.viewJson),
+                    ViewJson: '',
+                    ViewId: o.viewid,
                     PropArbitraryId: o.proparbitraryid
                 };
+                if(false === Csw.isNullOrEmpty(o.viewJson))
+                {
+                    jsonData.ViewJson = JSON.stringify(o.viewJson);
+                }
 
                 Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/getViewPropFilterUI',
@@ -104,7 +110,7 @@
                     subfields = (Csw.contains(propsData, 'subfields')) ? propsData.subfields : [],
                     filtValOpt = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.options : {},
                     filtValAry = [],
-                    filtSelected = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {},
+                    filtSelected = Csw.string(filtOpt.selectedFilterVal, (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {}),
                     placeholder = '',
                     subfieldCell, filterModesCell, propFilterValueCell, defaultSubField,
                     field, thisField, filtermodes, mode, thisMode, subfieldsList, filterModesList, filt, filtInput;
@@ -115,7 +121,6 @@
                         .empty()
                         .span({ text: propertyName, ID: makePropFilterId(propertyName, filtOpt) }) //3
                 }
-
                 //Row propRow, Column 4: Subfield Cell
                 subfieldCell = propFilterTable.cell(filtOpt.propRow, (filtOpt.firstColumn + 1)) //4
                     .empty();
@@ -164,6 +169,7 @@
                     onChange: function () {
                         var r = {
                             selectedSubfieldVal: subfieldsList.val(),
+                            selectedFilterMode: '',
                             selectedFilterVal: '',
                             advancedIsHidden: Csw.bool(subfieldsList.$.is(':hidden'))
                         };
@@ -184,7 +190,8 @@
                     onChange: function () {
                         var r = {
                             selectedSubfieldVal: subfieldsList.val(),
-                            selectedFilterVal: filterModesList.val(),
+                            selectedFilterMode: filterModesList.val(),
+                            selectedFilterVal: '',
                             advancedIsHidden: Csw.bool(filterModesList.$.is(':hidden'))
                         };
                         $.extend(filtOpt, r);
@@ -192,8 +199,8 @@
                     }
                 });
 
-                if (false === Csw.isNullOrEmpty(filtOpt.selectedFilterVal)) {
-                    filterModesList.val(filtOpt.selectedFilterVal).propDom('selected', true);
+                if (false === Csw.isNullOrEmpty(filtOpt.selectedFilterMode)) {
+                    filterModesList.val(filtOpt.selectedFilterMode).propDom('selected', true);
                 }
 
                 if (filtOpt.advancedIsHidden) {
