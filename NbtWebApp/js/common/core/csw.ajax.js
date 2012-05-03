@@ -61,8 +61,10 @@
             success: function (data) {
                 var endTime = new Date();
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
-                var result = $.parseJSON(data.d);
-
+                var result = data;  
+                if(data.d) {
+                    result = $.parseJSON(data.d);
+                }
                 if (result.error !== undefined) {
                     if (false === o.overrideError) {
                         internal.handleAjaxError({
@@ -172,7 +174,7 @@
             async: o.async,
             url: url,
             dataType: 'json',
-            data: JSON.stringify(o.data),
+            data: $.param(o.data),
             success: function (result) {
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
 
