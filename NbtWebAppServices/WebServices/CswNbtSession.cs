@@ -13,7 +13,7 @@ namespace NbtWebAppServices.WebServices
 {
     [ServiceContract]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class Session
+    public class CswNbtSession
     {
         CswTimer Timer = new CswTimer();
         double ServerInitTime = 0;

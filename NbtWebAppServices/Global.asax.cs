@@ -2,6 +2,7 @@
 using System.ServiceModel.Activation;
 using System.Web;
 using System.Web.Routing;
+using NbtWebAppServices.WebServices;
 
 namespace NbtWebAppServices
 {
@@ -9,7 +10,7 @@ namespace NbtWebAppServices
     {
         protected void Application_Start( object sender, EventArgs e )
         {
-            RouteTable.Routes.Add( new ServiceRoute( "", new WebServiceHostFactory(), typeof( Session ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "", new WebServiceHostFactory(), typeof( CswNbtSession ) ) );
         }
 
         protected void Application_BeginRequest( object sender, EventArgs e )
