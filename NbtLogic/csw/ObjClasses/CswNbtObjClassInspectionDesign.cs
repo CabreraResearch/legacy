@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -210,11 +209,118 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ); }
         }
 
+        private static CswNbtView _getSystemView( CswNbtResources CswNbtResources, string ViewName )
+        {
+            List<CswNbtView> Views = CswNbtResources.ViewSelect.restoreViews( ViewName );
+            CswNbtNode ChemSwAdminRoleNode = CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+            return Views.FirstOrDefault( View => View.Visibility == NbtViewVisibility.Role &&
+                View.VisibilityRoleId == ChemSwAdminRoleNode.NodeId );
+        }
+
+        public static CswNbtView SiLocationsTreeView( CswNbtResources CswNbtResources )
+        {
+            CswNbtView Ret = _getSystemView( CswNbtResources, "SI Location Tree" );
+            if( null == Ret )
+            {
+                CswNbtNode ChemSwAdminRoleNode = CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                Ret = new CswNbtView( CswNbtResources );
+                Ret.makeNew( "SI Locations Tree", NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.Category = "SI Configuration";
+                Ret.ViewMode = NbtViewRenderingMode.Tree;
+
+                CswNbtMetaDataObjectClass LocationOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
+                CswNbtMetaDataObjectClassProp NameOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.NamePropertyName );
+                CswNbtViewProperty NameVp = Ret.AddViewProperty( LocationVr, NameOcp );
+                NameVp.SortBy = true;
+                Ret.save();
+            }
+            return Ret;
+        }
+
+        public static CswNbtView SiLocationsListView( CswNbtResources CswNbtResources )
+        {
+            CswNbtView Ret = _getSystemView( CswNbtResources, "SI Location List" );
+            if( null == Ret )
+            {
+                CswNbtNode ChemSwAdminRoleNode = CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                Ret = new CswNbtView( CswNbtResources );
+                Ret.makeNew( "SI Locations List", NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.Category = "SI Configuration";
+                Ret.ViewMode = NbtViewRenderingMode.List;
+
+                CswNbtMetaDataObjectClass LocationOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
+                CswNbtMetaDataObjectClassProp NameOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.NamePropertyName );
+                CswNbtViewProperty NameVp = Ret.AddViewProperty( LocationVr, NameOcp );
+                NameVp.SortBy = true;
+                Ret.save();
+            }
+            return Ret;
+        }
+
+        private static CswNbtView _getSiInspectionBaseView( CswNbtResources CswNbtResources, string ViewName )
+        {
+            CswNbtView Ret = _getSystemView( CswNbtResources, ViewName );
+            if( null == Ret )
+            {
+                CswNbtNode ChemSwAdminRoleNode = CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                Ret = new CswNbtView( CswNbtResources );
+                Ret.makeNew( ViewName, NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.Category = "SI Configuration";
+                Ret.ViewMode = NbtViewRenderingMode.List;
+
+                CswNbtMetaDataObjectClass InspectionDesignOc = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                CswNbtViewRelationship InspectionDesignVr = Ret.AddViewRelationship( InspectionDesignOc, true );
+
+                CswNbtViewProperty DueDateVp = Ret.AddViewPropertyByName( InspectionDesignVr, InspectionDesignOc, DatePropertyName );
+                DueDateVp.SortBy = true;
+
+                CswNbtViewProperty LocationVp = Ret.AddViewPropertyByName( InspectionDesignVr, InspectionDesignOc, LocationPropertyName );
+                LocationVp.SortBy = true;
+
+                Ret.AddViewPropertyByName( InspectionDesignVr, InspectionDesignOc, "Barcode" );
+
+                CswNbtMetaDataObjectClassProp StatusOcp = InspectionDesignOc.getObjectClassProp( StatusPropertyName );
+                CswNbtViewProperty StatusVp = Ret.AddViewProperty( InspectionDesignVr, StatusOcp );
+                string Completed = InspectionStatusAsString( InspectionStatus.Completed );
+                string Cancelled = InspectionStatusAsString( InspectionStatus.Cancelled );
+                string CompletedLate = InspectionStatusAsString( InspectionStatus.Completed_Late );
+
+                Ret.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Completed, false );
+                Ret.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Cancelled, false );
+                Ret.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CompletedLate, false );
+
+                Ret.save();
+            }
+            return Ret;
+        }
+
+        public static CswNbtView SiInspectionsByDateView( CswNbtResources CswNbtResources )
+        {
+            return _getSiInspectionBaseView( CswNbtResources, "SI Inspections by Date" );
+        }
+
+        public static CswNbtView SiInspectionsByUserView( CswNbtResources CswNbtResources )
+        {
+            return _getSiInspectionBaseView( CswNbtResources, "SI Inspections by User" );
+        }
+
+        public static CswNbtView SiInspectionsByBarcodeView( CswNbtResources CswNbtResources )
+        {
+            return _getSiInspectionBaseView( CswNbtResources, "SI Inspections by Barcode" );
+        }
+
+        public static CswNbtView SiInspectionsByLocationView( CswNbtResources CswNbtResources )
+        {
+            return _getSiInspectionBaseView( CswNbtResources, "SI Inspections by Location" );
+        }
+
         #region Inherited Events
         /// <summary>
         /// Set any existing pending or overdue inspections on the same parent to missed
         /// </summary>
-        public override void beforeCreateNode( bool OverrideUniqueValidation ) 
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             if( Tristate.True != this.IsFuture.Checked &&
                 null != this.Generator.RelatedNodeId )
@@ -319,7 +425,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp ButtonOCP = NodeTypeProp.getObjectClassProp();
                 if( ButtonOCP.PropName == FinishPropertyName )
                 {
-                    
+
                     bool _OOC = false;
                     bool _allAnswered = true;
                     bool _allAnsweredinTime = true;
@@ -374,14 +480,14 @@ namespace ChemSW.Nbt.ObjClasses
                         Message = "Inspection can not be finished until all questions are answered.  Questions remaining: " + UnansweredQuestions.ToString();
                     }
                 } // if( ButtonOCP.PropName == FinishPropertyName )
-                
+
                 else if( ButtonOCP.PropName == CancelPropertyName )
                 {
                     Message = "Inspection has been cancelled.";
                     ButtonAction = NbtButtonAction.refresh;
                     this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
                 }
-                
+
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;
