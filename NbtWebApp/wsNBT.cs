@@ -251,16 +251,16 @@ namespace ChemSW.Nbt.WebServices
                         JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
                     }
                     JObj["timer"] = new JObject();
-                    JObj["timer"]["serverinit"] = ServerInitTime;
+                    JObj["timer"]["serverinit"] = Math.Round( ServerInitTime, 3 );
                     if( null != _CswNbtResources )
                     {
-                        JObj["timer"]["dbinit"] = _CswNbtResources.CswLogger.DbInitTime;
-                        JObj["timer"]["dbquery"] = _CswNbtResources.CswLogger.DbQueryTime;
-                        JObj["timer"]["dbcommit"] = _CswNbtResources.CswLogger.DbCommitTime;
-                        JObj["timer"]["dbdeinit"] = _CswNbtResources.CswLogger.DbDeInitTime;
-                        JObj["timer"]["treeloadersql"] = _CswNbtResources.CswLogger.TreeLoaderSQLTime;
+                        JObj["timer"]["dbinit"] = Math.Round( _CswNbtResources.CswLogger.DbInitTime, 3 );
+                        JObj["timer"]["dbquery"] = Math.Round( _CswNbtResources.CswLogger.DbQueryTime, 3 );
+                        JObj["timer"]["dbcommit"] = Math.Round( _CswNbtResources.CswLogger.DbCommitTime, 3 );
+                        JObj["timer"]["dbdeinit"] = Math.Round( _CswNbtResources.CswLogger.DbDeInitTime, 3 );
+                        JObj["timer"]["treeloadersql"] = Math.Round( _CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
                     }
-                    JObj["timer"]["servertotal"] = Timer.ElapsedDurationInMilliseconds;
+                    JObj["timer"]["servertotal"] = Math.Round( Timer.ElapsedDurationInMilliseconds, 3 );
                 }
             }
         }//_jAuthenticationStatus()
