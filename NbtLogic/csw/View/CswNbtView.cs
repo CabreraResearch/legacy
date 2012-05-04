@@ -325,6 +325,8 @@ namespace ChemSW.Nbt
                             return AddViewProperty( ParentViewRelationship, LocationNtp );
                         }
                         break;
+                    default:
+                        throw new CswDniException( ErrorType.Error, "Cannot add a View Property without a Location or Barcode property.", "Attempted to call AddViewPropertyByFieldType() with an unsupported FieldType." );
                 }
             }
             return null;
