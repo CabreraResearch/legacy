@@ -248,32 +248,6 @@ namespace ChemSW.Nbt
             return ViewsSelect.getTable();
         }
 
-        /*
-         
-         
-            if( Visibility == NbtViewVisibility.User &&
-                null != VisibilityUserId )
-            {
-                CswNbtNode ChemSwAdminUser = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                if( VisibilityUserId == ChemSwAdminUser.NodeId &&
-                    _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
-                {
-                    Ret = false;
-                }
-            }
-            else if( Visibility == NbtViewVisibility.Role &&
-                null != VisibilityRoleId )
-            {
-                CswNbtNode ChemSwAdminRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                if( VisibilityRoleId == ChemSwAdminRole.NodeId &&
-                    _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
-                {
-                    Ret = false;
-                }
-            }
-         
-         */
-
         /// <summary>
         /// Get a DataTable of all enabled views in the database
         /// </summary>
