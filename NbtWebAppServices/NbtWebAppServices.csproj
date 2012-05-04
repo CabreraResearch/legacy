@@ -111,7 +111,8 @@
     <Compile Include="Core\CswWebCookies.cs" />
     <Compile Include="Session\CswNbtSessionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebServices\CswNbtSession.cs" />
+    <Compile Include="WebServices\CswNbtWsLocations.cs" />
+    <Compile Include="WebServices\CswNbtWsSession.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">

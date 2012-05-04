@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Web;
 using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Security;
@@ -10,13 +11,28 @@ namespace NbtWebAppServices.Response
     {
         private CswTimer _Timer;
         private double _ServerInitTime;
-        public CswNbtWebServiceResponse()
+        private HttpContext _Context;
+
+        public CswNbtWebServiceResponse( HttpContext Context )
         {
             _ServerInitTime = 0;
             _Timer = new CswTimer();
+            _Context = Context;
+            SessionAuthenticationStatus = new CswNbtSessionAuthenticationStatus();
+            SessionAuthenticationStatus.AuthenticationStatus = AuthenticationStatus.Unknown.ToString();
+            try
+            {
+                CswNbtSessionResources = CswNbtSessionResources.initResources( _Context );
+                AuthenticationStatus Auth = CswNbtSessionResources.attemptRefresh( true );
+                SessionAuthenticationStatus.AuthenticationStatus = Auth.ToString();
+            }
+            catch( Exception ex )
+            {
+                addError( ex );
+            }
         }
 
-        public CswNbtSessionAuthenticationStatus AuthenticationStatus { get; set; }
+        public CswNbtSessionAuthenticationStatus SessionAuthenticationStatus { get; set; }
 
         public CswNbtWebServiceStatus Status { get; set; }
 
@@ -24,39 +40,45 @@ namespace NbtWebAppServices.Response
 
         public Object Data { get; set; }
 
-        public void finalizeResponse( AuthenticationStatus AuthenticationStatusIn, CswNbtSessionResources CswNbtSessionResources, object Data )
+        public CswNbtSessionResources CswNbtSessionResources { get; set; }
+
+        public void finalizeResponse( object DataObj, CswNbtResources OtherResources = null )
         {
-
-            CswNbtWebServiceResponse Response = new CswNbtWebServiceResponse();
-            Response.AuthenticationStatus = new CswNbtSessionAuthenticationStatus
-                                                              {
-                                                                  AuthenticationStatus = AuthenticationStatusIn.ToString()
-                                                              };
-
-            if( null != CswNbtSessionResources &&
-                null != CswNbtSessionResources.CswSessionManager )
+            try
             {
-                CswDateTime CswTimeout = new CswDateTime( CswNbtSessionResources.CswNbtResources, CswNbtSessionResources.CswSessionManager.TimeoutDate );
-                Response.AuthenticationStatus.TimeOut = CswTimeout.ToClientAsJavascriptString();
+                if( null != CswNbtSessionResources &&
+                     null != CswNbtSessionResources.CswSessionManager )
+                {
+                    CswDateTime CswTimeout = new CswDateTime( CswNbtSessionResources.CswNbtResources, CswNbtSessionResources.CswSessionManager.TimeoutDate );
+                    SessionAuthenticationStatus.TimeOut = CswTimeout.ToClientAsJavascriptString();
+                }
+                Performance = new CswNbtWebServicePerformance
+                {
+                    ServerInit = _ServerInitTime
+                };
+                if( null != CswNbtSessionResources &&
+                     null != CswNbtSessionResources.CswNbtResources )
+                {
+                    Performance.DbInit = CswNbtSessionResources.CswNbtResources.CswLogger.DbInitTime;
+                    Performance.DbQuery = CswNbtSessionResources.CswNbtResources.CswLogger.DbQueryTime;
+                    Performance.DbCommit = CswNbtSessionResources.CswNbtResources.CswLogger.DbCommitTime;
+                    Performance.DbDeinit = CswNbtSessionResources.CswNbtResources.CswLogger.DbDeInitTime;
+                    Performance.TreeLoaderSql = CswNbtSessionResources.CswNbtResources.CswLogger.TreeLoaderSQLTime;
+                }
+                Performance.ServerTotal = _Timer.ElapsedDurationInMilliseconds;
+                Data = "Response Complete";
+                if( null != CswNbtSessionResources )
+                {
+                    CswNbtSessionResources.deInitResources( OtherResources );
+                }
             }
-            Response.Performance = new CswNbtWebServicePerformance
-                                              {
-                                                  ServerInit = _ServerInitTime
-                                              };
-            if( null != CswNbtSessionResources &&
-                null != CswNbtSessionResources.CswNbtResources )
+            catch( Exception Ex )
             {
-                Response.Performance.DbInit = CswNbtSessionResources.CswNbtResources.CswLogger.DbInitTime;
-                Response.Performance.DbQuery = CswNbtSessionResources.CswNbtResources.CswLogger.DbQueryTime;
-                Response.Performance.DbCommit = CswNbtSessionResources.CswNbtResources.CswLogger.DbCommitTime;
-                Response.Performance.DbDeinit = CswNbtSessionResources.CswNbtResources.CswLogger.DbDeInitTime;
-                Response.Performance.TreeLoaderSql = CswNbtSessionResources.CswNbtResources.CswLogger.TreeLoaderSQLTime;
+                addError( Ex );
             }
-            Response.Performance.ServerTotal = _Timer.ElapsedDurationInMilliseconds;
-            Response.Data = Data;
         }
 
-        public void addError( Exception Exception, CswNbtSessionResources CswNbtSessionResources )
+        public void addError( Exception Exception )
         {
             CswNbtWebServiceError Error = new CswNbtWebServiceError( CswNbtSessionResources );
             Status = Error.getErrorStatus( Exception );

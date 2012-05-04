@@ -10,7 +10,8 @@ namespace NbtWebAppServices
     {
         protected void Application_Start( object sender, EventArgs e )
         {
-            RouteTable.Routes.Add( new ServiceRoute( "", new WebServiceHostFactory(), typeof( CswNbtSession ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "", new WebServiceHostFactory(), typeof( CswNbtWsSession ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "", new WebServiceHostFactory(), typeof( CswNbtWsLocations ) ) );
         }
 
         protected void Application_BeginRequest( object sender, EventArgs e )
