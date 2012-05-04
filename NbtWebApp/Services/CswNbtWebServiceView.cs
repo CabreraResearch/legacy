@@ -533,6 +533,26 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // getRuntimeViewFilters()
 
+        public JObject updateRuntimeViewFilters( CswNbtView View, JObject NewFiltersJson )
+        {
+            foreach( CswNbtViewPropertyFilter PropFilter in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) )
+            {
+                if( null != NewFiltersJson[PropFilter.ArbitraryId] )
+                {
+                    JObject NewFilter = (JObject) NewFiltersJson[PropFilter.ArbitraryId];
+                    PropFilter.FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) NewFilter["filter"].ToString();
+                    PropFilter.SubfieldName = (CswNbtSubField.SubFieldName) NewFilter["subfield"].ToString();
+                    PropFilter.Value = NewFilter["filtervalue"].ToString();
+                }
+            }
+            
+            View.SaveToCache( true, true );
+
+            JObject ret = new JObject();
+            ret["newviewid"] = View.SessionViewId.ToString();
+            return ret;
+        }
+
         #region Helper Functions
 
         private Collection<CswNbtViewRelationship> getNodeTypeRelatedNodeTypesAndObjectClasses( Int32 FirstVersionId, CswNbtView View, Int32 Level )

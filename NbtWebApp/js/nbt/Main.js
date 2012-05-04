@@ -915,10 +915,12 @@ window.initMain = window.initMain || function (undefined) {
             ID: 'main_viewfilters',
             parent: Csw.literals.factory($('#LeftDiv')),
             viewid: o.viewid,
-            onEditFilters: function(filtersJson) {
-                
-            }
-        });
+            onEditFilters: function(newviewid) {
+                var newopts = o;
+                newopts.viewid = newviewid;
+                refreshNodesTree(newopts);
+            } // onEditFilters
+        }); // viewFilters
 
         mainTree = Csw.nbt.nodeTree({
             ID: 'main',

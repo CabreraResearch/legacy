@@ -973,6 +973,36 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getRuntimeViewFilters()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string updateRuntimeViewFilters( string ViewId, string FiltersJson )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtView View = _getView( ViewId );
+                    var ws = new CswNbtWebServiceView( _CswNbtResources );
+                    ReturnVal = ws.updateRuntimeViewFilters( View, JObject.Parse( FiltersJson ) );
+                }
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getRuntimeViewFilters()
+
         #region Grid Views
 
         private void _clearGroupBy( CswNbtViewRelationship Relationship )

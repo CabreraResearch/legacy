@@ -11,6 +11,7 @@
                 ID: '',
                 parent: '',
                 filtersMethod: 'getRuntimeViewFilters',
+                applyMethod: 'updateRuntimeViewFilters',
                 viewid: '',
                 onEditFilters: null
             };
@@ -80,7 +81,18 @@
                                             filtersJson[filtJson.arbitraryid] = newFiltJson;
                                         });
                                     });
-                                    Csw.tryExec(internal.onEditFilters, filtersJson);
+                                    
+                                    Csw.ajax.post({
+                                        urlMethod: internal.applyMethod,
+                                        data: { 
+                                            ViewId: internal.viewid, 
+                                            FiltersJson: JSON.stringify(filtersJson) 
+                                        },
+                                        success: function(data) {
+                                            Csw.tryExec(internal.onEditFilters, data.newviewid);
+                                        }
+                                    });
+                                    
                                 } // onClick
                             });
                             div.show();
