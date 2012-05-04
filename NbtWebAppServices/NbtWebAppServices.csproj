@@ -103,7 +103,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Response\CswNbtWebServiceError.cs" />
-    <Compile Include="Response\CswNbtWebServiceResponseEmpty.cs" />
+    <Compile Include="Response\CswNbtWebServiceResponseNoData.cs" />
     <Compile Include="Response\CswNbtWebServiceResponse.cs" />
     <Compile Include="Response\ICswNbtWebServiceResponse.cs" />
     <Compile Include="Session\CswNbtStatistics.cs" />

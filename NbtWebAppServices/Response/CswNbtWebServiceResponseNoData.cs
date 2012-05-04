@@ -6,11 +6,11 @@ using NbtWebAppServices.Session;
 
 namespace NbtWebAppServices.Response
 {
-    public class CswNbtWebServiceResponseEmpty : ICswNbtWebServiceResponse
+    public class CswNbtWebServiceResponseNoData : ICswNbtWebServiceResponse
     {
         private CswTimer _Timer;
         private double _ServerInitTime;
-        public CswNbtWebServiceResponseEmpty()
+        public CswNbtWebServiceResponseNoData()
         {
             _ServerInitTime = 0;
             _Timer = new CswTimer();
