@@ -43,8 +43,6 @@ namespace ChemSW.Nbt.MetaData
         public class NodeTypeLayout
         {
             public LayoutType LayoutType = LayoutType.Unknown;
-            //public CswNbtMetaDataNodeTypeProp Prop = null;
-            //public CswNbtMetaDataNodeTypeTab Tab = null;
             public Int32 PropId = Int32.MinValue;
             public Int32 TabId = Int32.MinValue;
             public Int32 DisplayRow = Int32.MinValue;
@@ -64,8 +62,6 @@ namespace ChemSW.Nbt.MetaData
         }
         public NodeTypeLayout getLayout( LayoutType LayoutType, Int32 PropId )
         {
-            CswTimer GetLayoutTimer = new CswTimer();
-
             NodeTypeLayout Layout = null;
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
             DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
@@ -74,17 +70,11 @@ namespace ChemSW.Nbt.MetaData
                 Layout = new NodeTypeLayout();
                 Layout.LayoutType = LayoutType;
                 Layout.PropId = PropId;
-                //Layout.Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( CswConvert.ToInt32( LayoutTable.Rows[0]["nodetypetabsetid"] ) );
                 Layout.TabId = CswConvert.ToInt32( LayoutTable.Rows[0]["nodetypetabsetid"] );
                 Layout.DisplayRow = CswConvert.ToInt32( LayoutTable.Rows[0]["display_row"] );
                 Layout.DisplayColumn = CswConvert.ToInt32( LayoutTable.Rows[0]["display_column"] );
             }
-
-            _CswNbtMetaDataResources.CswNbtResources.logTimerResult( "CswNbtMetaDataNodeTypeLayoutMgr.getLayout()", GetLayoutTimer.ElapsedDurationInSecondsAsString );
-
-
             return Layout;
-
         } // getLayout()
 
 
@@ -186,77 +176,13 @@ namespace ChemSW.Nbt.MetaData
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsInLayout( Int32 NodeTypeId, Int32 TabId, LayoutType LayoutType )
         {
-            //Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
-
-            //CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsInLayout_Select", "nodetype_layout" );
-            //string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString();
-            //if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
-            //{
-            //    WhereClause += "and nodetypetabsetid = " + TabId.ToString();
-            //}
-            //Collection<OrderByClause> OrderBy = new Collection<OrderByClause>() { 
-            //    new OrderByClause( "display_row", OrderByType.Ascending ),
-            //    new OrderByClause( "display_column", OrderByType.Ascending )
-            //};
-            //DataTable LayoutTable = LayoutSelect.getTable( WhereClause, OrderBy );
-            //foreach( DataRow Row in LayoutTable.Rows )
-            //{
-            //    CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) );
-            //    if( Prop != null )
-            //        ret.Add( Prop );
-            //}
-            //return ret;
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeTypeId, TabId, LayoutType );
         } // getPropsInLayout()
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsNotInLayout( CswNbtMetaDataNodeType NodeType, Int32 TabId, LayoutType LayoutType )
         {
-            //Collection<CswNbtMetaDataNodeTypeProp> ret = new Collection<CswNbtMetaDataNodeTypeProp>();
-            //foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps())
-            //{
-            //    ret.Add( Prop );
-            //}
-
-            //CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getPropsNotInLayout_Select", "nodetype_layout" );
-            //string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeType.NodeTypeId.ToString();
-            //if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && TabId != Int32.MinValue )
-            //{
-            //    WhereClause += "and nodetypetabsetid = " + TabId.ToString();
-            //}
-            //DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
-            //foreach( DataRow Row in LayoutTable.Rows )
-            //{
-            //    ret.Remove( _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( CswConvert.ToInt32( Row["nodetypepropid"] ) ) );
-            //}
-            //return ret;
             return _CswNbtMetaDataResources.NodeTypePropsCollection.getLayoutProps( NodeType.NodeTypeId, TabId, LayoutType, false );
         } // getPropsNotInLayout()
-
-
-        //public void makeSpaceForProp(CswNbtMetaDataNodeTypeLayout.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
-        //    // NodeTypeTab, Int32 DisplayColumn, Int32 DisplayRow)
-        //{
-        //    if( InsertAfterProp != null )
-        //    {
-        //        NodeTypeLayout InsertAfterPropLayout = getLayout( LayoutType, InsertAfterProp );
-        //        if( InsertAfterPropLayout != null )
-        //        {
-        //            Collection<CswNbtMetaDataNodeTypeProp> PropsToPush = new Collection<CswNbtMetaDataNodeTypeProp>();
-        //            CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "makeSpaceForProp_Update", "nodetype_layout" );
-        //            DataTable LayoutTable = LayoutUpdate.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + InsertAfterProp.NodeType.NodeTypeId.ToString() );
-        //            foreach( DataRow Row in LayoutTable.Rows )
-        //            {
-        //                if( ( InsertAfterPropLayout.Tab == null || InsertAfterPropLayout.Tab.TabId == CswConvert.ToInt32( Row["nodetypetabsetid"] ) ) &&
-        //                    CswConvert.ToInt32( Row["display_column"] ) == DisplayColumn &&
-        //                    CswConvert.ToInt32( Row["display_row"] ) >= DisplayRow )
-        //                {
-        //                    Row["display_row"] = CswConvert.ToDbVal( CswConvert.ToInt32( Row["display_row"] ) + 1 );
-        //                }
-        //            }
-        //            LayoutUpdate.update( LayoutTable );
-        //        }
-        //    }
-        //} // makeSpaceForProp()
 
     } // public class CswNbtMetaDataNodeTypeLayout : ICswNbtMetaDataObject
 } // namespace ChemSW.Nbt.MetaData
