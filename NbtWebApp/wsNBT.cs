@@ -2745,7 +2745,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string removeProp( string PropId, string EditMode )
+        public string removeProp( string PropId, string TabId, string EditMode )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2758,7 +2758,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
-                    bool ret = ws.removeProp( PropId );
+                    bool ret = ws.removeProp( PropId, CswConvert.ToInt32(TabId) );
                     ReturnVal.Add( new JProperty( "removeprop", ret.ToString().ToLower() ) );
                 }
 

@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeProp.getNodeType();
-                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
+                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.FirstEditLayout.TabId );
                     }
                     else
                     {
@@ -791,7 +791,7 @@ namespace ChemSW.Nbt.WebPages
                 Int32 OldSelectedNodeTypePropId = CswConvert.ToInt32( _SelectedValue );
                 if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Property )
                 {
-                    CswNbtMetaDataNodeTypeTab OriginalTab = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.EditLayout.TabId );
+                    CswNbtMetaDataNodeTypeTab OriginalTab = Master.CswNbtResources.MetaData.getNodeTypeTab( SelectedNodeTypeProp.FirstEditLayout.TabId );
 
                     string MultiString = getPropAttributeValue( "EditProp_MultiValue" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     if( MultiString == string.Empty )
@@ -923,7 +923,7 @@ namespace ChemSW.Nbt.WebPages
 
                     // Conditional Filter
                     if( _ConditionalFilter != null && _ConditionalFilter.SelectedPropLatestVersion != null &&
-                        Master.CswNbtResources.MetaData.getNodeTypeTab( PropToSave.EditLayout.TabId ).TabName == OriginalTab.TabName ) //BZ 7415
+                        Master.CswNbtResources.MetaData.getNodeTypeTab( PropToSave.FirstEditLayout.TabId ).TabName == OriginalTab.TabName ) //BZ 7415
                     {
                         PropToSave.setFilter( _ConditionalFilter.SelectedNodeTypePropFirstVersionId, _ConditionalFilter.SelectedSubField, _ConditionalFilter.SelectedFilterMode, _ConditionalFilter.FilterValue );
                     }
@@ -933,7 +933,7 @@ namespace ChemSW.Nbt.WebPages
 
                         if( _ConditionalFilter != null )
                         {
-                            _ConditionalFilter.FilterPropertiesToTabId = PropToSave.EditLayout.TabId;
+                            _ConditionalFilter.FilterPropertiesToTabId = PropToSave.FirstEditLayout.TabId;
                             _ConditionalFilter.Set( SelectedNodeType.NodeTypeId, string.Empty );
                         }
                     }
@@ -1470,9 +1470,9 @@ namespace ChemSW.Nbt.WebPages
                     if( CswConvert.ToInt32( _SelectedValue ) > 0 )
                     {
                         // Edit Property Select box
-                        if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.TabId != Int32.MinValue )
+                        if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.FirstEditLayout.TabId != Int32.MinValue )
                         {
-                            EditPropTabSelect.SelectedValue = SelectedNodeTypeProp.EditLayout.TabId.ToString();
+                            EditPropTabSelect.SelectedValue = SelectedNodeTypeProp.FirstEditLayout.TabId.ToString();
                         }
                     }
                     _SaveButton.Visible = true;
@@ -1521,7 +1521,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayColValue = new TextBox();
                     DisplayColValue.CssClass = "textinput";
                     DisplayColValue.ID = "EditProp_DisplayColValue" + SelectedNodeTypeProp.PropId.ToString();
-                    DisplayColValue.Text = SelectedNodeTypeProp.EditLayout.DisplayColumn.ToString();
+                    DisplayColValue.Text = SelectedNodeTypeProp.FirstEditLayout.DisplayColumn.ToString();
                     DisplayColRow.Cells[1].Controls.Add( DisplayColValue );
 
                     TableRow DisplayRowRow = makeEditPropTableRow( EditPropPlaceHolder );
@@ -1532,7 +1532,7 @@ namespace ChemSW.Nbt.WebPages
                     TextBox DisplayRowValue = new TextBox();
                     DisplayRowValue.CssClass = "textinput";
                     DisplayRowValue.ID = "EditProp_DisplayRowValue" + SelectedNodeTypeProp.PropId.ToString();
-                    DisplayRowValue.Text = SelectedNodeTypeProp.EditLayout.DisplayRow.ToString();
+                    DisplayRowValue.Text = SelectedNodeTypeProp.FirstEditLayout.DisplayRow.ToString();
                     DisplayRowRow.Cells[1].Controls.Add( DisplayRowValue );
 
                     TableRow DisplayColAdd = makeEditPropTableRow( EditPropPlaceHolder );
