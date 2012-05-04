@@ -150,9 +150,16 @@ namespace ChemSW.Nbt.MetaData
                 Row["nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
                 Row["nodetypepropid"] = CswConvert.ToDbVal( PropId );
 
-                if( TabId != Int32.MinValue && LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+                if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
                 {
-                    Row["nodetypetabsetid"] = CswConvert.ToDbVal( TabId );
+                    if( TabId != Int32.MinValue )
+                    {
+                        Row["nodetypetabsetid"] = CswConvert.ToDbVal( TabId );
+                    }
+                    else
+                    {
+                        throw new CswDniException( ErrorType.Error, "Tab is required", "CswNbtMetaDataNodeTypeLayoutMgr.updatePropLayout() requires a valid TabId for Edit layouts" );
+                    }
                 }
                 if( DisplayRow != Int32.MinValue && DisplayColumn != Int32.MinValue )
                 {
