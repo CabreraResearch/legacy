@@ -11,7 +11,8 @@
                 ID: '',
                 parent: '',
                 filtersMethod: 'getRuntimeViewFilters',
-                viewid: ''
+                viewid: '',
+                onEditFilters: null
             };
             var external = {};
 
@@ -20,36 +21,16 @@
 
                 if (options) $.extend(internal, options);
 
-                var tbl = internal.parent.table({ ID: internal.ID });
-                tbl.addClass('viewfilterstbl');
+                var div = internal.parent.div({ ID: internal.ID });
+                div.hide()
+                   .addClass('viewfiltersdiv');
+                var tbl = div.table();
 
                 Csw.ajax.post({
                     urlMethod: internal.filtersMethod,
                     data: { ViewId: internal.viewid },
                     success: function (data) {
-
-                        //Property_root_NT_8_OCP_1228: Object
-                            //arbitraryid: "root_NT_8_OCP_1228"
-                            //fieldtype: "List"
-                            //filters: Object
-                                //Filter_root_NT_8_OCP_1228_Value_NotEquals_Retired: Object
-                                    //arbitraryid: "root_NT_8_OCP_1228_Value_NotEquals_Retired"
-                                    //casesensitive: "True"
-                                    //filtermode: "NotEquals"
-                                    //nodename: "filter"
-                                    //showatruntime: "True"
-                                    //subfieldname: "Value"
-                                    //value: "Retired"
-                            //name: "Status"
-                            //nodename: "property"
-                            //nodetypepropid: "-2147483648"
-                            //objectclasspropid: "1228"
-                            //order: ""
-                            //sortby: "False"
-                            //sortmethod: "Ascending"
-                            //type: "ObjectClassPropId"
-                            //width: ""
-
+                        
                         var row = 1;
                         Csw.each(data, function (propJson) {
                             //propJson.propname = propJson.name;
@@ -66,7 +47,7 @@
                                     propRow: row,
                                     firstColumn: 1,
                                     includePropertyName: true,
-                                    advancedIsHidden: false,
+                                    advancedIsHidden: true,
                                     selectedSubfieldVal: filtJson.subfieldname,
                                     selectedFilterMode: filtJson.filtermode,
                                     selectedFilterVal: filtJson.value,
@@ -74,8 +55,36 @@
                                 });
                                 row++;
                             }); //each()
-
                         }); //each()
+
+                        if(row > 1) {   // at least one filter
+                            var toprightcell = tbl.cell(1,5);
+                            toprightcell.css({ width: '100%', textAlign: 'right' });
+
+                            var filterbtn = tbl.cell(1, 5).imageButton({
+                                ButtonType: Csw.enums.imageButton_ButtonType.Refresh,
+                                AlternateText: 'Apply Filters',
+                                ID: 'filterbtn',
+                                onClick: function() {
+                                    var filtersJson = {};
+
+                                    Csw.each(data, function (propJson) {
+                                        Csw.each(propJson.filters, function (filtJson) {
+                                            var newFiltJson = tbl.$.CswViewPropFilter('getFilterJson', {
+                                                ID: internal.ID,
+                                                filtJson: propJson,
+                                                proparbitraryid: propJson.arbitraryid,
+                                                filtarbitraryid: filtJson.arbitraryid,
+                                                allowNullFilterValue: true
+                                            });
+                                            filtersJson[filtJson.arbitraryid] = newFiltJson;
+                                        });
+                                    });
+                                    Csw.tryExec(internal.onEditFilters, filtersJson);
+                                } // onClick
+                            });
+                            div.show();
+                        }
                     } // success
                 }); // ajax
 

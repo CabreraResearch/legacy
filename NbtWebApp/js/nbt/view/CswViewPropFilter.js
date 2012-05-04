@@ -76,8 +76,7 @@
                     ViewId: o.viewid,
                     PropArbitraryId: o.proparbitraryid
                 };
-                if(false === Csw.isNullOrEmpty(o.viewJson))
-                {
+                if (false === Csw.isNullOrEmpty(o.viewJson)) {
                     jsonData.ViewJson = JSON.stringify(o.viewJson);
                 }
 
@@ -140,9 +139,9 @@
                     cssclass: Csw.enums.cssClasses_ViewBuilder.default_filter.name
                 })
                     .css({ 'text-align': "center" });
-                if (false === filtOpt.advancedIsHidden) {
-                    defaultSubField.hide();
-                }
+                //if (false === filtOpt.advancedIsHidden) {
+                defaultSubField.hide();
+                //}
 
                 //Generate subfields and filters picklist arrays
                 for (field in subfields) {
@@ -192,7 +191,7 @@
                             selectedSubfieldVal: subfieldsList.val(),
                             selectedFilterMode: filterModesList.val(),
                             selectedFilterVal: '',
-                            advancedIsHidden: Csw.bool(filterModesList.$.is(':hidden'))
+                            advancedIsHidden: Csw.bool(subfieldsList.$.is(':hidden'))
                         };
                         $.extend(filtOpt, r);
                         renderPropFiltRow(filtOpt);
@@ -203,9 +202,9 @@
                     filterModesList.val(filtOpt.selectedFilterMode).propDom('selected', true);
                 }
 
-                if (filtOpt.advancedIsHidden) {
-                    filterModesList.hide();
-                }
+                //                if (filtOpt.advancedIsHidden) {
+                //                    filterModesList.hide();
+                //                }
 
                 //Filter input (value)
                 if (fieldtype === Csw.enums.subFieldsMap.List.name) {
@@ -241,13 +240,17 @@
                         cssclass: Csw.enums.cssClasses_ViewBuilder.filter_value.name,
                         value: '',
                         placeholder: placeholder,
-                        width: "200px",
+                        width: "100px",
                         autofocus: filtOpt.autoFocusInput,
                         autocomplete: 'on'
                     });
                 }
                 if (false === Csw.isNullOrEmpty(filtInput, true)) {
                     filtInput.data('propsData', propsData);
+                }
+                if (filtOpt.selectedFilterMode === 'Null' ||
+                    filtOpt.selectedFilterMode === 'NotNull') {
+                    filtInput.hide();
                 }
             }
             return propFilterTable.$;
@@ -335,6 +338,8 @@
             var o = {
                 filtJson: {},
                 ID: '',
+                proparbitraryid: '',
+                filtarbitraryid: '',
                 allowNullFilterValue: false
             };
             if (options) $.extend(o, options);
@@ -344,6 +349,10 @@
                 $filtInput = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_value.name),
                 fieldtype = Csw.string(o.filtJson.fieldtype, o.fieldtype),
                 filterValue, $subField, subFieldText, $filter, filterText, nodetypeorobjectclassid;
+
+            if($filtInput.length > 1) { 
+                $filtInput = $filtInput.filter('#' + o.filtarbitraryid) 
+            }
 
             switch (fieldtype) {
                 case Csw.enums.subFieldsMap.Logical.name:
@@ -359,9 +368,15 @@
 
             if (false === Csw.isNullOrEmpty(filterValue) || o.allowNullFilterValue) {
                 $subField = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name);
+                if($subField.length > 1) { 
+                    $subField = $subField.filter('#' + o.filtarbitraryid) 
+                }
                 subFieldText = $subField.find(':selected').text();
 
                 $filter = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name);
+                if($filter.length > 1) { 
+                    $filter = $filter.filter('#' + o.filtarbitraryid) 
+                }
                 filterText = $filter.find(':selected').val();
                 nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Csw.Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;
                 if (Csw.isNullOrEmpty(nodetypeorobjectclassid)) {

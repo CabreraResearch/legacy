@@ -914,7 +914,10 @@ window.initMain = window.initMain || function (undefined) {
         var viewfilters = Csw.nbt.viewFilters({
             ID: 'main_viewfilters',
             parent: Csw.literals.factory($('#LeftDiv')),
-            viewid: o.viewid
+            viewid: o.viewid,
+            onEditFilters: function(filtersJson) {
+                
+            }
         });
 
         mainTree = Csw.nbt.nodeTree({
