@@ -261,7 +261,7 @@
                                 doUpdateSubProps(false);
                             }, // onConfigOff
                             onRemove: function (event, onRemoveData) {
-                                internal.onRemove(onRemoveData);
+                                internal.onRemove(tabid, onRemoveData);
                             } // onRemove
                         }); // Csw.literals.layoutTable()
 
@@ -381,7 +381,7 @@
 
             // getPropsImpl()
 
-            internal.onRemove = function (onRemoveData) {
+            internal.onRemove = function (tabid, onRemoveData) {
                 'use strict';
                 var propid = '';
                 var propDiv = internal.getPropertyCell(onRemoveData.cellSet).children('div');
@@ -392,7 +392,7 @@
                 Csw.ajax.post({
                     watchGlobal: internal.AjaxWatchGlobal,
                     urlMethod: internal.RemovePropUrlMethod,
-                    data: { PropId: propid, EditMode: internal.EditMode },
+                    data: { PropId: propid, EditMode: internal.EditMode, TabId: tabid },
                     success: function () {
                         internal.onPropertyRemove(propid);
                     }
