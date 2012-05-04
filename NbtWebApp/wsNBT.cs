@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             if( AuthenticationStatus == AuthenticationStatus.Unknown )
-                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), IsMobile );
+                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
 
             // case 21211
             if( AuthenticationStatus == AuthenticationStatus.Authenticated )
@@ -4239,6 +4239,70 @@ namespace ChemSW.Nbt.WebServices
 
 
         #endregion Quotas
+
+        #region Modules
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getModules()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceModules( _CswNbtResources );
+                    ReturnVal = ws.GetModules();
+                }
+
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getModules()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string saveModules( string Modules )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    var ws = new CswNbtWebServiceModules( _CswNbtResources );
+                    ReturnVal["result"] = ws.SaveModules( Modules ).ToString().ToLower();
+                }
+
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // saveModules()
+
+        #endregion Modules
+
+
 
         #region Inspection Design
 

@@ -125,6 +125,9 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Ret["Admin"]["View Log"] = new JObject();
                         Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
+                        
+                        Ret["Admin"]["Modules"] = new JObject();
+                        Ret["Admin"]["Modules"]["action"] = "Modules";
                     }
 
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() &&

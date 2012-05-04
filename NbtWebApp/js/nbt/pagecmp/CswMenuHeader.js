@@ -9,6 +9,7 @@
             Url: '/NbtWebApp/wsNBT.asmx/getHeaderMenu',
             onLogout: function () { },
             onQuotas: function () { },
+            onModules: function () { },
             onSessions: function () { },
             onImpersonate: null,
             onEndImpersonation: null,
@@ -39,6 +40,7 @@
                                                         itemJson: thisItem, 
                                                         onLogout: o.onLogout,
                                                         onQuotas: o.onQuotas,
+                                                        onModules: o.onModules,
                                                         onSessions: o.onSessions,
                                                         onImpersonate: o.onImpersonate,
                                                         onEndImpersonation: o.onEndImpersonation });
@@ -55,6 +57,7 @@
                                                          itemJson: thisChild, 
                                                          onLogout: o.onLogout,
                                                          onQuotas: o.onQuotas,
+                                                         onModules: o.onModules,
                                                          onSessions: o.onSessions,
                                                          onImpersonate: o.onImpersonate,
                                                          onEndImpersonation: o.onEndImpersonation });
