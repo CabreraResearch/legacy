@@ -32,13 +32,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private string _CompletionMessage = string.Empty;
-        public string CompletionMessage
-        {
-            get { return ( _CompletionMessage ); }
-        }
-
-
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
@@ -63,12 +56,12 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = LogicRunStatus.Running;
 
+
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 try
                 {
-                    _CompletionMessage = string.Empty; 
 
                     List<CswNbtObjClassInspectionDesign> InspectionDesigns = _CswScheduleLogicNodes.getInspectonDesigns();
 
@@ -102,13 +95,16 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
 
-                    _CompletionMessage = "CswScheduleLogicNbtUpdtInspection::threadCallBack() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtInspection::threadCallBack() exception: " + Exception.Message;
+                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
 
             }//if we're not shutting down
+
+            _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+
 
         }//threadCallBack()
 

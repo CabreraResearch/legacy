@@ -32,13 +32,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private string _CompletionMessage = string.Empty;
-        public string CompletionMessage
-        {
-            get { return ( _CompletionMessage ); }
-        }
-
-
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public CswScheduleLogicDetail CswScheduleLogicDetail
@@ -68,8 +61,7 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    _CompletionMessage = string.Empty; 
-
+                    
                     List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
 
                     for( Int32 idx = 0; ( idx < ObjectGenerators.Count && idx < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
@@ -122,12 +114,14 @@ namespace ChemSW.Nbt.Sched
 
                 catch( Exception Exception )
                 {
-                    _CompletionMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
+                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
 
             }//if we're not shutting down
+
+            _CswScheduleLogicDetail.StatusMessage = "Completed without error";
 
         }//threadCallBack()
 

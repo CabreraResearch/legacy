@@ -4,7 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;    
+using ChemSW.MtSched.Sched;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -31,13 +31,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private string _CompletionMessage = string.Empty;
-        public string CompletionMessage
-        {
-            get { return ( _CompletionMessage ); }
-        }
-
-
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         public CswScheduleLogicDetail CswScheduleLogicDetail
@@ -46,13 +39,13 @@ namespace ChemSW.Nbt.Sched
         }
 
 
-        private CswNbtResources _CswNbtResources = null; 
+        private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-			_CswNbtResources.AuditContext = "Scheduler Task: Update MTBF";
-		}
+            _CswNbtResources.AuditContext = "Scheduler Task: Update MTBF";
+        }
 
         public void threadCallBack()
         {
@@ -63,7 +56,6 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    _CompletionMessage = string.Empty; 
 
                     // BZ 6779
                     // Set all MTBF fields pendingupdate = 1
@@ -96,14 +88,17 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
 
-                    _CompletionMessage = "CswScheduleLogicNbtUpdtMTBF::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtMTBF::GetUpdatedItems() exception: " + Exception.Message;
+                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
 
+                _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+
+
             }//if we're not shutting down
-        
+
         }//threadCallBack()
 
 
