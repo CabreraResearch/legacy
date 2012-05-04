@@ -14,7 +14,8 @@ namespace ChemSW.Nbt.Actions
         Deficient_Inspections,
         Quotas,
         Sessions,
-        View_Scheduled_Rules
+        View_Scheduled_Rules,
+        Modules
     }
 
     public class CswNbtAction

@@ -247,6 +247,16 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Whether modules allows this nodetype to be enabled.
+        /// </summary>
+        public bool Enabled
+        {
+            get { return CswConvert.ToBoolean( _NodeTypeRow["enabled"] ); }
+            set { _NodeTypeRow["enabled"] = CswConvert.ToDbVal( value ); }
+        }
+
+
+        /// <summary>
         /// Returns whether any node exists on this nodetype
         /// </summary>
         public bool InUse

@@ -62,26 +62,26 @@ namespace ChemSW.Nbt.Schema
         public void addTable( string TableName, string FkColumnName )
         {
 
-            if ( _DdlOps.ContainsKey( TableName ) && DdlTableOpType.Drop == _DdlOps[ TableName ].DdlTableOpType )
+            if( _DdlOps.ContainsKey( TableName ) && DdlTableOpType.Drop == _DdlOps[TableName].DdlTableOpType )
                 throw ( new CswDniException( "Table " + TableName + " cannot be added because it is already being dropped " ) );
 
             if( _CswNbtResources.CswResources.isTableDefinedInMetaData( TableName ) )
                 throw ( new CswDniException( "Cannot add table " + TableName + " because a table by that name already exists" ) );
 
-            if ( !_DdlOps.ContainsKey( TableName ) )
+            if( !_DdlOps.ContainsKey( TableName ) )
             {
                 _DdlOps.Add( TableName, _makeTableDdlOp( _CswConstraintDdlOps, TableName ) );
 
-                _DdlOps[ TableName ].DdlTableOpType = DdlTableOpType.Add;
-                _DdlOps[ TableName ].PkColumnName = FkColumnName;
+                _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Add;
+                _DdlOps[TableName].PkColumnName = FkColumnName;
             }
             else
             {
-                if ( DdlTableOpType.Column == _DdlOps[ TableName ].DdlTableOpType )
-                    _DdlOps[ TableName ].DdlTableOpType = DdlTableOpType.Add;
+                if( DdlTableOpType.Column == _DdlOps[TableName].DdlTableOpType )
+                    _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Add;
             }//
 
-            _DdlOps[ TableName ].apply();
+            _DdlOps[TableName].apply();
 
 
 
@@ -90,32 +90,38 @@ namespace ChemSW.Nbt.Schema
 
         public void dropTable( string TableName )
         {
-            if ( _DdlOps.ContainsKey( TableName ) && DdlTableOpType.Add == _DdlOps[ TableName ].DdlTableOpType )
+            if( _DdlOps.ContainsKey( TableName ) && DdlTableOpType.Add == _DdlOps[TableName].DdlTableOpType )
+            {
                 throw ( new CswDniException( "Table " + TableName + " cannot be dropped because it is already being added" ) );
+            }
 
             if( !_CswNbtResources.CswResources.isTableDefinedInMetaData( TableName ) )
+            {
                 throw ( new CswDniException( "Cannot drop table " + TableName + " because no table by that name exists" ) );
+            }
 
-            if ( !_DdlOps.ContainsKey( TableName ) )
+            if( !_DdlOps.ContainsKey( TableName ) )
             {
                 _DdlOps.Add( TableName, _makeTableDdlOp( _CswConstraintDdlOps, TableName ) );
-                _DdlOps[ TableName ].DdlTableOpType = DdlTableOpType.Drop;
+                _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Drop;
             }
             else
             {
-                if ( DdlTableOpType.Column == _DdlOps[ TableName ].DdlTableOpType )
-                    _DdlOps[ TableName ].DdlTableOpType = DdlTableOpType.Add;
+                if( DdlTableOpType.Column == _DdlOps[TableName].DdlTableOpType )
+                {
+                    _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Add;
+                }
             }
 
-            _DdlOps[ TableName ].apply();
+            _DdlOps[TableName].apply();
 
         }//dropTable()
 
         private void _verifyOrCreateTableForColumnOp( string TableName )
         {
-            if ( _DdlOps.ContainsKey( TableName ) )
+            if( _DdlOps.ContainsKey( TableName ) )
             {
-                if ( DdlTableOpType.Drop == _DdlOps[ TableName ].DdlTableOpType )
+                if( DdlTableOpType.Drop == _DdlOps[TableName].DdlTableOpType )
                     throw ( new CswDniException( "Table " + TableName + " is being dropped; you cannot add columns to it" ) );
             }
             else
@@ -124,9 +130,9 @@ namespace ChemSW.Nbt.Schema
                     throw ( new CswDniException( "No such table: " + TableName ) );
 
                 _DdlOps.Add( TableName, _makeTableDdlOp( _CswConstraintDdlOps, TableName ) );
-                _DdlOps[ TableName ].DdlTableOpType = DdlTableOpType.Column;
+                _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Column;
 
-                _DdlOps[ TableName ].apply();
+                _DdlOps[TableName].apply();
 
             }//if-else ddl op is defined for table
 
@@ -136,16 +142,16 @@ namespace ChemSW.Nbt.Schema
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
                                bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, DataDictionaryPortableDataType portabledatatype, bool ReadOnly,
                                bool Required, string tablename, DataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
-                               //Int32 NodeTypePropId, string SubFieldName )
+        //Int32 NodeTypePropId, string SubFieldName )
         {
             _verifyOrCreateTableForColumnOp( tablename );
 
-            _DdlOps[tablename].addColumn( columnname, columntype, datatypesize, dblprecision, 
-                                          defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview, 
-                                          logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly, 
+            _DdlOps[tablename].addColumn( columnname, columntype, datatypesize, dblprecision,
+                                          defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
+                                          logicaldelete, lowerrangevalue, lowerrangevalueinclusive, portabledatatype, ReadOnly,
                                           Required, uniquetype, uperrangevalueinclusive, upperrangevalue ); //, NodeTypePropId, SubFieldName );
 
-            _DdlOps[ tablename ].apply();
+            _DdlOps[tablename].apply();
 
 
         }//addColumn()
@@ -154,9 +160,9 @@ namespace ChemSW.Nbt.Schema
         {
             _verifyOrCreateTableForColumnOp( TableName );
 
-            _DdlOps[ TableName ].dropColumn( ColumnName );
+            _DdlOps[TableName].dropColumn( ColumnName );
 
-            _DdlOps[ TableName ].apply();
+            _DdlOps[TableName].apply();
 
         }//addColumn()
 
@@ -165,7 +171,7 @@ namespace ChemSW.Nbt.Schema
         {
             _verifyOrCreateTableForColumnOp( TableName );
 
-            _DdlOps[TableName].renameColumn( OriginalColumnName, NewColumnName ); 
+            _DdlOps[TableName].renameColumn( OriginalColumnName, NewColumnName );
 
             _DdlOps[TableName].apply();
 
@@ -237,7 +243,7 @@ namespace ChemSW.Nbt.Schema
 
             ReturnVal = _CswConstraintDdlOps.getConstraintName( ReferencingTableNameName, ReferencingColumnName, ReferencedTableName, ReferencedColumnName );
 
-            if ( string.Empty == ReturnVal )
+            if( string.Empty == ReturnVal )
                 throw ( new CswDniException( "A constraint name was not reported" ) );
 
 
@@ -256,7 +262,7 @@ namespace ChemSW.Nbt.Schema
 
         public void removeConstraint( string ReferencingTableNameName, string ReferencingColumnName, string ReferencedTableName, string ReferencedColumnName, string ConstraintName )
         {
-            _CswConstraintDdlOps.removeConstraint( ReferencingTableNameName, ReferencingColumnName,ReferencedTableName,ReferencedColumnName, ConstraintName );
+            _CswConstraintDdlOps.removeConstraint( ReferencingTableNameName, ReferencingColumnName, ReferencedTableName, ReferencedColumnName, ConstraintName );
             _CswConstraintDdlOps.apply( ReferencingTableNameName, string.Empty );
 
             Constraint RemovedConstraint = new Constraint();
@@ -286,7 +292,7 @@ namespace ChemSW.Nbt.Schema
 
         public void confirm()
         {
-            foreach ( CswTableDdlOp CurrentTableDdlOp in _DdlOps.Values )
+            foreach( CswTableDdlOp CurrentTableDdlOp in _DdlOps.Values )
             {
                 CurrentTableDdlOp.confirm();
             }//iterate ops
@@ -296,23 +302,23 @@ namespace ChemSW.Nbt.Schema
         {
 
 
-            foreach ( Constraint CurrentAddedContraint in _Cosntraints )
+            foreach( Constraint CurrentAddedContraint in _Cosntraints )
             {
                 _CswConstraintDdlOps.revert( CurrentAddedContraint.ReferencingTable, CurrentAddedContraint.ReferencingColumn );
             }
 
-            foreach ( CswTableDdlOp CurrentTableDdlOp in _DdlOps.Values )
+            foreach( CswTableDdlOp CurrentTableDdlOp in _DdlOps.Values )
             {
                 CurrentTableDdlOp.revert();
             }//iterate ops
 
-            foreach ( CswSequenceDdlOp CurrentSequenceDdlOp in _SequenceOps )
+            foreach( CswSequenceDdlOp CurrentSequenceDdlOp in _SequenceOps )
             {
-                if ( DdlSequenceOpType.Add == CurrentSequenceDdlOp.DdlSequenceOpType )
+                if( DdlSequenceOpType.Add == CurrentSequenceDdlOp.DdlSequenceOpType )
                 {
                     _CswNbtSequenceManager.removeDbSequence( CurrentSequenceDdlOp.SequenceName );
                 }
-                else if ( DdlSequenceOpType.Remove == CurrentSequenceDdlOp.DdlSequenceOpType )
+                else if( DdlSequenceOpType.Remove == CurrentSequenceDdlOp.DdlSequenceOpType )
                 {
                     _CswNbtSequenceManager.makeDbSequence( CurrentSequenceDdlOp.SequenceName, CurrentSequenceDdlOp.InitialValue );
                 }
