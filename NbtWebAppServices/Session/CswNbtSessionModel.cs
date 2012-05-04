@@ -3,7 +3,7 @@ using ChemSW.Exceptions;
 
 namespace NbtWebAppServices.Session
 {
-    public class CswSessionRequest
+    public class CswNbtSessionRequest
     {
         public string Password { get; set; }
         public string CustomerId { get; set; }
@@ -11,19 +11,16 @@ namespace NbtWebAppServices.Session
         public bool IsMobile { get; set; }
     }
 
-    public class CswSessionAuthentication
+    public class CswNbtSessionAuthenticationStatus
     {
         private string _AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown.ToString();
         public string AuthenticationStatus { get { return _AuthenticationStatus; } set { _AuthenticationStatus = value; } }
 
         private string _TimeOut = "0";
         public string TimeOut { get { return _TimeOut; } set { _TimeOut = value; } }
-
-        private CswPerfTimer _CswPerfTimer = new CswPerfTimer();
-        public CswPerfTimer CswPerfTimer { get { return _CswPerfTimer; } set { _CswPerfTimer = value; } }
     }
 
-    public class CswPerfTimer
+    public class CswNbtWebServicePerformance
     {
         public double ServerInit { get; set; }
         public double DbInit { get; set; }
@@ -34,13 +31,13 @@ namespace NbtWebAppServices.Session
         public double ServerTotal { get; set; }
     }
 
-    public class CswError
+    public class CswNbtWebServiceStatus
     {
-        public readonly bool Success = false;
-        public string Message;
-        public string Detail;
-        public ErrorType Type;
-        public bool Display;
+        public bool Success = true;
+        public string ErrorMessage = default( string );
+        public string ErrorDetail = default( string );
+        public ErrorType ErrorType = ErrorType.None;
+        public bool DisplayError = false;
     }
 
 }
