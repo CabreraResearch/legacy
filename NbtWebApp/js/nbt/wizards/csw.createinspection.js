@@ -206,17 +206,17 @@
                 var stepTwoComplete = false;
 
                 return function () {
-                    var inspectionTable, $newDesignLabel,
-                        tempInspectionName = internal.selectedInspectionTarget + ' Inspection',
-                        tempCategoryName = internal.selectedInspectionTarget;
-
-                    var makeInspectionDesignName = function (name) {
+                    function makeTempInspectionDesignName(name) {
                         var ret = Csw.string(name).trim();
-                        //                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
-                        //                            ret += ' Inspection';
-                        //                        }
+                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
+                            ret += ' Inspection';
+                        }
                         return ret;
-                    };
+                    }
+
+                    var inspectionTable, $newDesignLabel,
+                        tempInspectionName = makeTempInspectionDesignName(internal.selectedInspectionTarget),
+                        tempCategoryName = internal.selectedInspectionTarget;
 
                     var toggleNewDesignName = function () {
                         if (internal.isNewInspectionDesign()) {
@@ -275,14 +275,14 @@
                                 } else {
                                     internal.selectedInspectionDesign.name = selected.text();
                                 }
-                                tempCategoryName = internal.selectedInspectionTarget;
+                                tempCategoryName = makeTempInspectionDesignName(internal.selectedInspectionTarget);
                                 internal.categoryNameInput.val(tempCategoryName);
                                 Csw.publish(internal.createInspectionEvents.designNameChanged);
                                 toggleNewDesignName();
                             });
                         //Create New is selected by default
                         internal.selectedInspectionDesign.id = internal.inspectionDesignSelect.find(':selected').val();
-                        internal.selectedInspectionDesign.name = makeInspectionDesignName(internal.selectedInspectionTarget);
+                        internal.selectedInspectionDesign.name = tempInspectionName;
 
                         inspectionTable.cell(2, 1).br();
 
@@ -299,11 +299,11 @@
                                 cssclass: 'required',
                                 maxlength: 50,
                                 width: (50 * 7) + 'px',
-                                value: tempInspectionName + ' Inspection'
+                                value: tempInspectionName
                             })
                             .bind('change keypress keydown keyup', function () {
                                 setTimeout(function () {
-                                    var newInspectionDesignName = makeInspectionDesignName(internal.newDesignName.val());
+                                    var newInspectionDesignName = internal.newDesignName.val();
                                     internal.selectedInspectionDesign.id = '[Create New]';
                                     internal.selectedInspectionDesign.name = newInspectionDesignName;
                                     internal.toggleButton(internal.buttons.next, nextBtnEnabled());
@@ -337,20 +337,40 @@
                 };
             } ());
 
-            internal.checkIsNodeTypeNameUnique = function (name, success, error) {
-                Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
-                    async: false,
-                    data: { 'NodeTypeName': name },
-                    success: function (data) {
-                        Csw.tryExec(success, data);
-                    },
-                    error: function (data) {
-                        Csw.tryExec(error, data);
-                        internal.toggleButton(internal.buttons.next);
-                        internal.toggleButton(internal.buttons.prev, true);
-                    }
-                });
+            internal.validationFailed = function () {
+                internal.toggleButton(internal.buttons.next, true);
+                internal.toggleButton(internal.buttons.prev, true, true);
+            };
+
+            internal.checkTargetIsClientSideUnique = function () {
+                var ret = false;
+                if (Csw.string(internal.selectedInspectionTarget).trim().toLowerCase() != Csw.string(internal.selectedInspectionDesign.name).trim().toLowerCase()) {
+                    ret = true;
+                } else {
+                    internal.validationFailed();
+                    var err = Csw.error.makeErrorObj(Csw.enums.errorType.error,
+                                                     'An Inspection Design and an Inspection Target cannot have the same name.',
+                                                     'Attempted to create Inspection Target ' + internal.selectedInspectionTarget + ' against Inspection Design ' + internal.selectedInspectionDesign.name);
+                    Csw.error.showError(err);
+                }
+                return ret;
+            };
+
+            internal.checkIsNodeTypeNameUnique = function(name, success, error) {
+                if (internal.checkTargetIsClientSideUnique()) {
+                    Csw.ajax.post({
+                        url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
+                        async: false,
+                        data: { 'NodeTypeName': name },
+                        success: function(data) {
+                            Csw.tryExec(success, data);
+                        },
+                        error: function(data) {
+                            internal.validationFailed();
+                            Csw.tryExec(error, data);
+                        }
+                    });
+                }
             };
 
             //File upload onSuccess event to prep Step 4
@@ -367,6 +387,7 @@
                 var designChangeHandle = function () {
                     helpText.remove();
                     helpText = internal.divStep4.p({ text: '<p>Review the <b>' + internal.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
+                    internal.toggleButton(internal.buttons.next, true);
                 };
                 Csw.subscribe(internal.createInspectionEvents.designNameChanged, designChangeHandle);
 
@@ -530,19 +551,6 @@
                     }
                 };
             } ());
-
-            internal.checkTargetIsClientSideUnique = function (proposedTargetName) {
-                var ret = false,
-                    targetName = proposedTargetName || internal.selectedInspectionTarget;
-                if (Csw.string(targetName).trim().toLowerCase() != Csw.string(internal.selectedInspectionDesign.name).trim().toLowerCase()) {
-                    ret = true;
-                } else {
-                    $.CswDialog('ErrorDialog', Csw.error.makeErrorObj(Csw.enums.errorType.warning.name,
-                        'An Inspection Design and an Inspection Target cannot have the same name.',
-                        'Attempted to create Inspection Target ' + targetName + ' against Inspection Design ' + internal.selectedInspectionDesign.name));
-                }
-                return ret;
-            };
 
             //Step 5. Preview and Finish.
             internal.makeStepFive = (function () {
