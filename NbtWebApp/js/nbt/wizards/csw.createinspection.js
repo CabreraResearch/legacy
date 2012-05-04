@@ -356,16 +356,16 @@
                 return ret;
             };
 
-            internal.checkIsNodeTypeNameUnique = function(name, success, error) {
+            internal.checkIsNodeTypeNameUnique = function (name, success, error) {
                 if (internal.checkTargetIsClientSideUnique()) {
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                         async: false,
                         data: { 'NodeTypeName': name },
-                        success: function(data) {
+                        success: function (data) {
                             Csw.tryExec(success, data);
                         },
-                        error: function(data) {
+                        error: function (data) {
                             internal.validationFailed();
                             Csw.tryExec(error, data);
                         }
@@ -662,6 +662,7 @@
                         internal.makeStepTwo();
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step3.step:
+                        internal.checkIsNodeTypeNameUnique(internal.selectedInspectionDesign.name);
                         internal.makeStepThree(true); //we're moving forward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step4.step:
