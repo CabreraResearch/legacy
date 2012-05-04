@@ -2191,12 +2191,13 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName )
+        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
+                int OCId = CswConvert.ToInt32( ObjectClassId );
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
@@ -2211,6 +2212,10 @@ namespace ChemSW.Nbt.WebServices
                         {
                             ObjectClass = _CswNbtResources.MetaData.getObjectClass( OC );
                         }
+                    }
+                    else if( Int32.MinValue != OCId )
+                    {
+                        ObjectClass = _CswNbtResources.MetaData.getObjectClass( OCId );
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
                     ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName );
