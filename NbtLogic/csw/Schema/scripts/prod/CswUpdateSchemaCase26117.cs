@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -39,8 +40,9 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtView SiLocationsTreeView = CswNbtObjClassInspectionDesign.SiLocationsTreeView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
-            CswNbtView SiLocationsTreeList = CswNbtObjClassInspectionDesign.SiLocationsListView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
+            CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
+            CswNbtView SiLocationsTreeView = SystemViews.SiLocationsTreeView();
+            CswNbtView SiLocationsTreeList = SystemViews.SiLocationsListView();
             SiLocationsTreeView.Root.ChildRelationships.Clear();
             SiLocationsTreeList.Root.ChildRelationships.Clear();
 
@@ -63,10 +65,10 @@ namespace ChemSW.Nbt.Schema
             SiLocationsTreeView.save();
             SiLocationsTreeList.save();
 
-            CswNbtObjClassInspectionDesign.SiInspectionsByUserView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
-            CswNbtObjClassInspectionDesign.SiInspectionsByLocationView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
-            CswNbtObjClassInspectionDesign.SiInspectionsByDateView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
-            CswNbtObjClassInspectionDesign.SiInspectionsByBarcodeView( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
+            SystemViews.SiInspectionsByUserView();
+            SystemViews.SiInspectionsByLocationView();
+            SystemViews.SiInspectionsByDateView();
+            SystemViews.SiInspectionsByBarcodeView();
 
         }//Update()
 
