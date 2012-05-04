@@ -309,10 +309,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = ( RelatedNodeId != null ) ?
-                                RelatedNodeId.ToString() : string.Empty;
+            ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = default( string );
+            if( RelatedNodeId != null && Int32.MinValue != RelatedNodeId.PrimaryKey )
+            {
+                ParentObject[_NodeIDSubField.ToXmlNodeName( true ).ToLower()] = RelatedNodeId.ToString();
+            }
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
+            ParentObject["nodetypeid"] = default( string );
+            ParentObject["objectclassid"] = default( string );
             if( TargetType == NbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
@@ -321,14 +326,20 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["objectclassid"] = TargetId.ToString();
             }
+
+            ParentObject["allowadd"] = false;
             if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetId ) ) )
             {
                 ParentObject["allowadd"] = "true";
             }
-            if( null != RelatedNodeId )
+            
+            ParentObject["relatednodeid"] = default( string );
+            if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
             {
                 ParentObject["relatednodeid"] = RelatedNodeId.ToString();
             }
+            
+            ParentObject["usesearch"] = false;
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             if( Options.Count > _SearchThreshold )
             {
