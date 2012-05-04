@@ -10,6 +10,10 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            // case 26029
+            // This should always be run after schema updates in order to synchronize enabled nodetypes
+            _CswNbtSchemaModTrnsctn.MetaData.ResetEnabledNodeTypes();
+
         }//Update()
 
     }//class RunAfterEveryExecutionOfUpdater_01

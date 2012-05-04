@@ -93,6 +93,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\CswNbtWebServiceModules.cs" />
     <Compile Include="Services\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="Services\CswNbtWebServiceGenerators.cs" />
     <Compile Include="Services\CswNbtWebServiceReport.cs" />
@@ -173,6 +174,7 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
+    <Compile Include="Global.asax.cs" />
     <Content Include="crystal\ActiveXControls\PrintControl.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_cs.cab" />
     <Content Include="crystal\ActiveXControls\PrintControl_res_da.cab" />
