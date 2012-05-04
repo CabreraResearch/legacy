@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
                 }
                 if( FilterString[4] != string.Empty )
                 {
-                    CaseSensitive = Convert.ToBoolean( FilterString[4].ToString() );
+                    CaseSensitive = CswConvert.ToBoolean( FilterString[4].ToString() );
                 }
                 //if( Values[ 5 ] != String.Empty )
                 //{
@@ -91,11 +91,11 @@ namespace ChemSW.Nbt
                 }
                 if( FilterNode.Attributes["casesensitive"] != null )
                 {
-                    CaseSensitive = Convert.ToBoolean( FilterNode.Attributes["casesensitive"].Value );
+                    CaseSensitive = CswConvert.ToBoolean( FilterNode.Attributes["casesensitive"].Value );
                 }
                 if( FilterNode.Attributes["showatruntime"] != null )
                 {
-                    ShowAtRuntime = Convert.ToBoolean( FilterNode.Attributes["showatruntime"].Value );
+                    ShowAtRuntime = CswConvert.ToBoolean( FilterNode.Attributes["showatruntime"].Value );
                 }
                 //if( FilterNode.Attributes[ "arbitraryid" ] != null )
                 //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
