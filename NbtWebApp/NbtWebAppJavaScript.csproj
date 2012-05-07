@@ -107,6 +107,7 @@
     <Content Include="js\nbt\actions\csw.quotas.js" />
     <Content Include="js\nbt\controls\csw.nodeselect.js" />
     <Content Include="js\nbt\layouts\csw.tabsandprops.js" />
+    <Content Include="js\nbt\view\csw.viewfilters.js" />
     <Content Include="js\nbt\wizards\csw.creatematerial.js" />
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
     <Content Include="js\nbt\controls\csw.nodetypeselect.js" />

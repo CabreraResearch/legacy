@@ -458,7 +458,7 @@ namespace ChemSW.Nbt
             return NewPropNode;
         }
 
-        public JProperty ToJson( string PName = null, bool FirstLevelOnly = false )
+        public JProperty ToJson( string PName = null, bool FirstLevelOnly = false, bool ShowAtRuntimeOnly = false )
         {
             JObject FilterObj = new JObject();
             if( string.IsNullOrEmpty( PName ) )
@@ -486,7 +486,10 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewPropertyFilter Filter in this.Filters )
                 {
-                    FilterObj.Add( Filter.ToJson() );
+                    if(false == ShowAtRuntimeOnly || Filter.ShowAtRuntime)
+                    {
+                        FilterObj.Add( Filter.ToJson() );
+                    }
                 }
             }
             return PropertyProp;

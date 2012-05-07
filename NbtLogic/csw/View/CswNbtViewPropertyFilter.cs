@@ -20,13 +20,15 @@ namespace ChemSW.Nbt
                                          CswNbtSubField.SubFieldName inSubFieldName,
                                          CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
                                          string inValue,
-                                         bool inCaseSensitive )
+                                         bool inCaseSensitive = false,
+                                         bool inShowAtRuntime = false )
             : base( CswNbtResources, View )
         {
             SubfieldName = inSubFieldName;
             FilterMode = inFilterMode;
             Value = inValue;
             CaseSensitive = inCaseSensitive;
+            ShowAtRuntime = inShowAtRuntime;
         }
 
         /// <summary>
@@ -37,20 +39,34 @@ namespace ChemSW.Nbt
         {
             if( FilterString[0] == NbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
             {
-                if( FilterString[1] != String.Empty )
+                if( FilterString[1] != string.Empty )
+                {
                     Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterConjunction ), FilterString[1].ToString(), true );
-                if( FilterString[2] != String.Empty )
+                }
+                if( FilterString[2] != string.Empty )
+                {
                     Value = FilterString[2].ToString();
-                if( FilterString[3] != String.Empty )
-                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterString[3].ToString(), true );
+                }
+                if( FilterString[3] != string.Empty )
+                {
                     FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) FilterString[3].ToString();
-                if( FilterString[4] != String.Empty )
-                    CaseSensitive = Convert.ToBoolean( FilterString[4].ToString() );
+                }
+                if( FilterString[4] != string.Empty )
+                {
+                    CaseSensitive = CswConvert.ToBoolean( FilterString[4].ToString() );
+                }
                 //if( Values[ 5 ] != String.Empty )
+                //{
                 //    ArbitraryId = Values[ 5 ].ToString();
-                if( FilterString[6] != String.Empty )
-                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterString[6].ToString() );
+                //}
+                if( FilterString[6] != string.Empty )
+                {
                     SubfieldName = (CswNbtSubField.SubFieldName) FilterString[6].ToString();
+                }
+                if( FilterString[7] != string.Empty )
+                {
+                    ShowAtRuntime = CswConvert.ToBoolean( FilterString[7] );    
+                }
                 _validate();
             }
 
@@ -75,7 +91,11 @@ namespace ChemSW.Nbt
                 }
                 if( FilterNode.Attributes["casesensitive"] != null )
                 {
-                    CaseSensitive = Convert.ToBoolean( FilterNode.Attributes["casesensitive"].Value );
+                    CaseSensitive = CswConvert.ToBoolean( FilterNode.Attributes["casesensitive"].Value );
+                }
+                if( FilterNode.Attributes["showatruntime"] != null )
+                {
+                    ShowAtRuntime = CswConvert.ToBoolean( FilterNode.Attributes["showatruntime"].Value );
                 }
                 //if( FilterNode.Attributes[ "arbitraryid" ] != null )
                 //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
@@ -121,8 +141,12 @@ namespace ChemSW.Nbt
 
                 if( FilterObj["casesensitive"] != null )
                 {
-                    bool _CaseSensitive = CswConvert.ToBoolean( FilterObj["casesensitive"] );
-                    CaseSensitive = _CaseSensitive;
+                    CaseSensitive = CswConvert.ToBoolean( FilterObj["casesensitive"] );
+                }
+
+                if( FilterObj["showatruntime"] != null )
+                {
+                    ShowAtRuntime = CswConvert.ToBoolean( FilterObj["showatruntime"] );
                 }
 
                 string _SfName = CswConvert.ToString( FilterObj["subfieldname"] );
@@ -218,6 +242,7 @@ namespace ChemSW.Nbt
             get { return "Images/view/filter.gif"; }
         }
 
+        public bool ShowAtRuntime;
 
         private void _validate()
         {
@@ -245,6 +270,10 @@ namespace ChemSW.Nbt
             CaseSensitiveAttribute.Value = CaseSensitive.ToString();
             PropFilterNode.Attributes.Append( CaseSensitiveAttribute );
 
+            XmlAttribute ShowAtRuntimeAttribute = XmlDoc.CreateAttribute( "showatruntime" );
+            ShowAtRuntimeAttribute.Value = ShowAtRuntime.ToString();
+            PropFilterNode.Attributes.Append( ShowAtRuntimeAttribute );
+
             XmlAttribute ArbitraryIdAttribute = XmlDoc.CreateAttribute( "arbitraryid" );
             ArbitraryIdAttribute.Value = ArbitraryId.ToString();
             PropFilterNode.Attributes.Append( ArbitraryIdAttribute );
@@ -262,6 +291,7 @@ namespace ChemSW.Nbt
                                      new XAttribute( "value", Value ),
                                      new XAttribute( "filtermode", FilterMode.ToString() ),
                                      new XAttribute( "casesensitive", CaseSensitive.ToString() ),
+                                     new XAttribute( "showatruntime", ShowAtRuntime.ToString() ),
                                      new XAttribute( "arbitraryid", ArbitraryId ),
                                      new XAttribute( "subfieldname", SubfieldName.ToString() )
                 );
@@ -276,6 +306,7 @@ namespace ChemSW.Nbt
                                                 new JProperty( "value", Value ),
                                                 new JProperty( "filtermode", FilterMode.ToString() ),
                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),
+                                                new JProperty( "showatruntime", ShowAtRuntime.ToString() ),
                                                 new JProperty( "arbitraryid", ArbitraryId ),
                                                 new JProperty( "subfieldname", SubfieldName.ToString() )
                                                 )
@@ -299,6 +330,7 @@ namespace ChemSW.Nbt
             ret.Add( CaseSensitive.ToString() );
             ret.Add( ArbitraryId.ToString() );
             ret.Add( SubfieldName.ToString() );
+            ret.Add( ShowAtRuntime.ToString() );
 
             return ret;
         }

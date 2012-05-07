@@ -110,13 +110,13 @@
         external.checked = function (value) {
             var ret = external;
             if (internal.canCheck) {
-                if (internal.type == arguments.length === 1) {
+                if (arguments.length === 1) {
                     if (value) {
                         external.propDom({ 'checked': true });
                     } else {
-                        if (window.abandonHope) {
+                        //if (window.abandonHope) {
                             external.$.removeAttr('checked');
-                        }
+                        //}
                     }
                 } else {
                     ret = external.$.is(':checked');
