@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                         {
-                            if( ConfigMode || _showProp( Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node ) )
+                            if( ConfigMode || _showProp( LayoutType, Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node ) )
                             {
                                 _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
                             }
@@ -207,19 +207,19 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getProps()
 
-        private bool _showProp( CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
+        private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
         {
             bool RetShow = false;
 
-            switch( _CswNbtResources.EditMode )
+            switch( LayoutType )
             {
-                case NodeEditMode.Add:
+                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add:
                     //Case 24023: Exclude buttons on Add
                     RetShow = ( Prop.EditProp( Node, _ThisUser, true ) &&
                                 Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
                     break;
                 default:
-                    RetShow = Prop.ShowProp( Node, _ThisUser, TabId );
+                    RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
                     break;
             }
             RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );
