@@ -3,7 +3,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -83,25 +82,26 @@ namespace ChemSW.Nbt.ObjClasses
             // BZ 7845
             if( Type.Empty )
             {
-                RunStatus.StaticText = "Cannot Enable Mail Report: No Type Selected";
+                RunStatus.AddComment( "Cannot Enable Mail Report: No Type Selected" );
                 Enabled.Checked = Tristate.False;
             }
             else
             {
                 if( Type.Value == TypeOptionReport && Report.Empty )
                 {
-                    RunStatus.StaticText = "Cannot Enable Mail Report: No Report Selected";
+                    RunStatus.AddComment( "Cannot Enable Mail Report: No Report Selected" );
                     Enabled.Checked = Tristate.False;
                 }
                 else if( Type.Value == TypeOptionView && ReportView.Empty )
                 {
-                    RunStatus.StaticText = "Cannot Enable Mail Report: No View Selected";
+                    RunStatus.AddComment( "Cannot Enable Mail Report: No View Selected" );
                     Enabled.Checked = Tristate.False;
                 }
                 else
                 {
-                    if( RunStatus.StaticText.StartsWith( "Cannot Enable Mail Report" ) )
-                        RunStatus.StaticText = string.Empty;
+                    //case 25702 - Since the comments are logged, we don't need to clear the status
+                    //if( RunStatus.StaticText.StartsWith( "Cannot Enable Mail Report" ) )
+                    //    RunStatus.StaticText = string.Empty;
                 }
             }
 
@@ -145,7 +145,8 @@ namespace ChemSW.Nbt.ObjClasses
                 if( RunNowPropertyName == OCP.PropName )
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
-                    RunStatus.StaticText = string.Empty;
+                    //case 25702
+                    //RunStatus.StaticText = string.Empty;
                     Node.postChanges( false );
                     ButtonAction = NbtButtonAction.refresh;
                 }
@@ -245,11 +246,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropStatic RunStatus
+        public CswNbtNodePropComments RunStatus
         {
             get
             {
-                return ( _CswNbtNode.Properties[RunStatusPropertyName].AsStatic );
+                return ( _CswNbtNode.Properties[RunStatusPropertyName].AsComments );
             }
         }
 

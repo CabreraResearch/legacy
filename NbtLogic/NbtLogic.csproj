@@ -84,7 +84,11 @@
   <ItemGroup>
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25981.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25702.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25702B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25994.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26029.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25041.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25987.cs" />
     <Compile Include="csw\Security\CswNbtUser.cs" />
