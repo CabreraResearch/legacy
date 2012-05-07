@@ -55,11 +55,59 @@
                 // Webservice Checkboxes
                 cell11.span({ text: 'Include Webservices:' });
                 cell11.append('<br/>');
-                var wssel = cell11.select({
-                    ID: 'webservice_sel',
-                    values: ['runTree', 'runTree, getTabs', 'runTree, getTabs, getProps'],
-                    selected: 'runTree, getTabs, getProps'
+
+                var cbruntree = cell11.input({
+                    ID: 'cbruntree',
+                    type: Csw.enums.inputTypes.checkbox,
+                    checked: true,
+                    onChange: function () {
+                        if (false === cbruntree.checked()) {
+                            cbgettabs.checked(false);
+                            cbgetprops.checked(false);
+                            cbgetmainmenu.checked(false);
+                        }
+                    }
                 });
+                cell11.span({ text: 'runTree' }).br();
+
+                var cbgetmainmenu = cell11.input({
+                    ID: 'cbgetmainmenu',
+                    type: Csw.enums.inputTypes.checkbox,
+                    checked: true,
+                    onChange: function () {
+                        if (false === cbruntree.checked()) {
+                            cbgetmainmenu.checked(false);
+                        }
+                    }
+                });
+                cell11.span({ text: 'getMainMenu' }).br();
+
+                var cbgettabs = cell11.input({
+                    ID: 'cbgettabs',
+                    type: Csw.enums.inputTypes.checkbox,
+                    checked: true,
+                    onChange: function () {
+                        if (false === cbruntree.checked()) {
+                            cbgettabs.checked(false);
+                        }
+                        if (false === cbgettabs.checked()) {
+                            cbgetprops.checked(false);
+                        }
+                    }
+                });
+                cell11.span({ text: 'getTabs' }).br();
+
+                var cbgetprops = cell11.input({
+                    ID: 'cbgetprops',
+                    type: Csw.enums.inputTypes.checkbox,
+                    checked: true,
+                    onChange: function () {
+                        if (false === cbgettabs.checked()) {
+                            cbgetprops.checked(false);
+                        }
+                    }
+                });
+                cell11.span({ text: 'getProps' }).br();
 
                 cell11.append('<br/><br/>');
 
@@ -112,8 +160,10 @@
                     startBtn.disable();
                     stopBtn.enable();
 
+                    var viewid = vs.value().value;
+
                     var runTreeData = {
-                        ViewId: vs.value().value,
+                        ViewId: viewid,
                         IdPrefix: 'test',
                         IncludeNodeRequired: false,
                         IncludeNodeKey: '',
@@ -123,56 +173,77 @@
                         DefaultSelect: Csw.enums.nodeTree_DefaultSelect.firstchild.name
                     };
 
-                    doAjax(tbl, vs.value().name, 'runTree', runTreeData, function (result) {
-                        if (wssel.val() === 'runTree, getTabs' || wssel.val() === 'runTree, getTabs, getProps') {
+                    if (cbruntree.checked()) {
+                        doAjax(tbl, vs.value().name, 'runTree', runTreeData, function (result) {
 
                             var nodeid = '';
                             var nodekey = result.selectid;
                             var nodetypeid = '';
                             var editmode = Csw.enums.editMode.Edit;
 
-                            var getTabsData = {
-                                EditMode: editmode,
-                                NodeId: nodeid,
-                                SafeNodeKey: nodekey,
-                                NodeTypeId: nodetypeid,
-                                Date: '',
-                                filterToPropId: '',
-                                Multi: false
-                            };
+                            if (cbgetmainmenu.checked()) {
+                                var getMainMenuData = {
+                                    ViewId: viewid,
+                                    SafeNodeKey: nodekey,
+                                    PropIdAttr: '',
+                                    LimitMenuTo: ''
+                                };
 
-                            doAjax(tbl, vs.value().name, 'getTabs', getTabsData, function (result) {
-
-                                if (wssel.val() === 'runTree, getTabs, getProps') {
-                                    var tabid = result[1]['id'];
-
-                                    var getPropsData = {
-                                        EditMode: editmode,
-                                        NodeId: nodeid,
-                                        TabId: tabid,
-                                        SafeNodeKey: nodekey,
-                                        NodeTypeId: nodetypeid,
-                                        Date: '',
-                                        Multi: false,
-                                        filterToPropId: '',
-                                        ConfigMode: false
-                                    };
-
-                                    doAjax(tbl, vs.value().name, 'getProps', getPropsData, function (result) {
-
+                                doAjax(tbl, vs.value().name, 'getMainMenu', getMainMenuData, function (result) {
+                                    if (false === cbgettabs.checked()) {
                                         to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                                    }
+                                }); // doAjax getMainMenu
 
-                                    }); // doAjax getProps
-                                } // if (wssel.val() === 'runTree, getTabs, getProps') {
-                                else {
-                                    to = setTimeout(test, Csw.number(delaytb.val(), 500));
-                                }
-                            }); // doAjax getTabs
-                        } // if (wssel.val() === 'runTree, getTabs' || wssel.val() === 'runTree, getTabs, getProps') {
-                        else {
-                            to = setTimeout(test, Csw.number(delaytb.val(), 500));
-                        }
-                    }); // doAjax runTree
+                            }
+                            if (cbgettabs.checked()) {
+
+                                var getTabsData = {
+                                    EditMode: editmode,
+                                    NodeId: nodeid,
+                                    SafeNodeKey: nodekey,
+                                    NodeTypeId: nodetypeid,
+                                    Date: '',
+                                    filterToPropId: '',
+                                    Multi: false
+                                };
+
+                                doAjax(tbl, vs.value().name, 'getTabs', getTabsData, function (result) {
+
+                                    if (cbgetprops.checked()) {
+                                        var tabid = result[1]['id'];
+
+                                        var getPropsData = {
+                                            EditMode: editmode,
+                                            NodeId: nodeid,
+                                            TabId: tabid,
+                                            SafeNodeKey: nodekey,
+                                            NodeTypeId: nodetypeid,
+                                            Date: '',
+                                            Multi: false,
+                                            filterToPropId: '',
+                                            ConfigMode: false
+                                        };
+
+                                        doAjax(tbl, vs.value().name, 'getProps', getPropsData, function (result) {
+
+                                            to = setTimeout(test, Csw.number(delaytb.val(), 500));
+
+                                        }); // doAjax getProps
+                                    } // if (cbgetprops.checked()) {
+                                    else {
+                                        to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                                    }
+                                }); // doAjax getTabs
+                            } // if (cbgettabs.checked()) {
+                            else if (false === cbgetmainmenu.checked()) {
+                                to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                            }
+                        }); // doAjax runTree
+                    } // if(cbruntree.checked()) {
+                    else {
+                        to = setTimeout(test, Csw.number(delaytb.val(), 500));
+                    }
                 } // test()
 
             }, // onAuthenticate
