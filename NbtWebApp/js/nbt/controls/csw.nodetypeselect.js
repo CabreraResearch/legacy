@@ -17,6 +17,9 @@
                 onSuccess: null,
                 width: '200px',
                 addNewOption: false,
+                //blankOption: '', //TODO - if not empty, this is the default value (like 'select one') - also, ask it how many options it has - if only one option, skip to dialog, 
+                optionCount: '',
+                filterToPermission: '',
                 labelText: null,
                 excludeNodeTypeIds: '',
                 relatedToNodeTypeId: '',
@@ -46,14 +49,19 @@
                     external.option({ value: '[Create New]' });
                 }
 
+//                if ('' !== internal.blankOption) {
+//                    external.option({ value: 0, display: internal.blankOption });
+//                }
+
                 Csw.ajax.post({
                     urlMethod: internal.nodeTypesUrlMethod,
                     data: {
                         ObjectClassName: Csw.string(internal.objectClassName),
                         ObjectClassId: Csw.string(internal.objectClassId),
-                        ExcludeNodeTypeIds: internal.excludeNodeTypeIds, 
+                        ExcludeNodeTypeIds: internal.excludeNodeTypeIds,
                         RelatedToNodeTypeId: internal.relatedToNodeTypeId,
-                        RelatedObjectClassPropName: internal.relatedObjectClassPropName
+                        RelatedObjectClassPropName: internal.relatedObjectClassPropName,
+                        FilterToPermission: internal.filterToPermission
                     },
                     success: function (data) {
                         var ret = data;

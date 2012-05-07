@@ -21,7 +21,9 @@
                     options = propVals.options,
                     useSearch = Csw.bool(propVals.usesearch),
                     relationships = [],
-                    cellCol = 1;
+                    cellCol = 1,
+                    selectedNodeType = {},
+                    addImage = {};
 
                 // Default to selected node as relationship value for new nodes being added
                 if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
@@ -112,43 +114,56 @@
                         }
 
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
-                    }
-                    if (allowAdd) {
+                    } //if-else(useSearch)
+                    if (allowAdd) {//case 25721 
+                        var makeAddImage = function (nodeTypeCount) {
+                            addImage = table.cell(1, cellCol)
+                            .div()
+                            .imageButton({
+                                ButtonType: Csw.enums.imageButton_ButtonType.Add,
+                                AlternateText: "Add New " + o.propData.name,
+                                onClick: function () {
+                                    if (nodeTypeCount === 1 && false === Csw.isNullOrEmpty(selectedNodeType)) {
+                                        nodeTypeId = selectedNodeType.val();
+                                    }
+                                    if (false === Csw.isNullOrEmpty(nodeTypeId)) {
+                                        $.CswDialog('AddNodeDialog', {
+                                            'nodetypeid': nodeTypeId,
+                                            'onAddNode': o.onReload
+                                        });
+                                    }
+                                    if (Csw.number(nodeTypeCount) > 1) {
+                                        addImage.hide();
+                                        selectedNodeType.show();
+                                    }
+                                }
+                            });
+                            cellCol++;
+                        };
                         if (false === Csw.isNullOrEmpty(nodeTypeId)) {
-                            // Add new value
-                            table.cell(1, cellCol)
-                            .div()
-                            .imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.Add,
-                                AlternateText: "Add New " + o.propData.name,
-                                onClick: function () {
-                                    $.CswDialog('AddNodeDialog', {
-                                        'nodetypeid': nodeTypeId,
-                                        'onAddNode': o.onReload
-                                    });
-                                }
-                            });
+                            makeAddImage();
+                        }
+                        if (false === Csw.isNullOrEmpty(objectClassId)) {
+                            selectedNodeType = table.cell(1, cellCol)
+                                .nodeTypeSelect({
+                                    objectClassId: objectClassId,
+                                    onSelect: function (data, nodeTypeCount) {
+                                        if (Csw.number(nodeTypeCount) > 1) {
+                                            $.CswDialog('AddNodeDialog', {
+                                                'nodetypeid': selectedNodeType.val(),
+                                                'onAddNode': o.onReload
+                                            });
+                                        }
+                                    },
+                                    onSuccess: function (data, nodeTypeCount) {
+                                        makeAddImage(Csw.number(nodeTypeCount));
+                                        selectedNodeType.hide();
+                                    },
+                                    filterToPermission: 'Create'
+                                });
                             cellCol++;
                         }
-                        else if (false === Csw.isNullOrEmpty(objectClassId)) {
-                            //case 25721
-                            var selectedNodeType = table.cell(1, cellCol)
-                                .nodeTypeSelect({ objectClassId: objectClassId });
-                            cellCol++;
-                            table.cell(1, cellCol)
-                            .div()
-                            .imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.Add,
-                                AlternateText: "Add New " + o.propData.name,
-                                onClick: function () {
-                                    $.CswDialog('AddNodeDialog', {
-                                        'nodetypeid': selectedNodeType.val(),
-                                        'onAddNode': o.onReload
-                                    });
-                                }
-                            });
-                        }
-                    }//if (allowAdd)
+                    } //if (allowAdd)
                 } // if-else (o.ReadOnly) {
             }, // init
             save: function (o) {
