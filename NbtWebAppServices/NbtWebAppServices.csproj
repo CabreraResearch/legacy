@@ -101,13 +101,14 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\CswWebServiceTools.cs" />
+    <Compile Include="Core\CswNbtWebServiceTools.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Request\CswNbtWebServiceRequest.cs" />
     <Compile Include="Request\ICswNbtWebServiceRequest.cs" />
-    <Compile Include="Response\CswNbtWebServiceError.cs" />
+    <Compile Include="Core\CswNbtWebServiceError.cs" />
+    <Compile Include="Response\CswNbtWebServiceResponseDefault.cs" />
     <Compile Include="Response\CswNbtWebServiceResponseNoData.cs" />
     <Compile Include="Response\CswNbtWebServiceResponse.cs" />
     <Compile Include="Response\ICswNbtWebServiceResponse.cs" />
@@ -115,9 +116,10 @@
     <Compile Include="Response\Locations\CswNbtLocationsResponseModel.cs" />
     <Compile Include="Session\CswNbtStatistics.cs" />
     <Compile Include="Session\CswNbtSessionResources.cs" />
-    <Compile Include="Core\CswWebCookies.cs" />
+    <Compile Include="Core\CswNbtWebServiceCookies.cs" />
     <Compile Include="Response\Session\CswNbtSessionResponseModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WebServices\CswNbtWsDefault.cs" />
     <Compile Include="WebServices\CswNbtWsLocations.cs" />
     <Compile Include="WebServices\CswNbtWsSession.cs" />
   </ItemGroup>

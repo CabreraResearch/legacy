@@ -4,6 +4,7 @@ using System.Web;
 using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Security;
+using NbtWebAppServices.Core;
 using NbtWebAppServices.Session;
 
 namespace NbtWebAppServices.Response
@@ -22,6 +23,8 @@ namespace NbtWebAppServices.Response
             _Context = Context;
             SessionAuthenticationStatus = new CswNbtSessionAuthenticationStatus();
             SessionAuthenticationStatus.AuthenticationStatus = "Unknown";
+            Status = new CswNbtWebServiceStatus();
+
             try
             {
                 CswNbtSessionResources = CswNbtSessionResources.initResources( _Context );
@@ -83,7 +86,7 @@ namespace NbtWebAppServices.Response
         public void addError( Exception Exception )
         {
             CswNbtWebServiceError Error = new CswNbtWebServiceError( CswNbtSessionResources );
-            Status = Error.getErrorStatus( Exception );
+            Status.Errors.Add( Error.getErrorStatus( Exception ) );
             Status.Success = false;
         }
     }

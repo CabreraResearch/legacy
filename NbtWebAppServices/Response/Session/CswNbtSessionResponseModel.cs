@@ -1,4 +1,5 @@
 ﻿
+using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
 
 namespace NbtWebAppServices.Session
@@ -23,13 +24,23 @@ namespace NbtWebAppServices.Session
         public double ServerTotal { get; set; }
     }
 
-    public class CswNbtWebServiceStatus
+    public class CswNbtWebServiceErrorMessage
     {
-        public bool Success = true;
         public string ErrorMessage = default( string );
         public string ErrorDetail = default( string );
         public ErrorType ErrorType = ErrorType.None;
         public bool DisplayError = false;
+    }
+
+    public class CswNbtWebServiceStatus
+    {
+        public CswNbtWebServiceStatus()
+        {
+            Errors = new Collection<CswNbtWebServiceErrorMessage>();
+        }
+        public bool Success = true;
+        public Collection<CswNbtWebServiceErrorMessage> Errors { get; set; }
+        public bool DisplayErrors = false;
     }
 
 }

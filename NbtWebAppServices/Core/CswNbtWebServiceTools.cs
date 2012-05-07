@@ -2,7 +2,7 @@
 
 namespace NbtWebAppServices.Core
 {
-    public class CswWebserviceTools
+    public class CswNbtWebServiceTools
     {
         public static string getIpAddress()
         {

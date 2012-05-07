@@ -2,7 +2,7 @@
 using ChemSW.Exceptions;
 using NbtWebAppServices.Session;
 
-namespace NbtWebAppServices.Response
+namespace NbtWebAppServices.Core
 {
     public class CswNbtWebServiceError
     {
@@ -12,14 +12,14 @@ namespace NbtWebAppServices.Response
             _CswNbtSessionResources = CswNbtSessionResources;
         }
 
-        public CswNbtWebServiceStatus getErrorStatus( Exception ex )
+        public CswNbtWebServiceErrorMessage getErrorStatus( Exception ex )
         {
             return _error( ex );
         }
 
-        private CswNbtWebServiceStatus _error( Exception ex )
+        private CswNbtWebServiceErrorMessage _error( Exception ex )
         {
-            CswNbtWebServiceStatus Ret = new CswNbtWebServiceStatus();
+            CswNbtWebServiceErrorMessage Ret = new CswNbtWebServiceErrorMessage();
             if( null != _CswNbtSessionResources &&
                 null != _CswNbtSessionResources.CswNbtResources )
             {

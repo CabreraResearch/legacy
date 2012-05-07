@@ -51,7 +51,7 @@ namespace NbtWebAppServices.Session
 
 
             CswSessionManager = new CswSessionManager( AppType.Nbt,
-                                                       new CswWebCookies( _Context.Request, _Context.Response ),
+                                                       new CswNbtWebServiceCookies( _Context.Request, _Context.Response ),
                                                        LoginAccessId,
                                                        CswNbtResources.SetupVbls,
                                                        CswNbtResources.CswDbCfgInfo,
