@@ -21,7 +21,7 @@ namespace NbtWebAppServices.Response
             _Timer = new CswTimer();
             _Context = Context;
             SessionAuthenticationStatus = new CswNbtSessionAuthenticationStatus();
-            SessionAuthenticationStatus.AuthenticationStatus = AuthenticationStatus.Unknown.ToString();
+            SessionAuthenticationStatus.AuthenticationStatus = "Unknown";
             try
             {
                 CswNbtSessionResources = CswNbtSessionResources.initResources( _Context );

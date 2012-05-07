@@ -7,17 +7,17 @@ using NbtWebAppServices.Session;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtWebServiceResponse : ICswNbtWebServiceResponse
+    public class CswNbtWebServiceResponseLocations : ICswNbtWebServiceResponse
     {
         private CswNbtWebServiceResponseNoData _DefaultResponse;
 
-        public CswNbtWebServiceResponse( HttpContext Context )
+        public CswNbtWebServiceResponseLocations( HttpContext Context )
         {
             _DefaultResponse = new CswNbtWebServiceResponseNoData( Context );
         }
 
         [DataMember]
-        public object Data { get; set; }
+        public CswNbtLocationsResponseModel Data { get; set; }
 
         [DataMember]
         public CswNbtSessionAuthenticationStatus SessionAuthenticationStatus

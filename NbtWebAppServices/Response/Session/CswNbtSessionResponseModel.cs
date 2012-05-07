@@ -3,14 +3,6 @@ using ChemSW.Exceptions;
 
 namespace NbtWebAppServices.Session
 {
-    public class CswNbtSessionRequest
-    {
-        public string Password { get; set; }
-        public string CustomerId { get; set; }
-        public string UserName { get; set; }
-        public bool IsMobile { get; set; }
-    }
-
     public class CswNbtSessionAuthenticationStatus
     {
         private string _AuthenticationStatus = ChemSW.Security.AuthenticationStatus.Unknown.ToString();

@@ -21,7 +21,7 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseNoData init( CswNbtSessionRequest request )
+        public CswNbtWebServiceResponseNoData init( CswNbtWebServiceRequest.CswNbtSessionRequest request )
         {
             CswNbtWebServiceResponseNoData Ret = new CswNbtWebServiceResponseNoData( _Context );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -135,7 +135,7 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseNoData end( string SessionId )
+        public CswNbtWebServiceResponseNoData end( string CswSessionId )
         {
             CswNbtWebServiceResponseNoData Ret = new CswNbtWebServiceResponseNoData( _Context );
             try
@@ -143,7 +143,7 @@ namespace NbtWebAppServices.WebServices
                 _CswNbtSessionResources = Ret.CswNbtSessionResources;
                 if( Ret.SessionAuthenticationStatus.AuthenticationStatus == AuthenticationStatus.Authenticated.ToString() )
                 {
-                    _CswNbtSessionResources.CswSessionManager.clearSession( SessionId );
+                    _CswNbtSessionResources.CswSessionManager.clearSession( CswSessionId );
                 }
             }
             catch( Exception Ex )

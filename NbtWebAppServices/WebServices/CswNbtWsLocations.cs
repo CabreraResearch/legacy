@@ -24,9 +24,9 @@ namespace NbtWebAppServices.WebServices
         [OperationContract]
         [WebGet]
         [Description( "Generate a list of Locations" )]
-        public CswNbtLocationsResponse list()
+        public CswNbtWebServiceResponseLocations list()
         {
-            CswNbtLocationsResponse Ret = new CswNbtLocationsResponse( _Context );
+            CswNbtWebServiceResponseLocations Ret = new CswNbtWebServiceResponseLocations( _Context );
             try
             {
                 _CswNbtSessionResources = Ret.CswNbtSessionResources;
@@ -35,28 +35,37 @@ namespace NbtWebAppServices.WebServices
                 CswNbtView LocationsListView = SystemViews.SiLocationsListView();
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( LocationsListView, true, false );
                 Int32 LocationCount = Tree.getChildNodeCount();
-                CswNbtWsLocationsModel.CswNbtWsLocationListModel LocationList = new CswNbtWsLocationsModel.CswNbtWsLocationListModel();
+                CswNbtLocationsResponseModel LocationModel = new CswNbtLocationsResponseModel();
+
                 if( LocationCount > 0 )
                 {
+                    CswNbtMetaDataObjectClass LocationsOc = _CswNbtSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+
                     for( Int32 N = 0; N < LocationCount; N += 1 )
                     {
-                        Tree.goToNthChild( 0 );
-                        CswNbtWsLocationsModel.CswNbtWsLocationNodeModel LocationNode = new CswNbtWsLocationsModel.CswNbtWsLocationNodeModel();
-                        JArray Props = Tree.getChildNodePropsOfNode();
+                        Tree.goToNthChild( N );
+                        CswNbtNodeKey NodeKey = Tree.getNodeKeyForCurrentPosition();
 
-                        LocationNode.Name = Tree.getNodeNameForCurrentPosition();
-                        LocationNode.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
-                        foreach( JObject Prop in Props )
+                        if( NodeKey.ObjectClassId == LocationsOc.ObjectClassId )
                         {
-                            if( CswConvert.ToString( Prop["fieldtype"] ).ToLower() == CswNbtMetaDataFieldType.NbtFieldType.Location.ToString().ToLower() )
+                            CswNbtLocationsResponseModel.CswNbtLocationNodeModel LocationNode = new CswNbtLocationsResponseModel.CswNbtLocationNodeModel();
+                            JArray Props = Tree.getChildNodePropsOfNode();
+
+                            LocationNode.Name = Tree.getNodeNameForCurrentPosition();
+                            LocationNode.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
+                            LocationNode.Path = default( string );
+                            foreach( JObject Prop in Props )
                             {
-                                LocationNode.Path = CswConvert.ToString( Prop["gestalt"] );
+                                if( CswConvert.ToString( Prop["fieldtype"] ).ToLower() == CswNbtMetaDataFieldType.NbtFieldType.Location.ToString().ToLower() )
+                                {
+                                    LocationNode.Path = CswConvert.ToString( Prop["gestalt"] );
+                                }
                             }
+                            LocationModel.Add( LocationNode );
                         }
-                        LocationList.LocationsList.Add( LocationNode );
                         Tree.goToParentNode();
                     }
-                    Ret.Data = LocationList;
+                    Ret.Data = LocationModel;
                 }
             }
             catch( Exception Ex )
