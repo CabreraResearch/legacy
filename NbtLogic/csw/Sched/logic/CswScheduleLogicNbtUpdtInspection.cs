@@ -63,6 +63,9 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
 
+                    Int32 TotalProcessed = 0;
+                    string Names = string.Empty;
+
                     List<CswNbtObjClassInspectionDesign> InspectionDesigns = _CswScheduleLogicNodes.getInspectonDesigns();
 
                     for( Int32 idx = 0; ( idx < InspectionDesigns.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
@@ -78,6 +81,9 @@ namespace ChemSW.Nbt.Sched
                         {
                             CurrentInspectionDesign.Status.Value = _Overdue;
                             CurrentInspectionDesign.postChanges( true );
+
+                            TotalProcessed++;
+                            Names += CurrentInspectionDesign.Name + "; ";
                         }
 
                         if( LogicRunStatus.Stopping == _LogicRunStatus )
@@ -87,7 +93,7 @@ namespace ChemSW.Nbt.Sched
 
                     }
 
-
+                    _CswScheduleLogicDetail.StatusMessage = TotalProcessed.ToString() + " inspections processed: " + Names;
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }//try

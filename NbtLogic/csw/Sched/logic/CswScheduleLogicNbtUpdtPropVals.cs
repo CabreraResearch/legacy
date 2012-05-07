@@ -89,6 +89,7 @@ namespace ChemSW.Nbt.Sched
 
                     }//if there were out of date nodes
 
+                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }
@@ -100,7 +101,6 @@ namespace ChemSW.Nbt.Sched
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;//last line
                 }
 
-                _CswScheduleLogicDetail.StatusMessage = "Completed without error";
 
 
             }//if we're not shutting down

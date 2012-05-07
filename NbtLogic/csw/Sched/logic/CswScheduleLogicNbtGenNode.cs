@@ -61,8 +61,11 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    
+
                     List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
+
+                    Int32 TotalGeneratorsProcessed = 0;
+                    string GeneratorDescriptions = string.Empty;
 
                     for( Int32 idx = 0; ( idx < ObjectGenerators.Count && idx < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
@@ -101,6 +104,9 @@ namespace ChemSW.Nbt.Sched
                                 {
                                     string Message = _runGenerator( CurrentGenerator );
                                     _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+
+                                    GeneratorDescriptions += CurrentGenerator.Description + "; ";
+                                    TotalGeneratorsProcessed++;
                                 }
                             } // if( ThisDueDateValue != DateTime.MinValue )
 
@@ -108,6 +114,7 @@ namespace ChemSW.Nbt.Sched
 
                     }//iterate generators
 
+                    _CswScheduleLogicDetail.StatusMessage = TotalGeneratorsProcessed.ToString() + " generators processed: " + GeneratorDescriptions;
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
@@ -121,7 +128,6 @@ namespace ChemSW.Nbt.Sched
 
             }//if we're not shutting down
 
-            _CswScheduleLogicDetail.StatusMessage = "Completed without error";
 
         }//threadCallBack()
 

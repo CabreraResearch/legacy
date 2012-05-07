@@ -81,6 +81,7 @@ namespace ChemSW.Nbt.Sched
                         JNPUpdate.update( JNPTable );
                     }
 
+                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }//try
@@ -94,7 +95,6 @@ namespace ChemSW.Nbt.Sched
 
                 }//catch
 
-                _CswScheduleLogicDetail.StatusMessage = "Completed without error";
 
 
             }//if we're not shutting down
