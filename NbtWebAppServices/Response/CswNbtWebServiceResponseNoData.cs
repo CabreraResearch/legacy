@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.Nbt;
@@ -7,6 +8,7 @@ using NbtWebAppServices.Session;
 
 namespace NbtWebAppServices.Response
 {
+    [DataContract]
     public class CswNbtWebServiceResponseNoData : ICswNbtWebServiceResponse
     {
         private CswTimer _Timer;
@@ -32,17 +34,18 @@ namespace NbtWebAppServices.Response
             }
         }
 
+        [DataMember]
         public CswNbtSessionAuthenticationStatus SessionAuthenticationStatus { get; set; }
 
+        [DataMember]
         public CswNbtWebServiceStatus Status { get; set; }
 
+        [DataMember]
         public CswNbtWebServicePerformance Performance { get; set; }
-
-        public string Data { get; set; }
 
         public CswNbtSessionResources CswNbtSessionResources { get; set; }
 
-        public void finalizeResponse( object OptionalData = null, CswNbtResources OtherResources = null )
+        public void finalizeResponse( CswNbtResources OtherResources = null )
         {
             try
             {
@@ -66,7 +69,6 @@ namespace NbtWebAppServices.Response
                     Performance.TreeLoaderSql = CswNbtSessionResources.CswNbtResources.CswLogger.TreeLoaderSQLTime;
                 }
                 Performance.ServerTotal = _Timer.ElapsedDurationInMilliseconds;
-                Data = "Response Complete";
                 if( null != CswNbtSessionResources )
                 {
                     CswNbtSessionResources.deInitResources( OtherResources );
