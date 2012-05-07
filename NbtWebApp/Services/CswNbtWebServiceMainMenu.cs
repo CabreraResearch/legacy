@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
@@ -326,13 +327,26 @@ namespace ChemSW.Nbt.WebServices
 
         public static JObject makeAddMenuItem( CswNbtViewNode.CswNbtViewAddNodeTypeEntry Entry, CswPrimaryKey RelatedNodeId, string RelatedNodeName, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
-            return new JObject( new JProperty( "text", Entry.NodeType.NodeTypeName ),
-                                new JProperty( "nodetypeid", Entry.NodeType.NodeTypeId ),
-                                new JProperty( "relatednodeid", RelatedNodeId.ToString() ),  //for Grid Props
-                                new JProperty( "relatednodename", RelatedNodeName ),  //for Grid Props
-                                new JProperty( "relatednodetypeid", RelatedNodeTypeId ),
-                                new JProperty( "relatedobjectclassid", RelatedObjectClassId ),
-                                new JProperty( "action", CswNbtWebServiceMainMenu.MenuActions.AddNode.ToString() ) );
+            JObject Ret = new JObject();
+            Ret["text"] = default( string );
+            Ret["nodetypeid"] = default( string );
+            if( null != Entry.NodeType )
+            {
+                Ret["text"] = Entry.NodeType.NodeTypeName;
+                Ret["nodetypeid"] = Entry.NodeType.NodeTypeId;
+            }
+            Ret["relatednodeid"] = default( string );
+            if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
+            {
+                Ret["relatednodeid"] = RelatedNodeId.ToString();
+            }
+
+            Ret["relatednodename"] = RelatedNodeName;
+            Ret["relatednodetypeid"] = RelatedNodeTypeId;
+            Ret["relatedobjectclassid"] = RelatedObjectClassId;
+            Ret["action"] = MenuActions.AddNode.ToString();
+
+            return Ret;
         } // makeAddMenuItem()
 
 
