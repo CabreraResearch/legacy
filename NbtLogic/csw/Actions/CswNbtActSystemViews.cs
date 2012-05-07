@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ChemSW.Nbt.MetaData;
@@ -10,6 +11,14 @@ namespace ChemSW.Nbt.Actions
     {
         CswNbtResources _CswNbtResources = null;
 
+        private readonly string SiViewCategory = "SI Configuration";
+        private readonly string SiLocationsListViewName = "SI Locations List";
+        private readonly string SiLocationsTreeViewName = "SI Locations Tree";
+        private readonly string SiInspectionsByDateViewName = "SI Inspections by Date";
+        private readonly string SiInspectionsByBarcodeViewName = "SI Inspections by Barcode";
+        private readonly string SiInspectionsByLocationViewName = "SI Inspections by Location";
+        private readonly string SiInspectionsByUserViewName = "SI Inspections by User";
+
         public CswNbtActSystemViews( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -17,7 +26,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _getSystemView( string ViewName )
         {
-            List<CswNbtView> Views = _CswNbtResources.ViewSelect.restoreViews( ViewName );
+            List<CswNbtView> Views = _CswNbtResources.ViewSelect.restoreViews( ViewName, NbtViewVisibility.Unknown, Int32.MinValue );
             CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             return Views.FirstOrDefault( View => View.Visibility == NbtViewVisibility.Role &&
                 View.VisibilityRoleId == ChemSwAdminRoleNode.NodeId );
@@ -31,7 +40,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.makeNew( ViewName, NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "SI Configuration";
+                Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
 
                 CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
@@ -64,13 +73,13 @@ namespace ChemSW.Nbt.Actions
 
         public CswNbtView SiLocationsTreeView()
         {
-            CswNbtView Ret = _getSystemView( "SI Location Tree" );
+            CswNbtView Ret = _getSystemView( SiLocationsTreeViewName );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( "SI Locations Tree", NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "SI Configuration";
+                Ret.makeNew( SiLocationsTreeViewName, NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.Tree;
 
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
@@ -85,13 +94,13 @@ namespace ChemSW.Nbt.Actions
 
         public CswNbtView SiLocationsListView()
         {
-            CswNbtView Ret = _getSystemView( "SI Location List" );
+            CswNbtView Ret = _getSystemView( SiLocationsListViewName );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( "SI Locations List", NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "SI Configuration";
+                Ret.makeNew( SiLocationsListViewName, NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
 
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
@@ -106,22 +115,22 @@ namespace ChemSW.Nbt.Actions
 
         public CswNbtView SiInspectionsByDateView()
         {
-            return _getSiInspectionBaseView( "SI Inspections by Date" );
+            return _getSiInspectionBaseView( SiInspectionsByDateViewName );
         }
 
         public CswNbtView SiInspectionsByUserView()
         {
-            return _getSiInspectionBaseView( "SI Inspections by User" );
+            return _getSiInspectionBaseView( SiInspectionsByUserViewName );
         }
 
         public CswNbtView SiInspectionsByBarcodeView()
         {
-            return _getSiInspectionBaseView( "SI Inspections by Barcode" );
+            return _getSiInspectionBaseView( SiInspectionsByBarcodeViewName );
         }
 
         public CswNbtView SiInspectionsByLocationView()
         {
-            return _getSiInspectionBaseView( "SI Inspections by Location" );
+            return _getSiInspectionBaseView( SiInspectionsByLocationViewName );
         }
 
     }
