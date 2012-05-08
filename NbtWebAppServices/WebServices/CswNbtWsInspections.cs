@@ -115,13 +115,8 @@ namespace NbtWebAppServices.WebServices
                     _initInspectionResources( CswNbtActSystemViews.SystemViewName.SIInspectionsbyLocation );
 
                     CswNbtMetaDataObjectClassProp LocationOcp = _InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
-
-                    _NbtSystemView.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
-                                                             {
-                                                                 FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Contains,
-                                                                 FilterValue = LocationName,
-                                                                 ObjectClassProp = LocationOcp
-                                                             } );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition Filter = _NbtSystemView.makeSystemViewFilter( LocationOcp, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                    _NbtSystemView.addSystemViewFilter( Filter );
                     _makeInspectionReturn();
                 }
                 catch( Exception Ex )
@@ -241,13 +236,11 @@ namespace NbtWebAppServices.WebServices
                                                    AnswerId = PropAsQuestion.NodeTypePropId,
                                                    Comments = PropAsQuestion.Comments,
                                                    CorrectiveAction = PropAsQuestion.CorrectiveAction,
-                                                   LastModifyDate = ( PropAsQuestion.DateAnswered >= PropAsQuestion.DateCorrected ) ?
-                                                                                                                                        PropAsQuestion.DateAnswered : PropAsQuestion.DateCorrected,
+                                                   LastModifyDate = PropAsQuestion.LastEditDate,
                                                    QuestionId = PropAsQuestion.NodeTypePropId,
-                                                   Status = NodeAsInspectionDesign.Status.Value
+                                                   Status = NodeAsInspectionDesign.Status.Value,
+                                                   LastModifyUserName = PropAsQuestion.LastEditUser
                                                };
-                    //ResponseQuestion.LastModifyUserId = null;
-                    //ResponseQuestion.LastModifyUserName = null;
 
                     ResponseInspection.Questions.Add( ResponseQuestion );
                 }

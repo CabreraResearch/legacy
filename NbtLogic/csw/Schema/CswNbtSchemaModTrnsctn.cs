@@ -692,6 +692,25 @@ namespace ChemSW.Nbt.Schema
             return RetActionId;
         }
 
+        /// <summary>
+        /// Convenience function for making new jct_module_actions records
+        /// </summary>
+        public void createFieldTypesSubFieldsJunction( CswNbtMetaDataFieldType FieldType, CswNbtSubField.PropColumn Column,
+            CswNbtSubField.SubFieldName SubField, bool IsReportable, bool IsDefault = false )
+        {
+            CswTableUpdate JctFtSfUpdate = makeCswTableUpdate( "SchemaModTrnsctn_FieldTypeSubFieldJunction", "field_types_subfields" );
+            DataTable UpdateAsDataTable = JctFtSfUpdate.getEmptyTable();
+            DataRow JctRow = UpdateAsDataTable.NewRow();
+            JctRow["fieldtypeid"] = FieldType.FieldTypeId;
+            JctRow["propcolname"] = Column.ToString();
+            JctRow["subfieldname"] = SubField.ToString();
+            JctRow["reportable"] = CswConvert.ToDbVal( IsReportable );
+            JctRow["is_default"] = CswConvert.ToDbVal( IsDefault );
+            UpdateAsDataTable.Rows.Add( JctRow );
+            JctFtSfUpdate.update( UpdateAsDataTable );
+        }
+
+
         public void createModuleActionJunction( CswNbtResources.CswNbtModule Module, CswNbtActionName ActionName )
         {
             Int32 ModuleId = getModuleId( Module );
