@@ -85,6 +85,7 @@ namespace ChemSW.Nbt.Schema
             //create some nodes...
 
             //locations
+            Int32 bldgNTID = Int32.MinValue;
             CswPrimaryKey locNRL = null;
             CswPrimaryKey locLab1 = null;
             foreach( CswNbtNode anode in _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ).getNodes( false, false ) )
@@ -92,6 +93,7 @@ namespace ChemSW.Nbt.Schema
                 if( anode.NodeName == "North Research Lab" )
                 {
                     locNRL = anode.NodeId;
+                    bldgNTID = anode.NodeTypeId;
                 }
                 if( anode.NodeName == "Lab 1" )
                 {
@@ -203,6 +205,22 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.ViewSelect.deleteViewByName( "Scheduling, SI_protocol: SI_target" );
 
             //create views
+            //name=Lab Safety By Location; cat=Lab Safety; mode=tree, global; struct=Building>Room>Lab Safety
+            CswNbtMetaDataNodeType bldgNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( bldgNTID );
+            CswNbtMetaDataNodeType targNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( wiz.TargetNtId );
+
+            CswNbtView LocView = _CswNbtSchemaModTrnsctn.makeView();
+            LocView.makeNew( "Lab Safety By Location", NbtViewVisibility.Global );
+            LocView.ViewMode = NbtViewRenderingMode.Tree;
+            CswNbtViewRelationship bldgRelationship = LocView.AddViewRelationship( bldgNT, true );
+            //add room
+            CswNbtMetaDataNodeTypeProp roomLocProp = roomNT.getNodeTypePropByObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
+            CswNbtViewRelationship roomRelationship = LocView.AddViewRelationship( bldgRelationship, NbtViewPropOwnerType.Second, roomLocProp, true );
+            //add inspection target
+            CswNbtMetaDataNodeTypeProp targetLocProp = targNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
+            LocView.AddViewRelationship( roomRelationship, NbtViewPropOwnerType.Second, targetLocProp, true );
+            LocView.save();
+
             //Due Lab Inspections
             CswNbtMetaDataNodeType inspectNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( wiz.DesignNtId );
             CswNbtMetaDataNodeTypeProp dueDateProp = inspectNT.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.DatePropertyName );
@@ -213,6 +231,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtView view = _CswNbtSchemaModTrnsctn.makeView();
             view.makeNew( "Due Lab Safety Inspections", NbtViewVisibility.Global );
             view.ForMobile = true;
+            view.ViewMode = NbtViewRenderingMode.Grid;
             CswNbtViewRelationship ParentRelationship = view.AddViewRelationship( inspectNT, true );
             view.AddViewProperty( ParentRelationship, dueDateProp );
             CswNbtViewProperty statusviewProp = view.AddViewProperty( ParentRelationship, statusProp );
@@ -266,7 +285,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtObjClassRole roleNode = CswNbtNodeCaster.AsRole( arole );
                 bool canDelete = true;
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.OOC_Inspections, roleNode, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Deficient_Inspections, roleNode, true );
                 _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Edit_View, roleNode, true );
                 _setNtPermitsForRole( roleNode, inspectNT, true, true, true, canDelete );
                 _setNtPermitsForRole( roleNode, targetNT, true, true, true, canDelete );
@@ -280,14 +299,52 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtObjClassRole roleNode = CswNbtNodeCaster.AsRole( arole );
                 bool canDelete = false;
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.OOC_Inspections, roleNode, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Deficient_Inspections, roleNode, true );
                 _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Edit_View, roleNode, true );
                 _setNtPermitsForRole( roleNode, inspectNT, true, true, true, canDelete );
                 _setNtPermitsForRole( roleNode, targetNT, true, true, true, canDelete );
                 _setNtPermitsForRole( roleNode, groupNT, true, true, true, canDelete );
                 _setNtPermitsForRole( roleNode, schedNT, true, true, true, canDelete );
                 _setNtPermitsForRole( roleNode, mailNT, true, true, true, canDelete );
+
+                //welcome items for inspector
+                ChemSW.Nbt.Welcome.CswNbtWelcomeTable aWelcomeTbl = _CswNbtSchemaModTrnsctn.getWelcomeTable();
+                aWelcomeTbl.DeleteAllWelcomeItemsForRole( roleNode.NodeId.ToString() );
+
+                //Due Inspections view r1c1 calendar.gif
+                aWelcomeTbl.AddWelcomeItem( Welcome.CswNbtWelcomeTable.WelcomeComponentType.Link,
+                    CswNbtView.ViewType.View, view.ViewId.ToString(), int.MinValue, "Due Inspections", 1, 1,
+                    "calendar.gif", arole.NodeId.ToString() );
+
+                //Add Inspections (inspection points by location view) r1c2 feinspection.png
+                aWelcomeTbl.AddWelcomeItem( Welcome.CswNbtWelcomeTable.WelcomeComponentType.Link,
+                    CswNbtView.ViewType.View, LocView.ViewId.ToString(), int.MinValue, "Add Inspection", 1, 2,
+                    "feinspection.png", arole.NodeId.ToString() );
+
+                //Completed Inspection view r1c3 clipboard.gif
+                aWelcomeTbl.AddWelcomeItem( Welcome.CswNbtWelcomeTable.WelcomeComponentType.Link,
+                    CswNbtView.ViewType.View, CompletedView.ViewId.ToString(), int.MinValue, "Completed Inspections", 1, 3,
+                    "clipboard.gif", arole.NodeId.ToString() );
+
+                //Scheduling Inspections view r2c1 (no icon)
+                if( null != wiz.SchedulingViewId )
+                {
+                    aWelcomeTbl.AddWelcomeItem( Welcome.CswNbtWelcomeTable.WelcomeComponentType.Link,
+                        CswNbtView.ViewType.View, wiz.SchedulingViewId.ToString(), int.MinValue, "Scheduling Inspections", 2, 1,
+                        "blank.gif", arole.NodeId.ToString() );
+                }
+
+                //Action Required view r2c2 warning.gif
+                aWelcomeTbl.AddWelcomeItem( Welcome.CswNbtWelcomeTable.WelcomeComponentType.Link,
+                    CswNbtView.ViewType.View, ArView.ViewId.ToString(), int.MinValue, "Action Required", 2, 2,
+                    "warning.gif", arole.NodeId.ToString() );
+
+                //Lab 1 Deficiencies (report, no icon) r2c3
+                //REPORT LINKS DON'T WORK on welcome page yet...
             }
+
+
+
 
         }//Update()
 

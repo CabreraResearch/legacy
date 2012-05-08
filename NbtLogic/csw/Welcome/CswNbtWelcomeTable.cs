@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
@@ -254,31 +253,47 @@ namespace ChemSW.Nbt.Welcome
             return ret;
         } // MoveWelcomeItems
 
-        public bool DeleteWelcomeItem( string strRoleId, Int32 WelcomeId )
+        private bool DeleteTheWelcomeItems( string strRoleId, Int32 WelcomeId )
         {
             bool ret = false;
-
+            string colName = "welcomeid";
             CswPrimaryKey RolePk = new CswPrimaryKey();
-            RolePk.FromString( strRoleId );
-            Int32 RoleId = RolePk.PrimaryKey;
+            Int32 Id = WelcomeId;
+            if( strRoleId != String.Empty )
+            {
+                RolePk.FromString( strRoleId );
+                Id = RolePk.PrimaryKey;
+                colName = "roleid";
+            }
 
-            if( WelcomeId != Int32.MinValue )
+
+            if( colName != "welcomeid" || WelcomeId != Int32.MinValue )
             {
                 CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
-                DataTable WelcomeTable = WelcomeUpdate.getTable( "welcomeid", WelcomeId );
+                DataTable WelcomeTable = WelcomeUpdate.getTable( colName, Id );
                 if( WelcomeTable.Rows.Count > 0 )
                 {
-                    DataRow WelcomeRow = WelcomeTable.Rows[0];
-                    WelcomeRow.Delete();
+                    foreach( DataRow WelcomeRow in WelcomeTable.Rows )
+                    {
+                        WelcomeRow.Delete();
+                    }
                     WelcomeUpdate.update( WelcomeTable );
                     ret = true;
                 }
             } // if( WelcomeId != Int32.MinValue ) 
 
             return ret;
+        }
+
+        public bool DeleteAllWelcomeItemsForRole( string strRoleId )
+        {
+            return DeleteTheWelcomeItems( strRoleId, Int32.MinValue );
+        }
+
+        public bool DeleteWelcomeItem( string strRoleId, Int32 WelcomeId )
+        {
+            return DeleteTheWelcomeItems( string.Empty, WelcomeId );
         } // MoveWelcomeItems
-
-
 
 
     }
