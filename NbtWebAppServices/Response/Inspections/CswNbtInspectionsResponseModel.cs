@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using ChemSW.Core;
 
 namespace NbtWebAppServices.Response
 {
@@ -59,9 +58,9 @@ namespace NbtWebAppServices.Response
             {
                 public CswNbtInspectionDesignSectionProperty()
                 {
-                    Choices = new CswCommaDelimitedString();
+                    Choices = new Collection<string>();
                 }
-                public CswCommaDelimitedString Choices { get; set; }
+                public Collection<string> Choices { get; set; }
                 public Int32 QuestionId { get; set; }
                 public string Text { get; set; }
                 public string Type { get; set; }
@@ -72,6 +71,7 @@ namespace NbtWebAppServices.Response
         [DataContract]
         public class CswNbtInspectionsCollection
         {
+            [DataMember]
             public Collection<CswNbtInspection> Inspections;
 
             public CswNbtInspectionsCollection()

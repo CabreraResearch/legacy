@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -9,37 +10,48 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActSystemViews
     {
-        CswNbtResources _CswNbtResources = null;
+        #region Public, Definitional props
 
-        private readonly string SiViewCategory = "SI Configuration";
-        private readonly string SiLocationsListViewName = "SI Locations List";
-        private readonly string SiLocationsTreeViewName = "SI Locations Tree";
-        private readonly string SiInspectionsByDateViewName = "SI Inspections by Date";
-        private readonly string SiInspectionsByBarcodeViewName = "SI Inspections by Barcode";
-        private readonly string SiInspectionsByLocationViewName = "SI Inspections by Location";
-        private readonly string SiInspectionsByUserViewName = "SI Inspections by User";
-
-        public CswNbtActSystemViews( CswNbtResources CswNbtResources )
+        public CswNbtView SystemView { get; private set; }
+        public static readonly string SiViewCategory = "SI Configuration";
+        public sealed class SystemViewName : CswEnum<SystemViewName>
         {
-            _CswNbtResources = CswNbtResources;
+            private SystemViewName( String Name ) : base( Name ) { }
+            public static IEnumerable<SystemViewName> all { get { return All; } }
+            public static explicit operator SystemViewName( string Str )
+            {
+                SystemViewName Ret = Parse( Str );
+                return Ret ?? Unknown;
+            }
+            public static readonly SystemViewName SILocationsList = new SystemViewName( "SI Locations List" );
+            public static readonly SystemViewName SILocationsTree = new SystemViewName( "SI Locations Tree" );
+            public static readonly SystemViewName SIInspectionsbyDate = new SystemViewName( "SI Inspections by Date" );
+            public static readonly SystemViewName SIInspectionsbyBarcode = new SystemViewName( "SI Inspections by Barcode" );
+            public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
+            public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
+            public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
         }
+        #endregion Public, Definitional props
 
-        private CswNbtView _getSystemView( string ViewName )
+        #region Private, core methods
+
+        private CswNbtResources _CswNbtResources = null;
+        private CswNbtView _getSystemView( SystemViewName ViewName )
         {
-            List<CswNbtView> Views = _CswNbtResources.ViewSelect.restoreViews( ViewName, NbtViewVisibility.Unknown, Int32.MinValue );
+            List<CswNbtView> Views = _CswNbtResources.ViewSelect.restoreViews( ViewName.ToString(), NbtViewVisibility.Unknown, Int32.MinValue );
             CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             return Views.FirstOrDefault( View => View.Visibility == NbtViewVisibility.Role &&
                 View.VisibilityRoleId == ChemSwAdminRoleNode.NodeId );
         }
 
-        private CswNbtView _getSiInspectionBaseView( string ViewName )
+        private CswNbtView _getSiInspectionBaseView( SystemViewName ViewName )
         {
             CswNbtView Ret = _getSystemView( ViewName );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( ViewName, NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.makeNew( ViewName.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
 
@@ -71,14 +83,14 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public CswNbtView SiLocationsTreeView()
+        private CswNbtView _siLocationsTreeView()
         {
-            CswNbtView Ret = _getSystemView( SiLocationsTreeViewName );
+            CswNbtView Ret = _getSystemView( SystemViewName.SILocationsTree );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SiLocationsTreeViewName, NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.makeNew( SystemViewName.SILocationsTree.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.Tree;
 
@@ -92,14 +104,14 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public CswNbtView SiLocationsListView()
+        private CswNbtView _siLocationsListView()
         {
-            CswNbtView Ret = _getSystemView( SiLocationsListViewName );
+            CswNbtView Ret = _getSystemView( SystemViewName.SILocationsList );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SiLocationsListViewName, NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.makeNew( SystemViewName.SILocationsList.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
 
@@ -113,25 +125,64 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public CswNbtView SiInspectionsByDateView()
+        private CswNbtMetaDataObjectClass _EnforceObjectClassRelationship = null;
+
+        #endregion Private, core methods
+
+        #region Constructor
+
+        public CswNbtActSystemViews( CswNbtResources CswNbtResources, SystemViewName ViewName, CswNbtMetaDataObjectClass EnforceObjectClassRelationship )
         {
-            return _getSiInspectionBaseView( SiInspectionsByDateViewName );
+            _CswNbtResources = CswNbtResources;
+            _EnforceObjectClassRelationship = EnforceObjectClassRelationship;
+
+            if( ViewName == SystemViewName.SILocationsList )
+            {
+                SystemView = _siLocationsListView();
+            }
+            else if( ViewName == SystemViewName.SILocationsTree )
+            {
+                SystemView = _siLocationsTreeView();
+            }
+            else if( ViewName != SystemViewName.Unknown )
+            {
+                SystemView = _getSiInspectionBaseView( ViewName );
+            }
         }
 
-        public CswNbtView SiInspectionsByUserView()
+        #endregion Constructor
+
+        #region Public methods
+
+        public class SystemViewPropFilterDefinition
         {
-            return _getSiInspectionBaseView( SiInspectionsByUserViewName );
+            public CswNbtMetaDataObjectClassProp ObjectClassProp { get; set; }
+            public string FilterValue { get; set; }
+            public CswNbtPropFilterSql.PropertyFilterMode FilterMode { get; set; }
         }
 
-        public CswNbtView SiInspectionsByBarcodeView()
+        public bool AddSystemViewFilter( SystemViewPropFilterDefinition FilterDefinition )
         {
-            return _getSiInspectionBaseView( SiInspectionsByBarcodeViewName );
+            bool Ret = false;
+            foreach( CswNbtViewRelationship PotentialInspectionDesignRelationship in SystemView.Root.ChildRelationships )
+            {
+                if( PotentialInspectionDesignRelationship.isExpectedMetaDataType( _EnforceObjectClassRelationship ) )
+                {
+                    Ret = true;
+                    SystemView.AddViewPropertyAndFilter( PotentialInspectionDesignRelationship, FilterDefinition.ObjectClassProp, FilterDefinition.FilterValue, FilterMode: FilterDefinition.FilterMode );
+                }
+                if( PotentialInspectionDesignRelationship.ChildRelationships.Count > 0 )
+                {
+                    Ret = Ret || AddSystemViewFilter( FilterDefinition );
+                }
+            }
+            return Ret;
         }
 
-        public CswNbtView SiInspectionsByLocationView()
-        {
-            return _getSiInspectionBaseView( SiInspectionsByLocationViewName );
-        }
+        #endregion Public methods
+
+
+
 
     }
 

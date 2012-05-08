@@ -14,6 +14,7 @@ namespace NbtWebAppServices.Response
         public CswNbtWebServiceResponseInspections( HttpContext Context )
         {
             _DefaultResponse = new CswNbtWebServiceResponseNoData( Context );
+            Data = new CswNbtInspectionsResponseModel();
         }
 
         [DataMember]

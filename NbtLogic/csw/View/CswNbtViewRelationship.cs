@@ -58,6 +58,27 @@ namespace ChemSW.Nbt
         public NbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
         public string GroupByPropName { get { return _GroupByPropName; } }
 
+        public bool isExpectedMetaDataType( CswNbtMetaDataNodeType NodeType )
+        {
+            return ( null != NodeType &&
+                     SecondType == NbtViewRelatedIdType.NodeTypeId &&
+                     SecondId == NodeType.getFirstVersionNodeType().NodeTypeId );
+        }
+
+        public bool isExpectedMetaDataType( CswNbtMetaDataObjectClass ObjectClass )
+        {
+            bool Ret = ( null != ObjectClass &&
+                         SecondType == NbtViewRelatedIdType.ObjectClassId &&
+                         SecondId == ObjectClass.ObjectClassId );
+            if( false == Ret &&
+                null != ObjectClass &&
+                SecondType == NbtViewRelatedIdType.NodeTypeId )
+            {
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( SecondId );
+                Ret = ( null != NodeType && NodeType.ObjectClassId == ObjectClass.ObjectClassId );
+            }
+            return Ret;
+        }
 
         #region Relationship internals
 

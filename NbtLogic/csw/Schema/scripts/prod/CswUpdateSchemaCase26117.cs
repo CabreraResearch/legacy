@@ -40,10 +40,14 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
-            CswNbtView SiLocationsTreeView = SystemViews.SiLocationsTreeView();
-            CswNbtView SiLocationsTreeList = SystemViews.SiLocationsListView();
+            CswNbtActSystemViews LocationTreeSystemView = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources,
+                CswNbtActSystemViews.SystemViewName.SILocationsTree, null );
+            CswNbtView SiLocationsTreeView = LocationTreeSystemView.SystemView;
             SiLocationsTreeView.Root.ChildRelationships.Clear();
+
+            CswNbtActSystemViews LocationListSystemView = new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources,
+                CswNbtActSystemViews.SystemViewName.SILocationsList, null );
+            CswNbtView SiLocationsTreeList = LocationListSystemView.SystemView;
             SiLocationsTreeList.Root.ChildRelationships.Clear();
 
             CswNbtMetaDataNodeType SiteNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Site" );
@@ -65,10 +69,14 @@ namespace ChemSW.Nbt.Schema
             SiLocationsTreeView.save();
             SiLocationsTreeList.save();
 
-            SystemViews.SiInspectionsByUserView();
-            SystemViews.SiInspectionsByLocationView();
-            SystemViews.SiInspectionsByDateView();
-            SystemViews.SiInspectionsByBarcodeView();
+            new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources,
+                                      CswNbtActSystemViews.SystemViewName.SIInspectionsbyBarcode, null );
+            new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources,
+                                      CswNbtActSystemViews.SystemViewName.SIInspectionsbyDate, null );
+            new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources,
+                                      CswNbtActSystemViews.SystemViewName.SIInspectionsbyLocation, null );
+            new CswNbtActSystemViews( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources,
+                                      CswNbtActSystemViews.SystemViewName.SIInspectionsbyUser, null );
 
         }//Update()
 
