@@ -24,6 +24,13 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueoptions,
                 CswNbtObjClassTask.PartsXValueName
             );
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
+                TaskOC.getObjectClassProp( CswNbtObjClassTask.PartsPropertyName ),
+                CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd,
+                false
+            );
+
         }//Update()
     }//class CswUpdateSchemaCase26094
 }//namespace ChemSW.Nbt.Schema

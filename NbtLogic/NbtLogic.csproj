@@ -83,6 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26094B.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26094.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25702.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25702B.cs" />
