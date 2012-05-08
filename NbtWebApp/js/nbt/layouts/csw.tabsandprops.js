@@ -100,7 +100,8 @@
                     NodeTypeId: internal.nodetypeid,
                     Date: internal.date,
                     filterToPropId: internal.filterToPropId,
-                    Multi: internal.Multi
+                    Multi: internal.Multi,
+                    ConfigMode: internal.Config
                 };
 
                 // For performance, don't bother getting tabs if we're in Add or Preview

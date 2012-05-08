@@ -501,15 +501,17 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        public bool ShowProp( CswNbtNode Node, ICswNbtUser User, Int32 TabId )
+        public bool ShowProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtNode Node, ICswNbtUser User, Int32 TabId )
         {
             //CswNbtMetaDataNodeTypeProp Prop = this;
             CswNbtMetaDataNodeTypeTab Tab = null;
-            CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout(TabId);
-            if( EditLayout != null )
+            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
             {
-                //Tab = Prop.EditLayout.Tab;
-                Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout( TabId );
+                if( EditLayout != null )
+                {
+                    Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                }
             }
             var ret = ( false == hasFilter() && false == Node.Properties[this].Hidden &&
                         _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );

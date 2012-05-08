@@ -702,6 +702,25 @@ namespace ChemSW.Nbt.Schema
             return RetActionId;
         }
 
+        /// <summary>
+        /// Convenience function for making new jct_module_actions records
+        /// </summary>
+        public void createFieldTypesSubFieldsJunction( CswNbtMetaDataFieldType FieldType, CswNbtSubField.PropColumn Column,
+            CswNbtSubField.SubFieldName SubField, bool IsReportable, bool IsDefault = false )
+        {
+            CswTableUpdate JctFtSfUpdate = makeCswTableUpdate( "SchemaModTrnsctn_FieldTypeSubFieldJunction", "field_types_subfields" );
+            DataTable UpdateAsDataTable = JctFtSfUpdate.getEmptyTable();
+            DataRow JctRow = UpdateAsDataTable.NewRow();
+            JctRow["fieldtypeid"] = FieldType.FieldTypeId;
+            JctRow["propcolname"] = Column.ToString();
+            JctRow["subfieldname"] = SubField.ToString();
+            JctRow["reportable"] = CswConvert.ToDbVal( IsReportable );
+            JctRow["is_default"] = CswConvert.ToDbVal( IsDefault );
+            UpdateAsDataTable.Rows.Add( JctRow );
+            JctFtSfUpdate.update( UpdateAsDataTable );
+        }
+
+
         public void createModuleActionJunction( CswNbtResources.CswNbtModule Module, CswNbtActionName ActionName )
         {
             Int32 ModuleId = getModuleId( Module );
@@ -1492,6 +1511,17 @@ namespace ChemSW.Nbt.Schema
             }
 
         } // runExternalSqlScript
+
+
+        /// <summary>
+        /// Returns true if the current schema is an unmodified master
+        /// </summary>
+        public bool isMaster()
+        {
+            // This is kind of a kludgey way to determine whether we're on a fresh master, but see case 25806
+            CswNbtNode AdminNode = Nodes.makeUserNodeFromUsername( "admin" );
+            return ( null != AdminNode && CswNbtNodeCaster.AsUser( AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
+        }
 
     }//class CswNbtSchemaModTrnsctn
 

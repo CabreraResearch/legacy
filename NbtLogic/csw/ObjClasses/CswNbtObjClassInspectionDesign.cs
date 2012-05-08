@@ -209,6 +209,8 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ); }
         }
 
+
+
         #region Inherited Events
         /// <summary>
         /// Set any existing pending or overdue inspections on the same parent to missed
