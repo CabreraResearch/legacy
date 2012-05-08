@@ -13,31 +13,6 @@
     <FileAlignment>512</FileAlignment>
     <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js|\CswNbt.min.js|\CswCommon.min.js</JSLintSkip>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <NoWarn>true</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <NoWarn>true</NoWarn>
-  </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>NbtJavaScript</RootNamespace>
   </PropertyGroup>
