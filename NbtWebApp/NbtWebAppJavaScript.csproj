@@ -13,31 +13,6 @@
     <FileAlignment>512</FileAlignment>
     <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js|\CswNbt.min.js|\CswCommon.min.js</JSLintSkip>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <NoWarn>true</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <NoWarn>true</NoWarn>
-  </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>NbtJavaScript</RootNamespace>
   </PropertyGroup>
@@ -85,11 +60,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.thingrid.css" />
     <Content Include="css\csw.label.css" />
     <Content Include="css\csw.table.layout.css" />
+    <Content Include="css\watermark.css" />
     <Content Include="js\common\composites\_composites.factory.js" />
     <Content Include="js\common\controls\_controls.factory.js" />
     <Content Include="js\common\literals\csw.label.js" />

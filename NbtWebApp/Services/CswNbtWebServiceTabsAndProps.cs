@@ -21,14 +21,16 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtResources _CswNbtResources;
         private readonly ICswNbtUser _ThisUser;
         private readonly bool _IsMultiEdit;
+        private readonly bool _ConfigMode;
         private string HistoryTabPrefix = "history_";
         private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
 
-        public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, bool Multi = false )
+        public CswNbtWebServiceTabsAndProps( CswNbtResources CswNbtResources, CswNbtStatisticsEvents CswNbtStatisticsEvents, bool Multi = false, bool ConfigMode = false )
         {
             _CswNbtResources = CswNbtResources;
             _ThisUser = _CswNbtResources.CurrentNbtUser;
             _IsMultiEdit = Multi;
+            _ConfigMode = ConfigMode;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
         }
 
@@ -92,7 +94,8 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     // History tab
-                    if( false == CswConvert.ToBoolean( _IsMultiEdit ) &&
+                    if( false == _ConfigMode &&
+                        false == _IsMultiEdit &&
                         Date.IsNull &&
                         CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( "auditing" ) ) )
                     {
@@ -135,7 +138,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Returns JObject for all properties in a given tab
         /// </summary>
-        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId, bool ConfigMode )
+        public JObject getProps( string NodeId, string NodeKey, string TabId, Int32 NodeTypeId, CswDateTime Date, string filterToPropId )
         {
             JObject Ret = new JObject();
 
@@ -196,7 +199,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         foreach( CswNbtMetaDataNodeTypeProp Prop in Props )
                         {
-                            if( ConfigMode || _showProp( Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node ) )
+                            if( _ConfigMode || _showProp( LayoutType, Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node ) )
                             {
                                 _addProp( Ret, Node, Prop, CswConvert.ToInt32( TabId ) );
                             }
@@ -207,19 +210,19 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getProps()
 
-        private bool _showProp( CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
+        private bool _showProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswPropIdAttr FilterPropIdAttr, Int32 TabId, CswNbtNode Node )
         {
             bool RetShow = false;
 
-            switch( _CswNbtResources.EditMode )
+            switch( LayoutType )
             {
-                case NodeEditMode.Add:
+                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add:
                     //Case 24023: Exclude buttons on Add
                     RetShow = ( Prop.EditProp( Node, _ThisUser, true ) &&
                                 Prop.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
                     break;
                 default:
-                    RetShow = Prop.ShowProp( Node, _ThisUser, TabId );
+                    RetShow = Prop.ShowProp( LayoutType, Node, _ThisUser, TabId );
                     break;
             }
             RetShow = RetShow && ( FilterPropIdAttr == null || Prop.PropId == FilterPropIdAttr.NodeTypePropId );

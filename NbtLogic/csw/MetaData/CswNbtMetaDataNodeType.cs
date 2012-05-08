@@ -528,6 +528,25 @@ namespace ChemSW.Nbt.MetaData
             return _BarcodeProperty;
         } // getBarcodeProperty()
 
+        private CswNbtMetaDataNodeTypeProp _LocationProperty;
+        public CswNbtMetaDataNodeTypeProp getLocationProperty()
+        {
+            if( _LocationProperty == null )
+            {
+                foreach( CswNbtMetaDataNodeTypeProp Prop in from _Prop in getNodeTypeProps()
+                                                            where _Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location
+                                                            select _Prop )
+                {
+                    if( _LocationProperty != null )
+                    {
+                        throw new CswDniException( ErrorType.Warning, "Multiple Locations Found", "Nodetype " + NodeTypeName + " has more than one location property" );
+                    }
+                    _LocationProperty = Prop;
+                }
+            }
+            return _LocationProperty;
+        } // getBarcodeProperty()
+
         public CswNbtView CreateDefaultView()
         {
             CswNbtView DefaultView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );

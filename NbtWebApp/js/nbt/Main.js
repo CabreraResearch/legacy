@@ -29,6 +29,16 @@ window.initMain = window.initMain || function (undefined) {
 
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
+    // watermark
+    Csw.ajax.post({
+        urlMethod: 'getWatermark',
+        success: function(result) {
+            if (false === Csw.isNullOrEmpty(result.watermark)) {
+                $('#watermark').text(result.watermark);
+            }
+        }
+    });
+
     // handle querystring arguments
     var qs = Csw.queryString();
     if (false == Csw.isNullOrEmpty(qs.viewid)) {
