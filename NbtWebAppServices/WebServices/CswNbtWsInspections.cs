@@ -26,7 +26,7 @@ namespace NbtWebAppServices.WebServices
         private CswNbtWebServiceResponseInspections _Response;
         private CswNbtActSystemViews _NbtSystemView;
 
-        private void _initInspectionResources(CswNbtActSystemViews.SystemViewName ViewName )
+        private void _initInspectionResources( CswNbtActSystemViews.SystemViewName ViewName )
         {
             _CswNbtSessionResources = _Response.CswNbtSessionResources;
             _InspectionDesignOc = _CswNbtSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
@@ -38,7 +38,7 @@ namespace NbtWebAppServices.WebServices
         }
 
         [OperationContract]
-        [WebGet( UriTemplate = "byDateRange/{StartingDate}/{EndingDate}" )]
+        [WebGet( UriTemplate = "byDateRange?StartingDate={StartingDate}&EndingDate={EndingDate}" )]
         public CswNbtWebServiceResponseInspections byDateRange( string StartingDate, string EndingDate )
         {
             _Response = new CswNbtWebServiceResponseInspections( _Context );
@@ -58,13 +58,13 @@ namespace NbtWebAppServices.WebServices
                     CswDateTime CswStart = new CswDateTime( _CswNbtSessionResources.CswNbtResources, Start );
                     CswDateTime CswEnd = new CswDateTime( _CswNbtSessionResources.CswNbtResources, End );
 
-                    _NbtSystemView.AddSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
+                    _NbtSystemView.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
                                                              {
                                                                  FilterMode = CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals,
                                                                  FilterValue = CswStart.ToOracleNativeDateForQuery(),
                                                                  ObjectClassProp = DueDateOcp
                                                              } );
-                    _NbtSystemView.AddSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
+                    _NbtSystemView.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
                                                              {
                                                                  FilterMode = CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals,
                                                                  FilterValue = CswEnd.ToOracleNativeDateForQuery(),
@@ -91,18 +91,8 @@ namespace NbtWebAppServices.WebServices
                 try
                 {
                     _initInspectionResources( CswNbtActSystemViews.SystemViewName.SIInspectionsbyUser );
-                    
-                    CswNbtMetaDataObjectClassProp LocationOcp = _InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
 
-                    
-                    //_NbtSystemView.AddSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
-                    //                                         {
-                    //                                             FilterMode = CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals,
-                    //                                             FilterValue = CswEnd.ToOracleNativeDateForQuery(),
-                    //                                             ObjectClassProp = DueDateOcp
-                    //                                         } );
                     _makeInspectionReturn();
-                    
                 }
                 catch( Exception Ex )
                 {
@@ -112,7 +102,7 @@ namespace NbtWebAppServices.WebServices
             _Response.finalizeResponse();
             return _Response;
         } // get()
-        
+
         [OperationContract]
         [WebGet]
         public CswNbtWebServiceResponseInspections byLocation( string LocationName )
@@ -125,8 +115,8 @@ namespace NbtWebAppServices.WebServices
                     _initInspectionResources( CswNbtActSystemViews.SystemViewName.SIInspectionsbyLocation );
 
                     CswNbtMetaDataObjectClassProp LocationOcp = _InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.LocationPropertyName );
-                    
-                    _NbtSystemView.AddSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
+
+                    _NbtSystemView.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
                                                              {
                                                                  FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Contains,
                                                                  FilterValue = LocationName,
@@ -152,7 +142,19 @@ namespace NbtWebAppServices.WebServices
             {
                 try
                 {
-                    _CswNbtSessionResources = Ret.CswNbtSessionResources;
+                    _initInspectionResources( CswNbtActSystemViews.SystemViewName.SIInspectionsbyBarcode );
+
+                    CswNbtMetaDataObjectClass LocationOc = _CswNbtSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                    CswNbtMetaDataObjectClassProp LocationBarcodeOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.BarcodePropertyName );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition LocationFilter = _NbtSystemView.makeSystemViewFilter( LocationBarcodeOcp, Barcode, CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                    _NbtSystemView.addSystemViewFilter( LocationFilter, LocationOc );
+
+                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
+                    CswNbtMetaDataObjectClassProp TargetBarcodeOcp = InspectionTargetOc.getObjectClassProp( CswNbtObjClassInspectionTarget.BarcodePropertyName );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition TargetFilter = _NbtSystemView.makeSystemViewFilter( TargetBarcodeOcp, Barcode, CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                    _NbtSystemView.addSystemViewFilter( TargetFilter, InspectionTargetOc );
+
+                    _makeInspectionReturn();
                 }
                 catch( Exception Ex )
                 {
@@ -171,7 +173,7 @@ namespace NbtWebAppServices.WebServices
         {
             CswNbtMetaDataNodeType NewInspectionNodeType = InspectionNode.getNodeType();
             InspectionDesignTypeIds.Add( NewInspectionNodeType.NodeTypeId );
-            var ResponseDesign = new CswNbtInspectionsResponseModel.CswNbtInspectionDesignsCollection.CswNbtInspectionDesign
+            var ResponseDesign = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign
             {
                 DesignId = NewInspectionNodeType.NodeTypeId,
                 Name = NewInspectionNodeType.NodeTypeName
@@ -179,7 +181,7 @@ namespace NbtWebAppServices.WebServices
 
             foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NewInspectionNodeType.getNodeTypeTabs() )
             {
-                var ResponseSection = new CswNbtInspectionsResponseModel.CswNbtInspectionDesignsCollection.CswNbtInspectionDesignSection
+                var ResponseSection = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
                 {
                     Name = NodeTypeTab.TabName,
                     Order = NodeTypeTab.TabOrder,
@@ -188,7 +190,7 @@ namespace NbtWebAppServices.WebServices
 
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeTab.getNodeTypePropsByDisplayOrder() )
                 {
-                    var ResponseProperty = new CswNbtInspectionsResponseModel.CswNbtInspectionDesignsCollection.CswNbtInspectionDesignSectionProperty
+                    var ResponseProperty = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
                     {
                         HelpText = NodeTypeProp.HelpText,
                         Text = NodeTypeProp.PropName
@@ -209,7 +211,7 @@ namespace NbtWebAppServices.WebServices
                     ResponseSection.Properties.Add( ResponseProperty );
                 }
                 ResponseDesign.Sections.Add( ResponseSection );
-                _Response.Data.Designs.Designs.Add( ResponseDesign );
+                _Response.Data.Designs.Add( ResponseDesign );
             }
         }
 
@@ -217,7 +219,7 @@ namespace NbtWebAppServices.WebServices
         {
             InspectionDesignNodeIds.Add( InspectionNode.NodeId.PrimaryKey );
             CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
-            var ResponseInspection = new CswNbtInspectionsResponseModel.CswNbtInspectionsCollection.CswNbtInspection
+            var ResponseInspection = new CswNbtInspectionsResponseModel.CswNbtInspection
                                          {
                                              DesignId = InspectionNode.NodeTypeId,
                                              DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
@@ -233,7 +235,7 @@ namespace NbtWebAppServices.WebServices
                 if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                 {
                     CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
-                    var ResponseQuestion = new CswNbtInspectionsResponseModel.CswNbtInspectionsCollection.CswNbtInspectionQuestion
+                    var ResponseQuestion = new CswNbtInspectionsResponseModel.CswNbtInspection.CswNbtInspectionQuestion
                                                {
                                                    Answer = PropAsQuestion.Answer,
                                                    AnswerId = PropAsQuestion.NodeTypePropId,
@@ -250,27 +252,27 @@ namespace NbtWebAppServices.WebServices
                     ResponseInspection.Questions.Add( ResponseQuestion );
                 }
             }
-            _Response.Data.Inspections.Inspections.Add( ResponseInspection );
+            _Response.Data.Inspections.Add( ResponseInspection );
         }
 
         private void _iterateTree( ICswNbtTree Tree )
         {
-            Int32 InspectionCount = Tree.getChildNodeCount();
-            if( InspectionCount > 0 )
+            Int32 ChildNodeCount = Tree.getChildNodeCount();
+            if( ChildNodeCount > 0 )
             {
-                for( Int32 I = 0; I < InspectionCount; I += 1 )
+                for( Int32 I = 0; I < ChildNodeCount; I += 1 )
                 {
                     Tree.goToNthChild( I );
-                    CswNbtNode InspectionNode = Tree.getNodeForCurrentPosition();
-                    if( InspectionNode.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass )
+                    CswNbtNode NodeForCurrentPosition = Tree.getNodeForCurrentPosition();
+                    if( NodeForCurrentPosition.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass )
                     {
-                        if( false == InspectionDesignTypeIds.Contains( InspectionNode.NodeTypeId ) )
+                        if( false == InspectionDesignTypeIds.Contains( NodeForCurrentPosition.NodeTypeId ) )
                         {
-                            _addInspectionDesignToResponse( InspectionNode );
+                            _addInspectionDesignToResponse( NodeForCurrentPosition );
                         }
-                        if( false == InspectionDesignNodeIds.Contains( InspectionNode.NodeId.PrimaryKey ) )
+                        if( false == InspectionDesignNodeIds.Contains( NodeForCurrentPosition.NodeId.PrimaryKey ) )
                         {
-                            _addInspectionDesignNodeToResponse( InspectionNode );
+                            _addInspectionDesignNodeToResponse( NodeForCurrentPosition );
                         }
 
                     }

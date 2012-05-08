@@ -8,39 +8,27 @@ namespace NbtWebAppServices.Response
     public class CswNbtInspectionsResponseModel
     {
         [DataMember]
-        public CswNbtInspectionDesignsCollection Designs;
+        public Collection<CswNbtInspectionDesign> Designs;
 
         [DataMember]
-        public CswNbtInspectionsCollection Inspections;
+        public Collection<CswNbtInspection> Inspections;
 
         public CswNbtInspectionsResponseModel()
         {
-            Designs = new CswNbtInspectionDesignsCollection();
-            Inspections = new CswNbtInspectionsCollection();
+            Designs = new Collection<CswNbtInspectionDesign>();
+            Inspections = new Collection<CswNbtInspection>();
         }
 
-        [DataContract]
-        public class CswNbtInspectionDesignsCollection
+        public class CswNbtInspectionDesign
         {
-            [DataMember]
-            public Collection<CswNbtInspectionDesign> Designs;
-
-            public CswNbtInspectionDesignsCollection()
+            public CswNbtInspectionDesign()
             {
-                Designs = new Collection<CswNbtInspectionDesign>();
+                Sections = new Collection<CswNbtInspectionDesignSection>();
             }
 
-            public class CswNbtInspectionDesign
-            {
-                public CswNbtInspectionDesign()
-                {
-                    Sections = new Collection<CswNbtInspectionDesignSection>();
-                }
-
-                public Int32 DesignId { get; set; }
-                public string Name { get; set; }
-                public Collection<CswNbtInspectionDesignSection> Sections { get; set; }
-            }
+            public Int32 DesignId { get; set; }
+            public string Name { get; set; }
+            public Collection<CswNbtInspectionDesignSection> Sections { get; set; }
 
             public class CswNbtInspectionDesignSection
             {
@@ -48,6 +36,7 @@ namespace NbtWebAppServices.Response
                 {
                     Properties = new Collection<CswNbtInspectionDesignSectionProperty>();
                 }
+
                 public Int32 SectionId { get; set; }
                 public string Name { get; set; }
                 public Int32 Order { get; set; }
@@ -60,6 +49,7 @@ namespace NbtWebAppServices.Response
                 {
                     Choices = new Collection<string>();
                 }
+
                 public Collection<string> Choices { get; set; }
                 public Int32 QuestionId { get; set; }
                 public string Text { get; set; }
@@ -68,33 +58,22 @@ namespace NbtWebAppServices.Response
             }
         }
 
-        [DataContract]
-        public class CswNbtInspectionsCollection
+        public class CswNbtInspection
         {
-            [DataMember]
-            public Collection<CswNbtInspection> Inspections;
-
-            public CswNbtInspectionsCollection()
+            public CswNbtInspection()
             {
-                Inspections = new Collection<CswNbtInspection>();
+                Questions = new Collection<CswNbtInspectionQuestion>();
             }
 
-            public class CswNbtInspection
-            {
-                public CswNbtInspection()
-                {
-                    Questions = new Collection<CswNbtInspectionQuestion>();
-                }
+            public Int32 DesignId { get; set; }
+            public DateTime DueDate { get; set; }
+            public Int32 InspectionId { get; set; }
+            public string InspectionPointName { get; set; }
+            public string LocationPath { get; set; }
+            public string RouteName { get; set; }
+            public string Status { get; set; }
+            public Collection<CswNbtInspectionQuestion> Questions { get; set; }
 
-                public Int32 DesignId { get; set; }
-                public DateTime DueDate { get; set; }
-                public Int32 InspectionId { get; set; }
-                public string InspectionPointName { get; set; }
-                public string LocationPath { get; set; }
-                public string RouteName { get; set; }
-                public string Status { get; set; }
-                public Collection<CswNbtInspectionQuestion> Questions { get; set; }
-            }
 
             public class CswNbtInspectionQuestion
             {
@@ -108,9 +87,6 @@ namespace NbtWebAppServices.Response
                 public Int32 QuestionId { get; set; }
                 public string Status { get; set; }
             }
-
         }
-
-
     }
 }
