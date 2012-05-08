@@ -22,6 +22,7 @@
             cssclass: '',
             src: '',
             alt: '',
+            title: '',
             height: '',
             ismap: '',
             usemap: '',
@@ -49,6 +50,7 @@
             attr.add('class', internal.cssclass);
             attr.add('src', internal.src);
             attr.add('alt', internal.alt);
+            attr.add('title', internal.title);
             attr.add('height', internal.height);
             attr.add('ismap', internal.ismap);
             attr.add('usemap', internal.usemap);

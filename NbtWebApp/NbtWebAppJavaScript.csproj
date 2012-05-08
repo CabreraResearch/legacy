@@ -13,31 +13,6 @@
     <FileAlignment>512</FileAlignment>
     <JSLintSkip>\Scripts\|\Images\|\js\thirdparty\|\Content\|\js\CswAll.min.js|\js\ChemSW.min.js|\js\|\csw.js\ChemSW-vsdoc.js|\CswNbt.min.js|\CswCommon.min.js</JSLintSkip>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <NoWarn>true</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>0</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-    <GenerateSerializationAssemblies>Auto</GenerateSerializationAssemblies>
-    <NoWarn>true</NoWarn>
-  </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>NbtJavaScript</RootNamespace>
   </PropertyGroup>
@@ -85,11 +60,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <None Include="css\cssVariables.pm" />
     <Content Include="css\csw.thingrid.css" />
     <Content Include="css\csw.label.css" />
     <Content Include="css\csw.table.layout.css" />
+    <Content Include="css\watermark.css" />
     <Content Include="js\common\composites\_composites.factory.js" />
     <Content Include="js\common\controls\_controls.factory.js" />
     <Content Include="js\common\literals\csw.label.js" />
@@ -99,6 +76,7 @@
     <Content Include="js\common\layouts\csw.wizard.js" />
     <Content Include="js\CswCommon-vsdoc.js" />
     <Content Include="js\CswNbt-vsdoc.js" />
+    <Content Include="js\nbt\actions\csw.modules.js" />
     <Content Include="js\nbt\actions\csw.audithistory.js" />
     <Content Include="js\nbt\actions\csw.inspectionstatus.js" />
     <Content Include="js\nbt\actions\csw.sessions.js" />
@@ -106,6 +84,7 @@
     <Content Include="js\nbt\actions\csw.quotas.js" />
     <Content Include="js\nbt\controls\csw.nodeselect.js" />
     <Content Include="js\nbt\layouts\csw.tabsandprops.js" />
+    <Content Include="js\nbt\view\csw.viewfilters.js" />
     <Content Include="js\nbt\wizards\csw.creatematerial.js" />
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
     <Content Include="js\nbt\controls\csw.nodetypeselect.js" />
@@ -256,14 +235,12 @@
     <None Include="js\common\_compileCommon.pl" />
     <None Include="js\common\_concatCswVsDoc.pl" />
     <None Include="js\nbt\_compileNbt.pl" />
-	<Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.Sched
         {
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-			_CswNbtResources.AuditContext = "Scheduler Task: Update Property Values";
-		}
+            _CswNbtResources.AuditContext = "Scheduler Task: Update Property Values";
+        }
 
 
         private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
@@ -49,22 +49,17 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private string _CompletionMessage = string.Empty;
-        public string CompletionMessage
-        {
-            get { return ( _CompletionMessage ); }
-        }
 
         public void threadCallBack()
         {
             _LogicRunStatus = LogicRunStatus.Running;
+
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 try
                 {
-                    _CompletionMessage = string.Empty; 
 
                     if( _CswNbtResources == null )
                         throw new CswDniException( "_CswNbtResources is null" );
@@ -94,16 +89,19 @@ namespace ChemSW.Nbt.Sched
 
                     }//if there were out of date nodes
 
+                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
                 }
 
                 catch( Exception Exception )
                 {
-                    _CompletionMessage = "CswScheduleLogicNbtUpdtPropVals exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtUpdtPropVals exception: " + Exception.Message;
+                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;//last line
                 }
+
+
 
             }//if we're not shutting down
 

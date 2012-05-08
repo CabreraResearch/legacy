@@ -285,6 +285,54 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Creates a new <see cref="CswNbtViewProperty"/> for this view by property name
+        /// </summary>
+        public CswNbtViewProperty AddViewPropertyByName( CswNbtViewRelationship ParentViewRelationship, CswNbtMetaDataObjectClass ObjectClass, string PropertyName )
+        {
+            CswNbtMetaDataObjectClassProp ObjectClassProp = ObjectClass.getObjectClassProp( PropertyName );
+            if( null != ObjectClassProp )
+            {
+                return AddViewProperty( ParentViewRelationship, ObjectClassProp );
+            }
+
+            return ( from NodeType in ObjectClass.getLatestVersionNodeTypes()
+                     select NodeType.getNodeTypeProp( PropertyName )
+                         into NodeTypeProp
+                         where null != NodeTypeProp
+                         select AddViewProperty( ParentViewRelationship, NodeTypeProp ) ).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="CswNbtViewProperty"/> for this view for unique FieldTypes (Barcode/Location)
+        /// </summary>
+        public CswNbtViewProperty AddViewPropertyByFieldType( CswNbtViewRelationship ParentViewRelationship, CswNbtMetaDataObjectClass ObjectClass, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+            {
+                switch( FieldType )
+                {
+                    case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                        CswNbtMetaDataNodeTypeProp BarcodeNtp = NodeType.getBarcodeProperty();
+                        if( null != BarcodeNtp )
+                        {
+                            return AddViewProperty( ParentViewRelationship, BarcodeNtp );
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                        CswNbtMetaDataNodeTypeProp LocationNtp = NodeType.getLocationProperty();
+                        if( null != LocationNtp )
+                        {
+                            return AddViewProperty( ParentViewRelationship, LocationNtp );
+                        }
+                        break;
+                    default:
+                        throw new CswDniException( ErrorType.Error, "Cannot add a View Property without a Location or Barcode property.", "Attempted to call AddViewPropertyByFieldType() with an unsupported FieldType." );
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
         public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty, CswNbtSubField.SubFieldName SubFieldName, CswNbtPropFilterSql.PropertyFilterMode FilterMode, string Value, bool CaseSensitive )

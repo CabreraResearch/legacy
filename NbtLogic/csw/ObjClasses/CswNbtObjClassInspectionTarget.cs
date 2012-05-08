@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.ObjClasses
         */
 
         /// <summary>
-        /// Inspection Target Inspection Status (OK, OOC)
+        /// Inspection Target Inspection Status (OK, Deficient)
         /// </summary>
         public CswNbtNodePropList Status
         {
