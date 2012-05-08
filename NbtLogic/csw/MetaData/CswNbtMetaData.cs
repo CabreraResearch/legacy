@@ -822,17 +822,23 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
 
             // Version, if necessary
-            string OriginalTabName;
+            string OriginalTabName = string.Empty;
             if( TabId != Int32.MinValue )
-                OriginalTabName = getNodeTypeTab( TabId ).TabName;
-            else if( InsertAfterProp != null && InsertAfterProp.EditLayout.TabId != Int32.MinValue )
             {
-                CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( InsertAfterProp.EditLayout.TabId );
-                //OriginalTabName = InsertAfterProp.EditLayout.Tab.TabName;
-                OriginalTabName = OriginalTab.TabName;
+                OriginalTabName = getNodeTypeTab( TabId ).TabName;
             }
-            else
+            else if( InsertAfterProp != null && InsertAfterProp.FirstEditLayout.TabId != Int32.MinValue )
+            {
+                CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( InsertAfterProp.FirstEditLayout.TabId );
+                if( OriginalTab != null )
+                {
+                    OriginalTabName = OriginalTab.TabName;
+                }
+            }
+            if( OriginalTabName == string.Empty )
+            {
                 OriginalTabName = NodeType.getFirstNodeTypeTab().TabName;
+            }
             NodeType = CheckVersioning( NodeType );
             CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( OriginalTabName );
 
@@ -1218,15 +1224,18 @@ namespace ChemSW.Nbt.MetaData
                 // Fix layout
                 foreach( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType in Enum.GetValues( typeof( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType ) ) )
                 {
-                    CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp.PropId );
-                    if( OriginalLayout != null )
+                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp.PropId );
+                    foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
                     {
-                        Int32 NewTabId = Int32.MinValue;
-                        if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+                        if( OriginalLayout != null )
                         {
-                            NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
+                            Int32 NewTabId = Int32.MinValue;
+                            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+                            {
+                                NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
+                            }
+                            NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, NewPropId, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
                         }
-                        NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, NewPropId, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
                     }
                 }
 
@@ -1430,10 +1439,10 @@ namespace ChemSW.Nbt.MetaData
         /// <returns>Tab of deleted property (for UI to select)</returns>
         protected CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool Internal )
         {
-            CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.EditLayout.TabId );
-            if( !Internal )
+            CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.FirstEditLayout.TabId );
+            if( false == Internal )
             {
-                if( !NodeTypeProp.IsDeletable() )
+                if( false == NodeTypeProp.IsDeletable() )
                     throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
 
                 //string OriginalPropName = NodeTypeProp.PropName;
@@ -1451,10 +1460,7 @@ namespace ChemSW.Nbt.MetaData
             JctNodesPropsUpdate.update( JctNodesPropsTable );
 
             // Delete nodetype_layout records
-            foreach( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType in Enum.GetValues( typeof( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType ) ) )
-            {
-                NodeTypeLayout.removePropFromLayout( LayoutType, NodeTypeProp );
-            }
+            NodeTypeLayout.removePropFromAllLayouts( NodeTypeProp );
 
             // Delete Views
             // This has to come after because nodetype_props has an fk to node_views.

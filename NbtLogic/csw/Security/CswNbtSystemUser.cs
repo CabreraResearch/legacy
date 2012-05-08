@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Security
         public string Username { get { return _Username; } }
         public string Rolename { get { return string.Empty; } }
         public string FirstName { get { return string.Empty; } }
-        public string LastName { get { return string.Empty; } }
+        public string LastName { get { return _Username; } }
         public string Email { get { return string.Empty; } }
         public string DateFormat { get { return string.Empty; } }
         public string TimeFormat { get { return string.Empty; } }

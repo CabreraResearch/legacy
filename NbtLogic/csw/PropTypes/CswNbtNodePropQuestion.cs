@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _IsCompliantSubField;
         private CswNbtSubField _LastEditDate;
         private CswNbtSubField _LastEditUser;
+        private bool _IsActionRequired = false;//case 25035
 
         /// <summary>
         /// Returns whether the property value is empty
@@ -146,6 +147,21 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _IsCompliantSubField.Column, value );
+            }
+        }
+
+        /// <summary>
+        /// True only when the parent Node has a Status of ActionRequired
+        /// </summary>
+        public bool IsActionRequired//case 25035
+        {
+            get
+            {
+                return _IsActionRequired;
+            }
+            set
+            {
+                _IsActionRequired = value;
             }
         }
 
@@ -333,6 +349,10 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
             ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
             ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant.ToString();
+
+            ParentObject["isactionrequired"] = IsActionRequired.ToString();
+
+
             //ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?
             //        DateAnswered.ToShortDateString() : string.Empty;
             //ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = ( DateCorrected != DateTime.MinValue ) ?
