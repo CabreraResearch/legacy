@@ -261,6 +261,7 @@ namespace ChemSW.Nbt.WebServices
                         JObj["timer"]["treeloadersql"] = Math.Round( _CswNbtResources.CswLogger.TreeLoaderSQLTime, 3 );
                     }
                     JObj["timer"]["servertotal"] = Math.Round( Timer.ElapsedDurationInMilliseconds, 3 );
+                    JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
                 }
             }
         }//_jAuthenticationStatus()
@@ -2258,6 +2259,38 @@ namespace ChemSW.Nbt.WebServices
         #endregion MetaData
 
         #region Misc
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getWatermark()
+        {
+            JObject ReturnVal = new JObject();
+
+            // No authentication necessary
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Ignore;
+            try
+            {
+                _initResources();
+                
+                string Watermark = _CswNbtResources.SetupVbls.readSetting( "Watermark" );
+                if( string.Empty != Watermark )
+                {
+                    ReturnVal["watermark"] = Watermark;
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getSessions()
+
+
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
