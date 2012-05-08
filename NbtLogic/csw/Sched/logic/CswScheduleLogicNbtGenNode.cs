@@ -70,47 +70,67 @@ namespace ChemSW.Nbt.Sched
                     for( Int32 idx = 0; ( idx < ObjectGenerators.Count && idx < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
+
                         if( CurrentGenerator.Enabled.Checked == Tristate.True )
                         {
-                            DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
-                            DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
-                            if( InitialDueDateValue == DateTime.MinValue )
+
+                            try
                             {
-                                InitialDueDateValue = ThisDueDateValue;
-                            }
-                            DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
 
-                            // BZ 7866
-                            if( ThisDueDateValue != DateTime.MinValue )
+
+                                DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
+                                DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
+                                if( InitialDueDateValue == DateTime.MinValue )
+                                {
+                                    InitialDueDateValue = ThisDueDateValue;
+                                }
+                                DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
+
+                                // BZ 7866
+                                if( ThisDueDateValue != DateTime.MinValue )
+                                {
+                                    // BZ 7124 - set runtime
+                                    if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
+                                    {
+                                        ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                    }
+
+                                    Int32 WarnDays = CswConvert.ToInt32( CurrentGenerator.WarningDays.Value );
+                                    if( WarnDays > 0 )
+                                    {
+                                        TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
+                                        ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
+                                        InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                                    }
+
+                                    // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                                    if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
+                                        ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
+                                        ( DateTime.Now >= ThisDueDateValue ) )
+                                    {
+                                        string Message = _runGenerator( CurrentGenerator );
+                                        _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+
+                                        GeneratorDescriptions += CurrentGenerator.Description + "; ";
+                                        TotalGeneratorsProcessed++;
+                                    }
+                                } // if( ThisDueDateValue != DateTime.MinValue )
+
+                            }//try
+
+                            catch( Exception Exception )
                             {
-                                // BZ 7124 - set runtime
-                                if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
-                                {
-                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
-                                }
+                                string Message = "Unable to process generator " + CurrentGenerator.Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
+                                GeneratorDescriptions += Message;
+                                CurrentGenerator.Enabled.Checked = Tristate.False;
+                                _CswNbtResources.logError( new CswDniException( Message ) );
 
-                                Int32 WarnDays = CswConvert.ToInt32( CurrentGenerator.WarningDays.Value );
-                                if( WarnDays > 0 )
-                                {
-                                    TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
-                                    ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
-                                    InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
-                                }
 
-                                // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                                if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
-                                    ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
-                                    ( DateTime.Now >= ThisDueDateValue ) )
-                                {
-                                    string Message = _runGenerator( CurrentGenerator );
-                                    _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
-
-                                    GeneratorDescriptions += CurrentGenerator.Description + "; ";
-                                    TotalGeneratorsProcessed++;
-                                }
-                            } // if( ThisDueDateValue != DateTime.MinValue )
+                            }//catch
 
                         } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
+
+
 
                     }//iterate generators
 
