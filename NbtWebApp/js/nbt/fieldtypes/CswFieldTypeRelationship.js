@@ -144,11 +144,12 @@
                             makeAddImage();
                         }
                         if (false === Csw.isNullOrEmpty(objectClassId)) {
+                            var blankText = '[Select One]';
                             selectedNodeType = table.cell(1, cellCol)
                                 .nodeTypeSelect({
                                     objectClassId: objectClassId,
                                     onSelect: function (data, nodeTypeCount) {
-                                        if (Csw.number(nodeTypeCount) > 1) {
+                                        if (blankText !== selectedNodeType.val()) {
                                             $.CswDialog('AddNodeDialog', {
                                                 'nodetypeid': selectedNodeType.val(),
                                                 'onAddNode': o.onReload
@@ -159,6 +160,7 @@
                                         makeAddImage(Csw.number(nodeTypeCount));
                                         selectedNodeType.hide();
                                     },
+                                    blankOptionText: blankText,
                                     filterToPermission: 'Create'
                                 });
                             cellCol++;

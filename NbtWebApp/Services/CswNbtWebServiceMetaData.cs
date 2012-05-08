@@ -106,11 +106,7 @@ namespace ChemSW.Nbt.WebServices
         {
             bool hasPermission = true;
             CswNbtPermit.NodeTypePermission PermissionType;
-            if( !Enum.TryParse<CswNbtPermit.NodeTypePermission>( FilterToPermission, out PermissionType ) )
-            {
-                FilterToPermission = "";
-            }
-            if( false == String.IsNullOrEmpty( FilterToPermission ) )
+            if( Enum.TryParse<CswNbtPermit.NodeTypePermission>( FilterToPermission, out PermissionType ) )
             {
                 hasPermission = _CswNbtResources.Permit.can( PermissionType, RetNodeType );
             }
