@@ -123,7 +123,8 @@ namespace ChemSW.Nbt.Sched
                                 string Message = "Unable to process generator " + CurrentGenerator.Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
                                 GeneratorDescriptions += Message;
                                 CurrentGenerator.Enabled.Checked = Tristate.False;
-                                CurrentGenerator.RunStatus = "Disabled due do exception: " + Exception.Message;
+                                CurrentGenerator.RunStatus.AddComment( "Disabled due do exception: " + Exception.Message );
+                                CurrentGenerator.postChanges( false );
                                 _CswNbtResources.logError( new CswDniException( Message ) );
 
 
