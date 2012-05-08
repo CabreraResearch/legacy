@@ -717,17 +717,29 @@
                     'ID': o.ID + '_editfilt',
                     'FirstCellRightAlign': true
                 });
-                filterTable.cell(1, 1).text('Case Sensitive');
 
-                filterTable.cell(1, 2)
+                filterTable.cell(1, 1).text('Case Sensitive');
+                var cbCaseSensitive = filterTable.cell(1, 2)
                     .input({
                         ID: o.ID + '_casecb',
                         type: Csw.enums.inputTypes.checkbox,
                         onChange: function () {
-                            var $this = $(this);
-                            viewNodeData.casesensitive = $this.is(':checked');
+                            //var $this = $(this);
+                            viewNodeData.casesensitive = cbCaseSensitive.$.is(':checked');
                         },
                         checked: Csw.bool(viewNodeData.casesensitive)
+                    });
+
+                filterTable.cell(2, 1).text('Show At Runtime');
+                var cbShowAtRuntime = filterTable.cell(2, 2)
+                    .input({
+                        ID: o.ID + '_showcb',
+                        type: Csw.enums.inputTypes.checkbox,
+                        onChange: function () {
+                            //var $this = $(this);
+                            viewNodeData.showatruntime = cbShowAtRuntime.$.is(':checked');
+                        },
+                        checked: Csw.bool(viewNodeData.showatruntime)
                     });
             });
         }

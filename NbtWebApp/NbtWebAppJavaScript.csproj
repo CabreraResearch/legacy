@@ -100,6 +100,7 @@
     <Content Include="js\common\layouts\csw.wizard.js" />
     <Content Include="js\CswCommon-vsdoc.js" />
     <Content Include="js\CswNbt-vsdoc.js" />
+    <Content Include="js\nbt\actions\csw.modules.js" />
     <Content Include="js\nbt\actions\csw.audithistory.js" />
     <Content Include="js\nbt\actions\csw.inspectionstatus.js" />
     <Content Include="js\nbt\actions\csw.sessions.js" />
@@ -107,6 +108,7 @@
     <Content Include="js\nbt\actions\csw.quotas.js" />
     <Content Include="js\nbt\controls\csw.nodeselect.js" />
     <Content Include="js\nbt\layouts\csw.tabsandprops.js" />
+    <Content Include="js\nbt\view\csw.viewfilters.js" />
     <Content Include="js\nbt\wizards\csw.creatematerial.js" />
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
     <Content Include="js\nbt\controls\csw.nodetypeselect.js" />

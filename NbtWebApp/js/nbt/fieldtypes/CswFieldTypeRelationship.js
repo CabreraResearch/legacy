@@ -59,24 +59,24 @@
                         });
                         cellCol++;
 
-//                        var dialogLink = table.cell(1, cellCol).a({
-//                            ID: Csw.makeId(o.ID, '', 'searchlink'),
-//                            text: 'Find',
+                        //                        var dialogLink = table.cell(1, cellCol).a({
+                        //                            ID: Csw.makeId(o.ID, '', 'searchlink'),
+                        //                            text: 'Find',
                         table.cell(1, cellCol).imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.View,
-                                AlternateText: "Search " + o.propData.name,
-                                onClick: function () {
-                                    $.CswDialog('SearchDialog', {
-                                        propname: o.propData.name,
-                                        nodetypeid: nodeTypeId,
-                                        objectclassid: objectClassId,
-                                        onSelectNode: function(nodeObj) {
-                                            nameSpan.text(nodeObj.nodename);
-                                            hiddenValue.val(nodeObj.nodeid);
-                                        }
-                                    });
-                                }
-                            });
+                            ButtonType: Csw.enums.imageButton_ButtonType.View,
+                            AlternateText: "Search " + o.propData.name,
+                            onClick: function () {
+                                $.CswDialog('SearchDialog', {
+                                    propname: o.propData.name,
+                                    nodetypeid: nodeTypeId,
+                                    objectclassid: objectClassId,
+                                    onSelectNode: function (nodeObj) {
+                                        nameSpan.text(nodeObj.nodename);
+                                        hiddenValue.val(nodeObj.nodeid);
+                                    }
+                                });
+                            }
+                        });
                         cellCol++;
 
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, hiddenValue.val()); }, Csw.nodeHoverOut);
@@ -113,10 +113,10 @@
 
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
                     }
-
-                    if (false === Csw.isNullOrEmpty(nodeTypeId) && allowAdd) {
-                        // Add new value
-                        table.cell(1, cellCol)
+                    if (allowAdd) {
+                        if (false === Csw.isNullOrEmpty(nodeTypeId)) {
+                            // Add new value
+                            table.cell(1, cellCol)
                             .div()
                             .imageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Add,
@@ -124,14 +124,31 @@
                                 onClick: function () {
                                     $.CswDialog('AddNodeDialog', {
                                         'nodetypeid': nodeTypeId,
-                                        'onAddNode': function () {
-                                            o.onReload();
-                                        }
+                                        'onAddNode': o.onReload
                                     });
                                 }
                             });
-                        cellCol++;
-                    }
+                            cellCol++;
+                        }
+                        else if (false === Csw.isNullOrEmpty(objectClassId)) {
+                            //case 25721
+                            var selectedNodeType = table.cell(1, cellCol)
+                                .nodeTypeSelect({ objectClassId: objectClassId });
+                            cellCol++;
+                            table.cell(1, cellCol)
+                            .div()
+                            .imageButton({
+                                ButtonType: Csw.enums.imageButton_ButtonType.Add,
+                                AlternateText: "Add New " + o.propData.name,
+                                onClick: function () {
+                                    $.CswDialog('AddNodeDialog', {
+                                        'nodetypeid': selectedNodeType.val(),
+                                        'onAddNode': o.onReload
+                                    });
+                                }
+                            });
+                        }
+                    }//if (allowAdd)
                 } // if-else (o.ReadOnly) {
             }, // init
             save: function (o) {
