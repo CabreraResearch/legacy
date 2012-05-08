@@ -1984,7 +1984,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId, string Multi )
+        public string getTabs( string EditMode, string NodeId, string SafeNodeKey, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1995,7 +1995,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ) );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ), CswConvert.ToBoolean( ConfigMode ) );
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
@@ -2032,11 +2032,11 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ) );
+                    CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ), CswConvert.ToBoolean( ConfigMode ) );
                     _setEditMode( EditMode );
                     CswDateTime InDate = new CswDateTime( _CswNbtResources );
                     InDate.FromClientDateTimeString( Date );
-                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId, CswConvert.ToBoolean( ConfigMode ) );
+                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, CswConvert.ToInt32( NodeTypeId ), InDate, filterToPropId );
                 }
 
                 _deInitResources();
