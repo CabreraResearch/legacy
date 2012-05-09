@@ -6,8 +6,8 @@
         <meta http-equiv="X-UA-Compatible" content="IE=9">
         <title>Login</title>
         <!--#include file="MainIncludes.html" -->
-        <script type="text/javascript" src="js/ChemSW.min.js"></script>
-        <script type="text/javascript" src="js/CswAll.min.js"></script>
+        <script type="text/javascript" src="CswCommon.min.js"></script>
+        <script type="text/javascript" src="CswNbt.min.js"></script>
     </head>
     <body>
         <form id="form1" runat="server">

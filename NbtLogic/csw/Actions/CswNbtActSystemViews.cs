@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -242,11 +243,11 @@ namespace ChemSW.Nbt.Actions
                        };
         }
 
-        public bool addSystemViewFilter( SystemViewPropFilterDefinition FilterDefinition, CswNbtMetaDataObjectClass MatchObjectClass = null )
+        private bool _addSystemViewFilterRecursive(IEnumerable<CswNbtViewRelationship> Relationships, SystemViewPropFilterDefinition FilterDefinition, CswNbtMetaDataObjectClass MatchObjectClass = null )
         {
             bool Ret = false;
             CswNbtMetaDataObjectClass ExpectedObjectClass = MatchObjectClass ?? _EnforceObjectClassRelationship;
-            foreach( CswNbtViewRelationship PotentialInspectionDesignRelationship in SystemView.Root.ChildRelationships )
+            foreach( CswNbtViewRelationship PotentialInspectionDesignRelationship in Relationships )
             {
                 if( PotentialInspectionDesignRelationship.isExpectedMetaDataType( ExpectedObjectClass ) )
                 {
@@ -255,10 +256,15 @@ namespace ChemSW.Nbt.Actions
                 }
                 if( PotentialInspectionDesignRelationship.ChildRelationships.Count > 0 )
                 {
-                    Ret = Ret || addSystemViewFilter( FilterDefinition, MatchObjectClass );
+                    Ret = Ret || _addSystemViewFilterRecursive( PotentialInspectionDesignRelationship.ChildRelationships, FilterDefinition, MatchObjectClass );
                 }
             }
             return Ret;
+        }
+
+        public bool addSystemViewFilter( SystemViewPropFilterDefinition FilterDefinition, CswNbtMetaDataObjectClass MatchObjectClass = null )
+        {
+            return _addSystemViewFilterRecursive( SystemView.Root.ChildRelationships, FilterDefinition, MatchObjectClass );
         }
 
         #endregion Public methods

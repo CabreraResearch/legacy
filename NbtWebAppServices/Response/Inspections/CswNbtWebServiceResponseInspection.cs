@@ -14,11 +14,11 @@ namespace NbtWebAppServices.Response
         public CswNbtWebServiceResponseInspections( HttpContext Context )
         {
             _DefaultResponse = new CswNbtWebServiceResponseNoData( Context );
-            Data = new CswNbtInspectionsResponseModel();
+            Data = new CswNbtInspectionsResponseModel.CswNbtInspection();
         }
 
         [DataMember]
-        public CswNbtInspectionsResponseModel Data { get; set; }
+        public CswNbtInspectionsResponseModel.CswNbtInspection Data { get; set; }
 
         [DataMember]
         public CswNbtSessionAuthenticationStatus SessionAuthenticationStatus

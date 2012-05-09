@@ -91,7 +91,8 @@
     <Compile Include="Request\CswNbtWebServiceRequest.cs" />
     <Compile Include="Request\ICswNbtWebServiceRequest.cs" />
     <Compile Include="Core\CswNbtWebServiceError.cs" />
-    <Compile Include="Response\Inspections\CswNbtWebServiceResponseInspections.cs" />
+    <Compile Include="Response\Inspections\CswNbtWebServiceResponseInspection.cs" />
+    <Compile Include="Response\Inspections\CswNbtWebServiceResponseInspectionsAndDesign.cs" />
     <Compile Include="Response\Default\CswNbtWebServiceResponseDefault.cs" />
     <Compile Include="Response\Default\CswNbtWebServiceResponseNoData.cs" />
     <Compile Include="Response\Default\CswNbtWebServiceResponse.cs" />
