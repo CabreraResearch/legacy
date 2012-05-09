@@ -928,6 +928,8 @@ window.initMain = window.initMain || function (undefined) {
             onEditFilters: function(newviewid) {
                 var newopts = o;
                 newopts.viewid = newviewid;
+                // set the current view to be the session view, so filters are saved
+                Csw.clientState.setCurrentView(newviewid, o.viewmode);
                 refreshNodesTree(newopts);
             } // onEditFilters
         }); // viewFilters
