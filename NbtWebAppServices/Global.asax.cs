@@ -13,7 +13,7 @@ namespace NbtWebAppServices
             WebServiceHostFactory Factory = new WebServiceHostFactory();
             RouteTable.Routes.Add( new ServiceRoute( "Session", Factory, typeof( CswNbtWsSession ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Locations", Factory, typeof( CswNbtWsLocations ) ) );
-            RouteTable.Routes.Add( new ServiceRoute( "Inspections", Factory, typeof( CswNbtWsInspections ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Inspections", Factory, typeof( CswNbtWebServiceInspectionsUriMethods ) ) );
         }
 
         protected void Application_BeginRequest( object sender, EventArgs e )

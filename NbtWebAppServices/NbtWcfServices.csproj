@@ -91,6 +91,8 @@
     <Compile Include="Default\CswNbtWebServiceRequest.cs" />
     <Compile Include="Default\ICswNbtWebServiceRequest.cs" />
     <Compile Include="Core\CswNbtWebServiceError.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceInspectionsPost.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceInspectionsGet.cs" />
     <Compile Include="Inspections\CswNbtWebServiceResponseInspection.cs" />
     <Compile Include="Inspections\CswNbtWebServiceResponseInspectionsAndDesign.cs" />
     <Compile Include="Default\CswNbtWebServiceResponseBase.cs" />
@@ -104,7 +106,7 @@
     <Compile Include="Core\CswNbtWebServiceCookies.cs" />
     <Compile Include="Session\CswNbtSessionDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Inspections\CswNbtWsInspections.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceInspectionsUriMethods.cs" />
     <Compile Include="Default\CswNbtWsDefault.cs" />
     <Compile Include="Locations\CswNbtWsLocations.cs" />
     <Compile Include="Session\CswNbtWsSession.cs" />

@@ -9,6 +9,7 @@ namespace NbtWebAppServices.Response
         public CswNbtWebServiceResponseInspectionsAndDesign( HttpContext Context )
             : base( Context )
         {
+            Data = new CswNbtInspectionsDataModel();
         }
 
         [DataMember]

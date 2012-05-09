@@ -81,9 +81,8 @@ namespace NbtWebAppServices.Response
                 public Int32 AnswerId { get; set; }
                 public string Comments { get; set; }
                 public string CorrectiveAction { get; set; }
-                public DateTime LastModifyDate { get; set; }
-                public Int32 LastModifyUserId { get; set; }
-                public string LastModifyUserName { get; set; }
+                public DateTime DateAnswered { get; set; }
+                public DateTime DateCorrected { get; set; }
                 public Int32 QuestionId { get; set; }
                 public string Status { get; set; }
             }

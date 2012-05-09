@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.PropTypes
         public DateTime DateAnswered
         {
             get { return _CswNbtNodePropData.GetPropRowValueDate( _DateAnsweredSubField.Column ); }
-            private set
+            set
             {
                 _CswNbtNodePropData.SetPropRowValue( _DateAnsweredSubField.Column, value );
             }
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
         public DateTime DateCorrected
         {
             get { return _CswNbtNodePropData.GetPropRowValueDate( _DateCorrectedSubField.Column ); }
-            private set
+            set
             {
                 _CswNbtNodePropData.SetPropRowValue( _DateCorrectedSubField.Column, value );
             }
