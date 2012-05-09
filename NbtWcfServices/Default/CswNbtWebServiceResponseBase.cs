@@ -16,7 +16,7 @@ namespace NbtWebAppServices.Response
         private double _ServerInitTime;
         private HttpContext _Context;
 
-        public CswNbtWebServiceResponseBase( HttpContext Context )
+        public CswNbtWebServiceResponseBase( HttpContext Context, bool AttemptRefresh = true )
         {
             _ServerInitTime = 0;
             _Timer = new CswTimer();
@@ -28,8 +28,11 @@ namespace NbtWebAppServices.Response
             try
             {
                 CswNbtSessionResources = CswNbtSessionResources.initResources( _Context );
-                AuthenticationStatus Auth = CswNbtSessionResources.attemptRefresh( true );
-                SessionAuthenticationStatus.AuthenticationStatus = Auth.ToString();
+                if( AttemptRefresh )
+                {
+                    AuthenticationStatus Auth = CswNbtSessionResources.attemptRefresh( true );
+                    SessionAuthenticationStatus.AuthenticationStatus = Auth.ToString();
+                }
             }
             catch( Exception ex )
             {

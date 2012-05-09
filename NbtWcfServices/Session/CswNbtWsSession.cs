@@ -23,7 +23,7 @@ namespace NbtWebAppServices.WebServices
         [WebInvoke( Method = "POST" )]
         public CswNbtWebServiceResponseBase init( CswNbtWebServiceRequest.CswNbtSessionRequest request )
         {
-            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
+            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context, false );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
