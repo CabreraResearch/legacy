@@ -467,7 +467,7 @@
                 'use strict';
                 var propid = propData.id,
                     cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol),
-                    helpText = Csw.makeSafeHTML(Csw.string(propData.helptext)),
+                    helpText = Csw.string(propData.helptext),
                     propName = Csw.string(propData.name),
                     labelCell = {};
 
@@ -487,7 +487,7 @@
                         labelCell.a({
                             cssclass: 'cswprop_helplink',
                             title: helpText,
-                            onClick: function() {
+                            onClick: function () {
                                 return false;
                             },
                             value: propName
