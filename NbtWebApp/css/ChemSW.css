@@ -1316,3 +1316,13 @@ ul li div {
     background-color: &cswbgcolorhilite;
     cursor: pointer;
 }
+
+.viewfiltersdiv
+{
+    border: 1px solid &cswheaderbordercolor;
+    background-color: &cswheaderbgcolor;
+    padding: 3px;
+    max-width: 270px;
+    max-height: 70px;
+    overflow: auto; 
+}

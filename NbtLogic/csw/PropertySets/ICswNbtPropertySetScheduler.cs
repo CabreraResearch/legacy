@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.PropertySets
 
         CswNbtNodePropDateTime FinalDueDate { get; }
         CswNbtNodePropDateTime NextDueDate { get; }
-        CswNbtNodePropStatic RunStatus { get; }
+        CswNbtNodePropComments RunStatus { get; }
         CswNbtNodePropNumber WarningDays { get; }
         CswNbtNodePropTimeInterval DueDateInterval { get; }
         CswNbtNodePropDateTime RunTime { get; }

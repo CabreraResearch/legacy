@@ -68,8 +68,10 @@
             success: function (data) {
                 var endTime = new Date();
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
-                var result = $.parseJSON(data.d);
-
+                var result = data;  
+                if(data.d) {
+                    result = $.parseJSON(data.d);
+                }
                 if (result.error !== undefined) {
                     if (false === o.overrideError) {
                         internal.handleAjaxError({
@@ -104,17 +106,18 @@
                     while (etms.length < 3) {
                         etms = "0" + etms;
                     }
-                    Csw.log(endTime.toLocaleTimeString() + "." + etms + "\t" +
-                             url + "\t" +
-                             (endTime - startTime) + "\t" +
-                             result.timer.serverinit + "\t" +
-                             result.timer.servertotal + "\t" +
-                             result.timer.dbinit + "\t" +
-                             result.timer.dbquery + "\t" +
-                             result.timer.dbcommit + "\t" +
-                             result.timer.dbdeinit + "\t" +
-                             result.timer.treeloadersql);
-
+                    if (false === Csw.isNullOrEmpty(result.timer)) {
+                        Csw.log(endTime.toLocaleTimeString() + "." + etms + "\t" +
+                            url + "\t" +
+                            (endTime - startTime) + "\t" +
+                            result.timer.serverinit + "\t" +
+                            result.timer.servertotal + "\t" +
+                            result.timer.dbinit + "\t" +
+                            result.timer.dbquery + "\t" +
+                            result.timer.dbcommit + "\t" +
+                            result.timer.dbdeinit + "\t" +
+                            result.timer.treeloadersql);
+                    }
                     delete result.AuthenticationStatus;
                     delete result.timeout;
                     if (Csw.bool(o.removeTimer)) {
@@ -180,7 +183,7 @@
             async: o.async,
             url: url,
             dataType: 'json',
-            data: JSON.stringify(o.data),
+            data: $.param(o.data),
             success: function (result) {
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
 

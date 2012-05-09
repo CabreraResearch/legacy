@@ -32,6 +32,14 @@ namespace ChemSW.Nbt.PropTypes
             _DateAnsweredSubField = _FieldTypeRule.DateAnsweredSubField;
             _DateCorrectedSubField = _FieldTypeRule.DateCorrectedSubField;
             _IsCompliantSubField = _FieldTypeRule.IsCompliantSubField;
+            _LastEditDate = _FieldTypeRule.LastEditDate;
+            _LastEditUser = _FieldTypeRule.LastEditUser;
+
+            if( WasModified )
+            {
+                LastEditDate = DateTime.Now;
+                LastEditUser = _CswNbtResources.CurrentNbtUser.Username;
+            }
 
         }//ctor
         private CswNbtFieldTypeRuleQuestion _FieldTypeRule;
@@ -41,6 +49,9 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _DateAnsweredSubField;
         private CswNbtSubField _DateCorrectedSubField;
         private CswNbtSubField _IsCompliantSubField;
+        private CswNbtSubField _LastEditDate;
+        private CswNbtSubField _LastEditUser;
+        private bool _IsActionRequired = false;//case 25035
 
         /// <summary>
         /// Returns whether the property value is empty
@@ -140,6 +151,21 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// True only when the parent Node has a Status of ActionRequired
+        /// </summary>
+        public bool IsActionRequired//case 25035
+        {
+            get
+            {
+                return _IsActionRequired;
+            }
+            set
+            {
+                _IsActionRequired = value;
+            }
+        }
+
+        /// <summary>
         /// Date value set when question is answered
         /// </summary>
         public DateTime DateAnswered
@@ -170,6 +196,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _CommentsSubField.Column ); }
             set { _CswNbtNodePropData.SetPropRowValue( _CommentsSubField.Column, value ); }
+        }
+
+        public DateTime LastEditDate
+        {
+            get { return CswConvert.ToDateTime( _CswNbtNodePropData.GetPropRowValue( _LastEditDate.Column ) ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _LastEditDate.Column, value ); }
+        }
+
+        public string LastEditUser
+        {
+            get { return _CswNbtNodePropData.GetPropRowValue( _LastEditUser.Column ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _LastEditUser.Column, value ); }
         }
 
         /// <summary>
@@ -271,6 +309,8 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+
+
         public override void ToXml( XmlNode ParentNode )
         {
             CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.ToXmlNodeName(), Answer );
@@ -309,15 +349,22 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
             ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
             ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant.ToString();
+
+            ParentObject["isactionrequired"] = IsActionRequired.ToString();
+
+
             //ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?
             //        DateAnswered.ToShortDateString() : string.Empty;
             //ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = ( DateCorrected != DateTime.MinValue ) ?
             //        DateCorrected.ToShortDateString() : string.Empty;
 
             CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources, DateAnswered );
-            ParentObject.Add( new JProperty( _DateAnsweredSubField.ToXmlNodeName( true ), CswDateAnswered.ToClientAsDateTimeJObject() ) );
+            ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = CswDateAnswered.ToClientAsDateTimeJObject();
             CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources, DateCorrected );
-            ParentObject.Add( new JProperty( _DateCorrectedSubField.ToXmlNodeName( true ), CswDateCorrected.ToClientAsDateTimeJObject() ) );
+            ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = CswDateCorrected.ToClientAsDateTimeJObject();
+            ParentObject[_LastEditUser.ToXmlNodeName( true )] = LastEditUser;
+            CswDateTime CswLastEdited = new CswDateTime( _CswNbtResources, LastEditDate );
+            ParentObject[_LastEditDate.ToXmlNodeName( true )] = CswLastEdited.ToClientAsDateTimeJObject();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

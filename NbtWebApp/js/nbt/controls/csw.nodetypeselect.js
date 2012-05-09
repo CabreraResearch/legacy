@@ -12,6 +12,7 @@
                 nodeTypesUrlMethod: 'getNodeTypes',
                 nodetypeid: '',
                 objectClassName: '',
+                objectClassId: '',
                 onSelect: null,
                 onSuccess: null,
                 width: '200px',
@@ -49,6 +50,7 @@
                     urlMethod: internal.nodeTypesUrlMethod,
                     data: {
                         ObjectClassName: Csw.string(internal.objectClassName),
+                        ObjectClassId: Csw.string(internal.objectClassId),
                         ExcludeNodeTypeIds: internal.excludeNodeTypeIds, 
                         RelatedToNodeTypeId: internal.relatedToNodeTypeId,
                         RelatedObjectClassPropName: internal.relatedObjectClassPropName

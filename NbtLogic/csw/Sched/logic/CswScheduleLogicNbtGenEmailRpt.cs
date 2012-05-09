@@ -36,13 +36,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private string _CompletionMessage = string.Empty;
-        public string CompletionMessage
-        {
-            get { return ( _CompletionMessage ); }
-        }
-
-
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
@@ -89,8 +82,8 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    _CompletionMessage = string.Empty;
-
+                    string InnerErrorMessage = string.Empty;
+                    Int32 TotalReportsProcessed = 0;
                     List<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
 
                     for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
@@ -246,9 +239,8 @@ namespace ChemSW.Nbt.Sched
                                                                             StatusMessage = CswNbtMailReportStatus.EmailFailureReason;
                                                                         }
 
-
+                                                                        TotalReportsProcessed++;
                                                                         _CswScheduleNodeUpdater.update( CurrentMailReport.Node, StatusMessage );
-                                                                        _CswScheduleLogicDetail.StatusMessage = StatusMessage;
 
                                                                     } // if( CswNbtMailReportStatus.ReportDataExist )
 
@@ -268,17 +260,18 @@ namespace ChemSW.Nbt.Sched
                                         else
                                         {
                                             CswNbtMailReportStatus.ReportFailureReason = "Unknown " + CurrentMailReport.Type.Value;
+                                            InnerErrorMessage += CswNbtMailReportStatus.ReportFailureReason + ";";
                                         }
                                     } // if( ThisDueDateValue != DateTime.MinValue )
                                     else
                                     {
                                         CswNbtMailReportStatus.ReportFailureReason = "Report type is not specified";
-                                        _CswScheduleLogicDetail.StatusMessage = CswNbtMailReportStatus.ReportFailureReason;
+                                        InnerErrorMessage += CswNbtMailReportStatus.ReportFailureReason + "; ";
 
                                         //if the report type is specified 
 
                                         // might be redundant with CswNbtDbBasedSchdEvents.handleOnSchdItemWasRun()
-                                        CurrentMailReport.RunStatus.StaticText = CswNbtMailReportStatus.Message;
+                                        CurrentMailReport.RunStatus.AddComment( CswNbtMailReportStatus.Message );
                                         CurrentMailReport.postChanges( true );
 
                                     }
@@ -292,9 +285,10 @@ namespace ChemSW.Nbt.Sched
                         {
                             if( null != CurrentMailReport )
                             {
-                                _CswScheduleLogicDetail.StatusMessage = Exception.Message;
 
-                                CurrentMailReport.RunStatus.StaticText = "An exception occured: " + Exception.Message;
+                                InnerErrorMessage += "An exception occurred: " + Exception.Message + "; ";
+
+                                CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
                                 CurrentMailReport.postChanges( true );
 
                             }
@@ -302,6 +296,14 @@ namespace ChemSW.Nbt.Sched
 
                     }// for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
 
+                    if( string.Empty == InnerErrorMessage )
+                    {
+                        _CswScheduleLogicDetail.StatusMessage = TotalReportsProcessed.ToString() + " reports processed without error";
+                    }
+                    else
+                    {
+                        _CswScheduleLogicDetail.StatusMessage = TotalReportsProcessed.ToString() + " reports processed, and the following errors occured during processing: " + InnerErrorMessage;
+                    }
 
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
 
@@ -310,13 +312,15 @@ namespace ChemSW.Nbt.Sched
                 catch( Exception Exception )
                 {
 
-                    _CompletionMessage = "CswScheduleLogicNbtGenEmailRpt::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _CswScheduleLogicDetail.StatusMessage = "An exception occurred: " + Exception.Message;
+                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
 
                 }//catch
 
+
             }//if we're not shutting down
+
 
         }//threadCallBack()
 
