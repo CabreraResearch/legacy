@@ -44,7 +44,6 @@ namespace NbtWebAppServices.Response
         string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late );
         string Missed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed );
         string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required );
-        Collection<CswNbtInspectionsDataModel.CswNbtInspection> ProcessedInspections = new Collection<CswNbtInspectionsDataModel.CswNbtInspection>();
 
         private bool _updateInspectionNode( CswNbtInspectionsDataModel.CswNbtInspection Inspection )
         {
@@ -98,7 +97,7 @@ namespace NbtWebAppServices.Response
 
                             if( NodeAsDesign.Status.Value == Completed || NodeAsDesign.Status.Value == CompletedLate )
                             {
-                                ProcessedInspections.Add( Inspection );
+                                /* Nothing to so */
                             }
                             else if( NodeAsDesign.Status.Value == ActionRequired )
                             {
