@@ -290,6 +290,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode()
         {
+            //case 26113: check parent for bad inspections 
+            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+            ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
+            //CswNbtObjClassInspectionTarget pnodeAsTarget = CswNbtNodeCaster.AsInspectionTarget( ParentNode );
+            bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
+            bool _Deficient = areMoreActionsRequired();
+            if( _Deficient != _alreadyDeficient )
+            {
+                Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                ParentNode.postChanges( false );
+            }
+
             _CswNbtObjClassDefault.beforeDeleteNode();
 
         }//beforeDeleteNode()
@@ -297,6 +309,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterDeleteNode()
         {
             _CswNbtObjClassDefault.afterDeleteNode();
+
         }//afterDeleteNode()        
 
         public override void afterPopulateProps()
