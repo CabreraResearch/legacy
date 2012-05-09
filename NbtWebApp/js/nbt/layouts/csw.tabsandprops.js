@@ -615,7 +615,7 @@
                             }
                             return false;
                         };
-                        Csw.crawlObject(subProps, subOnSuccess, true);
+                        Csw.crawlObject(subProps, subOnSuccess, false);
                     }
                 } // if (propData.display != 'false' || ConfigMode )
             };
