@@ -107,16 +107,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtSubField DateCorrectedSubField;
 
         /// <summary>
-        /// Last Edit Date: Date, field4, value
-        /// </summary>
-        public CswNbtSubField LastEditDate;
-
-        /// <summary>
-        /// Last Edit User: Text, field5, value
-        /// </summary>
-        public CswNbtSubField LastEditUser;
-
-        /// <summary>
         /// CswNbtFieldTypeRuleQuestion Subfields
         /// </summary>
         public CswNbtSubFieldColl SubFields
