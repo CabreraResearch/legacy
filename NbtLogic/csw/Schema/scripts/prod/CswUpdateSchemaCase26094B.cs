@@ -18,17 +18,18 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeProp PartsProp = TaskNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassTask.PartsPropertyName );
                 IEnumerable<CswNbtMetaDataNodeTypeTab> TaskNodeTypeTabs = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeTabs( TaskNodeType.NodeTypeId );
+                int TabIdToAdd = 0;
+                int TabIndex = 0;
                 foreach( CswNbtMetaDataNodeTypeTab TaskNodeTypeTab in TaskNodeTypeTabs )
                 {
-                    if( TaskNodeTypeTab.TabName.Equals( "Completion" ) )
+                    PartsProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId: TaskNodeTypeTab.TabId );
+                    if( 0 == TabIndex || TaskNodeTypeTab.TabName.Equals( "Completion" ) )
                     {
-                        PartsProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId: TaskNodeTypeTab.TabId );
+                        TabIdToAdd = TaskNodeTypeTab.TabId;
                     }
-                    else
-                    {
-                        PartsProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId: TaskNodeTypeTab.TabId );
-                    }
+                    TabIndex++;
                 }
+                PartsProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId: TabIdToAdd );
             }
 
         }//Update()
