@@ -23,7 +23,7 @@ namespace NbtWebAppServices.WebServices
         private CswNbtSessionResources _CswNbtSessionResources = null;
         private CswNbtMetaDataObjectClass _InspectionDesignOc = null;
         private CswNbtView _SystemView;
-        private CswNbtWebServiceResponseInspections _Response;
+        private CswNbtWebServiceResponseInspectionsAndDesign _Response;
         private CswNbtActSystemViews _NbtSystemView;
 
         private void _initInspectionResources( CswNbtActSystemViews.SystemViewName ViewName )
@@ -39,9 +39,9 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet( UriTemplate = "byDateRange?StartingDate={StartingDate}&EndingDate={EndingDate}" )]
-        public CswNbtWebServiceResponseInspections byDateRange( string StartingDate, string EndingDate )
+        public CswNbtWebServiceResponseInspectionsAndDesign byDateRange( string StartingDate, string EndingDate )
         {
-            _Response = new CswNbtWebServiceResponseInspections( _Context );
+            _Response = new CswNbtWebServiceResponseInspectionsAndDesign( _Context );
             if( _Response.Status.Success )
             {
                 try
@@ -83,9 +83,9 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet]
-        public CswNbtWebServiceResponseInspections byUser()
+        public CswNbtWebServiceResponseInspectionsAndDesign byUser()
         {
-            _Response = new CswNbtWebServiceResponseInspections( _Context );
+            _Response = new CswNbtWebServiceResponseInspectionsAndDesign( _Context );
             if( _Response.Status.Success )
             {
                 try
@@ -105,10 +105,10 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet]
-        public CswNbtWebServiceResponseInspections byLocation( string LocationName )
+        public CswNbtWebServiceResponseInspectionsAndDesign byLocation( string LocationName )
         {
-            CswNbtWebServiceResponseInspections Ret = new CswNbtWebServiceResponseInspections( _Context );
-            if( Ret.Status.Success )
+            _Response = new CswNbtWebServiceResponseInspectionsAndDesign( _Context );
+            if( _Response.Status.Success )
             {
                 try
                 {
@@ -121,19 +121,19 @@ namespace NbtWebAppServices.WebServices
                 }
                 catch( Exception Ex )
                 {
-                    Ret.addError( Ex );
+                    _Response.addError( Ex );
                 }
             }
-            Ret.finalizeResponse();
-            return Ret;
+            _Response.finalizeResponse();
+            return _Response;
         } // get()
 
         [OperationContract]
         [WebGet]
-        public CswNbtWebServiceResponseInspections byBarcode( string Barcode )
+        public CswNbtWebServiceResponseInspectionsAndDesign byBarcode( string Barcode )
         {
-            CswNbtWebServiceResponseInspections Ret = new CswNbtWebServiceResponseInspections( _Context );
-            if( Ret.Status.Success )
+            _Response = new CswNbtWebServiceResponseInspectionsAndDesign( _Context );
+            if( _Response.Status.Success )
             {
                 try
                 {
@@ -153,99 +153,125 @@ namespace NbtWebAppServices.WebServices
                 }
                 catch( Exception Ex )
                 {
+                    _Response.addError( Ex );
+                }
+            }
+            _Response.finalizeResponse();
+            return _Response;
+        } // get()
+
+        [OperationContract]
+        [WebInvoke(Method = "POST")]
+        public CswNbtWebServiceResponseInspections updateInspection(CswNbtInspectionsResponseModel.CswNbtInspection Inspection )
+        {
+            CswNbtWebServiceResponseInspections Ret = new CswNbtWebServiceResponseInspections( _Context );
+            if( Ret.Status.Success )
+            {
+                try
+                {
+                    _initInspectionResources( CswNbtActSystemViews.SystemViewName.SIInspectionsbyBarcode );
+                    
+                }
+                catch( Exception Ex )
+                {
                     Ret.addError( Ex );
                 }
             }
             Ret.finalizeResponse();
             return Ret;
-        } // get()
-
-
+        }
+        
         private Collection<Int32> InspectionDesignTypeIds = new Collection<Int32>();
-        private Collection<Int32> InspectionDesignNodeIds = new Collection<Int32>();
+        private Collection<CswPrimaryKey> InspectionDesignNodeIds = new Collection<CswPrimaryKey>();
 
-        private void _addInspectionDesignToResponse( CswNbtNode InspectionNode )
+        private void _addNodeTypeInspectionDesignToResponse( CswNbtNode InspectionNode )
         {
-            CswNbtMetaDataNodeType NewInspectionNodeType = InspectionNode.getNodeType();
-            InspectionDesignTypeIds.Add( NewInspectionNodeType.NodeTypeId );
-            var ResponseDesign = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign
+            if( false == InspectionDesignTypeIds.Contains( InspectionNode.NodeTypeId ) )
             {
-                DesignId = NewInspectionNodeType.NodeTypeId,
-                Name = NewInspectionNodeType.NodeTypeName
-            };
+                CswNbtMetaDataNodeType NewInspectionNodeType = InspectionNode.getNodeType();
+                InspectionDesignTypeIds.Add( NewInspectionNodeType.NodeTypeId );
+                var ResponseDesign = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign
+                                         {
+                                             DesignId = NewInspectionNodeType.NodeTypeId,
+                                             Name = NewInspectionNodeType.NodeTypeName
+                                         };
 
-            foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NewInspectionNodeType.getNodeTypeTabs() )
-            {
-                var ResponseSection = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
+                foreach ( CswNbtMetaDataNodeTypeTab NodeTypeTab in NewInspectionNodeType.getNodeTypeTabs() )
                 {
-                    Name = NodeTypeTab.TabName,
-                    Order = NodeTypeTab.TabOrder,
-                    SectionId = NodeTypeTab.TabId
-                };
+                    var ResponseSection = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
+                                              {
+                                                  Name = NodeTypeTab.TabName,
+                                                  Order = NodeTypeTab.TabOrder,
+                                                  SectionId = NodeTypeTab.TabId
+                                              };
 
-                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeTab.getNodeTypePropsByDisplayOrder() )
-                {
-                    var ResponseProperty = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
+                    foreach ( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeTab.getNodeTypePropsByDisplayOrder() )
                     {
-                        HelpText = NodeTypeProp.HelpText,
-                        Text = NodeTypeProp.PropName
-                    };
-                    CswNbtMetaDataFieldType.NbtFieldType FieldType = NodeTypeProp.getFieldType().FieldType;
-                    ResponseProperty.Type = FieldType.ToString();
+                        var ResponseProperty = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
+                                                   {
+                                                       HelpText = NodeTypeProp.HelpText,
+                                                       Text = NodeTypeProp.PropName
+                                                   };
+                        CswNbtMetaDataFieldType.NbtFieldType FieldType = NodeTypeProp.getFieldType().FieldType;
+                        ResponseProperty.Type = FieldType.ToString();
 
-                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
-                    {
-                        ResponseProperty.QuestionId = NodeTypeProp.PropId;
-                        CswCommaDelimitedString Answers = new CswCommaDelimitedString();
-                        Answers.FromString( NodeTypeProp.ListOptions );
-                        foreach( string Answer in Answers )
+                        if ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                         {
-                            ResponseProperty.Choices.Add( Answer );
+                            ResponseProperty.QuestionId = NodeTypeProp.PropId;
+                            CswCommaDelimitedString Answers = new CswCommaDelimitedString();
+                            Answers.FromString( NodeTypeProp.ListOptions );
+                            foreach ( string Answer in Answers )
+                            {
+                                ResponseProperty.Choices.Add( Answer );
+                            }
                         }
+                        ResponseSection.Properties.Add( ResponseProperty );
                     }
-                    ResponseSection.Properties.Add( ResponseProperty );
+                    ResponseDesign.Sections.Add( ResponseSection );
+                    _Response.Data.Designs.Add( ResponseDesign );
                 }
-                ResponseDesign.Sections.Add( ResponseSection );
-                _Response.Data.Designs.Add( ResponseDesign );
             }
         }
 
-        private void _addInspectionDesignNodeToResponse( CswNbtNode InspectionNode )
+        private void _addInspectionDesignNodeNodeToResponse( CswNbtNode InspectionNode )
         {
-            InspectionDesignNodeIds.Add( InspectionNode.NodeId.PrimaryKey );
-            CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
-            var ResponseInspection = new CswNbtInspectionsResponseModel.CswNbtInspection
-                                         {
-                                             DesignId = InspectionNode.NodeTypeId,
-                                             DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
-                                             InspectionId = NodeAsInspectionDesign.NodeId.PrimaryKey,
-                                             InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
-                                             LocationPath = NodeAsInspectionDesign.Location.Gestalt,
-                                             RouteName = default( string ),
-                                             Status = NodeAsInspectionDesign.Status.Value
-                                         };
-
-            foreach( CswNbtNodePropWrapper Prop in InspectionNode.Properties )
+            if( false == InspectionDesignNodeIds.Contains( InspectionNode.NodeId ) )
             {
-                if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
-                {
-                    CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
-                    var ResponseQuestion = new CswNbtInspectionsResponseModel.CswNbtInspection.CswNbtInspectionQuestion
-                                               {
-                                                   Answer = PropAsQuestion.Answer,
-                                                   AnswerId = PropAsQuestion.NodeTypePropId,
-                                                   Comments = PropAsQuestion.Comments,
-                                                   CorrectiveAction = PropAsQuestion.CorrectiveAction,
-                                                   LastModifyDate = PropAsQuestion.LastEditDate,
-                                                   QuestionId = PropAsQuestion.NodeTypePropId,
-                                                   Status = NodeAsInspectionDesign.Status.Value,
-                                                   LastModifyUserName = PropAsQuestion.LastEditUser
-                                               };
+                InspectionDesignNodeIds.Add( InspectionNode.NodeId );
+                CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                var ResponseInspection = new CswNbtInspectionsResponseModel.CswNbtInspection
+                                             {
+                                                 DesignId = InspectionNode.NodeTypeId,
+                                                 DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
+                                                 InspectionId = NodeAsInspectionDesign.NodeId.PrimaryKey,
+                                                 InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
+                                                 LocationPath = NodeAsInspectionDesign.Location.Gestalt,
+                                                 RouteName = default( string ),
+                                                 Status = NodeAsInspectionDesign.Status.Value
+                                             };
 
-                    ResponseInspection.Questions.Add( ResponseQuestion );
+                foreach ( CswNbtNodePropWrapper Prop in InspectionNode.Properties )
+                {
+                    if ( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
+                    {
+                        CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
+                        var ResponseQuestion = new CswNbtInspectionsResponseModel.CswNbtInspection.CswNbtInspectionQuestion
+                                                   {
+                                                       Answer = PropAsQuestion.Answer,
+                                                       AnswerId = PropAsQuestion.NodeTypePropId,
+                                                       Comments = PropAsQuestion.Comments,
+                                                       CorrectiveAction = PropAsQuestion.CorrectiveAction,
+                                                       LastModifyDate = PropAsQuestion.LastEditDate,
+                                                       QuestionId = PropAsQuestion.NodeTypePropId,
+                                                       Status = NodeAsInspectionDesign.Status.Value,
+                                                       LastModifyUserName = PropAsQuestion.LastEditUser
+                                                   };
+
+                        ResponseInspection.Questions.Add( ResponseQuestion );
+                    }
                 }
+                _Response.Data.Inspections.Add( ResponseInspection );
             }
-            _Response.Data.Inspections.Add( ResponseInspection );
         }
 
         private void _iterateTree( ICswNbtTree Tree )
@@ -259,15 +285,8 @@ namespace NbtWebAppServices.WebServices
                     CswNbtNode NodeForCurrentPosition = Tree.getNodeForCurrentPosition();
                     if( NodeForCurrentPosition.ObjClass.ObjectClass.ObjectClass == _InspectionDesignOc.ObjectClass )
                     {
-                        if( false == InspectionDesignTypeIds.Contains( NodeForCurrentPosition.NodeTypeId ) )
-                        {
-                            _addInspectionDesignToResponse( NodeForCurrentPosition );
-                        }
-                        if( false == InspectionDesignNodeIds.Contains( NodeForCurrentPosition.NodeId.PrimaryKey ) )
-                        {
-                            _addInspectionDesignNodeToResponse( NodeForCurrentPosition );
-                        }
-
+                        _addNodeTypeInspectionDesignToResponse( NodeForCurrentPosition );
+                        _addInspectionDesignNodeNodeToResponse( NodeForCurrentPosition );
                     }
                     if( Tree.getChildNodeCount() > 0 )
                     {
