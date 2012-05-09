@@ -10,21 +10,21 @@ namespace NbtWebAppServices.WebServices
 {
     [ServiceContract]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtWsDefault
+    public class CswNbtWcfDefaultUriMethods
     {
         private HttpContext _Context = HttpContext.Current;
-        private CswNbtSessionResources _CswNbtSessionResources = null;
+        private CswNbtWcfSessionResources _CswNbtWcfSessionResources = null;
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseBase post( CswNbtWebServiceRequest.CswNbtSessionRequest request )
+        public CswNbtWcfResponseBase post( CswNbtWcfRequest.CswNbtSessionRequest request )
         {
-            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context );
             if( Ret.Status.Success )
             {
                 try
                 {
-                    _CswNbtSessionResources = Ret.CswNbtSessionResources;
+                    _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
                 }
                 catch( Exception ex )
                 {
@@ -37,14 +37,14 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet]
-        public CswNbtWebServiceResponseBase get()
+        public CswNbtWcfResponseBase get()
         {
-            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context );
             if( Ret.Status.Success )
             {
                 try
                 {
-                    _CswNbtSessionResources = Ret.CswNbtSessionResources;
+                    _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
                 }
                 catch( Exception Ex )
                 {

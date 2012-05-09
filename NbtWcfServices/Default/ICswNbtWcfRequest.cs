@@ -1,7 +1,7 @@
 ﻿
 namespace NbtWebAppServices.Response
 {
-    public interface ICswNbtWebServiceRequest
+    public interface ICswNbtWcfRequest
     {
         //TBD
     }

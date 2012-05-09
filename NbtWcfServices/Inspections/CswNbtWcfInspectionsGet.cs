@@ -11,20 +11,20 @@ using NbtWebAppServices.Session;
 
 namespace NbtWebAppServices.Response
 {
-    public class CswNbtWebServiceInspectionsGet
+    public class CswNbtWcfInspectionsGet
     {
         private HttpContext _Context = HttpContext.Current;
-        private CswNbtSessionResources _CswNbtSessionResources = null;
+        private CswNbtWcfSessionResources _CswNbtWcfSessionResources = null;
         private CswNbtMetaDataObjectClass _InspectionDesignOc = null;
         private CswNbtView _SystemView;
         private CswNbtActSystemViews _NbtSystemView;
-        private CswNbtWebServiceResponseInspectionsAndDesign _Response;
+        private CswNbtWcfInspectionsResponseWithDesigns _InspectionsResponse;
 
         private void _initInspectionResources( CswNbtActSystemViews.SystemViewName ViewName )
         {
-            _CswNbtSessionResources = _Response.CswNbtSessionResources;
-            _InspectionDesignOc = _CswNbtSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
-            _NbtSystemView = new CswNbtActSystemViews( _CswNbtSessionResources.CswNbtResources,
+            _CswNbtWcfSessionResources = _InspectionsResponse.CswNbtWcfSessionResources;
+            _InspectionDesignOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+            _NbtSystemView = new CswNbtActSystemViews( _CswNbtWcfSessionResources.CswNbtResources,
                                                        ViewName,
                                                        _InspectionDesignOc
                 );
@@ -40,7 +40,7 @@ namespace NbtWebAppServices.Response
             {
                 CswNbtMetaDataNodeType NewInspectionNodeType = InspectionNode.getNodeType();
                 InspectionDesignTypeIds.Add( NewInspectionNodeType.NodeTypeId );
-                var ResponseDesign = new CswNbtInspectionsDataModel.CswNbtInspectionDesign
+                var ResponseDesign = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign
                 {
                     DesignId = NewInspectionNodeType.NodeTypeId,
                     Name = NewInspectionNodeType.NodeTypeName
@@ -48,7 +48,7 @@ namespace NbtWebAppServices.Response
 
                 foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NewInspectionNodeType.getNodeTypeTabs() )
                 {
-                    var ResponseSection = new CswNbtInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
+                    var ResponseSection = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
@@ -57,7 +57,7 @@ namespace NbtWebAppServices.Response
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeTab.getNodeTypePropsByDisplayOrder() )
                     {
-                        var ResponseProperty = new CswNbtInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
+                        var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
                         {
                             HelpText = NodeTypeProp.HelpText,
                             Text = NodeTypeProp.PropName
@@ -78,7 +78,7 @@ namespace NbtWebAppServices.Response
                         ResponseSection.Properties.Add( ResponseProperty );
                     }
                     ResponseDesign.Sections.Add( ResponseSection );
-                    _Response.Data.Designs.Add( ResponseDesign );
+                    _InspectionsResponse.Data.Designs.Add( ResponseDesign );
                 }
             }
         }
@@ -89,7 +89,7 @@ namespace NbtWebAppServices.Response
             {
                 InspectionDesignNodeIds.Add( InspectionNode.NodeId );
                 CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
-                var ResponseInspection = new CswNbtInspectionsDataModel.CswNbtInspection
+                var ResponseInspection = new CswNbtWcfInspectionsDataModel.CswNbtInspection
                 {
                     DesignId = InspectionNode.NodeTypeId,
                     DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
@@ -105,7 +105,7 @@ namespace NbtWebAppServices.Response
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
-                        var ResponseQuestion = new CswNbtInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion
+                        var ResponseQuestion = new CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion
                         {
                             Answer = PropAsQuestion.Answer,
                             AnswerId = PropAsQuestion.NodeTypePropId,
@@ -120,7 +120,7 @@ namespace NbtWebAppServices.Response
                         ResponseInspection.Questions.Add( ResponseQuestion );
                     }
                 }
-                _Response.Data.Inspections.Add( ResponseInspection );
+                _InspectionsResponse.Data.Inspections.Add( ResponseInspection );
             }
         }
 
@@ -151,16 +151,16 @@ namespace NbtWebAppServices.Response
         {
             if( null != _SystemView )
             {
-                ICswNbtTree Tree = _CswNbtSessionResources.CswNbtResources.Trees.getTreeFromView( _SystemView, true, false );
+                ICswNbtTree Tree = _CswNbtWcfSessionResources.CswNbtResources.Trees.getTreeFromView( _SystemView, true, false );
                 _iterateTree( Tree );
             }
         }
 
-        public CswNbtWebServiceInspectionsGet( HttpContext Context, CswNbtActSystemViews.SystemViewName ViewName )
+        public CswNbtWcfInspectionsGet( HttpContext Context, CswNbtActSystemViews.SystemViewName ViewName )
         {
             _Context = Context;
-            _Response = new CswNbtWebServiceResponseInspectionsAndDesign( _Context );
-            if( _Response.Status.Success )
+            _InspectionsResponse = new CswNbtWcfInspectionsResponseWithDesigns( _Context );
+            if( _InspectionsResponse.Status.Success )
             {
                 try
                 {
@@ -168,14 +168,14 @@ namespace NbtWebAppServices.Response
                 }
                 catch( Exception ex )
                 {
-                    _Response.addError( ex );
+                    _InspectionsResponse.addError( ex );
                 }
             }
         }
 
         public CswDateTime getCswDate( DateTime Date )
         {
-            return new CswDateTime( _CswNbtSessionResources.CswNbtResources, Date );
+            return new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, Date );
         }
 
         public void addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
@@ -185,7 +185,7 @@ namespace NbtWebAppServices.Response
                 if( ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
                 {
                     FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
-                    CswNbtMetaDataObjectClass InstanceOc = _CswNbtSessionResources.CswNbtResources.MetaData.getObjectClass( ObjectClass );
+                    CswNbtMetaDataObjectClass InstanceOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( ObjectClass );
                     if( null != InstanceOc )
                     {
                         CswNbtMetaDataObjectClassProp InstancePropertyOcp = InstanceOc.getObjectClassProp( PropertyName );
@@ -200,24 +200,24 @@ namespace NbtWebAppServices.Response
             }
             catch( Exception ex )
             {
-                _Response.addError( ex );
+                _InspectionsResponse.addError( ex );
             }
         }
 
 
 
-        public CswNbtWebServiceResponseInspectionsAndDesign finalize()
+        public CswNbtWcfInspectionsResponseWithDesigns finalize()
         {
             try
             {
                 _makeInspectionReturn();
-                _Response.finalizeResponse();
+                _InspectionsResponse.finalizeResponse();
             }
             catch( Exception ex )
             {
-                _Response.addError( ex );
+                _InspectionsResponse.addError( ex );
             }
-            return _Response;
+            return _InspectionsResponse;
         }
 
     }

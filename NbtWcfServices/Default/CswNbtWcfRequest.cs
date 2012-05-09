@@ -1,7 +1,7 @@
 ﻿
 namespace NbtWebAppServices.Response
 {
-    public class CswNbtWebServiceRequest : ICswNbtWebServiceRequest
+    public class CswNbtWcfRequest : ICswNbtWcfRequest
     {
         public class CswNbtSessionRequest
         {

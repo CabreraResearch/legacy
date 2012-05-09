@@ -14,17 +14,17 @@ using NbtWebAppServices.Core;
 
 namespace NbtWebAppServices.Session
 {
-    public class CswNbtSessionResources
+    public class CswNbtWcfSessionResources
     {
         public CswNbtResources CswNbtResources = null;
         public ICswResources CswResourcesMaster = null;
         //private CswNbtMetaDataEvents _CswNbtMetaDataEvents;
         public CswSessionManager CswSessionManager = null;
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
-        private CswNbtStatistics _CswNbtStatistics = null;
+        private CswNbtWcfStatistics _CswNbtWcfStatistics = null;
         private HttpContext _Context;
 
-        public CswNbtSessionResources( HttpContext Context, string LoginAccessId, SetupMode SetupMode )
+        public CswNbtWcfSessionResources( HttpContext Context, string LoginAccessId, SetupMode SetupMode )
         {
 
             //SuperCycleCache configuraiton has to happen here because here is where we can stash the cache,
@@ -51,7 +51,7 @@ namespace NbtWebAppServices.Session
 
 
             CswSessionManager = new CswSessionManager( AppType.Nbt,
-                                                       new CswNbtWebServiceCookies( _Context.Request, _Context.Response ),
+                                                       new CswNbtWcfCookies( _Context.Request, _Context.Response ),
                                                        LoginAccessId,
                                                        CswNbtResources.SetupVbls,
                                                        CswNbtResources.CswDbCfgInfo,
@@ -59,17 +59,17 @@ namespace NbtWebAppServices.Session
                                                        CswNbtResources,
                                                        CswResourcesMaster,
                                                        new CswNbtSchemaAuthenticator( CswNbtResources ),
-                                                       _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
+                                                       _CswNbtWcfStatistics = new CswNbtWcfStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
                                                                                                   RecordStatistics ) );
-            CswNbtStatisticsEvents = _CswNbtStatistics.CswNbtStatisticsEvents;
+            CswNbtStatisticsEvents = _CswNbtWcfStatistics.CswNbtStatisticsEvents;
             CswSessionManager.OnDeauthenticate += OnDeauthenticate;
 
             CswNbtResources.AccessId = CswSessionManager.AccessId;
         }//ctor()
 
-        public static CswNbtSessionResources initResources( HttpContext Context )
+        public static CswNbtWcfSessionResources initResources( HttpContext Context )
         {
-            CswNbtSessionResources Ret = new CswNbtSessionResources( Context, string.Empty, SetupMode.NbtWeb );
+            CswNbtWcfSessionResources Ret = new CswNbtWcfSessionResources( Context, string.Empty, SetupMode.NbtWeb );
             Ret.CswNbtResources.beginTransaction();
             Ret.CswNbtResources.logMessage( "WebServices: CswSession Started (_initResources called)" );
             return Ret;
@@ -143,7 +143,7 @@ namespace NbtWebAppServices.Session
                     //CswNbtView ContextView = _getView( ContextViewId );
                     //if( ContextView != null )
                     //{
-                    //    CswNbtSessionResources.CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
+                    //    CswNbtWcfSessionResources.CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
                     //}
                 }
                 else if( ContextActionName != string.Empty )
@@ -160,6 +160,6 @@ namespace NbtWebAppServices.Session
         } // _attemptRefresh()
 
 
-    }//CswNbtSessionResources
+    }//CswNbtWcfSessionResources
 
 }//ChemSW.Nbt

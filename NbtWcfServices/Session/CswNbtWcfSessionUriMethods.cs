@@ -14,26 +14,26 @@ namespace NbtWebAppServices.WebServices
 {
     [ServiceContract]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtWsSession
+    public class CswNbtWcfSessionUriMethods
     {
         private HttpContext _Context = HttpContext.Current;
-        private CswNbtSessionResources _CswNbtSessionResources = null;
+        private CswNbtWcfSessionResources _CswNbtWcfSessionResources = null;
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseBase init( CswNbtWebServiceRequest.CswNbtSessionRequest request )
+        public CswNbtWcfResponseBase init( CswNbtWcfRequest.CswNbtSessionRequest request )
         {
-            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context, false );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context, false );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
-                _CswNbtSessionResources = Ret.CswNbtSessionResources;
+                _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
                 try
                 {
                     string ParsedAccessId = request.CustomerId.ToLower().Trim();
                     if( false == string.IsNullOrEmpty( ParsedAccessId ) )
                     {
-                        _CswNbtSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
+                        _CswNbtWcfSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
                     }
                     else
                     {
@@ -51,7 +51,7 @@ namespace NbtWebAppServices.WebServices
 
                 if( AuthenticationStatus == AuthenticationStatus.Unknown )
                 {
-                    AuthenticationStatus = _CswNbtSessionResources.CswSessionManager.beginSession( request.UserName, request.Password, CswNbtWebServiceTools.getIpAddress() );
+                    AuthenticationStatus = _CswNbtWcfSessionResources.CswSessionManager.beginSession( request.UserName, request.Password, CswNbtWcfTools.getIpAddress() );
                 }
 
                 // case 21211
@@ -59,19 +59,19 @@ namespace NbtWebAppServices.WebServices
                 {
                     // case 21036
                     if( request.IsMobile &&
-                         false == _CswNbtSessionResources.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
+                         false == _CswNbtWcfSessionResources.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
                     {
                         AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
-                        _CswNbtSessionResources.CswSessionManager.clearSession();
+                        _CswNbtWcfSessionResources.CswSessionManager.clearSession();
                     }
-                    CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtSessionResources.CswNbtResources );
+                    CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtWcfSessionResources.CswNbtResources );
 
-                    if( _CswNbtSessionResources.CswNbtResources.CurrentNbtUser.PasswordIsExpired )
+                    if( _CswNbtWcfSessionResources.CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                     {
                         // BZ 9077 - Password expired
                         AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
                     }
-                    else if( LicenseManager.MustShowLicense( _CswNbtSessionResources.CswNbtResources.CurrentUser ) )
+                    else if( LicenseManager.MustShowLicense( _CswNbtWcfSessionResources.CswNbtResources.CurrentUser ) )
                     {
                         // BZ 8133 - make sure they've seen the License
                         AuthenticationStatus = AuthenticationStatus.ShowLicense;
@@ -79,7 +79,7 @@ namespace NbtWebAppServices.WebServices
                 }
 
                 //bury the overhead of nuking old sessions in the overhead of authenticating
-                _CswNbtSessionResources.purgeExpiredSessions();
+                _CswNbtWcfSessionResources.purgeExpiredSessions();
             }
             catch( Exception ex )
             {
@@ -135,15 +135,15 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseBase end( string CswSessionId )
+        public CswNbtWcfResponseBase end( string CswSessionId )
         {
-            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context );
             try
             {
-                _CswNbtSessionResources = Ret.CswNbtSessionResources;
+                _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
                 if( Ret.SessionAuthenticationStatus.AuthenticationStatus == AuthenticationStatus.Authenticated.ToString() )
                 {
-                    _CswNbtSessionResources.CswSessionManager.clearSession( CswSessionId );
+                    _CswNbtWcfSessionResources.CswSessionManager.clearSession( CswSessionId );
                 }
             }
             catch( Exception Ex )
