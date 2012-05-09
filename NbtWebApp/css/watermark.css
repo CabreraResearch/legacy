@@ -12,6 +12,7 @@ div.watermark{
 	font-size: 200px;
 	color: #000000;
 	opacity: 0.05;
+	pointer-events:none;
 }
 	div.content > *:first-child,x:-moz-any-link{margin-top:0;}/* ff only */
 	div.watermark,x:-moz-any-link{z-index:auto;}/* ff only */
