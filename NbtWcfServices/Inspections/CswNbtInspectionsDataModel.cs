@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtInspectionsResponseModel
+    public class CswNbtInspectionsDataModel
     {
         [DataMember]
         public Collection<CswNbtInspectionDesign> Designs;
@@ -13,7 +13,7 @@ namespace NbtWebAppServices.Response
         [DataMember]
         public Collection<CswNbtInspection> Inspections;
 
-        public CswNbtInspectionsResponseModel()
+        public CswNbtInspectionsDataModel()
         {
             Designs = new Collection<CswNbtInspectionDesign>();
             Inspections = new Collection<CswNbtInspection>();
@@ -64,7 +64,7 @@ namespace NbtWebAppServices.Response
             {
                 Questions = new Collection<CswNbtInspectionQuestion>();
             }
-            
+
             public Int32 DesignId { get; set; }
             public DateTime DueDate { get; set; }
             public Int32 InspectionId { get; set; }
@@ -81,9 +81,8 @@ namespace NbtWebAppServices.Response
                 public Int32 AnswerId { get; set; }
                 public string Comments { get; set; }
                 public string CorrectiveAction { get; set; }
-                public DateTime LastModifyDate { get; set; }
-                public Int32 LastModifyUserId { get; set; }
-                public string LastModifyUserName { get; set; }
+                public DateTime DateAnswered { get; set; }
+                public DateTime DateCorrected { get; set; }
                 public Int32 QuestionId { get; set; }
                 public string Status { get; set; }
             }

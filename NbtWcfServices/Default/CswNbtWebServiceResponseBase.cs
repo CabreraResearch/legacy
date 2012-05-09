@@ -10,13 +10,13 @@ using NbtWebAppServices.Session;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtWebServiceResponseNoData : ICswNbtWebServiceResponse
+    public class CswNbtWebServiceResponseBase : ICswNbtWebServiceResponse
     {
         private CswTimer _Timer;
         private double _ServerInitTime;
         private HttpContext _Context;
 
-        public CswNbtWebServiceResponseNoData( HttpContext Context )
+        public CswNbtWebServiceResponseBase( HttpContext Context )
         {
             _ServerInitTime = 0;
             _Timer = new CswTimer();

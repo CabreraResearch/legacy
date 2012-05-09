@@ -74,29 +74,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( DateCorrectedSubField );
-
-            //Date
-            LastEditDate = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field4, CswNbtSubField.SubFieldName.ChangedDate, true );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            LastEditDate.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
-            SubFields.add( LastEditDate );
-
-            //Text
-            LastEditUser = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field5, CswNbtSubField.SubFieldName.Name, true );
-            LastEditUser.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            LastEditUser.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            LastEditUser.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            LastEditUser.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            LastEditUser.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            LastEditUser.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
-            SubFields.add( LastEditUser );
-
         }//ctor
 
         /// <summary>
@@ -128,16 +105,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         /// Date Corrected: Date, field2_date, value
         /// </summary>
         public CswNbtSubField DateCorrectedSubField;
-
-        /// <summary>
-        /// Last Edit Date: Date, field4, value
-        /// </summary>
-        public CswNbtSubField LastEditDate;
-
-        /// <summary>
-        /// Last Edit User: Text, field5, value
-        /// </summary>
-        public CswNbtSubField LastEditUser;
 
         /// <summary>
         /// CswNbtFieldTypeRuleQuestion Subfields

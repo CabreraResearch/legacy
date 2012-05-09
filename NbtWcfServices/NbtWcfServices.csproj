@@ -88,27 +88,28 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Request\CswNbtWebServiceRequest.cs" />
-    <Compile Include="Request\ICswNbtWebServiceRequest.cs" />
+    <Compile Include="Default\CswNbtWebServiceRequest.cs" />
+    <Compile Include="Default\ICswNbtWebServiceRequest.cs" />
     <Compile Include="Core\CswNbtWebServiceError.cs" />
-    <Compile Include="Response\Inspections\CswNbtWebServiceResponseInspection.cs" />
-    <Compile Include="Response\Inspections\CswNbtWebServiceResponseInspectionsAndDesign.cs" />
-    <Compile Include="Response\Default\CswNbtWebServiceResponseDefault.cs" />
-    <Compile Include="Response\Default\CswNbtWebServiceResponseNoData.cs" />
-    <Compile Include="Response\Default\CswNbtWebServiceResponse.cs" />
-    <Compile Include="Response\Default\ICswNbtWebServiceResponse.cs" />
-    <Compile Include="Response\Locations\CswNbtWebServiceResponseLocations.cs" />
-    <Compile Include="Response\Inspections\CswNbtInspectionsResponseModel.cs" />
-    <Compile Include="Response\Locations\CswNbtLocationsResponseModel.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceInspectionsPost.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceInspectionsGet.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceResponseInspection.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceResponseInspectionsAndDesign.cs" />
+    <Compile Include="Default\CswNbtWebServiceResponseBase.cs" />
+    <Compile Include="Default\CswNbtWebServiceResponse.cs" />
+    <Compile Include="Default\ICswNbtWebServiceResponse.cs" />
+    <Compile Include="Locations\CswNbtWebServiceResponseLocations.cs" />
+    <Compile Include="Inspections\CswNbtInspectionsDataModel.cs" />
+    <Compile Include="Locations\CswNbtLocationsDataModel.cs" />
     <Compile Include="Session\CswNbtStatistics.cs" />
     <Compile Include="Session\CswNbtSessionResources.cs" />
     <Compile Include="Core\CswNbtWebServiceCookies.cs" />
-    <Compile Include="Response\Session\CswNbtSessionResponseModel.cs" />
+    <Compile Include="Session\CswNbtSessionDataModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebServices\CswNbtWsInspections.cs" />
-    <Compile Include="WebServices\CswNbtWsDefault.cs" />
-    <Compile Include="WebServices\CswNbtWsLocations.cs" />
-    <Compile Include="WebServices\CswNbtWsSession.cs" />
+    <Compile Include="Inspections\CswNbtWebServiceInspectionsUriMethods.cs" />
+    <Compile Include="Default\CswNbtWsDefault.cs" />
+    <Compile Include="Locations\CswNbtWsLocations.cs" />
+    <Compile Include="Session\CswNbtWsSession.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
