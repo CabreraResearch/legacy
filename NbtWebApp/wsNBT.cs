@@ -2346,11 +2346,14 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _initResources();
-                
-                string Watermark = _CswNbtResources.SetupVbls.readSetting( "Watermark" );
-                if( string.Empty != Watermark )
+
+                if( _CswNbtResources.SetupVbls.doesSettingExist( "Watermark" ) )
                 {
-                    ReturnVal["watermark"] = Watermark;
+                    string Watermark = _CswNbtResources.SetupVbls.readSetting( "Watermark" );
+                    if( string.Empty != Watermark )
+                    {
+                        ReturnVal["watermark"] = Watermark;
+                    }
                 }
                 _deInitResources();
             }
