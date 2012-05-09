@@ -467,7 +467,7 @@
                 'use strict';
                 var propid = propData.id,
                     cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol),
-                    helpText = Csw.string(propData.helptext),
+                    helpText = Csw.makeSafeHTML(Csw.string(propData.helptext)),
                     propName = Csw.string(propData.name),
                     labelCell = {};
 

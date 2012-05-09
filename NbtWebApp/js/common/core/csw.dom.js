@@ -479,6 +479,18 @@
             return elementId.join(internal.Delimiter);
         });
 
+    Csw.makeSafeHTML =  Csw.makeSafeHTML ||
+        Csw.register('makeSafeHTML', function (stringToModify) {
+            /// <summary>Makes the given string literal HTML-safe </summary>
+            /// <param name="stringToModify" type="String"></param>
+            /// <returns type="String">An HTML-safe version of the given string</returns>
+            var HTMLstringToModify; 
+
+            HTMLstringToModify = stringToModify.replace(/"/g, '&quot;');
+             
+            return HTMLstringToModify;
+        });
+
     Csw.makeSafeId = Csw.makeSafeId ||
         Csw.register('makeSafeId', function (options, prefix, suffix, delimiter) {
             /// <summary>   Generates a "safe" ID for DOM assignment </summary>
