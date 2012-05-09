@@ -35,7 +35,7 @@ namespace NbtWebAppServices.WebServices
                 CswNbtView LocationsListView = LocationSystemView.SystemView;
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( LocationsListView, true, false );
                 Int32 LocationCount = Tree.getChildNodeCount();
-                CswNbtLocationsResponseModel LocationModel = new CswNbtLocationsResponseModel();
+                CswNbtLocationsDataModel LocationModel = new CswNbtLocationsDataModel();
 
                 if( LocationCount > 0 )
                 {
@@ -48,7 +48,7 @@ namespace NbtWebAppServices.WebServices
 
                         if( NodeKey.ObjectClassId == LocationsOc.ObjectClassId )
                         {
-                            CswNbtLocationsResponseModel.CswNbtLocationNodeModel LocationNode = new CswNbtLocationsResponseModel.CswNbtLocationNodeModel();
+                            CswNbtLocationsDataModel.CswNbtLocationNodeModel LocationNode = new CswNbtLocationsDataModel.CswNbtLocationNodeModel();
                             JArray Props = Tree.getChildNodePropsOfNode();
 
                             LocationNode.Name = Tree.getNodeNameForCurrentPosition();

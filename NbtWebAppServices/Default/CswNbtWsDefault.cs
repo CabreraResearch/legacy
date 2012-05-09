@@ -17,9 +17,9 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseNoData post( CswNbtWebServiceRequest.CswNbtSessionRequest request )
+        public CswNbtWebServiceResponseBase post( CswNbtWebServiceRequest.CswNbtSessionRequest request )
         {
-            CswNbtWebServiceResponseNoData Ret = new CswNbtWebServiceResponseNoData( _Context );
+            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
             if( Ret.Status.Success )
             {
                 try
@@ -37,9 +37,9 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet]
-        public CswNbtWebServiceResponseNoData get()
+        public CswNbtWebServiceResponseBase get()
         {
-            CswNbtWebServiceResponseNoData Ret = new CswNbtWebServiceResponseNoData( _Context );
+            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
             if( Ret.Status.Success )
             {
                 try

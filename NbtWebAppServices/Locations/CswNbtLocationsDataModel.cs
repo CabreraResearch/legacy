@@ -4,10 +4,10 @@ using System.Runtime.Serialization;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtLocationsResponseModel
+    public class CswNbtLocationsDataModel
     {
         private Collection<CswNbtLocationNodeModel> _Locations;
-        public CswNbtLocationsResponseModel()
+        public CswNbtLocationsDataModel()
         {
             _Locations = new Collection<CswNbtLocationNodeModel>();
         }

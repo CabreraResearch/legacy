@@ -21,9 +21,9 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseNoData init( CswNbtWebServiceRequest.CswNbtSessionRequest request )
+        public CswNbtWebServiceResponseBase init( CswNbtWebServiceRequest.CswNbtSessionRequest request )
         {
-            CswNbtWebServiceResponseNoData Ret = new CswNbtWebServiceResponseNoData( _Context );
+            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -135,9 +135,9 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseNoData end( string CswSessionId )
+        public CswNbtWebServiceResponseBase end( string CswSessionId )
         {
-            CswNbtWebServiceResponseNoData Ret = new CswNbtWebServiceResponseNoData( _Context );
+            CswNbtWebServiceResponseBase Ret = new CswNbtWebServiceResponseBase( _Context );
             try
             {
                 _CswNbtSessionResources = Ret.CswNbtSessionResources;

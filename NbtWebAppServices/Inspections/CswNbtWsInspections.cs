@@ -162,7 +162,7 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebInvoke( Method = "POST" )]
-        public CswNbtWebServiceResponseInspections updateInspection( CswNbtInspectionsResponseModel.CswNbtInspection Inspection )
+        public CswNbtWebServiceResponseInspections updateInspection( CswNbtInspectionsDataModel.CswNbtInspection Inspection )
         {
             CswNbtWebServiceResponseInspections Ret = new CswNbtWebServiceResponseInspections( _Context );
             if( Ret.Status.Success )
@@ -190,7 +190,7 @@ namespace NbtWebAppServices.WebServices
             {
                 CswNbtMetaDataNodeType NewInspectionNodeType = InspectionNode.getNodeType();
                 InspectionDesignTypeIds.Add( NewInspectionNodeType.NodeTypeId );
-                var ResponseDesign = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign
+                var ResponseDesign = new CswNbtInspectionsDataModel.CswNbtInspectionDesign
                                          {
                                              DesignId = NewInspectionNodeType.NodeTypeId,
                                              Name = NewInspectionNodeType.NodeTypeName
@@ -198,7 +198,7 @@ namespace NbtWebAppServices.WebServices
 
                 foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NewInspectionNodeType.getNodeTypeTabs() )
                 {
-                    var ResponseSection = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
+                    var ResponseSection = new CswNbtInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
                                               {
                                                   Name = NodeTypeTab.TabName,
                                                   Order = NodeTypeTab.TabOrder,
@@ -207,7 +207,7 @@ namespace NbtWebAppServices.WebServices
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeTab.getNodeTypePropsByDisplayOrder() )
                     {
-                        var ResponseProperty = new CswNbtInspectionsResponseModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
+                        var ResponseProperty = new CswNbtInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
                                                    {
                                                        HelpText = NodeTypeProp.HelpText,
                                                        Text = NodeTypeProp.PropName
@@ -239,7 +239,7 @@ namespace NbtWebAppServices.WebServices
             {
                 InspectionDesignNodeIds.Add( InspectionNode.NodeId );
                 CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
-                var ResponseInspection = new CswNbtInspectionsResponseModel.CswNbtInspection
+                var ResponseInspection = new CswNbtInspectionsDataModel.CswNbtInspection
                                              {
                                                  DesignId = InspectionNode.NodeTypeId,
                                                  DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
@@ -255,7 +255,7 @@ namespace NbtWebAppServices.WebServices
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
-                        var ResponseQuestion = new CswNbtInspectionsResponseModel.CswNbtInspection.CswNbtInspectionQuestion
+                        var ResponseQuestion = new CswNbtInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion
                                                    {
                                                        Answer = PropAsQuestion.Answer,
                                                        AnswerId = PropAsQuestion.NodeTypePropId,
