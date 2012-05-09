@@ -42,7 +42,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScript", "NbtW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppJavaScriptMobile", "NbtWebApp\NbtWebAppJavaScriptMobile.csproj", "{B2DB6C68-B291-4C0E-9DB1-AFCCC92D8F4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWebAppServices", "NbtWebAppServices\NbtWebAppServices.csproj", "{22B27336-428C-4A59-9909-38BE803C9161}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtWcfServices", "NbtWebAppServices\NbtWcfServices.csproj", "{22B27336-428C-4A59-9909-38BE803C9161}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
