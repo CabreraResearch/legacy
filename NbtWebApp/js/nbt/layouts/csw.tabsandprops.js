@@ -487,7 +487,7 @@
                         labelCell.a({
                             cssclass: 'cswprop_helplink',
                             title: helpText,
-                            onClick: function() {
+                            onClick: function () {
                                 return false;
                             },
                             value: propName
@@ -615,7 +615,7 @@
                             }
                             return false;
                         };
-                        Csw.crawlObject(subProps, subOnSuccess, true);
+                        Csw.crawlObject(subProps, subOnSuccess, false);
                     }
                 } // if (propData.display != 'false' || ConfigMode )
             };

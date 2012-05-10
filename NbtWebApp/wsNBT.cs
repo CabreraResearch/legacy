@@ -2273,8 +2273,9 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName )
+        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string FilterToPermission )
         {
+            //sometimes we only want nodetypes for which the user has Create permissions - how do we determine this?
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -2300,7 +2301,7 @@ namespace ChemSW.Nbt.WebServices
                         ObjectClass = _CswNbtResources.MetaData.getObjectClass( OCId );
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName );
+                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, FilterToPermission );
                 }
 
                 _deInitResources();
@@ -2358,10 +2359,13 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
 
-                string Watermark = _CswNbtResources.SetupVbls.readSetting( "Watermark" );
-                if( string.Empty != Watermark )
+                if( _CswNbtResources.SetupVbls.doesSettingExist( "Watermark" ) )
                 {
-                    ReturnVal["watermark"] = Watermark;
+                    string Watermark = _CswNbtResources.SetupVbls.readSetting( "Watermark" );
+                    if( string.Empty != Watermark )
+                    {
+                        ReturnVal["watermark"] = Watermark;
+                    }
                 }
                 _deInitResources();
             }
