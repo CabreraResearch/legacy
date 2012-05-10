@@ -284,6 +284,10 @@ namespace ChemSW.Nbt.WebServices
             Ret["error"]["type"] = Type.ToString();
             Ret["error"]["message"] = Message;
             Ret["error"]["detail"] = Detail;
+
+            _deInitResources(); //<-- An hackadelic solution than which no greater hackadelic solution can be conceived for case 26204
+
+
             return Ret;
 
         }
@@ -2016,11 +2020,19 @@ namespace ChemSW.Nbt.WebServices
 
         } // getTabs()
 
+
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode )
         {
 
+            // **** HERE'S WHAT YOU UNCOMMENT IN ORDER TO RUN THE CswNbtServiceDriver DISPENSATION OF WEB METHODS AS PER CASE 26213
+            //CswNbtServiceDriver CswNbtServiceDriver = new CswNbtServiceDriver( Context, SetupMode.NbtWeb, new CswNbtServiceLogicGetProps( EditMode, NodeId, SafeNodeKey, TabId, NodeTypeId, Date, filterToPropId, Multi, ConfigMode ) );
+            //return ( CswNbtServiceDriver.run() );
+
+
+            //EVERYTHING FROM HERE TO THE END OF THE METHOD GETS COMMENTED OUT IF YOU USE THE CswNbtServiceDriver DISPENSATION
             CswTimer GetPropsTimer = new CswTimer();
 
             JObject ReturnVal = new JObject();
@@ -2052,7 +2064,6 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.logTimerResult( "wsNBT.getProps()", GetPropsTimer.ElapsedDurationInSecondsAsString );
 
             return ReturnVal.ToString();
-
         } // getProps()
 
         [WebMethod( EnableSession = false )]
@@ -4513,7 +4524,7 @@ namespace ChemSW.Nbt.WebServices
 
                     ReturnVal["success"] = "true";
 
-                    CswGridData gd = new CswGridData( _CswNbtResources );
+                    CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
                     gd.PkColumn = "RowNumber";
 
                     ReturnVal["jqGridOpt"] = gd.DataTableToJSON( ExcelDataTable, true );
