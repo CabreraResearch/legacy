@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
             dr1["QUESTION"] = "Is door placarded properly?";
             dr1["ALLOWED_ANSWERS"] = "Yes,No";
             dr1["COMPLIANT_ANSWERS"] = "Yes";
-            dr1["HELP_TEXT"] = "There should be proper safety placards for PROP65 and Radioactivity as necesssary";
+            dr1["HELP_TEXT"] = "There should be proper safety placards for PROP65 and Radioactivity as necessary.";
             qTable.Rows.Add( dr1 );
 
             // Section1: Q1.2 
@@ -101,13 +101,17 @@ namespace ChemSW.Nbt.Schema
                 }
             }
             //Lab 2 in North Research Lab
+            CswPrimaryKey locLab2 = null;
             CswNbtMetaDataNodeType roomNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Room" );
-            CswNbtNode lab2Node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( roomNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-            CswNbtObjClassLocation lab2NodeAsLocation = CswNbtNodeCaster.AsLocation( lab2Node );
-            lab2NodeAsLocation.Location.NodeId = locNRL;
-            lab2Node.IsDemo = true;
-            lab2NodeAsLocation.postChanges( true );
-            CswPrimaryKey locLab2 = lab2Node.NodeId;
+            if( locNRL != null )
+            {
+                CswNbtNode lab2Node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( roomNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                CswNbtObjClassLocation lab2NodeAsLocation = CswNbtNodeCaster.AsLocation( lab2Node );
+                lab2NodeAsLocation.Location.NodeId = locNRL;
+                lab2Node.IsDemo = true;
+                lab2NodeAsLocation.postChanges( true );
+                locLab2 = lab2Node.NodeId;
+            }
 
             //ExampleGroup
             CswNbtNode groupNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( wiz.GroupNtId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
@@ -162,11 +166,18 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType rptNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Report" );
             CswNbtNode rptNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( rptNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             CswNbtObjClassReport rptNodeAsReport = CswNbtNodeCaster.AsReport( rptNode );
+            Int32 locPropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( wiz.DesignNtId, "Location" );
+            Int32 inspnamePropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( wiz.DesignNtId, "Name" );
+            Int32 inspdatePropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( wiz.DesignNtId, "Inspection Date" );
+            Int32 targPropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( wiz.DesignNtId, "Target" );
+
+
+
             rptNodeAsReport.Category.Text = "Lab Safety";
             rptNodeAsReport.ReportName.Text = "Lab 1 Deficiencies";
-            rptNodeAsReport.SQL.Text = @"select des.p4521 as InspectionDate,
-                                      des.P4511 as InspectionName,
-                                      des.P4517 as Location,
+            rptNodeAsReport.SQL.Text = @"select des.P" + inspdatePropId.ToString() + @" as InspectionDate, 
+                                      des.P" + inspnamePropId.ToString() + @" as InspectionName,
+                                      des.P" + locPropId.ToString() + @" as Location,
                                       CASE nvl(q.correctiveaction,'NULL')
                                        WHEN 'NULL' then 'NO'
                                        ELSE 'yes'
@@ -176,12 +187,12 @@ namespace ChemSW.Nbt.Schema
                                       q.answer,
                                       q.correctiveaction,
                                       q.comments
-                                      from ntlabsafetyinspection des
-                                      join ntlabsafety targ on targ.nodeid=des.p4510inspectiontargetcl_ocfk
+                                      from ntlabsafetychecklist des
+                                      join ntlabsafety targ on targ.nodeid=des.P" + targPropId.ToString() + @"_labsafety_ntfk
                                     join vwquestiondetail q on q.nodeid = des.nodeid
                                           where (q.iscompliant = '0' or q.correctiveaction is not null)
-                                           and des.P4517 like '%> Lab 1'
-                                      order by des.p4517, des.p4521, q.questionno";
+                                           and des.P" + locPropId.ToString() + @" like '%> Lab 1'
+                                      order by des.P" + locPropId.ToString() + @", des.P" + inspdatePropId.ToString() + @", q.questionno";
             rptNode.IsDemo = true;
             rptNodeAsReport.postChanges( true );
 
@@ -191,18 +202,10 @@ namespace ChemSW.Nbt.Schema
             CswNbtObjClassMailReport mailNodeAsMailReport = CswNbtNodeCaster.AsMailReport( mailNode );
             mailNodeAsMailReport.Type.Value = CswNbtObjClassMailReport.TypeOptionReport;
             mailNodeAsMailReport.Enabled.Checked = Tristate.True;
-            //mailNodeAsMailReport.DueDateInterval.RateInterval = CswRateInterval.RateIntervalType.MonthlyByWeekAndDay;
-            //?how to set 1st of month here?
-            //?how to set name of mailer node?
+            mailNodeAsMailReport.DueDateInterval.RateInterval.setMonthlyByDate( 1, 1, 1, 2020 );
             mailNodeAsMailReport.Report.RelatedNodeId = rptNode.NodeId;
             mailNode.IsDemo = true;
             mailNodeAsMailReport.postChanges( true );
-
-
-            //remove views
-            _CswNbtSchemaModTrnsctn.ViewSelect.deleteViewByName( "Groups, SI_protocol: SI_target" );
-            _CswNbtSchemaModTrnsctn.ViewSelect.deleteViewByName( "Inspections, SI_protocol: SI_target" );
-            _CswNbtSchemaModTrnsctn.ViewSelect.deleteViewByName( "Scheduling, SI_protocol: SI_target" );
 
             //create views
             //name=Lab Safety By Location; cat=Lab Safety; mode=tree, global; struct=Building>Room>Lab Safety

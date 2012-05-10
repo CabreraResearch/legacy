@@ -253,21 +253,11 @@ namespace ChemSW.Nbt.Welcome
             return ret;
         } // MoveWelcomeItems
 
-        private bool DeleteTheWelcomeItems( string strRoleId, Int32 WelcomeId )
+        private bool DeleteTheWelcomeItems( Int32 Id, string colName )
         {
             bool ret = false;
-            string colName = "welcomeid";
-            CswPrimaryKey RolePk = new CswPrimaryKey();
-            Int32 Id = WelcomeId;
-            if( strRoleId != String.Empty )
-            {
-                RolePk.FromString( strRoleId );
-                Id = RolePk.PrimaryKey;
-                colName = "roleid";
-            }
 
-
-            if( colName != "welcomeid" || WelcomeId != Int32.MinValue )
+            if( Id != Int32.MinValue )
             {
                 CswTableUpdate WelcomeUpdate = _CswNbtResources.makeCswTableUpdate( "AddWelcomeItem_Update", "welcome" );
                 DataTable WelcomeTable = WelcomeUpdate.getTable( colName, Id );
@@ -280,19 +270,26 @@ namespace ChemSW.Nbt.Welcome
                     WelcomeUpdate.update( WelcomeTable );
                     ret = true;
                 }
-            } // if( WelcomeId != Int32.MinValue ) 
+            } // if( Id != Int32.MinValue ) 
 
             return ret;
         }
 
         public bool DeleteAllWelcomeItemsForRole( string strRoleId )
         {
-            return DeleteTheWelcomeItems( strRoleId, Int32.MinValue );
+            CswPrimaryKey RolePk = new CswPrimaryKey();
+            Int32 Id = Int32.MinValue;
+            if( strRoleId != String.Empty )
+            {
+                RolePk.FromString( strRoleId );
+                Id = RolePk.PrimaryKey;
+            }
+            return DeleteTheWelcomeItems( Id, "roleid" );
         }
 
         public bool DeleteWelcomeItem( string strRoleId, Int32 WelcomeId )
         {
-            return DeleteTheWelcomeItems( string.Empty, WelcomeId );
+            return DeleteTheWelcomeItems( WelcomeId, "welcomeid" );
         } // MoveWelcomeItems
 
 
