@@ -283,6 +283,10 @@ namespace ChemSW.Nbt.WebServices
             Ret["error"]["type"] = Type.ToString();
             Ret["error"]["message"] = Message;
             Ret["error"]["detail"] = Detail;
+
+            _deInitResources(); //<-- An hackadelic solution than which no greater hackadelic solution can be conceived for case 26204
+
+
             return Ret;
 
         }
