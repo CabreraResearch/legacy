@@ -33,26 +33,25 @@
                     success: function (data) {
                         
                         var row = 1;
+                        var viewPropFilters = {};
                         Csw.each(data, function (propJson) {
                             //propJson.propname = propJson.name;
                             Csw.each(propJson.filters, function (filtJson) {
 
-                                tbl.$.CswViewPropFilter('init', {
-                                    //options
-                                    viewid: internal.viewid,
-                                    viewJson: '',
-                                    //propsData: propJson,
-                                    proparbitraryid: propJson.arbitraryid,
-                                    filtarbitraryid: filtJson.arbitraryid,
-                                    viewbuilderpropid: '',
-                                    propRow: row,
-                                    firstColumn: 1,
-                                    includePropertyName: true,
-                                    advancedIsHidden: true,
-                                    selectedSubfieldVal: filtJson.subfieldname,
-                                    selectedFilterMode: filtJson.filtermode,
-                                    selectedFilterVal: filtJson.value,
-                                    autoFocusInput: false
+                                viewPropFilters[filtJson.arbitraryid] = Csw.nbt.viewPropFilter('init', {
+                                        parent: tbl,
+                                        viewid: internal.viewid,
+                                        viewJson: '',
+                                        proparbitraryid: propJson.arbitraryid,
+                                        filtarbitraryid: filtJson.arbitraryid,
+                                        viewbuilderpropid: '',
+                                        propRow: row,
+                                        firstColumn: 1,
+                                        showPropertyName: true,
+                                        selectedSubFieldName: filtJson.subfieldname,
+                                        selectedFilterMode: filtJson.filtermode,
+                                        selectedValue: filtJson.value,
+                                        autoFocusInput: false
                                 });
                                 row++;
                             }); //each()
@@ -71,14 +70,7 @@
 
                                     Csw.each(data, function (propJson) {
                                         Csw.each(propJson.filters, function (filtJson) {
-                                            var newFiltJson = tbl.$.CswViewPropFilter('getFilterJson', {
-                                                ID: internal.ID,
-                                                filtJson: propJson,
-                                                proparbitraryid: propJson.arbitraryid,
-                                                filtarbitraryid: filtJson.arbitraryid,
-                                                allowNullFilterValue: true
-                                            });
-                                            filtersJson[filtJson.arbitraryid] = newFiltJson;
+                                            filtersJson[filtJson.arbitraryid] = viewPropFilters[filtJson.arbitraryid].getFilterJson();
                                         });
                                     });
                                     
