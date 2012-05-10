@@ -560,6 +560,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["versionno"] = "1";
             InsertedNodeTypesRow["islocked"] = "0";
             InsertedNodeTypesRow["tablename"] = "nodes";
+            InsertedNodeTypesRow["enabled"] = "1";
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
             Int32 NodeTypeId = CswConvert.ToInt32( InsertedNodeTypesRow["nodetypeid"] );
             InsertedNodeTypesRow["firstversionid"] = NodeTypeId.ToString();

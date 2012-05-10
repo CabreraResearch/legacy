@@ -649,9 +649,9 @@
                         confirmViewsList.li({
                             text: '<b>Inspections, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
                         });
-                    } else {
+                    } /*else {
                         internal.toggleButton(internal.buttons.prev, true, true);
-                    }
+                    }*/
                 };
             } ());
 

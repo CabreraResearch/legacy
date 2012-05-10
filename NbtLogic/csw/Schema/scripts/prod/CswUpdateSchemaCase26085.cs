@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -61,28 +62,28 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 //simplify the All Equipment view
-                _CswNbtSchemaModTrnsctn.deleteView( "All Equipment", true );
-                CswNbtView allEqView = _CswNbtSchemaModTrnsctn.makeView();
-                allEqView.makeNew( "All Equipment", NbtViewVisibility.Global );
-                allEqView.ViewMode = NbtViewRenderingMode.Tree;
-                allEqView.Category = "Equipment";
+                List<CswNbtView> theEqViewList = _CswNbtSchemaModTrnsctn.ViewSelect.restoreViews( "All Equipment", NbtViewVisibility.Global, Int32.MinValue );
+                CswNbtView allEqView = null;
 
-                //CswNbtView allEqView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( "All Equipment" );
+                if( theEqViewList.Count < 1 )
+                {
+                    allEqView = _CswNbtSchemaModTrnsctn.makeView();
+                    allEqView.makeNew( "All Equipment", NbtViewVisibility.Global );
+                    allEqView.ViewMode = NbtViewRenderingMode.Tree;
+                    allEqView.Category = "Equipment";
+                }
+                else
+                {
+                    allEqView = theEqViewList[0];
+                    allEqView.Root.ChildRelationships.Clear();
+                }
+
                 if( null != allEqView )
                 {
-                    //allEqView.Root.ChildRelationships.Clear();
-
                     CswNbtViewRelationship typeRelationship = allEqView.AddViewRelationship( eqtypeNT, true );
                     //add equipment
                     CswNbtViewRelationship eqRelationship = allEqView.AddViewRelationship( typeRelationship, NbtViewPropOwnerType.Second, equipstypeProp, true );
-                    CswNbtMetaDataNodeTypeProp eqstatTypeProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( assemblyNT.NodeTypeId, "Status" );
-                    CswNbtViewProperty eqstatViewProp = allEqView.AddViewProperty( eqRelationship, eqstatTypeProp );
-                    CswNbtViewPropertyFilter ArbitraryFilter1 = allEqView.AddViewPropertyFilter(
-                                         eqstatViewProp,
-                                         CswNbtSubField.SubFieldName.Unknown,
-                                         CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                                         "Retired",
-                                         false );
+                    //status<>retired filter is automatic on equipment
 
                     //add assembly
                     CswNbtViewRelationship assemblyRelationship = allEqView.AddViewRelationship( typeRelationship, NbtViewPropOwnerType.Second, atypeProp, true );
