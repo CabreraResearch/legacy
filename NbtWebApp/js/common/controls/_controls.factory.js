@@ -19,7 +19,6 @@
                 internal.controlPreProcessing = function (opts, controlName) {
                     var id = '';
                     opts = opts || {};
-                    opts.controlName = controlName;
                     if (external.getId) {
                         id = external.getId();
                     }

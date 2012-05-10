@@ -18,7 +18,6 @@
 
                 internal.controlPreProcessing = function (opts, controlName) {
                     opts = opts || {};
-                    opts.controlName = controlName;
                     return opts;
                 };
 
