@@ -10,13 +10,13 @@ using NbtWebAppServices.Session;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtWebServiceResponseBase : ICswNbtWebServiceResponse
+    public class CswNbtWcfResponseBase : ICswNbtWcfResponse
     {
         private CswTimer _Timer;
         private double _ServerInitTime;
         private HttpContext _Context;
 
-        public CswNbtWebServiceResponseBase( HttpContext Context )
+        public CswNbtWcfResponseBase( HttpContext Context, bool AttemptRefresh = true )
         {
             _ServerInitTime = 0;
             _Timer = new CswTimer();
@@ -27,9 +27,12 @@ namespace NbtWebAppServices.Response
 
             try
             {
-                CswNbtSessionResources = CswNbtSessionResources.initResources( _Context );
-                AuthenticationStatus Auth = CswNbtSessionResources.attemptRefresh( true );
-                SessionAuthenticationStatus.AuthenticationStatus = Auth.ToString();
+                CswNbtWcfSessionResources = CswNbtWcfSessionResources.initResources( _Context );
+                if( AttemptRefresh )
+                {
+                    AuthenticationStatus Auth = CswNbtWcfSessionResources.attemptRefresh( true );
+                    SessionAuthenticationStatus.AuthenticationStatus = Auth.ToString();
+                }
             }
             catch( Exception ex )
             {
@@ -46,35 +49,35 @@ namespace NbtWebAppServices.Response
         [DataMember]
         public CswNbtWebServicePerformance Performance { get; set; }
 
-        public CswNbtSessionResources CswNbtSessionResources { get; set; }
+        public CswNbtWcfSessionResources CswNbtWcfSessionResources { get; set; }
 
         public void finalizeResponse( CswNbtResources OtherResources = null )
         {
             try
             {
-                if( null != CswNbtSessionResources &&
-                     null != CswNbtSessionResources.CswSessionManager )
+                if( null != CswNbtWcfSessionResources &&
+                     null != CswNbtWcfSessionResources.CswSessionManager )
                 {
-                    CswDateTime CswTimeout = new CswDateTime( CswNbtSessionResources.CswNbtResources, CswNbtSessionResources.CswSessionManager.TimeoutDate );
+                    CswDateTime CswTimeout = new CswDateTime( CswNbtWcfSessionResources.CswNbtResources, CswNbtWcfSessionResources.CswSessionManager.TimeoutDate );
                     SessionAuthenticationStatus.TimeOut = CswTimeout.ToClientAsJavascriptString();
                 }
                 Performance = new CswNbtWebServicePerformance
                                   {
                                       ServerInit = _ServerInitTime
                                   };
-                if( null != CswNbtSessionResources &&
-                     null != CswNbtSessionResources.CswNbtResources )
+                if( null != CswNbtWcfSessionResources &&
+                     null != CswNbtWcfSessionResources.CswNbtResources )
                 {
-                    Performance.DbInit = CswNbtSessionResources.CswNbtResources.CswLogger.DbInitTime;
-                    Performance.DbQuery = CswNbtSessionResources.CswNbtResources.CswLogger.DbQueryTime;
-                    Performance.DbCommit = CswNbtSessionResources.CswNbtResources.CswLogger.DbCommitTime;
-                    Performance.DbDeinit = CswNbtSessionResources.CswNbtResources.CswLogger.DbDeInitTime;
-                    Performance.TreeLoaderSql = CswNbtSessionResources.CswNbtResources.CswLogger.TreeLoaderSQLTime;
+                    Performance.DbInit = CswNbtWcfSessionResources.CswNbtResources.CswLogger.DbInitTime;
+                    Performance.DbQuery = CswNbtWcfSessionResources.CswNbtResources.CswLogger.DbQueryTime;
+                    Performance.DbCommit = CswNbtWcfSessionResources.CswNbtResources.CswLogger.DbCommitTime;
+                    Performance.DbDeinit = CswNbtWcfSessionResources.CswNbtResources.CswLogger.DbDeInitTime;
+                    Performance.TreeLoaderSql = CswNbtWcfSessionResources.CswNbtResources.CswLogger.TreeLoaderSQLTime;
                 }
                 Performance.ServerTotal = _Timer.ElapsedDurationInMilliseconds;
-                if( null != CswNbtSessionResources )
+                if( null != CswNbtWcfSessionResources )
                 {
-                    CswNbtSessionResources.deInitResources( OtherResources );
+                    CswNbtWcfSessionResources.deInitResources( OtherResources );
                 }
             }
             catch( Exception Ex )
@@ -85,7 +88,7 @@ namespace NbtWebAppServices.Response
 
         public void addError( Exception Exception )
         {
-            CswNbtWebServiceError Error = new CswNbtWebServiceError( CswNbtSessionResources );
+            CswNbtWcfError Error = new CswNbtWcfError( CswNbtWcfSessionResources );
             Status.Errors.Add( Error.getErrorStatus( Exception ) );
             Status.Success = false;
         }

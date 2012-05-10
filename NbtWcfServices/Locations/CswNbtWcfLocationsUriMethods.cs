@@ -16,30 +16,30 @@ namespace NbtWebAppServices.WebServices
 {
     [ServiceContract]
     [AspNetCompatibilityRequirements( RequirementsMode = AspNetCompatibilityRequirementsMode.Allowed )]
-    public class CswNbtWsLocations
+    public class CswNbtWcfLocationsUriMethods
     {
         private HttpContext _Context = HttpContext.Current;
-        private CswNbtSessionResources _CswNbtSessionResources = null;
+        private CswNbtWcfSessionResources _CswNbtWcfSessionResources = null;
 
         [OperationContract]
         [WebGet]
         [Description( "Generate a list of Locations" )]
-        public CswNbtWebServiceResponseLocations list()
+        public CswNbtWcfLocationsResponse list()
         {
-            CswNbtWebServiceResponseLocations Ret = new CswNbtWebServiceResponseLocations( _Context );
+            CswNbtWcfLocationsResponse Ret = new CswNbtWcfLocationsResponse( _Context );
             try
             {
-                _CswNbtSessionResources = Ret.CswNbtSessionResources;
-                CswNbtResources NbtResources = _CswNbtSessionResources.CswNbtResources;
+                _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
+                CswNbtResources NbtResources = _CswNbtWcfSessionResources.CswNbtResources;
                 CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( NbtResources, CswNbtActSystemViews.SystemViewName.SILocationsList, null );
                 CswNbtView LocationsListView = LocationSystemView.SystemView;
                 ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( LocationsListView, true, false );
                 Int32 LocationCount = Tree.getChildNodeCount();
-                CswNbtLocationsDataModel LocationModel = new CswNbtLocationsDataModel();
+                CswNbtWcfLocationsDataModel WcfLocationModel = new CswNbtWcfLocationsDataModel();
 
                 if( LocationCount > 0 )
                 {
-                    CswNbtMetaDataObjectClass LocationsOc = _CswNbtSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                    CswNbtMetaDataObjectClass LocationsOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
 
                     for( Int32 N = 0; N < LocationCount; N += 1 )
                     {
@@ -48,7 +48,7 @@ namespace NbtWebAppServices.WebServices
 
                         if( NodeKey.ObjectClassId == LocationsOc.ObjectClassId )
                         {
-                            CswNbtLocationsDataModel.CswNbtLocationNodeModel LocationNode = new CswNbtLocationsDataModel.CswNbtLocationNodeModel();
+                            CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel LocationNode = new CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel();
                             JArray Props = Tree.getChildNodePropsOfNode();
 
                             LocationNode.Name = Tree.getNodeNameForCurrentPosition();
@@ -61,11 +61,11 @@ namespace NbtWebAppServices.WebServices
                                     LocationNode.Path = CswConvert.ToString( Prop["gestalt"] );
                                 }
                             }
-                            LocationModel.Add( LocationNode );
+                            WcfLocationModel.Add( LocationNode );
                         }
                         Tree.goToParentNode();
                     }
-                    Ret.Data = LocationModel;
+                    Ret.Data = WcfLocationModel;
                 }
             }
             catch( Exception Ex )

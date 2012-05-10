@@ -5,14 +5,14 @@ using ChemSW.Session;
 
 namespace NbtWebAppServices.Core
 {
-    public class CswNbtWebServiceCookies : ICswWebClientStorage
+    public class CswNbtWcfCookies : ICswWebClientStorage
     {
         private HttpRequest _HttpRequest;
         private HttpResponse _HttpResponse;
 
         private string _SessionCookieName = "CswSessionId";
 
-        public CswNbtWebServiceCookies( HttpRequest HttpRequest, HttpResponse HttpResponse )
+        public CswNbtWcfCookies( HttpRequest HttpRequest, HttpResponse HttpResponse )
         {
             _HttpRequest = HttpRequest;
             _HttpResponse = HttpResponse;

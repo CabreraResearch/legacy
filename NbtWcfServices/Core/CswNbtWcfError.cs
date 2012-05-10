@@ -4,12 +4,12 @@ using NbtWebAppServices.Session;
 
 namespace NbtWebAppServices.Core
 {
-    public class CswNbtWebServiceError
+    public class CswNbtWcfError
     {
-        private CswNbtSessionResources _CswNbtSessionResources;
-        public CswNbtWebServiceError( CswNbtSessionResources CswNbtSessionResources )
+        private CswNbtWcfSessionResources _CswNbtWcfSessionResources;
+        public CswNbtWcfError( CswNbtWcfSessionResources CswNbtWcfSessionResources )
         {
-            _CswNbtSessionResources = CswNbtSessionResources;
+            _CswNbtWcfSessionResources = CswNbtWcfSessionResources;
         }
 
         public CswNbtWebServiceErrorMessage getErrorStatus( Exception ex )
@@ -20,11 +20,11 @@ namespace NbtWebAppServices.Core
         private CswNbtWebServiceErrorMessage _error( Exception ex )
         {
             CswNbtWebServiceErrorMessage Ret = new CswNbtWebServiceErrorMessage();
-            if( null != _CswNbtSessionResources &&
-                null != _CswNbtSessionResources.CswNbtResources )
+            if( null != _CswNbtWcfSessionResources &&
+                null != _CswNbtWcfSessionResources.CswNbtResources )
             {
-                _CswNbtSessionResources.CswNbtResources.CswLogger.reportError( ex );
-                _CswNbtSessionResources.CswNbtResources.Rollback();
+                _CswNbtWcfSessionResources.CswNbtResources.CswLogger.reportError( ex );
+                _CswNbtWcfSessionResources.CswNbtResources.Rollback();
             }
 
             CswDniException newEx = null;
@@ -38,16 +38,16 @@ namespace NbtWebAppServices.Core
             }
 
             Ret.DisplayError = true;
-            if( null != _CswNbtSessionResources &&
-                null != _CswNbtSessionResources.CswNbtResources )
+            if( null != _CswNbtWcfSessionResources &&
+                null != _CswNbtWcfSessionResources.CswNbtResources )
             {
                 if( newEx.Type == ErrorType.Warning )
                 {
-                    Ret.DisplayError = ( _CswNbtSessionResources.CswNbtResources.ConfigVbls.getConfigVariableValue( "displaywarningsinui" ) != "0" );
+                    Ret.DisplayError = ( _CswNbtWcfSessionResources.CswNbtResources.ConfigVbls.getConfigVariableValue( "displaywarningsinui" ) != "0" );
                 }
                 else
                 {
-                    Ret.DisplayError = ( _CswNbtSessionResources.CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" );
+                    Ret.DisplayError = ( _CswNbtWcfSessionResources.CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" );
                 }
             }
 

@@ -4,9 +4,9 @@ using System.Web;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtWebServiceResponse : CswNbtWebServiceResponseBase
+    public class CswNbtWcfResponse : CswNbtWcfResponseBase
     {
-        public CswNbtWebServiceResponse( HttpContext Context )
+        public CswNbtWcfResponse( HttpContext Context )
             : base( Context )
         {
         }

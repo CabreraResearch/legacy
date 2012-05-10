@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtInspectionsDataModel
+    public class CswNbtWcfInspectionsDataModel
     {
         [DataMember]
         public Collection<CswNbtInspectionDesign> Designs;
@@ -13,7 +13,7 @@ namespace NbtWebAppServices.Response
         [DataMember]
         public Collection<CswNbtInspection> Inspections;
 
-        public CswNbtInspectionsDataModel()
+        public CswNbtWcfInspectionsDataModel()
         {
             Designs = new Collection<CswNbtInspectionDesign>();
             Inspections = new Collection<CswNbtInspection>();

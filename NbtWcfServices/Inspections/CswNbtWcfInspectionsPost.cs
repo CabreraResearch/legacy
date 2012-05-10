@@ -10,18 +10,18 @@ using NbtWebAppServices.Session;
 
 namespace NbtWebAppServices.Response
 {
-    public class CswNbtWebServiceInspectionsPost
+    public class CswNbtWcfInspectionsPost
     {
         private HttpContext _Context = HttpContext.Current;
-        private CswNbtSessionResources _CswNbtSessionResources = null;
-        private Collection<CswNbtInspectionsDataModel.CswNbtInspection> _Inspections;
-        private CswNbtWebServiceResponseInspections _Response;
+        private CswNbtWcfSessionResources _CswNbtWcfSessionResources = null;
+        private Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> _Inspections;
+        private CswNbtWcfInspectionsResponse _InspectionsResponse;
 
-        public CswNbtWebServiceInspectionsPost( HttpContext Context, Collection<CswNbtInspectionsDataModel.CswNbtInspection> Inspections )
+        public CswNbtWcfInspectionsPost( HttpContext Context, Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> Inspections )
         {
             _Context = Context;
-            _Response = new CswNbtWebServiceResponseInspections( _Context );
-            if( _Response.Status.Success )
+            _InspectionsResponse = new CswNbtWcfInspectionsResponse( _Context );
+            if( _InspectionsResponse.Status.Success )
             {
                 try
                 {
@@ -30,11 +30,11 @@ namespace NbtWebAppServices.Response
                     {
                         throw new CswDniException( ErrorType.Error, "Cannot post Inspection updates if the Inspection collection is empty.", "The provided Inspections collection was null or empty." );
                     }
-                    _CswNbtSessionResources = _Response.CswNbtSessionResources;
+                    _CswNbtWcfSessionResources = _InspectionsResponse.CswNbtWcfSessionResources;
                 }
                 catch( Exception ex )
                 {
-                    _Response.addError( ex );
+                    _InspectionsResponse.addError( ex );
                 }
             }
         }
@@ -44,9 +44,8 @@ namespace NbtWebAppServices.Response
         string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Completed_Late );
         string Missed = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Missed );
         string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required );
-        Collection<CswNbtInspectionsDataModel.CswNbtInspection> ProcessedInspections = new Collection<CswNbtInspectionsDataModel.CswNbtInspection>();
 
-        private bool _updateInspectionNode( CswNbtInspectionsDataModel.CswNbtInspection Inspection )
+        private bool _updateInspectionNode( CswNbtWcfInspectionsDataModel.CswNbtInspection Inspection )
         {
             bool Processed = false;
             try
@@ -54,29 +53,29 @@ namespace NbtWebAppServices.Response
                 if( Int32.MinValue != Inspection.InspectionId )
                 {
                     CswPrimaryKey InspectionPk = new CswPrimaryKey( "nodes", Inspection.InspectionId );
-                    CswNbtNode InspectionNode = _CswNbtSessionResources.CswNbtResources.Nodes.GetNode( InspectionPk, Inspection.DesignId );
+                    CswNbtNode InspectionNode = _CswNbtWcfSessionResources.CswNbtResources.Nodes.GetNode( InspectionPk, Inspection.DesignId );
                     if( null != InspectionNode )
                     {
                         CswNbtObjClassInspectionDesign NodeAsDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
                         if( NodeAsDesign.Status.Value == Completed || NodeAsDesign.Status.Value == CompletedLate )
                         {
                             Processed = true;
-                            _Response.Completed.Add( Inspection );
+                            _InspectionsResponse.Completed.Add( Inspection );
                         }
                         else if( NodeAsDesign.Status.Value == Cancelled )
                         {
                             Processed = true;
-                            _Response.Cancelled.Add( Inspection );
+                            _InspectionsResponse.Cancelled.Add( Inspection );
                         }
                         else if( NodeAsDesign.Status.Value == Missed )
                         {
                             Processed = true;
-                            _Response.Missed.Add( Inspection );
+                            _InspectionsResponse.Missed.Add( Inspection );
                         }
                         else
                         {
                             /* We loop once to set the property values */
-                            foreach( CswNbtInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion Question in Inspection.Questions )
+                            foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion Question in Inspection.Questions )
                             {
                                 CswNbtMetaDataNodeTypeProp Ntp = InspectionNode.getNodeType().getNodeTypeProp( Question.QuestionId );
                                 if( null != Ntp )
@@ -98,13 +97,13 @@ namespace NbtWebAppServices.Response
 
                             if( NodeAsDesign.Status.Value == Completed || NodeAsDesign.Status.Value == CompletedLate )
                             {
-                                ProcessedInspections.Add( Inspection );
+                                /* Nothing to so */
                             }
                             else if( NodeAsDesign.Status.Value == ActionRequired )
                             {
                                 Inspection.Status = NodeAsDesign.Status.Value;
                                 /* We loop again to modify the return with the status of the Inspection per Question */
-                                foreach( CswNbtInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion Question in Inspection.Questions )
+                                foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion Question in Inspection.Questions )
                                 {
                                     Question.Status = NodeAsDesign.Status.Value;
                                 }
@@ -112,11 +111,11 @@ namespace NbtWebAppServices.Response
                                 Inspection.DueDate = NodeAsDesign.InspectionDate.DateTimeValue;
                                 Inspection.InspectionPointName = NodeAsDesign.Target.CachedNodeName;
                                 Inspection.LocationPath = NodeAsDesign.Location.CachedValue;
-                                _Response.ActionRequired.Add( Inspection );
+                                _InspectionsResponse.ActionRequired.Add( Inspection );
                             }
                             else
                             {
-                                _Response.InComplete.Add( Inspection );
+                                _InspectionsResponse.InComplete.Add( Inspection );
                             }
                         }
                     }
@@ -124,35 +123,35 @@ namespace NbtWebAppServices.Response
             }
             catch( Exception Ex )
             {
-                _Response.addError( Ex );
+                _InspectionsResponse.addError( Ex );
             }
             return Processed;
         }
 
         private void _updateInspections()
         {
-            foreach( CswNbtInspectionsDataModel.CswNbtInspection Inspection in _Inspections )
+            foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection Inspection in _Inspections )
             {
                 bool Processed = _updateInspectionNode( Inspection );
                 if( false == Processed )
                 {
-                    _Response.Failed.Add( Inspection );
+                    _InspectionsResponse.Failed.Add( Inspection );
                 }
             }
         }
 
-        public CswNbtWebServiceResponseInspections finalize()
+        public CswNbtWcfInspectionsResponse finalize()
         {
             try
             {
                 _updateInspections();
-                _Response.finalizeResponse();
+                _InspectionsResponse.finalizeResponse();
             }
             catch( Exception ex )
             {
-                _Response.addError( ex );
+                _InspectionsResponse.addError( ex );
             }
-            return _Response;
+            return _InspectionsResponse;
         }
 
     }

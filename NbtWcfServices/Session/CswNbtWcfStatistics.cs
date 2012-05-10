@@ -3,11 +3,11 @@ using ChemSW.Session;
 
 namespace NbtWebAppServices.Session
 {
-    public class CswNbtStatistics : ICswStatisticsStorage
+    public class CswNbtWcfStatistics : ICswStatisticsStorage
     {
         private CswNbtStatisticsStorageDb _CswNbtStatisticsStorageDb = null;
         private bool _RecordStatistics = false;
-        public CswNbtStatistics( CswNbtStatisticsStorageDb CswNbtStatisticsStorageDb, bool RecordStatistics )
+        public CswNbtWcfStatistics( CswNbtStatisticsStorageDb CswNbtStatisticsStorageDb, bool RecordStatistics )
         {
             _RecordStatistics = RecordStatistics;
 

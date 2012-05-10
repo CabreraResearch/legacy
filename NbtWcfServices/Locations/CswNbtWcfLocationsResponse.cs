@@ -4,15 +4,15 @@ using System.Web;
 namespace NbtWebAppServices.Response
 {
     [DataContract]
-    public class CswNbtWebServiceResponseLocations : CswNbtWebServiceResponseBase
+    public class CswNbtWcfLocationsResponse : CswNbtWcfResponseBase
     {
-        public CswNbtWebServiceResponseLocations( HttpContext Context )
+        public CswNbtWcfLocationsResponse( HttpContext Context )
             : base( Context )
         {
         }
 
         [DataMember]
-        public CswNbtLocationsDataModel Data { get; set; }
+        public CswNbtWcfLocationsDataModel Data { get; set; }
 
     }
 }
