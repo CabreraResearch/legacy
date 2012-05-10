@@ -250,10 +250,11 @@
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)js\common\_compileCommon.pl $(ProjectDir)
 call $(ProjectDir)js\nbt\_compileNbt.pl $(ProjectDir)
-call $(ProjectDir)js\_updateIncludes.pl $(ProjectDir)</PostBuildEvent>
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>echo "NbtWebJavaScript" build started
+call $(ProjectDir)js\_updateIncludes.pl $(ProjectDir)
 call $(ProjectDir)css\_compressor.pl $(ProjectDir)
 call $(ProjectDir)js\common\_concatCswVsDoc.pl $(ProjectDir)
 call $(ProjectDir)js\nbt\_concatNbtVsDoc.pl $(ProjectDir)</PreBuildEvent>
