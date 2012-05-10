@@ -20,7 +20,7 @@
             var dateAnswered = (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : '';
             var dateCorrected = (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
 
-            var isActionRequired = Csw.bool(propVals.isactionrequired);//case 25035
+            var isActionRequired = Csw.bool(propVals.isactionrequired); //case 25035
 
             if (o.ReadOnly) {
                 propDiv.append('Answer: ' + answer);
@@ -108,23 +108,24 @@
             var selectedAnswer = answerSel.val();
             var correctiveAction = correctiveActionTextBox.val();
 
-            if (selectedAnswer !== '' && correctiveAction === '') {
-                isCompliant = false;
-                for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
-                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
+            if(correctiveAction === '') {
+                if (selectedAnswer !== '') {
+                    isCompliant = false;
+                    for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
+                        isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
+                    }
                 }
+                correctiveActionLabel.hide();
+                correctiveActionTextBox.hide();
             }
-            if (isCompliant || false === isActionRequired) {//case 25035
-
-                answerSel.removeClass('CswFieldTypeQuestion_Deficient');
-                if (correctiveAction === '') {
-                    correctiveActionLabel.hide();
-                    correctiveActionTextBox.hide();
-                }
+            if (isCompliant) {
+                answerSel.removeClass('CswFieldTypeQuestion_Deficient');    
             } else {
                 answerSel.addClass('CswFieldTypeQuestion_Deficient');
-                correctiveActionLabel.show();
-                correctiveActionTextBox.show();
+                if (isActionRequired) {//case 25035
+                    correctiveActionLabel.show();
+                    correctiveActionTextBox.show();
+                }
             }
         }
     } // checkCompliance()
