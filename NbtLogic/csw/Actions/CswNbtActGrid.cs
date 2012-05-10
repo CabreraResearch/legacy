@@ -11,10 +11,10 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Logic
 {
-    public class CswGridData
+    public class CswNbtActGrid
     {
         private CswNbtResources _CswNbtResources;
-        public CswGridData( CswNbtResources Resources )
+        public CswNbtActGrid( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
             PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.Logic
             return Ret;
         }
 
-    } // class CswGridData
+    } // class CswNbtActGrid
 
     /// <summary>
     /// For the transformation of XElement Attribute types into valid JProperty and JObject types

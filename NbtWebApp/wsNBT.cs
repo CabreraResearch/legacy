@@ -4512,7 +4512,7 @@ namespace ChemSW.Nbt.WebServices
 
                     ReturnVal["success"] = "true";
 
-                    CswGridData gd = new CswGridData( _CswNbtResources );
+                    CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
                     gd.PkColumn = "RowNumber";
 
                     ReturnVal["jqGridOpt"] = gd.DataTableToJSON( ExcelDataTable, true );

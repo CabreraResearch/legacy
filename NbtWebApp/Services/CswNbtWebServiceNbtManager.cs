@@ -105,10 +105,10 @@ namespace ChemSW.Nbt.WebServices
             CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
             DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            CswGridData GridData = new CswGridData( _OtherResources );
+            CswNbtActGrid NbtActGrid = new CswNbtActGrid( _OtherResources );
             string TablePkColumn = "scheduledruleid";
-            GridData.PkColumn = TablePkColumn;
-            GridData.HidePkColumn = true;
+            NbtActGrid.PkColumn = TablePkColumn;
+            NbtActGrid.HidePkColumn = true;
 
             CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
                                                           {
@@ -129,16 +129,16 @@ namespace ChemSW.Nbt.WebServices
                 ScheduledRulesTable.Columns.Remove( ColumnName );
             }
 
-            GridData.EditableColumns = new CswCommaDelimitedString();
+            NbtActGrid.EditableColumns = new CswCommaDelimitedString();
             foreach( DataColumn Column in ScheduledRulesTable.Columns )
             {
                 if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
                 {
-                    GridData.EditableColumns.Add( Column.ColumnName );
+                    NbtActGrid.EditableColumns.Add( Column.ColumnName );
                 }
             }
 
-            RetObj = GridData.DataTableToJSON( ScheduledRulesTable, true );
+            RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
 
             return RetObj;
         }

@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject getViewGrid( bool All )
         {
             JObject ReturnVal = new JObject();
-            CswGridData gd = new CswGridData( _CswNbtResources );
+            CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
             gd.PkColumn = "nodeviewid";
 
             JArray JColumnNames = new JArray();
