@@ -42,6 +42,7 @@
             //For submit
             selectedPropVal: '',
             selectedSubfieldVal: '',
+            selectedFilterMode: '',
             selectedFilterVal: '',
 
             bottomRow: 2,
@@ -119,6 +120,7 @@
                         .span({ ID: nodeTypeId, cssclass: Csw.enums.cssClasses_ViewBuilder.metadatatype_static.name, text: thisProp.metadatatypename })
                         .propNonDom('relatedidtype', thisProp.relatedidtype);
                     o.selectedSubfieldVal = '';
+                    o.selectedFilterMode = '';
                     o.selectedFilterVal = '';
 
                     filtArbitraryId = thisProp.filtarbitraryid;
@@ -221,6 +223,7 @@
                                     var r = {
                                         propertyid: thisPropId,
                                         selectedSubfieldVal: '',
+                                        selectedFilterMode: '',
                                         selectedFilterVal: '',
                                         selectedPropData: newOh.find('viewbuilderpropid', thisPropId)
                                     };
