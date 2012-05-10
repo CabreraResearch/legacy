@@ -38,7 +38,7 @@
                             //propJson.propname = propJson.name;
                             Csw.each(propJson.filters, function (filtJson) {
 
-                                viewPropFilters[filtJson.arbitraryid] = Csw.nbt.viewPropFilter('init', {
+                                viewPropFilters[filtJson.arbitraryid] = Csw.nbt.viewPropFilter({
                                         parent: tbl,
                                         viewid: internal.viewid,
                                         viewJson: '',

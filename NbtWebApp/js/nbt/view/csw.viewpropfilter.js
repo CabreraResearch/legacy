@@ -38,9 +38,10 @@
 
 
                 // Populated internally, do not override:
+                table: null,
                 propNameCell: null,
                 subFieldCell: null,
-                filterModesCell: null,
+                filterModeCell: null,
                 valueCell: null,
                 propNameControl: null,
                 subfieldControl: null,
@@ -60,17 +61,17 @@
                     suffix: ''
                 };
 
-                if (false == Csw.isNullOrEmpty(o.filtarbitraryid)) {
+                if (false == Csw.isNullOrEmpty(internal.filtarbitraryid)) {
                     idParams.ID = id + delimiter + 'filtarbitraryid';
-                    idparams.suffix = internal.filtarbitraryid;
+                    idParams.suffix = internal.filtarbitraryid;
                 }
-                else if (false == Csw.isNullOrEmpty(o.viewbuilderpropid)) {
+                else if (false == Csw.isNullOrEmpty(internal.viewbuilderpropid)) {
                     idParams.ID = id + delimiter + 'viewbuilderpropid';
-                    idparams.suffix = internal.viewbuilderpropid;
+                    idParams.suffix = internal.viewbuilderpropid;
                 }
-                else if (false == Csw.isNullOrEmpty(o.proparbitraryid)) {
+                else if (false == Csw.isNullOrEmpty(internal.proparbitraryid)) {
                     idParams.ID = id + delimiter + 'proparbitraryid';
-                    idparams.suffix = internal.proparbitraryid;
+                    idParams.suffix = internal.proparbitraryid;
                 }
 
                 return Csw.makeId(idParams);
@@ -89,9 +90,9 @@
             internal.makeSubfieldControl = function () {
                 var subfields = (Csw.contains(internal.propsData, 'subfields')) ? internal.propsData.subfields : [];
                 var defaultSubfield = Csw.string(internal.selectedSubFieldName, 
-                                                 Csw.string(propsData.defaultsubfield, 
-                                                            Csw.string(propsData.subfieldname, 
-                                                                       propsData.subfield)));
+                                                 Csw.string(internal.propsData.defaultsubfield, 
+                                                            Csw.string(internal.propsData.subfieldname, 
+                                                                       internal.propsData.subfield)));
                 var subFieldOptions = [];
                 var subfieldid = internal.makePropFilterId('filter_subfield');
 
@@ -117,7 +118,7 @@
                         //cssclass: Csw.enums.cssClasses_ViewBuilder.subfield_select.name,
                         onChange: function () {
                             internal.selectedSubFieldName = internal.subfieldControl.val();
-                            renderPropFiltRow();
+                            internal.renderPropFiltRow();
                         }
                     });
                 } // if-else(internal.readOnly)
@@ -127,33 +128,33 @@
             internal.makeFilterModeControl = function() {
                 var filterModeOptions = [];
                 var subfield = internal.selectedSubFieldJson;
-                var defaultFilterMode = Csw.string(selectedFilterMode, 
-                                                   Csw.string(propsData.defaultfilter,
-                                                              propsData.filtermode));
+                var defaultFilterMode = Csw.string(internal.selectedFilterMode, 
+                                                   Csw.string(internal.propsData.defaultfilter,
+                                                              internal.propsData.filtermode));
                 var filtermodeid = internal.makePropFilterId('filter_mode');
 
-                internal.filterModesCell.empty();
+                internal.filterModeCell.empty();
                 if(internal.readOnly)
                 {
-                    internal.filterModeControl = internal.filterModesCell.span({ 
+                    internal.filterModeControl = internal.filterModeCell.span({ 
                         ID: filtermodeid,
                         text: defaultFilterMode
                     });
                 } else {
                     if (Csw.contains(subfield, 'filtermodes')) {
-                        Csw.each(thisSubField.filtermodes, function(thisMode, mode) {
+                        Csw.each(subfield.filtermodes, function(thisMode, mode) {
                             filterModeOptions.push({ value: mode, display: thisMode });
                         });
                     }
 
-                    internal.filterModeControl = internal.filterModesCell.select({ 
+                    internal.filterModeControl = internal.filterModeCell.select({ 
                         ID: filtermodeid,
                         values: filterModeOptions,
                         selected: defaultFilterMode,
                         //cssclass: Csw.enums.cssClasses_ViewBuilder.filter_select.name,
                         onChange: function () {
                             internal.selectedFilterMode = internal.filterModeControl.val();
-                            renderPropFiltRow();
+                            internal.renderPropFiltRow();
                         }
                     });
                 } // if-else(internal.readOnly)
@@ -161,12 +162,12 @@
 
 
             internal.makeFilterValueControl = function() {
-                var fieldtype = propsData.fieldtype;
-                var valueOptionDefs = (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.options : {};
+                var fieldtype = internal.propsData.fieldtype;
+                var valueOptionDefs = (Csw.contains(internal.propsData, 'filtersoptions')) ? internal.propsData.filtersoptions.options : {};
                 var valueOptions = [];
                 var valueSelected = Csw.string(internal.selectedValue, 
-                                               Csw.string(propsData.value, 
-                                                          (Csw.contains(propsData, 'filtersoptions')) ? propsData.filtersoptions.selected : {}));
+                                               Csw.string(internal.propsData.value, 
+                                                          (Csw.contains(internal.propsData, 'filtersoptions')) ? internal.propsData.filtersoptions.selected : {}));
                 var valueId = internal.makePropFilterId('propfilter_input');
                 var placeholder = internal.propname;
 
@@ -195,7 +196,7 @@
                     } else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
                         internal.valueControl = internal.valueCell.triStateCheckBox({ 
                             ID: valueId,
-                            Checked: Csw.bool(valueSelected)
+                            Checked: valueSelected   // tristate, not bool
                             //cssclass: 'ViewPropFilterLogical ' + Csw.enums.cssClasses_ViewBuilder.filter_value.name
                         });
                     } else {
@@ -232,20 +233,11 @@
 
 
             external.getFilterJson = function () {
-                var filterValue, subFieldText, filterModeText;
-                var fieldtype = propsData.fieldtype;
+                var filterValue, subFieldText, filterModeText, 
+                    retJson = {};
+                var fieldtype = internal.propsData.fieldtype;
 
-                switch (fieldtype) {
-                    case Csw.enums.subFieldsMap.Logical.name:
-                        filterValue = internal.valueControl.checked();
-                        break;
-                    case Csw.enums.subFieldsMap.List.name:
-                        filterValue = internal.valueControl.val();
-                        break;
-                    default:
-                        filterValue = internal.valueControl.val();
-                        break;
-                }
+                filterValue = internal.valueControl.val();
 
                 if (false === Csw.isNullOrEmpty(filterValue) || internal.allowNullFilterValue) {
                     subFieldText = internal.subfieldControl.val();
@@ -264,7 +256,7 @@
                         proparbitraryid: internal.proparbitraryid,
                         relatedidtype: internal.relatedidtype,
                         subfield: subFieldText,
-                        filter: filterText,
+                        filter: filterModeText,
                         filtervalue: Csw.string(filterValue).trim()
                     };
 
@@ -352,13 +344,13 @@
                             success: function (data) {
                                 internal.propsData = data;
                                 internal.propname = internal.propsData.propname
-                                renderPropFiltRow();
+                                internal.renderPropFiltRow();
                             } //success
                         }); //ajax
                     } // if (Csw.isNullOrEmpty(internal.propsData) && false === Csw.isNullOrEmpty(internal.proparbitraryid)) {
                     else {
                         internal.propname = internal.propsData.propname
-                        renderPropFiltRow();
+                        internal.renderPropFiltRow();
                     }
                 
                 } // if-else(Csw.isNullOrEmpty(internal.table.controlName) || internal.table.controlName !== 'table') {
