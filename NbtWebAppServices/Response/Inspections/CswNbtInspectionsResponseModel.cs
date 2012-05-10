@@ -64,7 +64,7 @@ namespace NbtWebAppServices.Response
             {
                 Questions = new Collection<CswNbtInspectionQuestion>();
             }
-
+            
             public Int32 DesignId { get; set; }
             public DateTime DueDate { get; set; }
             public Int32 InspectionId { get; set; }
