@@ -1,11 +1,11 @@
 using System;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Logic;
 
 
 namespace ChemSW.Nbt.WebServices
@@ -35,29 +35,29 @@ namespace ChemSW.Nbt.WebServices
             InspectionData.Columns.Add( "Inspection Point" );
             InspectionData.Columns.Add( "Due" );
             InspectionData.Columns.Add( "Status" );
-            InspectionData.Columns.Add( "OOC Question" );
-            InspectionData.Columns.Add( "OOC Answer" );
+            InspectionData.Columns.Add( "Deficient Question" );
+            InspectionData.Columns.Add( "Deficient Answer" );
             InspectionData.Columns.Add( "Date Answered" );
             InspectionData.Columns.Add( "Comments" );
 
-            // get OOC inspections
-            CswNbtView OOCView = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship InspectionRel = OOCView.AddViewRelationship( InspectionOC, false );
-            CswNbtViewProperty StatusViewProp = OOCView.AddViewProperty( InspectionRel, InspectionStatusOCP );
-            CswNbtViewPropertyFilter StatusOOCFilter = OOCView.AddViewPropertyFilter(
+            // get Deficient inspections
+            CswNbtView DeficientView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship InspectionRel = DeficientView.AddViewRelationship( InspectionOC, false );
+            CswNbtViewProperty StatusViewProp = DeficientView.AddViewProperty( InspectionRel, InspectionStatusOCP );
+            CswNbtViewPropertyFilter StatusDeficientFilter = DeficientView.AddViewPropertyFilter(
                 StatusViewProp,
                 InspectionStatusOCP.getFieldTypeRule().SubFields.Default.Name,
                 CswNbtPropFilterSql.PropertyFilterMode.Equals,
                 CswNbtObjClassInspectionDesign.InspectionStatusAsString( CswNbtObjClassInspectionDesign.InspectionStatus.Action_Required ),
                 false );
 
-            ICswNbtTree OOCTree = _CswNbtResources.Trees.getTreeFromView( OOCView, false, true, false, false );
-            for( Int32 i = 0; i < OOCTree.getChildNodeCount(); i++ )
+            ICswNbtTree DeficientTree = _CswNbtResources.Trees.getTreeFromView( DeficientView, false, true, false, false );
+            for( Int32 i = 0; i < DeficientTree.getChildNodeCount(); i++ )
             {
-                OOCTree.goToNthChild( i );
+                DeficientTree.goToNthChild( i );
 
                 bool AtLeastOneQuestion = false;
-                CswNbtNode InspectionNode = OOCTree.getNodeForCurrentPosition();
+                CswNbtNode InspectionNode = DeficientTree.getNodeForCurrentPosition();
                 CswNbtObjClassInspectionDesign NodeAsInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
                 CswNbtPropEnmrtrFiltered QuestionProps = InspectionNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
                 foreach( CswNbtNodePropWrapper QuestionProp in QuestionProps )
@@ -75,8 +75,8 @@ namespace ChemSW.Nbt.WebServices
                             Row["Due"] = NodeAsInspection.Date.DateTimeValue.ToShortDateString();
                         }
                         Row["Status"] = NodeAsInspection.Status.Value;
-                        Row["OOC Question"] = QuestionProp.NodeTypeProp.PropNameWithQuestionNo;
-                        Row["OOC Answer"] = QuestionProp.AsQuestion.Answer;
+                        Row["Deficient Question"] = QuestionProp.NodeTypeProp.PropNameWithQuestionNo;
+                        Row["Deficient Answer"] = QuestionProp.AsQuestion.Answer;
                         if( NodeAsInspection.Date.DateTimeValue != DateTime.MinValue )
                         {
                             Row["Date Answered"] = QuestionProp.AsQuestion.DateAnswered.ToShortDateString();
@@ -105,10 +105,10 @@ namespace ChemSW.Nbt.WebServices
                     InspectionData.Rows.Add( Row );
                 }
 
-                OOCTree.goToParentNode();
-            } // for( Int32 i = 0; i < OOCTree.getChildNodeCount(); i++ )
+                DeficientTree.goToParentNode();
+            } // for( Int32 i = 0; i < DeficientTree.getChildNodeCount(); i++ )
 
-            CswGridData gd = new CswGridData( _CswNbtResources );
+            CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
             gd.PkColumn = "rownum";
             return gd.DataTableToJSON( InspectionData );
 

@@ -166,24 +166,25 @@ namespace ChemSW.Nbt.MetaData
 
         private string _makeModuleWhereClause()
         {
-            return @" ( ( exists (select j.jctmoduleobjectclassid
-                                    from jct_modules_objectclass j
-                                    join modules m on j.moduleid = m.moduleid
-                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)
-                                     and m.enabled = '1')
-                          or not exists (select j.jctmoduleobjectclassid
-                                           from jct_modules_objectclass j
-                                           join modules m on j.moduleid = m.moduleid
-                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)) )
-                    and ( exists (select j.jctmodulenodetypeid
-                                    from jct_modules_nodetypes j
-                                    join modules m on j.moduleid = m.moduleid
-                                   where j.nodetypeid = nodetype_props.nodetypeid
-                                     and m.enabled = '1')
-                          or not exists (select j.jctmodulenodetypeid
-                                           from jct_modules_nodetypes j
-                                           join modules m on j.moduleid = m.moduleid
-                                          where j.nodetypeid = nodetype_props.nodetypeid) ) )";
+//            return @" ( ( exists (select j.jctmoduleobjectclassid
+//                                    from jct_modules_objectclass j
+//                                    join modules m on j.moduleid = m.moduleid
+//                                   where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)
+//                                     and m.enabled = '1')
+//                          or not exists (select j.jctmoduleobjectclassid
+//                                           from jct_modules_objectclass j
+//                                           join modules m on j.moduleid = m.moduleid
+//                                          where j.objectclassid = (select t.objectclassid from nodetypes t where t.nodetypeid = nodetype_props.nodetypeid)) )
+//                    and ( exists (select j.jctmodulenodetypeid
+//                                    from jct_modules_nodetypes j
+//                                    join modules m on j.moduleid = m.moduleid
+//                                   where j.nodetypeid = nodetype_props.nodetypeid
+//                                     and m.enabled = '1')
+//                          or not exists (select j.jctmodulenodetypeid
+//                                           from jct_modules_nodetypes j
+//                                           join modules m on j.moduleid = m.moduleid
+//                                          where j.nodetypeid = nodetype_props.nodetypeid) ) )";
+            return " nodetype_props.nodetypeid in (select nodetypeid from nodetypes where enabled = '1') ";
         }
 
         //public void ClearKeys()

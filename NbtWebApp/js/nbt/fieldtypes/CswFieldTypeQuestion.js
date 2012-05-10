@@ -7,7 +7,6 @@
     var multi = false;
     var methods = {
         init: function (o) {
-
             var propDiv = o.propDiv;
             propDiv.empty();
             var propVals = o.propData.values;
@@ -20,6 +19,8 @@
 
             var dateAnswered = (false === o.Multi) ? Csw.string(propVals.dateanswered.date).trim() : '';
             var dateCorrected = (false === o.Multi) ? Csw.string(propVals.datecorrected.date).trim() : '';
+
+            var isActionRequired = Csw.bool(propVals.isactionrequired); //case 25035
 
             if (o.ReadOnly) {
                 propDiv.append('Answer: ' + answer);
@@ -51,7 +52,7 @@
                                       .select({
                                           ID: o.ID + '_ans',
                                           onChange: function () {
-                                              checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                                              checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
                                               o.onChange();
                                           },
                                           values: splitAnswers,
@@ -63,7 +64,7 @@
                     ID: o.ID + '_cor',
                     text: correctiveAction,
                     onChange: function () {
-                        checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                        checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
                         o.onChange();
                     }
                 });
@@ -75,7 +76,7 @@
                     onChange: o.onChange
                 });
 
-                checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox);
+                checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired);
             }
         },
         save: function (o) {
@@ -100,29 +101,31 @@
         }
     };
 
-    function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox) {
+    function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired) {
         if (false === multi) {
             var splitCompliantAnswers = compliantAnswers.split(',');
             var isCompliant = true;
             var selectedAnswer = answerSel.val();
             var correctiveAction = correctiveActionTextBox.val();
 
-            if (selectedAnswer !== '' && correctiveAction === '') {
-                isCompliant = false;
-                for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
-                    isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
+            if(correctiveAction === '') {
+                if (selectedAnswer !== '') {
+                    isCompliant = false;
+                    for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
+                        isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
+                    }
                 }
+                correctiveActionLabel.hide();
+                correctiveActionTextBox.hide();
             }
             if (isCompliant) {
-                answerSel.removeClass('CswFieldTypeQuestion_OOC');
-                if (correctiveAction === '') {
-                    correctiveActionLabel.hide();
-                    correctiveActionTextBox.hide();
-                }
+                answerSel.removeClass('CswFieldTypeQuestion_Deficient');    
             } else {
-                answerSel.addClass('CswFieldTypeQuestion_OOC');
-                correctiveActionLabel.show();
-                correctiveActionTextBox.show();
+                answerSel.addClass('CswFieldTypeQuestion_Deficient');
+                if (isActionRequired) {//case 25035
+                    correctiveActionLabel.show();
+                    correctiveActionTextBox.show();
+                }
             }
         }
     } // checkCompliance()

@@ -157,8 +157,8 @@ namespace ChemSW.Nbt.PropTypes
 
             CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateTimeValue );
             CswXmlDocument.AppendXmlAttribute( DateValueNode, "datetime", CswDate.ToClientAsDateTimeString() );
-            CswXmlDocument.AppendXmlAttribute( DateValueNode, "dateformat", CswDate.ClientDateFormat );
-            CswXmlDocument.AppendXmlAttribute( DateValueNode, "timeformat", CswDate.ClientTimeFormat );
+            CswXmlDocument.AppendXmlAttribute( DateValueNode, "dateformat", CswDate.ClientDateFormat.ToString() );
+            CswXmlDocument.AppendXmlAttribute( DateValueNode, "timeformat", CswDate.ClientTimeFormat.ToString() );
         }
 
         public override void ToXElement( XElement ParentNode )

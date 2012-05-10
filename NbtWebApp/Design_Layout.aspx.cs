@@ -261,10 +261,10 @@ namespace ChemSW.Nbt.WebPages
                 }
                 else
                 {
-                    if( Prop.EditLayout.DisplayRow != Int32.MinValue )
-						DisplayRowTextBox.Text = Prop.EditLayout.DisplayRow.ToString();
-					if( Prop.EditLayout.DisplayColumn != Int32.MinValue )
-						DisplayColTextBox.Text = Prop.EditLayout.DisplayColumn.ToString();
+                    if( Prop.FirstEditLayout.DisplayRow != Int32.MinValue )
+                        DisplayRowTextBox.Text = Prop.FirstEditLayout.DisplayRow.ToString();
+                    if( Prop.FirstEditLayout.DisplayColumn != Int32.MinValue )
+                        DisplayColTextBox.Text = Prop.FirstEditLayout.DisplayColumn.ToString();
                 }
 
                 if( _Mode == LayoutMode.Inspection )
@@ -350,8 +350,8 @@ namespace ChemSW.Nbt.WebPages
                     LayoutControlSet LCS = LayoutControlsHash[FirstPropVersionId] as LayoutControlSet;
 
                     bool SetValOnAdd = (Prop.AddLayout != null);
-                    Int32 DisplayRow = Prop.EditLayout.DisplayRow;
-					Int32 DisplayColumn = Prop.EditLayout.DisplayColumn;
+                    Int32 DisplayRow = Prop.FirstEditLayout.DisplayRow;
+                    Int32 DisplayColumn = Prop.FirstEditLayout.DisplayColumn;
                     Int32 DisplayRowAdd = Prop.AddLayout.DisplayRow;
                     Int32 DisplayColAdd = Prop.AddLayout.DisplayColumn;
 

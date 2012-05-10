@@ -28,8 +28,9 @@
                 onEditView: null, //function (viewid) { },
                 onSaveView: null, //function (newviewid) { },
                 onQuotas: null, // function () { },
+                onModules: null, // function () { },
                 onSessions: null, // function () { },
-            onImpersonate: null,
+                onImpersonate: null,
                 Multi: false,
                 nodeTreeCheck: null
             };
@@ -182,6 +183,9 @@
                         break;
                     case 'Quotas':
                         $a.click(o.onQuotas);
+                        break;
+                    case 'Modules':
+                        $a.click(o.onModules);
                         break;
                     case 'Sessions':
                         $a.click(o.onSessions);
