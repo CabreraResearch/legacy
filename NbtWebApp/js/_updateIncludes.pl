@@ -15,11 +15,8 @@ sub deleteYesterdays {
     opendir(JSDIR, $path) or die("Cannot open js directory: $path ; $!");
     while((my $filename = readdir(JSDIR)))
     {
-        if(($filename =~ /.*\.js$/ &&
-           $filename =~ /Csw.*\.min\.js/) ||
-           ($filename =~ /.*\.css$/ &&
-           $filename =~ /ChemSW.*\.min\.css/)
-          ) 
+        if($filename =~ /.*\.(js|css)$/ &&
+           $filename =~ /Csw.*\.min\.(js|css)$/) 
         {
             unlink("$path\\$filename");
         }
