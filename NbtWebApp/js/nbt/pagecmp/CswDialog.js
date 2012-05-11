@@ -536,12 +536,13 @@
             }
 
             var div = Csw.literals.div();
-            div.span({ text: 'Are you sure you want to delete:&nbsp;' });
+            div.span({ text: 'Are you sure you want to delete' });
 
 
             if (o.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                div.span({ text: '&nbsp;the following?' }).br();
                 var nodechecks = null;
                 if (false == Csw.isNullOrEmpty(o.nodeTreeCheck)) {
                     nodechecks = o.nodeTreeCheck.checkedNodes();
@@ -552,16 +553,16 @@
                     Csw.each(nodechecks, function (thisObj) {
                         o.nodeids[n] = thisObj.nodeid;
                         o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey;
-                        div.br().span({ text: thisObj.nodename }).css({ 'padding-left': '10px' });
+                        div.span({ text: thisObj.nodename }).css({ 'padding-left': '10px' }).br();
                         n += 1;
                     });
                 } else {
                     for (var i = 0; i < o.nodenames.length; i++) {
-                        div.br().span({ text: o.nodenames[i] }).css({ 'padding-left': '10px' });
+                        div.span({ text: o.nodenames[i] }).css({ 'padding-left': '10px' }).br();
                     }
                 }
             } else {
-                div.span({ text: o.nodenames + '?' });
+                div.span({ text: ':&nbsp;' + o.nodenames + '?' });
             }
             div.br().br();
 
