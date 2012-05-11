@@ -13,10 +13,10 @@
                 var propDiv = o.propDiv;
                 propDiv.empty();
                 var propVals = o.propData.values;
-                var nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid).trim() : '';
+                var nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid, o.relatednodeid).trim() : '';
                 var nodeKey = ''; //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
-                var name = (false === o.Multi) ? Csw.string(propVals.name).trim() : Csw.enums.multiEditDefaultValue;
-                var path = (false === o.Multi) ? Csw.string(propVals.path).trim() : Csw.enums.multiEditDefaultValue;
+                var name = (false === o.Multi) ? Csw.string(propVals.name, o.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
+                var path = (false === o.Multi) ? Csw.string(propVals.path, o.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
                 var viewId = Csw.string(propVals.viewid).trim();
                 var comboBox;
 
