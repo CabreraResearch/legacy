@@ -104,14 +104,15 @@ namespace ChemSW.Nbt.WebServices
 
         private void _deInitResources( CswNbtResources OtherResources = null )
         {
-            _CswSessionResources.endSession();
-            if( null != _CswNbtResources )
+            if( _CswSessionResources != null )
             {
+                _CswSessionResources.endSession();
                 _CswNbtResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
 
-                _CswNbtResources.finalize();
-                _CswNbtResources.release();
+                _CswSessionResources.finalize();
+                _CswSessionResources.release();
             }
+
             if( null != OtherResources )
             {
                 OtherResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
