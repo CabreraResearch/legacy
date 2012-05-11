@@ -17,13 +17,16 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeType TaskNodeType in TaskNodeTypes )
             {
                 CswNbtMetaDataNodeTypeProp PartsProp = TaskNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassTask.PartsPropertyName );
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.removePropFromAllLayouts( PartsProp );
                 CswNbtMetaDataNodeTypeTab TaskNodeTypeTab = TaskNodeType.getNodeTypeTab( "Completion" );
                 if( null == TaskNodeTypeTab )
                 {
                     TaskNodeTypeTab = TaskNodeType.getFirstNodeTypeTab();
                 }
-                PartsProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TaskNodeTypeTab.TabId );
+                if( TaskNodeTypeTab != null )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.removePropFromAllLayouts( PartsProp );
+                    PartsProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TaskNodeTypeTab.TabId );
+                }
             }
 
         }//Update()
