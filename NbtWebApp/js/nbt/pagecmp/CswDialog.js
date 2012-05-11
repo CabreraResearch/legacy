@@ -11,7 +11,9 @@
 
         ExpireDialog: function (options) {
             var o = {
-                onYes: null
+                onYes: null,
+                expirationInterval: 300000,
+                onExpire: Csw.clientSession.logout
             };
 
             if (options) {
@@ -20,14 +22,31 @@
 
             var div = Csw.literals.div();
 
-            div.p({ text: 'Your session is about to time out.  Would you like to continue working?' });
+            var tbl = div.table();
 
-            div.button({
+            tbl.cell(1, 1).span({ text: 'Your session is about to time out.' });
+            tbl.cell(2, 1).span({ text: 'Would you like to continue working?' });
+
+            var btnTbl = tbl.cell(2, 1).table();
+
+            window.setTimeout(o.onExpire, Csw.number(o.expirationInterval, 300000));
+
+            btnTbl.cell(3, 1).button({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
+                bindOnEnter: div,
                 onClick: function () {
                     div.$.dialog('close');
                     Csw.tryExec(o.onYes);
+                }
+            });
+
+            btnTbl.cell(3, 2).button({
+                ID: 'cancel_btn',
+                enabledText: 'No',
+                onClick: function () {
+                    div.$.dialog('close');
+                    Csw.clientSession.logout();
                 }
             });
 
@@ -472,9 +491,9 @@
             // Prevent copy if quota is reached
             var div = Csw.literals.div({ ID: 'CopyNodeDialogDiv' });
             var tbl = div.table({ ID: 'CopyNodeDialogDiv_table' });
-            var cell11 = tbl.cell(1,1).propDom('colspan', '2');
-            var cell21 = tbl.cell(2,1);
-            var cell22 = tbl.cell(2,2);
+            var cell11 = tbl.cell(1, 1).propDom('colspan', '2');
+            var cell21 = tbl.cell(2, 1);
+            var cell22 = tbl.cell(2, 2);
 
             Csw.ajax.post({
                 urlMethod: 'checkQuota',

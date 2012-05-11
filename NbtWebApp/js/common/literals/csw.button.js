@@ -19,6 +19,7 @@
             /// <para>options.disabledText: Text to display when disabled</para>
             /// <para>options.disableOnClick: Disable the button when it's clicked</para>
             /// <para>options.onClick: Event to execute when the button is clicked</para>
+            /// <para>options.bindOnEnter: CswParent object bind 'Enter' key to this button.</para>
             /// </param>
             /// <returns type="button">A button object</returns>
             var internal = {
@@ -32,7 +33,8 @@
                 primaryicon: '',
                 secondaryicon: '',
                 onClick: null,
-                isEnabled: true
+                isEnabled: true,
+                bindOnEnter: {}
             };
             var external = {};
 
@@ -102,7 +104,10 @@
 
                 $.extend(external, Csw.literals.input(internal));
 
-
+                if(false === Csw.isNullOrEmpty(internal.bindOnEnter)) {
+                    internal.bindOnEnter.clickOnEnter(external);
+                }
+                
                 external.propNonDom({
                     enabledText: internal.enabledText,
                     disabledText: internal.disabledText
