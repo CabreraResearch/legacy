@@ -38,6 +38,7 @@ namespace NbtWebAppServices.Response
             {
                 addError( ex );
             }
+
         }
 
         [DataMember]
@@ -75,14 +76,17 @@ namespace NbtWebAppServices.Response
                     Performance.TreeLoaderSql = CswNbtWcfSessionResources.CswNbtResources.CswLogger.TreeLoaderSQLTime;
                 }
                 Performance.ServerTotal = _Timer.ElapsedDurationInMilliseconds;
-                if( null != CswNbtWcfSessionResources )
-                {
-                    CswNbtWcfSessionResources.deInitResources( OtherResources );
-                }
             }
             catch( Exception Ex )
             {
                 addError( Ex );
+            }
+            finally
+            {
+                if( null != CswNbtWcfSessionResources )
+                {
+                    CswNbtWcfSessionResources.deInitResources( OtherResources );
+                }
             }
         }
 

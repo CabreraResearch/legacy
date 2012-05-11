@@ -1,7 +1,9 @@
-
 use strict;
 
-printf("Started compiling ChemSW.min.css\n");
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+my $datestr = ($year + 1900).".". ($mon + 1) .".$mday";
+
+printf("Started compiling ChemSW.$datestr.min.css\n");
 
 use FindBin;
 use lib $FindBin::Bin;
@@ -9,7 +11,7 @@ use cssVariables;
 my %vars = %cssVariables::vars;
 
 my $dir = $ARGV[0];
-my $destfile = "$dir\\css\\ChemSW.min.css";
+my $destfile = "$dir\\css\\ChemSW.$datestr.min.css";
 unlink($destfile);
 
 open(CSSDOC, "> $destfile") or die("Cannot open vsdoc file: $destfile ; $!");
@@ -20,11 +22,11 @@ my $path = "$dir\\css\\";
 extractFile("ChemSW.css");
 extractFiles();
 
-printf("Finished compiling ChemSW.min.css\n");
+printf("Finished compiling ChemSW.$datestr.min.css\n");
 
 printf("Running CSS postprocessor\n");
 
-postProcessor("ChemSW.min.css", "ChemSW.min.css");
+postProcessor("ChemSW.$datestr.min.css", "ChemSW.$datestr.min.css");
 
 printf("Finished running CSS postprocessor\n");
 
