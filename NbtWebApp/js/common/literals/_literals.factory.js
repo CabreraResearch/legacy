@@ -67,6 +67,7 @@
                     ret = Csw.literals.factory($jqElement, opts);
                 } else {
                     ret = Csw.literals[controlName](opts);
+                    ret.controlName = controlName;
                 }
                 internal.controlPostProcessing(ret, controlName);
                 return ret;
