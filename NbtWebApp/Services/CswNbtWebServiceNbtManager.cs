@@ -62,6 +62,7 @@ namespace ChemSW.Nbt.WebServices
         private void _finalize( CswNbtResources OtherResources )
         {
             OtherResources.finalize();
+            OtherResources.release();
         }
 
         #endregion private
