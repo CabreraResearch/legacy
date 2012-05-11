@@ -356,7 +356,7 @@
 
             switch (fieldtype) {
                 case Csw.enums.subFieldsMap.Logical.name:
-                    filterValue = Csw.bool(Csw.string($filtInput.val, $filtInput.attr('value')));
+                    filterValue = Csw.string($filtInput.val, $filtInput.attr('value'));
                     break;
                 case Csw.enums.subFieldsMap.List.name:
                     filterValue = $filtInput.find(':selected').val();
