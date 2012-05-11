@@ -230,8 +230,8 @@
                 } else {
                     if (Csw.isNullOrEmpty(defaultSubfieldVal)) {
                         placeholder = propertyName;
-                        if (placeholder !== subfieldsList.find(':selected').text()) {
-                            placeholder += "'s " + subfieldsList.find(':selected').text();
+                        if (placeholder !== subfieldsList.selectedText()) {
+                            placeholder += "'s " + subfieldsList.selectedText();
                         }
                     }
                     filtInput = propFilterValueCell.input({
