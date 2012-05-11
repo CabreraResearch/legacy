@@ -127,7 +127,6 @@
 
             internal.makeFilterModeControl = function() {
                 var filterModeOptions = [];
-                var subfield = internal.selectedSubFieldJson;
                 var defaultFilterMode = Csw.string(internal.selectedFilterMode, 
                                                    Csw.string(internal.propsData.defaultfilter,
                                                               internal.propsData.filtermode));
@@ -141,8 +140,8 @@
                         text: defaultFilterMode
                     });
                 } else {
-                    if (Csw.contains(subfield, 'filtermodes')) {
-                        Csw.each(subfield.filtermodes, function(thisMode, mode) {
+                    if (Csw.contains(internal.selectedSubFieldJson, 'filtermodes')) {
+                        Csw.each(internal.selectedSubFieldJson.filtermodes, function(thisMode, mode) {
                             filterModeOptions.push({ value: mode, display: thisMode });
                         });
                     }
