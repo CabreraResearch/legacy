@@ -58,6 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void finalizeOtherResources( CswNbtResources OtherResources )
         {
             OtherResources.finalize();
+            OtherResources.release();
         }
 
 
