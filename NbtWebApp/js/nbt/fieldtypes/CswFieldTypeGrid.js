@@ -121,30 +121,30 @@
                     cswGrid.changeGridOpts(g);
                 },
                 onSearch: {
-                    onViewSearch: function () {
-                        var onSearchSubmit = function (searchviewid) {
-                            var s = {};
-                            $.extend(s, gridOpts);
-                            s.viewid = searchviewid;
-                            o.refreshGrid(s, cswGrid);
-                        };
+//                    onViewSearch: function () {
+//                        var onSearchSubmit = function (searchviewid) {
+//                            var s = {};
+//                            $.extend(s, gridOpts);
+//                            s.viewid = searchviewid;
+//                            o.refreshGrid(s, cswGrid);
+//                        };
 
-                        var onClearSubmit = function (parentviewid) {
-                            var s = {};
-                            $.extend(s, gridOpts);
-                            s.viewid = parentviewid;
-                            o.refreshGrid(s, cswGrid);
-                        };
+//                        var onClearSubmit = function (parentviewid) {
+//                            var s = {};
+//                            $.extend(s, gridOpts);
+//                            s.viewid = parentviewid;
+//                            o.refreshGrid(s, cswGrid);
+//                        };
 
-                        searchDiv.empty();
-                        searchDiv.$.CswSearch({ parentviewid: viewid,
-                            cswnbtnodekey: o.cswnbtnodekey,
-                            ID: searchDiv.getId(),
-                            onSearchSubmit: onSearchSubmit,
-                            onClearSubmit: onClearSubmit
-                        });
-                    },
-                    onGenericSearch: null /*not possible here*/
+//                        searchDiv.empty();
+//                        searchDiv.$.CswSearch({ parentviewid: viewid,
+//                            cswnbtnodekey: o.cswnbtnodekey,
+//                            ID: searchDiv.getId(),
+//                            onSearchSubmit: onSearchSubmit,
+//                            onClearSubmit: onClearSubmit
+//                        });
+//                    },
+//                    onGenericSearch: null /*not possible here*/
                 },
                 onEditView: function () {
                     if (Csw.isFunction(o.onEditView)) {

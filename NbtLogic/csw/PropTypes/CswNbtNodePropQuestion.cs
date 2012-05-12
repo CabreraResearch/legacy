@@ -32,7 +32,6 @@ namespace ChemSW.Nbt.PropTypes
             _DateAnsweredSubField = _FieldTypeRule.DateAnsweredSubField;
             _DateCorrectedSubField = _FieldTypeRule.DateCorrectedSubField;
             _IsCompliantSubField = _FieldTypeRule.IsCompliantSubField;
-
         }//ctor
         private CswNbtFieldTypeRuleQuestion _FieldTypeRule;
         private CswNbtSubField _AnswerSubField;
@@ -41,6 +40,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _DateAnsweredSubField;
         private CswNbtSubField _DateCorrectedSubField;
         private CswNbtSubField _IsCompliantSubField;
+        private bool _IsActionRequired = false;//case 25035
 
         /// <summary>
         /// Returns whether the property value is empty
@@ -140,12 +140,27 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// True only when the parent Node has a Status of ActionRequired
+        /// </summary>
+        public bool IsActionRequired//case 25035
+        {
+            get
+            {
+                return _IsActionRequired;
+            }
+            set
+            {
+                _IsActionRequired = value;
+            }
+        }
+
+        /// <summary>
         /// Date value set when question is answered
         /// </summary>
         public DateTime DateAnswered
         {
             get { return _CswNbtNodePropData.GetPropRowValueDate( _DateAnsweredSubField.Column ); }
-            private set
+            set
             {
                 _CswNbtNodePropData.SetPropRowValue( _DateAnsweredSubField.Column, value );
             }
@@ -157,7 +172,7 @@ namespace ChemSW.Nbt.PropTypes
         public DateTime DateCorrected
         {
             get { return _CswNbtNodePropData.GetPropRowValueDate( _DateCorrectedSubField.Column ); }
-            private set
+            set
             {
                 _CswNbtNodePropData.SetPropRowValue( _DateCorrectedSubField.Column, value );
             }
@@ -271,6 +286,8 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+
+
         public override void ToXml( XmlNode ParentNode )
         {
             CswXmlDocument.AppendXmlNode( ParentNode, _AnswerSubField.ToXmlNodeName(), Answer );
@@ -309,15 +326,19 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
             ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
             ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant.ToString();
+
+            ParentObject["isactionrequired"] = IsActionRequired.ToString();
+
+
             //ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?
             //        DateAnswered.ToShortDateString() : string.Empty;
             //ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = ( DateCorrected != DateTime.MinValue ) ?
             //        DateCorrected.ToShortDateString() : string.Empty;
 
             CswDateTime CswDateAnswered = new CswDateTime( _CswNbtResources, DateAnswered );
-            ParentObject.Add( new JProperty( _DateAnsweredSubField.ToXmlNodeName( true ), CswDateAnswered.ToClientAsDateTimeJObject() ) );
+            ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = CswDateAnswered.ToClientAsDateTimeJObject();
             CswDateTime CswDateCorrected = new CswDateTime( _CswNbtResources, DateCorrected );
-            ParentObject.Add( new JProperty( _DateCorrectedSubField.ToXmlNodeName( true ), CswDateCorrected.ToClientAsDateTimeJObject() ) );
+            ParentObject[_DateCorrectedSubField.ToXmlNodeName( true )] = CswDateCorrected.ToClientAsDateTimeJObject();
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -210,6 +210,9 @@
                         });
                     }
                     break;
+                case 'Ignore':
+                    o.success();
+                    break;
             }
 
             if (o.ForMobile &&

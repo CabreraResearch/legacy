@@ -29,6 +29,16 @@ window.initMain = window.initMain || function (undefined) {
 
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
+    // watermark
+    Csw.ajax.post({
+        urlMethod: 'getWatermark',
+        success: function(result) {
+            if (false === Csw.isNullOrEmpty(result.watermark)) {
+                $('#watermark').text(result.watermark);
+            }
+        }
+    });
+
     // handle querystring arguments
     var qs = Csw.queryString();
     if (false == Csw.isNullOrEmpty(qs.viewid)) {
@@ -65,7 +75,7 @@ window.initMain = window.initMain || function (undefined) {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
-                $('#header_dashboard').CswDashboard();
+                refreshDashboard();
 
                 universalsearch = Csw.composites.universalSearch({}, {
                     $searchbox_parent: $('#SearchDiv'),
@@ -101,6 +111,9 @@ window.initMain = window.initMain || function (undefined) {
                     },
                     onQuotas: function () {
                         handleAction({ 'actionname': 'Quotas' });
+                    },
+                    onModules: function () {
+                        handleAction({ 'actionname': 'Modules' });
                     },
                     onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
@@ -163,6 +176,10 @@ window.initMain = window.initMain || function (undefined) {
             } // onAuthenticate
         }); // CswLogin
 
+    }
+    
+    function refreshDashboard() {
+        $('#header_dashboard').empty().CswDashboard();
     }
 
     // initAll()
@@ -404,30 +421,30 @@ window.initMain = window.initMain || function (undefined) {
                         break;
                 }
             },
-            'onSearch':
-                 {
-                     'onViewSearch': function () {
-                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
-                         refreshSearchPanel({
-                             'genericSearchId': genericSearchId,
-                             'viewSearchId': viewSearchId,
-                             'searchType': 'view',
-                             'cswnbtnodekey': o.cswnbtnodekey,
-                             'viewid': o.viewid
-                         });
-                     },
-                     'onGenericSearch': function () {
-                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
-                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
-                         refreshSearchPanel({
-                             'genericSearchId': genericSearchId,
-                             'viewSearchId': viewSearchId,
-                             'searchType': 'generic',
-                             'cswnbtnodekey': o.cswnbtnodekey
-                         });
-                     }
-                 },
+//            'onSearch':
+//                 {
+//                     'onViewSearch': function () {
+//                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+//                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+//                         refreshSearchPanel({
+//                             'genericSearchId': genericSearchId,
+//                             'viewSearchId': viewSearchId,
+//                             'searchType': 'view',
+//                             'cswnbtnodekey': o.cswnbtnodekey,
+//                             'viewid': o.viewid
+//                         });
+//                     },
+//                     'onGenericSearch': function () {
+//                         var genericSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'generic' });
+//                         var viewSearchId = Csw.makeId({ 'ID': mainSearchId, prefix: o.prefix, suffix: 'view' });
+//                         refreshSearchPanel({
+//                             'genericSearchId': genericSearchId,
+//                             'viewSearchId': viewSearchId,
+//                             'searchType': 'generic',
+//                             'cswnbtnodekey': o.cswnbtnodekey
+//                         });
+//                     }
+//                 },
             'onEditView': function () {
                 handleAction({
                     'actionname': 'Edit_View',
@@ -445,118 +462,118 @@ window.initMain = window.initMain || function (undefined) {
         });
     }
 
-    function refreshSearchPanel(options) {
-        //if (debugOn()) Csw.log('Main.refreshSearchPanel()');
+//    function refreshSearchPanel(options) {
+//        //if (debugOn()) Csw.log('Main.refreshSearchPanel()');
 
-        var o = {
-            viewid: '',
-            nodetypeid: '',
-            cswnbtnodekey: '',
-            viewSearchId: '',
-            genericSearchId: '',
-            searchType: 'generic'
-        };
+//        var o = {
+//            viewid: '',
+//            nodetypeid: '',
+//            cswnbtnodekey: '',
+//            viewSearchId: '',
+//            genericSearchId: '',
+//            searchType: 'generic'
+//        };
 
-        if (options) {
-            $.extend(o, options);
-        }
+//        if (options) {
+//            $.extend(o, options);
+//        }
 
-        $('#CenterTopDiv').children('#' + o.viewSearchId)
-             .empty();
-        $('#CenterTopDiv').children('#' + o.genericSearchId)
-             .empty();
-        var $thisSearchForm = '';
+//        $('#CenterTopDiv').children('#' + o.viewSearchId)
+//             .empty();
+//        $('#CenterTopDiv').children('#' + o.genericSearchId)
+//             .empty();
+//        var $thisSearchForm = '';
 
-        switch (o.searchType.toLowerCase()) {
-            case 'generic':
-                {
-                    $thisSearchForm = makeSearchForm({ 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.genericSearchId });
-                    break;
-                }
-            case 'view':
-                {
-                    $thisSearchForm = makeSearchForm({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.viewSearchId });
-                    break;
-                }
-        }
-        return $thisSearchForm;
-    }
+//        switch (o.searchType.toLowerCase()) {
+//            case 'generic':
+//                {
+//                    $thisSearchForm = makeSearchForm({ 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.genericSearchId });
+//                    break;
+//                }
+//            case 'view':
+//                {
+//                    $thisSearchForm = makeSearchForm({ 'viewid': o.viewid, 'cswnbtnodekey': o.cswnbtnodekey, 'ID': o.viewSearchId });
+//                    break;
+//                }
+//        }
+//        return $thisSearchForm;
+//    }
 
-    function makeSearchForm(options) {
-        var o = {
-            viewid: '',
-            nodetypeid: '',
-            cswnbtnodekey: '',
-            ID: ''
-        };
-        if (options) {
-            $.extend(o, options);
-        }
+//    function makeSearchForm(options) {
+//        var o = {
+//            viewid: '',
+//            nodetypeid: '',
+//            cswnbtnodekey: '',
+//            ID: ''
+//        };
+//        if (options) {
+//            $.extend(o, options);
+//        }
 
-        clear({ centertop: true });
+//        clear({ centertop: true });
 
-        var onSearchSubmit = function (searchviewid, searchviewmode) {
-            clear({ right: true, centerbottom: true });
-            var viewMode = searchviewmode;
-            if (viewMode === 'list') {
-                viewMode = 'tree';
-            }
-            Csw.clientState.setCurrentView(searchviewid, viewMode);
+//        var onSearchSubmit = function (searchviewid, searchviewmode) {
+//            clear({ right: true, centerbottom: true });
+//            var viewMode = searchviewmode;
+//            if (viewMode === 'list') {
+//                viewMode = 'tree';
+//            }
+//            Csw.clientState.setCurrentView(searchviewid, viewMode);
 
-            refreshSelected({
-                viewmode: viewMode,
-                viewid: searchviewid,
-                forsearch: true,
-                showempty: false,
-                cswnbtnodekey: '', //do not want a view of only this node
-                nodeid: ''
-            });
-        };
-        var onClearSubmit = function (parentviewid, parentviewmode) {
-            clear({ centertop: true }); //clear Search first
+//            refreshSelected({
+//                viewmode: viewMode,
+//                viewid: searchviewid,
+//                forsearch: true,
+//                showempty: false,
+//                cswnbtnodekey: '', //do not want a view of only this node
+//                nodeid: ''
+//            });
+//        };
+//        var onClearSubmit = function (parentviewid, parentviewmode) {
+//            clear({ centertop: true }); //clear Search first
 
-            var viewid;
-            if (Csw.isNullOrEmpty(parentviewid)) {
-                viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
-            } else {
-                viewid = parentviewid;
-            }
+//            var viewid;
+//            if (Csw.isNullOrEmpty(parentviewid)) {
+//                viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
+//            } else {
+//                viewid = parentviewid;
+//            }
 
-            if (false === Csw.isNullOrEmpty(viewid)) {
-                clear({ right: true, centerbottom: true }); //wait to clear rest until we have a valid viewid
-                var viewmode;
-                if (Csw.isNullOrEmpty(parentviewmode)) {
-                    viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
-                } else {
-                    viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
-                }
+//            if (false === Csw.isNullOrEmpty(viewid)) {
+//                clear({ right: true, centerbottom: true }); //wait to clear rest until we have a valid viewid
+//                var viewmode;
+//                if (Csw.isNullOrEmpty(parentviewmode)) {
+//                    viewmode = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewMode);
+//                } else {
+//                    viewmode = (parentviewmode === 'list') ? 'tree' : parentviewmode;
+//                }
 
-                Csw.clientState.setCurrentView(viewid, viewmode);
+//                Csw.clientState.setCurrentView(viewid, viewmode);
 
-                refreshSelected({
-                    viewmode: viewmode,
-                    viewid: viewid,
-                    forsearch: true,
-                    showempty: false,
-                    cswnbtnodekey: '', //do not want a view of only this node
-                    nodeid: ''
-                });
-            }
-        };
-        var onSearchClose = function () {
-            clear({ centertop: true });
-        };
-        var $search = $('#CenterTopDiv').CswSearch({
-            'parentviewid': o.viewid,
-            'cswnbtnodekey': o.cswnbtnodekey,
-            'nodetypeid': o.nodetypeid,
-            'ID': o.ID,
-            'onSearchSubmit': onSearchSubmit,
-            'onClearSubmit': onClearSubmit,
-            'onSearchClose': onSearchClose
-        });
-        return $search;
-    }
+//                refreshSelected({
+//                    viewmode: viewmode,
+//                    viewid: viewid,
+//                    forsearch: true,
+//                    showempty: false,
+//                    cswnbtnodekey: '', //do not want a view of only this node
+//                    nodeid: ''
+//                });
+//            }
+//        };
+//        var onSearchClose = function () {
+//            clear({ centertop: true });
+//        };
+//        var $search = $('#CenterTopDiv').CswSearch({
+//            'parentviewid': o.viewid,
+//            'cswnbtnodekey': o.cswnbtnodekey,
+//            'nodetypeid': o.nodetypeid,
+//            'ID': o.ID,
+//            'onSearchSubmit': onSearchSubmit,
+//            'onClearSubmit': onClearSubmit,
+//            'onSearchClose': onSearchClose
+//        });
+//        return $search;
+//    }
 
     function getViewGrid(options) {
         //if (debugOn()) Csw.log('Main.getViewGrid()');
@@ -904,6 +921,19 @@ window.initMain = window.initMain || function (undefined) {
 
         clear({ left: true });
 
+        var viewfilters = Csw.nbt.viewFilters({
+            ID: 'main_viewfilters',
+            parent: Csw.literals.factory($('#LeftDiv')),
+            viewid: o.viewid,
+            onEditFilters: function(newviewid) {
+                var newopts = o;
+                newopts.viewid = newviewid;
+                // set the current view to be the session view, so filters are saved
+                Csw.clientState.setCurrentView(newviewid, o.viewmode);
+                refreshNodesTree(newopts);
+            } // onEditFilters
+        }); // viewFilters
+
         mainTree = Csw.nbt.nodeTree({
             ID: 'main',
             parent: Csw.literals.factory($('#LeftDiv')),
@@ -952,15 +982,15 @@ window.initMain = window.initMain || function (undefined) {
             'data': { 'ActionName': o.actionname }
         });
 
-        function setupOocInspections() {
+        function setupDeficientInspections() {
             clear({ 'all': true });
 
             Csw.actions.inspectionStatus(centerTopDiv, {
                 onEditNode: function () {
-                    setupOocInspections();
+                    setupDeficientInspections();
                 },
                 onAfterButtonClick: function () {
-                    setupOocInspections();
+                    setupDeficientInspections();
                 }
             });
         }
@@ -1080,8 +1110,8 @@ window.initMain = window.initMain || function (undefined) {
             //			case 'Inspection_Design':                                                               
             //				break;                                                               
 
-            case 'OOC_Inspections':
-                setupOocInspections();
+            case 'Deficient_Inspections':
+                setupDeficientInspections();
 
                 break;
             case 'Quotas':
@@ -1092,6 +1122,14 @@ window.initMain = window.initMain || function (undefined) {
                     }
                 });
 
+                break;
+            case 'Modules':
+                Csw.actions.modules(centerTopDiv, {
+                    onModuleChange: function() {
+                        refreshDashboard();
+                        refreshViewSelect();
+                    }
+                });
                 break;
             case 'Sessions':
                 Csw.actions.sessions(centerTopDiv);
@@ -1127,3 +1165,4 @@ window.initMain = window.initMain || function (undefined) {
 
     // _handleAction()
 };
+

@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.WebPages
                     {
                         _SelectedNodeTypeProp = Master.CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( _SelectedValue ) );
                         _SelectedNodeType = _SelectedNodeTypeProp.getNodeType();
-                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.EditLayout.TabId );
+                        _SelectedNodeTypeTab = Master.CswNbtResources.MetaData.getNodeTypeTab( _SelectedNodeTypeProp.FirstEditLayout.TabId );
                     }
                     else
                     {
@@ -585,8 +585,8 @@ namespace ChemSW.Nbt.WebPages
             if( SelectedNodeTypeProp != null )
             {
                 // Edit Property Select box
-                if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.EditLayout.TabId != Int32.MinValue )
-                    AddPropTabSelect.SelectedIndex = AddPropTabSelect.Items.IndexOf( AddPropTabSelect.Items.FindByValue( SelectedNodeTypeProp.EditLayout.TabId.ToString() ) );
+                if( SelectedNodeTypeProp != null && SelectedNodeTypeProp.FirstEditLayout.TabId != Int32.MinValue )
+                    AddPropTabSelect.SelectedIndex = AddPropTabSelect.Items.IndexOf( AddPropTabSelect.Items.FindByValue( SelectedNodeTypeProp.FirstEditLayout.TabId.ToString() ) );
             }
         }
     }

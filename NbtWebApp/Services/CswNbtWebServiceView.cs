@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject getViewGrid( bool All )
         {
             JObject ReturnVal = new JObject();
-            CswGridData gd = new CswGridData( _CswNbtResources );
+            CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
             gd.PkColumn = "nodeviewid";
 
             JArray JColumnNames = new JArray();
@@ -514,7 +514,44 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // getViewChildOptions()
 
+        public JObject getRuntimeViewFilters( CswNbtView View )
+        {
+            JObject ret = new JObject();
+            if( View != null )
+            {
+                // We need the property arbitrary id, so we're doing this by property, not by filter.  
+                // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
+                foreach( CswNbtViewProperty Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) )
+                {
+                    JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
+                    if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
+                    {
+                        ret.Add( PropertyJson );
+                    }
+                }
+            }
+            return ret;
+        } // getRuntimeViewFilters()
 
+        public JObject updateRuntimeViewFilters( CswNbtView View, JObject NewFiltersJson )
+        {
+            foreach( CswNbtViewPropertyFilter PropFilter in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) )
+            {
+                if( null != NewFiltersJson[PropFilter.ArbitraryId] )
+                {
+                    JObject NewFilter = (JObject) NewFiltersJson[PropFilter.ArbitraryId];
+                    PropFilter.FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) NewFilter["filter"].ToString();
+                    PropFilter.SubfieldName = (CswNbtSubField.SubFieldName) NewFilter["subfield"].ToString();
+                    PropFilter.Value = NewFilter["filtervalue"].ToString();
+                }
+            }
+            
+            View.SaveToCache( true, true );
+
+            JObject ret = new JObject();
+            ret["newviewid"] = View.SessionViewId.ToString();
+            return ret;
+        }
 
         #region Helper Functions
 

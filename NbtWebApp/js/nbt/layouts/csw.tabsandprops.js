@@ -100,7 +100,8 @@
                     NodeTypeId: internal.nodetypeid,
                     Date: internal.date,
                     filterToPropId: internal.filterToPropId,
-                    Multi: internal.Multi
+                    Multi: internal.Multi,
+                    ConfigMode: internal.Config
                 };
 
                 // For performance, don't bother getting tabs if we're in Add or Preview
@@ -248,7 +249,7 @@
                                 columns: 2
                             },
                             onSwap: function (e, onSwapData) {
-                                internal.onSwap(onSwapData);
+                                internal.onSwap(tabid, onSwapData);
                             },
                             showConfigButton: false, //o.Config,
                             showExpandRowButton: internal.Config,
@@ -261,7 +262,7 @@
                                 doUpdateSubProps(false);
                             }, // onConfigOff
                             onRemove: function (event, onRemoveData) {
-                                internal.onRemove(onRemoveData);
+                                internal.onRemove(tabid, onRemoveData);
                             } // onRemove
                         }); // Csw.literals.layoutTable()
 
@@ -381,7 +382,7 @@
 
             // getPropsImpl()
 
-            internal.onRemove = function (onRemoveData) {
+            internal.onRemove = function (tabid, onRemoveData) {
                 'use strict';
                 var propid = '';
                 var propDiv = internal.getPropertyCell(onRemoveData.cellSet).children('div');
@@ -392,7 +393,7 @@
                 Csw.ajax.post({
                     watchGlobal: internal.AjaxWatchGlobal,
                     urlMethod: internal.RemovePropUrlMethod,
-                    data: { PropId: propid, EditMode: internal.EditMode },
+                    data: { PropId: propid, EditMode: internal.EditMode, TabId: tabid },
                     success: function () {
                         internal.onPropertyRemove(propid);
                     }
@@ -402,19 +403,20 @@
 
             // onRemove()
 
-            internal.onSwap = function (onSwapData) {
-                internal.moveProp(internal.getPropertyCell(onSwapData.cellSet), onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
-                internal.moveProp(internal.getPropertyCell(onSwapData.swapcellset), onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
+            internal.onSwap = function (tabid, onSwapData) {
+                internal.moveProp(internal.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+                internal.moveProp(internal.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
             };
 
             // onSwap()
 
-            internal.moveProp = function (propDiv, newrow, newcolumn, propId) {
+            internal.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
                 'use strict';
                 if (propDiv.length() > 0) {
                     var propid = Csw.string(propDiv.propNonDom('propid'), propId);
                     var dataJson = {
                         PropId: propid,
+                        TabId: tabid,
                         NewRow: newrow,
                         NewColumn: newcolumn,
                         EditMode: internal.EditMode
@@ -485,7 +487,7 @@
                         labelCell.a({
                             cssclass: 'cswprop_helplink',
                             title: helpText,
-                            onClick: function() {
+                            onClick: function () {
                                 return false;
                             },
                             value: propName
@@ -593,7 +595,7 @@
                                 columns: 2
                             },
                             onSwap: function (e, onSwapData) {
-                                internal.onSwap(onSwapData);
+                                internal.onSwap(tabid, onSwapData);
                             },
                             showConfigButton: false,
                             showExpandRowButton: false,
