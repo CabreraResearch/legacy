@@ -751,33 +751,37 @@
             }
             var treecontent = viewJsonHtml(stepno, currentViewJson);
 
-            $tree.jstree({
-                "html_data":
+            try {
+                $tree.jstree({
+                    "html_data":
                         {
                             "data": treecontent.html
                         },
-                "ui": {
-                    "select_limit": 1 //,
+                    "ui": {
+                        "select_limit": 1 //,
                     //"initially_select": selectid,
-                },
-                "types": {
-                    "types": treecontent.types,
-                    "max_children": -2,
-                    "max_depth": -2
-                },
-                "plugins": ["themes", "html_data", "ui", "types", "crrm"]
-            }); // tree
+                    },
+                    "types": {
+                        "types": treecontent.types,
+                        "max_children": -2,
+                        "max_depth": -2
+                    },
+                    "plugins": ["themes", "html_data", "ui", "types", "crrm"]
+                }); // tree
 
-            if (stepno >= Csw.enums.wizardSteps_ViewEditor.relationships.step && stepno <= Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                bindDeleteBtns(stepno);
-            }
+                if (stepno >= Csw.enums.wizardSteps_ViewEditor.relationships.step && stepno <= Csw.enums.wizardSteps_ViewEditor.filters.step) {
+                    bindDeleteBtns(stepno);
+                }
 
-            if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                bindViewPropFilterBtns(stepno);
-            }
+                if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
+                    bindViewPropFilterBtns(stepno);
+                }
 
-            if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
-                makeTuningStep($tree);
+                if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
+                    makeTuningStep($tree);
+                }
+            } catch (e) {
+                Csw.error.showError(Csw.enums.errorType.error, 'Unable to render this tree element.', 'Exception: ' + e.name + ' occurred with ' + e.message);
             }
             return $tree;
         } // _makeViewTree()

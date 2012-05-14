@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( _Deficient )
                         {
-                            Message = "Inspection is out of compliance and requires further action.";
+                            Message = "Inspection is deficient and requires further action.";
                             this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
                         }
                         else
