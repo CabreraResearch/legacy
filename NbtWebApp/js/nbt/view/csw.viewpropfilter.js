@@ -34,6 +34,7 @@
                 propRow: 1,                  // starting row for rendering filter in table
                 firstColumn: 3,              // starting column for rendering filter in table
                 autoFocusInput: false,       // focus on filter value input
+                $clickOnEnter: null,           // control to assign a clickOnEnter event, for value input
                 //allowNullFilterValue: false,  // include null filters in JSON
 
 
@@ -208,6 +209,7 @@
                                 internal.selectedValue = internal.valueControl.val();
                             }
                         });
+                        internal.valueControl.$.clickOnEnter(internal.$clickOnEnter);
                     }
 
                     if (internal.filterModeControl.val() === 'Null' || internal.filterModeControl.val() === 'NotNull') {
@@ -233,6 +235,11 @@
 //                        nodetypeorobjectclassid = Csw.string(internal.nodetypeorobjectclassid);
 //                    }
 
+                // workaround for case 26287
+                internal.selectedSubFieldName = internal.subfieldControl.val();
+                internal.selectedFilterMode = internal.filterModeControl.val();
+                internal.selectedValue = internal.valueControl.val();
+
                 retJson = {
                     //nodetypeorobjectclassid: nodetypeorobjectclassid,
                     proptype: Csw.string(internal.proptype, internal.relatedidtype),
@@ -244,7 +251,6 @@
                     filter: internal.selectedFilterMode,
                     filtervalue: internal.selectedValue.trim()
                 };
-
                 return retJson;
             }; // getFilterJson()
 

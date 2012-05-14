@@ -84,7 +84,7 @@
 
                 if (internal.ReadOnly) {
                     if (internal.Multi) {
-                        internal.value = Csw.enums.multiEditDefaultValue;
+                        internal.text = Csw.enums.multiEditDefaultValue;
                     } else {
                         switch (internal.value) {
                             case 'true':
@@ -109,6 +109,7 @@
                         Csw.tryExec(internal.changeState);
                     }
                 });
+                external.val(internal.value);
 
             } ());
 
