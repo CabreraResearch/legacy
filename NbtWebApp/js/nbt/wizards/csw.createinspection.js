@@ -697,8 +697,8 @@
 
                 internal.toggleButton(internal.buttons.prev, false);
                 internal.toggleButton(internal.buttons.next, false);
-                internal.toggleButton(internal.buttons.finish, false);
                 internal.toggleButton(internal.buttons.cancel, false);
+                internal.toggleButton(internal.buttons.finish, false);                
 
                 if (false === Csw.isNullOrEmpty(internal.inspectionGrid)) {
                     designGrid = JSON.stringify(internal.inspectionGrid.getAllGridRows());

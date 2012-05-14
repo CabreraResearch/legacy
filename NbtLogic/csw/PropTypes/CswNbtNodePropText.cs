@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = Text.Replace( "\"", "&quot;" );
             ParentObject["length"] = Length.ToString();
         }
 

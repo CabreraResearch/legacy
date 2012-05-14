@@ -28,6 +28,8 @@
                             button.enable();
                             if (Csw.bool(data.success)) {
 
+                                Csw.clientDb.setItem(propAttr + '_message', data.message);
+
                                 if (false === Csw.isNullOrEmpty(data.message)) {
                                     // can't use messagediv, since doSave has remade the tab
                                     var $newmessagediv = $('#' + messagediv.getId());
@@ -115,8 +117,11 @@
 
             messagediv = table.cell(1, 2).div({
                 ID: Csw.makeId(o.ID, '', 'msg', '', false),
-                cssclass: 'buttonmessage'
+                cssclass: 'buttonmessage',
+                text: Csw.clientDb.getItem(o.propid+'_message')
             });
+
+            Csw.clientDb.removeItem(o.propid+'_message');
 
             if (o.Required) {
                 button.addClass('required');
