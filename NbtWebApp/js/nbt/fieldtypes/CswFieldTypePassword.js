@@ -13,8 +13,8 @@
             var propVals = o.propData.values,
                 isExpired = (false === o.Multi) ? Csw.bool(propVals.isexpired) : null,
                 isAdmin = (false === o.Multi) ? Csw.bool(propVals.isadmin) : null,
-                passwordcomplexity = (false === o.Multi) ? propVals.passwordcomplexity : null,
-                passwordlength = (false === o.Multi) ? propVals.passwordlength : null,
+                passwordcomplexity = Csw.number(propVals.passwordcomplexity, 0),
+                passwordlength = Csw.number(propVals.passwordlength, 0),
                 pwd1,
                 pwd2;
 
@@ -67,22 +67,22 @@
                     return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);
                 }, 'Passwords do not match!');
                 //Case 26096
-                if (passwordlength != null) {
+                if (passwordlength > 0) {
                     $.validator.addMethod("password_length", function (value) {
                         return (Csw.string(value).length >= passwordlength);
                     }, 'Password must be at least ' + passwordlength + ' characters long.');
-                    textBox1.addClass('textinput password_length');
+                    textBox1.addClass('password_length');
                 }
                 if (passwordcomplexity > 0) {
                     $.validator.addMethod("password_number", function (value) {
                         return (/.*[\d]/.test(value) && /.*[a-zA-Z]/.test(value));
                     }, 'Password must contain at least one letter and one number.');
-                    textBox1.addClass('textinput password_number');
+                    textBox1.addClass('password_number');
                     if (passwordcomplexity > 1) {
                         $.validator.addMethod("password_symbol", function (value) {
                             return (/.*[`~!@#$%\^*()_\-+=\[{\]};:|\.?,]/.test(value));
                         }, 'Password must contain a symbol.');
-                        textBox1.addClass('textinput password_symbol');
+                        textBox1.addClass('password_symbol');
                     }
                 }
             }
