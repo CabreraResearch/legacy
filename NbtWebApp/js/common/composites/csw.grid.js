@@ -275,6 +275,7 @@
             };
 
             external.changeGridOpts = function (opts, toggleColumns) {
+                var delBtn, editBtn;
                 $.extend(true, internal, opts);
                 internal.makeGrid(internal);
 
@@ -285,6 +286,21 @@
                         }
                     }
                 });
+                if (false === external.isMulti()) {
+                    if (false === internal.canEdit) {
+                        editBtn = external.gridPager.find('#edit_' + internal.gridTableId);
+                        if (Csw.contains(editBtn, 'remove')) {
+                            editBtn.remove();
+                        }
+                    }
+                    if (false === internal.canDelete) {
+                        delBtn = external.gridPager.find('#del_' + internal.gridTableId).remove();
+                        if (Csw.contains(delBtn, 'remove')) {
+                            delBtn.remove();
+                        }
+                    }
+                }
+
                 external.resizeWithParent();
             };
 
