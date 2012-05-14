@@ -46,10 +46,6 @@ namespace NbtWebAppServices.Core
                 SessionCookie = new HttpCookie( _SessionCookieName ) { HttpOnly = true };
                 _HttpResponse.Cookies.Add( SessionCookie );
             }
-            if( SessionsListEntry.IsMobile )
-            {
-                SessionCookie.Expires = DateTime.Now.AddMonths( 3 );
-            }
             SessionCookie.Value = SessionsListEntry.SessionId;
         }
 
