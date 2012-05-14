@@ -85,6 +85,42 @@
                 return Csw.makeId({ prefix: 'step_' + step, ID: internal.ID, suffix: suffix });
             };
 
+            internal.validationFailed = function () {
+                internal.toggleButton(internal.buttons.next, true);
+                internal.toggleButton(internal.buttons.prev, true, true);
+            };
+
+            internal.checkTargetIsClientSideUnique = function () {
+                var ret = false;
+                if (Csw.string(internal.selectedInspectionTarget).trim().toLowerCase() != Csw.string(internal.selectedInspectionDesign.name).trim().toLowerCase()) {
+                    ret = true;
+                } else {
+                    internal.validationFailed();
+                    var err = Csw.error.makeErrorObj(Csw.enums.errorType.error,
+                                                     'An Inspection Design and an Inspection Target cannot have the same name.',
+                                                     'Attempted to create Inspection Target ' + internal.selectedInspectionTarget + ' against Inspection Design ' + internal.selectedInspectionDesign.name);
+                    Csw.error.showError(err);
+                }
+                return ret;
+            };
+
+            internal.checkIsNodeTypeNameUnique = function (name, success, error) {
+                if (internal.checkTargetIsClientSideUnique()) {
+                    Csw.ajax.post({
+                        url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
+                        async: false,
+                        data: { 'NodeTypeName': name },
+                        success: function (data) {
+                            Csw.tryExec(success, data);
+                        },
+                        error: function (data) {
+                            internal.validationFailed();
+                            Csw.tryExec(error, data);
+                        }
+                    });
+                }
+            };
+
             //Step 1. Select an Inspection Target.
             internal.makeStepOne = (function () {
                 var stepOneComplete = false,
@@ -208,8 +244,8 @@
                 return function () {
                     function makeTempInspectionDesignName(name) {
                         var ret = Csw.string(name).trim();
-                        if (-1 === ret.indexOf('Inspection') && -1 === ret.indexOf('inspection')) {
-                            ret += ' Inspection';
+                        if (-1 === ret.indexOf('Checklist') && -1 === ret.indexOf('checklist')) {
+                            ret += ' Checklist';
                         }
                         return ret;
                     }
@@ -310,7 +346,8 @@
                                     Csw.publish(internal.createInspectionEvents.designNameChanged);
                                 }, 10);
                             });
-
+                            $.validator.addMethod(internal.newDesignName.getId(), internal.checkTargetIsClientSideUnique, 'An Inspection Design and an Inspection Target cannot have the same name.');
+                            
                         inspectionTable.cell(5, 1).br();
 
                         //2. Category Name
@@ -336,43 +373,7 @@
                     stepTwoComplete = true;
                 };
             } ());
-
-            internal.validationFailed = function () {
-                internal.toggleButton(internal.buttons.next, true);
-                internal.toggleButton(internal.buttons.prev, true, true);
-            };
-
-            internal.checkTargetIsClientSideUnique = function () {
-                var ret = false;
-                if (Csw.string(internal.selectedInspectionTarget).trim().toLowerCase() != Csw.string(internal.selectedInspectionDesign.name).trim().toLowerCase()) {
-                    ret = true;
-                } else {
-                    internal.validationFailed();
-                    var err = Csw.error.makeErrorObj(Csw.enums.errorType.error,
-                                                     'An Inspection Design and an Inspection Target cannot have the same name.',
-                                                     'Attempted to create Inspection Target ' + internal.selectedInspectionTarget + ' against Inspection Design ' + internal.selectedInspectionDesign.name);
-                    Csw.error.showError(err);
-                }
-                return ret;
-            };
-
-            internal.checkIsNodeTypeNameUnique = function (name, success, error) {
-                if (internal.checkTargetIsClientSideUnique()) {
-                    Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
-                        async: false,
-                        data: { 'NodeTypeName': name },
-                        success: function (data) {
-                            Csw.tryExec(success, data);
-                        },
-                        error: function (data) {
-                            internal.validationFailed();
-                            Csw.tryExec(error, data);
-                        }
-                    });
-                }
-            };
-
+            
             //File upload onSuccess event to prep Step 4
             internal.makeInspectionDesignGrid = function (jqGridOpts, onSuccess) {
                 Csw.tryExec(onSuccess);
@@ -518,9 +519,9 @@
                     }; //doStepTwo
 
                     if (internal.isNewInspectionDesign()) {
-                        //selectedInspectionDesign.name = $newDesignName.val();
-                        internal.checkIsNodeTypeNameUnique(internal.selectedInspectionDesign.name, doStepThree);
+                        doStepThree();
                     }
+
                     internal.toggleButton(internal.buttons.next, nextIsEnabled(), doNextClick());
                     internal.toggleButton(internal.buttons.prev, true, doPrevClick());
                 };
@@ -697,8 +698,8 @@
 
                 internal.toggleButton(internal.buttons.prev, false);
                 internal.toggleButton(internal.buttons.next, false);
-                internal.toggleButton(internal.buttons.finish, false);
                 internal.toggleButton(internal.buttons.cancel, false);
+                internal.toggleButton(internal.buttons.finish, false);                
 
                 if (false === Csw.isNullOrEmpty(internal.inspectionGrid)) {
                     designGrid = JSON.stringify(internal.inspectionGrid.getAllGridRows());
@@ -767,7 +768,6 @@
                 });
 
                 internal.makeStepOne();
-
             } ());
 
             return external;

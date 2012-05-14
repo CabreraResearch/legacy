@@ -230,8 +230,8 @@
                 } else {
                     if (Csw.isNullOrEmpty(defaultSubfieldVal)) {
                         placeholder = propertyName;
-                        if (placeholder !== subfieldsList.find(':selected').text()) {
-                            placeholder += "'s " + subfieldsList.find(':selected').text();
+                        if (placeholder !== subfieldsList.selectedText()) {
+                            placeholder += "'s " + subfieldsList.selectedText();
                         }
                     }
                     filtInput = propFilterValueCell.input({
@@ -350,13 +350,13 @@
                 fieldtype = Csw.string(o.filtJson.fieldtype, o.fieldtype),
                 filterValue, $subField, subFieldText, $filter, filterText, nodetypeorobjectclassid;
 
-            if($filtInput.length > 1) { 
-                $filtInput = $filtInput.filter('#' + o.filtarbitraryid) 
+            if ($filtInput.length > 1) {
+                $filtInput = $filtInput.filter('#' + o.filtarbitraryid);
             }
 
             switch (fieldtype) {
                 case Csw.enums.subFieldsMap.Logical.name:
-                    filterValue = $filtInput.val();
+                    filterValue = Csw.string($filtInput.val, $filtInput.attr('value'));
                     break;
                 case Csw.enums.subFieldsMap.List.name:
                     filterValue = $filtInput.find(':selected').val();
@@ -368,14 +368,14 @@
 
             if (false === Csw.isNullOrEmpty(filterValue) || o.allowNullFilterValue) {
                 $subField = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.subfield_select.name);
-                if($subField.length > 1) { 
-                    $subField = $subField.filter('#' + o.filtarbitraryid) 
+                if ($subField.length > 1) {
+                    $subField = $subField.filter('#' + o.filtarbitraryid)
                 }
                 subFieldText = $subField.find(':selected').text();
 
                 $filter = $thisProp.find('.' + Csw.enums.cssClasses_ViewBuilder.filter_select.name);
-                if($filter.length > 1) { 
-                    $filter = $filter.filter('#' + o.filtarbitraryid) 
+                if ($filter.length > 1) {
+                    $filter = $filter.filter('#' + o.filtarbitraryid)
                 }
                 filterText = $filter.find(':selected').val();
                 nodetypeorobjectclassid = (o.filtJson.nodetypepropid === Csw.Int32MinVal) ? o.filtJson.objectclasspropid : o.filtJson.nodetypepropid;

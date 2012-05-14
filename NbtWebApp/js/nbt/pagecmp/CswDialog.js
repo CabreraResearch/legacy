@@ -11,7 +11,9 @@
 
         ExpireDialog: function (options) {
             var o = {
-                onYes: null
+                onYes: null,
+                expirationInterval: 300000,
+                onExpire: Csw.clientSession.logout
             };
 
             if (options) {
@@ -20,14 +22,31 @@
 
             var div = Csw.literals.div();
 
-            div.p({ text: 'Your session is about to time out.  Would you like to continue working?' });
+            var tbl = div.table();
 
-            div.button({
+            tbl.cell(1, 1).span({ text: 'Your session is about to time out.' });
+            tbl.cell(2, 1).span({ text: 'Would you like to continue working?' });
+
+            var btnTbl = tbl.cell(2, 1).table();
+
+            window.setTimeout(o.onExpire, Csw.number(o.expirationInterval, 300000));
+
+            btnTbl.cell(3, 1).button({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
+                bindOnEnter: div,
                 onClick: function () {
                     div.$.dialog('close');
                     Csw.tryExec(o.onYes);
+                }
+            });
+
+            btnTbl.cell(3, 2).button({
+                ID: 'cancel_btn',
+                enabledText: 'No',
+                onClick: function () {
+                    div.$.dialog('close');
+                    Csw.clientSession.logout();
                 }
             });
 
@@ -472,9 +491,9 @@
             // Prevent copy if quota is reached
             var div = Csw.literals.div({ ID: 'CopyNodeDialogDiv' });
             var tbl = div.table({ ID: 'CopyNodeDialogDiv_table' });
-            var cell11 = tbl.cell(1,1).propDom('colspan', '2');
-            var cell21 = tbl.cell(2,1);
-            var cell22 = tbl.cell(2,2);
+            var cell11 = tbl.cell(1, 1).propDom('colspan', '2');
+            var cell21 = tbl.cell(2, 1);
+            var cell22 = tbl.cell(2, 2);
 
             Csw.ajax.post({
                 urlMethod: 'checkQuota',
@@ -536,12 +555,13 @@
             }
 
             var div = Csw.literals.div();
-            div.span({ text: 'Are you sure you want to delete:&nbsp;' });
+            div.span({ text: 'Are you sure you want to delete' });
 
 
             if (o.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                div.span({ text: '&nbsp;the following?' }).br();
                 var nodechecks = null;
                 if (false == Csw.isNullOrEmpty(o.nodeTreeCheck)) {
                     nodechecks = o.nodeTreeCheck.checkedNodes();
@@ -552,16 +572,16 @@
                     Csw.each(nodechecks, function (thisObj) {
                         o.nodeids[n] = thisObj.nodeid;
                         o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey;
-                        div.br().span({ text: thisObj.nodename }).css({ 'padding-left': '10px' });
+                        div.span({ text: thisObj.nodename }).css({ 'padding-left': '10px' }).br();
                         n += 1;
                     });
                 } else {
                     for (var i = 0; i < o.nodenames.length; i++) {
-                        div.br().span({ text: o.nodenames[i] }).css({ 'padding-left': '10px' });
+                        div.span({ text: o.nodenames[i] }).css({ 'padding-left': '10px' }).br();
                     }
                 }
             } else {
-                div.span({ text: o.nodenames + '?' });
+                div.span({ text: ':&nbsp;' + o.nodenames + '?' });
             }
             div.br().br();
 
