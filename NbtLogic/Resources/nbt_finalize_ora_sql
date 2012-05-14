@@ -71,7 +71,7 @@ commit;
 create or replace view vwnpv as
 select j.nodeid nid,to_char(j.gestalt) gestalt,
   field1_fk,field1_date,field2_date,field1_numeric,field2_numeric,
-  field1,field2,field3,field4,to_char(clobdata) clobdata,
+  field1,field2,field3,field4,field5,to_char(clobdata) clobdata,
   nodetypepropid ntpid from jct_nodes_props j;
 /
 commit;
