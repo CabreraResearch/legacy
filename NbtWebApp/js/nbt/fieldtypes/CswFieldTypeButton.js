@@ -28,8 +28,6 @@
                             button.enable();
                             if (Csw.bool(data.success)) {
 
-                                Csw.clientDb.setItem(propAttr + '_message', data.message);
-
                                 if (false === Csw.isNullOrEmpty(data.message)) {
                                     // can't use messagediv, since doSave has remade the tab
                                     var $newmessagediv = $('#' + messagediv.getId());
@@ -52,8 +50,17 @@
                                         }
                                         break;
 
-                                    case Csw.enums.nbtButtonAction.refresh:
-                                        Csw.tryExec(o.onReload);
+                                    case Csw.enums.nbtButtonAction.refresh://cases 26201, 26107 
+                                        Csw.tryExec(o.onReload(
+                                            (function (messagedivid) { 
+                                                return function () {
+                                                    if (false === Csw.isNullOrEmpty(data.message)) {
+                                                        var $newmessagediv = $('#' + messagedivid);
+                                                        $newmessagediv.text(data.message);
+                                                    }
+                                                }
+                                            })(messagediv.getId())
+                                        ));
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:
                                         Csw.openPopup(data.actiondata, 600, 800);
@@ -117,11 +124,8 @@
 
             messagediv = table.cell(1, 2).div({
                 ID: Csw.makeId(o.ID, '', 'msg', '', false),
-                cssclass: 'buttonmessage',
-                text: Csw.clientDb.getItem(o.propid+'_message')
+                cssclass: 'buttonmessage'
             });
-
-            Csw.clientDb.removeItem(o.propid+'_message');
 
             if (o.Required) {
                 button.addClass('required');
