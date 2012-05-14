@@ -3,7 +3,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -18,6 +17,9 @@ namespace ChemSW.Nbt.ObjClasses
         public static string DoneOnPropertyName { get { return "Done On"; } }
         public static string IsFuturePropertyName { get { return "IsFuture"; } }
         public static string GeneratorPropertyName { get { return "Generator"; } }
+        public static string PartsPropertyName { get { return "Parts"; } }
+
+        public static string PartsXValueName { get { return "Service"; } }
 
         //ICswNbtPropertySetRuleGeneratorTarget
         public string GeneratorTargetGeneratedDatePropertyName { get { return DueDatePropertyName; } }
@@ -99,6 +101,34 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            if( Owner.RelatedNodeId != null )
+            {
+                CswNbtNode EquipmentOrAssemblyNode = _CswNbtResources.Nodes[Owner.RelatedNodeId];
+                if( EquipmentOrAssemblyNode != null )
+                {
+                    CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
+                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
+                    {
+                        CswNbtObjClassEquipment EquipmentNodeAsEquipment = CswNbtNodeCaster.AsEquipment( EquipmentOrAssemblyNode );
+                        foreach( string YValue in EquipmentNodeAsEquipment.Parts.YValues )
+                        {
+                            if( EquipmentNodeAsEquipment.Parts.CheckValue( CswNbtObjClassEquipment.PartsXValueName, YValue ) )
+                                NewYValues.Add( YValue );
+                        }
+                    }
+                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
+                    {
+                        CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = CswNbtNodeCaster.AsEquipmentAssembly( EquipmentOrAssemblyNode );
+                        foreach( string YValue in AssemblyNodeAsAssembly.AssemblyParts.YValues )
+                        {
+                            if( AssemblyNodeAsAssembly.AssemblyParts.CheckValue( CswNbtObjClassEquipmentAssembly.PartsXValueName, YValue ) )
+                                NewYValues.Add( YValue );
+                        }
+                    }
+                    this.Parts.YValues = NewYValues;
+                } // if( EquipmentOrAssemblyNode != null )
+            } // if( Owner.RelatedNodeId != null )
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -194,6 +224,14 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName].AsRelationship );
+            }
+        }
+
+        public CswNbtNodePropLogicalSet Parts
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PartsPropertyName].AsLogicalSet );
             }
         }
         #endregion

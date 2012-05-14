@@ -265,7 +265,7 @@
                             .nodeTypeSelect({
                                 ID: Csw.makeSafeId('nodeTypeSelect'),
                                 objectClassName: 'InspectionDesignClass',
-                                addNewOption: true
+                                blankOptionText: '[Create New]'
                             })
                             .change(function () {
                                 var selected = internal.inspectionDesignSelect.find(':selected');

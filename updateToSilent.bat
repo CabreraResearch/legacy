@@ -27,11 +27,11 @@ echo "Pull from Main Completed."
 
 echo "Updating working directories to tag..."
 
-hg update -R /kiln/Common/CswCommon -r "%TagName%"
-hg update -R /kiln/Common/CswConfigUI -r "%TagName%"
-hg update -R /kiln/Common/CswWebControls -r "%TagName%"
-hg update -R /kiln/Common/CswLogService -r "%TagName%"
-hg update -R /kiln/nbt/nbt -r "%TagName%"
+hg update -R /kiln/Common/CswCommon -r "%TagName%" -C
+hg update -R /kiln/Common/CswConfigUI -r "%TagName%" -C
+hg update -R /kiln/Common/CswWebControls -r "%TagName%" -C
+hg update -R /kiln/Common/CswLogService -r "%TagName%" -C
+hg update -R /kiln/nbt/nbt -r "%TagName%" -C
 
 echo "Update completed."
 
@@ -39,7 +39,7 @@ echo "Update completed."
 
 echo "Compiling new code..."
 
-msbuild C:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release
+msbuild d:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release
 
 echo "Compile Finished."
 
@@ -48,7 +48,7 @@ echo "Compile Finished."
 
 echo "Starting Schema updater..."
 
-C:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
+d:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
 echo "Schema update completed."
 

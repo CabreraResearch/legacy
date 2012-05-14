@@ -20,10 +20,10 @@
                 itemJson: '',
                 onLogout: null, // function () { },
                 onAlterNode: null, // function (nodeid, nodekey) { },
-                onSearch: {
-                    onViewSearch: null, // function () { },
-                    onGenericSearch: null // function () { }
-                },
+//                onSearch: {
+//                    onViewSearch: null, // function () { },
+//                    onGenericSearch: null // function () { }
+//                },
                 onMultiEdit: null, //function () { },
                 onEditView: null, //function (viewid) { },
                 onSaveView: null, //function (newviewid) { },

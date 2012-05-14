@@ -16,7 +16,8 @@
                 onSelect: null,
                 onSuccess: null,
                 width: '200px',
-                addNewOption: false,
+                blankOptionText: '',
+                filterToPermission: '',
                 labelText: null,
                 excludeNodeTypeIds: '',
                 relatedToNodeTypeId: '',
@@ -42,8 +43,8 @@
                     Csw.tryExec(internal.onSelect, external.val(), internal.nodetypecount);
                 });
 
-                if (Csw.bool(internal.addNewOption)) {
-                    external.option({ value: '[Create New]' });
+                if (false === Csw.isNullOrEmpty(internal.blankOptionText)) {
+                    external.option({ value: internal.blankOptionText });
                 }
 
                 Csw.ajax.post({
@@ -51,9 +52,10 @@
                     data: {
                         ObjectClassName: Csw.string(internal.objectClassName),
                         ObjectClassId: Csw.string(internal.objectClassId),
-                        ExcludeNodeTypeIds: internal.excludeNodeTypeIds, 
+                        ExcludeNodeTypeIds: internal.excludeNodeTypeIds,
                         RelatedToNodeTypeId: internal.relatedToNodeTypeId,
-                        RelatedObjectClassPropName: internal.relatedObjectClassPropName
+                        RelatedObjectClassPropName: internal.relatedObjectClassPropName,
+                        FilterToPermission: internal.filterToPermission
                     },
                     success: function (data) {
                         var ret = data;

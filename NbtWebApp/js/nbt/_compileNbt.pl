@@ -1,7 +1,10 @@
 use strict;
 
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+my $datestr = ($year + 1900).".". ($mon + 1) .".$mday";
+
 my $dir = $ARGV[0];
-my $destfile = "$dir\\CswNbt.min.js";
+my $destfile = "$dir\\CswNbt.$datestr.min.js";
 
 unlink($destfile);
 
@@ -41,4 +44,4 @@ sub extract
     return $filelist;
 }
 
-printf("Finished compiling CswNbt.min.js javascript\n");
+printf("Finished compiling CswNbt.$datestr.min.js javascript\n");

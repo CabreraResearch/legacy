@@ -67,9 +67,12 @@
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26085.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26127.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25981.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26112.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26117.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26094B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26094.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25702.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25702B.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25994.cs" />
@@ -106,7 +109,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialComponent.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassVendor.cs" />
     <Compile Include="csw\Actions\CswNbtActInspectionDesignWiz.cs" />
-    <Compile Include="csw\ImportExport\CswGridData.cs" />
+    <Compile Include="csw\Actions\CswNbtActGrid.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_02.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunAfterEveryExecutionOfUpdater_01.cs" />

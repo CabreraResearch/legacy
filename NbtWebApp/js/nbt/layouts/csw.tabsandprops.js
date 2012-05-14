@@ -487,7 +487,7 @@
                         labelCell.a({
                             cssclass: 'cswprop_helplink',
                             title: helpText,
-                            onClick: function() {
+                            onClick: function () {
                                 return false;
                             },
                             value: propName

@@ -60,6 +60,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="MainCswIncludes.html" />
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
     <None Include="css\cssVariables.pm" />
@@ -84,6 +85,7 @@
     <Content Include="js\nbt\actions\csw.quotas.js" />
     <Content Include="js\nbt\controls\csw.nodeselect.js" />
     <Content Include="js\nbt\layouts\csw.tabsandprops.js" />
+    <Content Include="js\nbt\view\csw.viewpropfilter.js" />
     <Content Include="js\nbt\view\csw.viewfilters.js" />
     <Content Include="js\nbt\wizards\csw.creatematerial.js" />
     <Content Include="js\nbt\wizards\csw.futurescheduling.js" />
@@ -228,6 +230,7 @@
     <Content Include="NodeReport.html" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
     <Content Include="_DevIncludes.html" />
+    <None Include="js\_updateIncludes.pl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="css\_compressor.pl" />
@@ -247,10 +250,12 @@
   </ProjectExtensions>
   <PropertyGroup>
     <PostBuildEvent>call $(ProjectDir)js\common\_compileCommon.pl $(ProjectDir)
-call $(ProjectDir)js\nbt\_compileNbt.pl $(ProjectDir)</PostBuildEvent>
+call $(ProjectDir)js\nbt\_compileNbt.pl $(ProjectDir)
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>echo "NbtWebJavaScript" build started
+call $(ProjectDir)js\_updateIncludes.pl $(ProjectDir)
 call $(ProjectDir)css\_compressor.pl $(ProjectDir)
 call $(ProjectDir)js\common\_concatCswVsDoc.pl $(ProjectDir)
 call $(ProjectDir)js\nbt\_concatNbtVsDoc.pl $(ProjectDir)</PreBuildEvent>

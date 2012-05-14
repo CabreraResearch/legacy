@@ -104,14 +104,15 @@ namespace ChemSW.Nbt.WebServices
 
         private void _deInitResources( CswNbtResources OtherResources = null )
         {
-            _CswSessionResources.endSession();
-            if( null != _CswNbtResources )
+            if( _CswSessionResources != null )
             {
+                _CswSessionResources.endSession();
                 _CswNbtResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
 
-                _CswNbtResources.finalize();
-                _CswNbtResources.release();
+                _CswSessionResources.finalize();
+                _CswSessionResources.release();
             }
+
             if( null != OtherResources )
             {
                 OtherResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
@@ -239,6 +240,12 @@ namespace ChemSW.Nbt.WebServices
 
         private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
         {
+            // ******************************************
+            // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
+            // since it occurs AFTER the call to _deInitResources(), and thus will leak Oracle connections 
+            // (see case 26273)
+            // ******************************************
+
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
@@ -247,8 +254,9 @@ namespace ChemSW.Nbt.WebServices
                     if( _CswSessionResources != null &&
                          _CswSessionResources.CswSessionManager != null )
                     {
-                        CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-                        JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                        //CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+                        //JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                        JObj["timeout"] = CswDateTime.ToClientAsJavascriptString( _CswSessionResources.CswSessionManager.TimeoutDate );
                     }
                     JObj["timer"] = new JObject();
                     JObj["timer"]["serverinit"] = Math.Round( ServerInitTime, 3 );
@@ -284,6 +292,10 @@ namespace ChemSW.Nbt.WebServices
             Ret["error"]["type"] = Type.ToString();
             Ret["error"]["message"] = Message;
             Ret["error"]["detail"] = Detail;
+
+            _deInitResources(); //<-- An hackadelic solution than which no greater hackadelic solution can be conceived for case 26204
+
+
             return Ret;
 
         }
@@ -2016,11 +2028,19 @@ namespace ChemSW.Nbt.WebServices
 
         } // getTabs()
 
+
+
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode )
         {
 
+            // **** HERE'S WHAT YOU UNCOMMENT IN ORDER TO RUN THE CswNbtServiceDriver DISPENSATION OF WEB METHODS AS PER CASE 26213
+            //CswNbtServiceDriver CswNbtServiceDriver = new CswNbtServiceDriver( Context, SetupMode.NbtWeb, new CswNbtServiceLogicGetProps( EditMode, NodeId, SafeNodeKey, TabId, NodeTypeId, Date, filterToPropId, Multi, ConfigMode ) );
+            //return ( CswNbtServiceDriver.run() );
+
+
+            //EVERYTHING FROM HERE TO THE END OF THE METHOD GETS COMMENTED OUT IF YOU USE THE CswNbtServiceDriver DISPENSATION
             CswTimer GetPropsTimer = new CswTimer();
 
             JObject ReturnVal = new JObject();
@@ -2052,7 +2072,6 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.logTimerResult( "wsNBT.getProps()", GetPropsTimer.ElapsedDurationInSecondsAsString );
 
             return ReturnVal.ToString();
-
         } // getProps()
 
         [WebMethod( EnableSession = false )]
@@ -2262,8 +2281,9 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName )
+        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string FilterToPermission )
         {
+            //sometimes we only want nodetypes for which the user has Create permissions - how do we determine this?
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
@@ -2289,7 +2309,7 @@ namespace ChemSW.Nbt.WebServices
                         ObjectClass = _CswNbtResources.MetaData.getObjectClass( OCId );
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName );
+                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, FilterToPermission );
                 }
 
                 _deInitResources();
@@ -4512,7 +4532,7 @@ namespace ChemSW.Nbt.WebServices
 
                     ReturnVal["success"] = "true";
 
-                    CswGridData gd = new CswGridData( _CswNbtResources );
+                    CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
                     gd.PkColumn = "RowNumber";
 
                     ReturnVal["jqGridOpt"] = gd.DataTableToJSON( ExcelDataTable, true );
