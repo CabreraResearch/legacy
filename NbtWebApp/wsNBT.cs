@@ -1077,7 +1077,7 @@ namespace ChemSW.Nbt.WebServices
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ReturnVal["rows"] = ws.getThinGridRows( RowLimit );
                 }
 
@@ -1111,7 +1111,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView View = _getView( ViewId );
                 if( null != View )
                 {
-                    CswNbtWebServiceGrid ws = new CswNbtWebServiceGrid( _CswNbtResources, View );
+                    CswNbtWebServiceGrid ws = new CswNbtWebServiceGrid( _CswNbtResources, View, true );
                     ws.ExportCsv( Context );
                 }
 
@@ -1147,7 +1147,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ReturnVal = ws.runGrid( IsQuickLaunch );
                 }
 
@@ -1180,8 +1180,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
-                    ReturnVal = g.getGridRowsByPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ), CswConvert.ToBoolean( IsReport ) );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( IsReport ) );
+                    ReturnVal = g.getGridRowsByPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ) );
                 }
 
                 _deInitResources();
@@ -1220,8 +1220,8 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, RealNodeKey );
-                    ReturnVal = g.getAllGridRows( CswConvert.ToBoolean( IsReport ) );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( IsReport ) );
+                    ReturnVal = g.getAllGridRows();
                 }
 
                 _deInitResources();

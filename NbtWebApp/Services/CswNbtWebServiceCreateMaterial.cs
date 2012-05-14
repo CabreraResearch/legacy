@@ -302,7 +302,7 @@ namespace ChemSW.Nbt.WebServices
             SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName ) );
             SizesView.AddViewProperty( SizeRel, SizeOc.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName ) );
 
-            CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( CswNbtResources, SizesView );
+            CswNbtWebServiceGrid wsG = new CswNbtWebServiceGrid( CswNbtResources, SizesView, false );
             Ret["rows"] = wsG.getThinGridRows( Int32.MinValue, true );
 
             return Ret;
