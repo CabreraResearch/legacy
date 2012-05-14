@@ -10,9 +10,13 @@
 
             var propDiv = o.propDiv;
             propDiv.empty();
-            var propVals = o.propData.values;
-            var isExpired = (false === o.Multi) ? Csw.bool(propVals.isexpired) : null;
-            var isAdmin = (false === o.Multi) ? Csw.bool(propVals.isadmin) : null;
+            var propVals = o.propData.values,
+                isExpired = (false === o.Multi) ? Csw.bool(propVals.isexpired) : null,
+                isAdmin = (false === o.Multi) ? Csw.bool(propVals.isadmin) : null,
+                passwordcomplexity = (false === o.Multi) ? propVals.passwordcomplexity : null,
+                passwordlength = (false === o.Multi) ? propVals.passwordlength : null,
+                pwd1,
+                pwd2;
 
             if (o.ReadOnly) {
                 // show nothing
@@ -36,7 +40,7 @@
                     value: (false === o.Multi) ? '' : Csw.enums.multiEditDefaultValue,
                     onChange: o.onChange
                 });
-                
+
                 /* Text Box 2 */
                 cell22.input({ ID: o.ID + '_pwd2',
                     type: Csw.enums.inputTypes.password,
@@ -58,10 +62,29 @@
                 }
 
                 $.validator.addMethod("password2", function () {
-                    var pwd1 = $('#' + o.ID + '_pwd1').val();
-                    var pwd2 = $('#' + o.ID + '_pwd2').val();
+                    pwd1 = $('#' + o.ID + '_pwd1').val();
+                    pwd2 = $('#' + o.ID + '_pwd2').val();
                     return ((pwd1 === '' && pwd2 === '') || pwd1 === pwd2);
                 }, 'Passwords do not match!');
+                //Case 26096
+                if (passwordlength != null) {
+                    $.validator.addMethod("password_length", function (value) {
+                        return (Csw.string(value).length >= passwordlength);
+                    }, 'Password must be at least ' + passwordlength + ' characters long.');
+                    textBox1.addClass('textinput password_length');
+                }
+                if (passwordcomplexity > 0) {
+                    $.validator.addMethod("password_number", function (value) {
+                        return (/.*[\d]/.test(value) && /.*[a-zA-Z]/.test(value));
+                    }, 'Password must contain at least one letter and one number.');
+                    textBox1.addClass('textinput password_number');
+                    if (passwordcomplexity > 1) {
+                        $.validator.addMethod("password_symbol", function (value) {
+                            return (/.*[`~!@#$%\^*()_\-+=\[{\]};:|\.?,]/.test(value));
+                        }, 'Password must contain a symbol.');
+                        textBox1.addClass('textinput password_symbol');
+                    }
+                }
             }
         },
         save: function (o) { //$propdiv, $xml
