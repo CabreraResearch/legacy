@@ -39,7 +39,7 @@ echo "Update completed."
 
 echo "Compiling new code..."
 
-msbuild C:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release
+msbuild d:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release
 
 echo "Compile Finished."
 
@@ -48,7 +48,7 @@ echo "Compile Finished."
 
 echo "Starting Schema updater..."
 
-C:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
+d:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all
 
 echo "Schema update completed."
 

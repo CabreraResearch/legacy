@@ -104,14 +104,15 @@ namespace ChemSW.Nbt.WebServices
 
         private void _deInitResources( CswNbtResources OtherResources = null )
         {
-            _CswSessionResources.endSession();
-            if( null != _CswNbtResources )
+            if( _CswSessionResources != null )
             {
+                _CswSessionResources.endSession();
                 _CswNbtResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
 
-                _CswNbtResources.finalize();
-                _CswNbtResources.release();
+                _CswSessionResources.finalize();
+                _CswSessionResources.release();
             }
+
             if( null != OtherResources )
             {
                 OtherResources.logMessage( "WebServices: Session Ended (_deInitResources called)" );
@@ -239,6 +240,12 @@ namespace ChemSW.Nbt.WebServices
 
         private void _jAddAuthenticationStatus( JObject JObj, AuthenticationStatus AuthenticationStatusIn, bool ForMobile = false )
         {
+            // ******************************************
+            // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
+            // since it occurs AFTER the call to _deInitResources(), and thus will leak Oracle connections 
+            // (see case 26273)
+            // ******************************************
+
             if( JObj != null )
             {
                 JObj["AuthenticationStatus"] = AuthenticationStatusIn.ToString();
@@ -247,8 +254,9 @@ namespace ChemSW.Nbt.WebServices
                     if( _CswSessionResources != null &&
                          _CswSessionResources.CswSessionManager != null )
                     {
-                        CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
-                        JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                        //CswDateTime CswTimeout = new CswDateTime( _CswNbtResources, _CswSessionResources.CswSessionManager.TimeoutDate );
+                        //JObj["timeout"] = CswTimeout.ToClientAsJavascriptString();
+                        JObj["timeout"] = CswDateTime.ToClientAsJavascriptString( _CswSessionResources.CswSessionManager.TimeoutDate );
                     }
                     JObj["timer"] = new JObject();
                     JObj["timer"]["serverinit"] = Math.Round( ServerInitTime, 3 );
