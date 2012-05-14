@@ -540,9 +540,12 @@ namespace ChemSW.Nbt.WebServices
                 if( null != NewFiltersJson[PropFilter.ArbitraryId] )
                 {
                     JObject NewFilter = (JObject) NewFiltersJson[PropFilter.ArbitraryId];
-                    PropFilter.FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) NewFilter["filter"].ToString();
-                    PropFilter.SubfieldName = (CswNbtSubField.SubFieldName) NewFilter["subfield"].ToString();
-                    PropFilter.Value = NewFilter["filtervalue"].ToString();
+                    if( NewFilter.Children().Count() > 0 )
+                    {
+                        PropFilter.FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) NewFilter["filter"].ToString();
+                        PropFilter.SubfieldName = (CswNbtSubField.SubFieldName) NewFilter["subfield"].ToString();
+                        PropFilter.Value = NewFilter["filtervalue"].ToString();
+                    }
                 }
             }
             
