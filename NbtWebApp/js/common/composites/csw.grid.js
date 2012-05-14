@@ -15,10 +15,11 @@
                 canDelete: false,
                 pagermode: 'default',
                 ID: '',
+                resizeWithParent: false,
                 gridOpts: {
                     autoencode: true,
-                    //autowidth: true,
-                    altRows: false,
+                    autowidth: true,
+                    altRows: true,
                     caption: '',
                     datatype: 'local',
                     emptyrecords: 'No Results',
@@ -30,7 +31,7 @@
                     shrinkToFit: true,
                     sortname: '',
                     sortorder: 'asc',
-                    width: '600px',
+                    //width: '600px',
                     rowNum: 10,
                     rowList: [10, 25, 50],        /* page size dropdown */
                     pgbuttons: true,     /* page control like next, back button */
@@ -62,13 +63,13 @@
                 optNavEdit: {
                     edit: true,
                     edittext: "",
-                    edittitle: "Edit row",
+                    edittitle: "Edit",
                     editfunc: null
                 },
                 optNavDelete: {
                     del: true,
                     deltext: "",
-                    deltitle: "Delete row",
+                    deltitle: "Delete",
                     delfunc: null
                 },
                 optNav: {
@@ -83,16 +84,16 @@
                     searchtext: "",
                     searchtitle: "Find records",
 
-                    //refresh
-                    refreshtext: "",
-                    refreshtitle: "Reload Grid",
+
+                    refresh: false,
+
                     alertcap: "Warning",
                     alerttext: "Please, select row",
 
                     //view
-                    view: true,
+                    view: false,
                     viewtext: "",
-                    viewtitle: "View row"
+                    viewtitle: "View"
                     //viewfunc: none--use jqGrid built-in function for read-only
                 }
             };
@@ -204,7 +205,7 @@
                 return ret;
             };
 
-            internal.getSelectedRowId = function () {
+            external.getSelectedRowId = function () {
                 var rowid = external.gridTable.$.jqGrid('getGridParam', 'selrow');
                 return rowid;
             };
@@ -232,7 +233,7 @@
                 ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
                 ///<returns type="Void"></returns>
                 if (Csw.isNullOrEmpty(rowid)) {
-                    rowid = internal.getSelectedRowId();
+                    rowid = external.getSelectedRowId();
                 }
                 var rowHeight = external.getGridRowHeight() || 23; // Default height
                 var index = external.gridTable.$.getInd(rowid);
@@ -260,7 +261,7 @@
                 ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
                 ///<returns type="String">Value of the cell.</returns>
                 if (Csw.isNullOrEmpty(rowid)) {
-                    rowid = internal.getSelectedRowId();
+                    rowid = external.getSelectedRowId();
                 }
                 var ret = internal.getCell(rowid, columnname);
                 return ret;
@@ -273,9 +274,18 @@
                 }
             };
 
-            external.changeGridOpts = function (opts) {
+            external.changeGridOpts = function (opts, toggleColumns) {
                 $.extend(true, internal, opts);
                 internal.makeGrid(internal);
+
+                Csw.each(toggleColumns, function (val) {
+                    if (Csw.contains(internal.gridOpts.colNames, val)) {
+                        if (external.isMulti()) {
+                            external.gridTable.$.jqGrid('hideCol', val);
+                        }
+                    }
+                });
+                external.resizeWithParent();
             };
 
             external.opGridRows = function (opts, rowid, onSelect, onEmpty) {
@@ -302,7 +312,7 @@
                 } else if (false === Csw.isNullOrEmpty(rowid)) {
                     rowids.push(rowid);
                 } else {
-                    rowids.push(internal.getSelectedRowId());
+                    rowids.push(external.getSelectedRowId());
                 }
 
                 if (rowids.length > 0) {
@@ -437,6 +447,10 @@
                 return internal.multiEdit;
             };
 
+            external.resizeWithParent = function () {
+                external.gridTable.$.jqGrid('setGridWidth', cswParent.$.width() - 100);
+            };
+
             /* "Constuctor" */
             (function () {
                 $.extend(true, internal, options);
@@ -471,7 +485,9 @@
                     ID: internal.ID
                 });
                 //$.extend(external, Csw.literals.div(internal));
-
+                if (internal.resizeWithParent) {
+                    $(window).bind('resize', external.resizeWithParent);
+                }
                 internal.makeGrid();
             } ());
 
