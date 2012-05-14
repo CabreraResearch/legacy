@@ -48,6 +48,7 @@
                                         propRow: row,
                                         firstColumn: 1,
                                         showPropertyName: true,
+                                        showSubfield: false,
                                         selectedSubFieldName: filtJson.subfieldname,
                                         selectedFilterMode: filtJson.filtermode,
                                         selectedValue: filtJson.value,
