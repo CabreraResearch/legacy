@@ -22,7 +22,7 @@
 
                 if (options) $.extend(internal, options);
 
-                var toprightcell, filterbtn;
+                var filterbtn;
                 var div = internal.parent.div({ ID: internal.ID })
                             .addClass('viewfilters')
                             .hide();
@@ -38,7 +38,6 @@
                     data: { ViewId: internal.viewid },
                     success: function (data) {
                         
-                        //var toprightcell = tbl.cell(1,5);
                         outercell12.css({ width: '100%', textAlign: 'right' });
 
                         var filterbtn = outercell12.imageButton({

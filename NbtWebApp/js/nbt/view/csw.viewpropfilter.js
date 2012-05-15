@@ -83,7 +83,8 @@
                 internal.propNameCell.empty();
                 internal.propNameControl = internal.propNameCell.span({ 
                     ID: internal.makePropFilterId('propname'),
-                    text: internal.propname
+                    text: internal.propname,
+                    nobr: true
                 });
             }; // makePropNameControl()
 
@@ -168,7 +169,7 @@
                     });
                 } else {
                     if (fieldtype === Csw.enums.subFieldsMap.List.name) {
-                        filtValAry.push({ value: '', display: '' });
+                        valueOptions.push({ value: '', display: '' });
                         Csw.each(valueOptionDefs, function(optionValue, optionName) {
                             valueOptions.push({ 
                                 value: Csw.string(optionValue).trim(), 

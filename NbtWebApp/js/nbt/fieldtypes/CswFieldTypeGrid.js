@@ -25,14 +25,23 @@
                 propDiv.append('[Grid display disabled]');
             } else {
 
-                var makeFullGrid = function (newDiv) {
+                var makeFullGrid = function (viewid, newDiv) {
                     'use strict';
-                    var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_menu') });
-                    newDiv.br();
-                    var searchDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_search') });
-                    newDiv.br();
+                    newDiv.empty();
+                    var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_menu') }).css({ height: '25px' });
+                    //newDiv.br();
+                    var filterDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_filter') });
+                    //newDiv.br();
                     var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype') });
 
+                    var viewfilters = Csw.nbt.viewFilters({
+                        ID: o.ID + '_viewfilters',
+                        parent: filterDiv,
+                        viewid: viewid,
+                        onEditFilters: function(newviewid) {
+                            makeFullGrid(newviewid, newDiv);
+                        } // onEditFilters
+                    }); // viewFilters
 
                     var gridOpts = {
                         ID: o.ID + '_fieldtypegrid',
@@ -49,7 +58,7 @@
                             o.onReload();
                         },
                         onSuccess: function (grid) {
-                            makeGridMenu(menuDiv, o, gridOpts, grid, viewid, searchDiv);
+                            makeGridMenu(menuDiv, o, gridOpts, grid, viewid);
                         }
                     };
                     gridDiv.$.CswNodeGrid('init', gridOpts);
@@ -71,7 +80,7 @@
                                     $.CswDialog('OpenEmptyDialog', {
                                             title: o.nodename + ' ' + o.propData.name,
                                             onOpen: function (dialogDiv) {
-                                                makeFullGrid(dialogDiv);
+                                                makeFullGrid(viewid, dialogDiv);
                                             }
                                         }
                                     );
@@ -86,7 +95,7 @@
                         makeSmallGrid();
                         break;
                     default:
-                        makeFullGrid(propDiv);
+                        makeFullGrid(viewid, propDiv);
                         break;
                 }
 
@@ -97,7 +106,7 @@
         }
     };
 
-    function makeGridMenu(menuDiv, o, gridOpts, cswGrid, viewid, searchDiv) {
+    function makeGridMenu(menuDiv, o, gridOpts, cswGrid, viewid) {
         //Case 21741
         if (o.EditMode !== Csw.enums.editMode.PrintReport) {
             menuDiv.$.CswMenuMain({
