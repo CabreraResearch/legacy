@@ -23,20 +23,25 @@
                 if (options) $.extend(internal, options);
 
                 var toprightcell, filterbtn;
-                var div = internal.parent.div({ ID: internal.ID });
-                div.hide()
+                var div = internal.parent.div({ ID: internal.ID })
+                            .addClass('viewfilters')
+                            .hide();
+                var outertbl = div.table();
+                var outercell11 = outertbl.cell(1,1);
+                var outercell12 = outertbl.cell(1,2);
+                var outercell11div = outercell11.div()
                    .addClass('viewfiltersdiv');
-                var tbl = div.table();
+                var tbl = outercell11div.table();
 
                 Csw.ajax.post({
                     urlMethod: internal.filtersMethod,
                     data: { ViewId: internal.viewid },
                     success: function (data) {
                         
-                        var toprightcell = tbl.cell(1,5);
-                        toprightcell.css({ width: '100%', textAlign: 'right' });
+                        //var toprightcell = tbl.cell(1,5);
+                        outercell12.css({ width: '100%', textAlign: 'right' });
 
-                        var filterbtn = tbl.cell(1, 5).imageButton({
+                        var filterbtn = outercell12.imageButton({
                             ButtonType: Csw.enums.imageButton_ButtonType.Refresh,
                             AlternateText: 'Apply Filters',
                             ID: 'filterbtn',
