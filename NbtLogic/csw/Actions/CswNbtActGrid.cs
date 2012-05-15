@@ -32,8 +32,8 @@ namespace ChemSW.Nbt.Logic
         public string GridTitle = string.Empty;
         public Int32 GridWidth = Int32.MinValue;
         public CswCommaDelimitedString EditableColumns = null;
-        public bool CanEdit = false;
-        public bool CanDelete = false;
+        public bool HasOneCanEdit = false;
+        public bool HasOneCanDelete = false;
 
         private Int32 _ColumnsWidth = 0;
 
@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.Logic
             makeJqColumn( Column, ColumnName, JColumnNames, JColumnDefs, IsKey, IsHidden, EnableGridEdit );
         }
 
-        public void makeJqColumn( DataColumn Column, String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableGridEdit = false )
+        public void makeJqColumn( DataColumn Column, String ColumnName, JArray JColumnNames, JArray JColumnDefs, bool IsKey = false, bool IsHidden = false, bool EnableInlineGridEdit = false )
         {
             JColumnNames.Add( ColumnName.ToUpperInvariant() );
             JObject ThisColumnDef = new JObject();
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.Logic
             }
             if( false == IsHidden &&
                     false == IsKey &&
-                        EnableGridEdit &&
+                        EnableInlineGridEdit &&
                             ( null == EditableColumns ||
                                 EditableColumns.Contains( ColumnName ) ) )
             {
@@ -313,8 +313,8 @@ namespace ChemSW.Nbt.Logic
             Ret[JqGridJsonOptions.autoencode.ToString()] = GridAutoEncode;
             //Ret[JqGridJsonOptions.height.ToString()] = GridHeight;
             Ret[JqGridJsonOptions.caption.ToString()] = GridTitle;
-            Ret["CanEdit"] = CanEdit.ToString().ToLower();
-            Ret["CanDelete"] = CanDelete.ToString().ToLower();
+            Ret["HasOneCanEdit"] = HasOneCanEdit;
+            Ret["HasOneCanDelete"] = HasOneCanDelete;
 
             return Ret;
         }
