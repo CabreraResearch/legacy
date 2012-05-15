@@ -278,7 +278,7 @@ window.initMain = window.initMain || function (undefined) {
         if (options) {
             $.extend(o, options);
         }
-        
+        multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
         var linkType = Csw.string(o.linktype).toLowerCase();
 
         var type = Csw.string(o.type).toLowerCase();
