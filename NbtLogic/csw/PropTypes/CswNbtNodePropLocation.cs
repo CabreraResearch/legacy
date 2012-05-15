@@ -289,6 +289,15 @@ namespace ChemSW.Nbt.PropTypes
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();
 
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass);
+            ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
+            JArray LocationNTArray = new JArray();
+            foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
+            {
+                LocationNTArray.Add( LocationNT.NodeTypeId );
+            }
+            ParentObject["locationnodetypeids"] = LocationNTArray; 
+
             //if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
             //{
             //    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );

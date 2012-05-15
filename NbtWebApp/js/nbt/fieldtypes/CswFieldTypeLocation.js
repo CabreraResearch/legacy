@@ -13,10 +13,26 @@
                 var propDiv = o.propDiv;
                 propDiv.empty();
                 var propVals = o.propData.values;
-                var nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid, o.relatednodeid).trim() : '';
+
+                var locationobjectclassid = propVals.locationobjectclassid;
+                var locationnodetypeids = propVals.locationnodetypeids;  // array
+
+                var relatedmatch = (o.relatedobjectclassid === locationobjectclassid);
+                Csw.each(locationnodetypeids, function (thisNTid) {
+                    relatedmatch = (relatedmatch || thisNTid === o.relatednodetypeid);
+                });
+
+                var nodeId, name, path;
                 var nodeKey = ''; //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
-                var name = (false === o.Multi) ? Csw.string(propVals.name, o.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
-                var path = (false === o.Multi) ? Csw.string(propVals.path, o.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
+                if (relatedmatch) {
+                    nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid, o.relatednodeid).trim() : '';
+                    name = (false === o.Multi) ? Csw.string(propVals.name, o.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
+                    path = (false === o.Multi) ? Csw.string(propVals.path, o.relatednodename).trim() : Csw.enums.multiEditDefaultValue;
+                } else {
+                    nodeId = (false === o.Multi) ? Csw.string(propVals.nodeid, '').trim() : '';
+                    name = (false === o.Multi) ? Csw.string(propVals.name, '').trim() : Csw.enums.multiEditDefaultValue;
+                    path = (false === o.Multi) ? Csw.string(propVals.path, '').trim() : Csw.enums.multiEditDefaultValue;
+                }
                 var viewId = Csw.string(propVals.viewid).trim();
                 var comboBox;
 
