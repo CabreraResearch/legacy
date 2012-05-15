@@ -73,6 +73,11 @@ namespace ChemSW.Nbt.Actions
         private Int32 _DesignNtId = 0;
         private Int32 _TargetNtId = 0;
         private Int32 _GroupNtId = 0;
+        private CswNbtViewId _groupsViewId = null;
+        private CswNbtViewId _inspectionsViewId = null;
+        private CswNbtViewId _schedulingViewId = null;
+
+
 
         #region MetaData
 
@@ -488,14 +493,17 @@ namespace ChemSW.Nbt.Actions
 
             //Inspection Scheduling view
             CswNbtView InspectionSchedulesView = _createInspectionSchedulingView( InspectionDesignNt, Category, InspectionTargetNt );
+            _schedulingViewId = InspectionSchedulesView.ViewId;
             _getClientViewData( InspectionSchedulesView, ( (JObject) RetObj["views"] ) );
 
             //Inspection Target Group Assignement view
             CswNbtView InspectionTargetGroupAssignmentView = _createInspectionGroupAssignmentView( Category, InspectionTargetNt, InspectionDesignNt );
+            _groupsViewId = InspectionTargetGroupAssignmentView.ViewId;
             _getClientViewData( InspectionTargetGroupAssignmentView, ( (JObject) RetObj["views"] ) );
 
             //Target Inspections view
             CswNbtView TargetInspectionsView = _createTargetInspectionsView( InspectionDesignNt, Category, InspectionTargetNt );
+            _inspectionsViewId = TargetInspectionsView.ViewId;
             _getClientViewData( TargetInspectionsView, ( (JObject) RetObj["views"] ) );
 
             return RetObj;
@@ -827,6 +835,9 @@ namespace ChemSW.Nbt.Actions
         public Int32 DesignNtId { get { return ( _DesignNtId ); } }
         public Int32 TargetNtId { get { return ( _TargetNtId ); } }
         public Int32 GroupNtId { get { return ( _GroupNtId ); } }
+        public CswNbtViewId GroupsViewId { get { return ( _groupsViewId ); } }
+        public CswNbtViewId InspectionsViewId { get { return ( _inspectionsViewId ); } }
+        public CswNbtViewId SchedulingViewId { get { return ( _schedulingViewId ); } }
 
 
         public DataTable prepareDataTable( DataTable UploadDataTable )

@@ -555,12 +555,13 @@
             }
 
             var div = Csw.literals.div();
-            div.span({ text: 'Are you sure you want to delete:&nbsp;' });
+            div.span({ text: 'Are you sure you want to delete' });
 
 
             if (o.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                div.span({ text: '&nbsp;the following?' }).br();
                 var nodechecks = null;
                 if (false == Csw.isNullOrEmpty(o.nodeTreeCheck)) {
                     nodechecks = o.nodeTreeCheck.checkedNodes();
@@ -580,7 +581,7 @@
                     }
                 }
             } else {
-                div.span({ text: o.nodenames + '?' });
+                div.span({ text: ':&nbsp;' + o.nodenames + '?' });
             }
             div.br({number: 2});
 

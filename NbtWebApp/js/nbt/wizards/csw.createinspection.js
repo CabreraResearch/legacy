@@ -650,9 +650,9 @@
                         confirmViewsList.li({
                             text: '<b>Inspections, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
                         });
-                    } else {
+                    } /*else {
                         internal.toggleButton(internal.buttons.prev, true, true);
-                    }
+                    }*/
                 };
             } ());
 
@@ -698,8 +698,8 @@
 
                 internal.toggleButton(internal.buttons.prev, false);
                 internal.toggleButton(internal.buttons.next, false);
-                internal.toggleButton(internal.buttons.finish, false);
                 internal.toggleButton(internal.buttons.cancel, false);
+                internal.toggleButton(internal.buttons.finish, false);                
 
                 if (false === Csw.isNullOrEmpty(internal.inspectionGrid)) {
                     designGrid = JSON.stringify(internal.inspectionGrid.getAllGridRows());

@@ -289,8 +289,8 @@
                                             propData: thisProp,
                                             onChange: function () {
                                             },
-                                            onReload: function () {
-                                                internal.getProps(tabContentDiv, tabid);
+                                            onReload: function (afterReload) {
+                                                internal.getProps(tabContentDiv, tabid, afterReload);
                                             },
                                             EditMode: internal.EditMode,
                                             Multi: internal.Multi,
@@ -552,7 +552,9 @@
                         propData: propData,
                         onChange: function () {
                         },
-                        onReload: function () { internal.getProps(tabContentDiv, tabid); },
+                        onReload: function (afterReload) {
+                            internal.getProps(tabContentDiv, tabid, afterReload);
+                        },
                         doSave: function (saveopts) {
                             var s = {
                                 onSuccess: null

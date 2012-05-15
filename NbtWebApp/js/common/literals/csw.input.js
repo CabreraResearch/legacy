@@ -58,7 +58,7 @@
             attr.add('width', Csw.string(internal.width, internal.type.defaultwidth));
             style.add('width', Csw.string(internal.width, internal.type.defaultwidth));
             attr.add('maxlength', internal.maxlength);
-            attr.add('value', internal.value);
+            //attr.add('value', internal.value);//case 26109
 
             if (Csw.bool(internal.autofocus)) {
                 attr.add('autofocus', internal.autofocus);
@@ -79,6 +79,8 @@
 
             $input = $(html);
             Csw.literals.factory($input, external);
+
+            external.propDom('value', internal.value);//case 26109
             
             if (Csw.isJQuery(internal.$parent)) {
                 internal.$parent.append(external.$);
