@@ -45,6 +45,7 @@
 
                     var gridOpts = {
                         ID: o.ID + '_fieldtypegrid',
+                        resizeWithParent: false,
                         viewid: viewid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey,
@@ -127,33 +128,7 @@
                             multiselect: multi
                         }
                     };
-                    cswGrid.changeGridOpts(g);
-                },
-                onSearch: {
-//                    onViewSearch: function () {
-//                        var onSearchSubmit = function (searchviewid) {
-//                            var s = {};
-//                            $.extend(s, gridOpts);
-//                            s.viewid = searchviewid;
-//                            o.refreshGrid(s, cswGrid);
-//                        };
-
-//                        var onClearSubmit = function (parentviewid) {
-//                            var s = {};
-//                            $.extend(s, gridOpts);
-//                            s.viewid = parentviewid;
-//                            o.refreshGrid(s, cswGrid);
-//                        };
-
-//                        searchDiv.empty();
-//                        searchDiv.$.CswSearch({ parentviewid: viewid,
-//                            cswnbtnodekey: o.cswnbtnodekey,
-//                            ID: searchDiv.getId(),
-//                            onSearchSubmit: onSearchSubmit,
-//                            onClearSubmit: onClearSubmit
-//                        });
-//                    },
-//                    onGenericSearch: null /*not possible here*/
+                    cswGrid.changeGridOpts(g, ['Action', 'Delete']);
                 },
                 onEditView: function () {
                     if (Csw.isFunction(o.onEditView)) {

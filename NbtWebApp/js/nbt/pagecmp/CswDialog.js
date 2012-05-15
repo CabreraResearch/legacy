@@ -502,7 +502,7 @@
                     if (Csw.bool(data.result)) {
 
                         cell11.append('Copying: ' + o.nodename);
-                        cell11.br().br();
+                        cell11.br({number: 2});
 
                         var copyBtn = cell21.button({ ID: 'copynode_submit',
                             enabledText: 'Copy',
@@ -583,7 +583,7 @@
             } else {
                 div.span({ text: ':&nbsp;' + o.nodenames + '?' });
             }
-            div.br().br();
+            div.br({number: 2});
 
             var deleteBtn = div.button({ ID: 'deletenode_submit',
                 enabledText: 'Delete',
@@ -711,7 +711,7 @@
                 }
             });
 
-            div.br().span({ text: 'MOL Text (Paste from Clipboard):' }).br();
+            div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
             molTxtArea = div.textArea({ ID: '', rows: 4, cols: 40 });
             div.br();

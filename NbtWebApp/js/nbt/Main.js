@@ -395,12 +395,14 @@ window.initMain = window.initMain || function (undefined) {
                     case Csw.enums.viewMode.grid.name:
                         multi = (false === o.grid.isMulti());
                         var g = {
+                            canEdit: multi,
+                            canDelete: multi,
                             gridOpts: {
                                 //reinit: true,
                                 multiselect: multi
                             }
                         };
-                        o.grid.changeGridOpts(g);
+                        o.grid.changeGridOpts(g, ['Action', 'Delete']);
                         break;
                     default:
                         multi = (false === multi);
