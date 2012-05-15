@@ -871,10 +871,10 @@ namespace ChemSW.Nbt.WebPages
                     Int32 DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
-                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Tab.TabId, DisplayRow, DisplayColumn );
+                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, Tab.TabId, DisplayRow, DisplayColumn );
                     if( SetValueOnAdd )
                     {
-                        PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
+                        PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
                     }
                     else
                     {

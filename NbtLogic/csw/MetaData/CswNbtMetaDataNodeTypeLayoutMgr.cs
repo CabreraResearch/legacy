@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -110,7 +109,7 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
-            if(LayoutTable.Rows.Count > 0)
+            if( LayoutTable.Rows.Count > 0 )
             {
                 DataRow LayoutRow = LayoutTable.Rows[0];
 
@@ -124,10 +123,15 @@ namespace ChemSW.Nbt.MetaData
             return Layout;
         }
 
-        public void updatePropLayout( LayoutType LayoutType, Int32 NodeTypeId, Int32 PropId, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
+        public void updatePropLayout( LayoutType LayoutType, Int32 NodeTypeId, Int32 PropId, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
         {
             if( LayoutType != LayoutType.Unknown && PropId != Int32.MinValue )
             {
+                if( DoMove )
+                {
+                    CswNbtMetaDataNodeTypeProp Prop = _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( PropId );
+                    removePropFromLayout( LayoutType, Prop, Int32.MinValue );
+                }
                 CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "updatePropLayout_Update", "nodetype_layout" );
                 string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString();
                 if( TabId != Int32.MinValue && LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
@@ -175,9 +179,13 @@ namespace ChemSW.Nbt.MetaData
             } // if( Type != LayoutType.Unknown && Prop != null )
         } // updatePropLayout()
 
-        public void updatePropLayout( LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswNbtMetaDataNodeTypeProp InsertAfterProp )
+        public void updatePropLayout( LayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
         {
             bool Added = false;
+            if( DoMove )
+            {
+                removePropFromLayout( LayoutType, Prop, Int32.MinValue );
+            }
             if( InsertAfterProp != null )
             {
                 Dictionary<Int32, NodeTypeLayout> InsertAfterPropLayouts = getLayout( LayoutType, InsertAfterProp );
@@ -207,7 +215,7 @@ namespace ChemSW.Nbt.MetaData
                         LayoutUpdate.update( LayoutTable );
 
                         // Add new prop to the layout
-                        updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn );
+                        updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, false, TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn );
                         Added = true;
                     } // foreach( Int32 TabId in InsertAfterPropLayouts.Keys )
                 } // if( InsertAfterPropLayouts.Values.Count > 0 )
@@ -216,7 +224,7 @@ namespace ChemSW.Nbt.MetaData
             if( false == Added )
             {
                 // Just add it somewhere
-                updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId );
+                updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, false );
             }
         } // updatePropLayout()
 

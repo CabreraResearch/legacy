@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
                 if( TaskNodeTypeTab != null )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.removePropFromAllLayouts( PartsProp );
-                    PartsProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TaskNodeTypeTab.TabId );
+                    PartsProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, TaskNodeTypeTab.TabId );
                 }
             }
 
