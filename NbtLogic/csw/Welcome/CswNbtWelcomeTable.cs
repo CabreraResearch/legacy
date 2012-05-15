@@ -185,17 +185,20 @@ namespace ChemSW.Nbt.Welcome
                         throw new CswDniException( ErrorType.Warning, "You must select something to add", "No nodetype selected for new Add Welcome Page Component" );
                     break;
                 case WelcomeComponentType.Link:
+                    CswPrimaryKey LinkPk = new CswPrimaryKey();
+                    LinkPk.FromString( PkValue );
+                    Int32 PkVal = LinkPk.PrimaryKey;
                     if( ViewType == CswNbtView.ViewType.View )
                     {
                         NewWelcomeRow["nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
                     }
                     else if( ViewType == CswNbtView.ViewType.Action )
                     {
-                        NewWelcomeRow["actionid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
+                        NewWelcomeRow["actionid"] = CswConvert.ToDbVal( PkVal );
                     }
                     else if( ViewType == CswNbtView.ViewType.Report )
                     {
-                        NewWelcomeRow["reportid"] = CswConvert.ToDbVal( new CswNbtViewId( PkValue ).get() );
+                        NewWelcomeRow["reportid"] = CswConvert.ToDbVal( PkVal );
                     }
                     else
                     {
