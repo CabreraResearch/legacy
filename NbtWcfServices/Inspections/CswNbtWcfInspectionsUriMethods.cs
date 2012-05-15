@@ -26,15 +26,23 @@ namespace NbtWebAppServices.WebServices
         {
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyDate );
             DateTime Start = CswConvert.ToDateTime( StartingDate );
+            if( DateTime.MinValue == Start )
+            {
+                Start = DateTime.Now;
+            }
             DateTime End = CswConvert.ToDateTime( EndingDate );
+            if( DateTime.MinValue == End )
+            {
+                End = DateTime.Now.AddDays( 7 );
+            }
             if( Start > End )
             {
-                End = DateTime.Now;
+                End = DateTime.Now.AddDays( 7 );
             }
             CswDateTime CswStart = WcfInspectionsGet.getCswDate( Start );
             CswDateTime CswEnd = WcfInspectionsGet.getCswDate( End );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, CswStart.ToOracleNativeDateForQuery() );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, CswEnd.ToOracleNativeDateForQuery() );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, CswStart.ToOracleNativeDateForQuery(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.DatePropertyName, CswEnd.ToOracleNativeDateForQuery(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
 
             return WcfInspectionsGet.finalize();
         }
