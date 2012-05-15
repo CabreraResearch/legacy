@@ -40,7 +40,7 @@
                 } else {
                     $('#btnGrid').click(function () { runReport(qs.reportid, 'grid'); });
                     $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
-                    $('#btnCrystal').click(function () { window.location = 'report.aspx?reportid=' + qs.reportid; });
+                    $('#btnCrystal').click(function () { Csw.window.location('report.aspx?reportid=' + qs.reportid); });
                 }
             }
         });
@@ -55,7 +55,7 @@
 
 
             if ('csv' == rformat.toLowerCase()) {
-                window.location = '/NbtWebApp/wsNBT.asmx/report?rformat=csv&reportid=' + reportid;
+                Csw.window.location('/NbtWebApp/wsNBT.asmx/report?rformat=csv&reportid=' + reportid);
             }
             else {
 

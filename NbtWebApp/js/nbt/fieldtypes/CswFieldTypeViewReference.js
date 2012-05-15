@@ -34,7 +34,7 @@
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeId);
                         Csw.cookie.clear(Csw.cookie.cookieNames.CurrentNodeKey);
 
-                        window.location = Csw.getGlobalProp('homeUrl');
+                        Csw.window.location(Csw.getGlobalProp('homeUrl'));
                     }
                 });
                 if (false === o.ReadOnly) {

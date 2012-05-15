@@ -44,7 +44,7 @@
                                                 data: { PropId: propAttr },
                                                 success: function () {
                                                     Csw.clientChanges.unsetChanged();
-                                                    window.location = "Main.html";
+                                                    Csw.window.location("Main.html");
                                                 }
                                             });
                                         }
