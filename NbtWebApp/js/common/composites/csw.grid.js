@@ -19,7 +19,7 @@
                 gridOpts: {
                     autoencode: true,
                     autowidth: true,
-                    altRows: true,
+                    altRows: window.internetExplorerVersionNo === -1,
                     caption: '',
                     datatype: 'local',
                     emptyrecords: 'No Results',
@@ -300,7 +300,6 @@
                         }
                     }
                 }
-
                 external.resizeWithParent();
             };
 

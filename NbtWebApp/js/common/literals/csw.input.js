@@ -114,7 +114,7 @@
                     if (value) {
                         external.propDom({ 'checked': true });
                     } else {
-                        //if (window.abandonHope) {
+                        //if (window.internetExplorerVersionNo !== -1) {
                             external.$.removeAttr('checked');
                         //}
                     }
