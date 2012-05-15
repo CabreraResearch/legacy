@@ -134,13 +134,13 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, this );
         }
 
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
+        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeTypeId, PropId, TabId, DisplayRow, DisplayColumn );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeTypeId, PropId, DoMove, TabId, DisplayRow, DisplayColumn );
         }
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
+        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this, InsertAfterProp );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this, InsertAfterProp, DoMove );
         }
         public void removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
@@ -394,7 +394,7 @@ namespace ChemSW.Nbt.MetaData
                     if( this.DefaultValue.Empty )
                     {
                         //_NodeTypePropRow["setvalonadd"] = CswConvert.ToDbVal( true );
-                        updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                        updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                     }
                 }
             }
