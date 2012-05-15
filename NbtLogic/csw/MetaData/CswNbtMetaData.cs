@@ -1452,6 +1452,12 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Delete Jct_Nodes_Props records
+            /* Case 26285: This is a bit of a hack (admittedly), but the crux of the issue is this: 
+             * because JctNodesPropsTableUpdate is a CswTableUpdate and not a CswTableSelect, we must commit the underlying DataTables, 
+             * which contain the row for this property's DefaultValue, which we fetched when we clicked the property in order to delete it. 
+             * Short of refactoring the CswTable instances into read/write pairs and implementing read and write getters, this'll do.
+             * TODO: Remove _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear(); when Design mode is refactored.
+             */
             _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
             CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
             DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
