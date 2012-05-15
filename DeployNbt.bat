@@ -21,7 +21,7 @@ D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all >> D:\log\dai
 REM must reset nbt_master before schemaupdater runs
 echo sqlplus nbt_master/hj345defwu9@nbttest @nbt_nuke.sql
 
-impdp.exe nbt_master/hj345defwu9@nbttest DUMPFILE=d:\kiln\nbt\nbt\schema\NBT_MASTER_11G.DMP DIRECTORY=NBTDUMPS REMAP_SCHEMA=nbt_master:nbt_master
+impdp.exe nbt_master/hj345defwu9@nbttest DUMPFILE=d:\kiln\nbt\nbt\schema\NBT_MASTER_11G.DMP DIRECTORY=EXPORTS REMAP_SCHEMA=nbt_master:nbt_master
 
 net start "ChemSW NBT Schedule Service" >> D:\log\dailylog.txt
 
