@@ -736,8 +736,8 @@
                     var propIds = internal.updatePropJsonFromLayoutTable();
                     var data = {
                         EditMode: internal.EditMode,
-                        NodeIds: Csw.tryParseObjByIdx(internal.nodeids, 0), // o.nodeids.join(','),
-                        SafeNodeKeys: Csw.tryParseObjByIdx(internal.nodekeys, 0), // o.nodekeys.join(','),
+                        NodeIds: internal.nodeids.join(','),
+                        SafeNodeKeys: internal.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(internal.nodekeys, 0) */
                         TabId: tabid,
                         NodeTypeId: internal.nodetypeid,
                         NewPropsJson: JSON.stringify(internal.propertyData),
@@ -752,7 +752,7 @@
                         success: function (successData) {
                             var doSave = true;
                             var dataJson = {
-                                SourceNodeKey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
+                                SourceNodeKey: internal.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(internal.nodekeys, 0) */
                                 CopyNodeIds: [],
                                 PropIds: []
                             };
@@ -796,7 +796,8 @@
                             else if (internal.Multi) {
                                 dataJson.CopyNodeIds = internal.nodeids;
                                 dataJson.PropIds = propIds;
-                                copyNodeProps(function () { window.location.reload(); });
+                                copyNodeProps( /* Case 26134. We're already doing a clear:all, we don't need this. 
+                                                function () { Csw.window.location().reload();  } */ ); 
                             }
 
                             internal.enableSaveBtn();
