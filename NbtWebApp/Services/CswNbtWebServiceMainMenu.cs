@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.Permit.can( CswNbtActionName.Multi_Edit ) &&
                 ( View.ViewMode != NbtViewRenderingMode.Grid ||
                 /* Per discussion with David, for the short term eliminate the need to validate the selection of nodes across different nodetypes in Grid views. */
-                  View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].ChildRelationships.Count == 0 )
+                  View.Root.ChildRelationships.Count == 1 )
                 )
             {
                 Ret["Multi-Edit"] = new JObject();
