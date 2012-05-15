@@ -392,12 +392,8 @@
                 };
                 Csw.subscribe(internal.createInspectionEvents.designNameChanged, designChangeHandle);
 
-                if (Csw.isNullOrEmpty(internal.inspectionGridDiv) || internal.inspectionGridDiv.length() === 0) {
-                    internal.inspectionGridDiv = internal.divStep4.div({ ID: previewGridId });
-                } else {
-                    internal.inspectionGridDiv.empty();
-                }
-
+                internal.inspectionGridDiv = internal.divStep4.div({ ID: previewGridId });
+                
                 internal.gridOptions = {
                     ID: internal.makeStepId('previewGrid'),
                     pagermode: 'default',
