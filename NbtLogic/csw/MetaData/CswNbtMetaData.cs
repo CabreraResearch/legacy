@@ -1115,6 +1115,8 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["nodetypename"] = NewNodeTypeName;
             InsertedNodeTypeRow["category"] = NodeType.Category;
             InsertedNodeTypeRow["islocked"] = CswConvert.ToDbVal( false );
+            InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
+
             NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
             Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
             if( IsVersioning )
