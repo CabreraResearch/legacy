@@ -1452,6 +1452,7 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Delete Jct_Nodes_Props records
+            _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
             CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
             DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
             foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
