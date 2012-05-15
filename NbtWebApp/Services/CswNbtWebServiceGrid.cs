@@ -177,7 +177,10 @@ namespace ChemSW.Nbt.WebServices
 
             JArray GridOrderedColumnDisplayNames = _makeDefaultColumnNames();
             _CswNbtActGrid.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
-            GridOrderedColumnDisplayNames.Add( "Delete" );
+            if( _ActionEnabled )
+            {
+                GridOrderedColumnDisplayNames.Add( "Delete" );
+            }
             JArray GridColumnDefinitions = _CswNbtActGrid.getGridColumnDefinitionJson( _PropsInGrid );
             _addDefaultColumnDefiniton( GridColumnDefinitions );
 
