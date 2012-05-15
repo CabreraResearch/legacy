@@ -383,10 +383,10 @@ namespace ChemSW.Nbt.WebPages
                     //Prop.DisplayRowAdd = DisplayRowAdd;
                     //Prop.DisplayColAdd = DisplayColAdd;
                     //Prop.SetValueOnAdd = SetValOnAdd;
-                    Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, Int32.MinValue, DisplayRow, DisplayColumn );
+                    Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Int32.MinValue, DisplayRow, DisplayColumn );
                     if( SetValOnAdd )
                     {
-                        Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
+                        Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
                     }
                     else
                     {
