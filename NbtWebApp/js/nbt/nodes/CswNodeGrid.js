@@ -114,7 +114,8 @@
                         data: {
                             ViewId: o.viewid,
                             IncludeNodeKey: o.cswnbtnodekey,
-                            IncludeInQuickLaunch: true
+                            IncludeInQuickLaunch: true,
+                            ForReport: forReporting
                         },
                         success: function (data) {
                             buildGrid(data);
@@ -150,21 +151,29 @@
                             cswGridOpts.gridOpts.caption = '';
                         }
                         else if (hasActions) {
-//                            delete cswGridOpts.gridOpts.optNavEdit;
-//                            delete cswGridOpts.gridOpts.optNavDelete;
+                            //                            delete cswGridOpts.gridOpts.optNavEdit;
+                            //                            delete cswGridOpts.gridOpts.optNavDelete;
                             cswGridOpts.gridOpts.canEdit = false;
                             cswGridOpts.gridOpts.canDelete = false;
                             cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
                                 internal.selectedRowId = rowid;
-                                if (-1 !== eventObj.toElement.className.indexOf('csw-grid-edit')) {
-                                    editRows(null, ret, o.onEditNode, o.onEditView);
+                                function validateNode(className) {
+                                    if (-1 !== className.indexOf('csw-grid-edit')) {
+                                        editRows(rowid, ret, o.onEditNode, o.onEditView);
+                                    }
+                                    else if (-1 !== className.indexOf('csw-grid-delete')) {
+                                        deleteRows(rowid, ret, o.onDeleteNode);
+                                    }
                                 }
-                                else if (-1 !== eventObj.toElement.className.indexOf('csw-grid-delete')) {
-                                    deleteRows(null, ret, o.onDeleteNode);
+                                if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
+                                    validateNode(eventObj.toElement.className);
+                                }
+                                else if (Csw.contains(eventObj, 'target') && Csw.isString(eventObj.target.className)) {
+                                    validateNode(eventObj.target.className);
                                 }
                                 return true;
                             };
-                        } 
+                        }
                         /* We need this to be defined upfront for multi-edit */
                         cswGridOpts.optNavEdit = {
                             editfunc: function (rowid) {
@@ -177,7 +186,7 @@
                                 return deleteRows(rowid, ret, o.onDeleteNode);
                             }
                         };
-                        
+
                         switch (pagerMode) {
                             case 'local':
                                 cswGridOpts.gridOpts.datatype = 'local';
