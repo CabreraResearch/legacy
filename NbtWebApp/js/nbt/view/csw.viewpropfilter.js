@@ -168,7 +168,24 @@
                         text: internal.selectedValue
                     });
                 } else {
-                    if (fieldtype === Csw.enums.subFieldsMap.List.name) {
+                    // DATETIME
+                    if (fieldtype === Csw.enums.subFieldsMap.DateTime.name) {
+                        internal.valueControl = internal.valueCell.dateTimePicker({
+                            ID: valueId,
+                            Date: internal.selectedValue,
+                            //Time: '',
+//                            DateFormat: Csw.serverDateFormatToJQuery(internal.propsData.dateformat),
+//                            TimeFormat: Csw.serverTimeFormatToJQuery(internal.propsData.timeformat),
+                            DisplayMode: 'Date',
+                            ReadOnly: false,
+                            Required: false,
+                            showTodayButton: true,
+                            onChange: function() {
+                                internal.selectedValue = Csw.string(internal.valueControl.val().date);
+                            }
+                        });
+                    // LIST
+                    } else if (fieldtype === Csw.enums.subFieldsMap.List.name) {
                         valueOptions.push({ value: '', display: '' });
                         Csw.each(valueOptionDefs, function(optionValue, optionName) {
                             valueOptions.push({ 
@@ -184,6 +201,7 @@
                                 internal.selectedValue = internal.valueControl.val();
                             }
                         });
+                    // LOGICAL
                     } else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
                         internal.valueControl = internal.valueCell.triStateCheckBox({ 
                             ID: valueId,
@@ -192,6 +210,7 @@
                                 internal.selectedValue = internal.valueControl.val();
                             }
                         });
+                    // DEFAULT (textbox)
                     } else {
                         if (Csw.isNullOrEmpty(internal.selectedValue)) {
                             if (placeholder !== internal.subfieldControl.val()) {
@@ -236,10 +255,10 @@
 //                        nodetypeorobjectclassid = Csw.string(internal.nodetypeorobjectclassid);
 //                    }
 
-                // workaround for case 26287
-                internal.selectedSubFieldName = internal.subfieldControl.val();
-                internal.selectedFilterMode = internal.filterModeControl.val();
-                internal.selectedValue = internal.valueControl.val();
+//                // workaround for case 26287
+//                internal.selectedSubFieldName = internal.subfieldControl.val();
+//                internal.selectedFilterMode = internal.filterModeControl.val();
+//                internal.selectedValue = internal.valueControl.val();
 
                 retJson = {
                     //nodetypeorobjectclassid: nodetypeorobjectclassid,
