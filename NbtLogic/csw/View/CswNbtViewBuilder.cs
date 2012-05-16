@@ -350,7 +350,25 @@ namespace ChemSW.Nbt.Logic
         }
 
         /// <summary>
-        /// Returns all props and prop filters for a NodeType or ObjectClass
+        /// Returns new, proposed View Props and Filters for a View in construction
+        /// </summary>
+        public void getVbProperties( JObject ParentObj, string ViewPropArbitraryIds, string ViewJson )
+        {
+            if( false == string.IsNullOrEmpty( ViewJson ) && false == string.IsNullOrEmpty( ViewPropArbitraryIds ) )
+            {
+                CswNbtView ThisView = new CswNbtView( _CswNbtResources );
+                ThisView.LoadJson( ViewJson );
+                CswCommaDelimitedString ArbIds = new CswCommaDelimitedString();
+                ArbIds.FromString( ViewPropArbitraryIds );
+                foreach( string ArbId in ArbIds )
+                {
+                    ParentObj[ArbId] = getVbProp( ThisView, ArbId );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Returns all props and prop filters for a CswNbtView
         /// </summary>
         public JObject getVbProperties( CswNbtView View )
         {

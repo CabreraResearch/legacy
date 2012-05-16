@@ -14,6 +14,7 @@
             PropNamesUrl: '/NbtWebApp/wsNBT.asmx/getPropNames',
             FiltersUrlMethod: 'getAllViewPropFilters',
             filtersData: {},
+            newProps: [],
             viewid: '',
             viewname: '',
             viewmode: '',
@@ -783,7 +784,7 @@
                 } catch (e) {
                     Csw.error.showError(Csw.enums.errorType.error, 'Unable to render this tree element.', 'Exception: ' + e.name + ' occurred with ' + e.message);
                 }
-            }
+            };
 
             var $tree = $content;
             if (Csw.isNullOrEmpty($tree)) {
@@ -793,7 +794,11 @@
             if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
                 Csw.ajax.post({
                     urlMethod: o.FiltersUrlMethod,
-                    data: { ViewId: _getSelectedViewId() },
+                    data: {
+                        ViewId: _getSelectedViewId(),
+                        NewPropArbIds: o.newProps.join(','),
+                        ViewJson: JSON.stringify(currentViewJson)
+                    },
                     success: function (data) {
                         o.filtersData = data;
                         doTree();
@@ -1017,7 +1022,7 @@
                     if (Csw.contains(o.filtersData, arbid)) {
                         filterData = o.filtersData[arbid];
                     }
-                    var $filtBuilderLi = makeViewPropertyFilterHtml(filterData, stepno, types, arbid,true);
+                    var $filtBuilderLi = makeViewPropertyFilterHtml(filterData, stepno, types, arbid, true);
                     if (false === Csw.isNullOrEmpty($filtBuilderLi)) {
                         $filtUl.append($filtBuilderLi);
                     }
@@ -1193,6 +1198,7 @@
                                         collection = Csw.enums.viewChildPropNames.childrelationships.name;
                                         break;
                                     case Csw.enums.wizardSteps_ViewEditor.properties.step:
+                                        o.newProps.push($selected.val());
                                         collection = Csw.enums.viewChildPropNames.properties.name;
                                         break;
                                 }

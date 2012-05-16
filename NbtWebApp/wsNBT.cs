@@ -1920,7 +1920,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getAllViewPropFilters( string ViewId )
+        public string getAllViewPropFilters( string ViewId, string NewPropArbIds, string ViewJson )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -1938,6 +1938,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ReturnVal = ws.getVbProperties( View );
                     }
+                    ws.getVbProperties(ReturnVal, NewPropArbIds, ViewJson);
                 }
 
                 _deInitResources();
