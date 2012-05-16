@@ -1918,7 +1918,39 @@ namespace ChemSW.Nbt.WebServices
 
         } // createView()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getAllViewPropFilters( string ViewId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
 
+                if( ViewId != string.Empty )
+                {
+                    var ws = new CswNbtViewBuilder( _CswNbtResources );
+
+                    CswNbtView View = _getView( ViewId );
+                    if( View != null )
+                    {
+                        ReturnVal = ws.getVbProperties( View );
+                    }
+                }
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]

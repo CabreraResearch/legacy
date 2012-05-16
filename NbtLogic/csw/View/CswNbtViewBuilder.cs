@@ -331,7 +331,34 @@ namespace ChemSW.Nbt.Logic
         //    return ViewBuilderProps;
         //}
 
+        private void _getVbPropertiesRecursive( IEnumerable<CswNbtViewRelationship> Relationships, JObject PropObject )
+        {
+            foreach( CswNbtViewRelationship Relationship in Relationships )
+            {
+                foreach( CswNbtViewProperty ViewProperty in Relationship.Properties )
+                {
+                    CswViewBuilderProp VbProp = new CswViewBuilderProp( ViewProperty );
+                    _getVbPropData( PropObject, VbProp );
+                }
+                if( Relationship.ChildRelationships.Count > 0 )
+                {
+                    _getVbPropertiesRecursive( Relationship.ChildRelationships, PropObject );
+                }
+            }
+        }
 
+        /// <summary>
+        /// Returns all props and prop filters for a NodeType or ObjectClass
+        /// </summary>
+        public JObject getVbProperties( CswNbtView View )
+        {
+            JObject ViewBuilderProps = new JObject();
+            if( null != View && View.Root.ChildRelationships.Count > 0 )
+            {
+                _getVbPropertiesRecursive( View.Root.ChildRelationships, ViewBuilderProps );
+            }
+            return ViewBuilderProps;
+        }
 
         /// <summary>
         /// Returns all prop filters for a CswNbtViewProperty
