@@ -33,11 +33,12 @@ namespace NbtWebAppServices.WebServices
             DateTime End = CswConvert.ToDateTime( EndingDate );
             if( DateTime.MinValue == End )
             {
-                End = DateTime.Now.AddDays( 7 );
+                End = DateTime.Now.AddDays( 2 );
             }
             if( Start > End )
             {
-                End = DateTime.Now.AddDays( 7 );
+                End = Start;
+                End = End.AddDays( 2 );
             }
             CswDateTime CswStart = WcfInspectionsGet.getCswDate( Start );
             CswDateTime CswEnd = WcfInspectionsGet.getCswDate( End );
