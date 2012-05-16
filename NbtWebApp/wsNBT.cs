@@ -1920,6 +1920,41 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getAllViewPropFilters( string ViewId, string NewPropArbIds, string ViewJson )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                if( ViewId != string.Empty )
+                {
+                    var ws = new CswNbtViewBuilder( _CswNbtResources );
+
+                    CswNbtView View = _getView( ViewId );
+                    if( View != null )
+                    {
+                        ReturnVal = ws.getVbProperties( View );
+                    }
+                    ws.getVbProperties(ReturnVal, NewPropArbIds, ViewJson);
+                }
+
+                _deInitResources();
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        }
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getViewPropFilterUI( string ViewJson, string ViewId, string PropArbitraryId )
         {
             JObject ReturnVal = new JObject();
@@ -2908,178 +2943,178 @@ namespace ChemSW.Nbt.WebServices
 
         #region Search
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getClientSearchJson( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
-        {
-            JObject ReturnVal = new JObject();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getClientSearchJson( string ViewId, string SelectedNodeTypeIdNum, string IdPrefix, string NodeKey )
+        //{
+        //    JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NbtNodeKey );
-                }
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
+        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
+        //            CswNbtView View = _getView( ViewId );
+        //            ReturnVal = ws.getSearchJson( View, SelectedNodeTypeIdNum, NbtNodeKey );
+        //        }
 
-                _deInitResources();
-            }
+        //        _deInitResources();
+        //    }
 
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        }
+        //}
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypeSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string IdPrefix, string NodeKey )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getNodeTypeSearchProps( string RelatedIdType, string NodeTypeOrObjectClassId, string IdPrefix, string NodeKey )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
-                }
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
+        //            ReturnVal = ( ws.getSearchProps( RelatedIdType, NodeTypeOrObjectClassId, NodeKey ) );
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        } // getSearch()
+        //} // getSearch()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getSearchableViews( string IsMobile, string OrderBy )
-        {
-            JObject ReturnVal = new JObject();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getSearchableViews( string IsMobile, string OrderBy )
+        //{
+        //    JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
 
-                    ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
-                    bool ForMobile = CswConvert.ToBoolean( IsMobile );
-                    var ws = new CswNbtWebServiceView( _CswNbtResources );
-                    //SearchNode =  ws.getSearchableViewTree( UserId, ForMobile, true, OrderBy ); 
-                }
+        //            ICswNbtUser UserId = _CswNbtResources.CurrentNbtUser;
+        //            bool ForMobile = CswConvert.ToBoolean( IsMobile );
+        //            var ws = new CswNbtWebServiceView( _CswNbtResources );
+        //            //SearchNode =  ws.getSearchableViewTree( UserId, ForMobile, true, OrderBy ); 
+        //        }
 
-                _deInitResources();
+        //        _deInitResources();
 
-            }
+        //    }
 
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        } // getSearch()
+        //} // getSearch()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doViewSearch( object SearchJson )
-        {
-            JObject ReturnVal = new JObject();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string doViewSearch( object SearchJson )
+        //{
+        //    JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
-                    if( null != SearchPair )
-                    {
-                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
-                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
-                        ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
-                    }
-                }
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
+        //            CswNbtViewSearchPair SearchPair = ws.doViewBasedSearch( SearchJson );
+        //            if( null != SearchPair )
+        //            {
+        //                ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
+        //                ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
+        //                ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
+        //            }
+        //        }
 
-                _deInitResources();
-            }
+        //        _deInitResources();
+        //    }
 
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        } // getSearch()
+        //} // getSearch()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string doNodeTypeSearch( object SearchJson )
-        {
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string doNodeTypeSearch( object SearchJson )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
-                    CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
-                    if( null != SearchPair )
-                    {
-                        ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
-                        ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
-                        ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
-                    }
-                }
+        //        if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+        //        {
+        //            var ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
+        //            CswNbtViewSearchPair SearchPair = ws.doNodesSearch( SearchJson );
+        //            if( null != SearchPair )
+        //            {
+        //                ReturnVal.Add( new JProperty( "parentviewid", SearchPair.ParentViewId ) );
+        //                ReturnVal.Add( new JProperty( "searchviewid", SearchPair.SearchViewId ) );
+        //                ReturnVal.Add( new JProperty( "viewmode", SearchPair.ViewMode.ToString().ToLower() ) );
+        //            }
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception ex )
-            {
-                ReturnVal = jError( ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
+        //    return ReturnVal.ToString();
 
-        }
+        //}
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
