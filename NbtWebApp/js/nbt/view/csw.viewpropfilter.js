@@ -365,7 +365,7 @@
 
                         Csw.ajax.post({
                             urlMethod: 'getViewPropFilterUI',
-                            async: false,
+                            //async: false,
                             data: {
                                 ViewJson: viewJson,
                                 ViewId: internal.viewid,
