@@ -44,14 +44,23 @@
                                                 data: { PropId: propAttr },
                                                 success: function () {
                                                     Csw.clientChanges.unsetChanged();
-                                                    window.location = "Main.html";
+                                                    Csw.window.location("Main.html");
                                                 }
                                             });
                                         }
                                         break;
 
-                                    case Csw.enums.nbtButtonAction.refresh:
-                                        Csw.tryExec(o.onReload);
+                                    case Csw.enums.nbtButtonAction.refresh://cases 26201, 26107 
+                                        Csw.tryExec(o.onReload(
+                                            (function (messagedivid) { 
+                                                return function () {
+                                                    if (false === Csw.isNullOrEmpty(data.message)) {
+                                                        var $newmessagediv = $('#' + messagedivid);
+                                                        $newmessagediv.text(data.message);
+                                                    }
+                                                }
+                                            })(messagediv.getId())
+                                        ));
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:
                                         Csw.openPopup(data.actiondata, 600, 800);

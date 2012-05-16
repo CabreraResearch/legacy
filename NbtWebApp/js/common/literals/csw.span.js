@@ -22,7 +22,8 @@
             ID: '',
             cssclass: '',
             text: '',
-            value: ''
+            value: '',
+            nobr: false
         };
         var external = {};
 
@@ -43,7 +44,13 @@
 
             html += attr.get();
             html += '>';
+            if(internal.nobr) {
+                html += '<nobr>';
+            }
             html += spanText;
+            if(internal.nobr) {
+                html += '</nobr>';
+            }
             html += '</span>';
             $span = $(html);
             Csw.literals.factory($span, external);

@@ -107,7 +107,7 @@
 
                     internal.stepDivs[s].propNonDom({ stepno: s })
                         .span({ cssclass: 'CswWizard_StepTitle', text: steptitle })
-                        .br().br()
+                        .br({number: 2})
                         .div({ suffix: s + '_content' });
                 }
 

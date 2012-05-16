@@ -91,25 +91,30 @@
 
             internal.rootnode = external.treeDiv.find('li').first();
 
-            if (Csw.bool(internal.ShowCheckboxes)) {
+            external.treeDiv.find('li').$.each(function () {
+                var $childObj = $(this);
+                var thisid = Csw.string($childObj.CswAttrDom('id'));
+                var thiskey = Csw.string($childObj.CswAttrDom('cswnbtnodekey'));
+                var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(internal.idPrefix.length));
+                var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
+                var altName = Csw.string($childObj.find('a').first().text());
+                var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
+                var thislocked = Csw.bool($childObj.CswAttrNonDom('locked'));
 
-                external.treeDiv.find('li').$.each(function () {
-                    var $childObj = $(this);
-                    var thisid = Csw.string($childObj.CswAttrDom('id'));
-                    var thiskey = Csw.string($childObj.CswAttrDom('cswnbtnodekey'));
-                    var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(internal.idPrefix.length));
-                    var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
-                    var altName = Csw.string($childObj.find('a').first().text());
-                    var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
-
+                if (Csw.bool(internal.ShowCheckboxes)) {
                     var $cb = $('<input type="checkbox" class="' + internal.idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '" cswnbtnodekey="' + thiskey + '"></input>');
                     $cb.prependTo($childObj);
                     if (internal.ValidateCheckboxes) {
                         $cb.click(function () { return internal.validateCheck($cb); });
                     }
-                }); // each()
+                } // if (Csw.bool(internal.ShowCheckboxes)) {
 
-            } // if (Csw.bool(internal.ShowCheckboxes)) {
+                if (thislocked) {
+                    $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
+                        .appendTo($childObj.children('a').first());
+                }
+
+            }); // each()
 
             if (internal.ShowToggleLink && internal.toggleLink) {
                 internal.toggleLink.show();
@@ -174,7 +179,7 @@
             internal.clearChecks();
 
             // case 25844 - open children
-            external.treeDiv.$.jstree( 'open_node', selected.$item );
+            external.treeDiv.$.jstree('open_node', selected.$item);
 
             Csw.tryExec(m.onSelectNode, optSelect);
         }; // internal.handleSelectNode()

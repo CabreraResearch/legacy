@@ -253,7 +253,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _Tab = Tab;
                 if( null != Object["values"] &&
-                    false == IsReadOnly() && 
+                    false == IsReadOnly() &&
                     ( null == Object["wasmodified"] ||
                      CswConvert.ToBoolean( Object["wasmodified"] ) ) )
                 {
@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         this.AsLocation.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
                     }
-                    
+
                     DoCopy = true;
                     break;
                 case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
@@ -398,6 +398,16 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropBlob) _CswNbtNodeProp );
             }
         }//Blob
+
+        public CswNbtNodePropComments AsComments
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropComments ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropComments ) ) ) );
+                return ( (CswNbtNodePropComments) _CswNbtNodeProp );
+            }
+        }//Comments
 
         public CswNbtNodePropComposite AsComposite
         {

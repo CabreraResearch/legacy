@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.WebServices
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
                 DataTable HistoryTable = HistorySelect.getTable();
 
-                CswGridData g = new CswGridData( _CswNbtResources );
+                CswNbtActGrid g = new CswNbtActGrid( _CswNbtResources );
                 ret["jqGridOpt"] = g.DataTableToJSON( HistoryTable );
             }
             return ret;

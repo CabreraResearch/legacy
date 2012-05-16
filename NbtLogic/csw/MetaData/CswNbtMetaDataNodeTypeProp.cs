@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using ChemSW.Audit;
 using ChemSW.Core;
@@ -104,41 +105,70 @@ namespace ChemSW.Nbt.MetaData
 
         #region Layout
 
-        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        /// <summary>
+        /// Returns the layout for this property.  If edit, be sure to supply a valid TabId
+        /// </summary>
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this );
+            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this.PropId, TabId );
         }
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
+
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getEditLayout( Int32 TabId )
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeTypeId, PropId, TabId, DisplayRow, DisplayColumn );
+            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId );
         }
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp )
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getAddLayout()
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this, InsertAfterProp );
+            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
-        public void removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getTableLayout()
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this );
+            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+        }
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getPreviewLayout()
+        {
+            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
+        }
+        public Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> getEditLayouts()
+        {
+            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, this );
+        }
+
+        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
+        {
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeTypeId, PropId, DoMove, TabId, DisplayRow, DisplayColumn );
+        }
+        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
+        {
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this, InsertAfterProp, DoMove );
+        }
+        public void removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue )
+        {
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this, TabId );
         }
 
         public void clearCachedLayouts()
         {
-            _EditLayout = null;
+            _FirstEditLayout = null;
             _AddLayout = null;
         }
 
-        private CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout _EditLayout = null;
-        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout
+        private CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout _FirstEditLayout = null;
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FirstEditLayout
         {
             get
             {
-                if( _EditLayout == null )
+                if( _FirstEditLayout == null )
                 {
-                    _EditLayout = getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
+                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> EditLayouts = getEditLayouts();
+                    if( EditLayouts.Values.Count > 0 )
+                    {
+                        _FirstEditLayout = EditLayouts.Values.First();
+                    }
                 }
-                return _EditLayout;
+                return _FirstEditLayout;
             }
-        } // EditLayout
+        } // FirstEditLayout
         private CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout _AddLayout = null;
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout AddLayout
         {
@@ -146,7 +176,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( _AddLayout == null )
                 {
-                    _AddLayout = getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    _AddLayout = getAddLayout();
                 }
                 return _AddLayout;
             }
@@ -364,7 +394,7 @@ namespace ChemSW.Nbt.MetaData
                     if( this.DefaultValue.Empty )
                     {
                         //_NodeTypePropRow["setvalonadd"] = CswConvert.ToDbVal( true );
-                        updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                        updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                     }
                 }
             }
@@ -460,28 +490,31 @@ namespace ChemSW.Nbt.MetaData
 
         public bool EditProp( CswNbtNode Node, ICswNbtUser User, bool InPopUp )
         {
-            CswNbtMetaDataNodeTypeProp Prop = this;
+            //CswNbtMetaDataNodeTypeProp Prop = this;
             bool IsOnAdd = ( ( IsRequired && DefaultValue.Empty ) ||
-                             Node.Properties[Prop].TemporarilyRequired ||
+                             Node.Properties[this].TemporarilyRequired ||
                              AddLayout != null );
-            var ret = ( ( !InPopUp || IsOnAdd ) &&
+            var ret = ( ( false == InPopUp || IsOnAdd ) &&
                         FilterNodeTypePropId == Int32.MinValue &&
-                        !( Node.Properties[Prop].Hidden ) &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, Prop.getNodeType(), false, null, User, Node.NodeId, Prop ) );
+                        false == Node.Properties[this].Hidden &&
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), false, null, User, Node.NodeId, this ) );
             return ret;
         }
 
-        public bool ShowProp( CswNbtNode Node, ICswNbtUser User )
+        public bool ShowProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtNode Node, ICswNbtUser User, Int32 TabId )
         {
-            CswNbtMetaDataNodeTypeProp Prop = this;
+            //CswNbtMetaDataNodeTypeProp Prop = this;
             CswNbtMetaDataNodeTypeTab Tab = null;
-            if( Prop.EditLayout != null )
+            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
             {
-                //Tab = Prop.EditLayout.Tab;
-                Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( Prop.EditLayout.TabId );
+                CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout( TabId );
+                if( EditLayout != null )
+                {
+                    Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                }
             }
-            var ret = ( !hasFilter() && !Node.Properties[Prop].Hidden &&
-                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, Prop.getNodeType(), false, Tab, User, Node.NodeId, Prop ) );
+            var ret = ( false == hasFilter() && false == Node.Properties[this].Hidden &&
+                        _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), false, Tab, User, Node.NodeId, this ) );
             return ret;
         }
 
@@ -838,7 +871,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 string ret = "Q";
-                CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
+                CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( FirstEditLayout.TabId );
                 if( Tab.SectionNo != Int32.MinValue )
                 {
                     ret += Tab.SectionNo.ToString() + ".";
@@ -1527,20 +1560,20 @@ namespace ChemSW.Nbt.MetaData
         public int CompareTo( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp )
         {
             int ret = 0;
-            if( EditLayout.DisplayRow == OtherNodeTypeProp.EditLayout.DisplayRow )
+            if( FirstEditLayout.DisplayRow == OtherNodeTypeProp.FirstEditLayout.DisplayRow )
             {
-                if( EditLayout.DisplayColumn == OtherNodeTypeProp.EditLayout.DisplayColumn )
+                if( FirstEditLayout.DisplayColumn == OtherNodeTypeProp.FirstEditLayout.DisplayColumn )
                 {
                     ret = this.PropName.CompareTo( OtherNodeTypeProp.PropName );
                 }
                 else
                 {
-                    ret = this.EditLayout.DisplayColumn.CompareTo( OtherNodeTypeProp.EditLayout.DisplayColumn );
+                    ret = this.FirstEditLayout.DisplayColumn.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayColumn );
                 }
             }
             else
             {
-                ret = this.EditLayout.DisplayRow.CompareTo( OtherNodeTypeProp.EditLayout.DisplayRow );
+                ret = this.FirstEditLayout.DisplayRow.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayRow );
             }
             return ret;
         }

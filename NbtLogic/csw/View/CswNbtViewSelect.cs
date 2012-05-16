@@ -6,6 +6,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
@@ -253,13 +254,24 @@ namespace ChemSW.Nbt
         public DataTable getAllEnabledViews()
         {
             CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "CswNbtViewSelect.getAllViews_select", "getAllViewInfo" );
+
+            CswNbtNode ChemSwAdminUser = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+            CswNbtNode ChemSwAdminRole = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+            bool ExcludeCswAdmin = ( _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername ||
+                                     _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName );
+
             DataTable AllViews = ViewsSelect.getTable();
             Collection<DataRow> DoomedRows = new Collection<DataRow>();
             foreach( DataRow Row in AllViews.Rows )
             {
                 CswNbtViewId ViewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ViewId );
-                if( false == View.IsFullyEnabled() )
+                if( false == View.IsFullyEnabled() ||
+                    ( ExcludeCswAdmin &&
+                    ( ( View.Visibility == NbtViewVisibility.Role &&
+                        View.VisibilityRoleId == ChemSwAdminRole.NodeId ) ||
+                    ( View.Visibility == NbtViewVisibility.User &&
+                        View.VisibilityUserId == ChemSwAdminUser.NodeId ) ) ) )
                 {
                     DoomedRows.Add( Row );
                 }

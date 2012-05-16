@@ -8,7 +8,7 @@
         Csw.register('goHome', function () {
             'use strict';
             Csw.clientState.clearCurrent();
-            window.location = Csw.getGlobalProp('homeUrl');
+            Csw.window.location(Csw.getGlobalProp('homeUrl'));
         });
 
     Csw.handleMenuItem = Csw.handleMenuItem ||
@@ -20,16 +20,17 @@
                 itemJson: '',
                 onLogout: null, // function () { },
                 onAlterNode: null, // function (nodeid, nodekey) { },
-                onSearch: {
-                    onViewSearch: null, // function () { },
-                    onGenericSearch: null // function () { }
-                },
+//                onSearch: {
+//                    onViewSearch: null, // function () { },
+//                    onGenericSearch: null // function () { }
+//                },
                 onMultiEdit: null, //function () { },
                 onEditView: null, //function (viewid) { },
                 onSaveView: null, //function (newviewid) { },
                 onQuotas: null, // function () { },
+                onModules: null, // function () { },
                 onSessions: null, // function () { },
-            onImpersonate: null,
+                onImpersonate: null,
                 Multi: false,
                 nodeTreeCheck: null
             };
@@ -182,6 +183,9 @@
                         break;
                     case 'Quotas':
                         $a.click(o.onQuotas);
+                        break;
+                    case 'Modules':
+                        $a.click(o.onModules);
                         break;
                     case 'Sessions':
                         $a.click(o.onSessions);

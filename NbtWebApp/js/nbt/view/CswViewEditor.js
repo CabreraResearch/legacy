@@ -717,17 +717,29 @@
                     'ID': o.ID + '_editfilt',
                     'FirstCellRightAlign': true
                 });
-                filterTable.cell(1, 1).text('Case Sensitive');
 
-                filterTable.cell(1, 2)
+                filterTable.cell(1, 1).text('Case Sensitive');
+                var cbCaseSensitive = filterTable.cell(1, 2)
                     .input({
                         ID: o.ID + '_casecb',
                         type: Csw.enums.inputTypes.checkbox,
                         onChange: function () {
-                            var $this = $(this);
-                            viewNodeData.casesensitive = $this.is(':checked');
+                            //var $this = $(this);
+                            viewNodeData.casesensitive = cbCaseSensitive.$.is(':checked');
                         },
                         checked: Csw.bool(viewNodeData.casesensitive)
+                    });
+
+                filterTable.cell(2, 1).text('Show At Runtime');
+                var cbShowAtRuntime = filterTable.cell(2, 2)
+                    .input({
+                        ID: o.ID + '_showcb',
+                        type: Csw.enums.inputTypes.checkbox,
+                        onChange: function () {
+                            //var $this = $(this);
+                            viewNodeData.showatruntime = cbShowAtRuntime.$.is(':checked');
+                        },
+                        checked: Csw.bool(viewNodeData.showatruntime)
                     });
             });
         }
@@ -739,33 +751,37 @@
             }
             var treecontent = viewJsonHtml(stepno, currentViewJson);
 
-            $tree.jstree({
-                "html_data":
+            try {
+                $tree.jstree({
+                    "html_data":
                         {
                             "data": treecontent.html
                         },
-                "ui": {
-                    "select_limit": 1 //,
+                    "ui": {
+                        "select_limit": 1 //,
                     //"initially_select": selectid,
-                },
-                "types": {
-                    "types": treecontent.types,
-                    "max_children": -2,
-                    "max_depth": -2
-                },
-                "plugins": ["themes", "html_data", "ui", "types", "crrm"]
-            }); // tree
+                    },
+                    "types": {
+                        "types": treecontent.types,
+                        "max_children": -2,
+                        "max_depth": -2
+                    },
+                    "plugins": ["themes", "html_data", "ui", "types", "crrm"]
+                }); // tree
 
-            if (stepno >= Csw.enums.wizardSteps_ViewEditor.relationships.step && stepno <= Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                bindDeleteBtns(stepno);
-            }
+                if (stepno >= Csw.enums.wizardSteps_ViewEditor.relationships.step && stepno <= Csw.enums.wizardSteps_ViewEditor.filters.step) {
+                    bindDeleteBtns(stepno);
+                }
 
-            if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                bindViewPropFilterBtns(stepno);
-            }
+                if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
+                    bindViewPropFilterBtns(stepno);
+                }
 
-            if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
-                makeTuningStep($tree);
+                if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
+                    makeTuningStep($tree);
+                }
+            } catch (e) {
+                Csw.error.showError(Csw.enums.errorType.error, 'Unable to render this tree element.', 'Exception: ' + e.name + ' occurred with ' + e.message);
             }
             return $tree;
         } // _makeViewTree()
