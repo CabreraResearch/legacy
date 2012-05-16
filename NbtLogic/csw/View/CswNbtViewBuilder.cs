@@ -338,7 +338,9 @@ namespace ChemSW.Nbt.Logic
                 foreach( CswNbtViewProperty ViewProperty in Relationship.Properties )
                 {
                     CswViewBuilderProp VbProp = new CswViewBuilderProp( ViewProperty );
-                    _getVbPropData( PropObject, VbProp );
+                    JObject ThisProp = new JObject();
+                    PropObject[VbProp.ViewProp.ArbitraryId] = ThisProp;
+                    _getVbPropData( ThisProp, VbProp );
                 }
                 if( Relationship.ChildRelationships.Count > 0 )
                 {
