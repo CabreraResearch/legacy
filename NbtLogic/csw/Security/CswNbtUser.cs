@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Security
             // We can't use a CswTableSelect on a view, apparently.  So we'll use a direct select
             //CswTableSelect UserSelect = _CswNbtResources.makeCswTableSelect( "CswNbtUser_User_Select", "vwNbtUser" );
             //DataTable UserTable = UserSelect.getTable( "where username = '" + Username + "'" );
-            string UserSelect = "select * from vwNbtUser where username = '" + Username + "'";
+            string UserSelect = "select * from vwNbtUser where lower(username) = '" + Username.ToLower() + "'";
             DataTable UserTable = _CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "CswNbtUser_User_Select", UserSelect );
 
             if( UserTable.Rows.Count > 0 )
