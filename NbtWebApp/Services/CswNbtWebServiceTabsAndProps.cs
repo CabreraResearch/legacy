@@ -676,6 +676,7 @@ namespace ChemSW.Nbt.WebServices
                         JObject ThisPropObj = new JObject();
                         ThisPropObj["propid"] = Prop.PropId.ToString();
                         ThisPropObj["propname"] = Prop.PropNameWithQuestionNo.ToString();
+                        ThisPropObj["hidden"] = ( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && Prop.FirstEditLayout == null ).ToString().ToLower();
                         ret.Add( ThisPropObj );
                     }
                 }

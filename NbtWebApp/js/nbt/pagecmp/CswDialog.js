@@ -374,9 +374,13 @@
                     success: function (data) {
                         var propOpts = [{ value: '', display: 'Select...'}];
                         Csw.each(data.add, function (p) {
+                            var display = p.propname;
+                            if(Csw.bool(p.hidden)) {
+                                display += ' (hidden)';
+                            }
                             propOpts.push({
                                 value: p.propid,
-                                display: p.propname
+                                display: display
                             });
                         });
                         addSelect.setOptions(propOpts, '', true);
