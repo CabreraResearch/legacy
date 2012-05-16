@@ -86,6 +86,18 @@ namespace ChemSW.Nbt.Actions
             return CopiedAssemblyNode;
         }
 
+        public CswNbtNode CopyGeneratorNode( CswNbtNode OriginalIDNode )//Case 26281
+        {
+            CswNbtNode CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalIDNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopiedIDNode.copyPropertyValues( OriginalIDNode );
+
+            CswNbtObjClassGenerator CopiedIDNodeAsID = CswNbtNodeCaster.AsGenerator( CopiedIDNode );
+            CopiedIDNodeAsID.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
+
+            CopiedIDNode.postChanges( true, true );
+            return CopiedIDNode;
+        } // CopyCopyGeneratorNodeNode()
+
         public CswNbtNode CopyInspectionTargetNode( CswNbtNode OriginalInspectionTargetNode )
         {
             // Copy this Inspection Target
