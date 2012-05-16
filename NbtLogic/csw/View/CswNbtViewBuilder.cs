@@ -5,7 +5,6 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Logic
@@ -296,41 +295,43 @@ namespace ChemSW.Nbt.Logic
             return Ret;
         }
 
-        /// <summary>
-        /// Returns all props and prop filters for a NodeType or ObjectClass
-        /// </summary>
-        public JObject getVbProperties( string RelatedIdTypeStr, string NodeTypeOrObjectClassId, string NodeKey )
-        {
-            JObject ViewBuilderProps = new JObject();
-            if( ( !string.IsNullOrEmpty( RelatedIdTypeStr ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) ) || !string.IsNullOrEmpty( NodeKey ) )
-            {
-                Int32 TypeOrObjectClassId = Int32.MinValue;
-                NbtViewRelatedIdType Relationship = NbtViewRelatedIdType.Unknown;
-                if( string.IsNullOrEmpty( NodeTypeOrObjectClassId ) && !string.IsNullOrEmpty( NodeKey ) )
-                {
-                    CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
-                    CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
-                    if( null != Node.getNodeType() )
-                    {
-                        TypeOrObjectClassId = Node.NodeTypeId;
-                        Relationship = NbtViewRelatedIdType.NodeTypeId;
-                    }
-                    else if( null != Node.getObjectClass() )
-                    {
-                        TypeOrObjectClassId = Node.getObjectClassId();
-                        Relationship = NbtViewRelatedIdType.ObjectClassId;
-                    }
-                }
-                else if( false == string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
-                {
-                    TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
-                    Relationship = (NbtViewRelatedIdType) RelatedIdTypeStr;
-                    //NbtViewRelatedIdType.TryParse( RelatedIdTypeStr, true, out Relationship );
-                }
-                ViewBuilderProps = _getVbProperties( Relationship, TypeOrObjectClassId );
-            }
-            return ViewBuilderProps;
-        }
+        ///// <summary>
+        ///// Returns all props and prop filters for a NodeType or ObjectClass
+        ///// </summary>
+        //public JObject getVbProperties( string RelatedIdTypeStr, string NodeTypeOrObjectClassId, string NodeKey )
+        //{
+        //    JObject ViewBuilderProps = new JObject();
+        //    if( ( !string.IsNullOrEmpty( RelatedIdTypeStr ) && !string.IsNullOrEmpty( NodeTypeOrObjectClassId ) ) || !string.IsNullOrEmpty( NodeKey ) )
+        //    {
+        //        Int32 TypeOrObjectClassId = Int32.MinValue;
+        //        NbtViewRelatedIdType Relationship = NbtViewRelatedIdType.Unknown;
+        //        if( string.IsNullOrEmpty( NodeTypeOrObjectClassId ) && !string.IsNullOrEmpty( NodeKey ) )
+        //        {
+        //            CswNbtNodeKey NbtNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+        //            CswNbtNode Node = _CswNbtResources.Nodes[NbtNodeKey];
+        //            if( null != Node.getNodeType() )
+        //            {
+        //                TypeOrObjectClassId = Node.NodeTypeId;
+        //                Relationship = NbtViewRelatedIdType.NodeTypeId;
+        //            }
+        //            else if( null != Node.getObjectClass() )
+        //            {
+        //                TypeOrObjectClassId = Node.getObjectClassId();
+        //                Relationship = NbtViewRelatedIdType.ObjectClassId;
+        //            }
+        //        }
+        //        else if( false == string.IsNullOrEmpty( NodeTypeOrObjectClassId ) )
+        //        {
+        //            TypeOrObjectClassId = CswConvert.ToInt32( NodeTypeOrObjectClassId );
+        //            Relationship = (NbtViewRelatedIdType) RelatedIdTypeStr;
+        //            //NbtViewRelatedIdType.TryParse( RelatedIdTypeStr, true, out Relationship );
+        //        }
+        //        ViewBuilderProps = _getVbProperties( Relationship, TypeOrObjectClassId );
+        //    }
+        //    return ViewBuilderProps;
+        //}
+
+
 
         /// <summary>
         /// Returns all prop filters for a CswNbtViewProperty
