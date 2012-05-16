@@ -41,9 +41,7 @@
                                 internal.isAuthenticated = true;
                             }
                         });
-                    },
-                    expirationInterval: internal.expiretimeInterval,
-                    onExpire: Csw.clientSession.logout
+                    }
                 });
             }
         }
@@ -84,7 +82,7 @@
             if (loginopts) {
                 $.extend(internal, loginopts);
             }
-
+            internal.isAuthenticated = true;
             Csw.ajax.post({
                 url: internal.authenticateUrl,
                 data: {
@@ -94,15 +92,16 @@
                     ForMobile: internal.ForMobile
                 },
                 success: function () {
-                    internal.isAuthenticated = true;
                     Csw.cookie.set(Csw.cookie.cookieNames.Username, internal.UserName);
                     Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, internal.logoutpath);
                     Csw.tryExec(internal.onAuthenticate, internal.UserName);
                 },
                 onloginfail: function (txt) {
+                    internal.isAuthenticated = false;
                     Csw.tryExec(internal.onFail, txt);
                 },
                 error: function () {
+                    internal.isAuthenticated = false;
                     Csw.tryExec(internal.onFail, 'Webservice Error');
                 }
             }); // ajax

@@ -11,9 +11,7 @@
 
         ExpireDialog: function (options) {
             var o = {
-                onYes: null,
-                expirationInterval: 300000,
-                onExpire: Csw.clientSession.logout
+                onYes: null
             };
 
             if (options) {
@@ -29,8 +27,6 @@
 
             var btnTbl = tbl.cell(2, 1).table();
 
-            window.setTimeout(o.onExpire, Csw.number(o.expirationInterval, 300000));
-
             btnTbl.cell(3, 1).button({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
@@ -40,17 +36,8 @@
                     Csw.tryExec(o.onYes);
                 }
             });
-
-            btnTbl.cell(3, 2).button({
-                ID: 'cancel_btn',
-                enabledText: 'No',
-                onClick: function () {
-                    div.$.dialog('close');
-                    Csw.clientSession.logout();
-                }
-            });
-
-            openDialog(div, 300, 150, null, 'Expire Warning');
+            
+            openDialog(div, 300, 150, Csw.clientSession.logout, 'Expire Warning');
 
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {
