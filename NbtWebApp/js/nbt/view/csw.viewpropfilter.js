@@ -291,8 +291,11 @@
 //            } // bindToButton()
 
             internal.setInitialValues = function() {
-                internal.propname = internal.propsData.propname;
-                                
+
+                if(Csw.isNullOrEmpty(internal.propname)) {
+                    internal.propname = internal.propsData.propname;
+                }
+                                                
                 if(Csw.isNullOrEmpty(internal.selectedSubFieldName)) {
                     internal.selectedSubFieldName = Csw.string(internal.propsData.defaultsubfield, 
                                                                Csw.string(internal.propsData.subfieldname, 
