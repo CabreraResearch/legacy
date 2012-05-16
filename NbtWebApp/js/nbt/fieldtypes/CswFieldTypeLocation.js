@@ -102,7 +102,7 @@
                     }); // imageButton
 
                     propDiv.$.hover(function (event) {
-                        Csw.nodeHoverIn(event, selectDiv.val());
+                        Csw.nodeHoverIn(event, selectDiv.propNonDom('value'));
                     }, Csw.nodeHoverOut);
                 }
             },
