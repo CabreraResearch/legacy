@@ -979,7 +979,7 @@
 
             openDialog(o.div, o.width, o.height, o.onClose, o.title);
 
-        }, // EditFilterDialog
+        }, // GenericDialog
 
 
         ErrorDialog: function (error) {
