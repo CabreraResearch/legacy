@@ -609,7 +609,7 @@ window.initMain = window.initMain || function (undefined) {
         o.onEditNode = function () { getViewGrid(o); };
         o.onDeleteNode = function () { getViewGrid(o); };
 
-        clear({ centerbottom: true });
+        clear({ centertop: true, centerbottom: true });
         
         var viewfilters = Csw.nbt.viewFilters({
             ID: 'main_viewfilters',
