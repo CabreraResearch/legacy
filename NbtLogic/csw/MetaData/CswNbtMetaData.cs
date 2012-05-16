@@ -995,7 +995,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void ResetEnabledNodeTypes()
         {
-            String IsEnabled;
+            bool IsEnabled;
             CswTableSelect NTSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "MetaData.ResetEnabledNodeTypes", "nodetypes" );
 
             CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodetypeid" };
@@ -1021,19 +1021,19 @@ namespace ChemSW.Nbt.MetaData
 
             DataTable NTTable = NTSelect.getTable( SelectClause, WhereClause );
 
-            CswTableUpdate NTUpdate = CswNbtResources.makeCswTableUpdate( "NodeTypes_Update", "nodetypes" );
-            DataTable NTAllTable = NTUpdate.getTable( String.Empty );
+            CswTableUpdate NTUpdate = CswNbtResources.makeCswTableUpdate( "ResetEnabledNodeTypes_Update", "nodetypes" );
+            DataTable NTAllTable = NTUpdate.getTable();
             foreach( DataRow NodeTypeRow in NTAllTable.Rows )
             {
-                IsEnabled = "0";
+                IsEnabled = false;
                 foreach( DataRow NTRow in NTTable.Rows )
                 {
                     if( CswConvert.ToInt32( NTRow["nodetypeid"] ) == CswConvert.ToInt32( NodeTypeRow["NodeTypeId"] ) )
                     {
-                        IsEnabled = "1";
+                        IsEnabled = true;
                     }
                 }
-                NodeTypeRow["enabled"] = IsEnabled;
+                NodeTypeRow["enabled"] = CswConvert.ToDbVal( IsEnabled );
             }
             NTUpdate.update( NTAllTable );
         } // ResetEnabledNodeTypes()
