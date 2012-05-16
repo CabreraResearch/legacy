@@ -43,15 +43,22 @@ namespace NbtWebAppServices.Response
                 public Collection<CswNbtInspectionDesignSectionProperty> Properties { get; set; }
             }
 
+            public class CswNbtInspectionChoice
+            {
+                public string Text { get; set; }
+                public bool IsCompliant { get; set; }
+            }
+
             public class CswNbtInspectionDesignSectionProperty
             {
                 public CswNbtInspectionDesignSectionProperty()
                 {
-                    Choices = new Collection<string>();
+                    Choices = new Collection<CswNbtInspectionChoice>();
                 }
 
-                public Collection<string> Choices { get; set; }
+                public Collection<CswNbtInspectionChoice> Choices { get; set; }
                 public Int32 QuestionId { get; set; }
+
                 public string Text { get; set; }
                 public string Type { get; set; }
                 public string HelpText { get; set; }
@@ -66,7 +73,7 @@ namespace NbtWebAppServices.Response
             }
 
             public Int32 DesignId { get; set; }
-            public DateTime DueDate { get; set; }
+            public string DueDate { get; set; }
             public Int32 InspectionId { get; set; }
             public string InspectionPointName { get; set; }
             public string LocationPath { get; set; }
@@ -81,8 +88,8 @@ namespace NbtWebAppServices.Response
                 public Int32 AnswerId { get; set; }
                 public string Comments { get; set; }
                 public string CorrectiveAction { get; set; }
-                public DateTime DateAnswered { get; set; }
-                public DateTime DateCorrected { get; set; }
+                public string DateAnswered { get; set; }
+                public string DateCorrected { get; set; }
                 public Int32 QuestionId { get; set; }
                 public string Status { get; set; }
             }

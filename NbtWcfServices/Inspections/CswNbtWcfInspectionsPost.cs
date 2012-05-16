@@ -84,8 +84,10 @@ namespace NbtWebAppServices.Response
                                     CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                                     PropAsQuestion.Answer = Question.Answer;
                                     PropAsQuestion.CorrectiveAction = Question.CorrectiveAction;
-                                    PropAsQuestion.DateAnswered = Question.DateAnswered;
-                                    PropAsQuestion.DateCorrected = Question.DateCorrected;
+                                    DateTime DateAnswered = CswConvert.ToDateTime( Question.DateAnswered );
+                                    DateTime DateCorrected = CswConvert.ToDateTime( Question.DateCorrected );
+                                    PropAsQuestion.DateAnswered = DateAnswered;
+                                    PropAsQuestion.DateCorrected = DateCorrected;
                                     PropAsQuestion.Comments = Question.Comments;
                                 }
                             }
@@ -97,7 +99,7 @@ namespace NbtWebAppServices.Response
 
                             if( NodeAsDesign.Status.Value == Completed || NodeAsDesign.Status.Value == CompletedLate )
                             {
-                                /* Nothing to so */
+                                /* Nothing to do */
                             }
                             else if( NodeAsDesign.Status.Value == ActionRequired )
                             {
@@ -108,7 +110,8 @@ namespace NbtWebAppServices.Response
                                     Question.Status = NodeAsDesign.Status.Value;
                                 }
                                 /* In case the Inspection has been modified by someone else */
-                                Inspection.DueDate = NodeAsDesign.InspectionDate.DateTimeValue;
+                                CswDateTime DueDate = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, NodeAsDesign.InspectionDate.DateTimeValue );
+                                Inspection.DueDate = DueDate.ToClientAsJavascriptString();
                                 Inspection.InspectionPointName = NodeAsDesign.Target.CachedNodeName;
                                 Inspection.LocationPath = NodeAsDesign.Location.CachedValue;
                                 _InspectionsResponse.ActionRequired.Add( Inspection );

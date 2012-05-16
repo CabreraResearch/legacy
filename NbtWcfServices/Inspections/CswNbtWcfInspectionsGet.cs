@@ -59,20 +59,28 @@ namespace NbtWebAppServices.Response
                     {
                         var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
                         {
-                            HelpText = NodeTypeProp.HelpText,
-                            Text = NodeTypeProp.PropName
+                            HelpText = NodeTypeProp.HelpText
                         };
                         CswNbtMetaDataFieldType.NbtFieldType FieldType = NodeTypeProp.getFieldType().FieldType;
                         ResponseProperty.Type = FieldType.ToString();
 
                         if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                         {
+                            ResponseProperty.Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName;
                             ResponseProperty.QuestionId = NodeTypeProp.PropId;
-                            CswCommaDelimitedString Answers = new CswCommaDelimitedString();
-                            Answers.FromString( NodeTypeProp.ListOptions );
-                            foreach( string Answer in Answers )
+                            CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                            PossibleAnswers.FromString( NodeTypeProp.ListOptions );
+                            CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+                            CompliantAnswers.FromString( NodeTypeProp.ValueOptions );
+                            foreach( string Answer in PossibleAnswers )
                             {
-                                ResponseProperty.Choices.Add( Answer );
+                                var Choice =
+                                    new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionChoice
+                                        {
+                                            Text = Answer,
+                                            IsCompliant = CompliantAnswers.Contains( Answer, false )
+                                        };
+                                ResponseProperty.Choices.Add( Choice );
                             }
                         }
                         ResponseSection.Properties.Add( ResponseProperty );
@@ -89,10 +97,12 @@ namespace NbtWebAppServices.Response
             {
                 InspectionDesignNodeIds.Add( InspectionNode.NodeId );
                 CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                CswDateTime DueDate = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, NodeAsInspectionDesign.Date.DateTimeValue );
                 var ResponseInspection = new CswNbtWcfInspectionsDataModel.CswNbtInspection
                 {
                     DesignId = InspectionNode.NodeTypeId,
-                    DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
+                    
+                    DueDate = DueDate.ToClientAsJavascriptString(),
                     InspectionId = NodeAsInspectionDesign.NodeId.PrimaryKey,
                     InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
                     LocationPath = NodeAsInspectionDesign.Location.Gestalt,
@@ -105,16 +115,18 @@ namespace NbtWebAppServices.Response
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
+                        CswDateTime DateAnswered = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, PropAsQuestion.DateAnswered );
+                        CswDateTime DateCorrected = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, PropAsQuestion.DateCorrected );
                         var ResponseQuestion = new CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion
                         {
                             Answer = PropAsQuestion.Answer,
-                            AnswerId = PropAsQuestion.NodeTypePropId,
+                            AnswerId = PropAsQuestion.JctNodePropId,
                             Comments = PropAsQuestion.Comments,
                             CorrectiveAction = PropAsQuestion.CorrectiveAction,
-                            DateAnswered = PropAsQuestion.DateAnswered,
+                            DateAnswered = DateAnswered.ToClientAsJavascriptString(),
                             QuestionId = PropAsQuestion.NodeTypePropId,
                             Status = NodeAsInspectionDesign.Status.Value,
-                            DateCorrected = PropAsQuestion.DateCorrected
+                            DateCorrected = DateCorrected.ToClientAsJavascriptString()
                         };
 
                         ResponseInspection.Questions.Add( ResponseQuestion );
