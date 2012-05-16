@@ -20,7 +20,8 @@
                 DisplayMode: 'Date',    // Date, Time, DateTime
                 ReadOnly: false,
                 Required: false,
-                onChange: null
+                onChange: null,
+                showTodayButton: false
             };
             var external = {};
 
@@ -57,7 +58,10 @@
                             width: '80px',
                             cssclass: 'textinput'
                         });
-                        internal.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(internal.DateFormat) });
+                        if(internal.Date.substr(0, 'today'.length) !== 'today')
+                        {
+                            internal.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(internal.DateFormat) });
+                        }
                         if (internal.Required) {
                             internal.dateBox.addClass('required');
                         }
@@ -84,6 +88,19 @@
                         if (internal.Required) {
                             internal.timeBox.addClass('required');
                         }
+                    }
+
+                    if(Csw.bool(internal.showTodayButton)) {
+                        internal.dateTimeDiv.button({
+                            ID: internal.ID + '_today',
+                            disableOnClick: false,
+                            onClick: function () {
+                                internal.dateBox.$.datepicker('destroy');
+                                internal.dateBox.val('today');  // this doesn't trigger onchange
+                                Csw.tryExec(internal.onChange);
+                            },
+                            enabledText: 'Today'
+                        });
                     }
                 } // if-else(o.ReadOnly)
             } ());

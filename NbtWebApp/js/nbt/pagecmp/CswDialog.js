@@ -361,9 +361,13 @@
                     success: function (data) {
                         var propOpts = [{ value: '', display: 'Select...'}];
                         Csw.each(data.add, function (p) {
+                            var display = p.propname;
+                            if(Csw.bool(p.hidden)) {
+                                display += ' (hidden)';
+                            }
                             propOpts.push({
                                 value: p.propid,
-                                display: p.propname
+                                display: display
                             });
                         });
                         addSelect.setOptions(propOpts, '', true);
@@ -931,6 +935,39 @@
 
             openDialog(div, 800, 600, null, 'Search ' + o.propname);
         }, // SearchDialog
+
+        GenericDialog: function(options) {
+            var o = {
+                div: null, 
+                title: '', 
+                onOk: null, 
+                onCancel: null,
+                onClose: null,
+                height: 400,
+                width: 600
+            };
+            if(options) $.extend(o, options);
+
+            o.div.button({
+                enabledText: 'OK',
+                onClick: function () {
+                    Csw.tryExec(o.onOk);
+                    o.div.$.dialog('close');
+                }
+            });
+
+            o.div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    Csw.tryExec(o.onCancel);
+                    o.div.$.dialog('close');
+                }
+            });
+
+            openDialog(o.div, o.width, o.height, o.onClose, o.title);
+
+        }, // GenericDialog
+
 
         ErrorDialog: function (error) {
             var div = Csw.literals.div();

@@ -1327,7 +1327,8 @@ ul li div {
 {
     padding: 2px;
     text-align: right;
-    max-width: 242px;
+    width: 242px;
     max-height: 70px;
+    font-size: 9px;
     overflow: auto; 
 }
