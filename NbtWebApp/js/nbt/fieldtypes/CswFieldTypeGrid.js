@@ -38,7 +38,7 @@
                         ID: o.ID + '_viewfilters',
                         parent: filterDiv,
                         viewid: viewid,
-                        onEditFilters: function(newviewid) {
+                        onEditFilters: function (newviewid) {
                             makeFullGrid(newviewid, newDiv);
                         } // onEditFilters
                     }); // viewFilters
@@ -79,11 +79,11 @@
                                 rows: data.rows,
                                 onLinkClick: function () {
                                     $.CswDialog('OpenEmptyDialog', {
-                                            title: o.nodename + ' ' + o.propData.name,
-                                            onOpen: function (dialogDiv) {
-                                                makeFullGrid(viewid, dialogDiv);
-                                            }
+                                        title: o.nodename + ' ' + o.propData.name,
+                                        onOpen: function (dialogDiv) {
+                                            makeFullGrid(viewid, dialogDiv);
                                         }
+                                    }
                                     );
                                 }
                             });
@@ -124,11 +124,14 @@
                 onMultiEdit: function () {
                     var multi = (false === cswGrid.isMulti());
                     var g = {
+                        canEdit: multi,
+                        canDelete: multi,
                         gridOpts: {
                             multiselect: multi
                         }
                     };
                     cswGrid.changeGridOpts(g, ['Action', 'Delete']);
+                    cswGrid.setWidth(600);
                 },
                 onEditView: function () {
                     if (Csw.isFunction(o.onEditView)) {

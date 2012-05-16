@@ -19,7 +19,7 @@
                 gridOpts: {
                     autoencode: true,
                     autowidth: true,
-                    altRows: window.internetExplorerVersionNo === -1,
+                    altRows: false, //window.internetExplorerVersionNo === -1,
                     caption: '',
                     datatype: 'local',
                     emptyrecords: 'No Results',
@@ -460,6 +460,10 @@
 
             external.isMulti = function () {
                 return internal.multiEdit;
+            };
+
+            external.setWidth = function (width) {
+                external.gridTable.$.jqGrid('setGridWidth', width);
             };
 
             external.resizeWithParent = function () {
