@@ -72,9 +72,9 @@
             Csw.clientDb.clear();
             Csw.cookie.clearAll();
             if (false === Csw.isNullOrEmpty(internal.logoutpath)) {
-                window.location = internal.logoutpath;
+                Csw.window.location(internal.logoutpath);
             } else {
-                window.location = Csw.getGlobalProp('homeUrl');
+                Csw.window.location(Csw.getGlobalProp('homeUrl'));
             }
         });
 

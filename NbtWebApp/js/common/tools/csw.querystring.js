@@ -22,7 +22,7 @@
                 a: /\+/g, // Regex for replacing addition symbol with a space
                 r: /([^&=]+)=?([^&]*)/g,
                 d: function (s) { return decodeURIComponent(s.replace(internal.a, " ")); },
-                q: window.location.search.substring(1)
+                q: Csw.window.location().search.substring(1)
             };
 
             while (internal.e = internal.r.exec(internal.q)) {

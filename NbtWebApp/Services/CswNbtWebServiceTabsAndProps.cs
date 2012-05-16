@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.WebServices
 
             bool ShowPropertyName = false == ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image ||
                                                FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button ||
-                                               ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid && 
+                                               ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Grid &&
                                                  PropWrapper.AsGrid.GridMode == CswNbtNodePropGrid.GridPropMode.Full ) );
 
             PropObj["showpropertyname"] = ShowPropertyName;
@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.WebServices
                 if( NodeTypePropId != Int32.MinValue && NewRow > 0 && NewColumn > 0 )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ), TabId, NewRow, NewColumn );
+                    Prop.updateLayout( _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode ), false, TabId, NewRow, NewColumn );
                     ret = true;
                 }
             } // if( _CswNbtResources.Permit.can( CswNbtActionName.Design ) || _CswNbtResources.CurrentNbtUser.IsAdministrator() )
@@ -688,7 +688,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
             //CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
-            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, CswConvert.ToInt32( TabId ), Int32.MinValue, Int32.MinValue );
+            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, false, CswConvert.ToInt32( TabId ), Int32.MinValue, Int32.MinValue );
             return true;
         } // addPropertyToLayout()
 

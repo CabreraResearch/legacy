@@ -69,18 +69,18 @@
                 //Case 26096
                 if (passwordlength > 0) {
                     $.validator.addMethod("password_length", function (value) {
-                        return (Csw.string(value).length >= passwordlength);
+                        return (Csw.string(value).length >= passwordlength || Csw.string(value).length === 0);
                     }, 'Password must be at least ' + passwordlength + ' characters long.');
                     textBox1.addClass('password_length');
                 }
                 if (passwordcomplexity > 0) {
                     $.validator.addMethod("password_number", function (value) {
-                        return (/.*[\d]/.test(value) && /.*[a-zA-Z]/.test(value));
+                        return ((/.*[\d]/.test(value) && /.*[a-zA-Z]/.test(value)) || Csw.string(value).length === 0);
                     }, 'Password must contain at least one letter and one number.');
                     textBox1.addClass('password_number');
                     if (passwordcomplexity > 1) {
                         $.validator.addMethod("password_symbol", function (value) {
-                            return (/.*[`~!@#$%\^*()_\-+=\[{\]};:|\.?,]/.test(value));
+                            return (/.*[`~!@#$%\^*()_\-+=\[{\]};:|\.?,]/.test(value) || Csw.string(value).length === 0);
                         }, 'Password must contain a symbol.');
                         textBox1.addClass('password_symbol');
                     }

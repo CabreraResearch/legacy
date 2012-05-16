@@ -191,11 +191,14 @@ namespace ChemSW.Nbt.Welcome
                     }
                     else if( ViewType == CswNbtView.ViewType.Action )
                     {
-                        NewWelcomeRow["actionid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
+                        NewWelcomeRow["actionid"] = CswConvert.ToDbVal( PkValue );
                     }
                     else if( ViewType == CswNbtView.ViewType.Report )
                     {
-                        NewWelcomeRow["reportid"] = CswConvert.ToDbVal( CswConvert.ToInt32( PkValue ) );
+                        CswPrimaryKey ReportPk = new CswPrimaryKey();
+                        ReportPk.FromString( PkValue );
+                        Int32 PkVal = ReportPk.PrimaryKey;
+                        NewWelcomeRow["reportid"] = CswConvert.ToDbVal( PkVal );
                     }
                     else
                     {

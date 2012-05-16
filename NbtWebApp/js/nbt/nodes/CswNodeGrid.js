@@ -102,6 +102,7 @@
             if (o.reinit) $parent.empty();
 
             var forReporting = (o.EditMode === Csw.enums.editMode.PrintReport),
+                isMulti = o.gridOpts.multiselect,
                 ret, doPaging = false;
 
             /* fetchGridSkeleton */
@@ -151,25 +152,23 @@
                             cswGridOpts.gridOpts.caption = '';
                         }
                         else if (hasActions) {
-                            //                            delete cswGridOpts.gridOpts.optNavEdit;
-                            //                            delete cswGridOpts.gridOpts.optNavDelete;
                             cswGridOpts.gridOpts.canEdit = false;
                             cswGridOpts.gridOpts.canDelete = false;
                             cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
-                                internal.selectedRowId = rowid;
                                 function validateNode(className) {
                                     if (-1 !== className.indexOf('csw-grid-edit')) {
                                         editRows(rowid, ret, o.onEditNode, o.onEditView);
-                                    }
-                                    else if (-1 !== className.indexOf('csw-grid-delete')) {
+                                    } else if (-1 !== className.indexOf('csw-grid-delete')) {
                                         deleteRows(rowid, ret, o.onDeleteNode);
                                     }
                                 }
-                                if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
-                                    validateNode(eventObj.toElement.className);
-                                }
-                                else if (Csw.contains(eventObj, 'target') && Csw.isString(eventObj.target.className)) {
-                                    validateNode(eventObj.target.className);
+                                internal.selectedRowId = rowid;
+                                if (false === isMulti) {
+                                    if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
+                                        validateNode(eventObj.toElement.className);
+                                    } else if (Csw.contains(eventObj, 'target') && Csw.isString(eventObj.target.className)) {
+                                        validateNode(eventObj.target.className);
+                                    }
                                 }
                                 return true;
                             };

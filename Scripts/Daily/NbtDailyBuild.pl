@@ -102,6 +102,7 @@ foreach my $component (@components)
 					   $subdir eq ".hg" ||
 					   $subdir eq "NbtSetup" ||
 					   $subdir eq "Schema" ||
+					   $subdir eq "Scripts" ||
 					   $subdir eq "TestApps" ||
 					   $subdir eq "packages"
 					   ))

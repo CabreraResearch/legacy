@@ -6,7 +6,7 @@ net stop "ChemSW NBT Schedule Service" >> D:\log\dailylog.txt
 
 taskkill -f /IM "nbtschedservice.exe" >> D:\log\dailylog.txt
 
-NbtDailyBuild.pl 1 >> D:\log\dailylog.txt 2>&1
+D:\kiln\nbt\nbt\Scripts\Daily\NbtDailyBuild.pl 1 >> D:\log\dailylog.txt 2>&1
 
 echo "Deploy Finished" >> D:\log\dailylog.txt
 

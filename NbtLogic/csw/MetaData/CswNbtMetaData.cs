@@ -619,7 +619,7 @@ namespace ChemSW.Nbt.MetaData
 
                 NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
 
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, DisplayRow, 1 );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, FirstTab.TabId, DisplayRow, 1 );
                 if( OCProp.getFieldType().IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) &&
                     ( ( OCProp.IsRequired &&
                     false == OCProp.HasDefaultValue() ) ||
@@ -627,7 +627,7 @@ namespace ChemSW.Nbt.MetaData
                     ( Int32.MinValue != OCProp.DisplayColAdd &&
                     Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
                 }
                 DisplayRow++;
             }//iterate object class props
@@ -925,18 +925,18 @@ namespace ChemSW.Nbt.MetaData
 
             if( InsertAfterProp != null )
             {
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp, InsertAfterProp );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp, InsertAfterProp, true );
                 if( FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp, true );
                 }
             }
             else //if( NodeTypeTabs.Rows.Count > 0 )
             {
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, Tab.TabId, Int32.MinValue, Int32.MinValue );
                 if( FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                 }
             }
 
@@ -1115,6 +1115,8 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["nodetypename"] = NewNodeTypeName;
             InsertedNodeTypeRow["category"] = NodeType.Category;
             InsertedNodeTypeRow["islocked"] = CswConvert.ToDbVal( false );
+            InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
+
             NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
             Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
             if( IsVersioning )
@@ -1235,7 +1237,7 @@ namespace ChemSW.Nbt.MetaData
                             {
                                 NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
                             }
-                            NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, NewPropId, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
+                            NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, NewPropId, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
                         }
                     }
                 }
@@ -1452,6 +1454,13 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Delete Jct_Nodes_Props records
+            /* Case 26285: This is a bit of a hack (admittedly), but the crux of the issue is this: 
+             * because JctNodesPropsTableUpdate is a CswTableUpdate and not a CswTableSelect, we must commit the underlying DataTables, 
+             * which contain the row for this property's DefaultValue, which we fetched when we clicked the property in order to delete it. 
+             * Short of refactoring the CswTable instances into read/write pairs and implementing read and write getters, this'll do.
+             * TODO: Remove _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear(); when Design mode is refactored.
+             */
+            _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
             CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
             DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
             foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
@@ -1548,7 +1557,7 @@ namespace ChemSW.Nbt.MetaData
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
             {
-                Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewTab.TabId, Int32.MinValue, Int32.MinValue );
+                Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, NewTab.TabId, Int32.MinValue, Int32.MinValue );
                 // BZ 8353 - To avoid constraint errors, post this change immediately
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
             }

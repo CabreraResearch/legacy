@@ -8,7 +8,7 @@
         Csw.register('goHome', function () {
             'use strict';
             Csw.clientState.clearCurrent();
-            window.location = Csw.getGlobalProp('homeUrl');
+            Csw.window.location(Csw.getGlobalProp('homeUrl'));
         });
 
     Csw.handleMenuItem = Csw.handleMenuItem ||

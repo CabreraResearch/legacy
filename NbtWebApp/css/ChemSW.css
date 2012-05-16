@@ -1317,12 +1317,17 @@ ul li div {
     cursor: pointer;
 }
 
-.viewfiltersdiv
+.viewfilters
 {
     border: 1px solid &cswheaderbordercolor;
     background-color: &cswheaderbgcolor;
-    padding: 3px;
-    max-width: 270px;
+    text-align: left;
+}
+.viewfiltersdiv
+{
+    padding: 2px;
+    text-align: right;
+    max-width: 242px;
     max-height: 70px;
     overflow: auto; 
 }
