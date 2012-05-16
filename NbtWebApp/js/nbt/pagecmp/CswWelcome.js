@@ -23,7 +23,7 @@
             }
             var $parent = $(this);
             var parent = Csw.literals.factory($parent);
-            
+
             var jsonData = {
                 RoleId: ''
             };
@@ -32,9 +32,10 @@
                 url: o.Url,
                 data: jsonData,
                 success: function (data) {
-                    var welcomeDiv = parent.div({ID: 'welcomediv' })
-                            .css({'text-align': 'center',
-                                  'font-size': '1.2em'});
+                    var welcomeDiv = parent.div({ ID: 'welcomediv' })
+                            .css({ 'text-align': 'center',
+                                'font-size': '1.2em'
+                            });
 
                     var layoutTable = welcomeDiv.layoutTable({
                         ID: 'welcometable',
@@ -74,7 +75,7 @@
                             var thisItem = data[welcomeId];
                             if (false === Csw.isNullOrEmpty(thisItem)) {
                                 var cellSet = layoutTable.cellSet(thisItem.displayrow, thisItem.displaycol);
-                                layoutTable.addCellSetAttributes(cellSet, {welcomeid: welcomeId});
+                                layoutTable.addCellSetAttributes(cellSet, { welcomeid: welcomeId });
                                 var imageCell = cellSet[1][1].children('div');
                                 var textCell = cellSet[2][1].children('div');
                                 var link = null;
@@ -154,7 +155,7 @@
                 ID: 'viewselecttable'
             });
 
-//            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
+            //            var $viewSelect = viewSelectTable.cell(1, 1).$.CswViewSelect({
             var viewSelect = viewSelectTable.cell(1, 1).viewSelect({
                 //$parent: viewSelectTable.cell(1, 1).$,
                 ID: 'welcome_viewsel',
@@ -163,16 +164,16 @@
             });
             viewSelect.$.hide();
 
-//            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
-//            var searchViewSelect = Csw.controls.viewSelect({
-//            var searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
-//                $parent: viewSelectTable.cell(2, 1).$,
-//                ID: 'welcome_searchviewsel',
-//                issearchable: true,
-//                usesession: false,
-//                maxHeight: '275px'
-//            });
-//            searchViewSelect.$.hide();
+            //            var $searchViewSelect = viewSelectTable.cell(2, 1).$.CswViewSelect({
+            //            var searchViewSelect = Csw.controls.viewSelect({
+            //            var searchViewSelect = viewSelectTable.cell(2, 1).viewSelect({
+            //                $parent: viewSelectTable.cell(2, 1).$,
+            //                ID: 'welcome_searchviewsel',
+            //                issearchable: true,
+            //                usesession: false,
+            //                maxHeight: '275px'
+            //            });
+            //            searchViewSelect.$.hide();
 
             var ntSelectLabel = table.cell(3, 1).span({ text: 'Add New:' });
             var ntSelect = table.cell(3, 2)
@@ -203,11 +204,11 @@
                         viewtype = selectedView.type;
                         viewvalue = selectedView.value;
                     }
-//                    else if (false == searchViewSelect.$.is(':hidden')) {
-//                        selectedView = searchViewSelect.val();
-//                        viewtype = selectedView.type;
-//                        viewvalue = selectedView.value;
-//                    }
+                    //                    else if (false == searchViewSelect.$.is(':hidden')) {
+                    //                        selectedView = searchViewSelect.val();
+                    //                        viewtype = selectedView.type;
+                    //                        viewvalue = selectedView.value;
+                    //                    }
 
                     _addItem({
                         AddWelcomeItemUrl: o.AddWelcomeItemUrl,
@@ -245,7 +246,7 @@
                 url: '/NbtWebApp/wsNBT.asmx/getWelcomeButtonIconList',
                 success: function (data) {
                     for (var filename in data) {
-                        if (false === Csw.isNullOrEmpty(filename) && 
+                        if (false === Csw.isNullOrEmpty(filename) &&
                             filename !== 'blank.gif') {
                             buttonSel.option({ value: filename, display: filename });
                         }
@@ -303,9 +304,9 @@
                 case 'link':
                     Csw.tryExec(c.onLinkClick, optSelect);
                     break;
-//                case 'search':
-//                    Csw.tryExec(c.onSearchClick, optSelect);
-//                    break;
+                //                case 'search':    
+                //                    Csw.tryExec(c.onSearchClick, optSelect);    
+                //                    break;    
                 case 'text':
                     break;
             }
@@ -397,8 +398,11 @@
             $.extend(s, onSwapData);
         }
 
-        _moveItem(s.moveWelcomeItemUrl, s.cellSet, s.swaprow, s.swapcolumn);
-        _moveItem(s.moveWelcomeItemUrl, s.swapcellset, s.row, s.column);
+        var welcomeIdOrig = _moveItem(s.moveWelcomeItemUrl, s.cellSet, s.swaprow, s.swapcolumn);
+        var welcomeIdSwap = _moveItem(s.moveWelcomeItemUrl, s.swapcellset, s.row, s.column);
+        //Case 25958 - swap welcomeIds after swapping cells
+        s.cellSet[2][1].propNonDom('welcomeid', welcomeIdSwap);
+        s.swapcellset[2][1].propNonDom('welcomeid', welcomeIdOrig);
     } // onSwap()
 
     function _moveItem(moveWelcomeItemUrl, cellSet, newrow, newcolumn) {
@@ -419,6 +423,7 @@
                 });
             }
         }
+        return welcomeid;
     } // _moveItem()
 
     function _onTypeChange(options) {
@@ -458,16 +463,16 @@
                 o.buttonSel.show();
                 o.buttonImg.show();
                 break;
-//            case 'Search':
-//                o.viewSelectLabel.show();
-//                o.viewselect.$.hide();
-//                o.searchviewselect.$.show();
-//                o.ntSelectLabel.hide();
-//                o.$ntselect.hide();
-//                o.buttonSelLabel.show();
-//                o.buttonSel.show();
-//                o.buttonImg.show();
-//                break;
+            //            case 'Search':    
+            //                o.viewSelectLabel.show();    
+            //                o.viewselect.$.hide();    
+            //                o.searchviewselect.$.show();    
+            //                o.ntSelectLabel.hide();    
+            //                o.$ntselect.hide();    
+            //                o.buttonSelLabel.show();    
+            //                o.buttonSel.show();    
+            //                o.buttonImg.show();    
+            //                break;    
             case 'Text':
                 o.viewSelectLabel.hide();
                 o.viewselect.$.hide();
