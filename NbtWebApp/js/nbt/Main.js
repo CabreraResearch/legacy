@@ -610,6 +610,19 @@ window.initMain = window.initMain || function (undefined) {
         o.onDeleteNode = function () { getViewGrid(o); };
 
         clear({ centerbottom: true });
+        
+        var viewfilters = Csw.nbt.viewFilters({
+            ID: 'main_viewfilters',
+            parent: Csw.literals.factory($('#CenterTopDiv')),
+            viewid: o.viewid,
+            onEditFilters: function (newviewid) {
+                var newopts = o;
+                newopts.viewid = newviewid;
+                // set the current view to be the session view, so filters are saved
+                Csw.clientState.setCurrentView(newviewid, Csw.enums.viewMode.grid.name);
+                getViewGrid(newopts);
+            } // onEditFilters
+        }); // viewFilters
 
         $('#CenterBottomDiv').CswNodeGrid('init', {
             viewid: o.viewid,
