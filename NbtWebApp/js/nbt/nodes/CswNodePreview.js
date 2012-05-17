@@ -35,6 +35,7 @@
                     top: Y + 'px',
                     left: X + 'px'
                 });
+                $div.css('z-index', '100');
             } // _fixDimensions()
 
             function _loadPreview() {
