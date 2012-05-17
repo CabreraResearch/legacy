@@ -80,6 +80,11 @@
                             return false;
                         });
                         break;
+                    case 'Clear Cache':
+                        $a.click(function () {
+                            return window.location.reload(true);
+                        });
+                        break;
                     case 'DeleteNode':
                     $a.click(function() {
                             $.CswDialog('DeleteNodeDialog', {
