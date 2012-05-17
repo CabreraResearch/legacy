@@ -27,6 +27,7 @@
                 onMultiEdit: null, //function () { },
                 onEditView: null, //function (viewid) { },
                 onSaveView: null, //function (newviewid) { },
+                onPrintView: null,  // function () { },
                 onQuotas: null, // function () { },
                 onModules: null, // function () { },
                 onSessions: null, // function () { },

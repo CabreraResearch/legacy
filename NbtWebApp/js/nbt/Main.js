@@ -30,14 +30,16 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     // watermark
-    Csw.ajax.post({
-        urlMethod: 'getWatermark',
-        success: function (result) {
-            if (false === Csw.isNullOrEmpty(result.watermark)) {
-                $('#watermark').text(result.watermark);
+    if(-1 === window.internetExplorerVersionNo) {
+        Csw.ajax.post({
+            urlMethod: 'getWatermark',
+            success: function (result) {
+                if (false === Csw.isNullOrEmpty(result.watermark)) {
+                    $('#watermark').text(result.watermark);
+                }
             }
-        }
-    });
+        });
+    }
 
     // handle querystring arguments
     var qs = Csw.queryString();
