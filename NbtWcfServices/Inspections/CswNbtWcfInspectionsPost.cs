@@ -110,8 +110,7 @@ namespace NbtWebAppServices.Response
                                     Question.Status = NodeAsDesign.Status.Value;
                                 }
                                 /* In case the Inspection has been modified by someone else */
-                                CswDateTime DueDate = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, NodeAsDesign.InspectionDate.DateTimeValue );
-                                Inspection.DueDate = DueDate.ToClientAsJavascriptString();
+                                Inspection.DueDate = NodeAsDesign.InspectionDate.DateTimeValue;
                                 Inspection.InspectionPointName = NodeAsDesign.Target.CachedNodeName;
                                 Inspection.LocationPath = NodeAsDesign.Location.CachedValue;
                                 _InspectionsResponse.ActionRequired.Add( Inspection );

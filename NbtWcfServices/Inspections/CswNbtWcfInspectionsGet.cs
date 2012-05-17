@@ -97,12 +97,11 @@ namespace NbtWebAppServices.Response
             {
                 InspectionDesignNodeIds.Add( InspectionNode.NodeId );
                 CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
-                CswDateTime DueDate = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, NodeAsInspectionDesign.Date.DateTimeValue );
                 var ResponseInspection = new CswNbtWcfInspectionsDataModel.CswNbtInspection
                 {
                     DesignId = InspectionNode.NodeTypeId,
-                    
-                    DueDate = DueDate.ToClientAsJavascriptString(),
+
+                    DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
                     InspectionId = NodeAsInspectionDesign.NodeId.PrimaryKey,
                     InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
                     LocationPath = NodeAsInspectionDesign.Location.Gestalt,
@@ -115,18 +114,16 @@ namespace NbtWebAppServices.Response
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
-                        CswDateTime DateAnswered = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, PropAsQuestion.DateAnswered );
-                        CswDateTime DateCorrected = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, PropAsQuestion.DateCorrected );
                         var ResponseQuestion = new CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion
                         {
                             Answer = PropAsQuestion.Answer,
                             AnswerId = PropAsQuestion.JctNodePropId,
                             Comments = PropAsQuestion.Comments,
                             CorrectiveAction = PropAsQuestion.CorrectiveAction,
-                            DateAnswered = DateAnswered.ToClientAsJavascriptString(),
+                            DateAnswered = PropAsQuestion.DateAnswered,
                             QuestionId = PropAsQuestion.NodeTypePropId,
                             Status = NodeAsInspectionDesign.Status.Value,
-                            DateCorrected = DateCorrected.ToClientAsJavascriptString()
+                            DateCorrected = PropAsQuestion.DateCorrected
                         };
 
                         ResponseInspection.Questions.Add( ResponseQuestion );
