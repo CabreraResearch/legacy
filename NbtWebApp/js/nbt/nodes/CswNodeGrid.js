@@ -5,13 +5,13 @@
     "use strict";
     var pluginName = 'CswNodeGrid';
 
-    var cswPrivate = {
+    var internal = {
         selectedRowId: ''
     };
 
     function deleteRows(rowid, grid, func) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = cswPrivate.selectedRowId;
+            rowid = internal.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -37,7 +37,7 @@
 
     function editRows(rowid, grid, func, editViewFunc) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = cswPrivate.selectedRowId;
+            rowid = internal.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -162,7 +162,7 @@
                                         deleteRows(rowid, ret, o.onDeleteNode);
                                     }
                                 }
-                                cswPrivate.selectedRowId = rowid;
+                                internal.selectedRowId = rowid;
                                 if (false === isMulti) {
                                     if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
                                         validateNode(eventObj.toElement.className);
@@ -172,6 +172,7 @@
                                 }
                                 return true;
                             };
+
                         }
                         /* We need this to be defined upfront for multi-edit */
                         cswGridOpts.optNavEdit = {
@@ -229,6 +230,17 @@
                         var parent = Csw.literals.factory($parent);
                         ret = parent.grid(cswGridOpts);
 
+                        var ids = ret.gridTable.$.jqGrid('getDataIDs');
+
+
+                        for (var i = 0; i < ids.length; i+=1) {
+                            var edit = '<img src="Images/icons/pencil.png" class="csw-grid-edit" />';
+                            var spacer = '<img src="Images/icons/spacer.png" />';
+                            var del = '<img src="Images/icons/minus-circle.png" class="csw-grid-delete" />';
+
+                            ret.gridTable.$.jqGrid('setRowData', ids[i], { Action: edit + spacer + del });
+                        }
+                        
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }

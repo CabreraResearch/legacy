@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         } // getGrid()
 
-        private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
+        private void _getGridProperties( IEnumerable<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
         {
             CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
             Collection<CswNbtViewProperty> PropsAtThisLevel = new Collection<CswNbtViewProperty>();
@@ -179,8 +179,9 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtActGrid.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
             if( _ActionEnabled )
             {
-                GridOrderedColumnDisplayNames.Add( "Delete" );
+                GridOrderedColumnDisplayNames.Add( "Action" );
             }
+
             JArray GridColumnDefinitions = _CswNbtActGrid.getGridColumnDefinitionJson( _PropsInGrid );
             _addDefaultColumnDefiniton( GridColumnDefinitions );
 
@@ -422,11 +423,6 @@ namespace ChemSW.Nbt.WebServices
         private JArray _makeDefaultColumnNames()
         {
             JArray Ret = new JArray();
-            Ret.Add( "Icon" );
-            if( _ActionEnabled )
-            {
-                Ret.Add( "Action" );
-            }
             Ret.Add( "jqgridid" ); //better to use int for jqGrid key
             Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
             Ret.Add( "nodename" );
@@ -462,28 +458,17 @@ namespace ChemSW.Nbt.WebServices
 
             if( _ActionEnabled )
             {
-                ColumnDefArray.AddFirst( new JObject(
+                ColumnDefArray.Add( new JObject(
                                             new JProperty( "name", "Action" ),
                                             new JProperty( "index", "Action" ),
                                             new JProperty( "formatter", "image" ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "90" )
+                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "40" )
                                             ) );
 
-                /* We want Delete at the end of this array */
-                ColumnDefArray.Add( new JObject(
-                                            new JProperty( "name", "Delete" ),
-                                            new JProperty( "index", "Delete" ),
-                                            new JProperty( "formatter", "image" ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "80" )
-                                            ) );
+
             }
 
-            ColumnDefArray.AddFirst( new JObject(
-                                new JProperty( "name", "Icon" ),
-                                new JProperty( "index", "Icon" ),
-                                new JProperty( "formatter", "image" ),
-                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "60" )
-                                ) );
+
 
         } // _addDefaultColumnDefiniton()
 
@@ -517,25 +502,11 @@ namespace ChemSW.Nbt.WebServices
                 bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
 
                 string Action = string.Empty;
-                string Delete = string.Empty;
-                if( ActionEnabled )
-                {
-                    if( CanEdit )
-                    {
-                        Action = "<span class=\"ui-icon ui-icon-pencil csw-grid-edit\" />";
-                    }
-                    else
-                    {
-                        Action = "<span class=\"ui-icon ui-icon-document csw-grid-edit\" />";
-                    }
-                    if( CanDelete )
-                    {
-                        Delete = "<span class=\"ui-icon ui-icon-trash csw-grid-delete\" />";
-                    }
-                }
+
+
 
                 ThisNodeObj["Action"] = Action;
-                ThisNodeObj["Delete"] = Delete;
+
                 ThisNodeObj["jqgridid"] = ThisNodeId;
                 ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
                 string Icon = "<img src=\'";
@@ -548,7 +519,7 @@ namespace ChemSW.Nbt.WebServices
                     Icon += "Images/icons/" + ThisNodeIcon;
                 }
                 Icon += "\'/>";
-                ThisNodeObj["Icon"] = Icon;
+                //ThisNodeObj["Icon"] = Icon;
                 ThisNodeObj["nodename"] = ThisNodeName;
 
                 _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid );
