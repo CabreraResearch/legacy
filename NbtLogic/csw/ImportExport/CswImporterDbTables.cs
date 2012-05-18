@@ -680,7 +680,8 @@ namespace ChemSW.Nbt.ImportExport
                                                     {
                                                         string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
 
-                                                        if( ( false == CurrentImportNodeId.Contains( "--" ) ) || 3 == CurrentImportNodeId.Split( new string[] { "--" }, StringSplitOptions.None ).Length ) //IMCS import references must have all three components in order to be not null
+                                                        if( ( false == CurrentImportTargetNodeId.Contains( "--" ) ) || 
+                                                            3 == CurrentImportTargetNodeId.Split( new string[] { "--" }, StringSplitOptions.RemoveEmptyEntries ).Length ) //IMCS import references must have all three components in order to be not null
                                                         {
 
                                                             string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";

@@ -571,7 +571,6 @@ namespace ChemSW.Nbt.WebServices
                             ( View.Visibility != NbtViewVisibility.Property || Level >= 2 );
 
             CswNbtMetaDataNodeType FirstVersionNodeType = _CswNbtResources.MetaData.getNodeType( FirstVersionId );
-            CswNbtMetaDataNodeType LatestVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( FirstVersionNodeType );
             CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
