@@ -10,7 +10,7 @@
             ///<param name="options" type="Object">Object defining paramaters for jqGrid construction.</param>
             ///<returns type="Csw.composites.grid">Object representing a CswGrid</returns>
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 canEdit: false,
                 canDelete: false,
                 pagermode: 'default',
@@ -97,9 +97,9 @@
                     //viewfunc: none--use jqGrid built-in function for read-only
                 }
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPrivateVar.insertWhiteSpace = function (num) {
+            cswPrivate.insertWhiteSpace = function (num) {
                 var ret = '', i;
                 for (i = 0; i < num; i += 1) {
                     ret += '&nbsp;';
@@ -107,22 +107,22 @@
                 return ret;
             };
 
-            cswPrivateVar.makeCustomPager = function (pagerDef) {
+            cswPrivate.makeCustomPager = function (pagerDef) {
                 var prevButton = {
-                    caption: cswPrivateVar.insertWhiteSpace(2),
+                    caption: cswPrivate.insertWhiteSpace(2),
                     buttonicon: 'ui-icon-seek-prev',
                     position: 'last',
                     title: '',
                     cursor: '',
-                    id: Csw.makeId(cswPrivateVar.gridPagerId, 'prevBtn')
+                    id: Csw.makeId(cswPrivate.gridPagerId, 'prevBtn')
                 };
                 if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onPrevPageClick)) {
                     prevButton.onClickButton = function (eventObj) {
-                        var nodes = cswPublicRet.gridTable.$.jqGrid('getDataIDs'),
+                        var nodes = cswPublic.gridTable.$.jqGrid('getDataIDs'),
                             firstNodeId = nodes[0],
                             lastNodeId = nodes[nodes.length],
-                            firstRow = cswPublicRet.gridTable.$.jqGrid('getRowData', firstNodeId),
-                            lastRow = cswPublicRet.gridTable.$.jqGrid('getRowData', lastNodeId);
+                            firstRow = cswPublic.gridTable.$.jqGrid('getRowData', firstNodeId),
+                            lastRow = cswPublic.gridTable.$.jqGrid('getRowData', lastNodeId);
 
                         pagerDef.onPrevPageClick(eventObj, firstRow, lastRow);
                     };
@@ -130,122 +130,122 @@
 
                 var spacer = {
                     sepclass: 'ui-separator',
-                    sepcontent: cswPrivateVar.insertWhiteSpace(24)
+                    sepcontent: cswPrivate.insertWhiteSpace(24)
                 };
 
                 var nextButton = {
-                    caption: cswPrivateVar.insertWhiteSpace(2),
+                    caption: cswPrivate.insertWhiteSpace(2),
                     buttonicon: 'ui-icon-seek-next',
                     onClickButton: '',
                     position: 'last',
                     title: 'Next',
                     cursor: '',
-                    id: Csw.makeId(cswPrivateVar.gridPagerId, 'nextBtn')
+                    id: Csw.makeId(cswPrivate.gridPagerId, 'nextBtn')
                 };
                 if (false === Csw.isNullOrEmpty(pagerDef) && Csw.isFunction(pagerDef.onNextPageClick)) {
                     nextButton.onClickButton = function (eventObj) {
-                        var nodes = cswPublicRet.gridTable.$.jqGrid('getDataIDs'),
+                        var nodes = cswPublic.gridTable.$.jqGrid('getDataIDs'),
                             firstNodeId = nodes[0],
                             lastNodeId = nodes[nodes.length - 1],
-                            firstRow = cswPublicRet.gridTable.$.jqGrid('getRowData', firstNodeId),
-                            lastRow = cswPublicRet.gridTable.$.jqGrid('getRowData', lastNodeId);
+                            firstRow = cswPublic.gridTable.$.jqGrid('getRowData', firstNodeId),
+                            lastRow = cswPublic.gridTable.$.jqGrid('getRowData', lastNodeId);
 
                         pagerDef.onNextPageClick(eventObj, firstRow, lastRow);
                     };
                 }
-                cswPublicRet.gridTable.$.jqGrid('navSeparatorAdd', '#' + cswPrivateVar.gridPagerId, spacer)
-                    .jqGrid('navButtonAdd', '#' + cswPrivateVar.gridPagerId, prevButton)
-                    .jqGrid('navButtonAdd', '#' + cswPrivateVar.gridPagerId, nextButton);
+                cswPublic.gridTable.$.jqGrid('navSeparatorAdd', '#' + cswPrivate.gridPagerId, spacer)
+                    .jqGrid('navButtonAdd', '#' + cswPrivate.gridPagerId, prevButton)
+                    .jqGrid('navButtonAdd', '#' + cswPrivate.gridPagerId, nextButton);
             };
 
-            cswPrivateVar.makeGrid = function () {
-                cswPrivateVar.multiEdit = cswPrivateVar.gridOpts.multiselect;
+            cswPrivate.makeGrid = function () {
+                cswPrivate.multiEdit = cswPrivate.gridOpts.multiselect;
                 /* Case 25809 */
-                cswPrivateVar.gridDiv.empty();
+                cswPrivate.gridDiv.empty();
 
-                cswPublicRet.gridTable = cswPrivateVar.gridDiv.table({
-                    ID: cswPrivateVar.gridTableId
+                cswPublic.gridTable = cswPrivate.gridDiv.table({
+                    ID: cswPrivate.gridTableId
                 });
 
-                cswPublicRet.gridPager = cswPrivateVar.gridDiv.div({ ID: cswPrivateVar.gridPagerId });
+                cswPublic.gridPager = cswPrivate.gridDiv.div({ ID: cswPrivate.gridPagerId });
 
-                cswPrivateVar.gridOpts.pager = cswPublicRet.gridPager.$;
-                if (cswPrivateVar.canEdit) {
-                    $.extend(true, cswPrivateVar.optNav, cswPrivateVar.optNavEdit);
+                cswPrivate.gridOpts.pager = cswPublic.gridPager.$;
+                if (cswPrivate.canEdit) {
+                    $.extend(true, cswPrivate.optNav, cswPrivate.optNavEdit);
                 }
-                if (cswPrivateVar.canDelete) {
-                    $.extend(true, cswPrivateVar.optNav, cswPrivateVar.optNavDelete);
+                if (cswPrivate.canDelete) {
+                    $.extend(true, cswPrivate.optNav, cswPrivate.optNavDelete);
                 }
 
-                if (cswPrivateVar.pagermode === 'default' || cswPrivateVar.pagermode === 'custom') {
+                if (cswPrivate.pagermode === 'default' || cswPrivate.pagermode === 'custom') {
                     try {
-                        if (false === Csw.contains(cswPrivateVar.gridOpts, 'colNames') ||
-                            cswPrivateVar.gridOpts.colNames.length === 0 ||
-                                (Csw.contains(cswPrivateVar.gridOpts, 'colModel') && cswPrivateVar.gridOpts.colNames.length !== cswPrivateVar.gridOpts.colModel.length)) {
+                        if (false === Csw.contains(cswPrivate.gridOpts, 'colNames') ||
+                            cswPrivate.gridOpts.colNames.length === 0 ||
+                                (Csw.contains(cswPrivate.gridOpts, 'colModel') && cswPrivate.gridOpts.colNames.length !== cswPrivate.gridOpts.colModel.length)) {
                             throw new Error('Cannot create a grid without at least one column defined.');
                         }
-                        cswPublicRet.gridTable.$.jqGrid(cswPrivateVar.gridOpts)
-                            .jqGrid('navGrid', '#' + cswPrivateVar.gridPagerId, cswPrivateVar.optNav, {}, {}, {}, {}, {}); //Case 24032: Removed jqGrid search
+                        cswPublic.gridTable.$.jqGrid(cswPrivate.gridOpts)
+                            .jqGrid('navGrid', '#' + cswPrivate.gridPagerId, cswPrivate.optNav, {}, {}, {}, {}, {}); //Case 24032: Removed jqGrid search
                     } catch (e) {
                         Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, e.message));
                     }
-                    if (cswPrivateVar.pagermode === 'custom') {
-                        cswPrivateVar.makeCustomPager(cswPrivateVar.customPager);
+                    if (cswPrivate.pagermode === 'custom') {
+                        cswPrivate.makeCustomPager(cswPrivate.customPager);
                     }
                 } else {
-                    cswPublicRet.gridTable.$.jqGrid(cswPrivateVar.gridOpts);
+                    cswPublic.gridTable.$.jqGrid(cswPrivate.gridOpts);
                 }
             };
 
-            cswPrivateVar.getCell = function (rowid, key) {
+            cswPrivate.getCell = function (rowid, key) {
                 var ret = '';
                 if (false === Csw.isNullOrEmpty(rowid) && false === Csw.isNullOrEmpty(key)) {
-                    ret = cswPublicRet.gridTable.$.jqGrid('getCell', rowid, key);
+                    ret = cswPublic.gridTable.$.jqGrid('getCell', rowid, key);
                 }
                 return ret;
             };
 
-            cswPublicRet.getSelectedRowId = function () {
-                var rowid = cswPublicRet.gridTable.$.jqGrid('getGridParam', 'selrow');
+            cswPublic.getSelectedRowId = function () {
+                var rowid = cswPublic.gridTable.$.jqGrid('getGridParam', 'selrow');
                 return rowid;
             };
 
-            cswPrivateVar.getSelectedRowsIds = function () {
-                var rowid = cswPublicRet.gridTable.$.jqGrid('getGridParam', 'selarrrow');
+            cswPrivate.getSelectedRowsIds = function () {
+                var rowid = cswPublic.gridTable.$.jqGrid('getGridParam', 'selarrrow');
                 return rowid;
             };
 
-            cswPrivateVar.getColumn = function (column, returnType) {
+            cswPrivate.getColumn = function (column, returnType) {
                 ///<summary>Gets the contents of a jqGrid column</summary>
                 ///<param name="column" type="String">Column name</param>
                 ///<param name="returnType" type="Boolean">If false, returns a simple array of values. If true, returns an array [{id: id, value: value},{...}]</param>
                 ///<returns type="Array">An array of the columns values</returns>
-                var ret = cswPublicRet.gridTable.$.jqGrid('getCol', column, returnType);
+                var ret = cswPublic.gridTable.$.jqGrid('getCol', column, returnType);
                 return ret;
             };
 
-            cswPublicRet.hideColumn = function (id) {
-                cswPublicRet.gridTable.$.jqGrid('hideCol', id);
+            cswPublic.hideColumn = function (id) {
+                cswPublic.gridTable.$.jqGrid('hideCol', id);
             };
 
-            cswPublicRet.scrollToRow = function (rowid) {
+            cswPublic.scrollToRow = function (rowid) {
                 ///<summary>Scrolls the grid to the specified rowid</summary>
                 ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
                 ///<returns type="Void"></returns>
                 if (Csw.isNullOrEmpty(rowid)) {
-                    rowid = cswPublicRet.getSelectedRowId();
+                    rowid = cswPublic.getSelectedRowId();
                 }
-                var rowHeight = cswPublicRet.getGridRowHeight() || 23; // Default height
-                var index = cswPublicRet.gridTable.$.getInd(rowid);
-                cswPublicRet.gridTable.$.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
+                var rowHeight = cswPublic.getGridRowHeight() || 23; // Default height
+                var index = cswPublic.gridTable.$.getInd(rowid);
+                cswPublic.gridTable.$.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
             };
 
-            cswPublicRet.getRowIdForVal = function (value, column) {
+            cswPublic.getRowIdForVal = function (value, column) {
                 ///<summary>Gets a jqGrid rowid by column name and value.</summary>
                 ///<param name="value" type="String">Cell value</param>
                 ///<param name="column" type="String">Column name</param>
                 ///<returns type="String">jqGrid row id.</returns>
-                var pks = cswPrivateVar.getColumn(column, true);
+                var pks = cswPrivate.getColumn(column, true);
                 var rowid = 0;
                 Csw.each(pks, function (obj) {
                     if (Csw.contains(obj, 'value') && Csw.string(obj.value) === Csw.string(value)) {
@@ -255,55 +255,55 @@
                 return rowid;
             };
 
-            cswPublicRet.getValueForColumn = function (columnname, rowid) {
+            cswPublic.getValueForColumn = function (columnname, rowid) {
                 ///<summary>Gets a cell value by column name.</summary>
                 ///<param name="columnname" type="String">Grid column name.</param>
                 ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
                 ///<returns type="String">Value of the cell.</returns>
                 if (Csw.isNullOrEmpty(rowid)) {
-                    rowid = cswPublicRet.getSelectedRowId();
+                    rowid = cswPublic.getSelectedRowId();
                 }
-                var ret = cswPrivateVar.getCell(rowid, columnname);
+                var ret = cswPrivate.getCell(rowid, columnname);
                 return ret;
             };
 
-            cswPublicRet.setSelection = function (rowid) {
+            cswPublic.setSelection = function (rowid) {
                 ///<summary>Sets the selected row by jqGrid's rowid</summary>
                 if (false === Csw.isNullOrEmpty(rowid)) {
-                    cswPublicRet.gridTable.$.setSelection(rowid);
+                    cswPublic.gridTable.$.setSelection(rowid);
                 }
             };
 
-            cswPublicRet.changeGridOpts = function (opts, toggleColumns) {
+            cswPublic.changeGridOpts = function (opts, toggleColumns) {
                 var delBtn, editBtn;
-                $.extend(true, cswPrivateVar, opts);
-                cswPrivateVar.makeGrid(cswPrivateVar);
+                $.extend(true, cswPrivate, opts);
+                cswPrivate.makeGrid(cswPrivate);
 
                 Csw.each(toggleColumns, function (val) {
-                    if (Csw.contains(cswPrivateVar.gridOpts.colNames, val)) {
-                        if (cswPublicRet.isMulti()) {
-                            cswPublicRet.gridTable.$.jqGrid('hideCol', val);
+                    if (Csw.contains(cswPrivate.gridOpts.colNames, val)) {
+                        if (cswPublic.isMulti()) {
+                            cswPublic.gridTable.$.jqGrid('hideCol', val);
                         }
                     }
                 });
-                if (false === cswPublicRet.isMulti()) {
-                    if (false === cswPrivateVar.canEdit) {
-                        editBtn = cswPublicRet.gridPager.find('#edit_' + cswPrivateVar.gridTableId);
+                if (false === cswPublic.isMulti()) {
+                    if (false === cswPrivate.canEdit) {
+                        editBtn = cswPublic.gridPager.find('#edit_' + cswPrivate.gridTableId);
                         if (Csw.contains(editBtn, 'remove')) {
                             editBtn.remove();
                         }
                     }
-                    if (false === cswPrivateVar.canDelete) {
-                        delBtn = cswPublicRet.gridPager.find('#del_' + cswPrivateVar.gridTableId).remove();
+                    if (false === cswPrivate.canDelete) {
+                        delBtn = cswPublic.gridPager.find('#del_' + cswPrivate.gridTableId).remove();
                         if (Csw.contains(delBtn, 'remove')) {
                             delBtn.remove();
                         }
                     }
                 }
-                cswPublicRet.resizeWithParent();
+                cswPublic.resizeWithParent();
             };
 
-            cswPublicRet.opGridRows = function (opts, rowid, onSelect, onEmpty) {
+            cswPublic.opGridRows = function (opts, rowid, onSelect, onEmpty) {
                 var ret = false;
                 var haveSelectedRows = false,
                     i;
@@ -314,20 +314,20 @@
                     if (false === Csw.isFunction(parent[key])) {
                         if (Csw.isArray(parent[key])) {
                             rowid = rowids[i];
-                            parent[key].push(cswPublicRet.getValueForColumn(key, rowid));
+                            parent[key].push(cswPublic.getValueForColumn(key, rowid));
                         } else {
-                            parent[key] = cswPublicRet.getValueForColumn(key, rowid);
+                            parent[key] = cswPublic.getValueForColumn(key, rowid);
                         }
                     }
                     return false;
                 }
 
-                if (cswPrivateVar.multiEdit) {
-                    rowids = cswPrivateVar.getSelectedRowsIds();
+                if (cswPrivate.multiEdit) {
+                    rowids = cswPrivate.getSelectedRowsIds();
                 } else if (false === Csw.isNullOrEmpty(rowid)) {
                     rowids.push(rowid);
                 } else {
-                    rowids.push(cswPublicRet.getSelectedRowId());
+                    rowids.push(cswPublic.getSelectedRowId());
                 }
 
                 if (rowids.length > 0) {
@@ -339,7 +339,7 @@
 
                 if (haveSelectedRows) {
                     if (Csw.isFunction(onSelect)) {
-                        opts.Multi = cswPrivateVar.multiEdit;
+                        opts.Multi = cswPrivate.multiEdit;
                         ret = onSelect(opts);
                     }
                 } else if (Csw.isFunction(onEmpty)) {
@@ -348,11 +348,11 @@
                 return ret;
             };
 
-            cswPublicRet.getAllGridRows = function () {
-                return cswPublicRet.gridTable.$.jqGrid('getRowData');
+            cswPublic.getAllGridRows = function () {
+                return cswPublic.gridTable.$.jqGrid('getRowData');
             };
 
-            cswPublicRet.print = function (onSuccess) {
+            cswPublic.print = function (onSuccess) {
 
                 try {
 
@@ -360,7 +360,7 @@
                     var newDiv = outerDiv.div({ width: '800px' });
 
                     var printOpts = {},
-                        printTableId = Csw.makeId(cswPrivateVar.gridTableId, 'printTable'),
+                        printTableId = Csw.makeId(cswPrivate.gridTableId, 'printTable'),
                         newGrid, data, i;
 
                     var addRowsToGrid = function (rowData) {
@@ -373,7 +373,7 @@
                     };
 
                     /* Case 26020 */
-                    $.extend(true, printOpts, cswPrivateVar);
+                    $.extend(true, printOpts, cswPrivate);
 
                     /* Nuke anything that might be holding onto a reference */
                     Csw.each(printOpts, function (thisObj, name) {
@@ -417,7 +417,7 @@
                     jqGrid cannot seem to handle the communication of the data property between window objects.
                     Just delete it and rebuild instead.
                     */
-                    data = cswPrivateVar.gridOpts.data;
+                    data = cswPrivate.gridOpts.data;
 
                     Csw.each(printOpts.gridOpts.colModel, function (column) {
                         /* This provides text wrapping in cells */
@@ -454,71 +454,71 @@
 
             // Row scrolling adapted from 
             // http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
-            cswPublicRet.getGridRowHeight = function () {
+            cswPublic.getGridRowHeight = function () {
 
                 var height = null; // Default
                 try {
-                    height = cswPublicRet.gridTable.$.find('tbody').find('tr:first').outerHeight();
+                    height = cswPublic.gridTable.$.find('tbody').find('tr:first').outerHeight();
                 } catch (e) {
                     //catch and just suppress error
                 }
                 return height;
             };
 
-            cswPublicRet.isMulti = function () {
-                return cswPrivateVar.multiEdit;
+            cswPublic.isMulti = function () {
+                return cswPrivate.multiEdit;
             };
 
-            cswPublicRet.setWidth = function (width) {
-                cswPublicRet.gridTable.$.jqGrid('setGridWidth', width);
+            cswPublic.setWidth = function (width) {
+                cswPublic.gridTable.$.jqGrid('setGridWidth', width);
             };
 
-            cswPublicRet.resizeWithParent = function () {
-                cswPublicRet.gridTable.$.jqGrid('setGridWidth', cswParent.$.width() - 100);
+            cswPublic.resizeWithParent = function () {
+                cswPublic.gridTable.$.jqGrid('setGridWidth', cswParent.$.width() - 100);
             };
 
             /* "Constuctor" */
             (function () {
-                $.extend(true, cswPrivateVar, options);
+                $.extend(true, cswPrivate, options);
 
-                switch (cswPrivateVar.pagermode) {
+                switch (cswPrivate.pagermode) {
                     case 'none':
-                        delete cswPrivateVar.gridOpts.pager;
-                        //delete cswPrivateVar.gridOpts.rowNum;
-                        //delete cswPrivateVar.gridOpts.rowList;
-                        delete cswPrivateVar.gridOpts.pgbuttons;
-                        delete cswPrivateVar.gridOpts.viewrecords;
-                        delete cswPrivateVar.gridOpts.pgtext;
+                        delete cswPrivate.gridOpts.pager;
+                        //delete cswPrivate.gridOpts.rowNum;
+                        //delete cswPrivate.gridOpts.rowList;
+                        delete cswPrivate.gridOpts.pgbuttons;
+                        delete cswPrivate.gridOpts.viewrecords;
+                        delete cswPrivate.gridOpts.pgtext;
                         break;
                     case 'default':
                         //accept defaults
                         break;
                     case 'custom':
-                        cswPrivateVar.gridOpts.rowNum = null;
-                        cswPrivateVar.gridOpts.rowList = [];
-                        cswPrivateVar.gridOpts.pgbuttons = false;
-                        cswPrivateVar.gridOpts.viewrecords = false;
-                        cswPrivateVar.gridOpts.pgtext = null;
+                        cswPrivate.gridOpts.rowNum = null;
+                        cswPrivate.gridOpts.rowList = [];
+                        cswPrivate.gridOpts.pgbuttons = false;
+                        cswPrivate.gridOpts.viewrecords = false;
+                        cswPrivate.gridOpts.pgtext = null;
                         break;
                 }
 
-                cswPrivateVar.gridPagerId = cswPrivateVar.gridPagerId || Csw.makeId('cswGridPager', cswPrivateVar.ID);
-                cswPrivateVar.gridTableId = cswPrivateVar.gridTableId || Csw.makeId('cswGridTable', cswPrivateVar.ID);
+                cswPrivate.gridPagerId = cswPrivate.gridPagerId || Csw.makeId('cswGridPager', cswPrivate.ID);
+                cswPrivate.gridTableId = cswPrivate.gridTableId || Csw.makeId('cswGridTable', cswPrivate.ID);
 
                 cswParent.empty();
-                cswPrivateVar.gridDiv = cswParent.div({
-                    isControl: cswPrivateVar.isControl,
-                    ID: cswPrivateVar.ID
+                cswPrivate.gridDiv = cswParent.div({
+                    isControl: cswPrivate.isControl,
+                    ID: cswPrivate.ID
                 });
-                //$.extend(cswPublicRet, Csw.literals.div(cswPrivateVar));
-                if (cswPrivateVar.resizeWithParent) {
-                    $(window).bind('resize', cswPublicRet.resizeWithParent);
+                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                if (cswPrivate.resizeWithParent) {
+                    $(window).bind('resize', cswPublic.resizeWithParent);
                 }
-                cswPrivateVar.makeGrid();
+                cswPrivate.makeGrid();
             } ());
 
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

@@ -6,45 +6,45 @@
     Csw.controls.moreDiv = Csw.controls.moreDiv ||
         Csw.controls.register('moreDiv', function (cswParent, options) {
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 ID: '',
                 moretext: 'more',
                 lesstext: 'less'
             };
             if (options) {
-                $.extend(cswPrivateVar, options);
+                $.extend(cswPrivate, options);
             }
 
-            var cswPublicRet;
+            var cswPublic;
 
-            cswPrivateVar.moreDiv = cswParent.div();
-            cswPublicRet = Csw.dom({}, cswPrivateVar.moreDiv);
+            cswPrivate.moreDiv = cswParent.div();
+            cswPublic = Csw.dom({}, cswPrivate.moreDiv);
 
-            cswPublicRet.shownDiv = cswPrivateVar.moreDiv.div({
-                ID: Csw.makeId(cswPrivateVar.ID, '', '_shwn')
+            cswPublic.shownDiv = cswPrivate.moreDiv.div({
+                ID: Csw.makeId(cswPrivate.ID, '', '_shwn')
             });
 
-            cswPublicRet.hiddenDiv = cswPrivateVar.moreDiv.div({
-                ID: Csw.makeId(cswPrivateVar.ID, '', '_hddn')
+            cswPublic.hiddenDiv = cswPrivate.moreDiv.div({
+                ID: Csw.makeId(cswPrivate.ID, '', '_hddn')
             }).hide();
 
-            cswPublicRet.moreLink = cswPrivateVar.moreDiv.a({
-                ID: Csw.makeId(cswPrivateVar.ID, '', '_more'),
-                text: cswPrivateVar.moretext,
+            cswPublic.moreLink = cswPrivate.moreDiv.a({
+                ID: Csw.makeId(cswPrivate.ID, '', '_more'),
+                text: cswPrivate.moretext,
                 cssclass: 'morelink',
                 onClick: function () {
-                    if (cswPublicRet.moreLink.toggleState === Csw.enums.toggleState.on) {
-                        cswPublicRet.moreLink.text(cswPrivateVar.lesstext);
-                        cswPublicRet.hiddenDiv.show();
+                    if (cswPublic.moreLink.toggleState === Csw.enums.toggleState.on) {
+                        cswPublic.moreLink.text(cswPrivate.lesstext);
+                        cswPublic.hiddenDiv.show();
                     } else {
-                        cswPublicRet.moreLink.text(cswPrivateVar.moretext);
-                        cswPublicRet.hiddenDiv.hide();
+                        cswPublic.moreLink.text(cswPrivate.moretext);
+                        cswPublic.hiddenDiv.hide();
                     }
                     return false;
                 } // onClick()
             });
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

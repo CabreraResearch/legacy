@@ -16,20 +16,20 @@
             /// </summary>
             /// <returns type="Object" />
             'use strict';
-            var cswPublicRet = {};
-            var cswPrivateVar = {
+            var cswPublic = {};
+            var cswPrivate = {
                 e: '',
                 a: /\+/g, // Regex for replacing addition symbol with a space
                 r: /([^&=]+)=?([^&]*)/g,
-                d: function (s) { return decodeURIComponent(s.replace(cswPrivateVar.a, " ")); },
+                d: function (s) { return decodeURIComponent(s.replace(cswPrivate.a, " ")); },
                 q: Csw.window.location().search.substring(1)
             };
 
-            while (cswPrivateVar.e = cswPrivateVar.r.exec(cswPrivateVar.q)) {
-                cswPublicRet[cswPrivateVar.d(cswPrivateVar.e[1])] = cswPrivateVar.d(cswPrivateVar.e[2]);
+            while (cswPrivate.e = cswPrivate.r.exec(cswPrivate.q)) {
+                cswPublic[cswPrivate.d(cswPrivate.e[1])] = cswPrivate.d(cswPrivate.e[2]);
             }
 
-            return cswPublicRet;
+            return cswPublic;
 
         });
 } ());

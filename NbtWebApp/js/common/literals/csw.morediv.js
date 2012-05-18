@@ -6,44 +6,44 @@
     Csw.literals.moreDiv = Csw.literals.moreDiv ||
         Csw.literals.register('moreDiv', function (options) {
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 ID: '',
                 $parent: '',
                 moretext: 'more',
                 lesstext: 'less'
             };
-            if (options) $.extend(cswPrivateVar, options);
+            if (options) $.extend(cswPrivate, options);
 
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPublicRet.shownDiv = Csw.literals.div({
-                ID: Csw.makeId(cswPrivateVar.ID, '', '_shwn'),
-                $parent: cswPrivateVar.$parent
+            cswPublic.shownDiv = Csw.literals.div({
+                ID: Csw.makeId(cswPrivate.ID, '', '_shwn'),
+                $parent: cswPrivate.$parent
             });
 
-            cswPublicRet.hiddenDiv = Csw.literals.div({
-                ID: Csw.makeId(cswPrivateVar.ID, '', '_hddn'),
-                $parent: cswPrivateVar.$parent
+            cswPublic.hiddenDiv = Csw.literals.div({
+                ID: Csw.makeId(cswPrivate.ID, '', '_hddn'),
+                $parent: cswPrivate.$parent
             }).hide();
 
-            cswPublicRet.moreLink = Csw.literals.a({
-                ID: Csw.makeId(cswPrivateVar.ID, '', '_more'),
-                $parent: cswPrivateVar.$parent,
-                text: cswPrivateVar.moretext,
+            cswPublic.moreLink = Csw.literals.a({
+                ID: Csw.makeId(cswPrivate.ID, '', '_more'),
+                $parent: cswPrivate.$parent,
+                text: cswPrivate.moretext,
                 cssclass: 'morelink',
                 onClick: function () {
-                    if (cswPublicRet.moreLink.toggleState === Csw.enums.toggleState.on) {
-                        cswPublicRet.moreLink.text(cswPrivateVar.lesstext);
-                        cswPublicRet.hiddenDiv.show();
+                    if (cswPublic.moreLink.toggleState === Csw.enums.toggleState.on) {
+                        cswPublic.moreLink.text(cswPrivate.lesstext);
+                        cswPublic.hiddenDiv.show();
                     } else {
-                        cswPublicRet.moreLink.text(cswPrivateVar.moretext);
-                        cswPublicRet.hiddenDiv.hide();
+                        cswPublic.moreLink.text(cswPrivate.moretext);
+                        cswPublic.hiddenDiv.hide();
                     }
                     return false;
                 } // onClick()
             });
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

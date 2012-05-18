@@ -17,7 +17,7 @@
             //        }
             //        return retDate;
 
-            var cswPrivateVar = {
+            var cswPrivate = {
                 dateFormat: 'mm/dd/yyyy',   // need to derive from current user eventually
                 timeFormat: 'hh:MM:ss',   // need to derive from current user eventually
                 secondms: 1000,
@@ -27,35 +27,35 @@
                 yearms: (1000 * 60 * 60 * 24 * 365)   // leap year will throw this off by a day
             };
 
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPublicRet.value = Csw.number(value); // converts a Date() to milliseconds
-            if (isNaN(cswPublicRet.value) || cswPublicRet.value <= 0) {
-                cswPublicRet.value = Csw.number(new Date()); //default to today
+            cswPublic.value = Csw.number(value); // converts a Date() to milliseconds
+            if (isNaN(cswPublic.value) || cswPublic.value <= 0) {
+                cswPublic.value = Csw.number(new Date()); //default to today
             }
 
-            cswPublicRet.addSeconds = function (s) {
-                cswPublicRet.value += s * cswPrivateVar.secondms;
-                return cswPublicRet; // chaining
+            cswPublic.addSeconds = function (s) {
+                cswPublic.value += s * cswPrivate.secondms;
+                return cswPublic; // chaining
             };
-            cswPublicRet.addMinutes = function (m) {
-                cswPublicRet.value += m * cswPrivateVar.minutems;
-                return cswPublicRet; // chaining
+            cswPublic.addMinutes = function (m) {
+                cswPublic.value += m * cswPrivate.minutems;
+                return cswPublic; // chaining
             };
-            cswPublicRet.addHours = function (h) {
-                cswPublicRet.value += h * cswPrivateVar.hourms;
-                return cswPublicRet; // chaining
+            cswPublic.addHours = function (h) {
+                cswPublic.value += h * cswPrivate.hourms;
+                return cswPublic; // chaining
             };
-            cswPublicRet.addDays = function (d) {
-                cswPublicRet.value += d * cswPrivateVar.dayms;
-                return cswPublicRet; // chaining
+            cswPublic.addDays = function (d) {
+                cswPublic.value += d * cswPrivate.dayms;
+                return cswPublic; // chaining
             };
-            cswPublicRet.addYears = function (y) {
-                cswPublicRet.value += y * cswPrivateVar.yearms;
-                return cswPublicRet; // chaining
+            cswPublic.addYears = function (y) {
+                cswPublic.value += y * cswPrivate.yearms;
+                return cswPublic; // chaining
             };
-            cswPublicRet.toDate = function () {
-                return new Date(cswPublicRet.value);
+            cswPublic.toDate = function () {
+                return new Date(cswPublic.value);
             };
 
 
@@ -192,14 +192,14 @@
             // END EXTERNAL CODE
             // ***********************************************************************************
 
-            cswPublicRet.format = function (mask, utc) {
-                return dateFormat(new Date(cswPublicRet.value), mask, utc);
+            cswPublic.format = function (mask, utc) {
+                return dateFormat(new Date(cswPublic.value), mask, utc);
             };
 
-            cswPublicRet.toString = function () {
-                return cswPublicRet.format(cswPrivateVar.dateFormat + ' ' + cswPrivateVar.timeFormat);
+            cswPublic.toString = function () {
+                return cswPublic.format(cswPrivate.dateFormat + ' ' + cswPrivate.timeFormat);
             };
-            return cswPublicRet;
+            return cswPublic;
         });
 
 

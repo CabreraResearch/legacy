@@ -17,30 +17,30 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="p">A p object</returns>
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 text: ''
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
                 var html = '', $b;
 
                 html += '<b>';
-                html += Csw.string(cswPrivateVar.text);
+                html += Csw.string(cswPrivate.text);
                 html += '</b>';
                 $b = $(html);
-                Csw.literals.factory($b, cswPublicRet);
+                Csw.literals.factory($b, cswPublic);
 
-                if (cswPrivateVar.$parent) {
-                    cswPrivateVar.$parent.append(cswPublicRet.$);
+                if (cswPrivate.$parent) {
+                    cswPrivate.$parent.append(cswPublic.$);
                 }
             } ());
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

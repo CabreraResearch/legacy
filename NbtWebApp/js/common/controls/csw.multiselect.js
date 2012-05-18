@@ -9,7 +9,7 @@
     Csw.controls.multiSelect = Csw.controls.multiSelect ||
         Csw.controls.register('multiSelect', function (cswParent, options) {
 
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 values: [],
@@ -20,26 +20,26 @@
                 isControl: false
             };
 
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             (function () {
 
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
 
                 var optionCount = 0,
-                    isMultiEdit = Csw.bool(cswPrivateVar.isMultiEdit),
-                    values = cswPrivateVar.values;
-                delete cswPrivateVar.values;
+                    isMultiEdit = Csw.bool(cswPrivate.isMultiEdit),
+                    values = cswPrivate.values;
+                delete cswPrivate.values;
 
-                cswPrivateVar.select = cswParent.select(cswPrivateVar);
-                cswPublicRet = Csw.dom({ }, cswPrivateVar.select);
-                //$.extend(cswPublicRet, Csw.literals.select(cswPrivateVar));
+                cswPrivate.select = cswParent.select(cswPrivate);
+                cswPublic = Csw.dom({ }, cswPrivate.select);
+                //$.extend(cswPublic, Csw.literals.select(cswPrivate));
 
-                if (Csw.isFunction(cswPrivateVar.onChange)) {
-                    cswPrivateVar.select.bind('change', function () {
-                        cswPrivateVar.onChange(cswPrivateVar.select);
+                if (Csw.isFunction(cswPrivate.onChange)) {
+                    cswPrivate.select.bind('change', function () {
+                        cswPrivate.onChange(cswPrivate.select);
                     });
                 }
 
@@ -49,26 +49,26 @@
                         isSelected;
                     if (false === Csw.isNullOrEmpty(value)) {
                         isSelected = (Csw.bool(opt.selected) && false === isMultiEdit);
-                        cswPrivateVar.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
+                        cswPrivate.select.option({ value: value, display: text, isSelected: isSelected, isDisabled: opt.disabled });
                         optionCount += 1;
                     }
                 });
 
                 if (optionCount > 20) {
-                    cswPrivateVar.select.$.multiselect().multiselectfilter();
+                    cswPrivate.select.$.multiselect().multiselectfilter();
                 } else {
-                    cswPrivateVar.select.$.multiselect();
+                    cswPrivate.select.$.multiselect();
                 }
             } ());
 
-            cswPublicRet.val = function () {
+            cswPublic.val = function () {
                 //In IE an empty array is frequently !== [], rather === null
-                var values = cswPrivateVar.select.$.val() || [],
+                var values = cswPrivate.select.$.val() || [],
                     valArray = values.sort();
                 return valArray.join(',');
             };
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 

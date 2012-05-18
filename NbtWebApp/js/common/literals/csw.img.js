@@ -16,7 +16,7 @@
         /// <para>options.text: Text to display</para>
         /// </param>
         /// <returns type="img">A img object</returns>
-        var cswPrivateVar = {
+        var cswPrivate = {
             $parent: '',
             ID: '',
             cssclass: '',
@@ -30,7 +30,7 @@
             width: '',
             onClick: null //function () {}
         };
-        var cswPublicRet = {};
+        var cswPublic = {};
 
         (function () {
             var html = '',
@@ -40,23 +40,23 @@
             var $img;
 
             if (options) {
-                $.extend(cswPrivateVar, options);
+                $.extend(cswPrivate, options);
             }
 
-            cswPrivateVar.ID = Csw.string(cswPrivateVar.ID, cswPrivateVar.name);
+            cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
             html += '<img ';
-            attr.add('id', cswPrivateVar.ID);
-            attr.add('class', cswPrivateVar.cssclass);
-            attr.add('src', cswPrivateVar.src);
-            attr.add('alt', cswPrivateVar.alt);
-            attr.add('title', cswPrivateVar.title);
-            attr.add('height', cswPrivateVar.height);
-            attr.add('ismap', cswPrivateVar.ismap);
-            attr.add('usemap', cswPrivateVar.usemap);
-            attr.add('width', cswPrivateVar.width);
+            attr.add('id', cswPrivate.ID);
+            attr.add('class', cswPrivate.cssclass);
+            attr.add('src', cswPrivate.src);
+            attr.add('alt', cswPrivate.alt);
+            attr.add('title', cswPrivate.title);
+            attr.add('height', cswPrivate.height);
+            attr.add('ismap', cswPrivate.ismap);
+            attr.add('usemap', cswPrivate.usemap);
+            attr.add('width', cswPrivate.width);
             
-            style.add('border', cswPrivateVar.border);
+            style.add('border', cswPrivate.border);
 
             html += attr.get();
             html += style.get();
@@ -64,22 +64,22 @@
             html += ' />';
             $img = $(html);
 
-            Csw.literals.factory($img, cswPublicRet);
-            if (Csw.isFunction(cswPrivateVar.onClick)) {
-                cswPublicRet.bind('click', cswPrivateVar.onClick);
+            Csw.literals.factory($img, cswPublic);
+            if (Csw.isFunction(cswPrivate.onClick)) {
+                cswPublic.bind('click', cswPrivate.onClick);
             }
 
-            cswPrivateVar.$parent.append(cswPublicRet.$);
+            cswPrivate.$parent.append(cswPublic.$);
 
         } ());
 
-        cswPublicRet.click = function (func) {
+        cswPublic.click = function (func) {
             if (Csw.isFunction(func)) {
-                cswPublicRet.bind('click', func);
+                cswPublic.bind('click', func);
             }
         };
 
-        return cswPublicRet;
+        return cswPublic;
     }
     Csw.literals.register('img', img);
     Csw.literals.img = Csw.literals.img || img;

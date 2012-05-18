@@ -17,7 +17,7 @@
             /// </param>
             /// <returns type="table">A table object</returns>
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 ID: '',
                 TableCssClass: '',
                 CellCssClass: '',
@@ -33,48 +33,48 @@
                 OddCellRightAlign: false,
                 border: 0
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             (function () {
-                var table = '<table id="' + cswPrivateVar.ID + '"></table>';
+                var table = '<table id="' + cswPrivate.ID + '"></table>';
                 var isjQuery = Csw.isJQuery(cswParent);
                 if (isjQuery) {
                     table = cswParent;
                 } 
                 if(options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
 
-                cswPrivateVar.table = cswParent.attach(table);
-                cswPublicRet.$ = cswPrivateVar.table.$;
+                cswPrivate.table = cswParent.attach(table);
+                cswPublic.$ = cswPrivate.table.$;
  
-                cswPrivateVar.table.bind('CswTable_onCreateCell', function (e, cell, row, column) {
-                    Csw.tryExec(cswPrivateVar.onCreateCell(e, cell, row, column));
+                cswPrivate.table.bind('CswTable_onCreateCell', function (e, cell, row, column) {
+                    Csw.tryExec(cswPrivate.onCreateCell(e, cell, row, column));
                     e.stopPropagation(); // prevents events from triggering in nested tables
                 });
-                cswPrivateVar.table.trigger('CswTable_onCreateCell', [cswPrivateVar.table.find('td'), 1, 1]);
+                cswPrivate.table.trigger('CswTable_onCreateCell', [cswPrivate.table.find('td'), 1, 1]);
 
                 if (false === isjQuery) {
-                    cswPrivateVar.table.addClass(cswPrivateVar.TableCssClass);
-                    cswPrivateVar.table.propDom({
-                        width: cswPrivateVar.width,
-                        align: cswPrivateVar.align
+                    cswPrivate.table.addClass(cswPrivate.TableCssClass);
+                    cswPrivate.table.propDom({
+                        width: cswPrivate.width,
+                        align: cswPrivate.align
                     });
-                    cswPrivateVar.table.propNonDom({
-                        cellpadding: cswPrivateVar.cellpadding,
-                        cellspacing: cswPrivateVar.cellspacing,
-                        border: cswPrivateVar.border,
-                        cellalign: cswPrivateVar.cellalign,
-                        cellvalign: cswPrivateVar.cellvalign,
-                        cellcssclass: cswPrivateVar.CellCssClass,
-                        FirstCellRightAlign: cswPrivateVar.FirstCellRightAlign,
-                        OddCellRightAlign: cswPrivateVar.OddCellRightAlign
+                    cswPrivate.table.propNonDom({
+                        cellpadding: cswPrivate.cellpadding,
+                        cellspacing: cswPrivate.cellspacing,
+                        border: cswPrivate.border,
+                        cellalign: cswPrivate.cellalign,
+                        cellvalign: cswPrivate.cellvalign,
+                        cellcssclass: cswPrivate.CellCssClass,
+                        FirstCellRightAlign: cswPrivate.FirstCellRightAlign,
+                        OddCellRightAlign: cswPrivate.OddCellRightAlign
                     });
-                    cswPrivateVar.table.css('text-align', cswPrivateVar.align);
+                    cswPrivate.table.css('text-align', cswPrivate.align);
                 }
             } ());
 
-            cswPublicRet.cell = function (row, col) {
+            cswPublic.cell = function (row, col) {
                 /// <summary>Get a cell from the table</summary>
                 /// <param name="row" type="Number">Row number</param>
                 /// <param name="col" type="Number">Column number</param>
@@ -83,7 +83,7 @@
                     thisCol, id,
                     attr = Csw.makeAttr();
 
-                if (cswPrivateVar.table.length() > 0 &&
+                if (cswPrivate.table.length() > 0 &&
                     false === Csw.isNullOrEmpty(row) &&
                         false === Csw.isNullOrEmpty(col)) {
                     if (row <= 0) {
@@ -95,29 +95,29 @@
                         col = 1;
                     }
 
-                    if (cswPrivateVar.ID) {
-                        retCell = cswPrivateVar.table.find('#' + Csw.makeId(cswPrivateVar.ID, 'row_' + row, 'col_' + col, '', false));
+                    if (cswPrivate.ID) {
+                        retCell = cswPrivate.table.find('#' + Csw.makeId(cswPrivate.ID, 'row_' + row, 'col_' + col, '', false));
                     }
                     if (Csw.isNullOrEmpty(retCell)) {
-                        retCell = cswPrivateVar.table.children('tbody')
+                        retCell = cswPrivate.table.children('tbody')
                             .children('tr:eq(' + Csw.number(row - 1) + ')')
                             .children('td:eq(' + Csw.number(col - 1) + ')');
                     }
 
                     if (Csw.isNullOrEmpty(retCell)) {
-                        while (row > cswPrivateVar.table.children('tbody').children('tr').length()) {
-                            cswPrivateVar.table.append('<tr></tr>');
+                        while (row > cswPrivate.table.children('tbody').children('tr').length()) {
+                            cswPrivate.table.append('<tr></tr>');
                         }
-                        thisRow = cswPrivateVar.table.children('tbody').children('tr:eq(' + Csw.number(row - 1) + ')');
+                        thisRow = cswPrivate.table.children('tbody').children('tr:eq(' + Csw.number(row - 1) + ')');
                         thisCol = thisRow.children('td').length();
 
                         while (col > thisCol) {
                             html = '';
                             thisCol += 1;
-                            id = Csw.makeId(cswPrivateVar.ID, 'row_' + row, 'col_' + thisCol, '', false);
-                            align = cswPrivateVar.table.propNonDom('cellalign');
-                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPrivateVar.table.propNonDom('FirstCellRightAlign'))) ||
-                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPrivateVar.table.propNonDom('OddCellRightAlign')))) {
+                            id = Csw.makeId(cswPrivate.ID, 'row_' + row, 'col_' + thisCol, '', false);
+                            align = cswPrivate.table.propNonDom('cellalign');
+                            if ((thisRow.children('td').length() === 0 && Csw.bool(cswPrivate.table.propNonDom('FirstCellRightAlign'))) ||
+                                (thisRow.children('td').length() % 2 === 0 && Csw.bool(cswPrivate.table.propNonDom('OddCellRightAlign')))) {
                                 align = 'right';
                             }
                             html += '<td ';
@@ -126,15 +126,15 @@
                             }
                             attr.add('realrow', row);
                             attr.add('realcol', thisCol);
-                            attr.add('class', cswPrivateVar.table.propNonDom('cellcssclass'));
+                            attr.add('class', cswPrivate.table.propNonDom('cellcssclass'));
                             attr.add('align', align);
-                            attr.add('valign', cswPrivateVar.table.propNonDom('cellvalign'));
+                            attr.add('valign', cswPrivate.table.propNonDom('cellvalign'));
                             html += attr.get();
                             html += '>';
                             html += '</td>';
                             newCell = thisRow.attach(html);
 
-                            cswPrivateVar.table.trigger('CswTable_onCreateCell', [newCell, row, thisCol]);
+                            cswPrivate.table.trigger('CswTable_onCreateCell', [newCell, row, thisCol]);
                             if (thisCol === col) {
                                 retCell = newCell;
                             }
@@ -150,29 +150,29 @@
                 return retCell;
             };
 
-            //        cswPublicRet.add = function (row, col, content, id) {
+            //        cswPublic.add = function (row, col, content, id) {
             //            /// <summary>Add content to a cell of this table.</summary>
             //            /// <param name="row" type="Number">Row number.</param>
             //            /// <param name="col" type="Number">Column number.</param>
             //            /// <param name="content" type="String">Content to add.</param>
             //            /// <returns type="Object">The specified cell.</returns>
-            //            var retCell = cswPublicRet.cell(row, col, id);
+            //            var retCell = cswPublic.cell(row, col, id);
             //            retCell.append(content);
             //            return retCell;
             //        };
 
-            cswPublicRet.maxrows = function () {
+            cswPublic.maxrows = function () {
                 /// <summary>Get the maximum table row number</summary>
                 /// <returns type="Number">Number of rows</returns>
-                var rows = cswPrivateVar.table.children('tbody').children('tr');
+                var rows = cswPrivate.table.children('tbody').children('tr');
                 return rows.length();
             };
 
-            cswPublicRet.maxcolumns = function () {
+            cswPublic.maxcolumns = function () {
                 /// <summary>Get the maximum table column number</summary>
                 /// <returns type="Number">Number of columns</returns>
-                var body = cswPrivateVar.table.children('tbody'),
-                    maxrows = cswPublicRet.maxrows(),
+                var body = cswPrivate.table.children('tbody'),
+                    maxrows = cswPublic.maxrows(),
                     maxcolumns = 0,
                     r, c, columns, row;
 
@@ -186,17 +186,17 @@
                 return maxcolumns;
             };
 
-            cswPublicRet.finish = function (onEmptyCell, startingRow, startingCol) {
+            cswPublic.finish = function (onEmptyCell, startingRow, startingCol) {
                 /// <summary>Finish</summary>
                 /// <returns type="undefined"></returns>
-                var maxrows = cswPublicRet.maxrows(),
-                    maxcolumns = cswPublicRet.maxcolumns(),
+                var maxrows = cswPublic.maxrows(),
+                    maxcolumns = cswPublic.maxcolumns(),
                     r, c, cell;
 
                 // make missing cells, and add &nbsp; to empty cells
                 for (r = Csw.number(startingRow, 1); r <= maxrows; r += 1) {
                     for (c = Csw.number(startingCol, 1); c <= maxcolumns; c += 1) {
-                        cell = cswPublicRet.cell(r, c);
+                        cell = cswPublic.cell(r, c);
                         if (cell.length() === 0) {
                             if (onEmptyCell !== null) {
                                 onEmptyCell(cell, r, c);
@@ -209,11 +209,11 @@
             };
 
             // These are safe for nested tables, since using $.find() is not
-            cswPublicRet.findRow = function (criteria) {
+            cswPublic.findRow = function (criteria) {
                 /// <summary>Find a row by jQuery search criteria</summary>
                 /// <param name="criteria" type="String"></param>
                 /// <returns type="Object">Rows matching search</returns>
-                var rows = cswPrivateVar.table.children('tbody').children('tr'),
+                var rows = cswPrivate.table.children('tbody').children('tr'),
                     ret = {};
                 if (false === Csw.isNullOrEmpty(criteria)) {
                     ret = rows.filter(criteria);
@@ -221,16 +221,16 @@
                 return ret;
             };
 
-            cswPublicRet.findCell = function (criteria) {
+            cswPublic.findCell = function (criteria) {
                 /// <summary>Find a cells by jQuery search criteria</summary>
                 /// <param name="criteria" type="String"></param>
                 /// <returns type="Object">Cells matching search</returns>
                 var cells, ret = {};
                 if (Csw.contains(criteria, 'row') &&
                     Csw.contains(criteria, 'column')) {
-                    ret = cswPrivateVar.table.jquery($(cswPublicRet.$[0].rows[criteria.row].cells[criteria.column]));
+                    ret = cswPrivate.table.jquery($(cswPublic.$[0].rows[criteria.row].cells[criteria.column]));
                 } else {
-                    cells = cswPrivateVar.table.children('tbody').children('tr').children('td');
+                    cells = cswPrivate.table.children('tbody').children('tr').children('td');
                     if (cells.isValid && false === Csw.isNullOrEmpty(criteria)) {
                         ret = cells.filter(criteria);
                     }
@@ -238,7 +238,7 @@
                 return ret;
             };
 
-            cswPublicRet.rowFindCell = function (row, criteria) {
+            cswPublic.rowFindCell = function (row, criteria) {
                 /// <summary>Given a row, find a cell by jQuery search criteria</summary>
                 /// <param name="row" type="Object"></param>
                 /// <param name="criteria" type="String"></param>
@@ -248,12 +248,12 @@
 
                 if (false === Csw.isNullOrEmpty(criteria)) {
                     $cells = cells.$.filter(criteria);
-                    ret = cswPrivateVar.table.jquery($cells);
+                    ret = cswPrivate.table.jquery($cells);
                 }
                 return ret;
             };
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

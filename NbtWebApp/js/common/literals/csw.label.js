@@ -17,7 +17,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="Csw.literals.label">A label object</returns>
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 cssclass: '',
@@ -27,7 +27,7 @@
                 useWide: false,
                 onClick: null //function () {}
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             (function () {
                 var html = '',
@@ -36,43 +36,43 @@
                 var $label;
                 
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
-                var cssClass = 'CswLabel ' + cswPrivateVar.cssclass;
-                if(cswPrivateVar.useWide) {
+                var cssClass = 'CswLabel ' + cswPrivate.cssclass;
+                if(cswPrivate.useWide) {
                     cssClass += ' CswLabelWide';
                 }
                 
-                cswPrivateVar.ID = Csw.string(cswPrivateVar.ID, cswPrivateVar.name);
+                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
                 html += '<label ';
-                attr.add('id', cswPrivateVar.ID);
+                attr.add('id', cswPrivate.ID);
                 attr.add('class', cssClass);
-                attr.add('for', cswPrivateVar.forAttr);
-                attr.add('form', cswPrivateVar.form);
+                attr.add('for', cswPrivate.forAttr);
+                attr.add('form', cswPrivate.form);
 
                 html += attr.get();
                 html += style.get();
 
                 html += '>';
 
-                html += Csw.string(cswPrivateVar.text, cswPrivateVar.value);
+                html += Csw.string(cswPrivate.text, cswPrivate.value);
 
                 html += '</label>';
                 $label = $(html);
 
-                Csw.literals.factory($label, cswPublicRet);
+                Csw.literals.factory($label, cswPublic);
 
-                if (Csw.isJQuery(cswPrivateVar.$parent)) {
-                    cswPrivateVar.$parent.append(cswPublicRet.$);
+                if (Csw.isJQuery(cswPrivate.$parent)) {
+                    cswPrivate.$parent.append(cswPublic.$);
                 }
             } ());
 
-            cswPublicRet.setFor = function (elementId) {
-                cswPublicRet.propDom('for', elementId);
+            cswPublic.setFor = function (elementId) {
+                cswPublic.propDom('for', elementId);
             };
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

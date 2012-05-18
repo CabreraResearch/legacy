@@ -17,7 +17,7 @@
         /// <para>options.text: Text to display</para>
         /// </param>
         /// <returns type="span">A span object</returns>
-        var cswPrivateVar = {
+        var cswPrivate = {
             $parent: '',
             ID: '',
             cssclass: '',
@@ -25,7 +25,7 @@
             value: '',
             nobr: false
         };
-        var cswPublicRet = {};
+        var cswPublic = {};
 
         (function () {
             var html = '',
@@ -35,32 +35,32 @@
 
             html += '<span ';
             if (options) {
-                $.extend(cswPrivateVar, options);
+                $.extend(cswPrivate, options);
             } 
             
-            attr.add('id', cswPrivateVar.ID);
-            attr.add('class', cswPrivateVar.cssclass);
-            spanText = Csw.string(cswPrivateVar.text, cswPrivateVar.value);
+            attr.add('id', cswPrivate.ID);
+            attr.add('class', cswPrivate.cssclass);
+            spanText = Csw.string(cswPrivate.text, cswPrivate.value);
 
             html += attr.get();
             html += '>';
-            if(cswPrivateVar.nobr) {
+            if(cswPrivate.nobr) {
                 html += '<nobr>';
             }
             html += spanText;
-            if(cswPrivateVar.nobr) {
+            if(cswPrivate.nobr) {
                 html += '</nobr>';
             }
             html += '</span>';
             $span = $(html);
-            Csw.literals.factory($span, cswPublicRet);
+            Csw.literals.factory($span, cswPublic);
 
-            if (cswPrivateVar.$parent) {
-                cswPrivateVar.$parent.append(cswPublicRet.$);
+            if (cswPrivate.$parent) {
+                cswPrivate.$parent.append(cswPublic.$);
             }
         } ());
 
-        return cswPublicRet;
+        return cswPublic;
     }
     Csw.literals.register('span', span);
     Csw.literals.span = Csw.literals.span || span;

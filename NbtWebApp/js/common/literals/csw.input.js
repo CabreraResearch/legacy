@@ -16,7 +16,7 @@
         /// <para>options.text: Text to display</para>
         /// </param>
         /// <returns type="input">An input object</returns>
-        var cswPrivateVar = {
+        var cswPrivate = {
             $parent: '',
             ID: '',
             name: '',
@@ -34,7 +34,7 @@
             onChange: null,
             onClick: null
         };
-        var cswPublicRet = {};
+        var cswPublic = {};
 
         (function () {
             var html = '',
@@ -43,32 +43,32 @@
             var $input;
 
             if (options) {
-                $.extend(cswPrivateVar, options);
+                $.extend(cswPrivate, options);
             }
 
-            cswPrivateVar.name = Csw.string(cswPrivateVar.name, cswPrivateVar.ID);
-            cswPrivateVar.ID = Csw.string(cswPrivateVar.ID, cswPrivateVar.name);
+            cswPrivate.name = Csw.string(cswPrivate.name, cswPrivate.ID);
+            cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
             html += '<input ';
-            attr.add('id', cswPrivateVar.ID);
-            attr.add('name', cswPrivateVar.name);
-            attr.add('class', cswPrivateVar.cssclass);
-            attr.add('type', cswPrivateVar.type.name);
-            attr.add('placeholder', cswPrivateVar.placeholder);
-            attr.add('width', Csw.string(cswPrivateVar.width, cswPrivateVar.type.defaultwidth));
-            style.add('width', Csw.string(cswPrivateVar.width, cswPrivateVar.type.defaultwidth));
-            attr.add('maxlength', cswPrivateVar.maxlength);
-            //attr.add('value', cswPrivateVar.value);//case 26109
+            attr.add('id', cswPrivate.ID);
+            attr.add('name', cswPrivate.name);
+            attr.add('class', cswPrivate.cssclass);
+            attr.add('type', cswPrivate.type.name);
+            attr.add('placeholder', cswPrivate.placeholder);
+            attr.add('width', Csw.string(cswPrivate.width, cswPrivate.type.defaultwidth));
+            style.add('width', Csw.string(cswPrivate.width, cswPrivate.type.defaultwidth));
+            attr.add('maxlength', cswPrivate.maxlength);
+            //attr.add('value', cswPrivate.value);//case 26109
 
-            if (Csw.bool(cswPrivateVar.autofocus)) {
-                attr.add('autofocus', cswPrivateVar.autofocus);
+            if (Csw.bool(cswPrivate.autofocus)) {
+                attr.add('autofocus', cswPrivate.autofocus);
             }
-            if (cswPrivateVar.type.autocomplete === true && cswPrivateVar.autocomplete === 'on') {
+            if (cswPrivate.type.autocomplete === true && cswPrivate.autocomplete === 'on') {
                 attr.add('autocomplete', 'on');
             }
-            cswPrivateVar.canCheck = cswPrivateVar.type === Csw.enums.inputTypes.checkbox || cswPrivateVar.type === Csw.enums.inputTypes.radio
-            if (cswPrivateVar.canCheck) {
-                if (Csw.bool(cswPrivateVar.checked) || cswPrivateVar.checked === 'checked') {
+            cswPrivate.canCheck = cswPrivate.type === Csw.enums.inputTypes.checkbox || cswPrivate.type === Csw.enums.inputTypes.radio
+            if (cswPrivate.canCheck) {
+                if (Csw.bool(cswPrivate.checked) || cswPrivate.checked === 'checked') {
                     attr.add('checked', true);
                 }
             }
@@ -78,56 +78,56 @@
             html += ' />';
 
             $input = $(html);
-            Csw.literals.factory($input, cswPublicRet);
+            Csw.literals.factory($input, cswPublic);
 
-            cswPublicRet.propDom('value', cswPrivateVar.value);//case 26109
+            cswPublic.propDom('value', cswPrivate.value);//case 26109
             
-            if (Csw.isJQuery(cswPrivateVar.$parent)) {
-                cswPrivateVar.$parent.append(cswPublicRet.$);
+            if (Csw.isJQuery(cswPrivate.$parent)) {
+                cswPrivate.$parent.append(cswPublic.$);
             }
-            if (Csw.isFunction(cswPrivateVar.onChange)) {
-                cswPublicRet.bind('change', cswPrivateVar.onChange);
+            if (Csw.isFunction(cswPrivate.onChange)) {
+                cswPublic.bind('change', cswPrivate.onChange);
             }
-            if (Csw.isFunction(cswPrivateVar.onClick)) {
-                cswPublicRet.bind('click', cswPrivateVar.onClick);
+            if (Csw.isFunction(cswPrivate.onClick)) {
+                cswPublic.bind('click', cswPrivate.onClick);
             }
         } ());
 
-        cswPublicRet.change = function (func) {
+        cswPublic.change = function (func) {
             if (Csw.isFunction(func)) {
-                cswPublicRet.bind('change', func);
+                cswPublic.bind('change', func);
             } else {
-                cswPublicRet.trigger('change');
+                cswPublic.trigger('change');
             }
         };
 
-        cswPublicRet.click = function (func) {
+        cswPublic.click = function (func) {
             if (Csw.isFunction(func)) {
-                cswPublicRet.bind('click', func);
+                cswPublic.bind('click', func);
             } else {
-                cswPublicRet.trigger('click');
+                cswPublic.trigger('click');
             }
         };
 
-        cswPublicRet.checked = function (value) {
-            var ret = cswPublicRet;
-            if (cswPrivateVar.canCheck) {
+        cswPublic.checked = function (value) {
+            var ret = cswPublic;
+            if (cswPrivate.canCheck) {
                 if (arguments.length === 1) {
                     if (value) {
-                        cswPublicRet.propDom({ 'checked': true });
+                        cswPublic.propDom({ 'checked': true });
                     } else {
                         //if (window.internetExplorerVersionNo !== -1) {
-                            cswPublicRet.$.removeAttr('checked');
+                            cswPublic.$.removeAttr('checked');
                         //}
                     }
                 } else {
-                    ret = cswPublicRet.$.is(':checked');
+                    ret = cswPublic.$.is(':checked');
                 }
             }
             return ret;
         };
 
-        return cswPublicRet;
+        return cswPublic;
     }
     Csw.literals.register('input', input);
     Csw.literals.input = Csw.literals.input || input;

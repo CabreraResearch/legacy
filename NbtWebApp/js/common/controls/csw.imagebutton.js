@@ -11,7 +11,7 @@
             ///<param name="options" type="Object">Object defining paramaters for imageButton construction.</param>
             ///<returns type="Csw.controls.imageButton">Object representing an imageButton</returns>
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 ButtonType: Csw.enums.imageButton_ButtonType.None,
                 Active: false,
                 AlternateText: '',
@@ -20,18 +20,18 @@
                 Required: false,
                 onClick: null
             };
-            var cswPublicRet = { };
+            var cswPublic = { };
 
             (function() {
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
 
-                cswPrivateVar.imageButton = cswParent.div(cswPrivateVar);
-                cswPublicRet = Csw.dom({ }, cswPrivateVar.imageButton);
+                cswPrivate.imageButton = cswParent.div(cswPrivate);
+                cswPublic = Csw.dom({ }, cswPrivate.imageButton);
             }());
 
-            cswPublicRet.setButtonType = function(newButtonType) {
+            cswPublic.setButtonType = function(newButtonType) {
                 var multiplier = -18;
                 //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
                 var port = document.location.port;
@@ -43,52 +43,52 @@
                 if (newButtonType !== undefined && newButtonType !== Csw.enums.imageButton_ButtonType.None) {
 
                     var offset = 0;
-                    if (cswPrivateVar.Active) {
+                    if (cswPrivate.Active) {
                         offset = -36;
                     }
-                    cswPublicRet.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') ' + offset + 'px ' + newButtonType * multiplier + 'px no-repeat';
+                    cswPublic.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') ' + offset + 'px ' + newButtonType * multiplier + 'px no-repeat';
 
-                    cswPublicRet.unbind('mouseover');
-                    cswPublicRet.unbind('mouseout');
-                    cswPublicRet.unbind('mousedown');
-                    cswPublicRet.unbind('mouseup');
-                    cswPublicRet.bind('mouseover', function() {
-                        cswPublicRet.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
+                    cswPublic.unbind('mouseover');
+                    cswPublic.unbind('mouseout');
+                    cswPublic.unbind('mousedown');
+                    cswPublic.unbind('mouseup');
+                    cswPublic.bind('mouseover', function() {
+                        cswPublic.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                     });
-                    cswPublicRet.bind('mouseout', function() {
-                        cswPublicRet.css('background-position', offset + 'px ' + newButtonType * multiplier + 'px');
+                    cswPublic.bind('mouseout', function() {
+                        cswPublic.css('background-position', offset + 'px ' + newButtonType * multiplier + 'px');
                     });
-                    cswPublicRet.bind('mousedown', function() {
-                        cswPublicRet.css('background-position', '-36px ' + newButtonType * multiplier + 'px');
+                    cswPublic.bind('mousedown', function() {
+                        cswPublic.css('background-position', '-36px ' + newButtonType * multiplier + 'px');
                     });
-                    cswPublicRet.bind('mouseup', function() {
-                        cswPublicRet.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
+                    cswPublic.bind('mouseup', function() {
+                        cswPublic.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                     });
                 }
-                cswPrivateVar.ButtonType = newButtonType;
+                cswPrivate.ButtonType = newButtonType;
                 return false;
             };
 
-            cswPublicRet.getButtonType = function() {
-                return cswPrivateVar.ButtonType;
+            cswPublic.getButtonType = function() {
+                return cswPrivate.ButtonType;
             };
 
 
-            cswPublicRet.click = function(newButtonType, func) {
+            cswPublic.click = function(newButtonType, func) {
                 if (Csw.isFunction(func)) {
-                    return cswPublicRet.bind('click', func);
+                    return cswPublic.bind('click', func);
                 } else {
-                    return cswPublicRet.setButtonType(newButtonType);
+                    return cswPublic.setButtonType(newButtonType);
                 }
             };
 
             (function() {
-                cswPublicRet.addClass('divbutton');
-                cswPublicRet.propNonDom('title', cswPrivateVar.AlternateText);
-                cswPublicRet.css('display', 'inline-block');
-                cswPublicRet.setButtonType(cswPrivateVar.ButtonType);
+                cswPublic.addClass('divbutton');
+                cswPublic.propNonDom('title', cswPrivate.AlternateText);
+                cswPublic.css('display', 'inline-block');
+                cswPublic.setButtonType(cswPrivate.ButtonType);
             }());
-            return cswPublicRet;
+            return cswPublic;
         });
 
 

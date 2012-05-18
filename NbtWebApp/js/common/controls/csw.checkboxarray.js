@@ -11,7 +11,7 @@
                 throw new Error('Cannot instance a Csw component without a Csw control');
             }
 
-            var cswPrivateVar = {
+            var cswPrivate = {
                 storedDataSuffix: 'cswCbaArrayDataStore',
                 cbaPrevSelectedSuffix: 'cswCba_prevSelected',
                 ID: '',
@@ -32,9 +32,9 @@
                 valColName: '',
                 storeDataId: ''
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPrivateVar.transmogrify = function () {
+            cswPrivate.transmogrify = function () {
                 var dataStore = {
                     cols: [],
                     data: []
@@ -44,37 +44,37 @@
                 var cols, i, v, thisSet, firstProp, column, fieldname;
 
 
-                if (false === Csw.isNullOrEmpty(cswPrivateVar.dataAry) && cswPrivateVar.dataAry.length > 0) {
+                if (false === Csw.isNullOrEmpty(cswPrivate.dataAry) && cswPrivate.dataAry.length > 0) {
                     // get columns
-                    cols = cswPrivateVar.cols;
+                    cols = cswPrivate.cols;
                     if (Csw.hasLength(cols) && cols.length === 0) {
-                        firstProp = cswPrivateVar.dataAry[0];
+                        firstProp = cswPrivate.dataAry[0];
                         for (column in firstProp) {
                             if (Csw.contains(firstProp, column)) {
                                 fieldname = column;
-                                if (fieldname !== cswPrivateVar.nameCol && fieldname !== cswPrivateVar.keyCol) {
+                                if (fieldname !== cswPrivate.nameCol && fieldname !== cswPrivate.keyCol) {
                                     cols.push(fieldname);
                                 }
                             }
                         }
                     }
-                    if (false === Csw.isNullOrEmpty(cswPrivateVar.valCol) && false === Csw.contains(cols, cswPrivateVar.valCol)) {
-                        cols.push(cswPrivateVar.valCol);
+                    if (false === Csw.isNullOrEmpty(cswPrivate.valCol) && false === Csw.contains(cols, cswPrivate.valCol)) {
+                        cols.push(cswPrivate.valCol);
                     }
 
                     // get data
-                    for (i = 0; i < cswPrivateVar.dataAry.length; i += 1) {
-                        thisSet = cswPrivateVar.dataAry[i];
+                    for (i = 0; i < cswPrivate.dataAry.length; i += 1) {
+                        thisSet = cswPrivate.dataAry[i];
                         values = [];
-                        if (Csw.contains(thisSet, cswPrivateVar.keyCol) && Csw.contains(thisSet, cswPrivateVar.nameCol)) {
+                        if (Csw.contains(thisSet, cswPrivate.keyCol) && Csw.contains(thisSet, cswPrivate.nameCol)) {
                             for (v = 0; v < cols.length; v += 1) {
                                 if (Csw.contains(thisSet, cols[v])) {
                                     values.push(Csw.bool(thisSet[cols[v]]));
                                 }
                             }
                             var dataOpts = {
-                                'label': thisSet[cswPrivateVar.nameCol],
-                                'key': thisSet[cswPrivateVar.keyCol],
+                                'label': thisSet[cswPrivate.nameCol],
+                                'key': thisSet[cswPrivate.keyCol],
                                 'values': values
                             };
                             data.push(dataOpts);
@@ -83,123 +83,123 @@
 
                     dataStore.cols = cols;
                     dataStore.data = data;
-                    Csw.clientDb.setItem(cswPrivateVar.storeDataId, dataStore);
+                    Csw.clientDb.setItem(cswPrivate.storeDataId, dataStore);
                 }
                 return dataStore;
             };
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
 
-                cswPrivateVar.storeDataId = Csw.makeId(cswPrivateVar.ID, cswPrivateVar.storedDataSuffix, '', '', false);
-                cswPrivateVar.cbaPrevSelected = Csw.makeId(cswPrivateVar.storeDataId, cswPrivateVar.cbaPrevSelectedSuffix, '', '', false);
+                cswPrivate.storeDataId = Csw.makeId(cswPrivate.ID, cswPrivate.storedDataSuffix, '', '', false);
+                cswPrivate.cbaPrevSelected = Csw.makeId(cswPrivate.storeDataId, cswPrivate.cbaPrevSelectedSuffix, '', '', false);
 
-                Csw.clientDb.removeItem(cswPrivateVar.storeDataId);
-                Csw.clientDb.removeItem(cswPrivateVar.cbaPrevSelected);
+                Csw.clientDb.removeItem(cswPrivate.storeDataId);
+                Csw.clientDb.removeItem(cswPrivate.cbaPrevSelected);
 
-                cswPrivateVar.cbaDiv = cswParent.div({
-                    ID: cswPrivateVar.storeDataId,
-                    height: (25 * cswPrivateVar.HeightInRows) + 'px'
+                cswPrivate.cbaDiv = cswParent.div({
+                    ID: cswPrivate.storeDataId,
+                    height: (25 * cswPrivate.HeightInRows) + 'px'
                 });
-                cswPublicRet = Csw.dom({ }, cswPrivateVar.cbaDiv);
-                //Csw.controls.factory(cswPrivateVar.$parent, cswPublicRet);
+                cswPublic = Csw.dom({ }, cswPrivate.cbaDiv);
+                //Csw.controls.factory(cswPrivate.$parent, cswPublic);
 
-                var cbaData = cswPrivateVar.transmogrify({
-                    dataAry: cswPrivateVar.dataAry,
-                    nameCol: cswPrivateVar.nameCol,
-                    keyCol: cswPrivateVar.keyCol,
-                    valCol: cswPrivateVar.valCol,
-                    cols: cswPrivateVar.cols
+                var cbaData = cswPrivate.transmogrify({
+                    dataAry: cswPrivate.dataAry,
+                    nameCol: cswPrivate.nameCol,
+                    keyCol: cswPrivate.keyCol,
+                    valCol: cswPrivate.valCol,
+                    cols: cswPrivate.cols
                 });
                 if (false === Csw.isNullOrEmpty(cbaData)) {
-                    $.extend(cswPrivateVar, cbaData);
+                    $.extend(cswPrivate, cbaData);
                 }
-                cswPrivateVar.MultiIsUnchanged = cswPrivateVar.Multi;
+                cswPrivate.MultiIsUnchanged = cswPrivate.Multi;
 
                 var checkType = Csw.enums.inputTypes.checkbox;
-                if (cswPrivateVar.UseRadios) {
+                if (cswPrivate.UseRadios) {
                     checkType = Csw.enums.inputTypes.radio;
                 }
 
-                Csw.clientDb.setItem(cswPrivateVar.storeDataId, { columns: cswPrivateVar.cols, data: cswPrivateVar.data });
+                Csw.clientDb.setItem(cswPrivate.storeDataId, { columns: cswPrivate.cols, data: cswPrivate.data });
 
-                if (cswPrivateVar.ReadOnly) {
-                    for (var r = 0; r < cswPrivateVar.data.length; r += 1) {
-                        var rRow = cswPrivateVar.data[r];
+                if (cswPrivate.ReadOnly) {
+                    for (var r = 0; r < cswPrivate.data.length; r += 1) {
+                        var rRow = cswPrivate.data[r];
                         var rowlabeled = false;
                         var first = true;
-                        for (var c = 0; c < cswPrivateVar.cols.length; c += 1) {
+                        for (var c = 0; c < cswPrivate.cols.length; c += 1) {
                             if (Csw.bool(rRow.values[c])) {
-                                if (false === cswPrivateVar.Multi) {
+                                if (false === cswPrivate.Multi) {
                                     if (false === rowlabeled) {
-                                        cswPrivateVar.cbaDiv.append(rRow.label + ": ");
+                                        cswPrivate.cbaDiv.append(rRow.label + ": ");
                                         rowlabeled = true;
                                     }
                                     if (false === first) {
-                                        cswPrivateVar.cbaDiv.append(", ");
+                                        cswPrivate.cbaDiv.append(", ");
                                     }
-                                    if (false === cswPrivateVar.UseRadios) {
-                                        cswPrivateVar.cbaDiv.append(cswPrivateVar.cols[c]);
+                                    if (false === cswPrivate.UseRadios) {
+                                        cswPrivate.cbaDiv.append(cswPrivate.cols[c]);
                                     }
                                     first = false;
                                 }
                             }
                         }
                         if (rowlabeled) {
-                            cswPrivateVar.cbaDiv.br();
+                            cswPrivate.cbaDiv.br();
                         }
                     }
                 } else {
-                    var table = cswPrivateVar.cbaDiv.table({
-                        ID: Csw.makeId(cswPrivateVar.ID, 'tbl')
+                    var table = cswPrivate.cbaDiv.table({
+                        ID: Csw.makeId(cswPrivate.ID, 'tbl')
                     });
 
-                    cswPrivateVar.cbaDiv.addClass('cbarraydiv');
+                    cswPrivate.cbaDiv.addClass('cbarraydiv');
                     table.addClass('cbarraytable');
 
                     // Header
                     var tablerow = 1;
-                    for (var d = 0; d < cswPrivateVar.cols.length; d++) {
+                    for (var d = 0; d < cswPrivate.cols.length; d++) {
                         var dCell = table.cell(tablerow, d + 2);
                         dCell.addClass('cbarraycell');
-                        var colName = cswPrivateVar.cols[d];
-                        if (colName === cswPrivateVar.valCol && false === Csw.isNullOrEmpty(cswPrivateVar.valColName)) {
-                            colName = cswPrivateVar.valColName;
+                        var colName = cswPrivate.cols[d];
+                        if (colName === cswPrivate.valCol && false === Csw.isNullOrEmpty(cswPrivate.valColName)) {
+                            colName = cswPrivate.valColName;
                         }
-                        if ((colName !== cswPrivateVar.keyCol && colName !== cswPrivateVar.nameCol)) {
+                        if ((colName !== cswPrivate.keyCol && colName !== cswPrivate.nameCol)) {
                             dCell.append(colName);
                         }
                     }
                     tablerow += 1;
 
                     //[none] row
-                    if (cswPrivateVar.UseRadios && false === cswPrivateVar.Required) {
+                    if (cswPrivate.UseRadios && false === cswPrivate.Required) {
                         // Row label
                         var labelCell = table.cell(tablerow, 1).text('[none]');
                         labelCell.addClass('cbarraycell');
 
-                        for (var e = 0; e < cswPrivateVar.cols.length; e += 1) {
+                        for (var e = 0; e < cswPrivate.cols.length; e += 1) {
                             var eCell = table.cell(tablerow, e + 2);
                             eCell.addClass('cbarraycell');
-                            var eCheckid = cswPrivateVar.ID + '_none';
+                            var eCheckid = cswPrivate.ID + '_none';
                             var eCheck = eCell.input({
                                 type: checkType,
-                                cssclass: 'CBACheckBox_' + cswPrivateVar.ID,
+                                cssclass: 'CBACheckBox_' + cswPrivate.ID,
                                 id: eCheckid,
-                                name: cswPrivateVar.ID,
-                                checked: false === cswPrivateVar.Multi
+                                name: cswPrivate.ID,
+                                checked: false === cswPrivate.Multi
                             });
-                            eCheck.propNonDom({ 'key': '', rowlabel: '[none]', collabel: cswPrivateVar.cols[e], row: -1, col: e });
-                            var delClick = Csw.makeDelegate(cswPrivateVar.onChange, eCheck);
+                            eCheck.propNonDom({ 'key': '', rowlabel: '[none]', collabel: cswPrivate.cols[e], row: -1, col: e });
+                            var delClick = Csw.makeDelegate(cswPrivate.onChange, eCheck);
                             eCheck.click(function () {
-                                cswPrivateVar.MultiIsUnchanged = false;
+                                cswPrivate.MultiIsUnchanged = false;
                                 delClick();
                             });
                             eCheck.change(delClick);
-                        } // for(var c = 0; c < cswPrivateVar.cols.length; c++)
-                    } // if(cswPrivateVar.UseRadios && ! cswPrivateVar.Required)
+                        } // for(var c = 0; c < cswPrivate.cols.length; c++)
+                    } // if(cswPrivate.UseRadios && ! cswPrivate.Required)
                     tablerow += 1;
 
                     var onChange = function (cB) {
@@ -208,87 +208,87 @@
                         var row = cB.propNonDom('row');
                         var isChecked = Csw.bool(cB.propDom('checked'));
                         //                    if (false === isChecked) {
-                        //                        if (cswPrivateVar.checked > 0) {
-                        //                            cswPrivateVar.checked -= 1;
+                        //                        if (cswPrivate.checked > 0) {
+                        //                            cswPrivate.checked -= 1;
                         //                        }
                         //                    } else {
-                        //                        cswPrivateVar.checked += 1;
+                        //                        cswPrivate.checked += 1;
                         //                    }
-                        var cache = Csw.clientDb.getItem(cswPrivateVar.storeDataId);
+                        var cache = Csw.clientDb.getItem(cswPrivate.storeDataId);
                         cache.MultiIsUnchanged = false;
                         if (Csw.contains(cache.data, row) && Csw.contains(cache.data[row], 'values')) {
                             cache.data[row].values[col] = cB.$.is(':checked');
                         }
-                        if (cswPrivateVar.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
-                            var data = Csw.clientDb.getItem(cswPrivateVar.cbaPrevSelected);
+                        if (cswPrivate.UseRadios) { //we're toggling--cache the prev selected row/col to deselect on later change
+                            var data = Csw.clientDb.getItem(cswPrivate.cbaPrevSelected);
                             if (Csw.contains(data, 'row') && Csw.contains(data, 'col')) {
                                 if (Csw.contains(cache.data, data.row) && Csw.contains(cache.data[data.row], 'values')) {
                                     cache.data[data.row].values[data.col] = false;
                                 }
                             }
-                            Csw.clientDb.setItem(cswPrivateVar.cbaPrevSelected, { row: row, col: col });
+                            Csw.clientDb.setItem(cswPrivate.cbaPrevSelected, { row: row, col: col });
                         }
-                        Csw.clientDb.setItem(cswPrivateVar.storeDataId, cache);
+                        Csw.clientDb.setItem(cswPrivate.storeDataId, cache);
                     };
 
                     // Data
-                    for (var s = 0; s < cswPrivateVar.data.length; s += 1) {
-                        var sRow = cswPrivateVar.data[s];
+                    for (var s = 0; s < cswPrivate.data.length; s += 1) {
+                        var sRow = cswPrivate.data[s];
                         // Row label
                         var sLabelcell = table.cell(tablerow + s, 1).text(sRow.label);
                         sLabelcell.addClass('cbarraycell');
 
-                        for (var f = 0; f < cswPrivateVar.cols.length; f += 1) {
+                        for (var f = 0; f < cswPrivate.cols.length; f += 1) {
                             var fCell = table.cell(tablerow + s, f + 2);
                             fCell.addClass('cbarraycell');
-                            var fCheckid = cswPrivateVar.ID + '_' + s + '_' + f;
+                            var fCheckid = cswPrivate.ID + '_' + s + '_' + f;
                             var fCheck = fCell.input({
                                 type: checkType,
-                                cssclass: 'CBACheckBox_' + cswPrivateVar.ID,
+                                cssclass: 'CBACheckBox_' + cswPrivate.ID,
                                 ID: fCheckid,
-                                name: cswPrivateVar.ID,
-                                onClick: cswPrivateVar.onChange,
+                                name: cswPrivate.ID,
+                                onClick: cswPrivate.onChange,
                                 checked: sRow.values[f]
                             });
 
-                            fCheck.propNonDom({ key: sRow.key, rowlabel: sRow.label, collabel: cswPrivateVar.cols[f], row: s, col: f });
+                            fCheck.propNonDom({ key: sRow.key, rowlabel: sRow.label, collabel: cswPrivate.cols[f], row: s, col: f });
                             var delChange = Csw.makeDelegate(onChange, fCheck);
                             fCheck.change(delChange);
                             //fCheck.data('thisRow', sRow);
 
                             if (sRow.values[f]) {
-                                if (cswPrivateVar.UseRadios) {
-                                    Csw.clientDb.setItem(cswPrivateVar.cbaPrevSelected, { col: f, row: s });
+                                if (cswPrivate.UseRadios) {
+                                    Csw.clientDb.setItem(cswPrivate.cbaPrevSelected, { col: f, row: s });
                                 }
                             }
-                        } // for(var c = 0; c < cswPrivateVar.cols.length; c++)
-                    } // for(var r = 0; r < cswPrivateVar.data.length; r++)
+                        } // for(var c = 0; c < cswPrivate.cols.length; c++)
+                    } // for(var r = 0; r < cswPrivate.data.length; r++)
 
-                    if (false === cswPrivateVar.UseRadios && cswPrivateVar.data.length > 0) {
+                    if (false === cswPrivate.UseRadios && cswPrivate.data.length > 0) {
                         var checkAllLinkText = 'Check All';
-                        if ($('.CBACheckBox_' + cswPrivateVar.ID).not(':checked').length === 0) {
+                        if ($('.CBACheckBox_' + cswPrivate.ID).not(':checked').length === 0) {
                             checkAllLinkText = 'Uncheck All';
                         }
 
-                        cswPrivateVar.checkAllLink = cswParent.div({
-                            isControl: cswPrivateVar.isControl,
+                        cswPrivate.checkAllLink = cswParent.div({
+                            isControl: cswPrivate.isControl,
                             align: 'right'
                         })
                             .a({
                                 href: 'javascript:void(0)',
                                 text: checkAllLinkText,
                                 onClick: function () {
-                                    cswPublicRet.toggleCheckAll();
+                                    cswPublic.toggleCheckAll();
                                     return false;
                                 }
                             });
                     }
 
-                } // if-else(cswPrivateVar.ReadOnly)
+                } // if-else(cswPrivate.ReadOnly)
 
             } ());
 
-            cswPublicRet.getdata = function (opts) {
+            cswPublic.getdata = function (opts) {
                 var _internal = {
                     ID: ''
                 };
@@ -297,28 +297,28 @@
                     $.extend(_internal, opts);
                 }
 
-                var data = Csw.clientDb.getItem(cswPrivateVar.storeDataId);
+                var data = Csw.clientDb.getItem(cswPrivate.storeDataId);
                 return data;
             };
 
-            cswPublicRet.toggleCheckAll = function () {
-                var checkBoxes = cswPublicRet.find('.CBACheckBox_' + cswPrivateVar.ID);
+            cswPublic.toggleCheckAll = function () {
+                var checkBoxes = cswPublic.find('.CBACheckBox_' + cswPrivate.ID);
                 if (checkBoxes.isValid) {
-                    if (cswPrivateVar.checkAllLink.text() === 'Uncheck All') {
-                        //if (cswPrivateVar.checked <= 0) {
-                        //    cswPrivateVar.checked = cswPrivateVar.data.length;
+                    if (cswPrivate.checkAllLink.text() === 'Uncheck All') {
+                        //if (cswPrivate.checked <= 0) {
+                        //    cswPrivate.checked = cswPrivate.data.length;
                         checkBoxes.propDom('checked', 'checked'); // Yes, this checks.  But click below unchecks again.
-                        cswPrivateVar.checkAllLink.text('Check All');
+                        cswPrivate.checkAllLink.text('Check All');
                     } else {
-                        //    cswPrivateVar.checked = 0;
+                        //    cswPrivate.checked = 0;
                         checkBoxes.$.removeAttr('checked'); // Yes, this unchecks.  But click below checks again.
-                        cswPrivateVar.checkAllLink.text('Uncheck All');
+                        cswPrivate.checkAllLink.text('Uncheck All');
                     }
                     checkBoxes.trigger('click'); // this toggles again
                 }
             }; // ToggleCheckAll()
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

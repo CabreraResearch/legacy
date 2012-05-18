@@ -18,7 +18,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="div">A div object</returns>
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 name: '',
@@ -32,27 +32,27 @@
                 styles: { },
                 onClick: null
             };
-            var cswPublicRet = { };
+            var cswPublic = { };
 
             (function() {
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
                 var html = '',
                     attr = Csw.makeAttr(),
                     style = Csw.makeStyle(),
-                    divText = Csw.string(cswPrivateVar.text);
+                    divText = Csw.string(cswPrivate.text);
                 var $div;
 
-                attr.add('id', cswPrivateVar.ID);
-                attr.add('name', Csw.string(cswPrivateVar.name, cswPrivateVar.ID));
-                attr.add('class', cswPrivateVar.cssclass);
-                attr.add('value', cswPrivateVar.value);
-                attr.add('align', cswPrivateVar.align);
-                cswPrivateVar.styles.align = cswPrivateVar.align;
-                cswPrivateVar.styles.height = cswPrivateVar.height;
-                cswPrivateVar.styles.width = cswPrivateVar.width;
-                style.set(cswPrivateVar.styles);
+                attr.add('id', cswPrivate.ID);
+                attr.add('name', Csw.string(cswPrivate.name, cswPrivate.ID));
+                attr.add('class', cswPrivate.cssclass);
+                attr.add('value', cswPrivate.value);
+                attr.add('align', cswPrivate.align);
+                cswPrivate.styles.align = cswPrivate.align;
+                cswPrivate.styles.height = cswPrivate.height;
+                cswPrivate.styles.width = cswPrivate.width;
+                style.set(cswPrivate.styles);
 
                 html += '<div ';
 
@@ -63,17 +63,17 @@
                 html += divText;
                 html += '</div>';
                 $div = $(html);
-                Csw.literals.factory($div, cswPublicRet);
+                Csw.literals.factory($div, cswPublic);
 
-                if (Csw.isFunction(cswPrivateVar.onClick)) {
-                    cswPublicRet.bind('click', cswPrivateVar.onClick);
+                if (Csw.isFunction(cswPrivate.onClick)) {
+                    cswPublic.bind('click', cswPrivate.onClick);
                 }
-                if (false === Csw.isNullOrEmpty(cswPrivateVar.$parent)) {
-                    cswPrivateVar.$parent.append(cswPublicRet.$);
+                if (false === Csw.isNullOrEmpty(cswPrivate.$parent)) {
+                    cswPrivate.$parent.append(cswPublic.$);
                 }
             }());
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

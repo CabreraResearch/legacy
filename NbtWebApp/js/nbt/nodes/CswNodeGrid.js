@@ -5,13 +5,13 @@
     "use strict";
     var pluginName = 'CswNodeGrid';
 
-    var cswPrivateVar = {
+    var cswPrivate = {
         selectedRowId: ''
     };
 
     function deleteRows(rowid, grid, func) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = cswPrivateVar.selectedRowId;
+            rowid = cswPrivate.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -37,7 +37,7 @@
 
     function editRows(rowid, grid, func, editViewFunc) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = cswPrivateVar.selectedRowId;
+            rowid = cswPrivate.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -162,7 +162,7 @@
                                         deleteRows(rowid, ret, o.onDeleteNode);
                                     }
                                 }
-                                cswPrivateVar.selectedRowId = rowid;
+                                cswPrivate.selectedRowId = rowid;
                                 if (false === isMulti) {
                                     if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
                                         validateNode(eventObj.toElement.className);

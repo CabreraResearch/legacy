@@ -7,7 +7,7 @@
     Csw.controls.viewSelect = Csw.controls.viewSelect ||
         Csw.controls.register('viewSelect', function (cswParent, params) {
 
-            var cswPrivateVar = {
+            var cswPrivate = {
                 viewurl: '/NbtWebApp/wsNBT.asmx/getViewSelect',
                 recenturl: '/NbtWebApp/wsNBT.asmx/getViewSelectRecent',
                 ID: 'viewselect',
@@ -23,25 +23,25 @@
                 div: null
             };
             if (params) {
-                $.extend(cswPrivateVar, params);
+                $.extend(cswPrivate, params);
             }
 
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPrivateVar.addCategory = function (catobj) {
+            cswPrivate.addCategory = function (catobj) {
 
-                var fieldsetid = Csw.makeId(cswPrivateVar.ID, '', catobj.category + '_fs', '', false);
-                var $fieldset = cswPrivateVar.vsdiv.$.find('#' + fieldsetid);
+                var fieldsetid = Csw.makeId(cswPrivate.ID, '', catobj.category + '_fs', '', false);
+                var $fieldset = cswPrivate.vsdiv.$.find('#' + fieldsetid);
                 if ($fieldset.length === 0) {
                     $fieldset = $('<fieldset id="' + fieldsetid + '" class="viewselectfieldset"></fieldset>')
-                                    .appendTo(cswPrivateVar.vsdiv.$);
+                                    .appendTo(cswPrivate.vsdiv.$);
                 }
 
                 $fieldset.contents().remove();
                 $fieldset.append('<legend class="viewselectlegend">' + catobj.category + '</legend>');
 
                 var morediv = Csw.literals.moreDiv({
-                    ID: Csw.makeId(cswPrivateVar.ID, '', catobj.category + '_morediv'),
+                    ID: Csw.makeId(cswPrivate.ID, '', catobj.category + '_morediv'),
                     $parent: $fieldset
                 });
 
@@ -52,7 +52,7 @@
                 morediv.moreLink.hide();
 
                 Csw.each(catobj.items, function (itemobj, itemname) {
-                    if (row > cswPrivateVar.hidethreshold && tbl === showntbl) {
+                    if (row > cswPrivate.hidethreshold && tbl === showntbl) {
                         row = 1;
                         tbl = hiddentbl;
                         morediv.moreLink.show();
@@ -64,8 +64,8 @@
                     var linkcell = tbl.cell(row, 2).addClass('viewselectitemcell');
                     linkcell.text(itemobj.name);
 
-                    iconcell.bind('click', function () { cswPrivateVar.handleSelect(itemobj); });
-                    linkcell.bind('click', function () { cswPrivateVar.handleSelect(itemobj); });
+                    iconcell.bind('click', function () { cswPrivate.handleSelect(itemobj); });
+                    linkcell.bind('click', function () { cswPrivate.handleSelect(itemobj); });
 
                     linkcell.$.hover(
                         function () {
@@ -81,12 +81,12 @@
                 }); // Csw.each() items
             }; // addCategory()
 
-            cswPrivateVar.handleSelect = function (itemobj) {
+            cswPrivate.handleSelect = function (itemobj) {
 
                 var $newTopContent = $('<div></div>');
                 var table = Csw.literals.table({
                     $parent: $newTopContent,
-                    ID: cswPrivateVar.ID + 'selectedtbl'
+                    ID: cswPrivate.ID + 'selectedtbl'
                 });
                 var iconDiv = table.cell(1, 1).div();
 
@@ -96,80 +96,80 @@
 
                 table.cell(1, 2).text(Csw.string(itemobj.name).substr(0, 30));
 
-                cswPrivateVar.comboBox.topContent($newTopContent);
-                cswPrivateVar.div.propNonDom('selectedType', itemobj.type);
-                cswPrivateVar.div.propNonDom('selectedName', itemobj.name);
+                cswPrivate.comboBox.topContent($newTopContent);
+                cswPrivate.div.propNonDom('selectedType', itemobj.type);
+                cswPrivate.div.propNonDom('selectedName', itemobj.name);
                 switch (itemobj.type.toLowerCase()) {
                     case 'view':
-                        cswPrivateVar.div.propNonDom('selectedValue', itemobj.viewid);
+                        cswPrivate.div.propNonDom('selectedValue', itemobj.viewid);
                         break;
                     case 'action':
-                        cswPrivateVar.div.propNonDom('selectedValue', itemobj.actionid);
+                        cswPrivate.div.propNonDom('selectedValue', itemobj.actionid);
                         break;
                     case 'report':
-                        cswPrivateVar.div.propNonDom('selectedValue', itemobj.reportid);
+                        cswPrivate.div.propNonDom('selectedValue', itemobj.reportid);
                         break;
                 }
 
-                //setTimeout(function () { cswPrivateVar.comboBox.toggle(); }, cswPrivateVar.ClickDelay);
-                Csw.tryExec(cswPrivateVar.onSelect, itemobj);
-            }; // cswPrivateVar.handleSelect()
+                //setTimeout(function () { cswPrivate.comboBox.toggle(); }, cswPrivate.ClickDelay);
+                Csw.tryExec(cswPrivate.onSelect, itemobj);
+            }; // cswPrivate.handleSelect()
 
 
             // Constructor
             (function () {
-                cswPrivateVar.div = cswParent.div();
-                cswPublicRet = Csw.dom({}, cswPrivateVar.div);
+                cswPrivate.div = cswParent.div();
+                cswPublic = Csw.dom({}, cswPrivate.div);
 
-                cswPrivateVar.vsdiv = Csw.literals.div({ ID: Csw.makeId(cswPrivateVar.ID, '', 'vsdiv') });
-                if (false == Csw.isNullOrEmpty(cswPrivateVar.maxHeight)) {
-                    cswPrivateVar.vsdiv.css({ maxHeight: cswPrivateVar.maxHeight });
+                cswPrivate.vsdiv = Csw.literals.div({ ID: Csw.makeId(cswPrivate.ID, '', 'vsdiv') });
+                if (false == Csw.isNullOrEmpty(cswPrivate.maxHeight)) {
+                    cswPrivate.vsdiv.css({ maxHeight: cswPrivate.maxHeight });
                 }
-                cswPrivateVar.comboBox = cswPrivateVar.div.comboBox({
-                    ID: cswPrivateVar.ID + '_combo',
+                cswPrivate.comboBox = cswPrivate.div.comboBox({
+                    ID: cswPrivate.ID + '_combo',
                     topContent: 'Select a View',
-                    selectContent: cswPrivateVar.vsdiv.$, /* NO! Refactor to use Csw.literals and more wholesome methods. */
+                    selectContent: cswPrivate.vsdiv.$, /* NO! Refactor to use Csw.literals and more wholesome methods. */
                     width: '266px'
                 });
 
-                $.extend(cswPublicRet, cswPrivateVar.comboBox);
+                $.extend(cswPublic, cswPrivate.comboBox);
 
                 Csw.ajax.post({
-                    url: cswPrivateVar.viewurl,
+                    url: cswPrivate.viewurl,
                     data: {
-                        IsSearchable: cswPrivateVar.issearchable,
-                        IncludeRecent: cswPrivateVar.includeRecent
+                        IsSearchable: cswPrivate.issearchable,
+                        IncludeRecent: cswPrivate.includeRecent
                     },
                     stringify: false,
                     success: function (data) {
-                        Csw.each(data.viewselectitems, cswPrivateVar.addCategory);
-                        Csw.tryExec(cswPrivateVar.onSuccess);
+                        Csw.each(data.viewselectitems, cswPrivate.addCategory);
+                        Csw.tryExec(cswPrivate.onSuccess);
                     }
                 });
             })();
 
 
-            cswPublicRet.value = function () {
+            cswPublic.value = function () {
                 return {
-                    type: cswPrivateVar.div.propNonDom('selectedType'),
-                    value: cswPrivateVar.div.propNonDom('selectedValue'),
-                    name: cswPrivateVar.div.propNonDom('selectedName')
+                    type: cswPrivate.div.propNonDom('selectedType'),
+                    value: cswPrivate.div.propNonDom('selectedValue'),
+                    name: cswPrivate.div.propNonDom('selectedName')
                 };
             };
 
-            cswPublicRet.val = cswPublicRet.value;
+            cswPublic.val = cswPublic.value;
 
-            cswPublicRet.refreshRecent = function () {
-                if (cswPrivateVar.includeRecent) {
+            cswPublic.refreshRecent = function () {
+                if (cswPrivate.includeRecent) {
                     Csw.ajax.post({
-                        url: cswPrivateVar.recenturl,
+                        url: cswPrivate.recenturl,
                         success: function (data) {
-                            Csw.each(data.viewselectitems, cswPrivateVar.addCategory);
+                            Csw.each(data.viewselectitems, cswPrivate.addCategory);
                         }
                     });
                 }
             }; // refreshRecent()
 
-            return cswPublicRet;
+            return cswPublic;
         });
 })();

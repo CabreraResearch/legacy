@@ -9,13 +9,13 @@
             /// <summary> Create an <ol /> </summary>
             /// <param name="options" type="Object">Options to define the ol.</param>
             /// <returns type="ol">A ol object</returns>
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 number: 1
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPublicRet.li = function (liOptions) {
+            cswPublic.li = function (liOptions) {
                 /// <summary> Create a <li /> </summary>
                 /// <param name="options" type="Object">Options to define the li.</param>
                 /// <returns type="li">A li object</returns>
@@ -34,7 +34,7 @@
 
                     $li = $(html);
                     Csw.literals.factory($li, liExternal);
-                    cswPublicRet.append($li);
+                    cswPublic.append($li);
                 }());
 
                 return liExternal;
@@ -44,16 +44,16 @@
                 var html = '<ol></ol>';
                 var $ol;
 
-                $.extend(cswPrivateVar, options);
+                $.extend(cswPrivate, options);
 
                 $ol = $(html);
-                Csw.literals.factory($ol, cswPublicRet);
+                Csw.literals.factory($ol, cswPublic);
 
-                cswPrivateVar.$parent.append(cswPublicRet.$);
+                cswPrivate.$parent.append(cswPublic.$);
             } ());
 
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

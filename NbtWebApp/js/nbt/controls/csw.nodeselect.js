@@ -6,7 +6,7 @@
     Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
         Csw.controls.register('nodeSelect', function (cswParent, options) {
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 nodesUrlMethod: 'getNodes',
@@ -21,31 +21,31 @@
                 excludeNodeTypeIds: '',
                 canAdd: false
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             (function () {
 
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
-                cswPrivateVar.ID += '_nodesel';
+                cswPrivate.ID += '_nodesel';
 
-                cswPrivateVar.table = cswParent.table();
-                cswPrivateVar.select = cswPrivateVar.table.cell(1, 1).select(cswPrivateVar);
+                cswPrivate.table = cswParent.table();
+                cswPrivate.select = cswPrivate.table.cell(1, 1).select(cswPrivate);
 
-                cswPublicRet = Csw.dom({}, cswPrivateVar.select);
+                cswPublic = Csw.dom({}, cswPrivate.select);
 
-                cswPublicRet.bind('change', function () {
-                    Csw.tryExec(cswPrivateVar.onChange, cswPublicRet);
-                    Csw.tryExec(cswPrivateVar.onSelect, cswPublicRet.val());
+                cswPublic.bind('change', function () {
+                    Csw.tryExec(cswPrivate.onChange, cswPublic);
+                    Csw.tryExec(cswPrivate.onSelect, cswPublic.val());
                 });
 
                 Csw.ajax.post({
-                    urlMethod: cswPrivateVar.nodesUrlMethod,
+                    urlMethod: cswPrivate.nodesUrlMethod,
                     data: {
-                        NodeTypeId: Csw.string(cswPrivateVar.nodeTypeId),
-                        ObjectClassId: Csw.string(cswPrivateVar.objectClassId),
-                        ObjectClass: Csw.string(cswPrivateVar.objectClassName)
+                        NodeTypeId: Csw.string(cswPrivate.nodeTypeId),
+                        ObjectClassId: Csw.string(cswPrivate.objectClassId),
+                        ObjectClass: Csw.string(cswPrivate.objectClassName)
                     },
                     success: function (data) {
                         var ret = data;
@@ -56,22 +56,22 @@
                         //Case 24155
                         Csw.each(ret, function (nodeName, nodeId) {
                             nodecount += 1;
-                            cswPublicRet.option({ value: nodeId, display: nodeName });
+                            cswPublic.option({ value: nodeId, display: nodeName });
                         });
 
-                        Csw.tryExec(cswPrivateVar.onSuccess, ret);
-                        cswPublicRet.css('width', Csw.string(cswPrivateVar.width));
+                        Csw.tryExec(cswPrivate.onSuccess, ret);
+                        cswPublic.css('width', Csw.string(cswPrivate.width));
                         
                         if (canAdd) {
-                            cswPrivateVar.table.cell(1, 2)
+                            cswPrivate.table.cell(1, 2)
                                 .imageButton({
                                     ButtonType: Csw.enums.imageButton_ButtonType.Add,
                                     AlternateText: 'Add New',
                                     onClick: function() {
                                         $.CswDialog('AddNodeDialog', {
-                                            nodetypeid: cswPrivateVar.nodeTypeId,
+                                            nodetypeid: cswPrivate.nodeTypeId,
                                             onAddNode: function(nodeid, nodekey, nodename) {
-                                                cswPublicRet.option({ value: nodeid, display: nodename, selected: true });
+                                                cswPublic.option({ value: nodeid, display: nodename, selected: true });
                                             }
                                         });
                                     }
@@ -82,7 +82,7 @@
                 });
             } ());
 
-            return cswPublicRet;
+            return cswPublic;
         });
 } ());
 

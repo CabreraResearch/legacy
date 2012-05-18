@@ -6,48 +6,48 @@
     Csw.actions.modules = Csw.actions.modules ||
         Csw.actions.register('modules', function (cswParent, options) {
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 urlMethod: 'getModules',
                 saveUrlMethod: 'saveModules',
                 ID: 'action_modules',
                 onModuleChange: null // function() {}
             };
-            if (options) $.extend(cswPrivateVar, options);
+            if (options) $.extend(cswPrivate, options);
 
             // constructor
-            cswPrivateVar.init = function () {
+            cswPrivate.init = function () {
 
                 cswParent.$.empty();
 
-                cswPrivateVar.table = cswParent.table({
-                    ID: cswPrivateVar.ID,
+                cswPrivate.table = cswParent.table({
+                    ID: cswPrivate.ID,
                     cellpadding: '3px',
                     FirstCellRightAlign: true
                 }).css({ 'padding-top': '5px' });
 
                 Csw.ajax.post({
-                    urlMethod: cswPrivateVar.urlMethod,
+                    urlMethod: cswPrivate.urlMethod,
                     data: {},
                     success: function (result) {
                         var row = 1;
-                        cswPrivateVar.table.cell(row, 1).css({ 'font-weight': 'bold' }).append('Enabled');
-                        cswPrivateVar.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
+                        cswPrivate.table.cell(row, 1).css({ 'font-weight': 'bold' }).append('Enabled');
+                        cswPrivate.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
                         row++;
 
                         var checkboxes = [];
 
                         Csw.each(result, function (thisValue, thisModule) {
-                            checkboxes.push(cswPrivateVar.table.cell(row, 1).input({
+                            checkboxes.push(cswPrivate.table.cell(row, 1).input({
                                 ID: thisModule,
                                 name: thisModule,
                                 type: Csw.enums.inputTypes.checkbox,
                                 checked: Csw.bool(thisValue)
                             }));
-                            cswPrivateVar.table.cell(row, 2).append(thisModule);
+                            cswPrivate.table.cell(row, 2).append(thisModule);
                             row++;
                         }); //each()
 
-                        cswPrivateVar.table.cell(row, 2).button({
+                        cswPrivate.table.cell(row, 2).button({
                             ID: 'savebtn',
                             enabledText: 'Save',
                             disabledText: 'Saving...',
@@ -58,11 +58,11 @@
                                 }); // each
 
                                 Csw.ajax.post({
-                                    urlMethod: cswPrivateVar.saveUrlMethod,
+                                    urlMethod: cswPrivate.saveUrlMethod,
                                     data: { Modules: JSON.stringify(changes) },
                                     success: function (result) {
-                                        Csw.tryExec(cswPrivateVar.onModuleChange);
-                                        cswPrivateVar.init();
+                                        Csw.tryExec(cswPrivate.onModuleChange);
+                                        cswPrivate.init();
                                     } // success
                                 }); // ajax
 
@@ -72,9 +72,9 @@
                     } // success
                 }); // ajax()
 
-            } // cswPrivateVar.init()
+            } // cswPrivate.init()
 
-            cswPrivateVar.init();
+            cswPrivate.init();
 
         }); // register()
 } ());

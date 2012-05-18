@@ -17,7 +17,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="link">A link object</returns>
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 cssclass: '',
@@ -30,7 +30,7 @@
                 target: '',
                 onClick: null //function () {}
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             (function () {
                 var html = '',
@@ -39,84 +39,84 @@
                 var $link;
 
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
 
-                cswPrivateVar.ID = Csw.string(cswPrivateVar.ID, cswPrivateVar.name);
+                cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
                 html += '<a ';
-                attr.add('id', cswPrivateVar.ID);
-                attr.add('class', cswPrivateVar.cssclass);
-                attr.add('href', cswPrivateVar.href);
-                attr.add('type', cswPrivateVar.type);
-                //attr.add('title', cswPrivateVar.title);//case 25692
-                attr.add('rel', cswPrivateVar.rel);
-                attr.add('media', cswPrivateVar.media);
-                attr.add('target', cswPrivateVar.target);
+                attr.add('id', cswPrivate.ID);
+                attr.add('class', cswPrivate.cssclass);
+                attr.add('href', cswPrivate.href);
+                attr.add('type', cswPrivate.type);
+                //attr.add('title', cswPrivate.title);//case 25692
+                attr.add('rel', cswPrivate.rel);
+                attr.add('media', cswPrivate.media);
+                attr.add('target', cswPrivate.target);
 
                 html += attr.get();
                 html += style.get();
 
                 html += '>';
 
-                html += Csw.string(cswPrivateVar.text, cswPrivateVar.value);
+                html += Csw.string(cswPrivate.text, cswPrivate.value);
 
                 html += '</a>';
                 $link = $(html);
 
-                Csw.literals.factory($link, cswPublicRet);
+                Csw.literals.factory($link, cswPublic);
 
-                cswPublicRet.propDom('title', cswPrivateVar.title);//case 25692
+                cswPublic.propDom('title', cswPrivate.title);//case 25692
 
                 // Click binding
 
-                if (Csw.isFunction(cswPrivateVar.onClick)) {
-                    cswPublicRet.bind('click', function (event, ui) {
-                        cswPrivateVar.click();
-                        var retval = Csw.tryExec(cswPrivateVar.onClick, event, ui);
-                        if (cswPrivateVar.href === '#') {
+                if (Csw.isFunction(cswPrivate.onClick)) {
+                    cswPublic.bind('click', function (event, ui) {
+                        cswPrivate.click();
+                        var retval = Csw.tryExec(cswPrivate.onClick, event, ui);
+                        if (cswPrivate.href === '#') {
                             return false;
                         } else {
                             return retval;
                         }
                     });
                 } else {
-                    cswPublicRet.bind('click', cswPrivateVar.click);
+                    cswPublic.bind('click', cswPrivate.click);
                 }
 
-                cswPrivateVar.$parent.append(cswPublicRet.$);
+                cswPrivate.$parent.append(cswPublic.$);
             } ());
 
-            cswPrivateVar.click = function () {
-                cswPrivateVar.toggle();
+            cswPrivate.click = function () {
+                cswPrivate.toggle();
             };
 
-            cswPrivateVar.toggle = function () {
-                if (cswPublicRet.toggleState === Csw.enums.toggleState.on) {
-                    cswPublicRet.toggleState = Csw.enums.toggleState.off;
-                } else if (cswPublicRet.toggleState === Csw.enums.toggleState.off) {
-                    cswPublicRet.toggleState = Csw.enums.toggleState.on;
+            cswPrivate.toggle = function () {
+                if (cswPublic.toggleState === Csw.enums.toggleState.on) {
+                    cswPublic.toggleState = Csw.enums.toggleState.off;
+                } else if (cswPublic.toggleState === Csw.enums.toggleState.off) {
+                    cswPublic.toggleState = Csw.enums.toggleState.on;
                 }
             };
 
-            cswPublicRet.toggleState = Csw.enums.toggleState.off;
+            cswPublic.toggleState = Csw.enums.toggleState.off;
 
-            cswPublicRet.click = function (func) {
+            cswPublic.click = function (func) {
                 if (Csw.isFunction(func)) {
-                    return cswPublicRet.bind('click', func);
+                    return cswPublic.bind('click', func);
                 } else {
-                    return cswPublicRet;
+                    return cswPublic;
                 }
             };
 
-            cswPublicRet.disable = function () {
-                cswPublicRet.addClass('disabled');
+            cswPublic.disable = function () {
+                cswPublic.addClass('disabled');
             };
-            cswPublicRet.enable = function () {
-                cswPublicRet.removeClass('disabled');
+            cswPublic.enable = function () {
+                cswPublic.removeClass('disabled');
             };
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

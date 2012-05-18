@@ -22,7 +22,7 @@
             /// <para>options.bindOnEnter: CswParent object bind 'Enter' key to this button.</para>
             /// </param>
             /// <returns type="button">A button object</returns>
-            var cswPrivateVar = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 enabledText: '',
@@ -36,104 +36,104 @@
                 isEnabled: true,
                 bindOnEnter: {}
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPublicRet.enable = function () {
+            cswPublic.enable = function () {
                 /// <summary>Enable the button.</summary>
                 /// <returns type="button">The button object.</returns>
-                cswPrivateVar.isEnabled = true;
-                if (cswPublicRet.length() > 0) {
-                    cswPublicRet.$.button({
-                        label: cswPublicRet.propNonDom('enabledText'),
+                cswPrivate.isEnabled = true;
+                if (cswPublic.length() > 0) {
+                    cswPublic.$.button({
+                        label: cswPublic.propNonDom('enabledText'),
                         disabled: false
                     });
                 }
-                return cswPublicRet;
+                return cswPublic;
             };
-            cswPublicRet.disable = function () {
+            cswPublic.disable = function () {
                 /// <summary>Disable the button.</summary>
                 /// <returns type="button">The button object.</returns>
-                cswPrivateVar.isEnabled = false;
-                if (cswPublicRet.length() > 0) {
-                    cswPublicRet.$.button({
-                        label: cswPublicRet.propNonDom('disabledText'),
+                cswPrivate.isEnabled = false;
+                if (cswPublic.length() > 0) {
+                    cswPublic.$.button({
+                        label: cswPublic.propNonDom('disabledText'),
                         disabled: true
                     });
                 }
-                return cswPublicRet;
+                return cswPublic;
             };
 
-            cswPublicRet.click = function (func) {
+            cswPublic.click = function (func) {
                 /// <summary>Trigger or assign a button click event.</summary>
                 /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
                 /// <returns type="button">The button object.</returns>
                 if (Csw.isFunction(func)) {
-                    cswPublicRet.bind('click', func);
+                    cswPublic.bind('click', func);
                 } else {
-                    if (cswPrivateVar.isEnabled) {
-                        cswPublicRet.trigger('click');
+                    if (cswPrivate.isEnabled) {
+                        cswPublic.trigger('click');
                     }
                 }
-                return cswPublicRet;
+                return cswPublic;
             };
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
-                cswPrivateVar.type = Csw.enums.inputTypes.button;
+                cswPrivate.type = Csw.enums.inputTypes.button;
                 var buttonOpt;
-                var internalOnClick = Csw.makeDelegate(cswPrivateVar.onClick);
+                var internalOnClick = Csw.makeDelegate(cswPrivate.onClick);
 
                 function onClick() {
                     var doEnable = function () {
-                        cswPublicRet.enable();
+                        cswPublic.enable();
                         Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
                     };
                     /* Case 25810 */
-                    if (cswPrivateVar.isEnabled) {
-                        if (cswPrivateVar.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
-                            cswPublicRet.disable();
+                    if (cswPrivate.isEnabled) {
+                        if (cswPrivate.disableOnClick && false === Csw.ajax.ajaxInProgress()) {
+                            cswPublic.disable();
                             Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, doEnable);
                         }
                         Csw.tryExec(internalOnClick, arguments);
                     }
                 }
 
-                cswPrivateVar.onClick = onClick;
+                cswPrivate.onClick = onClick;
 
-                $.extend(cswPublicRet, Csw.literals.input(cswPrivateVar));
+                $.extend(cswPublic, Csw.literals.input(cswPrivate));
 
-                if(false === Csw.isNullOrEmpty(cswPrivateVar.bindOnEnter)) {
-                    cswPrivateVar.bindOnEnter.clickOnEnter(cswPublicRet);
+                if(false === Csw.isNullOrEmpty(cswPrivate.bindOnEnter)) {
+                    cswPrivate.bindOnEnter.clickOnEnter(cswPublic);
                 }
                 
-                cswPublicRet.propNonDom({
-                    enabledText: cswPrivateVar.enabledText,
-                    disabledText: cswPrivateVar.disabledText
+                cswPublic.propNonDom({
+                    enabledText: cswPrivate.enabledText,
+                    disabledText: cswPrivate.disabledText
                 });
 
-                if (false === Csw.isNullOrEmpty(cswPrivateVar.cssclass)) {
-                    cswPublicRet.addClass(cswPrivateVar.cssclass);
+                if (false === Csw.isNullOrEmpty(cswPrivate.cssclass)) {
+                    cswPublic.addClass(cswPrivate.cssclass);
                 }
 
                 buttonOpt = {
-                    text: (cswPrivateVar.hasText),
-                    label: cswPrivateVar.enabledText,
-                    disabled: (cswPrivateVar.ReadOnly),
+                    text: (cswPrivate.hasText),
+                    label: cswPrivate.enabledText,
+                    disabled: (cswPrivate.ReadOnly),
                     icons: {
-                        primary: cswPrivateVar.primaryicon,
-                        secondary: cswPrivateVar.secondaryicon
+                        primary: cswPrivate.primaryicon,
+                        secondary: cswPrivate.secondaryicon
                     }
                 };
                 if (buttonOpt.disabled) {
-                    buttonOpt.label = cswPrivateVar.disabledText;
+                    buttonOpt.label = cswPrivate.disabledText;
                 }
-                cswPublicRet.$.button(buttonOpt);
+                cswPublic.$.button(buttonOpt);
 
             } ());
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

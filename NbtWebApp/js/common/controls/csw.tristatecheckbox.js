@@ -6,7 +6,7 @@
     Csw.controls.triStateCheckBox = Csw.controls.triStateCheckBox ||
         Csw.controls.register('triStateCheckBox', function (cswParent, options) {
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 ID: '',
                 prefix: '',
                 Checked: '',
@@ -20,24 +20,24 @@
                 btnValue: Csw.enums.imageButton_ButtonType.CheckboxNull
             };
 
-            var cswPublicRet = {};
+            var cswPublic = {};
 
-            cswPublicRet.val = function (value) {
+            cswPublic.val = function (value) {
                 var ret;
                 if (Csw.isNullOrEmpty(value)) {
-                    ret = cswPrivateVar.value;
+                    ret = cswPrivate.value;
                 } else {
-                    ret = cswPublicRet;
-                    cswPublicRet.propNonDom('value', value);
-                    cswPublicRet.propDom('title', value);
-                    cswPrivateVar.value = value;
+                    ret = cswPublic;
+                    cswPublic.propNonDom('value', value);
+                    cswPublic.propDom('title', value);
+                    cswPrivate.value = value;
                 }
                 return ret;
             };
 
-            cswPublicRet.getButtonType = function () {
+            cswPublic.getButtonType = function () {
                 var ret;
-                switch (cswPrivateVar.value) {
+                switch (cswPrivate.value) {
                     case 'true':
                         ret = Csw.enums.imageButton_ButtonType.CheckboxTrue;
                         break;
@@ -51,69 +51,69 @@
                 return ret;
             };
 
-            cswPrivateVar.changeState = function () {
-                if (cswPrivateVar.value === 'null') {
-                    cswPrivateVar.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
-                    cswPrivateVar.value = 'true';
-                } else if (cswPrivateVar.value === 'false') {
-                    if (Csw.bool(cswPrivateVar.Required)) {
-                        cswPrivateVar.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
-                        cswPrivateVar.value = 'true';
+            cswPrivate.changeState = function () {
+                if (cswPrivate.value === 'null') {
+                    cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
+                    cswPrivate.value = 'true';
+                } else if (cswPrivate.value === 'false') {
+                    if (Csw.bool(cswPrivate.Required)) {
+                        cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
+                        cswPrivate.value = 'true';
                     } else {
-                        cswPrivateVar.btnValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
-                        cswPrivateVar.value = 'null';
+                        cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxNull;
+                        cswPrivate.value = 'null';
                     }
-                } else if (cswPrivateVar.value === 'true') {
-                    cswPrivateVar.btnValue = Csw.enums.imageButton_ButtonType.CheckboxFalse;
-                    cswPrivateVar.value = 'false';
+                } else if (cswPrivate.value === 'true') {
+                    cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxFalse;
+                    cswPrivate.value = 'false';
                 }
-                cswPublicRet.val(cswPrivateVar.value);
-                cswPublicRet.propNonDom('value', cswPrivateVar.value);
-                cswPublicRet.propDom('title', cswPrivateVar.value);
-                cswPrivateVar.onChange();
-                return cswPrivateVar.checkBox.click(cswPrivateVar.btnValue);
+                cswPublic.val(cswPrivate.value);
+                cswPublic.propNonDom('value', cswPrivate.value);
+                cswPublic.propDom('title', cswPrivate.value);
+                cswPrivate.onChange();
+                return cswPrivate.checkBox.click(cswPrivate.btnValue);
             }; // onClick()
 
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
-                cswPrivateVar.value = Csw.string(cswPrivateVar.Checked, 'null').toLowerCase(); //Case 21769
-                cswPrivateVar.AlternateText = cswPrivateVar.value;
+                cswPrivate.value = Csw.string(cswPrivate.Checked, 'null').toLowerCase(); //Case 21769
+                cswPrivate.AlternateText = cswPrivate.value;
 
-                if (cswPrivateVar.ReadOnly) {
-                    if (cswPrivateVar.Multi) {
-                        cswPrivateVar.text = Csw.enums.multiEditDefaultValue;
+                if (cswPrivate.ReadOnly) {
+                    if (cswPrivate.Multi) {
+                        cswPrivate.text = Csw.enums.multiEditDefaultValue;
                     } else {
-                        switch (cswPrivateVar.value) {
+                        switch (cswPrivate.value) {
                             case 'true':
-                                cswPrivateVar.text = 'Yes';
+                                cswPrivate.text = 'Yes';
                                 break;
                             case 'false':
-                                cswPrivateVar.text = 'No';
+                                cswPrivate.text = 'No';
                                 break;
                         }
                     }
-                    cswPrivateVar.checkBox = cswParent.div(cswPrivateVar);
+                    cswPrivate.checkBox = cswParent.div(cswPrivate);
                 } else {
-                    cswPrivateVar.ID = Csw.makeId(cswPrivateVar.ID, 'tst');
-                    cswPrivateVar.ButtonType = cswPublicRet.getButtonType();
-                    cswPrivateVar.checkBox = cswParent.imageButton(cswPrivateVar);
-                    //cswPrivateVar.checkBox.imageButton(cswPrivateVar);
+                    cswPrivate.ID = Csw.makeId(cswPrivate.ID, 'tst');
+                    cswPrivate.ButtonType = cswPublic.getButtonType();
+                    cswPrivate.checkBox = cswParent.imageButton(cswPrivate);
+                    //cswPrivate.checkBox.imageButton(cswPrivate);
                 }
-                cswPublicRet = Csw.dom({}, cswPrivateVar.checkBox);
-                //$.extend(cswPublicRet, Csw.literals.div(cswPrivateVar));
-                cswPrivateVar.checkBox.bind('click', function () {
-                    if (!Csw.bool(cswPrivateVar.ReadOnly)) {
-                        Csw.tryExec(cswPrivateVar.changeState);
+                cswPublic = Csw.dom({}, cswPrivate.checkBox);
+                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
+                cswPrivate.checkBox.bind('click', function () {
+                    if (!Csw.bool(cswPrivate.ReadOnly)) {
+                        Csw.tryExec(cswPrivate.changeState);
                     }
                 });
-                cswPublicRet.val(cswPrivateVar.value);
+                cswPublic.val(cswPrivate.value);
 
             } ());
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());

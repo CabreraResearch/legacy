@@ -8,16 +8,16 @@
     /// </summary>
     /// <returns type="CswClientDb">Instance of itself. Must instance with 'new' keyword.</returns>
 
-    var cswPrivateVar = {
+    var cswPrivate = {
         keys: [],
         deserialize: $.parseJSON,
         serializer: JSON,
         hasLocalStorage: (window.Modernizr.localstorage),
         hasSessionStorage: (window.Modernizr.sessionstorage)
     };
-    cswPrivateVar.serialize = cswPrivateVar.serializer.stringify;
+    cswPrivate.serialize = cswPrivate.serializer.stringify;
 
-    cswPrivateVar.closureStorage = (function () {
+    cswPrivate.closureStorage = (function () {
         var storage = {},
             keys = [],
             length = 0;
@@ -84,13 +84,13 @@
     Csw.clientDb.clear = Csw.clientDb.clear ||
         Csw.clientDb.register('clear', function () {
             //nuke the entire storage collection
-            if (cswPrivateVar.hasLocalStorage) {
+            if (cswPrivate.hasLocalStorage) {
                 window.localStorage.clear();
             }
-            if (cswPrivateVar.hasSessionStorage) {
+            if (cswPrivate.hasSessionStorage) {
                 window.sessionStorage.clear();
             }
-            cswPrivateVar.closureStorage.clear();
+            cswPrivate.closureStorage.clear();
             return this;
         });
 
@@ -103,11 +103,11 @@
                     value = Csw.string(window.sessionStorage.getItem(key));
                 }
                 if (Csw.isNullOrEmpty(value) || value === 'undefined') {
-                    value = Csw.string(cswPrivateVar.closureStorage.getItem(key));
+                    value = Csw.string(cswPrivate.closureStorage.getItem(key));
                 }
                 if (!Csw.isNullOrEmpty(value) && value !== 'undefined') {
                     try {
-                        ret = cswPrivateVar.deserialize(value);
+                        ret = cswPrivate.deserialize(value);
                     } catch (e) {
                         ret = value;
                     }
@@ -119,22 +119,22 @@
     Csw.clientDb.getKeys = Csw.clientDb.getKeys ||
         Csw.clientDb.register('getKeys', function () {
             var locKey, sesKey, memKey;
-            if (Csw.isNullOrEmpty(cswPrivateVar.keys) && window.localStorage.length > 0) {
+            if (Csw.isNullOrEmpty(cswPrivate.keys) && window.localStorage.length > 0) {
                 for (locKey in window.localStorage) {
-                    cswPrivateVar.keys.push(locKey);
+                    cswPrivate.keys.push(locKey);
                 }
                 if (window.sessionStorage.length > 0) {
                     for (sesKey in window.sessionStorage) {
-                        cswPrivateVar.keys.push(sesKey);
+                        cswPrivate.keys.push(sesKey);
                     }
                 }
-                if (cswPrivateVar.closureStorage.length > 0) {
-                    for (memKey in cswPrivateVar.closureStorage.keys) {
-                        cswPrivateVar.keys.push(memKey);
+                if (cswPrivate.closureStorage.length > 0) {
+                    for (memKey in cswPrivate.closureStorage.keys) {
+                        cswPrivate.keys.push(memKey);
                     }
                 }
             }
-            return cswPrivateVar.keys;
+            return cswPrivate.keys;
         });
 
     Csw.clientDb.hasKey = Csw.clientDb.hasKey ||
@@ -147,8 +147,8 @@
         Csw.clientDb.register('removeItem', function (key) {
             window.localStorage.removeItem(key);
             window.sessionStorage.removeItem(key);
-            cswPrivateVar.closureStorage.removeItem(key);
-            delete cswPrivateVar.keys[key];
+            cswPrivate.closureStorage.removeItem(key);
+            delete cswPrivate.keys[key];
         });
 
     Csw.clientDb.setItem = Csw.clientDb.setItem ||
@@ -164,9 +164,9 @@
             var ret = true;
             if (false === Csw.isNullOrEmpty(key)) {
                 if (false === this.hasKey(key)) {
-                    cswPrivateVar.keys.push(key);
+                    cswPrivate.keys.push(key);
                 }
-                var val = (typeof value === 'object') ? cswPrivateVar.serialize(value) : value;
+                var val = (typeof value === 'object') ? cswPrivate.serialize(value) : value;
 
                 // if localStorage is full, we should fail gracefully into sessionStorage, then memory
                 try {
@@ -178,7 +178,7 @@
                     } catch (ssnErr) {
                         try {
                             window.sessionStorage.removeItem(key);
-                            cswPrivateVar.closureStorage.setItem(key, value);
+                            cswPrivate.closureStorage.setItem(key, value);
                         } catch (memErr) {
                             ret = false;
                         }

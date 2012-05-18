@@ -6,7 +6,7 @@
     Csw.actions.inspectionStatus = Csw.actions.inspectionStatus ||
         Csw.actions.register('inspectionStatus', function (cswParent, options) {
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 urlMethod: 'getInspectionStatusGrid',
                 onEditNode: function () { },
                 onAfterButtonClick: null,
@@ -32,12 +32,12 @@
                         var editOpt = {
                             nodeids: [],
                             nodenames: [],
-                            onEditNode: cswPrivateVar.onEditNode,
-                            onAfterButtonClick: cswPrivateVar.onAfterButtonClick
+                            onEditNode: cswPrivate.onEditNode,
+                            onAfterButtonClick: cswPrivate.onAfterButtonClick
                         };
                         if (false === Csw.isNullOrEmpty(rowid)) {
-                            editOpt.nodeids.push(cswPublicRet.grid.getValueForColumn('NODEPK', rowid));
-                            editOpt.nodenames.push(cswPublicRet.grid.getValueForColumn('INSPECTION', rowid));
+                            editOpt.nodeids.push(cswPublic.grid.getValueForColumn('NODEPK', rowid));
+                            editOpt.nodenames.push(cswPublic.grid.getValueForColumn('INSPECTION', rowid));
                             $.CswDialog('EditNodeDialog', editOpt);
                         } else {
                             $.CswDialog('AlertDialog', 'Please select a row to edit');
@@ -47,31 +47,31 @@
                 /* End Csw.grid specific options */
             };
             if (options) {
-                $.extend(cswPrivateVar, options);
+                $.extend(cswPrivate, options);
             }
 
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             Csw.ajax.post({
-                urlMethod: cswPrivateVar.urlMethod,
+                urlMethod: cswPrivate.urlMethod,
                 data: {},
                 success: function (gridJson) {
 
                     cswParent.empty();
-                    var inspGridId = cswPrivateVar.ID + '_csw_inspGrid_outer';
+                    var inspGridId = cswPrivate.ID + '_csw_inspGrid_outer';
 
-                    cswPublicRet.gridParent = cswParent.div({ ID: inspGridId });
+                    cswPublic.gridParent = cswParent.div({ ID: inspGridId });
 
-                    $.extend(cswPrivateVar.gridOpts, gridJson);
+                    $.extend(cswPrivate.gridOpts, gridJson);
 
-                    cswPublicRet.grid = cswPublicRet.gridParent.grid(cswPrivateVar);
-                    cswPublicRet.grid.hideColumn('NODEID');
-                    cswPublicRet.grid.hideColumn('NODEPK');
+                    cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
+                    cswPublic.grid.hideColumn('NODEID');
+                    cswPublic.grid.hideColumn('NODEPK');
 
                 }, // success
                 error: function () { }
             });
-            return cswPublicRet;
+            return cswPublic;
         });
 } ());
 

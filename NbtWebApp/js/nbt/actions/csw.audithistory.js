@@ -7,7 +7,7 @@
         Csw.actions.register('auditHistory', function (cswParent, options) {
             'use strict';
 
-            var cswPrivateVar = {
+            var cswPrivate = {
                 urlMethod: 'getAuditHistoryGrid',
                 ID: '',
                 nodeid: '',
@@ -24,9 +24,9 @@
                     height: 180,
                     rowNum: 10,
                     onSelectRow: function (selRowid) {
-                        if (false === cswPrivateVar.preventSelectTrigger && false === Csw.isNullOrEmpty(selRowid)) {
-                            var cellVal = cswPublicRet.grid.getValueForColumn('CHANGEDATE', selRowid);
-                            Csw.tryExec(cswPrivateVar.onSelectRow, cellVal);
+                        if (false === cswPrivate.preventSelectTrigger && false === Csw.isNullOrEmpty(selRowid)) {
+                            var cellVal = cswPublic.grid.getValueForColumn('CHANGEDATE', selRowid);
+                            Csw.tryExec(cswPrivate.onSelectRow, cellVal);
                         }
                     },
                     add: false,
@@ -37,38 +37,38 @@
                 }
             };
             if (options) {
-                $.extend(cswPrivateVar, options);
+                $.extend(cswPrivate, options);
             }
-            var cswPublicRet = { };
+            var cswPublic = { };
             cswParent.empty();
 
             Csw.ajax.post({
-                urlMethod: cswPrivateVar.urlMethod,
+                urlMethod: cswPrivate.urlMethod,
                 data: {
-                    NodeId: Csw.string(cswPrivateVar.nodeid),
-                    NbtNodeKey: Csw.string(cswPrivateVar.cswnbtnodekey),
-                    JustDateColumn: cswPrivateVar.JustDateColumn
+                    NodeId: Csw.string(cswPrivate.nodeid),
+                    NbtNodeKey: Csw.string(cswPrivate.cswnbtnodekey),
+                    JustDateColumn: cswPrivate.JustDateColumn
                 },
                 success: function (gridJson) {
 
-                    var auditGridId = cswPrivateVar.ID + '_csw_auditGrid_outer';
+                    var auditGridId = cswPrivate.ID + '_csw_auditGrid_outer';
 
-                    cswPrivateVar.gridDiv = cswParent.div({ ID: auditGridId });
+                    cswPrivate.gridDiv = cswParent.div({ ID: auditGridId });
 
                     if (Csw.contains(gridJson, 'jqGridOpt')) {
 
-                        $.extend(cswPrivateVar.gridOpts, gridJson.jqGridOpt);
+                        $.extend(cswPrivate.gridOpts, gridJson.jqGridOpt);
 
-                        if (cswPrivateVar.EditMode === Csw.enums.editMode.PrintReport) {
-                            cswPrivateVar.gridOpts.caption = '';
-                            cswPrivateVar.hasPager = false;
+                        if (cswPrivate.EditMode === Csw.enums.editMode.PrintReport) {
+                            cswPrivate.gridOpts.caption = '';
+                            cswPrivate.hasPager = false;
                         } else {
-                            cswPrivateVar.optNavEdit = {
+                            cswPrivate.optNavEdit = {
                                 editfunc: function (selRowid) {
                                     if (false === Csw.isNullOrEmpty(selRowid)) {
-                                        var cellVal = cswPublicRet.grid.getValueForColumn('CHANGEDATE', selRowid);
-                                        if (Csw.isFunction(cswPrivateVar.onEditRow)) {
-                                            cswPrivateVar.onEditRow(cellVal);
+                                        var cellVal = cswPublic.grid.getValueForColumn('CHANGEDATE', selRowid);
+                                        if (Csw.isFunction(cswPrivate.onEditRow)) {
+                                            cswPrivate.onEditRow(cellVal);
                                         }
                                     } else {
                                         $.CswDialog('AlertDialog', 'Please select a row to edit');
@@ -77,16 +77,16 @@
                             };
                         }
 
-                        cswPublicRet.grid = cswPrivateVar.gridDiv.grid(cswPrivateVar);
-                        cswPublicRet.grid.gridPager.css({ width: '100%', height: '20px' });
+                        cswPublic.grid = cswPrivate.gridDiv.grid(cswPrivate);
+                        cswPublic.grid.gridPager.css({ width: '100%', height: '20px' });
 
                         // set selected row by date
 
-                        if (false === Csw.isNullOrEmpty(cswPrivateVar.selectedDate)) {
-                            cswPrivateVar.preventSelectTrigger = true;
-                            var rowid = cswPublicRet.grid.getRowIdForVal('CHANGEDATE', cswPrivateVar.selectedDate.toString());
-                            cswPublicRet.grid.setSelection(rowid);
-                            cswPrivateVar.preventSelectTrigger = false;
+                        if (false === Csw.isNullOrEmpty(cswPrivate.selectedDate)) {
+                            cswPrivate.preventSelectTrigger = true;
+                            var rowid = cswPublic.grid.getRowIdForVal('CHANGEDATE', cswPrivate.selectedDate.toString());
+                            cswPublic.grid.setSelection(rowid);
+                            cswPrivate.preventSelectTrigger = false;
                         }
                     }
                 }

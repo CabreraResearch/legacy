@@ -11,7 +11,7 @@
             ///<param name="options" type="Object">Object defining paramaters for dateTimePicker construction.</param>
             ///<returns type="Csw.controls.dateTimePicker">Object representing a dateTimePicker</returns>
             'use strict';
-            var cswPrivateVar = {
+            var cswPrivate = {
                 ID: '',
                 Date: '',
                 Time: '',
@@ -23,81 +23,81 @@
                 onChange: null,
                 showTodayButton: false
             };
-            var cswPublicRet = {};
+            var cswPublic = {};
 
             (function () {
                 if (options) {
-                    $.extend(cswPrivateVar, options);
+                    $.extend(cswPrivate, options);
                 }
-                cswPrivateVar.dateTimeDiv = cswParent.div({
-                    isControl: cswPrivateVar.isControl,
-                    ID: cswPrivateVar.id
+                cswPrivate.dateTimeDiv = cswParent.div({
+                    isControl: cswPrivate.isControl,
+                    ID: cswPrivate.id
                 });
-                cswPublicRet = Csw.dom({ }, cswPrivateVar.dateTimeDiv);
-                //$.extend(cswPublicRet, Csw.literals.div(cswPrivateVar));
+                cswPublic = Csw.dom({ }, cswPrivate.dateTimeDiv);
+                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
 
-                if (cswPrivateVar.ReadOnly) {
-                    switch (cswPrivateVar.DisplayMode) {
+                if (cswPrivate.ReadOnly) {
+                    switch (cswPrivate.DisplayMode) {
                         case 'Date':
-                            cswPrivateVar.dateTimeDiv.div({ ID: cswPrivateVar.ID + '_date', value: cswPrivateVar.Date });
+                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_date', value: cswPrivate.Date });
                             break;
                         case 'Time':
-                            cswPrivateVar.dateTimeDiv.div({ ID: cswPrivateVar.ID + '_time', value: cswPrivateVar.Time });
+                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Time });
                             break;
                         case 'DateTime':
-                            cswPrivateVar.dateTimeDiv.div({ ID: cswPrivateVar.ID + '_time', value: cswPrivateVar.Date + ' ' + cswPrivateVar.Time });
+                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
                             break;
                     }
                 } else {
-                    if (cswPrivateVar.DisplayMode === 'Date' || cswPrivateVar.DisplayMode === 'DateTime') {
-                        cswPrivateVar.dateBox = cswPrivateVar.dateTimeDiv.input({
-                            ID: cswPrivateVar.ID + '_date',
+                    if (cswPrivate.DisplayMode === 'Date' || cswPrivate.DisplayMode === 'DateTime') {
+                        cswPrivate.dateBox = cswPrivate.dateTimeDiv.input({
+                            ID: cswPrivate.ID + '_date',
                             type: Csw.enums.inputTypes.text,
-                            value: cswPrivateVar.Date,
-                            onChange: cswPrivateVar.onChange,
+                            value: cswPrivate.Date,
+                            onChange: cswPrivate.onChange,
                             width: '80px',
                             cssclass: 'textinput'
                         });
-                        if(cswPrivateVar.Date.substr(0, 'today'.length) !== 'today')
+                        if(cswPrivate.Date.substr(0, 'today'.length) !== 'today')
                         {
-                            cswPrivateVar.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivateVar.DateFormat) });
+                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat) });
                         }
-                        if (cswPrivateVar.Required) {
-                            cswPrivateVar.dateBox.addClass('required');
+                        if (cswPrivate.Required) {
+                            cswPrivate.dateBox.addClass('required');
                         }
                     }
 
-                    if (cswPrivateVar.DisplayMode === 'Time' || cswPrivateVar.DisplayMode === 'DateTime') {
-                        cswPrivateVar.timeBox = cswPrivateVar.dateTimeDiv.input({
-                            ID: cswPrivateVar.ID + '_time',
+                    if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
+                        cswPrivate.timeBox = cswPrivate.dateTimeDiv.input({
+                            ID: cswPrivate.ID + '_time',
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
-                            onChange: cswPrivateVar.onChange,
-                            value: cswPrivateVar.Time,
+                            onChange: cswPrivate.onChange,
+                            value: cswPrivate.Time,
                             width: '80px'
                         });
-                        cswPrivateVar.dateTimeDiv.button({
-                            ID: cswPrivateVar.ID + '_now',
+                        cswPrivate.dateTimeDiv.button({
+                            ID: cswPrivate.ID + '_now',
                             disableOnClick: false,
                             onClick: function () {
-                                cswPrivateVar.timeBox.val(Csw.getTimeString(new Date(), cswPrivateVar.TimeFormat));
+                                cswPrivate.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
                             },
                             enabledText: 'Now'
                         });
 
-                        if (cswPrivateVar.Required) {
-                            cswPrivateVar.timeBox.addClass('required');
+                        if (cswPrivate.Required) {
+                            cswPrivate.timeBox.addClass('required');
                         }
                     }
 
-                    if(Csw.bool(cswPrivateVar.showTodayButton)) {
-                        cswPrivateVar.dateTimeDiv.button({
-                            ID: cswPrivateVar.ID + '_today',
+                    if(Csw.bool(cswPrivate.showTodayButton)) {
+                        cswPrivate.dateTimeDiv.button({
+                            ID: cswPrivate.ID + '_today',
                             disableOnClick: false,
                             onClick: function () {
-                                cswPrivateVar.dateBox.$.datepicker('destroy');
-                                cswPrivateVar.dateBox.val('today');  // this doesn't trigger onchange
-                                Csw.tryExec(cswPrivateVar.onChange);
+                                cswPrivate.dateBox.$.datepicker('destroy');
+                                cswPrivate.dateBox.val('today');  // this doesn't trigger onchange
+                                Csw.tryExec(cswPrivate.onChange);
                             },
                             enabledText: 'Today'
                         });
@@ -105,18 +105,18 @@
                 } // if-else(o.ReadOnly)
             } ());
 
-            cswPublicRet.val = function (readOnly) {
+            cswPublic.val = function (readOnly) {
                 var ret = {};
-                if (cswPrivateVar.dateBox && cswPrivateVar.dateBox.length() > 0) {
-                    ret.date = (false === Csw.bool(readOnly)) ? cswPrivateVar.dateBox.val() : cswPrivateVar.dateBox.text();
+                if (cswPrivate.dateBox && cswPrivate.dateBox.length() > 0) {
+                    ret.date = (false === Csw.bool(readOnly)) ? cswPrivate.dateBox.val() : cswPrivate.dateBox.text();
                 }
-                if (cswPrivateVar.timeBox && cswPrivateVar.timeBox.length() > 0) {
-                    ret.time = (false === Csw.bool(readOnly)) ? cswPrivateVar.timeBox.val() : cswPrivateVar.timeBox.text();
+                if (cswPrivate.timeBox && cswPrivate.timeBox.length() > 0) {
+                    ret.time = (false === Csw.bool(readOnly)) ? cswPrivate.timeBox.val() : cswPrivate.timeBox.text();
                 }
                 return ret;
             };
 
-            return cswPublicRet;
+            return cswPublic;
         });
 
 } ());
