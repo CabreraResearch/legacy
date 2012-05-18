@@ -18,8 +18,6 @@ namespace ChemSW.Nbt.Schema
             // fix category on Lab Safety (demo) views
             CswNbtView aView = null;
             string[] viewNames = { "Lab Safety By Location", "Due Lab Safety Inspections", "Completed Lab Safety Inspections", "Action Required Lab Safety Inspections" };
-            CswNbtView ArView = _CswNbtSchemaModTrnsctn.makeView();
-
 
             foreach( string astr in viewNames )
             {
