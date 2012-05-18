@@ -661,7 +661,9 @@ namespace ChemSW.Nbt.ImportExport
 
                                         foreach( DataRow CurrentImportProprow in CurrentUnprocssedPropsTable.Rows )
                                         {
-
+                                            // previous errors shouldn't prevent us from continuing to import
+                                            CurrentErrorStatus = ImportProcessStati.Imported; 
+                                            
                                             string CurrentNodeTypePropname = CurrentImportProprow["nodetypepropname"].ToString();
 
                                             if( ( "user" != NodeType.NodeTypeName.ToLower() ) && ( "role" != CurrentNodeTypePropname.ToLower() ) )
