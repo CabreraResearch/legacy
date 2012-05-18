@@ -435,7 +435,7 @@
                     //title: o.title,
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     date: date,
-                    ReloadTabOnSave: false,
+                    ReloadTabOnSave: true,
                     onEditView: function (viewid) {
                         div.$.dialog('close');
                         Csw.tryExec(o.onEditView, viewid);
