@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    CswGridData cg = new CswGridData( _CswNbtResources );
+                    CswNbtActGrid cg = new CswNbtActGrid( _CswNbtResources );
                     ret["griddata"] = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
                 }
             }

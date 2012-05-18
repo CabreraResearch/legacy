@@ -256,24 +256,26 @@ namespace ChemSW.Nbt
             string OrderBy = string.Empty;
 
             // Filter out disabled nodetypes/object classes
-            Where += @"where ((exists (select j.jctmoduleobjectclassid
-                              from jct_modules_objectclass j
-                              join modules m on j.moduleid = m.moduleid
-                             where j.objectclassid = t.objectclassid
-                               and m.enabled = '1')
-                or not exists (select j.jctmoduleobjectclassid
-                                 from jct_modules_objectclass j
-                                 join modules m on j.moduleid = m.moduleid
-                                where j.objectclassid = t.objectclassid) )
-               and (exists (select j.jctmodulenodetypeid
-                              from jct_modules_nodetypes j
-                              join modules m on j.moduleid = m.moduleid
-                             where j.nodetypeid = t.firstversionid
-                               and m.enabled = '1')
-                or not exists (select j.jctmodulenodetypeid
-                                 from jct_modules_nodetypes j
-                                 join modules m on j.moduleid = m.moduleid
-                                where j.nodetypeid = t.firstversionid) )) ";
+//            Where += @"where ((exists (select j.jctmoduleobjectclassid
+//                              from jct_modules_objectclass j
+//                              join modules m on j.moduleid = m.moduleid
+//                             where j.objectclassid = t.objectclassid
+//                               and m.enabled = '1')
+//                or not exists (select j.jctmoduleobjectclassid
+//                                 from jct_modules_objectclass j
+//                                 join modules m on j.moduleid = m.moduleid
+//                                where j.objectclassid = t.objectclassid) )
+//               and (exists (select j.jctmodulenodetypeid
+//                              from jct_modules_nodetypes j
+//                              join modules m on j.moduleid = m.moduleid
+//                             where j.nodetypeid = t.firstversionid
+//                               and m.enabled = '1')
+//                or not exists (select j.jctmodulenodetypeid
+//                                 from jct_modules_nodetypes j
+//                                 join modules m on j.moduleid = m.moduleid
+//                                where j.nodetypeid = t.firstversionid) )) ";
+            // case 26029
+            Where += "where t.enabled = '1' ";
 
             // Nodetype/Object Class filter
             if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )

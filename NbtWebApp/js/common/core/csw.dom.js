@@ -59,29 +59,29 @@
             ///<returns type="Csw.dom">Object representing a Csw.dom</returns>
             'use strict';
 
-            var internal = {};
-            var external = options || {
+            var cswPrivate = {};
+            var cswPublic = options || {
                 parentId: ''
             };
 
             if (Csw.isJQuery(element)) {
-                external.$ = element;
-                internal.id = Csw.string(element.prop('id'));
-                external.isValid = true;
+                cswPublic.$ = element;
+                cswPrivate.id = Csw.string(element.prop('id'));
+                cswPublic.isValid = true;
             } else if (false === Csw.isNullOrEmpty(element) && Csw.isJQuery(element.$)) {
                 /*This is already a Csw dom object*/
                 return element;
             } else {
-                internal.id = '';
-                external.$ = {};
+                cswPrivate.id = '';
+                cswPublic.$ = {};
             }
 
-            internal.makeControlForChain = function ($child, method) {
+            cswPrivate.makeControlForChain = function ($child, method) {
                 var ret,
                     _options = {
-                        parent: function () { return external; },
-                        first: function () { return external; },
-                        root: external.root,
+                        parent: function () { return cswPublic; },
+                        first: function () { return cswPublic; },
+                        root: cswPublic.root,
                         length: function () {
                             return 0;
                         },
@@ -94,7 +94,7 @@
                     if (Csw.isFunction(method)) {
                         ret = method($child, _options);
                     } else {
-                        ret = external.jquery($child, _options);
+                        ret = cswPublic.jquery($child, _options);
                     }
                 } else {
                     ret = _options;
@@ -102,42 +102,42 @@
                 return ret;
             };
 
-            internal.prepControl = function (opts, controlName) {
+            cswPrivate.prepControl = function (opts, controlName) {
                 var id = opts.id || controlName;
                 opts = opts || {};
-                internal.id = internal.id || Csw.makeId(external.parentId, 'sub', id, '_', false);
-                //opts.ID = opts.ID || internal.makeId(external.parentId, 'sub', id, '_', false);
-                opts.$ = external.$;
-                opts.root = external.root;
+                cswPrivate.id = cswPrivate.id || Csw.makeId(cswPublic.parentId, 'sub', id, '_', false);
+                //opts.ID = opts.ID || cswPrivate.makeId(cswPublic.parentId, 'sub', id, '_', false);
+                opts.$ = cswPublic.$;
+                opts.root = cswPublic.root;
 
                 return opts;
             };
 
-            external.addClass = function (name) {
+            cswPublic.addClass = function (name) {
                 /// <summary>Add a CSS class to an element.</summary>
                 /// <param name="$element" type="jQuery">An element to add class to.</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Classy jQuery element (for chaining)</returns> 
-                external.$.addClass(name);
-                return external;
+                cswPublic.$.addClass(name);
+                return cswPublic;
             };
 
-            external.append = function (object) {
+            cswPublic.append = function (object) {
                 /// <summary>Append an object to this element.</summary>
                 /// <param name="object" type="Object">Raw HTML, a jQuery object or text.</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 try {
-                    external.$.append(object);
+                    cswPublic.$.append(object);
                 } catch (e) {
                     Csw.log('Warning: append() failed, text() was used instead.', true);
                     if (Csw.isString(object)) {
-                        external.$.text(object);
+                        cswPublic.$.text(object);
                     }
                 }
-                return external;
+                return cswPublic;
             };
 
-            external.attach = function (object) {
+            cswPublic.attach = function (object) {
                 /// <summary>Attach an object to this element.</summary>
                 /// <param name="object" type="Object">Raw HTML. Warning: Do not pass a selector to this method!</param>
                 /// <returns type="Object">The new Csw object (for chaining)</returns> 
@@ -145,290 +145,290 @@
                 try {
                     $child = $(object);
                     if (false === Csw.isNullOrEmpty($child)) {
-                        external.$.append($child);
+                        cswPublic.$.append($child);
                     }
                 } catch (e) {
                     /* One day we'll implement client-side error handling */
                 }
-                ret = internal.makeControlForChain($child);
+                ret = cswPrivate.makeControlForChain($child);
                 return ret;
             };
 
-            external.bind = function (eventName, event) {
+            cswPublic.bind = function (eventName, event) {
                 /// <summary>Bind an action to a jQuery element's event.</summary>
                 /// <param name="$element" type="jQuery">A jQuery element</param>
                 /// <param name="eventName" type="String">The name of the event</param>
                 /// <param name="event" type="Function">A function to execute when the event fires</param>
                 /// <returns type="Object">The jQuery element (for chaining)</returns> 
-                external.$.bind(eventName, event);
-                return external;
+                cswPublic.$.bind(eventName, event);
+                return cswPublic;
             };
 
-            external.children = function (searchTerm, selector) {
+            cswPublic.children = function (searchTerm, selector) {
                 /// <summary>Find the child elements of this DOM element represented by this object</summary>
                 /// <param name="searchTerm" type="String">(Optional) Some search term to limit child results</param>
                 /// <param name="selector" type="String">(Optional) A selector</param>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = external.$.children(Csw.string(searchTerm), Csw.string(selector)),
-                        ret = internal.makeControlForChain(_$element);
+                var _$element = cswPublic.$.children(Csw.string(searchTerm), Csw.string(selector)),
+                        ret = cswPrivate.makeControlForChain(_$element);
                 return ret;
             };
 
-            external.clickOnEnter = function (cswControl) {
+            cswPublic.clickOnEnter = function (cswControl) {
                 /// <summary>Bind an event to the enter key, when pressed in this control.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                external.$.clickOnEnter(cswControl.$);
-                return external;
+                cswPublic.$.clickOnEnter(cswControl.$);
+                return cswPublic;
             };
 
-            external.css = function(param1, param2) {
+            cswPublic.css = function(param1, param2) {
                 /// <param name="param1" type="Object">Either a single JSON object with CSS to apply, or a single CSS name</param>
                 /// <param name="param2" type="string">single CSS value</param>
                 if (arguments.length === 1) {
-                    external.$.css(param1);
+                    cswPublic.$.css(param1);
                 } else {
-                    external.$.css(param1, param2);
+                    cswPublic.$.css(param1, param2);
                 }
-                return external;
+                return cswPublic;
             };
 
-            external.data = function (prop, val) {
+            cswPublic.data = function (prop, val) {
                 /// <summary>Store property data on the control.</summary>
                 /// <returns type="Object">All properties, a single property, or the control if defining a property (for chaining).</returns> 
                 var ret = '',
-                        _internal = Csw.clientDb.getItem('control_data_' + internal.id) || {};
+                        _internal = Csw.clientDb.getItem('control_data_' + cswPrivate.id) || {};
                 switch (arguments.length) {
                     case 0:
-                        ret = _internal || external.$.data();
+                        ret = _internal || cswPublic.$.data();
                         break;
                     case 1:
-                        ret = _internal[prop] || external.$.data(prop);
+                        ret = _internal[prop] || cswPublic.$.data(prop);
                         break;
                     case 2:
                         _internal[prop] = val;
-                        external.$.data(prop, val);
-                        Csw.clientDb.setItem('control_data_' + internal.id, _internal);
-                        ret = external;
+                        cswPublic.$.data(prop, val);
+                        Csw.clientDb.setItem('control_data_' + cswPrivate.id, _internal);
+                        ret = cswPublic;
                         break;
                 }
                 return ret;
 
             };
 
-            external.empty = function () {
+            cswPublic.empty = function () {
                 /// <summary>Empty the element.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                external.$.empty();
-                return external;
+                cswPublic.$.empty();
+                return cswPublic;
             };
 
-            external.filter = function (selector) {
+            cswPublic.filter = function (selector) {
                 /// <summary>Filter the child elements of this DOM element according to this selector</summary>
                 /// <param name="selector" type="String">A filter string.</param>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = external.$.filter(selector),
-                        ret = internal.makeControlForChain(_$element);
+                var _$element = cswPublic.$.filter(selector),
+                        ret = cswPrivate.makeControlForChain(_$element);
                 return ret;
             };
 
-            external.find = function (selector) {
+            cswPublic.find = function (selector) {
                 /// <summary>Find the child elements of this DOM element represented by this object</summary>
                 /// <param name="selector" type="String">A selector, id or jQuery object to find.</param>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = external.$.find(Csw.string(selector)),
-                        ret = internal.makeControlForChain(_$element);
+                var _$element = cswPublic.$.find(Csw.string(selector)),
+                        ret = cswPrivate.makeControlForChain(_$element);
                 return ret;
             };
 
-            external.first = function () {
+            cswPublic.first = function () {
                 /// <summary>Find the first child element of this DOM element represented by this object</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = external.$.first(),
-                        ret = internal.makeControlForChain(_$element);
+                var _$element = cswPublic.$.first(),
+                        ret = cswPrivate.makeControlForChain(_$element);
                 return ret;
             };
 
-            external.getId = function () {
+            cswPublic.getId = function () {
                 /// <summary>Get the DOM Element ID of this object.</summary>
                 /// <returns type="String">Element ID.</returns> 
-                return internal.id;
+                return cswPrivate.id;
             };
 
-            external.hide = function () {
+            cswPublic.hide = function () {
                 /// <summary>Make the element invisible.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                external.$.hide();
-                return external;
+                cswPublic.$.hide();
+                return cswPublic;
             };
 
-            external.jquery = function ($jqElement, opts) {
+            cswPublic.jquery = function ($jqElement, opts) {
                 /// <summary> Extend a jQuery object with Csw methods.</summary>
                 /// <param name="$element" type="jQuery">Element to extend.</param>
                 /// <returns type="jquery">A Csw.jquery object</returns>
-                opts = internal.controlPreProcessing(opts, 'jquery');
+                opts = cswPrivate.controlPreProcessing(opts, 'jquery');
                 return Csw.literals.factory($jqElement, opts);
             };
 
-            external.length = function () {
+            cswPublic.length = function () {
                 /// <summary>Get the length of this element.</summary>
                 /// <returns type="Number">Number of elements at the current level of the tree.</returns> 
-                return Csw.number(external.$.length);
+                return Csw.number(cswPublic.$.length);
             };
 
-            external.parent = external.parent || function () {
+            cswPublic.parent = cswPublic.parent || function () {
                 /// <summary>Get the parent of this control</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = external.$.parent(),
+                var _$element = cswPublic.$.parent(),
                     ret;
 
                 if (false === Csw.isNullOrEmpty(_$element, true)) {
-                    ret = external.jquery(_$element);
+                    ret = cswPublic.jquery(_$element);
                 } else {
                     ret = {};
                 }
                 return ret;
             };
 
-            external.propDom = function (name, value) {
+            cswPublic.propDom = function (name, value) {
                 /// <summary>
                 ///   Gets or sets a DOM property
                 /// </summary>
                 /// <param name="name" type="String">The name of the attribute</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-                var ret = external,
+                var ret = cswPublic,
                         prop;
 
                 try {
                     if (typeof name === "object") {
                         for (prop in name) {
-                            doProp(external.$, prop, name[prop]);
+                            doProp(cswPublic.$, prop, name[prop]);
                         }
                     } else {
-                        ret = doProp(external.$, name, value);
+                        ret = doProp(cswPublic.$, name, value);
                     }
                 } catch (e) {
                     //We're in IE hell. Do nothing.
                 }
                 if (arguments.length === 2 || Csw.isPlainObject(name)) {
-                    ret = external;
+                    ret = cswPublic;
                 }
                 return ret;
             };
 
-            external.propNonDom = function (name, value) {
+            cswPublic.propNonDom = function (name, value) {
                 /// <summary>
                 ///   Gets or sets an Non-Dom attribute
                 /// </summary>
                 /// <param name="name" type="String">The name of the attribute</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Either the value of the attribute (get) or this (set) for chaining</returns> 
-                var ret = external,
+                var ret = cswPublic,
                         prop;
                 try {
                     if (typeof name === "object") {
                         for (prop in name) {
-                            doAttr(external.$, prop, name[prop]);
+                            doAttr(cswPublic.$, prop, name[prop]);
                         }
                     } else {
-                        ret = doAttr(external.$, name, value);
+                        ret = doAttr(cswPublic.$, name, value);
                     }
                     // For proper chaining support
                 } catch (e) {
                     //We're in IE hell. Do nothing.
                 }
                 if (arguments.length === 2 || Csw.isPlainObject(name)) {
-                    ret = external;
+                    ret = cswPublic;
                 }
                 return ret;
             };
 
-            external.remove = function () {
+            cswPublic.remove = function () {
                 /// <summary>Remove the element and delete the object.</summary>
                 /// <returns type="null"></returns> 
-                external.$.remove();
-                external = null;
-                return external;
+                cswPublic.$.remove();
+                cswPublic = null;
+                return cswPublic;
             };
 
-            external.removeClass = function (name) {
+            cswPublic.removeClass = function (name) {
                 /// <summary>Remove a CSS class to an element.</summary>
                 /// <param name="$element" type="jQuery">An element to remove class from.</param>
                 /// <param name="value" type="String">The value of the attribute</param>
                 /// <returns type="Object">Classless jQuery element (for chaining)</returns> 
-                external.$.removeClass(name);
-                return external;
+                cswPublic.$.removeClass(name);
+                return cswPublic;
             };
 
-            external.root = external.root || function () {
+            cswPublic.root = cswPublic.root || function () {
                 /// <summary>Get the root (great, great, great grandparent) of this control</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                var _$element = external.$.parent(),
+                var _$element = cswPublic.$.parent(),
                     ret;
                 while (false === Csw.isNullOrEmpty(_$element.parent(), true)) {
                     _$element = _$element.parent();
                 }
                 if (false === Csw.isNullOrEmpty(_$element, true)) {
-                    ret = external.jquery(_$element);
+                    ret = cswPublic.jquery(_$element);
                 } else {
                     ret = {};
                 }
                 return ret;
             };
 
-            external.show = function () {
+            cswPublic.show = function () {
                 /// <summary>Make the element visible.</summary>
                 /// <returns type="Object">The Csw object (for chaining)</returns> 
-                external.$.show();
-                return external;
+                cswPublic.$.show();
+                return cswPublic;
             };
 
-            external.text = function (text) {
+            cswPublic.text = function (text) {
                 /// <summary>Get the value of the element.</summary>
                 /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
                 if (arguments.length === 1 && false === Csw.isNullOrUndefined(text)) {
-                    external.$.text(text);
-                    return external;
+                    cswPublic.$.text(text);
+                    return cswPublic;
                 } else {
-                    return Csw.string(external.$.text());
+                    return Csw.string(cswPublic.$.text());
                 }
             };
 
-            external.trigger = function (eventName, eventOpts) {
+            cswPublic.trigger = function (eventName, eventOpts) {
                 /// <summary>Trigger an event bound to a jQuery element.</summary>
                 /// <param name="$element" type="jQuery">A jQuery element</param>
                 /// <param name="eventName" type="String">The name of the event</param>
                 /// <param name="eventOpts" type="Object">Options collection to pass to the event handler.</param>
                 /// <returns type="Object">The jQuery element (for chaining)</returns> 
-                external.$.trigger(eventName, eventOpts);
-                return external;
+                cswPublic.$.trigger(eventName, eventOpts);
+                return cswPublic;
             };
 
-            external.unbind = function (eventName, event) {
+            cswPublic.unbind = function (eventName, event) {
                 /// <summary>Unbind an action from a jQuery element's event.</summary>
                 /// <param name="$element" type="jQuery">A jQuery element</param>
                 /// <param name="eventName" type="String">The name of the event</param>
                 /// <returns type="Object">The jQuery element (for chaining)</returns> 
-                external.$.unbind(eventName, event);
-                return external;
+                cswPublic.$.unbind(eventName, event);
+                return cswPublic;
             };
 
-            external.val = external.val || function (value) {
+            cswPublic.val = cswPublic.val || function (value) {
                 /// <summary>Get the value of the element.</summary>
                 /// <returns type="String">If get(), the value. If set(val), the Csw object (for chaining).</returns> 
                 if (arguments.length === 1 && false === Csw.isNullOrUndefined(value)) {
-                    external.$.val(value);
-                    return external;
+                    cswPublic.$.val(value);
+                    return cswPublic;
                 } else {
-                    return Csw.string(external.$.val());
+                    return Csw.string(cswPublic.$.val());
                 }
             };
 
-            external.valueOf = function () {
-                return external;
+            cswPublic.valueOf = function () {
+                return cswPublic;
             };
 
-            return external;
+            return cswPublic;
         });
 
     Csw.makeId = Csw.makeId ||
@@ -447,7 +447,7 @@
             /// <param name="suffix" type="Object"></param>
             /// <param name="delimiter" type="Object"></param>
             ///	<returns type="String">A concatenated string of provided values</returns>
-            var internal = {
+            var cswPrivate = {
                 idCount: 1 + Csw.number(Csw.getGlobalProp('uniqueIdCount'), 0),
                 prefix: '',
                 id: id,
@@ -457,26 +457,26 @@
             var elementId = [];
 
             if (Csw.isPlainObject(options)) {
-                $.extend(internal, options);
+                $.extend(cswPrivate, options);
             } else {
-                internal.prefix = options;
+                cswPrivate.prefix = options;
             }
-            internal.Delimiter = Csw.string(internal.Delimiter, '_');
+            cswPrivate.Delimiter = Csw.string(cswPrivate.Delimiter, '_');
 
-            if (false === Csw.isNullOrEmpty(internal.prefix)) {
-                elementId.push(Csw.string(internal.prefix));
+            if (false === Csw.isNullOrEmpty(cswPrivate.prefix)) {
+                elementId.push(Csw.string(cswPrivate.prefix));
             }
-            if (false === Csw.isNullOrEmpty(internal.id)) {
-                elementId.push(internal.id);
+            if (false === Csw.isNullOrEmpty(cswPrivate.id)) {
+                elementId.push(cswPrivate.id);
             }
-            if (false === Csw.isNullOrEmpty(internal.suffix)) {
-                elementId.push(internal.suffix);
+            if (false === Csw.isNullOrEmpty(cswPrivate.suffix)) {
+                elementId.push(cswPrivate.suffix);
             }
 //            if (Csw.bool(isUnique, true)) {
-//                Csw.setGlobalProp('uniqueIdCount', internal.idCount);
-//                elementId.push(internal.idCount);
+//                Csw.setGlobalProp('uniqueIdCount', cswPrivate.idCount);
+//                elementId.push(cswPrivate.idCount);
 //            }
-            return elementId.join(internal.Delimiter);
+            return elementId.join(cswPrivate.Delimiter);
         });
 
     Csw.makeSafeId = Csw.makeSafeId ||
@@ -525,18 +525,18 @@
         Csw.register('makeAttr', function () {
             /// <summary> Build an HTML element attribute string </summary>
             /// <returns type="String">A string of attribute key/value pairs</returns>
-            var internal = {
+            var cswPrivate = {
                 attributes: {}
             };
-            var external = {};
+            var cswPublic = {};
 
-            external.add = function (key, value) {
+            cswPublic.add = function (key, value) {
                 if (false === Csw.isNullOrEmpty(key)) {
-                    internal.attributes[Csw.string(key)] = Csw.string(value);
+                    cswPrivate.attributes[Csw.string(key)] = Csw.string(value);
                 }
             };
 
-            external.get = function () {
+            cswPublic.get = function () {
                 var ret = '';
 
                 function buildStyle(val, key) {
@@ -546,32 +546,32 @@
                     }
                 }
 
-                Csw.each(internal.attributes, buildStyle);
+                Csw.each(cswPrivate.attributes, buildStyle);
 
                 return ret;
             };
 
-            return external;
+            return cswPublic;
         });
 
     Csw.makeStyle = Csw.makeStyle ||
         Csw.register('makeStyle', function () {
             /// <summary> Build an HTML element style string </summary>
             /// <returns type="String">A string of style key/value pairs</returns>
-            var internal = {
+            var cswPrivate = {
                 styles: {}
             };
-            var external = {};
+            var cswPublic = {};
 
-            external.add = function (key, value) {
-                internal.styles[key] = value;
+            cswPublic.add = function (key, value) {
+                cswPrivate.styles[key] = value;
             };
 
-            external.set = function (stylesObj) {
-                internal.styles = stylesObj;
+            cswPublic.set = function (stylesObj) {
+                cswPrivate.styles = stylesObj;
             };
 
-            external.get = function () {
+            cswPublic.get = function () {
                 var htmlStyle = '', ret = '';
 
                 function buildStyle(val, key) {
@@ -581,7 +581,7 @@
                     }
                 }
 
-                Csw.each(internal.styles, buildStyle);
+                Csw.each(cswPrivate.styles, buildStyle);
 
                 if (htmlStyle.length > 0) {
                     ret = ' style="' + htmlStyle + '"';
@@ -589,7 +589,7 @@
                 return ret;
             };
 
-            return external;
+            return cswPublic;
         });
 
     Csw.tryParseElement = Csw.tryParseElement ||

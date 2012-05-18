@@ -6,7 +6,7 @@
 
     var nodeTree = function _nodeTree(opts) {
 
-        var internal = {
+        var cswPrivate = {
             ID: '',
             parent: null,
             //showempty: false, // if true, shows an empty tree (primarily for search)
@@ -27,21 +27,21 @@
             rootnode: null,
             toggleLink: null
         };
-        if (opts) $.extend(internal, opts);
+        if (opts) $.extend(cswPrivate, opts);
 
-        var external = {
+        var cswPublic = {
             treeDiv: null
         };
 
 
-        internal.make = function (data, viewid, viewmode, url) {
+        cswPrivate.make = function (data, viewid, viewmode, url) {
 
             var treeThemes = { "dots": true };
             if (viewmode === Csw.enums.viewMode.list.name) {
                 treeThemes = { "dots": false };
             }
 
-            external.treeDiv.$.jstree({
+            cswPublic.treeDiv.$.jstree({
                 "json_data": {
                     "data": data.root
                 },
@@ -63,105 +63,110 @@
             }); // jstree()
 
             function selectNode(e, newData) {
-                return internal.firstSelectNode({
+                return cswPrivate.firstSelectNode({
                     e: e,
                     data: newData,
                     url: url,
                     viewid: viewid
                 });
             }
-            external.treeDiv.bind('select_node.jstree', selectNode);
+            cswPublic.treeDiv.bind('select_node.jstree', selectNode);
 
             function hoverNode(e, bindData) {
                 var $hoverLI = $(bindData.rslt.obj[0]);
-                //var nodeid = $hoverLI.CswAttrDom('id').substring(internal.idPrefix.length);
+                //var nodeid = $hoverLI.CswAttrDom('id').substring(cswPrivate.idPrefix.length);
                 var nodeid = $hoverLI.CswAttrNonDom('nodeid');
                 var cswnbtnodekey = $hoverLI.CswAttrNonDom('cswnbtnodekey');
                 Csw.nodeHoverIn(bindData.args[1], nodeid, cswnbtnodekey);
             }
-            external.treeDiv.bind('hover_node.jstree', hoverNode);
+            cswPublic.treeDiv.bind('hover_node.jstree', hoverNode);
 
             function deHoverNode() {
-                Csw.jsTreeGetSelected(external.treeDiv.$);
+                Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
                 Csw.nodeHoverOut();
             }
-            external.treeDiv.bind('dehover_node.jstree', deHoverNode);
+            cswPublic.treeDiv.bind('dehover_node.jstree', deHoverNode);
 
-            external.treeDiv.$.jstree('select_node', Csw.tryParseElement(data.selectid));
+            cswPublic.treeDiv.$.jstree('select_node', Csw.tryParseElement(data.selectid));
 
-            internal.rootnode = external.treeDiv.find('li').first();
+            cswPrivate.rootnode = cswPublic.treeDiv.find('li').first();
 
-            if (Csw.bool(internal.ShowCheckboxes)) {
+            cswPublic.treeDiv.find('li').$.each(function () {
+                var $childObj = $(this);
+                var thisid = Csw.string($childObj.CswAttrDom('id'));
+                var thiskey = Csw.string($childObj.CswAttrDom('cswnbtnodekey'));
+                var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(cswPrivate.idPrefix.length));
+                var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
+                var altName = Csw.string($childObj.find('a').first().text());
+                var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
+                var thislocked = Csw.bool($childObj.CswAttrNonDom('locked'));
 
-                external.treeDiv.find('li').$.each(function () {
-                    var $childObj = $(this);
-                    var thisid = Csw.string($childObj.CswAttrDom('id'));
-                    var thiskey = Csw.string($childObj.CswAttrDom('cswnbtnodekey'));
-                    var thisnodeid = Csw.string($childObj.CswAttrNonDom('nodeid'), thisid.substring(internal.idPrefix.length));
-                    var thisrel = Csw.string($childObj.CswAttrNonDom('rel'));
-                    var altName = Csw.string($childObj.find('a').first().text());
-                    var thisnodename = Csw.string($childObj.CswAttrNonDom('nodename'), altName).trim();
-
-                    var $cb = $('<input type="checkbox" class="' + internal.idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '" cswnbtnodekey="' + thiskey + '"></input>');
+                if (Csw.bool(cswPrivate.ShowCheckboxes)) {
+                    var $cb = $('<input type="checkbox" class="' + cswPrivate.idPrefix + 'check" id="check_' + thisid + '" rel="' + thisrel + '" nodeid="' + thisnodeid + '" nodename="' + thisnodename + '" cswnbtnodekey="' + thiskey + '"></input>');
                     $cb.prependTo($childObj);
-                    if (internal.ValidateCheckboxes) {
-                        $cb.click(function () { return internal.validateCheck($cb); });
+                    if (cswPrivate.ValidateCheckboxes) {
+                        $cb.click(function () { return cswPrivate.validateCheck($cb); });
                     }
-                }); // each()
+                } // if (Csw.bool(cswPrivate.ShowCheckboxes)) {
 
-            } // if (Csw.bool(internal.ShowCheckboxes)) {
+                if (thislocked) {
+                    $('<img src="Images/quota/lock.gif" title="Quota exceeded" />')
+                        .appendTo($childObj.children('a').first());
+                }
 
-            if (internal.ShowToggleLink && internal.toggleLink) {
-                internal.toggleLink.show();
+            }); // each()
+
+            if (cswPrivate.ShowToggleLink && cswPrivate.toggleLink) {
+                cswPrivate.toggleLink.show();
             }
             // DO NOT define an onSuccess() function here that interacts with the tree.
             // The tree has initalization events that appear to happen asynchronously,
             // and thus having an onSuccess() function that changes the selected node will
             // cause a race condition.
 
-        }; // internal.make()
+        }; // cswPrivate.make()
 
-        internal.firstSelectNode = function (myoptions) {
+        cswPrivate.firstSelectNode = function (myoptions) {
             var m = {
                 e: '',
                 data: '',
                 url: '',
-                onSelectNode: internal.onSelectNode,
+                onSelectNode: cswPrivate.onSelectNode,
                 viewid: '',
-                forsearch: internal.forsearch
+                forsearch: cswPrivate.forsearch
             };
             if (myoptions) $.extend(m, myoptions);
 
             // case 21715 - don't trigger onSelectNode event on first event
             var m2 = {};
             $.extend(m2, m);
-            m2.onSelectNode = internal.onInitialSelectNode;
-            internal.handleSelectNode(m2);
+            m2.onSelectNode = cswPrivate.onInitialSelectNode;
+            cswPrivate.handleSelectNode(m2);
 
             // rebind event for next select
-            external.treeDiv.unbind('select_node.jstree');
-            external.treeDiv.bind('select_node.jstree', function (e, data) {
-                return internal.handleSelectNode({
+            cswPublic.treeDiv.unbind('select_node.jstree');
+            cswPublic.treeDiv.bind('select_node.jstree', function (e, data) {
+                return cswPrivate.handleSelectNode({
                     e: e,
                     data: data,
                     url: m.url,
                     viewid: m.viewid
                 });
             });
-        }; // internal.firstSelectNode()
+        }; // cswPrivate.firstSelectNode()
 
-        internal.handleSelectNode = function (myoptions) {
+        cswPrivate.handleSelectNode = function (myoptions) {
             var m = {
                 e: '',
                 data: '',
                 url: '',
-                onSelectNode: internal.onSelectNode,
+                onSelectNode: cswPrivate.onSelectNode,
                 viewid: '',
-                forsearch: internal.forsearch
+                forsearch: cswPrivate.forsearch
             };
             if (myoptions) $.extend(m, myoptions);
 
-            var selected = Csw.jsTreeGetSelected(external.treeDiv.$);
+            var selected = Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
             var optSelect = {
                 nodeid: selected.$item.CswAttrNonDom('nodeid'),
                 nodename: selected.text,
@@ -171,26 +176,26 @@
                 viewid: m.viewid
             };
 
-            internal.clearChecks();
+            cswPrivate.clearChecks();
 
             // case 25844 - open children
-            external.treeDiv.$.jstree( 'open_node', selected.$item );
+            cswPublic.treeDiv.$.jstree('open_node', selected.$item);
 
             Csw.tryExec(m.onSelectNode, optSelect);
-        }; // internal.handleSelectNode()
+        }; // cswPrivate.handleSelectNode()
 
-        internal.validateCheck = function ($checkbox) {
-            var $selected = Csw.jsTreeGetSelected(external.treeDiv.$);
+        cswPrivate.validateCheck = function ($checkbox) {
+            var $selected = Csw.jsTreeGetSelected(cswPublic.treeDiv.$);
             return ($selected.$item.CswAttrNonDom('rel') === $checkbox.CswAttrNonDom('rel'));
         };
 
-        internal.clearChecks = function () {
-            $('.' + internal.idPrefix + 'check').CswAttrDom('checked', '');
+        cswPrivate.clearChecks = function () {
+            $('.' + cswPrivate.idPrefix + 'check').CswAttrDom('checked', '');
         };
 
 
         // Typical mechanism for fetching tree data and making a tree
-        external.init = function (options) {
+        cswPublic.init = function (options) {
             var o = {
                 viewid: '',       // loads an arbitrary view
                 viewmode: '',
@@ -203,10 +208,10 @@
             };
             if (options) $.extend(o, options);
 
-            var url = internal.RunTreeUrl;
+            var url = cswPrivate.RunTreeUrl;
             var dataParam = {
                 ViewId: o.viewid,
-                IdPrefix: internal.idPrefix,
+                IdPrefix: cswPrivate.idPrefix,
                 IncludeNodeRequired: o.IncludeNodeRequired,
                 IncludeNodeKey: Csw.string(o.cswnbtnodekey),
                 IncludeNodeId: Csw.string(o.nodeid),
@@ -216,7 +221,7 @@
             };
 
             if (Csw.isNullOrEmpty(o.viewid)) {
-                url = internal.NodeTreeUrl;
+                url = cswPrivate.NodeTreeUrl;
             }
 
             Csw.ajax.post({
@@ -239,21 +244,21 @@
                             Csw.tryExec(o.onViewChange, newviewid, newviewmode);
                         }
 
-                        internal.make(data, o.viewid, o.viewmode, url);
+                        cswPrivate.make(data, o.viewid, o.viewmode, url);
                     }
 
                 } // success
             }); // ajax
 
-        }; // external.init()
+        }; // cswPublic.init()
 
         // For making a tree without using the regular mechanism for fetching tree data
-        external.makeTree = function (treeData) {
-            internal.make(treeData, '', 'tree', '');
+        cswPublic.makeTree = function (treeData) {
+            cswPrivate.make(treeData, '', 'tree', '');
         };
 
 
-        external.selectNode = function (optSelect) {
+        cswPublic.selectNode = function (optSelect) {
             var o = {
                 newnodeid: '',
                 newcswnbtnodekey: ''
@@ -261,41 +266,41 @@
             if (optSelect) {
                 $.extend(o, optSelect);
             }
-            external.treeDiv.$.jstree('select_node', '#' + internal.idPrefix + o.newcswnbtnodekey);
+            cswPublic.treeDiv.$.jstree('select_node', '#' + cswPrivate.idPrefix + o.newcswnbtnodekey);
         };
 
 
-        external.expandAll = function () {
-            if (external.treeDiv && internal.rootnode) {
-                external.treeDiv.$.jstree('open_all', internal.rootnode.$);
+        cswPublic.expandAll = function () {
+            if (cswPublic.treeDiv && cswPrivate.rootnode) {
+                cswPublic.treeDiv.$.jstree('open_all', cswPrivate.rootnode.$);
             }
 
-            if (internal.toggleLink) {
-                internal.toggleLink.text('Collapse All')
+            if (cswPrivate.toggleLink) {
+                cswPrivate.toggleLink.text('Collapse All')
                     .unbind('click')
                     .click(function () {
-                        external.collapseAll();
+                        cswPublic.collapseAll();
                         return false;
                     });
             }
         };
 
-        external.collapseAll = function () {
-            external.treeDiv.$.jstree('close_all', internal.rootnode.$);
+        cswPublic.collapseAll = function () {
+            cswPublic.treeDiv.$.jstree('close_all', cswPrivate.rootnode.$);
 
             // show first level
-            external.treeDiv.$.jstree('open_node', internal.rootnode.$);
+            cswPublic.treeDiv.$.jstree('open_node', cswPrivate.rootnode.$);
 
-            internal.toggleLink.text('Expand All')
+            cswPrivate.toggleLink.text('Expand All')
                 .unbind('click')
                 .click(function () {
-                    external.expandAll();
+                    cswPublic.expandAll();
                     return false;
                 });
         };
 
-        external.checkedNodes = function () {
-            var $nodechecks = $('.' + internal.idPrefix + 'check:checked');
+        cswPublic.checkedNodes = function () {
+            var $nodechecks = $('.' + cswPrivate.idPrefix + 'check:checked');
             var ret = [];
 
             if (false === Csw.isNullOrEmpty($nodechecks, true)) {
@@ -316,37 +321,37 @@
 
         (function constructor() {
 
-            if (false === Csw.isFunction(internal.onInitialSelectNode)) {
-                internal.onInitialSelectNode = internal.onSelectNode;
+            if (false === Csw.isFunction(cswPrivate.onInitialSelectNode)) {
+                cswPrivate.onInitialSelectNode = cswPrivate.onSelectNode;
             }
-            internal.idPrefix = Csw.string(internal.ID) + '_';
+            cswPrivate.idPrefix = Csw.string(cswPrivate.ID) + '_';
 
-            if (internal.ShowToggleLink) {
-                internal.toggleLink = internal.parent.a({
-                    ID: internal.idPrefix + 'toggle',
+            if (cswPrivate.ShowToggleLink) {
+                cswPrivate.toggleLink = cswPrivate.parent.a({
+                    ID: cswPrivate.idPrefix + 'toggle',
                     value: 'Expand All',
-                    onClick: external.expandAll
+                    onClick: cswPublic.expandAll
                 });
-                internal.toggleLink.hide();
+                cswPrivate.toggleLink.hide();
             }
 
-            external.treeDiv = internal.parent.div({ ID: internal.IdPrefix });
+            cswPublic.treeDiv = cswPrivate.parent.div({ ID: cswPrivate.IdPrefix });
 
-            if (internal.UseScrollbars) {
-                external.treeDiv.addClass('treediv');
+            if (cswPrivate.UseScrollbars) {
+                cswPublic.treeDiv.addClass('treediv');
             } else {
-                external.treeDiv.addClass('treediv_noscroll');
+                cswPublic.treeDiv.addClass('treediv_noscroll');
             }
-            if (false === Csw.isNullOrEmpty(internal.height)) {
-                external.treeDiv.css({ height: internal.height });
+            if (false === Csw.isNullOrEmpty(cswPrivate.height)) {
+                cswPublic.treeDiv.css({ height: cswPrivate.height });
             }
-            if (false === Csw.isNullOrEmpty(internal.width)) {
-                external.treeDiv.css({ width: internal.width });
+            if (false === Csw.isNullOrEmpty(cswPrivate.width)) {
+                cswPublic.treeDiv.css({ width: cswPrivate.width });
             }
 
         })(); // constructor
 
-        return external;
+        return cswPublic;
     };
 
     Csw.nbt.register('nodeTree', nodeTree);

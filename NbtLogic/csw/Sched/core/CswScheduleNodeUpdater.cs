@@ -17,16 +17,17 @@ namespace ChemSW.Nbt.Sched
         public void update( CswNbtNode CswNbtNodeSchedualable, string StatusMessage )
         {
             ICswNbtPropertySetScheduler SchedulerNode = CswNbtNodeCaster.AsPropertySetScheduler( CswNbtNodeSchedualable );
-            SchedulerNode.RunStatus.StaticText = StatusMessage;
+            //case 25702 - add comment:
+            SchedulerNode.RunStatus.AddComment( StatusMessage );
             DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateTimeValue );
-			if( SchedulerNode.FinalDueDate.DateTimeValue.Date != DateTime.MinValue &&
-				( SchedulerNode.FinalDueDate.DateTimeValue.Date < DateTime.Now.Date ||
-				  CandidateNextDueDate > SchedulerNode.FinalDueDate.DateTimeValue.Date ) )
+            if( SchedulerNode.FinalDueDate.DateTimeValue.Date != DateTime.MinValue &&
+                ( SchedulerNode.FinalDueDate.DateTimeValue.Date < DateTime.Now.Date ||
+                  CandidateNextDueDate > SchedulerNode.FinalDueDate.DateTimeValue.Date ) )
             {
                 CandidateNextDueDate = DateTime.MinValue;
             }
 
-			SchedulerNode.NextDueDate.DateTimeValue = CandidateNextDueDate;
+            SchedulerNode.NextDueDate.DateTimeValue = CandidateNextDueDate;
             CswNbtNodeSchedualable.postChanges( false );
 
         }//update() 

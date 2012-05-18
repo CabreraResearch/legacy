@@ -6,7 +6,7 @@
     Csw.layouts.wizard = Csw.layouts.wizard ||
         Csw.layouts.register('wizard', function (cswParent, options) {
             'use strict';
-            var internal = {
+            var cswPrivate = {
                 ID: 'wizard',
                 Title: 'A Wizard',
                 StepCount: 1,
@@ -26,19 +26,19 @@
                 currentStepNo: 1
             };
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivate, options);
             }
 
-            var external = {};
+            var cswPublic = {};
 
-            internal.getCurrentStepNo = function () {
-                return internal.currentStepNo;
+            cswPrivate.getCurrentStepNo = function () {
+                return cswPrivate.currentStepNo;
             };
 
-            internal.selectStep = function (stepno) {
-                if (stepno > 0 && stepno <= internal.StepCount) {
-                    internal.currentStepNo = stepno;
-                    Csw.each(internal.stepDivLinks, function (val, key) {
+            cswPrivate.selectStep = function (stepno) {
+                if (stepno > 0 && stepno <= cswPrivate.StepCount) {
+                    cswPrivate.currentStepNo = stepno;
+                    Csw.each(cswPrivate.stepDivLinks, function (val, key) {
                         if (val) {
                             if (key !== stepno) {
                                 val.removeClass('CswWizard_StepLinkDivSelected');
@@ -48,7 +48,7 @@
                         }
                     });
 
-                    Csw.each(internal.stepDivs, function (val, key) {
+                    Csw.each(cswPrivate.stepDivs, function (val, key) {
                         if (val) {
                             if (key !== stepno) {
                                 val.hide();
@@ -58,16 +58,16 @@
                         }
                     });
 
-                    if (stepno <= internal.StartingStep) {
-                        external.previous.disable();
+                    if (stepno <= cswPrivate.StartingStep) {
+                        cswPublic.previous.disable();
                     } else {
-                        external.previous.enable();
+                        cswPublic.previous.enable();
                     }
 
-                    if (stepno >= internal.StepCount) {
-                        external.next.disable();
+                    if (stepno >= cswPrivate.StepCount) {
+                        cswPublic.next.disable();
                     } else {
-                        external.next.enable();
+                        cswPublic.next.enable();
                     }
                 } // if(stepno <= stepcount)
             }; // _selectStep()
@@ -75,43 +75,43 @@
             (function () {
                 var indexCell, stepsCell, s, steptitle;
 
-                if (internal.StartingStep > internal.SelectedStep) {
-                    internal.SelectedStep = internal.StartingStep;
+                if (cswPrivate.StartingStep > cswPrivate.SelectedStep) {
+                    cswPrivate.SelectedStep = cswPrivate.StartingStep;
                 }
 
-                external.table = cswParent.table({
-                    suffix: internal.ID,
+                cswPublic.table = cswParent.table({
+                    suffix: cswPrivate.ID,
                     TableCssClass: 'CswWizard_WizardTable'
                 });
 
                 /* Title Cell */
-                external.table.cell(1, 1).text(internal.Title)
+                cswPublic.table.cell(1, 1).text(cswPrivate.Title)
                     .propDom('colspan', 2)
                     .addClass('CswWizard_TitleCell');
 
-                indexCell = external.table.cell(2, 1)
+                indexCell = cswPublic.table.cell(2, 1)
                     .propDom('rowspan', 2)
                     .addClass('CswWizard_IndexCell');
 
-                stepsCell = external.table.cell(2, 2)
+                stepsCell = cswPublic.table.cell(2, 2)
                     .addClass('CswWizard_StepsCell');
 
-                for (s = 1; s <= internal.StepCount; s += 1) {
-                    steptitle = internal.Steps[s];
-                    internal.stepDivLinks[s] = indexCell.div({
+                for (s = 1; s <= cswPrivate.StepCount; s += 1) {
+                    steptitle = cswPrivate.Steps[s];
+                    cswPrivate.stepDivLinks[s] = indexCell.div({
                         cssclass: 'CswWizard_StepLinkDiv',
                         text: s + '.&nbsp;' + steptitle
                     }).propNonDom({ stepno: s });
 
-                    internal.stepDivs[s] = stepsCell.div({ cssclass: 'CswWizard_StepDiv', suffix: s });
+                    cswPrivate.stepDivs[s] = stepsCell.div({ cssclass: 'CswWizard_StepDiv', suffix: s });
 
-                    internal.stepDivs[s].propNonDom({ stepno: s })
+                    cswPrivate.stepDivs[s].propNonDom({ stepno: s })
                         .span({ cssclass: 'CswWizard_StepTitle', text: steptitle })
-                        .br().br()
+                        .br({number: 2})
                         .div({ suffix: s + '_content' });
                 }
 
-                var buttonTable = external.table.cell(3, 1).table({
+                var buttonTable = cswPublic.table.cell(3, 1).table({
                     suffix: 'btntbl',
                     width: '100%'
                 });
@@ -129,58 +129,58 @@
                 });
 
                 /* Previous Button */
-                external.previous = bCell11.button({
+                cswPublic.previous = bCell11.button({
                     suffix: 'prev',
                     enabledText: '< Previous',
                     disableOnClick: false,
                     onClick: function () {
-                        var currentStepNo = internal.getCurrentStepNo();
-                        if (false === internal.onBeforePrevious || Csw.tryExec(internal.onBeforePrevious, currentStepNo)) {
-                            internal.selectStep(currentStepNo - 1);
-                            Csw.tryExec(internal.onPrevious, currentStepNo - 1);
+                        var currentStepNo = cswPrivate.getCurrentStepNo();
+                        if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
+                            cswPrivate.selectStep(currentStepNo - 1);
+                            Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
                         }
                     }
                 });
 
                 /* Next Button */
-                external.next = bCell11.button({
+                cswPublic.next = bCell11.button({
                     suffix: 'next',
                     enabledText: 'Next >',
                     disableOnClick: false,
                     onClick: function () {
-                        var currentStepNo = internal.getCurrentStepNo();
-                        if (false === internal.onBeforeNext || Csw.tryExec(internal.onBeforeNext, currentStepNo)) {
-                            internal.selectStep(currentStepNo + 1);
-                            Csw.tryExec(internal.onNext, currentStepNo + 1);
+                        var currentStepNo = cswPrivate.getCurrentStepNo();
+                        if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
+                            cswPrivate.selectStep(currentStepNo + 1);
+                            Csw.tryExec(cswPrivate.onNext, currentStepNo + 1);
                         }
                     }
                 });
 
                 /* Finish Button */
-                external.finish = bCell11.button({
+                cswPublic.finish = bCell11.button({
                     suffix: 'finish',
-                    enabledText: internal.FinishText,
-                    onClick: function () { Csw.tryExec(internal.onFinish); }
+                    enabledText: cswPrivate.FinishText,
+                    onClick: function () { Csw.tryExec(cswPrivate.onFinish); }
                 });
 
                 /* Cancel Button */
-                external.cancel = bCell12.button({
+                cswPublic.cancel = bCell12.button({
                     suffix: 'cancel',
                     enabledText: 'Cancel',
-                    onClick: function () { Csw.tryExec(internal.onCancel); }
+                    onClick: function () { Csw.tryExec(cswPrivate.onCancel); }
                 });
 
-                internal.selectStep(internal.SelectedStep);
-                if (internal.doNextOnInit) {
-                    Csw.tryExec(internal.onNext, internal.SelectedStep);
+                cswPrivate.selectStep(cswPrivate.SelectedStep);
+                if (cswPrivate.doNextOnInit) {
+                    Csw.tryExec(cswPrivate.onNext, cswPrivate.SelectedStep);
                 }
 
             } ());
 
-            external.div = function (stepno) {
+            cswPublic.div = function (stepno) {
                 var ret = null;
-                if (Csw.contains(internal.stepDivs, stepno)) {
-                    ret = internal.stepDivs[stepno];
+                if (Csw.contains(cswPrivate.stepDivs, stepno)) {
+                    ret = cswPrivate.stepDivs[stepno];
                 }
                 if (ret === null) {
                     throw new Error('The requested wizard step [' + stepno + '] does not exist.');
@@ -188,16 +188,16 @@
                 return ret;
             };
 
-            external.setStep = function (stepno) {
-                internal.selectStep(stepno);
+            cswPublic.setStep = function (stepno) {
+                cswPrivate.selectStep(stepno);
             };
 
-            external.makeStepId = function (suffix, stepNo) {
-                var step = stepNo || internal.currentStepNo;
-                return Csw.makeId('step_' + step, internal.ID, suffix);
+            cswPublic.makeStepId = function (suffix, stepNo) {
+                var step = stepNo || cswPrivate.currentStepNo;
+                return Csw.makeId('step_' + step, cswPrivate.ID, suffix);
             };
 
-            return external;
+            return cswPublic;
         });
 } ());
 

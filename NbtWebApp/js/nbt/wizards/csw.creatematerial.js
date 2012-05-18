@@ -7,7 +7,7 @@
         Csw.nbt.register('createMaterialWizard', function (cswParent, options) {
             'use strict';
 
-            var internal = {
+            var cswPrivate = {
                 ID: 'cswCreateMaterialWizard',
                 exitFunc: null, //function ($wizard) {},
                 startingStep: 1,
@@ -34,22 +34,22 @@
                 stepFiveComplete: false
             };
 
-            var external = {};
+            var cswPublic = {};
 
-            internal.reinitSteps = function (startWithStep) {
-                internal.stepFiveComplete = false;
+            cswPrivate.reinitSteps = function (startWithStep) {
+                cswPrivate.stepFiveComplete = false;
                 if (startWithStep <= 4) {
-                    internal.stepFourComplete = false;
+                    cswPrivate.stepFourComplete = false;
 
                     if (startWithStep <= 3) {
-                        internal.stepThreeComplete = false;
+                        cswPrivate.stepThreeComplete = false;
 
                         if (startWithStep <= 2) {
-                            internal.stepTwoComplete = false;
+                            cswPrivate.stepTwoComplete = false;
 
                             if (startWithStep <= 1) {
                                 /* This is mostly for debugging, you probably never need to reset step 1 in practice */
-                                internal.stepOneComplete = false;
+                                cswPrivate.stepOneComplete = false;
                             }
                         }
                     }
@@ -58,10 +58,10 @@
 
             (function () {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
 
-                internal.wizardSteps = {
+                cswPrivate.wizardSteps = {
                     1: 'Choose Type',
                     2: 'Identity',
                     3: 'Validate',
@@ -69,44 +69,44 @@
                     5: 'Size(s)'
                 };
 
-                internal.currentStepNo = internal.startingStep;
+                cswPrivate.currentStepNo = cswPrivate.startingStep;
 
-                internal.handleStep = function (newStepNo) {
-                    if (Csw.contains(internal, 'makeStep' + newStepNo)) {
-                        internal.lastStepNo = internal.currentStepNo;
-                        internal.currentStepNo = newStepNo;
-                        internal['makeStep' + newStepNo]();
+                cswPrivate.handleStep = function (newStepNo) {
+                    if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
+                        cswPrivate.lastStepNo = cswPrivate.currentStepNo;
+                        cswPrivate.currentStepNo = newStepNo;
+                        cswPrivate['makeStep' + newStepNo]();
 
-                        if (internal.currentStepNo === 4 &&
-                            internal.useExistingMaterial) {
-                            if (internal.currentStepNo > internal.lastStepNo) {
-                                internal.toggleButton(internal.buttons.next, true, true);
+                        if (cswPrivate.currentStepNo === 4 &&
+                            cswPrivate.useExistingMaterial) {
+                            if (cswPrivate.currentStepNo > cswPrivate.lastStepNo) {
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
                             }
-                            else if (internal.currentStepNo < internal.lastStepNo) {
-                                internal.toggleButton(internal.buttons.prev, true, true);
+                            else if (cswPrivate.currentStepNo < cswPrivate.lastStepNo) {
+                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         }
                     }
                 };
 
-                internal.finalize = function () {
+                cswPrivate.finalize = function () {
                     function getMaterialDefinition() {
                         var createMaterialDef = {
-                            useexistingmaterial: internal.useExistingMaterial,
-                            sizes: internal.sizeNodes
+                            useexistingmaterial: cswPrivate.useExistingMaterial,
+                            sizes: cswPrivate.sizeNodes
                         };
 
-                        if (false === internal.useExistingMaterial) {
-                            createMaterialDef.materialnodetypeid = internal.materialType.val;
-                            createMaterialDef.tradename = internal.tradeName;
-                            createMaterialDef.partno = internal.partNo;
-                            createMaterialDef.supplierid = internal.supplier.val;
-                            createMaterialDef.suppliername = internal.supplier.name;
-                            if (false === Csw.isNullOrEmpty(internal.tabsAndProps)) {
-                                createMaterialDef.properties = internal.tabsAndProps.getPropJson();
+                        if (false === cswPrivate.useExistingMaterial) {
+                            createMaterialDef.materialnodetypeid = cswPrivate.materialType.val;
+                            createMaterialDef.tradename = cswPrivate.tradeName;
+                            createMaterialDef.partno = cswPrivate.partNo;
+                            createMaterialDef.supplierid = cswPrivate.supplier.val;
+                            createMaterialDef.suppliername = cswPrivate.supplier.name;
+                            if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                                createMaterialDef.properties = cswPrivate.tabsAndProps.getPropJson();
                             }
                         } else {
-                            createMaterialDef.materialnodeid = internal.materialNodeId;
+                            createMaterialDef.materialnodeid = cswPrivate.materialNodeId;
                         }
                         return JSON.stringify(createMaterialDef);
                     }
@@ -121,65 +121,65 @@
                             if (Csw.contains(data, 'nextoptions')) {
                                 viewid = data.nextoptions.nodeview;
                             }
-                            Csw.tryExec(internal.onFinish, viewid);
+                            Csw.tryExec(cswPrivate.onFinish, viewid);
                         }
                     });
                 };
 
-                internal.wizard = Csw.layouts.wizard(cswParent.div(), {
-                    ID: Csw.makeId(internal.ID, 'wizard'),
+                cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
+                    ID: Csw.makeId(cswPrivate.ID, 'wizard'),
                     Title: 'Create Material',
                     StepCount: 5,
-                    Steps: internal.wizardSteps,
-                    StartingStep: internal.startingStep,
+                    Steps: cswPrivate.wizardSteps,
+                    StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
-                    onNext: internal.handleStep,
-                    onPrevious: internal.handleStep,
-                    onCancel: internal.onCancel,
-                    onFinish: internal.finalize,
+                    onNext: cswPrivate.handleStep,
+                    onPrevious: cswPrivate.handleStep,
+                    onCancel: cswPrivate.onCancel,
+                    onFinish: cswPrivate.finalize,
                     doNextOnInit: false
                 });
 
             } ());
 
 
-            internal.toggleButton = function (button, isEnabled, doClick) {
+            cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
                 if (Csw.bool(isEnabled)) {
-                    btn = internal.wizard[button].enable();
+                    btn = cswPrivate.wizard[button].enable();
                     if (Csw.bool(doClick)) {
                         btn.click();
                     }
                 } else {
-                    internal.wizard[button].disable();
+                    cswPrivate.wizard[button].disable();
                 }
                 return false;
             };
 
-            internal.makeStep1 = (function () {
+            cswPrivate.makeStep1 = (function () {
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return false === Csw.isNullOrEmpty(internal.materialType);
+                        return false === Csw.isNullOrEmpty(cswPrivate.materialType);
                     };
                     function typeSelect() {
-                        internal.materialType = { name: internal.materialTypeSelect.find(':selected').text(), val: internal.materialTypeSelect.val() };
-                        internal.toggleButton(internal.buttons.next, true);
-                        internal.reinitSteps(2);
+                        cswPrivate.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                        cswPrivate.reinitSteps(2);
                     }
-                    internal.toggleButton(internal.buttons.prev, false);
-                    internal.toggleButton(internal.buttons.cancel, true);
-                    internal.toggleButton(internal.buttons.finish, false);
-                    internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
 
-                    if (false === internal.stepOneComplete) {
-                        internal.divStep1 = internal.divStep1 || internal.wizard.div(1);
-                        internal.divStep1.empty();
+                    if (false === cswPrivate.stepOneComplete) {
+                        cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
+                        cswPrivate.divStep1.empty();
 
-                        internal.divStep1.br({ number: 2 });
+                        cswPrivate.divStep1.br({ number: 2 });
 
-                        internal.materialTypeSelect = internal.divStep1.nodeTypeSelect({
-                            ID: internal.wizard.makeStepId('nodeTypeSelect'),
+                        cswPrivate.materialTypeSelect = cswPrivate.divStep1.nodeTypeSelect({
+                            ID: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
                             useWide: true,
                             labelText: 'Select a Material Type: ',
                             objectClassName: 'MaterialClass',
@@ -187,52 +187,52 @@
                             onSuccess: typeSelect
                         });
 
-                        internal.stepOneComplete = true;
+                        cswPrivate.stepOneComplete = true;
                     }
                 };
             } ());
 
             //Step 2: 
-            internal.makeStep2 = (function () {
+            cswPrivate.makeStep2 = (function () {
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return false === Csw.isNullOrEmpty(internal.tradeName) && false === Csw.isNullOrEmpty(internal.supplier.val);
+                        return false === Csw.isNullOrEmpty(cswPrivate.tradeName) && false === Csw.isNullOrEmpty(cswPrivate.supplier.val);
                     };
                     function supplierSelect() {
-                        internal.supplier = { name: internal.supplierSelect.find(':selected').text(), val: internal.supplierSelect.val() };
-                        internal.toggleButton(internal.buttons.next, nextBtnEnabled());
-                        internal.reinitSteps(3);
+                        cswPrivate.supplier = { name: cswPrivate.supplierSelect.find(':selected').text(), val: cswPrivate.supplierSelect.val() };
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                        cswPrivate.reinitSteps(3);
                     }
 
-                    internal.toggleButton(internal.buttons.prev, true);
-                    internal.toggleButton(internal.buttons.cancel, true);
-                    internal.toggleButton(internal.buttons.finish, false);
-                    internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
 
-                    if (false === internal.stepTwoComplete) {
-                        internal.divStep2 = internal.divStep2 || internal.wizard.div(2);
-                        internal.divStep2.empty();
+                    if (false === cswPrivate.stepTwoComplete) {
+                        cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
+                        cswPrivate.divStep2.empty();
 
-                        internal.divStep2.br({ number: 2 });
+                        cswPrivate.divStep2.br({ number: 2 });
 
                         /* TRADENAME */
-                        internal.tradeNameInput = internal.divStep2.input({
-                            ID: internal.wizard.makeStepId('tradename'),
+                        cswPrivate.tradeNameInput = cswPrivate.divStep2.input({
+                            ID: cswPrivate.wizard.makeStepId('tradename'),
                             useWide: true,
                             labelText: 'Tradename: ',
                             cssclass: 'required',
                             onChange: function () {
-                                internal.tradeName = internal.tradeNameInput.val();
-                                internal.toggleButton(internal.buttons.next, nextBtnEnabled());
-                                internal.reinitSteps(3);
+                                cswPrivate.tradeName = cswPrivate.tradeNameInput.val();
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                                cswPrivate.reinitSteps(3);
                             }
                         });
-                        internal.divStep2.br({ number: 1 });
+                        cswPrivate.divStep2.br({ number: 1 });
 
                         /* SUPPLIER */
-                        internal.supplierSelect = internal.divStep2.nodeSelect({
-                            ID: internal.wizard.makeStepId('supplier'),
+                        cswPrivate.supplierSelect = cswPrivate.divStep2.nodeSelect({
+                            ID: cswPrivate.wizard.makeStepId('supplier'),
                             cssclass: 'required',
                             objectClassName: 'VendorClass',
                             useWide: true,
@@ -240,70 +240,70 @@
                             onChange: supplierSelect,
                             onSuccess: supplierSelect
                         });
-                        internal.divStep2.br({ number: 1 });
+                        cswPrivate.divStep2.br({ number: 1 });
 
                         /* PARTNO */
-                        internal.partNoInput = internal.divStep2.input({
-                            ID: internal.wizard.makeStepId('partno'),
+                        cswPrivate.partNoInput = cswPrivate.divStep2.input({
+                            ID: cswPrivate.wizard.makeStepId('partno'),
                             useWide: true,
                             labelText: 'Part No: ',
                             onChange: function () {
-                                internal.partNo = internal.partNoInput.val();
-                                internal.reinitSteps(3);
+                                cswPrivate.partNo = cswPrivate.partNoInput.val();
+                                cswPrivate.reinitSteps(3);
                             }
                         });
 
-                        internal.stepTwoComplete = true;
+                        cswPrivate.stepTwoComplete = true;
                     }
                 };
             } ());
 
-            internal.makeStep3 = (function () {
+            cswPrivate.makeStep3 = (function () {
 
                 return function () {
                     var div;
                     function makeConfirmation() {
-                        div.p({ useWide: true, labelText: 'Tradename:', text: internal.tradeName });
-                        div.p({ useWide: true, labelText: 'Supplier: ', text: internal.supplier.name });
-                        if (false === Csw.isNullOrEmpty(internal.partNo)) {
-                            div.p({ useWide: true, labelText: 'Part No: ', text: internal.partNo });
+                        div.p({ useWide: true, labelText: 'Tradename:', text: cswPrivate.tradeName });
+                        div.p({ useWide: true, labelText: 'Supplier: ', text: cswPrivate.supplier.name });
+                        if (false === Csw.isNullOrEmpty(cswPrivate.partNo)) {
+                            div.p({ useWide: true, labelText: 'Part No: ', text: cswPrivate.partNo });
                         }
                     }
 
-                    internal.toggleButton(internal.buttons.prev, true);
-                    internal.toggleButton(internal.buttons.cancel, true);
-                    internal.toggleButton(internal.buttons.finish, false);
-                    internal.toggleButton(internal.buttons.next, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
-                    if (false === internal.stepThreeComplete) {
-                        internal.divStep3 = internal.divStep3 || internal.wizard.div(3);
-                        internal.divStep3.empty();
+                    if (false === cswPrivate.stepThreeComplete) {
+                        cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
+                        cswPrivate.divStep3.empty();
 
-                        internal.divStep3.br({ number: 2 });
+                        cswPrivate.divStep3.br({ number: 2 });
 
-                        div = internal.divStep3.div();
+                        div = cswPrivate.divStep3.div();
 
 
                         Csw.ajax.post({
                             urlMethod: 'getMaterial',
                             data: {
-                                NodeTypeId: internal.materialType.val,
-                                Tradename: internal.tradeName,
-                                Supplier: internal.supplier.name,
-                                PartNo: internal.partNo
+                                NodeTypeId: cswPrivate.materialType.val,
+                                Tradename: cswPrivate.tradeName,
+                                Supplier: cswPrivate.supplier.name,
+                                PartNo: cswPrivate.partNo
                             },
                             success: function (data) {
                                 var topText = '', bottomText = '';
-                                internal.useExistingMaterial = (false === Csw.isNullOrEmpty(data.tradename));
-                                if (internal.useExistingMaterial) {
+                                cswPrivate.useExistingMaterial = (false === Csw.isNullOrEmpty(data.tradename));
+                                if (cswPrivate.useExistingMaterial) {
                                     topText = 'A material named ' + data.tradename + ' already exists as: ';
                                     bottomText = 'Click next to use this existing material.';
-                                    internal.tradeName = data.tradename;
-                                    internal.supplier.name = data.supplier;
-                                    internal.partNo = data.partno;
-                                    internal.materialNodeId = data.nodeid;
+                                    cswPrivate.tradeName = data.tradename;
+                                    cswPrivate.supplier.name = data.supplier;
+                                    cswPrivate.partNo = data.partno;
+                                    cswPrivate.materialNodeId = data.nodeid;
                                 } else {
-                                    topText = 'Creating a new ' + internal.tradeName + ' material: ';
+                                    topText = 'Creating a new ' + cswPrivate.tradeName + ' material: ';
                                 }
                                 div.p({ text: topText });
                                 makeConfirmation();
@@ -311,33 +311,33 @@
                             }
                         });
 
-                        internal.stepThreeComplete = true;
+                        cswPrivate.stepThreeComplete = true;
                     }
                 };
 
             } ());
 
-            internal.makeStep4 = (function () {
-                internal.stepFourComplete = false;
+            cswPrivate.makeStep4 = (function () {
+                cswPrivate.stepFourComplete = false;
 
                 return function () {
                     var div;
 
-                    internal.toggleButton(internal.buttons.prev, true);
-                    internal.toggleButton(internal.buttons.cancel, true);
-                    internal.toggleButton(internal.buttons.finish, false);
-                    internal.toggleButton(internal.buttons.next, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
-                    if (false === internal.stepFourComplete &&
-                        false === internal.useExistingMaterial) {
-                        internal.divStep4 = internal.divStep4 || internal.wizard.div(4);
-                        internal.divStep4.empty();
+                    if (false === cswPrivate.stepFourComplete &&
+                        false === cswPrivate.useExistingMaterial) {
+                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(4);
+                        cswPrivate.divStep4.empty();
 
-                        internal.divStep4.br({ number: 2 });
+                        cswPrivate.divStep4.br({ number: 2 });
 
-                        div = internal.divStep4.div();
-                        internal.tabsAndProps = Csw.layouts.tabsAndProps(div, {
-                            nodetypeid: internal.materialType.val,
+                        div = cswPrivate.divStep4.div();
+                        cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(div, {
+                            nodetypeid: cswPrivate.materialType.val,
                             showSaveButton: false,
                             EditMode: Csw.enums.editMode.Add,
                             ReloadTabOnSave: false,
@@ -345,14 +345,14 @@
                             excludeOcProps: ['tradename', 'supplier', 'partno']
                         });
 
-                        internal.stepFourComplete = true;
+                        cswPrivate.stepFourComplete = true;
                     }
                 };
 
             } ());
 
-            internal.makeStep5 = (function () {
-                internal.stepFiveComplete = false;
+            cswPrivate.makeStep5 = (function () {
+                cswPrivate.stepFiveComplete = false;
 
                 return function () {
                     var div, addDiv, selectDiv, sizes = [];
@@ -370,37 +370,37 @@
                     }
 
                     function sizeSelect(retObj, count) {
-                        internal.sizeNodeTypeId = internal.sizeSelect.val();
+                        cswPrivate.sizeNodeTypeId = cswPrivate.sizeSelect.val();
                         if (count > 1) {
                             selectDiv.show();
                         }
                         addDiv = addDiv || div.div();
                         addDiv.empty();
-                        internal.addSizeNode = Csw.layouts.tabsAndProps(addDiv, {
-                            nodetypeid: internal.sizeNodeTypeId,
+                        cswPrivate.addSizeNode = Csw.layouts.tabsAndProps(addDiv, {
+                            nodetypeid: cswPrivate.sizeNodeTypeId,
                             showSaveButton: false,
                             EditMode: Csw.enums.editMode.Add,
                             ReloadTabOnSave: false,
                             ShowAsReport: false,
                             excludeOcProps: ['material']
                         });
-                        internal.addSizeBtn = addDiv.button({
+                        cswPrivate.addSizeBtn = addDiv.button({
                             enabledText: 'Add',
                             onClick: function () {
-                                var sizeData = internal.addSizeNode.getPropJson();
+                                var sizeData = cswPrivate.addSizeNode.getPropJson();
 
                                 Csw.ajax.post({
                                     urlMethod: 'getSizeNodeProps',
                                     data: {
                                         SizeDefinition: JSON.stringify(sizeData),
-                                        SizeNodeTypeId: internal.sizeNodeTypeId
+                                        SizeNodeTypeId: cswPrivate.sizeNodeTypeId
                                     },
                                     success: function (data) {
                                         var size = data.row;
                                         if (isSizeNew(size)) {
-                                            internal.sizeGrid.addRows(size);
-                                            internal.sizeNodes.push({
-                                                nodetypeid: internal.sizeNodeTypeId,
+                                            cswPrivate.sizeGrid.addRows(size);
+                                            cswPrivate.sizeNodes.push({
+                                                nodetypeid: cswPrivate.sizeNodeTypeId,
                                                 sizedef: Csw.clone(sizeData) 
                                             });
                                             sizes.push(size);
@@ -413,65 +413,65 @@
                         });
                     }
 
-                    internal.toggleButton(internal.buttons.prev, true);
-                    internal.toggleButton(internal.buttons.cancel, true);
-                    internal.toggleButton(internal.buttons.finish, true);
-                    internal.toggleButton(internal.buttons.next, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
-                    if (false === internal.stepFiveComplete) {
-                        internal.divStep5 = internal.divStep5 || internal.wizard.div(5);
-                        internal.divStep5.empty();
+                    if (false === cswPrivate.stepFiveComplete) {
+                        cswPrivate.divStep5 = cswPrivate.divStep5 || cswPrivate.wizard.div(5);
+                        cswPrivate.divStep5.empty();
 
-                        internal.divStep5.br({ number: 2 });
+                        cswPrivate.divStep5.br({ number: 2 });
 
-                        div = internal.divStep5.div();
+                        div = cswPrivate.divStep5.div();
 
                         /* Thin Grid of sizes */
-                        internal.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true });
+                        cswPrivate.sizeGrid = div.thinGrid({ linkText: '', hasHeader: true });
 
 
-                        if (internal.useExistingMaterial) {
+                        if (cswPrivate.useExistingMaterial) {
 
                             Csw.ajax.post({
                                 urlMethod: 'getMaterialSizes',
-                                data: { MaterialId: internal.materialNodeId },
+                                data: { MaterialId: cswPrivate.materialNodeId },
                                 success: function (data) {
                                     sizes = data.rows || [];
 
-                                    internal.sizeGrid.addRows(sizes);
+                                    cswPrivate.sizeGrid.addRows(sizes);
                                 }
                             });
                         } else {
-                            internal.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable']);
+                            cswPrivate.sizeGrid.addRows(['', 'Capacity', 'Quantity Editable', 'Dispensable']);
                         }
 
                         div.br();
 
                         /* Size Select (hidden if only 1 NodeType present) */
                         selectDiv = div.div();
-                        internal.sizeSelect = selectDiv.nodeTypeSelect({
-                            ID: internal.wizard.makeStepId('nodeTypeSelect'),
+                        cswPrivate.sizeSelect = selectDiv.nodeTypeSelect({
+                            ID: cswPrivate.wizard.makeStepId('nodeTypeSelect'),
                             useWide: true,
                             labelText: 'Select a Material Size: ',
                             objectClassName: 'SizeClass',
                             onSelect: sizeSelect,
                             onSuccess: sizeSelect,
-                            relatedToNodeTypeId: internal.materialType.val,
+                            relatedToNodeTypeId: cswPrivate.materialType.val,
                             relatedObjectClassPropName: 'Material'
                         });
                         selectDiv.hide();
 
-                        /* Populate this with onSuccess of internal.sizeSelect */
-                        internal.addSizeNode = {};
+                        /* Populate this with onSuccess of cswPrivate.sizeSelect */
+                        cswPrivate.addSizeNode = {};
 
-                        internal.stepFiveComplete = true;
+                        cswPrivate.stepFiveComplete = true;
                     }
                 };
 
             } ());
 
-            internal.makeStep1();
+            cswPrivate.makeStep1();
 
-            return external;
+            return cswPublic;
         });
 } ());

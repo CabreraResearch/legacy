@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.MetaData
                         {
                             if( CswConvert.ToBoolean( Value ) )
                             {
-                                NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                                NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
                             }
                             else
                             {

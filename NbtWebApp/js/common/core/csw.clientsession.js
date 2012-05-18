@@ -4,7 +4,7 @@
 (function _cswClientSession() {
     'use strict';
 
-    var internal = {
+    var cswPrivate = {
         AccessId: '',
         UserName: '',
         Password: '',
@@ -16,42 +16,48 @@
         DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
         expiretimeInterval: '',
         expiretime: '',
-        expiredInterval: ''
+        expiredInterval: '',
+        isAuthenticated: false
     };
 
-    internal.checkExpired = function () {
+    cswPrivate.checkExpired = function () {
         var now = new Date();
-        if (Date.parse(internal.expiretime) - Date.parse(now) < 0) {
-            window.clearInterval(internal.expiredInterval);
+        if (Date.parse(cswPrivate.expiretime) - Date.parse(now) < 0) {
+            window.clearInterval(cswPrivate.expiredInterval);
             Csw.clientSession.logout();
         }
     };
 
-    internal.checkExpireTime = function () {
-        var now = new Date();
-        if (Date.parse(internal.expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
-            window.clearInterval(internal.expiretimeInterval);
-            $.CswDialog('ExpireDialog', {
-                'onYes': function () {
-                    Csw.ajax.post({
-                        'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
-                        'success': function () {
-                        }
-                    });
-                }
-            });
+    cswPrivate.checkExpireTime = function () {
+        if (cswPrivate.isAuthenticated) {
+            var now = new Date();
+            if (Date.parse(cswPrivate.expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
+                window.clearInterval(cswPrivate.expiretimeInterval);
+                $.CswDialog('ExpireDialog', {
+                    onYes: function () {
+                        Csw.ajax.post({
+                            'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
+                            'success': function () {
+                                cswPrivate.isAuthenticated = true;
+                            }
+                        });
+                    }
+                });
+            }
         }
     };
 
-    internal.setExpireTimeInterval = function () {
-        window.clearInterval(internal.expiretimeInterval);
-        window.clearInterval(internal.expiredInterval);
-        internal.expiretimeInterval = window.setInterval(function () {
-            internal.checkExpireTime();
-        }, 60000);
-        internal.expiredInterval = window.setInterval(function () {
-            internal.checkExpired();
-        }, 60000);
+    cswPrivate.setExpireTimeInterval = function () {
+        if (cswPrivate.isAuthenticated) {
+            window.clearInterval(cswPrivate.expiretimeInterval);
+            window.clearInterval(cswPrivate.expiredInterval);
+            cswPrivate.expiretimeInterval = window.setInterval(function () {
+                cswPrivate.checkExpireTime();
+            }, 60000);
+            cswPrivate.expiredInterval = window.setInterval(function () {
+                cswPrivate.checkExpired();
+            }, 60000);
+        }
     };
 
     Csw.clientSession = Csw.clientSession ||
@@ -60,13 +66,13 @@
     Csw.clientSession.finishLogout = Csw.clientSession.finishLogout ||
         Csw.clientSession.register('finishLogout', function () {
             ///<summary>Complete the logout. Nuke any lingering client-side data.</summary>
-            internal.logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
+            cswPrivate.logoutpath = Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath);
             Csw.clientDb.clear();
             Csw.cookie.clearAll();
-            if (false === Csw.isNullOrEmpty(internal.logoutpath)) {
-                window.location = internal.logoutpath;
+            if (false === Csw.isNullOrEmpty(cswPrivate.logoutpath)) {
+                Csw.window.location(cswPrivate.logoutpath);
             } else {
-                window.location = Csw.getGlobalProp('homeUrl');
+                Csw.window.location(Csw.getGlobalProp('homeUrl'));
             }
         });
 
@@ -74,27 +80,29 @@
         Csw.clientSession.register('login', function (loginopts) {
             ///<summary>Attempt a login.</summary>
             if (loginopts) {
-                $.extend(internal, loginopts);
+                $.extend(cswPrivate, loginopts);
             }
-
+            cswPrivate.isAuthenticated = true;
             Csw.ajax.post({
-                url: internal.authenticateUrl,
+                url: cswPrivate.authenticateUrl,
                 data: {
-                    AccessId: internal.AccessId,
-                    UserName: internal.UserName,
-                    Password: internal.Password,
-                    ForMobile: internal.ForMobile
+                    AccessId: cswPrivate.AccessId,
+                    UserName: cswPrivate.UserName,
+                    Password: cswPrivate.Password,
+                    ForMobile: cswPrivate.ForMobile
                 },
                 success: function () {
-                    Csw.cookie.set(Csw.cookie.cookieNames.Username, internal.UserName);
-                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, internal.logoutpath);
-                    Csw.tryExec(internal.onAuthenticate, internal.UserName);
+                    Csw.cookie.set(Csw.cookie.cookieNames.Username, cswPrivate.UserName);
+                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
+                    Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
                 },
                 onloginfail: function (txt) {
-                    Csw.tryExec(internal.onFail, txt);
+                    cswPrivate.isAuthenticated = false;
+                    Csw.tryExec(cswPrivate.onFail, txt);
                 },
                 error: function () {
-                    Csw.tryExec(internal.onFail, 'Webservice Error');
+                    cswPrivate.isAuthenticated = false;
+                    Csw.tryExec(cswPrivate.onFail, 'Webservice Error');
                 }
             }); // ajax
         });
@@ -103,11 +111,11 @@
         Csw.clientSession.register('logout', function (options) {
             ///<summary>End the current session.</summary>
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivate, options);
             }
-
+            cswPrivate.isAuthenticated = false;
             Csw.ajax.post({
-                url: internal.DeauthenticateUrl,
+                url: cswPrivate.DeauthenticateUrl,
                 data: {},
                 success: function () {
                     Csw.clientSession.finishLogout();
@@ -118,14 +126,14 @@
     Csw.clientSession.getExpireTime = Csw.clientSession.getExpireTime ||
         Csw.clientSession.register('getExpireTime', function () {
             ///<summary>Get the expiration time.</summary>
-            return internal.expiretime;
+            return cswPrivate.expiretime;
         });
 
     Csw.clientSession.setExpireTime = Csw.clientSession.setExpireTime ||
         Csw.clientSession.register('setExpireTime', function (value) {
             ///<summary>Define the expiration time.</summary>
-            internal.expiretime = value;
-            internal.setExpireTimeInterval();
+            cswPrivate.expiretime = value;
+            cswPrivate.setExpireTimeInterval();
         });
 
     Csw.clientSession.handleAuthenticationStatus = Csw.clientSession.handleAuthenticationStatus ||
@@ -209,6 +217,9 @@
                             }
                         });
                     }
+                    break;
+                case 'Ignore':
+                    o.success();
                     break;
             }
 

@@ -25,17 +25,27 @@
                 propDiv.append('[Grid display disabled]');
             } else {
 
-                var makeFullGrid = function (newDiv) {
+                var makeFullGrid = function (viewid, newDiv) {
                     'use strict';
-                    var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_menu') });
-                    newDiv.br();
-                    var searchDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_search') });
-                    newDiv.br();
+                    newDiv.empty();
+                    var menuDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_menu') }).css({ height: '25px' });
+                    //newDiv.br();
+                    var filterDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_filter') });
+                    //newDiv.br();
                     var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype') });
 
+                    var viewfilters = Csw.nbt.viewFilters({
+                        ID: o.ID + '_viewfilters',
+                        parent: filterDiv,
+                        viewid: viewid,
+                        onEditFilters: function (newviewid) {
+                            makeFullGrid(newviewid, newDiv);
+                        } // onEditFilters
+                    }); // viewFilters
 
                     var gridOpts = {
                         ID: o.ID + '_fieldtypegrid',
+                        resizeWithParent: false,
                         viewid: viewid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey,
@@ -49,7 +59,7 @@
                             o.onReload();
                         },
                         onSuccess: function (grid) {
-                            makeGridMenu(menuDiv, o, gridOpts, grid, viewid, searchDiv);
+                            makeGridMenu(menuDiv, o, gridOpts, grid, viewid);
                         }
                     };
                     gridDiv.$.CswNodeGrid('init', gridOpts);
@@ -69,11 +79,11 @@
                                 rows: data.rows,
                                 onLinkClick: function () {
                                     $.CswDialog('OpenEmptyDialog', {
-                                            title: o.nodename + ' ' + o.propData.name,
-                                            onOpen: function (dialogDiv) {
-                                                makeFullGrid(dialogDiv);
-                                            }
+                                        title: o.nodename + ' ' + o.propData.name,
+                                        onOpen: function (dialogDiv) {
+                                            makeFullGrid(viewid, dialogDiv);
                                         }
+                                    }
                                     );
                                 }
                             });
@@ -86,7 +96,7 @@
                         makeSmallGrid();
                         break;
                     default:
-                        makeFullGrid(propDiv);
+                        makeFullGrid(viewid, propDiv);
                         break;
                 }
 
@@ -97,7 +107,7 @@
         }
     };
 
-    function makeGridMenu(menuDiv, o, gridOpts, cswGrid, viewid, searchDiv) {
+    function makeGridMenu(menuDiv, o, gridOpts, cswGrid, viewid) {
         //Case 21741
         if (o.EditMode !== Csw.enums.editMode.PrintReport) {
             menuDiv.$.CswMenuMain({
@@ -114,37 +124,14 @@
                 onMultiEdit: function () {
                     var multi = (false === cswGrid.isMulti());
                     var g = {
+                        canEdit: multi,
+                        canDelete: multi,
                         gridOpts: {
                             multiselect: multi
                         }
                     };
-                    cswGrid.changeGridOpts(g);
-                },
-                onSearch: {
-                    onViewSearch: function () {
-                        var onSearchSubmit = function (searchviewid) {
-                            var s = {};
-                            $.extend(s, gridOpts);
-                            s.viewid = searchviewid;
-                            o.refreshGrid(s, cswGrid);
-                        };
-
-                        var onClearSubmit = function (parentviewid) {
-                            var s = {};
-                            $.extend(s, gridOpts);
-                            s.viewid = parentviewid;
-                            o.refreshGrid(s, cswGrid);
-                        };
-
-                        searchDiv.empty();
-                        searchDiv.$.CswSearch({ parentviewid: viewid,
-                            cswnbtnodekey: o.cswnbtnodekey,
-                            ID: searchDiv.getId(),
-                            onSearchSubmit: onSearchSubmit,
-                            onClearSubmit: onClearSubmit
-                        });
-                    },
-                    onGenericSearch: null /*not possible here*/
+                    cswGrid.changeGridOpts(g, ['Action', 'Delete']);
+                    cswGrid.setWidth(600);
                 },
                 onEditView: function () {
                     if (Csw.isFunction(o.onEditView)) {

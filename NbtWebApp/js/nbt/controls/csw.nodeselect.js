@@ -6,7 +6,7 @@
     Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
         Csw.controls.register('nodeSelect', function (cswParent, options) {
             'use strict';
-            var internal = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 nodesUrlMethod: 'getNodes',
@@ -21,31 +21,31 @@
                 excludeNodeTypeIds: '',
                 canAdd: false
             };
-            var external = {};
+            var cswPublic = {};
 
             (function () {
 
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
-                internal.ID += '_nodesel';
+                cswPrivate.ID += '_nodesel';
 
-                internal.table = cswParent.table();
-                internal.select = internal.table.cell(1, 1).select(internal);
+                cswPrivate.table = cswParent.table();
+                cswPrivate.select = cswPrivate.table.cell(1, 1).select(cswPrivate);
 
-                external = Csw.dom({}, internal.select);
+                cswPublic = Csw.dom({}, cswPrivate.select);
 
-                external.bind('change', function () {
-                    Csw.tryExec(internal.onChange, external);
-                    Csw.tryExec(internal.onSelect, external.val());
+                cswPublic.bind('change', function () {
+                    Csw.tryExec(cswPrivate.onChange, cswPublic);
+                    Csw.tryExec(cswPrivate.onSelect, cswPublic.val());
                 });
 
                 Csw.ajax.post({
-                    urlMethod: internal.nodesUrlMethod,
+                    urlMethod: cswPrivate.nodesUrlMethod,
                     data: {
-                        NodeTypeId: Csw.string(internal.nodeTypeId),
-                        ObjectClassId: Csw.string(internal.objectClassId),
-                        ObjectClass: Csw.string(internal.objectClassName)
+                        NodeTypeId: Csw.string(cswPrivate.nodeTypeId),
+                        ObjectClassId: Csw.string(cswPrivate.objectClassId),
+                        ObjectClass: Csw.string(cswPrivate.objectClassName)
                     },
                     success: function (data) {
                         var ret = data;
@@ -56,22 +56,22 @@
                         //Case 24155
                         Csw.each(ret, function (nodeName, nodeId) {
                             nodecount += 1;
-                            external.option({ value: nodeId, display: nodeName });
+                            cswPublic.option({ value: nodeId, display: nodeName });
                         });
 
-                        Csw.tryExec(internal.onSuccess, ret);
-                        external.css('width', Csw.string(internal.width));
+                        Csw.tryExec(cswPrivate.onSuccess, ret);
+                        cswPublic.css('width', Csw.string(cswPrivate.width));
                         
                         if (canAdd) {
-                            internal.table.cell(1, 2)
+                            cswPrivate.table.cell(1, 2)
                                 .imageButton({
                                     ButtonType: Csw.enums.imageButton_ButtonType.Add,
                                     AlternateText: 'Add New',
                                     onClick: function() {
                                         $.CswDialog('AddNodeDialog', {
-                                            nodetypeid: internal.nodeTypeId,
+                                            nodetypeid: cswPrivate.nodeTypeId,
                                             onAddNode: function(nodeid, nodekey, nodename) {
-                                                external.option({ value: nodeid, display: nodename, selected: true });
+                                                cswPublic.option({ value: nodeid, display: nodename, selected: true });
                                             }
                                         });
                                     }
@@ -82,7 +82,7 @@
                 });
             } ());
 
-            return external;
+            return cswPublic;
         });
 } ());
 

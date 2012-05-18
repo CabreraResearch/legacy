@@ -16,7 +16,7 @@
             // case 25371 - Save the tab first
             Csw.tryExec(o.doSave, {
                 onSuccess: function () {
-
+                    var $btn = $('#' + o.ID).button({ disabled: true });
                     params = {
                         NodeTypePropAttr: propAttr
                     };
@@ -25,9 +25,7 @@
                         url: '/NbtWebApp/wsNBT.asmx/onObjectClassButtonClick',
                         data: params,
                         success: function (data) {
-                            button.enable();
                             if (Csw.bool(data.success)) {
-
                                 if (false === Csw.isNullOrEmpty(data.message)) {
                                     // can't use messagediv, since doSave has remade the tab
                                     var $newmessagediv = $('#' + messagediv.getId());
@@ -44,19 +42,31 @@
                                                 data: { PropId: propAttr },
                                                 success: function () {
                                                     Csw.clientChanges.unsetChanged();
-                                                    window.location = "Main.html";
+                                                    Csw.window.location("Main.html");
                                                 }
                                             });
                                         }
                                         break;
 
-                                    case Csw.enums.nbtButtonAction.refresh:
-                                        Csw.tryExec(o.onReload);
+                                    case Csw.enums.nbtButtonAction.refresh: //cases 26201, 26107 
+                                        $btn.button({ disabled: false });
+                                        Csw.tryExec(o.onReload(
+                                            (function (messagedivid) {
+                                                return function () {
+                                                    if (false === Csw.isNullOrEmpty(data.message)) {
+                                                        var $newmessagediv = $('#' + messagedivid);
+                                                        $newmessagediv.text(data.message);
+                                                    }
+                                                };
+                                            })(messagediv.getId())
+                                        ));
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:
+                                        $btn.button({disabled: false});
                                         Csw.openPopup(data.actiondata, 600, 800);
                                         break;
                                     default:
+                                        $btn.button({disabled: false});
                                         break;
                                 }
                             }

@@ -12,6 +12,9 @@
             DeleteViewUrl: '/NbtWebApp/wsNBT.asmx/deleteView',
             ChildOptionsUrl: '/NbtWebApp/wsNBT.asmx/getViewChildOptions',
             PropNamesUrl: '/NbtWebApp/wsNBT.asmx/getPropNames',
+            FiltersUrlMethod: 'getAllViewPropFilters',
+            filtersData: {},
+            newProps: [],
             viewid: '',
             viewname: '',
             viewmode: '',
@@ -717,55 +720,92 @@
                     'ID': o.ID + '_editfilt',
                     'FirstCellRightAlign': true
                 });
-                filterTable.cell(1, 1).text('Case Sensitive');
 
-                filterTable.cell(1, 2)
+                filterTable.cell(1, 1).text('Case Sensitive');
+                var cbCaseSensitive = filterTable.cell(1, 2)
                     .input({
                         ID: o.ID + '_casecb',
                         type: Csw.enums.inputTypes.checkbox,
                         onChange: function () {
-                            var $this = $(this);
-                            viewNodeData.casesensitive = $this.is(':checked');
+                            //var $this = $(this);
+                            viewNodeData.casesensitive = cbCaseSensitive.$.is(':checked');
                         },
                         checked: Csw.bool(viewNodeData.casesensitive)
+                    });
+
+                filterTable.cell(2, 1).text('Show At Runtime');
+                var cbShowAtRuntime = filterTable.cell(2, 2)
+                    .input({
+                        ID: o.ID + '_showcb',
+                        type: Csw.enums.inputTypes.checkbox,
+                        onChange: function () {
+                            //var $this = $(this);
+                            viewNodeData.showatruntime = cbShowAtRuntime.$.is(':checked');
+                        },
+                        checked: Csw.bool(viewNodeData.showatruntime)
                     });
             });
         }
 
         function _makeViewTree(stepno, $content) {
+            var doTree = function () {
+
+                var treecontent = viewJsonHtml(stepno, currentViewJson);
+
+                try {
+                    $tree.jstree({
+                        "html_data":
+                            {
+                                "data": treecontent.html
+                            },
+                        "ui": {
+                            "select_limit": 1 //,
+                            //"initially_select": selectid,
+                        },
+                        "types": {
+                            "types": treecontent.types,
+                            "max_children": -2,
+                            "max_depth": -2
+                        },
+                        "plugins": ["themes", "html_data", "ui", "types", "crrm"]
+                    }); // tree
+
+                    if (stepno >= Csw.enums.wizardSteps_ViewEditor.relationships.step && stepno <= Csw.enums.wizardSteps_ViewEditor.filters.step) {
+                        bindDeleteBtns(stepno);
+                    }
+
+                    if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
+                        bindViewPropFilterBtns(stepno);
+                    }
+
+                    if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
+                        makeTuningStep($tree);
+                    }
+                } catch (e) {
+                    Csw.error.showError(Csw.enums.errorType.error, 'Unable to render this tree element.', 'Exception: ' + e.name + ' occurred with ' + e.message);
+                }
+            };
+
             var $tree = $content;
             if (Csw.isNullOrEmpty($tree)) {
                 $tree = getTreeDiv(stepno);
             }
-            var treecontent = viewJsonHtml(stepno, currentViewJson);
-
-            $tree.jstree({
-                "html_data":
-                        {
-                            "data": treecontent.html
-                        },
-                "ui": {
-                    "select_limit": 1 //,
-                    //"initially_select": selectid,
-                },
-                "types": {
-                    "types": treecontent.types,
-                    "max_children": -2,
-                    "max_depth": -2
-                },
-                "plugins": ["themes", "html_data", "ui", "types", "crrm"]
-            }); // tree
-
-            if (stepno >= Csw.enums.wizardSteps_ViewEditor.relationships.step && stepno <= Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                bindDeleteBtns(stepno);
-            }
 
             if (stepno === Csw.enums.wizardSteps_ViewEditor.filters.step) {
-                bindViewPropFilterBtns(stepno);
-            }
-
-            if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
-                makeTuningStep($tree);
+                Csw.ajax.post({
+                    urlMethod: o.FiltersUrlMethod,
+                    data: {
+                        ViewId: _getSelectedViewId(),
+                        NewPropArbIds: o.newProps.join(','),
+                        ViewJson: JSON.stringify(currentViewJson)
+                    },
+                    success: function (data) {
+                        o.filtersData = data;
+                        doTree();
+                    }
+                });
+            } else {
+                doTree();
             }
             return $tree;
         } // _makeViewTree()
@@ -967,7 +1007,7 @@
                             if (filterJson.hasOwnProperty(filter)) {
                                 var thisFilt = filterJson[filter];
                                 if (false === Csw.isNullOrEmpty(thisFilt)) {
-                                    var $filtLi = makeViewPropertyFilterHtml(thisFilt, stepno, types, arbid);
+                                    var $filtLi = makeViewPropertyFilterHtml(thisFilt, stepno, types, arbid, false);
                                     if (false === Csw.isNullOrEmpty($filtLi)) {
                                         $filtUl.append($filtLi);
                                     }
@@ -978,7 +1018,11 @@
                 }
                 /* Show add new filter */
                 if (stepno !== Csw.enums.wizardSteps_ViewEditor.tuning.step) {
-                    var $filtBuilderLi = makeViewPropertyFilterHtml(null, stepno, types, arbid);
+                    var filterData = null;
+                    if (Csw.contains(o.filtersData, arbid)) {
+                        filterData = o.filtersData[arbid];
+                    }
+                    var $filtBuilderLi = makeViewPropertyFilterHtml(filterData, stepno, types, arbid, true);
                     if (false === Csw.isNullOrEmpty($filtBuilderLi)) {
                         $filtUl.append($filtBuilderLi);
                     }
@@ -991,12 +1035,12 @@
             return $ret;
         }
 
-        function makeViewPropertyFilterHtml(itemJson, stepno, types, propArbId) {
+        function makeViewPropertyFilterHtml(itemJson, stepno, types, propArbId, isAdd) {
             var $ret = null;
             if (stepno >= Csw.enums.wizardSteps_ViewEditor.filters.step) {
                 $ret = $('<li></li>');
                 var rel = 'filter';
-                if (!Csw.isNullOrEmpty(itemJson)) {
+                if (false === isAdd && false === Csw.isNullOrEmpty(itemJson)) {
                     var filtArbitraryId = Csw.string(itemJson.arbitraryid);
                     if (stepno === Csw.enums.wizardSteps_ViewEditor.tuning.step) {
                         var selectedSubfield = Csw.string(itemJson.subfield, itemJson.subfieldname);
@@ -1012,7 +1056,7 @@
                         makeDeleteSpan(filtArbitraryId, $ret);
                     }
                 } else {
-                    $ret.append(makeViewPropFilterAddSpan(propArbId, rel));
+                    $ret.append(makeViewPropFilterAddSpan(propArbId, itemJson));
                 }
             }
             types.filter = { icon: { image: "Images/view/filter.gif"} };
@@ -1041,7 +1085,7 @@
             return $span;
         }
 
-        function makeViewPropFilterAddSpan(propArbId) {
+        function makeViewPropFilterAddSpan(propArbId, itemJson) {
             var $span = $('<span class="' + Csw.enums.cssClasses_ViewEdit.vieweditor_addfilter.name + '" arbid="' + propArbId + '"></span>');
             var table = Csw.literals.table({
                 $parent: $span,
@@ -1052,7 +1096,7 @@
             table.$.CswViewPropFilter('init', {
                 viewJson: currentViewJson,
                 ID: o.ID + '_' + propArbId + '_propfilttbl',
-                propsData: null,
+                propsData: itemJson,
                 proparbitraryid: propArbId,
                 propRow: 1,
                 firstColumn: 1,
@@ -1154,6 +1198,7 @@
                                         collection = Csw.enums.viewChildPropNames.childrelationships.name;
                                         break;
                                     case Csw.enums.wizardSteps_ViewEditor.properties.step:
+                                        o.newProps.push($selected.val());
                                         collection = Csw.enums.viewChildPropNames.properties.name;
                                         break;
                                 }

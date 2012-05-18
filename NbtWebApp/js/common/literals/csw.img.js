@@ -16,12 +16,13 @@
         /// <para>options.text: Text to display</para>
         /// </param>
         /// <returns type="img">A img object</returns>
-        var internal = {
+        var cswPrivate = {
             $parent: '',
             ID: '',
             cssclass: '',
             src: '',
             alt: '',
+            title: '',
             height: '',
             ismap: '',
             usemap: '',
@@ -29,7 +30,7 @@
             width: '',
             onClick: null //function () {}
         };
-        var external = {};
+        var cswPublic = {};
 
         (function () {
             var html = '',
@@ -39,22 +40,23 @@
             var $img;
 
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivate, options);
             }
 
-            internal.ID = Csw.string(internal.ID, internal.name);
+            cswPrivate.ID = Csw.string(cswPrivate.ID, cswPrivate.name);
 
             html += '<img ';
-            attr.add('id', internal.ID);
-            attr.add('class', internal.cssclass);
-            attr.add('src', internal.src);
-            attr.add('alt', internal.alt);
-            attr.add('height', internal.height);
-            attr.add('ismap', internal.ismap);
-            attr.add('usemap', internal.usemap);
-            attr.add('width', internal.width);
+            attr.add('id', cswPrivate.ID);
+            attr.add('class', cswPrivate.cssclass);
+            attr.add('src', cswPrivate.src);
+            attr.add('alt', cswPrivate.alt);
+            attr.add('title', cswPrivate.title);
+            attr.add('height', cswPrivate.height);
+            attr.add('ismap', cswPrivate.ismap);
+            attr.add('usemap', cswPrivate.usemap);
+            attr.add('width', cswPrivate.width);
             
-            style.add('border', internal.border);
+            style.add('border', cswPrivate.border);
 
             html += attr.get();
             html += style.get();
@@ -62,22 +64,22 @@
             html += ' />';
             $img = $(html);
 
-            Csw.literals.factory($img, external);
-            if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
+            Csw.literals.factory($img, cswPublic);
+            if (Csw.isFunction(cswPrivate.onClick)) {
+                cswPublic.bind('click', cswPrivate.onClick);
             }
 
-            internal.$parent.append(external.$);
+            cswPrivate.$parent.append(cswPublic.$);
 
         } ());
 
-        external.click = function (func) {
+        cswPublic.click = function (func) {
             if (Csw.isFunction(func)) {
-                external.bind('click', func);
+                cswPublic.bind('click', func);
             }
         };
 
-        return external;
+        return cswPublic;
     }
     Csw.literals.register('img', img);
     Csw.literals.img = Csw.literals.img || img;

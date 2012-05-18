@@ -540,7 +540,7 @@ namespace ChemSW.NbtWebControls
             {
                 if( NodeTypeProp.getFieldTypeRule().SearchAllowed &&
                     ( !_IsQuickSearch || NodeTypeProp.IsQuickSearch ) &&
-					( FilterPropertiesToTabId == Int32.MinValue || ( NodeTypeProp.EditLayout != null && NodeTypeProp.EditLayout.TabId == FilterPropertiesToTabId ) ) &&
+                    ( FilterPropertiesToTabId == Int32.MinValue || ( NodeTypeProp.FirstEditLayout != null && NodeTypeProp.FirstEditLayout.TabId == FilterPropertiesToTabId ) ) &&
                     ( FilterOutPropertyId == Int32.MinValue || NodeTypeProp.PropId != FilterOutPropertyId ) &&
                     ( AllowedFieldTypes.Count == 0 || AllowedFieldTypes.Contains( NodeTypeProp.getFieldType().FieldType ) ) &&
                     ( !FilterOutConditionalProperties || !NodeTypeProp.hasFilter() ) )

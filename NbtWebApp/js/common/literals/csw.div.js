@@ -18,7 +18,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="div">A div object</returns>
-            var internal = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 name: '',
@@ -32,27 +32,27 @@
                 styles: { },
                 onClick: null
             };
-            var external = { };
+            var cswPublic = { };
 
             (function() {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
                 var html = '',
                     attr = Csw.makeAttr(),
                     style = Csw.makeStyle(),
-                    divText = Csw.string(internal.text);
+                    divText = Csw.string(cswPrivate.text);
                 var $div;
 
-                attr.add('id', internal.ID);
-                attr.add('name', Csw.string(internal.name, internal.ID));
-                attr.add('class', internal.cssclass);
-                attr.add('value', internal.value);
-                attr.add('align', internal.align);
-                internal.styles.align = internal.align;
-                internal.styles.height = internal.height;
-                internal.styles.width = internal.width;
-                style.set(internal.styles);
+                attr.add('id', cswPrivate.ID);
+                attr.add('name', Csw.string(cswPrivate.name, cswPrivate.ID));
+                attr.add('class', cswPrivate.cssclass);
+                attr.add('value', cswPrivate.value);
+                attr.add('align', cswPrivate.align);
+                cswPrivate.styles.align = cswPrivate.align;
+                cswPrivate.styles.height = cswPrivate.height;
+                cswPrivate.styles.width = cswPrivate.width;
+                style.set(cswPrivate.styles);
 
                 html += '<div ';
 
@@ -63,17 +63,17 @@
                 html += divText;
                 html += '</div>';
                 $div = $(html);
-                Csw.literals.factory($div, external);
+                Csw.literals.factory($div, cswPublic);
 
-                if (Csw.isFunction(internal.onClick)) {
-                    external.bind('click', internal.onClick);
+                if (Csw.isFunction(cswPrivate.onClick)) {
+                    cswPublic.bind('click', cswPrivate.onClick);
                 }
-                if (false === Csw.isNullOrEmpty(internal.$parent)) {
-                    internal.$parent.append(external.$);
+                if (false === Csw.isNullOrEmpty(cswPrivate.$parent)) {
+                    cswPrivate.$parent.append(cswPublic.$);
                 }
             }());
 
-            return external;
+            return cswPublic;
         });
 
 } ());

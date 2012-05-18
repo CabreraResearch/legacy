@@ -20,17 +20,23 @@
 
             var div = Csw.literals.div();
 
-            div.p({ text: 'Your session is about to time out.  Would you like to continue working?' });
+            var tbl = div.table();
 
-            div.button({
+            tbl.cell(1, 1).span({ text: 'Your session is about to time out.' });
+            tbl.cell(2, 1).span({ text: 'Would you like to continue working?' });
+
+            var btnTbl = tbl.cell(2, 1).table();
+
+            btnTbl.cell(3, 1).button({
                 ID: 'renew_btn',
                 enabledText: 'Yes',
+                bindOnEnter: div,
                 onClick: function () {
                     div.$.dialog('close');
                     Csw.tryExec(o.onYes);
                 }
             });
-
+            
             openDialog(div, 300, 150, null, 'Expire Warning');
 
         }, // ExpireDialog
@@ -355,9 +361,13 @@
                     success: function (data) {
                         var propOpts = [{ value: '', display: 'Select...'}];
                         Csw.each(data.add, function (p) {
+                            var display = p.propname;
+                            if(Csw.bool(p.hidden)) {
+                                display += ' (hidden)';
+                            }
                             propOpts.push({
                                 value: p.propid,
-                                display: p.propname
+                                display: display
                             });
                         });
                         addSelect.setOptions(propOpts, '', true);
@@ -425,7 +435,7 @@
                     //title: o.title,
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     date: date,
-                    ReloadTabOnSave: false,
+                    ReloadTabOnSave: true,
                     onEditView: function (viewid) {
                         div.$.dialog('close');
                         Csw.tryExec(o.onEditView, viewid);
@@ -435,7 +445,7 @@
                         if (tabcount === 1 || o.Multi) {
                             div.$.dialog('close');
                         }
-                        setupTabs(date);
+                        //setupTabs(date);//case 26107
                         Csw.tryExec(o.onEditNode, nodeids, nodekeys);
                     },
                     onBeforeTabSelect: function () {
@@ -472,9 +482,9 @@
             // Prevent copy if quota is reached
             var div = Csw.literals.div({ ID: 'CopyNodeDialogDiv' });
             var tbl = div.table({ ID: 'CopyNodeDialogDiv_table' });
-            var cell11 = tbl.cell(1,1).propDom('colspan', '2');
-            var cell21 = tbl.cell(2,1);
-            var cell22 = tbl.cell(2,2);
+            var cell11 = tbl.cell(1, 1).propDom('colspan', '2');
+            var cell21 = tbl.cell(2, 1);
+            var cell22 = tbl.cell(2, 2);
 
             Csw.ajax.post({
                 urlMethod: 'checkQuota',
@@ -483,7 +493,7 @@
                     if (Csw.bool(data.result)) {
 
                         cell11.append('Copying: ' + o.nodename);
-                        cell11.br().br();
+                        cell11.br({number: 2});
 
                         var copyBtn = cell21.button({ ID: 'copynode_submit',
                             enabledText: 'Copy',
@@ -536,12 +546,13 @@
             }
 
             var div = Csw.literals.div();
-            div.span({ text: 'Are you sure you want to delete:&nbsp;' });
+            div.span({ text: 'Are you sure you want to delete' });
 
 
             if (o.Multi) {
                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                 //var nodechecked = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                div.span({ text: '&nbsp;the following?' }).br();
                 var nodechecks = null;
                 if (false == Csw.isNullOrEmpty(o.nodeTreeCheck)) {
                     nodechecks = o.nodeTreeCheck.checkedNodes();
@@ -552,18 +563,18 @@
                     Csw.each(nodechecks, function (thisObj) {
                         o.nodeids[n] = thisObj.nodeid;
                         o.cswnbtnodekeys[n] = thisObj.cswnbtnodekey;
-                        div.br().span({ text: thisObj.nodename }).css({ 'padding-left': '10px' });
+                        div.span({ text: thisObj.nodename }).css({ 'padding-left': '10px' }).br();
                         n += 1;
                     });
                 } else {
                     for (var i = 0; i < o.nodenames.length; i++) {
-                        div.br().span({ text: o.nodenames[i] }).css({ 'padding-left': '10px' });
+                        div.span({ text: o.nodenames[i] }).css({ 'padding-left': '10px' }).br();
                     }
                 }
             } else {
-                div.span({ text: o.nodenames + '?' });
+                div.span({ text: ':&nbsp;' + o.nodenames + '?' });
             }
-            div.br().br();
+            div.br({number: 2});
 
             var deleteBtn = div.button({ ID: 'deletenode_submit',
                 enabledText: 'Delete',
@@ -691,7 +702,7 @@
                 }
             });
 
-            div.br().span({ text: 'MOL Text (Paste from Clipboard):' }).br();
+            div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
             molTxtArea = div.textArea({ ID: '', rows: 4, cols: 40 });
             div.br();
@@ -924,6 +935,39 @@
 
             openDialog(div, 800, 600, null, 'Search ' + o.propname);
         }, // SearchDialog
+
+        GenericDialog: function(options) {
+            var o = {
+                div: null, 
+                title: '', 
+                onOk: null, 
+                onCancel: null,
+                onClose: null,
+                height: 400,
+                width: 600
+            };
+            if(options) $.extend(o, options);
+
+            o.div.button({
+                enabledText: 'OK',
+                onClick: function () {
+                    Csw.tryExec(o.onOk);
+                    o.div.$.dialog('close');
+                }
+            });
+
+            o.div.button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    Csw.tryExec(o.onCancel);
+                    o.div.$.dialog('close');
+                }
+            });
+
+            openDialog(o.div, o.width, o.height, o.onClose, o.title);
+
+        }, // GenericDialog
+
 
         ErrorDialog: function (error) {
             var div = Csw.literals.div();

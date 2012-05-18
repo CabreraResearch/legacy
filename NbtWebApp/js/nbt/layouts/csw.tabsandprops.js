@@ -6,7 +6,7 @@
     Csw.layouts.tabsAndProps = Csw.layouts.tabsAndProps ||
         Csw.layouts.register('tabsAndProps', function (cswParent, options) {
             'use strict';
-            var internal = {
+            var cswPrivate = {
                 ID: '',
                 TabsUrlMethod: 'getTabs',
                 SinglePropUrlMethod: 'getSingleProp',
@@ -53,22 +53,22 @@
                 propertyData: {},
                 excludeOcProps: []
             };
-            var external = {};
+            var cswPublic = {};
 
             (function () {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
 
-                internal.outerTabDiv = cswParent.tabDiv({ ID: internal.ID + '_tabdiv' });
-                internal.tabcnt = 0;
+                cswPrivate.outerTabDiv = cswParent.tabDiv({ ID: cswPrivate.ID + '_tabdiv' });
+                cswPrivate.tabcnt = 0;
             } ());
 
-            internal.clearTabs = function () {
-                internal.outerTabDiv.empty();
+            cswPrivate.clearTabs = function () {
+                cswPrivate.outerTabDiv.empty();
             };
 
-            internal.makeTabContentDiv = function (tabParent, tabid, canEditLayout) {
+            cswPrivate.makeTabContentDiv = function (tabParent, tabid, canEditLayout) {
                 'use strict';
                 var tabContentDiv = tabParent.tabDiv({
                     ID: tabid
@@ -91,55 +91,56 @@
                 return tabContentDiv;
             };
 
-            internal.getTabs = function (tabContentDiv) {
+            cswPrivate.getTabs = function (tabContentDiv) {
                 'use strict';
                 var jsonData = {
-                    EditMode: internal.EditMode,
-                    NodeId: Csw.tryParseObjByIdx(internal.nodeids, 0),
-                    SafeNodeKey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
-                    NodeTypeId: internal.nodetypeid,
-                    Date: internal.date,
-                    filterToPropId: internal.filterToPropId,
-                    Multi: internal.Multi
+                    EditMode: cswPrivate.EditMode,
+                    NodeId: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                    SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
+                    NodeTypeId: cswPrivate.nodetypeid,
+                    Date: cswPrivate.date,
+                    filterToPropId: cswPrivate.filterToPropId,
+                    Multi: cswPrivate.Multi,
+                    ConfigMode: cswPrivate.Config
                 };
 
                 // For performance, don't bother getting tabs if we're in Add or Preview
-                if (internal.EditMode === Csw.enums.editMode.Add ||
-                    internal.EditMode === Csw.enums.editMode.Preview ||
-                        internal.EditMode === Csw.enums.editMode.Table) {
+                if (cswPrivate.EditMode === Csw.enums.editMode.Add ||
+                    cswPrivate.EditMode === Csw.enums.editMode.Preview ||
+                        cswPrivate.EditMode === Csw.enums.editMode.Table) {
 
-                    var tabid = internal.EditMode + "_tab";
-                    tabContentDiv = internal.makeTabContentDiv(tabContentDiv, tabid, false);
-                    internal.getProps(tabContentDiv, tabid);
+                    var tabid = cswPrivate.EditMode + "_tab";
+                    tabContentDiv = cswPrivate.makeTabContentDiv(tabContentDiv, tabid, false);
+                    cswPrivate.getProps(tabContentDiv, tabid);
 
                 } else {
 
                     Csw.ajax.post({
-                        watchGlobal: internal.AjaxWatchGlobal,
-                        urlMethod: internal.TabsUrlMethod,
+                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                        urlMethod: cswPrivate.TabsUrlMethod,
                         data: jsonData,
                         success: function (data) {
-                            internal.clearTabs();
+                            cswPrivate.clearTabs();
                             var tabdivs = [];
                             var selectedtabno = 0;
                             var tabno = 0;
                             var tabDiv, tabUl;
-                            internal.nodename = data.nodename;
+                            cswPrivate.nodename = data.nodename;
                             delete data.nodename;
                             var tabFunc = function (thisTab) {
                                 var thisTabId = thisTab.id;
 
-                                if (internal.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
+                                if (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || tabdivs.length === 0) {
                                     // For PrintReports, we're going to make a separate tabstrip for each tab
-                                    tabDiv = internal.outerTabDiv.tabDiv();
+                                    tabDiv = cswPrivate.outerTabDiv.tabDiv();
                                     tabUl = tabDiv.ul();
                                     tabdivs[tabdivs.length] = tabDiv;
                                 }
                                 tabDiv = tabDiv || tabdivs[tabdivs.length - 1];
                                 tabUl = tabUl || tabDiv.ul();
                                 tabUl.li().a({ href: '#' + thisTabId, text: thisTab.name });
-                                internal.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
-                                if (thisTabId === internal.tabid) {
+                                cswPrivate.makeTabContentDiv(tabDiv, thisTabId, thisTab.canEditLayout);
+                                if (thisTabId === cswPrivate.tabid) {
                                     selectedtabno = tabno;
                                 }
                                 tabno += 1;
@@ -147,7 +148,7 @@
                             };
                             Csw.crawlObject(data, tabFunc, false);
 
-                            internal.tabcnt = tabno;
+                            cswPrivate.tabcnt = tabno;
 
                             Csw.each(tabdivs, function (thisTabDiv) {
                                 thisTabDiv.tabs({
@@ -156,10 +157,11 @@
                                         var ret = false;
                                         var selectTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(ui.index) + ')');
                                         var selectTabid = selectTabContentDiv.getId();
-                                        if (Csw.tryExec(internal.onBeforeTabSelect, selectedtabid)) {
+                                        if (Csw.tryExec(cswPrivate.onBeforeTabSelect, selectedtabid)) {
                                             if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
-                                                internal.getProps(selectTabContentDiv, selectTabid);
-                                                Csw.tryExec(internal.onTabSelect, selectTabid);
+                                                cswPrivate.form.empty();
+                                                cswPrivate.getProps(selectTabContentDiv, selectTabid);
+                                                Csw.tryExec(cswPrivate.onTabSelect, selectTabid);
                                                 ret = true;
                                             }
                                         }
@@ -169,8 +171,8 @@
                                 var eachTabContentDiv = thisTabDiv.children('div:eq(' + Csw.number(thisTabDiv.tabs('option', 'selected')) + ')');
                                 if (eachTabContentDiv.isValid) {
                                     var selectedtabid = eachTabContentDiv.getId();
-                                    internal.getProps(eachTabContentDiv, selectedtabid);
-                                    Csw.tryExec(internal.onTabSelect, selectedtabid);
+                                    cswPrivate.getProps(eachTabContentDiv, selectedtabid);
+                                    Csw.tryExec(cswPrivate.onTabSelect, selectedtabid);
                                 }
                             }); // for(var t in tabdivs)
                         } // success
@@ -180,80 +182,80 @@
 
             // getTabs()
 
-            internal.getProps = function (tabContentDiv, tabid, onSuccess) {
+            cswPrivate.getProps = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
-                if (internal.EditMode === Csw.enums.editMode.Add && internal.Config === false) {
+                if (cswPrivate.EditMode === Csw.enums.editMode.Add && cswPrivate.Config === false) {
                     // case 20970 - make sure there's room in the quota
                     Csw.ajax.post({
-                        watchGlobal: internal.AjaxWatchGlobal,
-                        urlMethod: internal.QuotaUrlMethod,
-                        data: { NodeTypeId: internal.nodetypeid },
+                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                        urlMethod: cswPrivate.QuotaUrlMethod,
+                        data: { NodeTypeId: cswPrivate.nodetypeid },
                         success: function (data) {
                             if (Csw.bool(data.result)) {
-                                internal.getPropsImpl(tabContentDiv, tabid, onSuccess);
+                                cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
                             } else {
                                 tabContentDiv.append('You have used all of your purchased quota, and must purchase additional quota space in order to add more.');
-                                Csw.tryExec(internal.onInitFinish, false);
+                                Csw.tryExec(cswPrivate.onInitFinish, false);
                             }
                         }
                     });
                 } else {
-                    internal.getPropsImpl(tabContentDiv, tabid, onSuccess);
+                    cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
                 }
             };
 
             // getProps()
 
-            internal.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
+            cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 var jsonData = {
-                    EditMode: internal.EditMode,
-                    NodeId: Csw.tryParseObjByIdx(internal.nodeids, 0),
+                    EditMode: cswPrivate.EditMode,
+                    NodeId: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
                     TabId: tabid,
-                    SafeNodeKey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
-                    NodeTypeId: internal.nodetypeid,
-                    Date: internal.date,
-                    Multi: internal.Multi,
-                    filterToPropId: internal.filterToPropId,
-                    ConfigMode: internal.Config
+                    SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
+                    NodeTypeId: cswPrivate.nodetypeid,
+                    Date: cswPrivate.date,
+                    Multi: cswPrivate.Multi,
+                    filterToPropId: cswPrivate.filterToPropId,
+                    ConfigMode: cswPrivate.Config
                 };
 
                 Csw.ajax.post({
-                    watchGlobal: internal.AjaxWatchGlobal,
-                    urlMethod: internal.PropsUrlMethod,
+                    watchGlobal: cswPrivate.AjaxWatchGlobal,
+                    urlMethod: cswPrivate.PropsUrlMethod,
                     data: jsonData,
                     success: function (data) {
-                        internal.propertyData = data;
-                        internal.form = tabContentDiv.children('form');
-                        internal.form.empty();
+                        cswPrivate.propertyData = data;
+                        cswPrivate.form = tabContentDiv.children('form');
+                        cswPrivate.form.empty();
 
-                        if (false === Csw.isNullOrEmpty(internal.title)) {
-                            internal.form.append(internal.title);
+                        if (false === Csw.isNullOrEmpty(cswPrivate.title)) {
+                            cswPrivate.form.append(cswPrivate.title);
                         }
 
-                        var formTable = internal.form.table({
-                            ID: internal.ID + '_formtbl',
+                        var formTable = cswPrivate.form.table({
+                            ID: cswPrivate.ID + '_formtbl',
                             width: '100%'
                         });
                         //var formTblCell11 = formTable.cell(1, 1);
                         //var formTblCell12 = formTable.cell(1, 2);
 
 
-                        internal.layoutTable = formTable.cell(1, 1).layoutTable({
-                            ID: internal.ID + '_props',
+                        cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable({
+                            ID: cswPrivate.ID + '_props',
                             OddCellRightAlign: true,
-                            ReadOnly: (internal.EditMode === Csw.enums.editMode.PrintReport || internal.ReadOnly),
+                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                             cellSet: {
                                 rows: 1,
                                 columns: 2
                             },
                             onSwap: function (e, onSwapData) {
-                                internal.onSwap(onSwapData);
+                                cswPrivate.onSwap(tabid, onSwapData);
                             },
                             showConfigButton: false, //o.Config,
-                            showExpandRowButton: internal.Config,
-                            showExpandColButton: (internal.Config && internal.EditMode !== Csw.enums.editMode.Table),
-                            showRemoveButton: internal.Config,
+                            showExpandRowButton: cswPrivate.Config,
+                            showExpandColButton: (cswPrivate.Config && cswPrivate.EditMode !== Csw.enums.editMode.Table),
+                            showRemoveButton: cswPrivate.Config,
                             onConfigOn: function () {
                                 doUpdateSubProps(true);
                             }, // onConfigOn
@@ -261,7 +263,7 @@
                                 doUpdateSubProps(false);
                             }, // onConfigOff
                             onRemove: function (event, onRemoveData) {
-                                internal.onRemove(onRemoveData);
+                                cswPrivate.onRemove(tabid, onRemoveData);
                             } // onRemove
                         }); // Csw.literals.layoutTable()
 
@@ -269,56 +271,56 @@
                             var updOnSuccess = function (thisProp, key) {
                                 if (Csw.bool(thisProp.hassubprops)) {
                                     var propId = key; //key
-                                    var subTable = internal.layoutTable[propId + '_subproptable'];
+                                    var subTable = cswPrivate.layoutTable[propId + '_subproptable'];
                                     var parentCell = subTable.parent().parent();
-                                    var cellSet = internal.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
-                                    internal.layoutTable.addCellSetAttributes(cellSet, { propId: propId });
-                                    var propCell = internal.getPropertyCell(cellSet);
+                                    var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                    cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: propId });
+                                    var propCell = cswPrivate.getPropertyCell(cellSet);
 
                                     if (subTable.length > 0) {
                                         var fieldOpt = {
                                             fieldtype: thisProp.fieldtype,
-                                            nodeid: Csw.tryParseObjByIdx(internal.nodeids, 0),
-                                            relatednodeid: internal.relatednodeid,
-                                            relatednodename: internal.relatednodename,
-                                            relatednodetypeid: internal.relatednodetypeid,
-                                            relatedobjectclassid: internal.relatedobjectclassid,
+                                            nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                                            relatednodeid: cswPrivate.relatednodeid,
+                                            relatednodename: cswPrivate.relatednodename,
+                                            relatednodetypeid: cswPrivate.relatednodetypeid,
+                                            relatedobjectclassid: cswPrivate.relatedobjectclassid,
                                             propid: propId,
                                             propDiv: propCell.children('div'),
                                             propData: thisProp,
                                             onChange: function () {
                                             },
-                                            onReload: function () {
-                                                internal.getProps(tabContentDiv, tabid);
+                                            onReload: function (afterReload) {
+                                                cswPrivate.getProps(tabContentDiv, tabid, afterReload);
                                             },
-                                            EditMode: internal.EditMode,
-                                            Multi: internal.Multi,
-                                            cswnbtnodekey: Csw.tryParseObjByIdx(internal.nodekeys, 0)
+                                            EditMode: cswPrivate.EditMode,
+                                            Multi: cswPrivate.Multi,
+                                            cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0)
                                         };
 
-                                        internal.updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn);
+                                        cswPrivate.updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn);
                                     }
                                 }
                                 return false;
                             };
-                            Csw.crawlObject(internal.propertyData, updOnSuccess, false);
+                            Csw.crawlObject(cswPrivate.propertyData, updOnSuccess, false);
                         }
 
-                        if (internal.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(internal.showSaveButton)) {
-                            internal.saveBtn = formTable.cell(2, 1).button({
+                        if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.showSaveButton)) {
+                            cswPrivate.saveBtn = formTable.cell(2, 1).button({
                                 ID: 'SaveTab',
                                 enabledText: 'Save Changes',
                                 disabledText: 'Saving...',
-                                onClick: function () { external.save(tabContentDiv, tabid); }
+                                onClick: function () { cswPublic.save(tabContentDiv, tabid); }
                             });
                         }
-                        internal.atLeastOne = internal.handleProperties(null, tabContentDiv, tabid, false);
-                        if (false === Csw.isNullOrEmpty(internal.layoutTable.cellSet(1, 1)) &&
-                            false === Csw.isNullOrEmpty(internal.layoutTable.cellSet(1, 1)[1][2])) {
-                            internal.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
+                        cswPrivate.atLeastOne = cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
+                        if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
+                            false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
+                            cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                         }
                         // Validation
-                        internal.form.$.validate({
+                        cswPrivate.form.$.validate({
                             highlight: function (element) {
                                 var $elm = $(element);
                                 $elm.attr('csw_invalid', '1');
@@ -335,24 +337,24 @@
                             }
                         }); // validate()
 
-                        if (Csw.bool(internal.Config)) {
-                            internal.layoutTable.configOn();
-                        } else if (!internal.Config &&
-                            Csw.isNullOrEmpty(internal.date) &&
-                                internal.filterToPropId === '' &&
-                                    internal.EditMode !== Csw.enums.editMode.PrintReport &&
+                        if (Csw.bool(cswPrivate.Config)) {
+                            cswPrivate.layoutTable.configOn();
+                        } else if (!cswPrivate.Config &&
+                            Csw.isNullOrEmpty(cswPrivate.date) &&
+                                cswPrivate.filterToPropId === '' &&
+                                    cswPrivate.EditMode !== Csw.enums.editMode.PrintReport &&
                                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
                             /* Case 24437 */
                             var editLayoutOpt = {
-                                ID: internal.ID,
-                                nodeids: internal.nodeids,
-                                nodekeys: internal.nodekeys,
-                                tabid: internal.tabid,
-                                nodetypeid: internal.nodetypeid,
+                                ID: cswPrivate.ID,
+                                nodeids: cswPrivate.nodeids,
+                                nodekeys: cswPrivate.nodekeys,
+                                tabid: cswPrivate.tabid,
+                                nodetypeid: cswPrivate.nodetypeid,
                                 Refresh: function () {
-                                    Csw.tryExec(internal.Refresh);
-                                    internal.Config = false;
-                                    internal.getTabs(tabContentDiv);
+                                    Csw.tryExec(cswPrivate.Refresh);
+                                    cswPrivate.Config = false;
+                                    cswPrivate.getTabs(tabContentDiv);
                                 }
                             };
 
@@ -360,19 +362,19 @@
                             formTable.cell(1, 2).imageButton({
                                 ButtonType: Csw.enums.imageButton_ButtonType.Configure,
                                 AlternateText: 'Configure',
-                                ID: internal.ID + 'configbtn',
+                                ID: cswPrivate.ID + 'configbtn',
                                 onClick: function () {
-                                    internal.clearTabs();
+                                    cswPrivate.clearTabs();
                                     $.CswDialog('EditLayoutDialog', editLayoutOpt);
                                 }
                             });
                         }
 
                         /* case 8494 */
-                        if (!internal.Config && !internal.atLeastOne.Saveable && internal.EditMode === Csw.enums.editMode.Add) {
-                            external.save(tabContentDiv, tabid);
+                        if (!cswPrivate.Config && !cswPrivate.atLeastOne.Saveable && cswPrivate.EditMode === Csw.enums.editMode.Add) {
+                            cswPublic.save(tabContentDiv, tabid);
                         } else {
-                            Csw.tryExec(internal.onInitFinish, internal.atLeastOne.Property);
+                            Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
                             Csw.tryExec(onSuccess);
                         }
                     } // success{}
@@ -381,20 +383,20 @@
 
             // getPropsImpl()
 
-            internal.onRemove = function (onRemoveData) {
+            cswPrivate.onRemove = function (tabid, onRemoveData) {
                 'use strict';
                 var propid = '';
-                var propDiv = internal.getPropertyCell(onRemoveData.cellSet).children('div');
+                var propDiv = cswPrivate.getPropertyCell(onRemoveData.cellSet).children('div');
                 if (false === Csw.isNullOrEmpty(propDiv)) {
                     propid = propDiv.first().propNonDom('propId');
                 }
 
                 Csw.ajax.post({
-                    watchGlobal: internal.AjaxWatchGlobal,
-                    urlMethod: internal.RemovePropUrlMethod,
-                    data: { PropId: propid, EditMode: internal.EditMode },
+                    watchGlobal: cswPrivate.AjaxWatchGlobal,
+                    urlMethod: cswPrivate.RemovePropUrlMethod,
+                    data: { PropId: propid, EditMode: cswPrivate.EditMode, TabId: tabid },
                     success: function () {
-                        internal.onPropertyRemove(propid);
+                        cswPrivate.onPropertyRemove(propid);
                     }
                 });
 
@@ -402,27 +404,28 @@
 
             // onRemove()
 
-            internal.onSwap = function (onSwapData) {
-                internal.moveProp(internal.getPropertyCell(onSwapData.cellSet), onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
-                internal.moveProp(internal.getPropertyCell(onSwapData.swapcellset), onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
+            cswPrivate.onSwap = function (tabid, onSwapData) {
+                cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+                cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
             };
 
             // onSwap()
 
-            internal.moveProp = function (propDiv, newrow, newcolumn, propId) {
+            cswPrivate.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
                 'use strict';
                 if (propDiv.length() > 0) {
                     var propid = Csw.string(propDiv.propNonDom('propid'), propId);
                     var dataJson = {
                         PropId: propid,
+                        TabId: tabid,
                         NewRow: newrow,
                         NewColumn: newcolumn,
-                        EditMode: internal.EditMode
+                        EditMode: cswPrivate.EditMode
                     };
 
                     Csw.ajax.post({
-                        watchGlobal: internal.AjaxWatchGlobal,
-                        urlMethod: internal.MovePropUrlMethod,
+                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                        urlMethod: cswPrivate.MovePropUrlMethod,
                         data: dataJson
                     });
                 }
@@ -430,38 +433,38 @@
 
             // _moveProp()
 
-            internal.getLabelCell = function (cellSet) {
+            cswPrivate.getLabelCell = function (cellSet) {
                 return cellSet[1][1].children('div');
             };
 
-            internal.getPropertyCell = function (cellSet) {
+            cswPrivate.getPropertyCell = function (cellSet) {
                 return cellSet[1][2].children('div');
             };
 
-            internal.handleProperties = function (layoutTable, tabContentDiv, tabid, configMode) {
+            cswPrivate.handleProperties = function (layoutTable, tabContentDiv, tabid, configMode) {
                 'use strict';
-                layoutTable = layoutTable || internal.layoutTable;
-                internal.atLeastOne = { Property: false, Saveable: false };
+                layoutTable = layoutTable || cswPrivate.layoutTable;
+                cswPrivate.atLeastOne = { Property: false, Saveable: false };
                 var handleSuccess = function (propObj) {
-                    internal.atLeastOne.Property = true;
-                    internal.handleProp(layoutTable, propObj, tabContentDiv, tabid, configMode);
+                    cswPrivate.atLeastOne.Property = true;
+                    cswPrivate.handleProp(layoutTable, propObj, tabContentDiv, tabid, configMode);
                     return false;
                 };
-                Csw.crawlObject(internal.propertyData, handleSuccess, false);
+                Csw.crawlObject(cswPrivate.propertyData, handleSuccess, false);
 
-                if (false === Csw.isNullOrEmpty(internal.saveBtn, true)) {
-                    if (internal.Config || (internal.atLeastOne.Saveable === false && internal.EditMode != Csw.enums.editMode.Add)) {
-                        internal.saveBtn.hide();
+                if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
+                    if (cswPrivate.Config || (cswPrivate.atLeastOne.Saveable === false && cswPrivate.EditMode != Csw.enums.editMode.Add)) {
+                        cswPrivate.saveBtn.hide();
                     } else {
-                        internal.saveBtn.show();
+                        cswPrivate.saveBtn.show();
                     }
                 }
-                return internal.atLeastOne;
+                return cswPrivate.atLeastOne;
             };
 
             // _handleProperties()
 
-            internal.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
+            cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
                 var propid = propData.id,
                     cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol),
@@ -471,10 +474,10 @@
 
                 layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 
-                if (internal.canDisplayProp(propData, configMode) &&
+                if (cswPrivate.canDisplayProp(propData, configMode) &&
                     Csw.bool(propData.showpropertyname)) {
 
-                    labelCell = internal.getLabelCell(cellSet);
+                    labelCell = cswPrivate.getLabelCell(cellSet);
 
                     labelCell.addClass('propertylabel');
                     if (Csw.bool(propData.highlight)) {
@@ -485,7 +488,7 @@
                         labelCell.a({
                             cssclass: 'cswprop_helplink',
                             title: helpText,
-                            onClick: function() {
+                            onClick: function () {
                                 return false;
                             },
                             value: propName
@@ -497,73 +500,75 @@
 
                     /* Case 25936 */
                     if (false === Csw.bool(propData.readonly)) {
-                        internal.atLeastOne.Saveable = true;
-                        if (internal.ShowCheckboxes && Csw.bool(propData.copyable)) {
+                        cswPrivate.atLeastOne.Saveable = true;
+                        if (cswPrivate.ShowCheckboxes && Csw.bool(propData.copyable)) {
                             var inpPropCheck = labelCell.input({
                                 ID: 'check_' + propid,
                                 type: Csw.enums.inputTypes.checkbox,
                                 value: false, // Value --not defined?,
-                                cssclass: internal.ID + '_check'
+                                cssclass: cswPrivate.ID + '_check'
                             });
                             inpPropCheck.propNonDom('propid', propid);
                         }
                     }
                 }
 
-                var propCell = internal.getPropertyCell(cellSet);
+                var propCell = cswPrivate.getPropertyCell(cellSet);
                 propCell.addClass('propertyvaluecell');
 
                 if (Csw.bool(propData.highlight)) {
                     propCell.addClass('ui-state-highlight');
                 }
-                internal.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
+                cswPrivate.makeProp(propCell, propData, tabContentDiv, tabid, configMode, layoutTable);
             };
 
-            internal.canDisplayProp = function (propData, configMode) {
+            cswPrivate.canDisplayProp = function (propData, configMode) {
                 /*The prop is set to display or we're in layout config mode*/
                 var ret = (Csw.bool(propData.display, true) || configMode);
                 /*And either no filter is set or the filter is set to this property */
-                ret = ret && (internal.filterToPropId === '' || internal.filterToPropId === propData.id);
+                ret = ret && (cswPrivate.filterToPropId === '' || cswPrivate.filterToPropId === propData.id);
                 /* We're not excluding any OC Props or this prop has not been excluded */
-                ret = ret && ((Csw.isNullOrEmpty(internal.excludeOcProps) || internal.excludeOcProps.length === 0) || false === Csw.contains(internal.excludeOcProps, Csw.string(propData.ocpname).toLowerCase()));
+                ret = ret && ((Csw.isNullOrEmpty(cswPrivate.excludeOcProps) || cswPrivate.excludeOcProps.length === 0) || false === Csw.contains(cswPrivate.excludeOcProps, Csw.string(propData.ocpname).toLowerCase()));
                 return ret;
             };
 
-            internal.makeProp = function (propCell, propData, tabContentDiv, tabid, configMode, layoutTable) {
+            cswPrivate.makeProp = function (propCell, propData, tabContentDiv, tabid, configMode, layoutTable) {
                 'use strict';
                 propCell.empty();
-                if (internal.canDisplayProp(propData, configMode)) {
+                if (cswPrivate.canDisplayProp(propData, configMode)) {
                     var propId = propData.id;
                     var propName = propData.name;
 
                     var fieldOpt = {
                         fieldtype: propData.fieldtype,
-                        nodeid: Csw.tryParseObjByIdx(internal.nodeids, 0),
-                        nodename: internal.nodename,
-                        relatednodeid: internal.relatednodeid,
-                        relatednodename: internal.relatednodename,
-                        relatednodetypeid: internal.relatednodetypeid,
-                        relatedobjectclassid: internal.relatedobjectclassid,
+                        nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                        nodename: cswPrivate.nodename,
+                        relatednodeid: cswPrivate.relatednodeid,
+                        relatednodename: cswPrivate.relatednodename,
+                        relatednodetypeid: cswPrivate.relatednodetypeid,
+                        relatedobjectclassid: cswPrivate.relatedobjectclassid,
                         propid: propId,
                         propDiv: propCell.div(),
-                        saveBtn: internal.saveBtn,
+                        saveBtn: cswPrivate.saveBtn,
                         propData: propData,
                         onChange: function () {
                         },
-                        onReload: function () { internal.getProps(tabContentDiv, tabid); },
+                        onReload: function (afterReload) {
+                            cswPrivate.getProps(tabContentDiv, tabid, afterReload);
+                        },
                         doSave: function (saveopts) {
                             var s = {
                                 onSuccess: null
                             };
                             if (saveopts) $.extend(s, saveopts);
-                            external.save(tabContentDiv, tabid, s.onSuccess);
+                            cswPublic.save(tabContentDiv, tabid, s.onSuccess);
                         },
-                        cswnbtnodekey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
-                        EditMode: internal.EditMode,
-                        Multi: internal.Multi,
-                        onEditView: internal.onEditView,
-                        onAfterButtonClick: internal.onAfterButtonClick,
-                        ReadOnly: Csw.bool(propData.readonly) || internal.Config
+                        cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0),
+                        EditMode: cswPrivate.EditMode,
+                        Multi: cswPrivate.Multi,
+                        onEditView: cswPrivate.onEditView,
+                        onAfterButtonClick: cswPrivate.onAfterButtonClick,
+                        ReadOnly: Csw.bool(propData.readonly) || cswPrivate.Config
                     };
                     fieldOpt.propDiv.propNonDom({
                         'nodeid': fieldOpt.nodeid,
@@ -571,11 +576,11 @@
                         'cswnbtnodekey': fieldOpt.cswnbtnodekey
                     });
 
-                    fieldOpt.onChange = function () { if (Csw.isFunction(internal.onPropertyChange)) internal.onPropertyChange(fieldOpt.propid, propName); };
+                    fieldOpt.onChange = function () { if (Csw.isFunction(cswPrivate.onPropertyChange)) cswPrivate.onPropertyChange(fieldOpt.propid, propName); };
                     if (Csw.bool(propData.hassubprops)) {
                         fieldOpt.onChange = function () {
-                            internal.updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable);
-                            if (Csw.isFunction(internal.onPropertyChange)) internal.onPropertyChange(fieldOpt.propid, propName);
+                            cswPrivate.updateSubProps(fieldOpt, propId, propData, propCell, tabContentDiv, tabid, false, layoutTable);
+                            if (Csw.isFunction(cswPrivate.onPropertyChange)) cswPrivate.onPropertyChange(fieldOpt.propid, propName);
                         };
                     } // if (Csw.bool(propData.hassubprops)) {
                     $.CswFieldTypeFactory('make', fieldOpt);
@@ -587,13 +592,13 @@
                         var subLayoutTable = propCell.layoutTable({
                             ID: fieldOpt.propid + '_subproptable',
                             OddCellRightAlign: true,
-                            ReadOnly: (internal.EditMode === Csw.enums.editMode.PrintReport || internal.ReadOnly),
+                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                             cellSet: {
                                 rows: 1,
                                 columns: 2
                             },
                             onSwap: function (e, onSwapData) {
-                                internal.onSwap(onSwapData);
+                                cswPrivate.onSwap(tabid, onSwapData);
                             },
                             showConfigButton: false,
                             showExpandRowButton: false,
@@ -604,7 +609,7 @@
                         var subOnSuccess = function (subProp, key) {
                             subProp.propId = key;
                             if (Csw.bool(subProp.display) || configMode) {
-                                internal.handleProp(subLayoutTable, subProp, tabContentDiv, tabid, configMode);
+                                cswPrivate.handleProp(subLayoutTable, subProp, tabContentDiv, tabid, configMode);
                                 if (configMode) {
                                     subLayoutTable.configOn();
                                 } else {
@@ -620,7 +625,7 @@
 
             // _makeProp()
 
-            internal.updateSubProps = function (fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, layoutTable) {
+            cswPrivate.updateSubProps = function (fieldOpt, propId, propData, propCell, tabContentDiv, tabid, configMode, layoutTable) {
                 /// <summary>Update a properties sub props</summary>
                 /// <param name="fieldOpt" type="Object"> An object defining a prop's fieldtype </param>
                 /// <param name="propId" type="String"> A propertyid </param>
@@ -646,28 +651,28 @@
                         // update the propxml from the server
                         var jsonData = {
                             EditMode: fieldOpt.EditMode,
-                            NodeId: Csw.tryParseObjByIdx(internal.nodeids, 0),
+                            NodeId: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
                             SafeNodeKey: fieldOpt.cswnbtnodekey,
                             PropId: propId,
-                            NodeTypeId: internal.nodetypeid,
+                            NodeTypeId: cswPrivate.nodetypeid,
                             NewPropJson: JSON.stringify(propData)
                         };
 
                         Csw.ajax.post({
-                            watchGlobal: internal.AjaxWatchGlobal,
-                            urlMethod: internal.SinglePropUrlMethod,
+                            watchGlobal: cswPrivate.AjaxWatchGlobal,
+                            urlMethod: cswPrivate.SinglePropUrlMethod,
                             data: jsonData,
                             success: function (data) {
 
                                 data.wasmodified = true; // keep the fact that the parent property was modified
-                                internal.makeProp(propCell, data, tabContentDiv, tabid, configMode, layoutTable);
+                                cswPrivate.makeProp(propCell, data, tabContentDiv, tabid, configMode, layoutTable);
                             }
                         });
                     }
                 }, 150);
             }; // _updateSubProps()
 
-            internal.updatePropJsonFromLayoutTable = function (layoutTable, propData) {
+            cswPrivate.updatePropJsonFromLayoutTable = function (layoutTable, propData) {
                 /// <summary>
                 /// Update the prop JSON from the main LayoutTable or from a subProp LayoutTable
                 ///</summary>
@@ -675,8 +680,8 @@
                 /// <param name="propData" type="Object">(Optional) an object representing CswNbt node properties.</param>
                 /// <returns type="Array">An array of propIds</returns>
                 'use strict';
-                layoutTable = layoutTable || internal.layoutTable;
-                propData = propData || internal.propertyData;
+                layoutTable = layoutTable || cswPrivate.layoutTable;
+                propData = propData || cswPrivate.propertyData;
 
                 var propIds = [];
                 var updSuccess = function (thisProp) {
@@ -684,14 +689,14 @@
                         propData: thisProp,
                         propDiv: '',
                         fieldtype: thisProp.fieldtype,
-                        nodeid: Csw.tryParseObjByIdx(internal.nodeids, 0),
-                        Multi: internal.Multi,
-                        cswnbtnodekey: internal.cswnbtnodekey
+                        nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                        Multi: cswPrivate.Multi,
+                        cswnbtnodekey: cswPrivate.cswnbtnodekey
                     };
 
                     var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
                     layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
-                    propOpt.propCell = internal.getPropertyCell(cellSet);
+                    propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
                     propOpt.propDiv = propOpt.propCell.children('div').first();
 
                     $.CswFieldTypeFactory('save', propOpt);
@@ -705,7 +710,7 @@
                         if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
                             var subTable = layoutTable[thisProp.id + '_subproptable'];
                             if (false === Csw.isNullOrEmpty(subTable)) {
-                                internal.updatePropJsonFromLayoutTable(subTable, subProps);
+                                cswPrivate.updatePropJsonFromLayoutTable(subTable, subProps);
                             }
                         }
                     }
@@ -715,48 +720,48 @@
                 return propIds;
             }; // updatePropJsonFromLayoutTable()
 
-            internal.enableSaveBtn = function () {
-                if (false === Csw.isNullOrEmpty(internal.saveBtn, true)) {
-                    internal.saveBtn.enable();
+            cswPrivate.enableSaveBtn = function () {
+                if (false === Csw.isNullOrEmpty(cswPrivate.saveBtn, true)) {
+                    cswPrivate.saveBtn.enable();
                 }
             };
 
-            external.getPropJson = function () {
-                internal.updatePropJsonFromLayoutTable();
-                return internal.propertyData;
+            cswPublic.getPropJson = function () {
+                cswPrivate.updatePropJsonFromLayoutTable();
+                return cswPrivate.propertyData;
             };
 
-            external.save = function (tabContentDiv, tabid, onSuccess) {
+            cswPublic.save = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
-                if (internal.form.$.valid()) {
-                    var propIds = internal.updatePropJsonFromLayoutTable();
+                if (cswPrivate.form.$.valid()) {
+                    var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                     var data = {
-                        EditMode: internal.EditMode,
-                        NodeIds: Csw.tryParseObjByIdx(internal.nodeids, 0), // o.nodeids.join(','),
-                        SafeNodeKeys: Csw.tryParseObjByIdx(internal.nodekeys, 0), // o.nodekeys.join(','),
+                        EditMode: cswPrivate.EditMode,
+                        NodeIds: cswPrivate.nodeids.join(','),
+                        SafeNodeKeys: cswPrivate.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0) */
                         TabId: tabid,
-                        NodeTypeId: internal.nodetypeid,
-                        NewPropsJson: JSON.stringify(internal.propertyData),
+                        NodeTypeId: cswPrivate.nodetypeid,
+                        NewPropsJson: JSON.stringify(cswPrivate.propertyData),
                         ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
                     };
 
                     Csw.ajax.post({
-                        watchGlobal: internal.AjaxWatchGlobal,
-                        urlMethod: internal.SavePropUrlMethod,
-                        async: (false === internal.Multi),
+                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                        urlMethod: cswPrivate.SavePropUrlMethod,
+                        async: (false === cswPrivate.Multi),
                         data: data,
                         success: function (successData) {
                             var doSave = true;
                             var dataJson = {
-                                SourceNodeKey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
+                                SourceNodeKey: cswPrivate.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0) */
                                 CopyNodeIds: [],
                                 PropIds: []
                             };
 
                             function copyNodeProps(onSuccess) {
                                 Csw.ajax.post({
-                                    watchGlobal: internal.AjaxWatchGlobal,
-                                    urlMethod: internal.CopyPropValuesUrlMethod,
+                                    watchGlobal: cswPrivate.AjaxWatchGlobal,
+                                    urlMethod: cswPrivate.CopyPropValuesUrlMethod,
                                     data: dataJson,
                                     success: function (copy) {
                                         Csw.tryExec(onSuccess, copy);
@@ -764,12 +769,12 @@
                                 }); // ajax						        
                             }
 
-                            if (internal.ShowCheckboxes) {
+                            if (cswPrivate.ShowCheckboxes) {
                                 // apply the newly saved checked property values on this node to the checked nodes
                                 //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
                                 //var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
-                                var nodechecks = internal.nodeTreeCheck.checkedNodes();
-                                var $propchecks = $('.' + internal.ID + '_check:checked');
+                                var nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
+                                var $propchecks = $('.' + cswPrivate.ID + '_check:checked');
 
                                 if (nodechecks.length > 0 && $propchecks.length > 0) {
                                     //$nodechecks.each(function () {
@@ -789,47 +794,48 @@
                                     $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
                                 }
                             } // if(o.ShowCheckboxes)
-                            else if (internal.Multi) {
-                                dataJson.CopyNodeIds = internal.nodeids;
+                            else if (cswPrivate.Multi) {
+                                dataJson.CopyNodeIds = cswPrivate.nodeids;
                                 dataJson.PropIds = propIds;
-                                copyNodeProps(function () { window.location.reload(); });
+                                copyNodeProps( /* Case 26134. We're already doing a clear:all, we don't need this. 
+                                                function () { Csw.window.location().reload();  } */ ); 
                             }
 
-                            internal.enableSaveBtn();
+                            cswPrivate.enableSaveBtn();
 
                             if (doSave) {
                                 // reload tab
-                                if (internal.ReloadTabOnSave) {
-                                    internal.getProps(tabContentDiv, tabid, function () {
-                                        Csw.tryExec(internal.onSave, successData.nodeid, successData.cswnbtnodekey, internal.tabcnt, successData.nodename);
+                                if (cswPrivate.ReloadTabOnSave) {
+                                    cswPrivate.getProps(tabContentDiv, tabid, function () {
+                                        Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
                                         Csw.tryExec(onSuccess);
                                     });
                                 } else {
-                                    // external events
-                                    Csw.tryExec(internal.onSave, successData.nodeid, successData.cswnbtnodekey, internal.tabcnt, successData.nodename);
+                                    // cswPublic events
+                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
                                     Csw.tryExec(onSuccess);
                                 }
                             }
 
                         }, // success
-                        error: internal.enableSaveBtn
+                        error: cswPrivate.enableSaveBtn
                     }); // ajax
-                } // if(internal.form.$.valid())
+                } // if(cswPrivate.form.$.valid())
                 else {
-                    internal.enableSaveBtn();
+                    cswPrivate.enableSaveBtn();
                 }
             }; // Save()
 
             (function () {
-                internal.getTabs(internal.outerTabDiv);
+                cswPrivate.getTabs(cswPrivate.outerTabDiv);
 
-                if (internal.EditMode !== Csw.enums.editMode.PrintReport) {
-                    internal.linkDiv = cswParent.div({ ID: internal.ID + '_linkdiv', align: 'right' });
-                    if (internal.ShowAsReport && false === internal.Multi) {
-                        internal.linkDiv.a({
+                if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport) {
+                    cswPrivate.linkDiv = cswParent.div({ ID: cswPrivate.ID + '_linkdiv', align: 'right' });
+                    if (cswPrivate.ShowAsReport && false === cswPrivate.Multi) {
+                        cswPrivate.linkDiv.a({
                             text: 'As Report',
                             onClick: function () {
-                                Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(internal.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(internal.nodekeys, 0), 600, 800);
+                                Csw.openPopup('NodeReport.html?nodeid=' + Csw.tryParseObjByIdx(cswPrivate.nodeids, 0) + '&cswnbtnodekey=' + Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0), 600, 800);
                             }
                         });
                     }
@@ -837,7 +843,7 @@
             } ());
 
 
-            return external;
+            return cswPublic;
         });
 } ());
 
