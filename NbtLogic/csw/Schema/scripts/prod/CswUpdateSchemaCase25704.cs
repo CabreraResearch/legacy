@@ -31,12 +31,11 @@ namespace ChemSW.Nbt.Schema
 
             // new nodetypes
             // IMCS_Report category=Equipment
-            CswNbtMetaDataNodeType imcsRptNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "ReportClass", "IMCS_Report", "Equipment" );
-            _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.IMCS, imcsRptNT.NodeTypeId );
+            CswNbtMetaDataNodeType imcsRptNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "ReportClass", "IMCS Report", "Equipment" );
             imcsRptNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassReport.ReportNamePropertyName ) );
             _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.IMCS, imcsRptNT.NodeTypeId );
             // SI_Report category=Inspections
-            CswNbtMetaDataNodeType siRptNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "ReportClass", "SI_Report", "Inspections" );
+            CswNbtMetaDataNodeType siRptNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "ReportClass", "SI Report", "Inspections" );
             siRptNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassReport.ReportNamePropertyName ) );
             _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswNbtResources.CswNbtModule.SI, siRptNT.NodeTypeId );
 
@@ -47,16 +46,18 @@ namespace ChemSW.Nbt.Schema
             CswNbtObjClassReport rptNodeAsReport = CswNbtNodeCaster.AsReport( rptNode );
 
             CswNbtMetaDataNodeType DesignNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Lab Safety Checklist" );
-            Int32 locPropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Location" );
-            Int32 inspnamePropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Name" );
-            Int32 inspdatePropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Inspection Date" );
-            Int32 targPropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Target" );
+            if( null != DesignNt )
+            {
+                Int32 locPropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Location" );
+                Int32 inspnamePropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Name" );
+                Int32 inspdatePropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Inspection Date" );
+                Int32 targPropId = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropId( DesignNt.NodeTypeId, "Target" );
 
 
 
-            rptNodeAsReport.Category.Text = "Lab Safety";
-            rptNodeAsReport.ReportName.Text = "Lab 1 Deficiencies";
-            rptNodeAsReport.SQL.Text = @"select des.P" + inspdatePropId.ToString() + @" as InspectionDate, 
+                rptNodeAsReport.Category.Text = "Lab Safety";
+                rptNodeAsReport.ReportName.Text = "Lab 1 Deficiencies";
+                rptNodeAsReport.SQL.Text = @"select des.P" + inspdatePropId.ToString() + @" as InspectionDate, 
                                       des.P" + inspnamePropId.ToString() + @" as InspectionName,
                                       des.P" + locPropId.ToString() + @" as Location,
                                       CASE nvl(q.correctiveaction,'NULL')
@@ -74,22 +75,22 @@ namespace ChemSW.Nbt.Schema
                                           where (q.iscompliant = '0' or q.correctiveaction is not null)
                                            and des.P" + locPropId.ToString() + @" like '%> Lab 1'
                                       order by des.P" + locPropId.ToString() + @", des.P" + inspdatePropId.ToString() + @", q.questionno";
-            rptNode.IsDemo = true;
-            rptNodeAsReport.postChanges( true );
+                rptNode.IsDemo = true;
+                rptNodeAsReport.postChanges( true );
 
-
-            //fix the mailer node to the new reportnode
-            if( oldNodeid != null )
-            {
-                CswNbtMetaDataObjectClass mailOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
-                foreach( CswNbtNode mailNode in mailOC.getNodes( false, false ) )
+                //fix the mailer node to the new reportnode
+                if( oldNodeid != null )
                 {
-                    CswNbtObjClassMailReport nodeAsMail = CswNbtNodeCaster.AsMailReport( mailNode );
-                    if( nodeAsMail.Report.RelatedNodeId == oldNodeid )
+                    CswNbtMetaDataObjectClass mailOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+                    foreach( CswNbtNode mailNode in mailOC.getNodes( false, false ) )
                     {
-                        nodeAsMail.Report.RelatedNodeId = rptNode.NodeId;
-                        mailNode.IsDemo = true;
-                        nodeAsMail.postChanges( true );
+                        CswNbtObjClassMailReport nodeAsMail = CswNbtNodeCaster.AsMailReport( mailNode );
+                        if( nodeAsMail.Report.RelatedNodeId == oldNodeid )
+                        {
+                            nodeAsMail.Report.RelatedNodeId = rptNode.NodeId;
+                            mailNode.IsDemo = true;
+                            nodeAsMail.postChanges( true );
+                        }
                     }
                 }
             }
