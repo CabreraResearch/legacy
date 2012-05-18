@@ -228,9 +228,9 @@
         });
 
     Csw.validateTime = Csw.validateTime ||
-        Csw.register('validateTime', function(value) {
+        Csw.register('validateTime', function (value) {
             var isValid = true;
-            var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g ;
+            var regex = /^(\d?\d):(\d\d)\s?([APap][Mm])?$/g;
             var match = regex.exec(value);
             if (match === null) {
                 isValid = false;
@@ -243,6 +243,41 @@
             }
             return isValid;
         });
+
+    Csw.getDateFromDnJson = Csw.getDateFromDnJson ||
+        Csw.register('getDateFromDnJson', function (dnDate) {
+            /// <summary> Transforms a .NET JSON date into a JavaScript date.</summary>
+            /// <param name="obj" type="Object"> Object to test</param>
+            /// <returns type="Boolean" />
+            /*
+            var milli = Csw.number(DnDate.replace(/\/Date\((\d+)\-?(\d+)\)\//, '$1'));
+            var offset = Csw.number(DnDate.replace(/\/Date\(\d+([\+\-]?\d+)\)\//, '$1'));
+            var localOffset = new Date().getTimezoneOffset();
+            return new Date((milli - ((localOffset + (offset / 100 * 60)) * 1000)));
+            */
+            /* Dn Date will look like /Date(1335758400000-0400)/  */
+            var dnDateStr = Csw.string(dnDate);
+            var ret, ticks, offset, localOffset, arr;
+            ret = Csw.dateTimeMinValue;
+            if (false === Csw.isNullOrEmpty(dnDateStr)) {
+                dnDateStr = dnDateStr.replace('/', '');
+                dnDateStr = dnDateStr.replace('Date', '');
+                dnDateStr = dnDateStr.replace('(', '');
+                dnDateStr = dnDateStr.replace(')', '');
+                arr = dnDateStr.split('-');
+                if (arr.length > 1) {
+                    ticks = Csw.number(arr[0]);
+                    offset = Csw.number(arr[1]);
+                    localOffset = new Date().getTimezoneOffset();
+                    ret = new Date((ticks - ((localOffset + (offset / 100 * 60)) * 1000)));
+                } else if(arr.length === 1) {
+                    ticks = Csw.number(arr[0]);
+                    ret = new Date(ticks);
+                }
+            }
+            return ret;
+        });
+
 
 } ());
 
