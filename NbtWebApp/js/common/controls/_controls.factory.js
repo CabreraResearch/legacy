@@ -1,6 +1,6 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
-
+'use strict';
 (function () {
 
     Csw.controls.factory = Csw.controls.factory ||
@@ -9,8 +9,6 @@
                 /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
                 /// <param name="cswParent" type="Csw.literals">An Csw Control to bind to.</param>
                 /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
-                'use strict';
-
                 var internal = {};
                 if (Csw.isNullOrEmpty(cswParent)) {
                     throw new Error('Cannot create a Csw component without a Csw control');
@@ -19,8 +17,8 @@
                 internal.controlPreProcessing = function (opts, controlName) {
                     var id = '';
                     opts = opts || {};
-                    if (external.getId) {
-                        id = external.getId();
+                    if (opts.getId) {
+                        id = opts.getId();
                     }
                     if (opts.suffix) {
                         opts.ID = Csw.makeId(id, opts.suffix);
