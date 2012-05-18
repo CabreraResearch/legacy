@@ -32,13 +32,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private string _CompletionMessage = string.Empty;
-        public string CompletionMessage
-        {
-            get { return ( _CompletionMessage ); }
-        }
-
-
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public CswScheduleLogicDetail CswScheduleLogicDetail
@@ -68,66 +61,95 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
-                    _CompletionMessage = string.Empty; 
 
                     List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
+
+                    Int32 TotalGeneratorsProcessed = 0;
+                    string GeneratorDescriptions = string.Empty;
 
                     for( Int32 idx = 0; ( idx < ObjectGenerators.Count && idx < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
+
                         if( CurrentGenerator.Enabled.Checked == Tristate.True )
                         {
-                            DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
-                            DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
-                            if( InitialDueDateValue == DateTime.MinValue )
+
+                            try
                             {
-                                InitialDueDateValue = ThisDueDateValue;
-                            }
-                            DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
 
-                            // BZ 7866
-                            if( ThisDueDateValue != DateTime.MinValue )
+
+                                DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
+                                DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
+                                if( InitialDueDateValue == DateTime.MinValue )
+                                {
+                                    InitialDueDateValue = ThisDueDateValue;
+                                }
+                                DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
+
+                                // BZ 7866
+                                if( ThisDueDateValue != DateTime.MinValue )
+                                {
+                                    // BZ 7124 - set runtime
+                                    if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
+                                    {
+                                        ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                    }
+
+                                    Int32 WarnDays = CswConvert.ToInt32( CurrentGenerator.WarningDays.Value );
+                                    if( WarnDays > 0 )
+                                    {
+                                        TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
+                                        ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
+                                        InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                                    }
+
+                                    // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                                    if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
+                                        ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
+                                        ( DateTime.Now >= ThisDueDateValue ) )
+                                    {
+                                        string Message = _runGenerator( CurrentGenerator );
+                                        _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+
+                                        GeneratorDescriptions += CurrentGenerator.Description + "; ";
+                                        TotalGeneratorsProcessed++;
+                                    }
+                                } // if( ThisDueDateValue != DateTime.MinValue )
+
+                            }//try
+
+                            catch( Exception Exception )
                             {
-                                // BZ 7124 - set runtime
-                                if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue )
-                                {
-                                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
-                                }
+                                string Message = "Unable to process generator " + CurrentGenerator.Description + ", which will now be disabled, due to the following exception: " + Exception.Message;
+                                GeneratorDescriptions += Message;
+                                CurrentGenerator.Enabled.Checked = Tristate.False;
+                                CurrentGenerator.RunStatus.AddComment( "Disabled due do exception: " + Exception.Message );
+                                CurrentGenerator.postChanges( false );
+                                _CswNbtResources.logError( new CswDniException( Message ) );
 
-                                Int32 WarnDays = CswConvert.ToInt32( CurrentGenerator.WarningDays.Value );
-                                if( WarnDays > 0 )
-                                {
-                                    TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
-                                    ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
-                                    InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
-                                }
 
-                                // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                                if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
-                                    ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
-                                    ( DateTime.Now >= ThisDueDateValue ) )
-                                {
-                                    string Message = _runGenerator( CurrentGenerator );
-                                    _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
-                                }
-                            } // if( ThisDueDateValue != DateTime.MinValue )
+                            }//catch
 
                         } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
 
+
+
                     }//iterate generators
 
+                    _CswScheduleLogicDetail.StatusMessage = TotalGeneratorsProcessed.ToString() + " generators processed: " + GeneratorDescriptions;
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line
 
                 }//try
 
                 catch( Exception Exception )
                 {
-                    _CompletionMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
-                    _CswNbtResources.logError( new CswDniException( _CompletionMessage ) );
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
+                    _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
                 }//catch
 
             }//if we're not shutting down
+
 
         }//threadCallBack()
 

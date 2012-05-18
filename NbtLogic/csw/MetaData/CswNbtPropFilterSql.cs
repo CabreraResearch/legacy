@@ -174,19 +174,19 @@ namespace ChemSW.Nbt.MetaData
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
                     {
-                        ReturnVal = NonNumericValueColumn + " > '" + SafeValue + "'";
+                        ReturnVal = NonNumericValueColumn + " > " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
                     {
-                        ReturnVal = NonNumericValueColumn + " >= '" + SafeValue + "'";
+                        ReturnVal = NonNumericValueColumn + " >= " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
                     {
-                        ReturnVal = NonNumericValueColumn + " < '" + SafeValue + "'";
+                        ReturnVal = NonNumericValueColumn + " < " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
                     {
-                        ReturnVal = NonNumericValueColumn + " <= '" + SafeValue + "'";
+                        ReturnVal = NonNumericValueColumn + " <= " + CasePrepend + "'" + SafeValue + "'" + CaseAppend;
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
                     {

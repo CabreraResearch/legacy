@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Linq;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -62,6 +63,7 @@ namespace ChemSW.Nbt.WebServices
         private void _finalize( CswNbtResources OtherResources )
         {
             OtherResources.finalize();
+            OtherResources.release();
         }
 
         #endregion private
@@ -87,7 +89,9 @@ namespace ChemSW.Nbt.WebServices
             JArray CustomerIds = new JArray();
             RetObj["customerids"] = CustomerIds;
 
-            foreach( string AccessId in _NbtManagerResources.CswDbCfgInfo.AccessIds )
+            foreach( string AccessId in from string _AccessId in _NbtManagerResources.CswDbCfgInfo.AccessIds
+                                        orderby _AccessId
+                                        select _AccessId )
             {
                 if( _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
                 {
@@ -105,10 +109,10 @@ namespace ChemSW.Nbt.WebServices
             CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
             DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            CswGridData GridData = new CswGridData( _OtherResources );
+            CswNbtActGrid NbtActGrid = new CswNbtActGrid( _OtherResources );
             string TablePkColumn = "scheduledruleid";
-            GridData.PkColumn = TablePkColumn;
-            GridData.HidePkColumn = true;
+            NbtActGrid.PkColumn = TablePkColumn;
+            NbtActGrid.HidePkColumn = true;
 
             CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
                                                           {
@@ -129,16 +133,16 @@ namespace ChemSW.Nbt.WebServices
                 ScheduledRulesTable.Columns.Remove( ColumnName );
             }
 
-            GridData.EditableColumns = new CswCommaDelimitedString();
+            NbtActGrid.EditableColumns = new CswCommaDelimitedString();
             foreach( DataColumn Column in ScheduledRulesTable.Columns )
             {
                 if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
                 {
-                    GridData.EditableColumns.Add( Column.ColumnName );
+                    NbtActGrid.EditableColumns.Add( Column.ColumnName );
                 }
             }
 
-            RetObj = GridData.DataTableToJSON( ScheduledRulesTable, true );
+            RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
 
             return RetObj;
         }

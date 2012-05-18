@@ -494,6 +494,39 @@ namespace ChemSW.Nbt
             return EnabledModules;
         }
 
+        /// <summary>
+        /// This will explicitly enable or disable a set of modules.  
+        /// Any modules not listed in either list will not be altered.
+        /// </summary>
+        public bool UpdateModules( Collection<CswNbtModule> ModulesToEnable, Collection<CswNbtModule> ModulesToDisable )
+        {
+            bool ret = false;
+
+            CswTableUpdate ModulesUpdate = makeCswTableUpdate( "CswNbtResources.UpdateModules_update", "modules" );
+            DataTable ModulesTable = ModulesUpdate.getTable();
+            foreach( DataRow ModuleRow in ModulesTable.Rows )
+            {
+                CswNbtModule Module;
+                Enum.TryParse( ModuleRow["name"].ToString(), true, out Module );
+                if( ModulesToEnable.Contains( Module ) )
+                {
+                    ModuleRow["enabled"] = CswConvert.ToDbVal( true );
+                }
+                if( ModulesToDisable.Contains( Module ) )
+                {
+                    ModuleRow["enabled"] = CswConvert.ToDbVal( false );
+                }
+            }
+            ret = ModulesUpdate.update( ModulesTable );
+
+            initModules();
+
+            // case 26029
+            MetaData.ResetEnabledNodeTypes();
+
+            return ret;
+        }
+
         #endregion Modules
 
 

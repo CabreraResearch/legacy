@@ -32,9 +32,11 @@ namespace ChemSW.Nbt.WebServices
         /// </param>
         /// <param name="RelationshipObjectClassPropName">(Optional [Requires RelationshipObjectClassPropName]) 
         /// <para>The name of the Object Class Prop which defines the relationship to RelationshipTargetNodeTypeId</para>
+        /// <param name="FilterToCreate">(Optional) 
+        /// <para>When set to true, only gets NodeTypes user has permission to create</para>
         /// </param>
         /// <returns></returns>
-        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, string ExcludeNodeTypeIds = "", Int32 RelationshipTargetNodeTypeId = Int32.MinValue, string RelationshipObjectClassPropName = "" )
+        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, string ExcludeNodeTypeIds = "", Int32 RelationshipTargetNodeTypeId = Int32.MinValue, string RelationshipObjectClassPropName = "", string FilterToPermission = "" )
         {
             JObject ReturnVal = new JObject();
 
@@ -82,7 +84,12 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                     }
+                    if( false == _userHasPermission( FilterToPermission, RetNodeType ) )
+                    {
+                        AddThisNodeType = false;
+                    }
                 }
+
                 if( AddThisNodeType )
                 {
                     _addNodeTypeAttributes( RetNodeType, ReturnVal );
@@ -94,6 +101,17 @@ namespace ChemSW.Nbt.WebServices
             ReturnVal["count"] = NodeTypeCount;
             return ReturnVal;
         } // getNodeTypes()
+
+        private bool _userHasPermission( string FilterToPermission, CswNbtMetaDataNodeType RetNodeType )
+        {
+            bool hasPermission = true;
+            CswNbtPermit.NodeTypePermission PermissionType;
+            if( Enum.TryParse<CswNbtPermit.NodeTypePermission>( FilterToPermission, out PermissionType ) )
+            {
+                hasPermission = _CswNbtResources.Permit.can( PermissionType, RetNodeType );
+            }
+            return hasPermission;
+        }
 
         private void _addNodeTypeAttributes( CswNbtMetaDataNodeType NodeType, JObject ReturnVal )
         {

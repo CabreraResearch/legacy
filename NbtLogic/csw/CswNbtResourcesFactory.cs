@@ -1,6 +1,5 @@
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Log;
 using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
@@ -33,15 +32,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.PooledConnectionState PooledConnectionState = RscAdo.PooledConnectionState.Open, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
-
-            if( SetupMode.NbtWeb == SetupMode )
-            {
-                if( null == CswSuperCycleCache )
-                {
-                    throw ( new CswDniException( "The web consumer must provide a super cycle cache!" ) );
-                }
-            }
-            else
+            if( null == CswSuperCycleCache )
             {
                 CswSuperCycleCache = new CswSuperCycleCacheDefault();
             }

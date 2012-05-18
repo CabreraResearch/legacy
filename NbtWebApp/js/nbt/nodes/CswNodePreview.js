@@ -12,7 +12,7 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 eventArg: {},
-                delay: 750
+                delay: 2500
             };
             if (options) $.extend(o, options);
 
@@ -35,6 +35,7 @@
                     top: Y + 'px',
                     left: X + 'px'
                 });
+                $div.css('z-index', '100');
             } // _fixDimensions()
 
             function _loadPreview() {

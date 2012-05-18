@@ -25,10 +25,10 @@
             propid: '',
             onAddNode: null, // function (nodeid, cswnbtnodekey) { },
             onMultiEdit: null, // function () { },
-            onSearch: {
-                 onViewSearch: null, // function () {}, 
-                 onGenericSearch: null // function () {}
-            },
+//            onSearch: {
+//                 onViewSearch: null, // function () {}, 
+//                 onGenericSearch: null // function () {}
+//            },
             onEditView: null, // function (viewid) { },
             onSaveView: null, // function (newviewid) { },
             Multi: false,

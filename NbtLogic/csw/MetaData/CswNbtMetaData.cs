@@ -558,8 +558,9 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypesRow["nodetypename"] = NodeTypeName;
             InsertedNodeTypesRow["category"] = Category;
             InsertedNodeTypesRow["versionno"] = "1";
-            InsertedNodeTypesRow["islocked"] = "0";
+            InsertedNodeTypesRow["islocked"] = CswConvert.ToDbVal( false );
             InsertedNodeTypesRow["tablename"] = "nodes";
+            InsertedNodeTypesRow["enabled"] = CswConvert.ToDbVal( true );
             NodeTypesTable.Rows.Add( InsertedNodeTypesRow );
             Int32 NodeTypeId = CswConvert.ToInt32( InsertedNodeTypesRow["nodetypeid"] );
             InsertedNodeTypesRow["firstversionid"] = NodeTypeId.ToString();
@@ -618,7 +619,7 @@ namespace ChemSW.Nbt.MetaData
 
                 NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
 
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, DisplayRow, 1 );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, FirstTab.TabId, DisplayRow, 1 );
                 if( OCProp.getFieldType().IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) &&
                     ( ( OCProp.IsRequired &&
                     false == OCProp.HasDefaultValue() ) ||
@@ -626,7 +627,7 @@ namespace ChemSW.Nbt.MetaData
                     ( Int32.MinValue != OCProp.DisplayColAdd &&
                     Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
                 }
                 DisplayRow++;
             }//iterate object class props
@@ -822,17 +823,23 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
 
             // Version, if necessary
-            string OriginalTabName;
+            string OriginalTabName = string.Empty;
             if( TabId != Int32.MinValue )
-                OriginalTabName = getNodeTypeTab( TabId ).TabName;
-            else if( InsertAfterProp != null && InsertAfterProp.EditLayout.TabId != Int32.MinValue )
             {
-                CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( InsertAfterProp.EditLayout.TabId );
-                //OriginalTabName = InsertAfterProp.EditLayout.Tab.TabName;
-                OriginalTabName = OriginalTab.TabName;
+                OriginalTabName = getNodeTypeTab( TabId ).TabName;
             }
-            else
+            else if( InsertAfterProp != null && InsertAfterProp.FirstEditLayout.TabId != Int32.MinValue )
+            {
+                CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( InsertAfterProp.FirstEditLayout.TabId );
+                if( OriginalTab != null )
+                {
+                    OriginalTabName = OriginalTab.TabName;
+                }
+            }
+            if( OriginalTabName == string.Empty )
+            {
                 OriginalTabName = NodeType.getFirstNodeTypeTab().TabName;
+            }
             NodeType = CheckVersioning( NodeType );
             CswNbtMetaDataNodeTypeTab Tab = NodeType.getNodeTypeTab( OriginalTabName );
 
@@ -918,18 +925,18 @@ namespace ChemSW.Nbt.MetaData
 
             if( InsertAfterProp != null )
             {
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp, InsertAfterProp );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp, InsertAfterProp, true );
                 if( FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp, InsertAfterProp, true );
                 }
             }
             else //if( NodeTypeTabs.Rows.Count > 0 )
             {
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, Tab.TabId, Int32.MinValue, Int32.MinValue );
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, Tab.TabId, Int32.MinValue, Int32.MinValue );
                 if( FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                 {
-                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, Int32.MinValue, Int32.MinValue, Int32.MinValue );
+                    NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                 }
             }
 
@@ -982,6 +989,54 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         }
+
+        /// <summary>
+        /// Reevaluates what nodetypes should be enabled
+        /// </summary>
+        public void ResetEnabledNodeTypes()
+        {
+            bool IsEnabled;
+            CswTableSelect NTSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "MetaData.ResetEnabledNodeTypes", "nodetypes" );
+
+            CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodetypeid" };
+
+            string WhereClause = @"where ((exists (select j.jctmoduleobjectclassid
+                                              from jct_modules_objectclass j
+                                              join modules m on j.moduleid = m.moduleid
+                                             where j.objectclassid = nodetypes.objectclassid
+                                               and m.enabled = '1')
+                                or not exists (select j.jctmoduleobjectclassid
+                                                 from jct_modules_objectclass j
+                                                 join modules m on j.moduleid = m.moduleid
+                                                where j.objectclassid = nodetypes.objectclassid) )
+                               and (exists (select j.jctmodulenodetypeid
+                                              from jct_modules_nodetypes j
+                                              join modules m on j.moduleid = m.moduleid
+                                             where j.nodetypeid = nodetypes.firstversionid
+                                               and m.enabled = '1')
+                                or not exists (select j.jctmodulenodetypeid
+                                                 from jct_modules_nodetypes j
+                                                 join modules m on j.moduleid = m.moduleid
+                                                where j.nodetypeid = nodetypes.firstversionid) ) )";
+
+            DataTable NTTable = NTSelect.getTable( SelectClause, WhereClause );
+
+            CswTableUpdate NTUpdate = CswNbtResources.makeCswTableUpdate( "ResetEnabledNodeTypes_Update", "nodetypes" );
+            DataTable NTAllTable = NTUpdate.getTable();
+            foreach( DataRow NodeTypeRow in NTAllTable.Rows )
+            {
+                IsEnabled = false;
+                foreach( DataRow NTRow in NTTable.Rows )
+                {
+                    if( CswConvert.ToInt32( NTRow["nodetypeid"] ) == CswConvert.ToInt32( NodeTypeRow["NodeTypeId"] ) )
+                    {
+                        IsEnabled = true;
+                    }
+                }
+                NodeTypeRow["enabled"] = CswConvert.ToDbVal( IsEnabled );
+            }
+            NTUpdate.update( NTAllTable );
+        } // ResetEnabledNodeTypes()
 
         /// <summary>
         /// Converts a Generic nodetype to another Object Class
@@ -1065,6 +1120,8 @@ namespace ChemSW.Nbt.MetaData
             InsertedNodeTypeRow["nodetypename"] = NewNodeTypeName;
             InsertedNodeTypeRow["category"] = NodeType.Category;
             InsertedNodeTypeRow["islocked"] = CswConvert.ToDbVal( false );
+            InsertedNodeTypeRow["enabled"] = CswConvert.ToDbVal( true );
+
             NewNodeTypeTable.Rows.Add( InsertedNodeTypeRow );
             Int32 NewNodeTypeId = CswConvert.ToInt32( InsertedNodeTypeRow["nodetypeid"].ToString() );
             if( IsVersioning )
@@ -1175,15 +1232,18 @@ namespace ChemSW.Nbt.MetaData
                 // Fix layout
                 foreach( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType in Enum.GetValues( typeof( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType ) ) )
                 {
-                    CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp.PropId );
-                    if( OriginalLayout != null )
+                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp.PropId );
+                    foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
                     {
-                        Int32 NewTabId = Int32.MinValue;
-                        if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+                        if( OriginalLayout != null )
                         {
-                            NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
+                            Int32 NewTabId = Int32.MinValue;
+                            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+                            {
+                                NewTabId = CswConvert.ToInt32( TabMap[OriginalLayout.TabId] );
+                            }
+                            NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, NewPropId, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
                         }
-                        NodeTypeLayout.updatePropLayout( LayoutType, NewNodeType.NodeTypeId, NewPropId, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
                     }
                 }
 
@@ -1387,10 +1447,10 @@ namespace ChemSW.Nbt.MetaData
         /// <returns>Tab of deleted property (for UI to select)</returns>
         protected CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool Internal )
         {
-            CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.EditLayout.TabId );
-            if( !Internal )
+            CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.FirstEditLayout.TabId );
+            if( false == Internal )
             {
-                if( !NodeTypeProp.IsDeletable() )
+                if( false == NodeTypeProp.IsDeletable() )
                     throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
 
                 //string OriginalPropName = NodeTypeProp.PropName;
@@ -1399,6 +1459,13 @@ namespace ChemSW.Nbt.MetaData
             }
 
             // Delete Jct_Nodes_Props records
+            /* Case 26285: This is a bit of a hack (admittedly), but the crux of the issue is this: 
+             * because JctNodesPropsTableUpdate is a CswTableUpdate and not a CswTableSelect, we must commit the underlying DataTables, 
+             * which contain the row for this property's DefaultValue, which we fetched when we clicked the property in order to delete it. 
+             * Short of refactoring the CswTable instances into read/write pairs and implementing read and write getters, this'll do.
+             * TODO: Remove _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear(); when Design mode is refactored.
+             */
+            _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
             CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
             DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
             foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
@@ -1408,10 +1475,7 @@ namespace ChemSW.Nbt.MetaData
             JctNodesPropsUpdate.update( JctNodesPropsTable );
 
             // Delete nodetype_layout records
-            foreach( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType in Enum.GetValues( typeof( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType ) ) )
-            {
-                NodeTypeLayout.removePropFromLayout( LayoutType, NodeTypeProp );
-            }
+            NodeTypeLayout.removePropFromAllLayouts( NodeTypeProp );
 
             // Delete Views
             // This has to come after because nodetype_props has an fk to node_views.
@@ -1498,7 +1562,7 @@ namespace ChemSW.Nbt.MetaData
 
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
             {
-                Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewTab.TabId, Int32.MinValue, Int32.MinValue );
+                Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, NewTab.TabId, Int32.MinValue, Int32.MinValue );
                 // BZ 8353 - To avoid constraint errors, post this change immediately
                 _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
             }

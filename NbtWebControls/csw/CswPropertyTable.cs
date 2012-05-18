@@ -273,13 +273,13 @@ namespace ChemSW.NbtWebControls
                 {
                     //MovedProp.DisplayRowAdd = NewDisplayRow;
                     //MovedProp.DisplayColAdd = NewDisplayColumn;
-                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
+                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
                 }
                 else
                 {
                     //MovedProp.DisplayRow = NewDisplayRow;
                     //MovedProp.DisplayColumn = NewDisplayColumn;
-                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
+                    MovedProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, false, Int32.MinValue, NewDisplayRow, NewDisplayColumn );
                 }
             }
             catch( Exception ex )
@@ -599,7 +599,7 @@ namespace ChemSW.NbtWebControls
                 // Non-conditionals first
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
-                    if( Prop.EditLayout.TabId != Int32.MinValue && Prop.EditLayout.TabId.ToString() == SelectedTabId.ToString() )
+                    if( Prop.FirstEditLayout.TabId != Int32.MinValue && Prop.FirstEditLayout.TabId.ToString() == SelectedTabId.ToString() )
                     {
                         if( !Prop.hasFilter() )
                         {
@@ -615,7 +615,7 @@ namespace ChemSW.NbtWebControls
                 // Conditionals second
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
-                    if( Prop.EditLayout.TabId != Int32.MinValue && Prop.EditLayout.TabId.ToString() == SelectedTabId.ToString() )
+                    if( Prop.FirstEditLayout.TabId != Int32.MinValue && Prop.FirstEditLayout.TabId.ToString() == SelectedTabId.ToString() )
                     {
                         // Conditional Filter on Properties
                         if( Prop.hasFilter() )
@@ -803,7 +803,7 @@ namespace ChemSW.NbtWebControls
                 if( EditMode == NodeEditMode.Add )
                     ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.AddLayout.DisplayRow, MetaDataProp.AddLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
                 else
-                    ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.EditLayout.DisplayRow, MetaDataProp.EditLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
+                    ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.FirstEditLayout.DisplayRow, MetaDataProp.FirstEditLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
                 LayoutTable.Components.Add( MetaDataProp.PropId, ThisComponent );
 
                 if( PropControl != null )

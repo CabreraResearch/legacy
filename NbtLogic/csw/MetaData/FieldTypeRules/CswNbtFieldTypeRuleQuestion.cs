@@ -74,7 +74,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( DateCorrectedSubField );
-
         }//ctor
 
         /// <summary>

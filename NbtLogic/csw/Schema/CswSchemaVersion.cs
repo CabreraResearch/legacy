@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Constructor to build a Schema Version tag from parts
         /// </summary>
-        public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration  )
+        public CswSchemaVersion( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration )
         {
             _init( inCycleIteration, inReleaseIdentifier, inReleaseIteration );
         }        /// <summary>
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public CswSchemaVersion( Int32 SingleIntegerVersion )
         {
-            _init( 0, 'X', SingleIntegerVersion  );
+            _init( 0, 'X', SingleIntegerVersion );
         }
         /// <summary>
         /// Constructor for string version of Schema Version tag.  Detects single integers for backwards compatibility.
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Schema
             if( SchemaVersionAsString.Length < 6 && CswTools.IsInteger( SchemaVersionAsString ) )
             {
                 // Example: 74   (backwards compatibility)
-                _init( 0, 'X', CswConvert.ToInt32( SchemaVersionAsString )  );
+                _init( 0, 'X', CswConvert.ToInt32( SchemaVersionAsString ) );
             }
             else
             {
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        private void _init( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration  )
+        private void _init( Int32 inCycleIteration, char inReleaseIdentifier, Int32 inReleaseIteration )
         {
             CycleIteration = inCycleIteration;
             ReleaseIdentifier = inReleaseIdentifier;
@@ -78,16 +78,16 @@ namespace ChemSW.Nbt.Schema
 
         #region IComparable<CswSchemaVersion> Members
 
-		public static bool operator <( CswSchemaVersion ver1, CswSchemaVersion ver2 )
-		{
-			return ver1.CompareTo( ver2 ) < 0;
-		}
-		public static bool operator >( CswSchemaVersion ver1, CswSchemaVersion ver2 )
-		{
-			return ver1.CompareTo( ver2 ) > 0;
-		}
-		
-		public Int32 CompareTo( CswSchemaVersion other )
+        public static bool operator <( CswSchemaVersion ver1, CswSchemaVersion ver2 )
+        {
+            return ver1.CompareTo( ver2 ) < 0;
+        }
+        public static bool operator >( CswSchemaVersion ver1, CswSchemaVersion ver2 )
+        {
+            return ver1.CompareTo( ver2 ) > 0;
+        }
+
+        public Int32 CompareTo( CswSchemaVersion other )
         {
             Int32 ret = 0;
             if( this.CycleIteration != other.CycleIteration )
@@ -409,8 +409,8 @@ namespace ChemSW.Nbt.Schema
             field1_date,
             field1_numeric,
             field2_date,
-			field2_numeric,
-			objectclasspropid,
+            field2_numeric,
+            objectclasspropid,
             isdemo
         }
 
@@ -915,7 +915,7 @@ namespace ChemSW.Nbt.Schema
             roletimeoutminutes,
             timeoutdate,
             logindate,
-            ismobile,
+            //ismobile, /* Case 26063 */
             isdemo
         }
 

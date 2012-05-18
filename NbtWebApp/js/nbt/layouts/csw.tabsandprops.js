@@ -100,7 +100,8 @@
                     NodeTypeId: internal.nodetypeid,
                     Date: internal.date,
                     filterToPropId: internal.filterToPropId,
-                    Multi: internal.Multi
+                    Multi: internal.Multi,
+                    ConfigMode: internal.Config
                 };
 
                 // For performance, don't bother getting tabs if we're in Add or Preview
@@ -158,6 +159,7 @@
                                         var selectTabid = selectTabContentDiv.getId();
                                         if (Csw.tryExec(internal.onBeforeTabSelect, selectedtabid)) {
                                             if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
+                                                internal.form.empty();
                                                 internal.getProps(selectTabContentDiv, selectTabid);
                                                 Csw.tryExec(internal.onTabSelect, selectTabid);
                                                 ret = true;
@@ -248,7 +250,7 @@
                                 columns: 2
                             },
                             onSwap: function (e, onSwapData) {
-                                internal.onSwap(onSwapData);
+                                internal.onSwap(tabid, onSwapData);
                             },
                             showConfigButton: false, //o.Config,
                             showExpandRowButton: internal.Config,
@@ -261,7 +263,7 @@
                                 doUpdateSubProps(false);
                             }, // onConfigOff
                             onRemove: function (event, onRemoveData) {
-                                internal.onRemove(onRemoveData);
+                                internal.onRemove(tabid, onRemoveData);
                             } // onRemove
                         }); // Csw.literals.layoutTable()
 
@@ -288,8 +290,8 @@
                                             propData: thisProp,
                                             onChange: function () {
                                             },
-                                            onReload: function () {
-                                                internal.getProps(tabContentDiv, tabid);
+                                            onReload: function (afterReload) {
+                                                internal.getProps(tabContentDiv, tabid, afterReload);
                                             },
                                             EditMode: internal.EditMode,
                                             Multi: internal.Multi,
@@ -381,7 +383,7 @@
 
             // getPropsImpl()
 
-            internal.onRemove = function (onRemoveData) {
+            internal.onRemove = function (tabid, onRemoveData) {
                 'use strict';
                 var propid = '';
                 var propDiv = internal.getPropertyCell(onRemoveData.cellSet).children('div');
@@ -392,7 +394,7 @@
                 Csw.ajax.post({
                     watchGlobal: internal.AjaxWatchGlobal,
                     urlMethod: internal.RemovePropUrlMethod,
-                    data: { PropId: propid, EditMode: internal.EditMode },
+                    data: { PropId: propid, EditMode: internal.EditMode, TabId: tabid },
                     success: function () {
                         internal.onPropertyRemove(propid);
                     }
@@ -402,19 +404,20 @@
 
             // onRemove()
 
-            internal.onSwap = function (onSwapData) {
-                internal.moveProp(internal.getPropertyCell(onSwapData.cellSet), onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
-                internal.moveProp(internal.getPropertyCell(onSwapData.swapcellset), onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
+            internal.onSwap = function (tabid, onSwapData) {
+                internal.moveProp(internal.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+                internal.moveProp(internal.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
             };
 
             // onSwap()
 
-            internal.moveProp = function (propDiv, newrow, newcolumn, propId) {
+            internal.moveProp = function (propDiv, tabid, newrow, newcolumn, propId) {
                 'use strict';
                 if (propDiv.length() > 0) {
                     var propid = Csw.string(propDiv.propNonDom('propid'), propId);
                     var dataJson = {
                         PropId: propid,
+                        TabId: tabid,
                         NewRow: newrow,
                         NewColumn: newcolumn,
                         EditMode: internal.EditMode
@@ -485,7 +488,7 @@
                         labelCell.a({
                             cssclass: 'cswprop_helplink',
                             title: helpText,
-                            onClick: function() {
+                            onClick: function () {
                                 return false;
                             },
                             value: propName
@@ -550,7 +553,9 @@
                         propData: propData,
                         onChange: function () {
                         },
-                        onReload: function () { internal.getProps(tabContentDiv, tabid); },
+                        onReload: function (afterReload) {
+                            internal.getProps(tabContentDiv, tabid, afterReload);
+                        },
                         doSave: function (saveopts) {
                             var s = {
                                 onSuccess: null
@@ -593,7 +598,7 @@
                                 columns: 2
                             },
                             onSwap: function (e, onSwapData) {
-                                internal.onSwap(onSwapData);
+                                internal.onSwap(tabid, onSwapData);
                             },
                             showConfigButton: false,
                             showExpandRowButton: false,
@@ -732,8 +737,8 @@
                     var propIds = internal.updatePropJsonFromLayoutTable();
                     var data = {
                         EditMode: internal.EditMode,
-                        NodeIds: Csw.tryParseObjByIdx(internal.nodeids, 0), // o.nodeids.join(','),
-                        SafeNodeKeys: Csw.tryParseObjByIdx(internal.nodekeys, 0), // o.nodekeys.join(','),
+                        NodeIds: internal.nodeids.join(','),
+                        SafeNodeKeys: internal.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(internal.nodekeys, 0) */
                         TabId: tabid,
                         NodeTypeId: internal.nodetypeid,
                         NewPropsJson: JSON.stringify(internal.propertyData),
@@ -748,7 +753,7 @@
                         success: function (successData) {
                             var doSave = true;
                             var dataJson = {
-                                SourceNodeKey: Csw.tryParseObjByIdx(internal.nodekeys, 0),
+                                SourceNodeKey: internal.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(internal.nodekeys, 0) */
                                 CopyNodeIds: [],
                                 PropIds: []
                             };
@@ -792,7 +797,8 @@
                             else if (internal.Multi) {
                                 dataJson.CopyNodeIds = internal.nodeids;
                                 dataJson.PropIds = propIds;
-                                copyNodeProps(function () { window.location.reload(); });
+                                copyNodeProps( /* Case 26134. We're already doing a clear:all, we don't need this. 
+                                                function () { Csw.window.location().reload();  } */ ); 
                             }
 
                             internal.enableSaveBtn();
