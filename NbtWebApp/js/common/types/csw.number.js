@@ -9,13 +9,13 @@
     Csw.int32MinVal = Csw.int32MinVal || int32MinVal;
 
     function number(inputNum, defaultNum) {
+        /// <summary>
+        ///   Returns the inputNum if !NaN, else returns the defaultNum
+        /// </summary>
+        /// <param name="inputNum" type="Number"> String to parse to number </param>
+        /// <param name="defaultNum" type="Number"> Default value if not a number </param>
+        /// <returns type="Number" />
         function tryParseNumber() {
-            /// <summary>
-            ///   Returns the inputNum if !NaN, else returns the defaultNum
-            /// </summary>
-            /// <param name="inputNum" type="Number"> String to parse to number </param>
-            /// <param name="defaultNum" type="Number"> Default value if not a number </param>
-            /// <returns type="Number" />
             var ret = NaN;
 
             function makeNumber(value) {

@@ -5,7 +5,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -87,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             Overdue,
             /// <summary>
-            /// Inspection finished, some answers OOC
+            /// Inspection finished, some answers Deficient
             /// </summary>
             Action_Required,
             /// <summary>
@@ -123,9 +122,9 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             OK,
             /// <summary>
-            /// Out of compliance
+            /// Deficient, Out of compliance
             /// </summary>
-            OOC,
+            Deficient,
             /// <summary>
             /// For unset values
             /// </summary>
@@ -210,11 +209,13 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ); }
         }
 
+
+
         #region Inherited Events
         /// <summary>
         /// Set any existing pending or overdue inspections on the same parent to missed
         /// </summary>
-        public override void beforeCreateNode( bool OverrideUniqueValidation ) 
+        public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             if( Tristate.True != this.IsFuture.Checked &&
                 null != this.Generator.RelatedNodeId )
@@ -280,7 +281,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//beforeWriteNode()
 
         /// <summary>
-        /// Update Parent Status (OK,OOC) if Inspection is submitted
+        /// Update Parent Status (OK,Deficient) if Inspection is submitted
         /// </summary>
         public override void afterWriteNode()
         {
@@ -289,6 +290,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode()
         {
+            //case 26113: check parent for bad inspections 
+            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+            ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
+            //CswNbtObjClassInspectionTarget pnodeAsTarget = CswNbtNodeCaster.AsInspectionTarget( ParentNode );
+            bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
+            bool _Deficient = areMoreActionsRequired();
+            if( _Deficient != _alreadyDeficient )
+            {
+                Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
+                ParentNode.postChanges( false );
+            }
+
             _CswNbtObjClassDefault.beforeDeleteNode();
 
         }//beforeDeleteNode()
@@ -296,10 +309,22 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterDeleteNode()
         {
             _CswNbtObjClassDefault.afterDeleteNode();
+
         }//afterDeleteNode()        
 
         public override void afterPopulateProps()
         {
+            //case 25035
+            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Action_Required ) )
+            {
+                CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                QuestionsFlt.Reset();
+                foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
+                {
+                    CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
+                    QuestionProp.IsActionRequired = true;
+                }
+            }
             _CswNbtObjClassDefault.afterPopulateProps();
             this.Status.ReadOnly = ( true != _CswNbtResources.CurrentNbtUser.IsAdministrator() );
         }//afterPopulateProps()
@@ -319,8 +344,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp ButtonOCP = NodeTypeProp.getObjectClassProp();
                 if( ButtonOCP.PropName == FinishPropertyName )
                 {
-                    
-                    bool _OOC = false;
+
+                    bool _Deficient = false;
                     bool _allAnswered = true;
                     bool _allAnsweredinTime = true;
 
@@ -330,10 +355,9 @@ namespace ChemSW.Nbt.ObjClasses
                     foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                     {
                         CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-                        _OOC = ( _OOC || !QuestionProp.IsCompliant );
+                        _Deficient = ( _Deficient || !QuestionProp.IsCompliant );
                         if( QuestionProp.Answer.Trim() == string.Empty )
                         {
-
                             UnansweredQuestions.Add( Prop.NodeTypeProp.FullQuestionNo );
                             _allAnswered = false;
                         }
@@ -342,9 +366,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                     if( _allAnswered )
                     {
-                        if( _OOC )
+                        if( _Deficient )
                         {
-                            Message = "Inspection is out of compliance and requires further action.";
+                            Message = "Inspection is deficient and requires further action.";
                             this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
                         }
                         else
@@ -363,7 +387,11 @@ namespace ChemSW.Nbt.ObjClasses
                         if( ParentNode != null )
                         {
                             ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-                            Parent.Status.Value = _OOC ? "OOC" : "OK";
+                            if( false == _Deficient )//case 25041
+                            {
+                                _Deficient = areMoreActionsRequired();
+                            }
+                            Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
                             //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
                             ParentNode.postChanges( false );
                         }
@@ -374,18 +402,46 @@ namespace ChemSW.Nbt.ObjClasses
                         Message = "Inspection can not be finished until all questions are answered.  Questions remaining: " + UnansweredQuestions.ToString();
                     }
                 } // if( ButtonOCP.PropName == FinishPropertyName )
-                
+
                 else if( ButtonOCP.PropName == CancelPropertyName )
                 {
                     Message = "Inspection has been cancelled.";
                     ButtonAction = NbtButtonAction.refresh;
                     this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
                 }
-                
+
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;
         } // onButtonClick()
+
+        private bool areMoreActionsRequired()//case 25041
+        {
+            CswNbtView SiblingView = new CswNbtView( _CswNbtResources );
+            SiblingView.ViewName = "SiblingView";
+            CswNbtViewRelationship ParentRelationship = SiblingView.AddViewRelationship( this.NodeType, false );
+            ParentRelationship.NodeIdsToFilterOut.Add( this.NodeId );
+            SiblingView.AddViewPropertyAndFilter(
+                ParentRelationship,
+                this.NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.StatusPropertyName ),
+                InspectionStatusAsString( InspectionStatus.Action_Required ),
+                CswNbtSubField.SubFieldName.Value,
+                false,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                );
+            SiblingView.AddViewPropertyAndFilter(
+                ParentRelationship,
+                this.NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.TargetPropertyName ),
+                this.Parent.RelatedNodeId.PrimaryKey.ToString(),
+                CswNbtSubField.SubFieldName.NodeID,
+                false,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                );
+            ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( SiblingView, true, true, false, false );
+            int NumOfSiblings = SiblingTree.getChildNodeCount();
+
+            return 0 < NumOfSiblings;
+        }
         #endregion
 
         #region Object class specific properties

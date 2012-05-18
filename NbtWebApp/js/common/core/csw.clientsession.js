@@ -16,7 +16,8 @@
         DeauthenticateUrl: '/NbtWebApp/wsNBT.asmx/deauthenticate',
         expiretimeInterval: '',
         expiretime: '',
-        expiredInterval: ''
+        expiredInterval: '',
+        isAuthenticated: false
     };
 
     internal.checkExpired = function () {
@@ -28,30 +29,35 @@
     };
 
     internal.checkExpireTime = function () {
-        var now = new Date();
-        if (Date.parse(internal.expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
-            window.clearInterval(internal.expiretimeInterval);
-            $.CswDialog('ExpireDialog', {
-                'onYes': function () {
-                    Csw.ajax.post({
-                        'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
-                        'success': function () {
-                        }
-                    });
-                }
-            });
+        if (internal.isAuthenticated) {
+            var now = new Date();
+            if (Date.parse(internal.expiretime) - Date.parse(now) < 180000) { // 3 minutes until timeout
+                window.clearInterval(internal.expiretimeInterval);
+                $.CswDialog('ExpireDialog', {
+                    onYes: function () {
+                        Csw.ajax.post({
+                            'url': '/NbtWebApp/wsNBT.asmx/RenewSession',
+                            'success': function () {
+                                internal.isAuthenticated = true;
+                            }
+                        });
+                    }
+                });
+            }
         }
     };
 
     internal.setExpireTimeInterval = function () {
-        window.clearInterval(internal.expiretimeInterval);
-        window.clearInterval(internal.expiredInterval);
-        internal.expiretimeInterval = window.setInterval(function () {
-            internal.checkExpireTime();
-        }, 60000);
-        internal.expiredInterval = window.setInterval(function () {
-            internal.checkExpired();
-        }, 60000);
+        if (internal.isAuthenticated) {
+            window.clearInterval(internal.expiretimeInterval);
+            window.clearInterval(internal.expiredInterval);
+            internal.expiretimeInterval = window.setInterval(function () {
+                internal.checkExpireTime();
+            }, 60000);
+            internal.expiredInterval = window.setInterval(function () {
+                internal.checkExpired();
+            }, 60000);
+        }
     };
 
     Csw.clientSession = Csw.clientSession ||
@@ -64,9 +70,9 @@
             Csw.clientDb.clear();
             Csw.cookie.clearAll();
             if (false === Csw.isNullOrEmpty(internal.logoutpath)) {
-                window.location = internal.logoutpath;
+                Csw.window.location(internal.logoutpath);
             } else {
-                window.location = Csw.getGlobalProp('homeUrl');
+                Csw.window.location(Csw.getGlobalProp('homeUrl'));
             }
         });
 
@@ -76,7 +82,7 @@
             if (loginopts) {
                 $.extend(internal, loginopts);
             }
-
+            internal.isAuthenticated = true;
             Csw.ajax.post({
                 url: internal.authenticateUrl,
                 data: {
@@ -91,9 +97,11 @@
                     Csw.tryExec(internal.onAuthenticate, internal.UserName);
                 },
                 onloginfail: function (txt) {
+                    internal.isAuthenticated = false;
                     Csw.tryExec(internal.onFail, txt);
                 },
                 error: function () {
+                    internal.isAuthenticated = false;
                     Csw.tryExec(internal.onFail, 'Webservice Error');
                 }
             }); // ajax
@@ -105,7 +113,7 @@
             if (options) {
                 $.extend(internal, options);
             }
-
+            internal.isAuthenticated = false;
             Csw.ajax.post({
                 url: internal.DeauthenticateUrl,
                 data: {},
@@ -209,6 +217,9 @@
                             }
                         });
                     }
+                    break;
+                case 'Ignore':
+                    o.success();
                     break;
             }
 

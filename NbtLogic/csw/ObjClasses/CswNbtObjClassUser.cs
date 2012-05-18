@@ -6,7 +6,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -120,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
         public Int32 UserObjectClassId { get { return ObjectClass.ObjectClassId; } }
         public Int32 RoleNodeTypeId { get { return RoleNode.NodeTypeId; } }
         public Int32 RoleObjectClassId { get { return RoleNode.ObjectClass.ObjectClassId; } }
-        
+
         public Int32 PasswordPropertyId { get { return PasswordProperty.NodeTypePropId; } }
         public bool PasswordIsExpired { get { return PasswordProperty.IsExpired; } }
 
@@ -328,7 +327,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string ret = DateFormatProperty.Value;
                 if( ret == string.Empty )
                 {
-                    ret = CswDateTime.DefaultDateFormat;
+                    ret = CswDateTime.DefaultDateFormat.ToString();
                 }
                 return ret;
             }
@@ -341,7 +340,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string ret = TimeFormatProperty.Value;
                 if( ret == string.Empty )
                 {
-                    ret = CswDateTime.DefaultTimeFormat;
+                    ret = CswDateTime.DefaultTimeFormat.ToString();
                 }
                 return ret;
             }

@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.WebPages
             else
                 HeadingDisplayRowLiteral.Text = "<b>Row</b>";
             PropDataTable.addControl( row, DisplayRowColumn, HeadingDisplayRowLiteral );
-            
+
             if( _Mode == LayoutMode.Edit || _Mode == LayoutMode.Add )
             {
                 Literal HeadingDisplayColLiteral = new Literal();
@@ -251,20 +251,20 @@ namespace ChemSW.Nbt.WebPages
                 {
                     SetValOnAddCheckBox = new CheckBox();
                     SetValOnAddCheckBox.ID = SetValOnAddIdPrefix + Prop.PropId.ToString();
-					SetValOnAddCheckBox.Checked = ( Prop.AddLayout != null );
+                    SetValOnAddCheckBox.Checked = ( Prop.AddLayout != null );
                     PropDataTable.addControl( row, SetValOnAddColumn, SetValOnAddCheckBox );
 
                     if( Prop.AddLayout.DisplayRow != Int32.MinValue )
-						DisplayRowTextBox.Text = Prop.AddLayout.DisplayRow.ToString();
-					if( Prop.AddLayout.DisplayColumn != Int32.MinValue )
+                        DisplayRowTextBox.Text = Prop.AddLayout.DisplayRow.ToString();
+                    if( Prop.AddLayout.DisplayColumn != Int32.MinValue )
                         DisplayColTextBox.Text = Prop.AddLayout.DisplayColumn.ToString();
                 }
                 else
                 {
-                    if( Prop.EditLayout.DisplayRow != Int32.MinValue )
-						DisplayRowTextBox.Text = Prop.EditLayout.DisplayRow.ToString();
-					if( Prop.EditLayout.DisplayColumn != Int32.MinValue )
-						DisplayColTextBox.Text = Prop.EditLayout.DisplayColumn.ToString();
+                    if( Prop.FirstEditLayout.DisplayRow != Int32.MinValue )
+                        DisplayRowTextBox.Text = Prop.FirstEditLayout.DisplayRow.ToString();
+                    if( Prop.FirstEditLayout.DisplayColumn != Int32.MinValue )
+                        DisplayColTextBox.Text = Prop.FirstEditLayout.DisplayColumn.ToString();
                 }
 
                 if( _Mode == LayoutMode.Inspection )
@@ -349,9 +349,9 @@ namespace ChemSW.Nbt.WebPages
                     CswNbtMetaDataNodeTypeProp Prop = NodeType.getNodeTypePropByFirstVersionId( FirstPropVersionId );
                     LayoutControlSet LCS = LayoutControlsHash[FirstPropVersionId] as LayoutControlSet;
 
-                    bool SetValOnAdd = (Prop.AddLayout != null);
-                    Int32 DisplayRow = Prop.EditLayout.DisplayRow;
-					Int32 DisplayColumn = Prop.EditLayout.DisplayColumn;
+                    bool SetValOnAdd = ( Prop.AddLayout != null );
+                    Int32 DisplayRow = Prop.FirstEditLayout.DisplayRow;
+                    Int32 DisplayColumn = Prop.FirstEditLayout.DisplayColumn;
                     Int32 DisplayRowAdd = Prop.AddLayout.DisplayRow;
                     Int32 DisplayColAdd = Prop.AddLayout.DisplayColumn;
 
@@ -378,20 +378,20 @@ namespace ChemSW.Nbt.WebPages
                             DisplayColumn = CswConvert.ToInt32( LCS.DisplayColTextBox.Text );
                     }
 
-					//Prop.DisplayRow = DisplayRow;
-					//Prop.DisplayColumn = DisplayColumn;
-					//Prop.DisplayRowAdd = DisplayRowAdd;
-					//Prop.DisplayColAdd = DisplayColAdd;
-					//Prop.SetValueOnAdd = SetValOnAdd;
-					Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, Int32.MinValue, DisplayRow, DisplayColumn );
-					if( SetValOnAdd )
-					{
-						Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
-					}
-					else
-					{
-						Prop.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-					}
+                    //Prop.DisplayRow = DisplayRow;
+                    //Prop.DisplayColumn = DisplayColumn;
+                    //Prop.DisplayRowAdd = DisplayRowAdd;
+                    //Prop.DisplayColAdd = DisplayColAdd;
+                    //Prop.SetValueOnAdd = SetValOnAdd;
+                    Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Int32.MinValue, DisplayRow, DisplayColumn );
+                    if( SetValOnAdd )
+                    {
+                        Prop.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
+                    }
+                    else
+                    {
+                        Prop.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                    }
 
                 }
 

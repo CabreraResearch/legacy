@@ -39,6 +39,9 @@ namespace ChemSW.Nbt.WebServices
                     case CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass:
                         NewNode = CswNbtActCopyNode.CopyEquipmentAssemblyNode( OriginalNode );
                         break;
+                    case CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass:
+                        NewNode = CswNbtActCopyNode.CopyGeneratorNode( OriginalNode );
+                        break;
                     case CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass:
                         NewNode = CswNbtActCopyNode.CopyInspectionTargetNode( OriginalNode );
                         break;

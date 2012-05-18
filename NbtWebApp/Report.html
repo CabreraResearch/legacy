@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -9,8 +9,7 @@
     <link rel="shortcut icon" href="images/favicon.ico" />
     <title>ChemSW Live</title>
     <!--#include file="MainIncludes.html" -->
-    <script type="text/javascript" src="CswCommon.min.js"></script> 
-    <script type="text/javascript" src="CswNbt.min.js"></script> 
+    <!--#include file="MainCswIncludes.html" -->
     <script type="text/javascript">
 
         $(document).ready(function () {
@@ -41,7 +40,7 @@
                 } else {
                     $('#btnGrid').click(function () { runReport(qs.reportid, 'grid'); });
                     $('#btnCsv').click(function () { runReport(qs.reportid, 'csv'); });
-                    $('#btnCrystal').click(function () { window.location = 'report.aspx?reportid=' + qs.reportid; });
+                    $('#btnCrystal').click(function () { Csw.window.location('report.aspx?reportid=' + qs.reportid); });
                 }
             }
         });
@@ -56,7 +55,7 @@
 
 
             if ('csv' == rformat.toLowerCase()) {
-                window.location = '/NbtWebApp/wsNBT.asmx/report?rformat=csv&reportid=' + reportid;
+                Csw.window.location('/NbtWebApp/wsNBT.asmx/report?rformat=csv&reportid=' + reportid);
             }
             else {
 

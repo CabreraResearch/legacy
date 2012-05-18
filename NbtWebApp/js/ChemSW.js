@@ -1,10 +1,10 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
-    window.abandonHope = false;
-
+window.internetExplorerVersionNo = window.internetExplorerVersionNo || - 1;
+    
     window.ChemSW = window.Csw = (function () {
-
+    
         var internal = {
             document: window.document,
             navigator: window.navigator,
@@ -20,7 +20,7 @@
 
         /* 
         * We are deliberately not assigning this method to the 'global' internal or external collection 
-        * We don't want to inadvertantly allow for cross-polination among namespaces. 
+        * We don't want to inadvertantly allow for cross-pollination among namespaces. 
         * makeNameSpace's only tie to the Csw closure is against internal for default values.
         */
         function makeNameSpace(externalCollection, anInternalCollection) {

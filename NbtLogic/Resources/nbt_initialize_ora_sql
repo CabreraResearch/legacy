@@ -62,9 +62,6 @@ CREATE OR REPLACE PROCEDURE update_sequences authid current_user IS
 
 /
 
---exec update_sequences;
---commit;
-
 CREATE OR REPLACE PROCEDURE correct_sequence_cache authid current_user IS
   cursor cur is select columnname, tablename from data_dictionary where columntype = 'pk' and isview= '0' and tablename in ('nodes','jct_nodes_props','nodes_audit','jct_nodes_props_audit','sessionlist','sessiondata','audit_transactions');
 
@@ -99,8 +96,6 @@ CREATE OR REPLACE PROCEDURE correct_sequence_cache authid current_user IS
   end;
 
 /
-exec correct_sequence_cache;
-commit;
 
 create or replace procedure DROP_SEQUENCES is
 begin

@@ -5,7 +5,17 @@
     "use strict";
     var pluginName = 'CswNodeGrid';
 
+    var internal = {
+        selectedRowId: ''
+    };
+
     function deleteRows(rowid, grid, func) {
+        if (Csw.isNullOrEmpty(rowid)) {
+            rowid = internal.selectedRowId;
+        }
+        if (Csw.isNullOrEmpty(rowid)) {
+            rowid = grid.getSelectedRowId();
+        }
         if (Csw.number(rowid) !== -1) { /* Case 24678 */
             var delOpt = {
                 cswnbtnodekey: [],
@@ -26,6 +36,12 @@
     }
 
     function editRows(rowid, grid, func, editViewFunc) {
+        if (Csw.isNullOrEmpty(rowid)) {
+            rowid = internal.selectedRowId;
+        }
+        if (Csw.isNullOrEmpty(rowid)) {
+            rowid = grid.getSelectedRowId();
+        }
         if (Csw.number(rowid) !== -1) { /* Case 24678 */
             var editOpt = {
                 cswnbtnodekey: [],
@@ -63,7 +79,11 @@
                 onEditNode: null,
                 onDeleteNode: null,
                 onSuccess: null,
-                onEditView: null
+                onEditView: null,
+                gridOpts: {
+                    multiselect: false
+                },
+                resizeWithParent: true
             };
 
             if (optJqGrid) {
@@ -82,6 +102,7 @@
             if (o.reinit) $parent.empty();
 
             var forReporting = (o.EditMode === Csw.enums.editMode.PrintReport),
+                isMulti = o.gridOpts.multiselect,
                 ret, doPaging = false;
 
             /* fetchGridSkeleton */
@@ -94,7 +115,8 @@
                         data: {
                             ViewId: o.viewid,
                             IncludeNodeKey: o.cswnbtnodekey,
-                            IncludeInQuickLaunch: true
+                            IncludeInQuickLaunch: true,
+                            ForReport: forReporting
                         },
                         success: function (data) {
                             buildGrid(data);
@@ -110,8 +132,9 @@
                         var wasTruncated = Csw.bool(data.wastruncated);
                         var cswGridOpts = {
                             ID: o.ID,
-                            canEdit: (Csw.bool(jqGridOpt.CanEdit) && false === forReporting),
-                            canDelete: (Csw.bool(jqGridOpt.CanDelete) && false === forReporting),
+                            resizeWithParent: o.resizeWithParent,
+                            canEdit: false,
+                            canDelete: false,
                             pagermode: 'default',
                             gridOpts: {}, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                             optNav: {},
@@ -119,27 +142,49 @@
                             optNavEdit: {},
                             optNavDelete: {}
                         };
-                        $.extend(cswGridOpts.gridOpts, jqGridOpt);
+                        $.extend(true, cswGridOpts.gridOpts, jqGridOpt);
 
                         if (Csw.isNullOrEmpty(cswGridOpts.gridOpts.width)) {
                             cswGridOpts.gridOpts.width = '650px';
                         }
-
+                        var hasActions = (false === forReporting && false === Csw.bool(cswGridOpts.gridOpts.multiselect));
                         if (forReporting) {
                             cswGridOpts.gridOpts.caption = '';
-                        } else {
-                            cswGridOpts.optNavEdit = {
-                                editfunc: function (rowid) {
-                                    return editRows(rowid, ret, o.onEditNode, o.onEditView);
+                        }
+                        else if (hasActions) {
+                            cswGridOpts.gridOpts.canEdit = false;
+                            cswGridOpts.gridOpts.canDelete = false;
+                            cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
+                                function validateNode(className) {
+                                    if (-1 !== className.indexOf('csw-grid-edit')) {
+                                        editRows(rowid, ret, o.onEditNode, o.onEditView);
+                                    } else if (-1 !== className.indexOf('csw-grid-delete')) {
+                                        deleteRows(rowid, ret, o.onDeleteNode);
+                                    }
                                 }
-                            };
-
-                            cswGridOpts.optNavDelete = {
-                                delfunc: function (rowid) {
-                                    return deleteRows(rowid, ret, o.onDeleteNode);
+                                internal.selectedRowId = rowid;
+                                if (false === isMulti) {
+                                    if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
+                                        validateNode(eventObj.toElement.className);
+                                    } else if (Csw.contains(eventObj, 'target') && Csw.isString(eventObj.target.className)) {
+                                        validateNode(eventObj.target.className);
+                                    }
                                 }
+                                return true;
                             };
                         }
+                        /* We need this to be defined upfront for multi-edit */
+                        cswGridOpts.optNavEdit = {
+                            editfunc: function (rowid) {
+                                return editRows(rowid, ret, o.onEditNode, o.onEditView);
+                            }
+                        };
+
+                        cswGridOpts.optNavDelete = {
+                            delfunc: function (rowid) {
+                                return deleteRows(rowid, ret, o.onDeleteNode);
+                            }
+                        };
 
                         switch (pagerMode) {
                             case 'local':

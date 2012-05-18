@@ -11,10 +11,11 @@ namespace ChemSW.Nbt.Actions
         Future_Scheduling,
         Create_Inspection,
         Multi_Edit,
-        OOC_Inspections,
+        Deficient_Inspections,
         Quotas,
         Sessions,
-        View_Scheduled_Rules
+        View_Scheduled_Rules,
+        Modules
     }
 
     public class CswNbtAction

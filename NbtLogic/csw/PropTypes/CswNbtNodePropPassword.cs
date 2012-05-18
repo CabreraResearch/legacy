@@ -136,6 +136,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
+            ParentObject["passwordcomplexity"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity );
+            ParentObject["passwordlength"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length );
             ParentObject["newpassword"] = string.Empty;
             ParentObject["isexpired"] = IsExpired.ToString().ToLower();
             ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();

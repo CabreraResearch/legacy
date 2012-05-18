@@ -15,10 +15,11 @@
                 canDelete: false,
                 pagermode: 'default',
                 ID: '',
+                resizeWithParent: false,
                 gridOpts: {
                     autoencode: true,
-                    //autowidth: true,
-                    altRows: false,
+                    autowidth: true,
+                    altRows: false, //window.internetExplorerVersionNo === -1,
                     caption: '',
                     datatype: 'local',
                     emptyrecords: 'No Results',
@@ -30,7 +31,7 @@
                     shrinkToFit: true,
                     sortname: '',
                     sortorder: 'asc',
-                    width: '600px',
+                    //width: '600px',
                     rowNum: 10,
                     rowList: [10, 25, 50],        /* page size dropdown */
                     pgbuttons: true,     /* page control like next, back button */
@@ -62,13 +63,13 @@
                 optNavEdit: {
                     edit: true,
                     edittext: "",
-                    edittitle: "Edit row",
+                    edittitle: "Edit",
                     editfunc: null
                 },
                 optNavDelete: {
                     del: true,
                     deltext: "",
-                    deltitle: "Delete row",
+                    deltitle: "Delete",
                     delfunc: null
                 },
                 optNav: {
@@ -83,16 +84,16 @@
                     searchtext: "",
                     searchtitle: "Find records",
 
-                    //refresh
-                    refreshtext: "",
-                    refreshtitle: "Reload Grid",
+
+                    refresh: false,
+
                     alertcap: "Warning",
                     alerttext: "Please, select row",
 
                     //view
-                    view: true,
+                    view: false,
                     viewtext: "",
-                    viewtitle: "View row"
+                    viewtitle: "View"
                     //viewfunc: none--use jqGrid built-in function for read-only
                 }
             };
@@ -204,7 +205,7 @@
                 return ret;
             };
 
-            internal.getSelectedRowId = function () {
+            external.getSelectedRowId = function () {
                 var rowid = external.gridTable.$.jqGrid('getGridParam', 'selrow');
                 return rowid;
             };
@@ -232,7 +233,7 @@
                 ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
                 ///<returns type="Void"></returns>
                 if (Csw.isNullOrEmpty(rowid)) {
-                    rowid = internal.getSelectedRowId();
+                    rowid = external.getSelectedRowId();
                 }
                 var rowHeight = external.getGridRowHeight() || 23; // Default height
                 var index = external.gridTable.$.getInd(rowid);
@@ -260,7 +261,7 @@
                 ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
                 ///<returns type="String">Value of the cell.</returns>
                 if (Csw.isNullOrEmpty(rowid)) {
-                    rowid = internal.getSelectedRowId();
+                    rowid = external.getSelectedRowId();
                 }
                 var ret = internal.getCell(rowid, columnname);
                 return ret;
@@ -273,9 +274,33 @@
                 }
             };
 
-            external.changeGridOpts = function (opts) {
+            external.changeGridOpts = function (opts, toggleColumns) {
+                var delBtn, editBtn;
                 $.extend(true, internal, opts);
                 internal.makeGrid(internal);
+
+                Csw.each(toggleColumns, function (val) {
+                    if (Csw.contains(internal.gridOpts.colNames, val)) {
+                        if (external.isMulti()) {
+                            external.gridTable.$.jqGrid('hideCol', val);
+                        }
+                    }
+                });
+                if (false === external.isMulti()) {
+                    if (false === internal.canEdit) {
+                        editBtn = external.gridPager.find('#edit_' + internal.gridTableId);
+                        if (Csw.contains(editBtn, 'remove')) {
+                            editBtn.remove();
+                        }
+                    }
+                    if (false === internal.canDelete) {
+                        delBtn = external.gridPager.find('#del_' + internal.gridTableId).remove();
+                        if (Csw.contains(delBtn, 'remove')) {
+                            delBtn.remove();
+                        }
+                    }
+                }
+                external.resizeWithParent();
             };
 
             external.opGridRows = function (opts, rowid, onSelect, onEmpty) {
@@ -302,7 +327,7 @@
                 } else if (false === Csw.isNullOrEmpty(rowid)) {
                     rowids.push(rowid);
                 } else {
-                    rowids.push(internal.getSelectedRowId());
+                    rowids.push(external.getSelectedRowId());
                 }
 
                 if (rowids.length > 0) {
@@ -330,90 +355,97 @@
             external.print = function (onSuccess) {
 
                 try {
-                    Csw.newWindow(function (newDiv) {
-                        var printOpts = {},
-                           printTableId = Csw.makeId(internal.gridTableId, 'printTable'),
-                           newGrid, data, i;
 
-                        var addRowsToGrid = function (rowData) {
-                            if (rowData) {
-                                /* Add the rows to the new newGrid */
-                                for (i = 0; i <= rowData.length; i += 1) {
-                                    newGrid.gridTable.$.jqGrid('addRowData', i + 1, rowData[i]);
-                                }
+                    var outerDiv = cswParent.div();
+                    var newDiv = outerDiv.div({ width: '800px' });
+
+                    var printOpts = {},
+                        printTableId = Csw.makeId(internal.gridTableId, 'printTable'),
+                        newGrid, data, i;
+
+                    var addRowsToGrid = function (rowData) {
+                        if (rowData) {
+                            /* Add the rows to the new newGrid */
+                            for (i = 0; i <= rowData.length; i += 1) {
+                                newGrid.gridTable.$.jqGrid('addRowData', i + 1, rowData[i]);
                             }
-                        };
-
-                        /* Case 26020 */
-                        $.extend(true, printOpts, internal);
-
-                        /* Nuke anything that might be holding onto a reference */
-                        Csw.each(printOpts, function (thisObj, name) {
-                            if (Csw.isFunction(thisObj) || Csw.isJQuery(thisObj)) {
-                                delete printOpts[name];
-                            }
-                        });
-
-                        printOpts.ID = printTableId;
-
-                        /* 
-                        Nuke any existing options with vanilla defaults.
-                        Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
-                        */
-                        delete printOpts.gridOpts.canEdit;
-                        delete printOpts.gridOpts.canDelete;
-                        delete printOpts.canEdit;
-                        delete printOpts.canDelete;
-
-                        printOpts.gridPagerId += '_print';
-                        printOpts.gridTableId += '_print';
-                        printOpts.gridOpts.rowNum = 100000;
-                        printOpts.gridOpts.rowList = [100000];
-                        printOpts.gridOpts.add = false;
-                        printOpts.gridOpts.del = false;
-                        printOpts.gridOpts.edit = false;
-                        printOpts.gridOpts.autoencode = true;
-                        //printOpts.gridOpts.autowidth = true;
-                        printOpts.gridOpts.width = $(window).width() - 40;
-                        printOpts.gridOpts.altRows = false;
-                        printOpts.gridOpts.datatype = 'local';
-                        delete printOpts.gridOpts.url;
-                        printOpts.gridOpts.emptyrecords = 'No Results';
-                        printOpts.gridOpts.height = 'auto';
-                        printOpts.gridOpts.multiselect = false;
-                        printOpts.gridOpts.toppager = false;
-                        //printOpts.gridOpts.forceFit = true;
-                        //printOpts.gridOpts.shrinkToFit = true;
-
-                        /*
-                        jqGrid cannot seem to handle the communication of the data property between window objects.
-                        Just delete it and rebuild instead.
-                        */
-                        data = internal.gridOpts.data;
-
-                        Csw.each(printOpts.gridOpts.colModel, function (column) {
-                            /* This provides text wrapping in cells */
-                            column.cellattr = function () {
-                                return 'style="white-space: normal;"';
-                            };
-                        });
-                        Csw.tryExec(onSuccess, newDiv);
-                        /* Get a new Csw.newGrid */
-                        newGrid = newDiv.grid(printOpts);
-
-                        if (Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
-                            Csw.ajax.get({
-                                url: printOpts.printUrl,
-                                success: function (rows) {
-                                    addRowsToGrid(rows.rows);
-                                }
-                            });
-                        } else {
-                            /* Get the data (rows) from the current grid */
-                            addRowsToGrid(data);
                         }
+                    };
 
+                    /* Case 26020 */
+                    $.extend(true, printOpts, internal);
+
+                    /* Nuke anything that might be holding onto a reference */
+                    Csw.each(printOpts, function (thisObj, name) {
+                        if (Csw.isFunction(thisObj) || Csw.isJQuery(thisObj)) {
+                            delete printOpts[name];
+                        }
                     });
+
+                    printOpts.ID = printTableId;
+
+                    /* 
+                    Nuke any existing options with vanilla defaults.
+                    Since jqGrid 3.6, there hasn't been an 'All' rowNum option. Just use a really high number.
+                    */
+                    delete printOpts.gridOpts.canEdit;
+                    delete printOpts.gridOpts.canDelete;
+                    delete printOpts.canEdit;
+                    delete printOpts.canDelete;
+
+                    printOpts.gridPagerId += '_print';
+                    printOpts.gridTableId += '_print';
+                    printOpts.gridOpts.rowNum = 100000;
+                    printOpts.gridOpts.rowList = [100000];
+                    printOpts.gridOpts.add = false;
+                    printOpts.gridOpts.del = false;
+                    printOpts.gridOpts.edit = false;
+                    printOpts.gridOpts.autoencode = true;
+                    //printOpts.gridOpts.autowidth = true;
+                    printOpts.gridOpts.width = 800;
+                    printOpts.gridOpts.altRows = false;
+                    printOpts.gridOpts.datatype = 'local';
+                    delete printOpts.gridOpts.url;
+                    printOpts.gridOpts.emptyrecords = 'No Results';
+                    printOpts.gridOpts.height = 'auto';
+                    printOpts.gridOpts.multiselect = false;
+                    printOpts.gridOpts.toppager = false;
+                    //printOpts.gridOpts.forceFit = true;
+                    //printOpts.gridOpts.shrinkToFit = true;
+
+                    /*
+                    jqGrid cannot seem to handle the communication of the data property between window objects.
+                    Just delete it and rebuild instead.
+                    */
+                    data = internal.gridOpts.data;
+
+                    Csw.each(printOpts.gridOpts.colModel, function (column) {
+                        /* This provides text wrapping in cells */
+                        column.cellattr = function () {
+                            return 'style="white-space: normal;"';
+                        };
+                    });
+                    Csw.tryExec(onSuccess, newDiv);
+                    /* Get a new Csw.newGrid */
+                    newGrid = newDiv.grid(printOpts);
+
+                    if (Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
+                        Csw.ajax.get({
+                            url: printOpts.printUrl,
+                            success: function (rows) {
+                                addRowsToGrid(rows.rows);
+                            }
+                        });
+                    } else {
+                        /* Get the data (rows) from the current grid */
+                        addRowsToGrid(data);
+                    }
+                    
+
+                    
+                    Csw.newWindow(outerDiv.$.html());
+                    outerDiv.remove();
+
                 } catch (e) {
                     Csw.log(e);
                 }
@@ -435,6 +467,14 @@
 
             external.isMulti = function () {
                 return internal.multiEdit;
+            };
+
+            external.setWidth = function (width) {
+                external.gridTable.$.jqGrid('setGridWidth', width);
+            };
+
+            external.resizeWithParent = function () {
+                external.gridTable.$.jqGrid('setGridWidth', cswParent.$.width() - 100);
             };
 
             /* "Constuctor" */
@@ -471,7 +511,9 @@
                     ID: internal.ID
                 });
                 //$.extend(external, Csw.literals.div(internal));
-
+                if (internal.resizeWithParent) {
+                    $(window).bind('resize', external.resizeWithParent);
+                }
                 internal.makeGrid();
             } ());
 
