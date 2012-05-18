@@ -229,7 +229,10 @@
                                 internal.selectedValue = internal.valueControl.val();
                             }
                         });
-                        internal.valueControl.$.clickOnEnter(internal.$clickOnEnter);
+                        if(false === Csw.isNullOrEmpty(internal.$clickOnEnter))
+                        {
+                            internal.valueControl.$.clickOnEnter(internal.$clickOnEnter);
+                        }
                     }
 
                     if (internal.filterModeControl.val() === 'Null' || internal.filterModeControl.val() === 'NotNull') {
