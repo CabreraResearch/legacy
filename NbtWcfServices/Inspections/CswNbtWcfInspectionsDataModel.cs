@@ -23,42 +23,41 @@ namespace NbtWebAppServices.Response
         {
             public CswNbtInspectionDesign()
             {
-                Sections = new Collection<CswNbtInspectionDesignSection>();
+                Sections = new Collection<Section>();
             }
 
             public Int32 DesignId { get; set; }
             public string Name { get; set; }
-            public Collection<CswNbtInspectionDesignSection> Sections { get; set; }
+            public Collection<Section> Sections { get; set; }
 
-            public class CswNbtInspectionDesignSection
+            public class Section
             {
-                public CswNbtInspectionDesignSection()
+                public Section()
                 {
-                    Properties = new Collection<CswNbtInspectionDesignSectionProperty>();
+                    Properties = new Collection<SectionProperty>();
                 }
 
                 public Int32 SectionId { get; set; }
                 public string Name { get; set; }
                 public Int32 Order { get; set; }
-                public Collection<CswNbtInspectionDesignSectionProperty> Properties { get; set; }
+                public Collection<SectionProperty> Properties { get; set; }
             }
 
-            public class CswNbtInspectionChoice
+            public class AnswerChoice
             {
                 public string Text { get; set; }
                 public bool IsCompliant { get; set; }
             }
 
-            public class CswNbtInspectionDesignSectionProperty
+            public class SectionProperty
             {
-                public CswNbtInspectionDesignSectionProperty()
+                public SectionProperty()
                 {
-                    Choices = new Collection<CswNbtInspectionChoice>();
+                    Choices = new Collection<AnswerChoice>();
                 }
 
-                public Collection<CswNbtInspectionChoice> Choices { get; set; }
+                public Collection<AnswerChoice> Choices { get; set; }
                 public Int32 QuestionId { get; set; }
-
                 public string Text { get; set; }
                 public string Type { get; set; }
                 public string HelpText { get; set; }
@@ -69,27 +68,27 @@ namespace NbtWebAppServices.Response
         {
             public CswNbtInspection()
             {
-                Questions = new Collection<CswNbtInspectionQuestion>();
+                Questions = new Collection<QuestionAnswer>();
             }
 
             public Int32 DesignId { get; set; }
-            public string DueDate { get; set; }
+            public DateTime DueDate { get; set; }
             public Int32 InspectionId { get; set; }
             public string InspectionPointName { get; set; }
             public string LocationPath { get; set; }
             public string RouteName { get; set; }
             public string Status { get; set; }
-            public Collection<CswNbtInspectionQuestion> Questions { get; set; }
+            public Collection<QuestionAnswer> Questions { get; set; }
 
 
-            public class CswNbtInspectionQuestion
+            public class QuestionAnswer
             {
                 public string Answer { get; set; }
                 public Int32 AnswerId { get; set; }
                 public string Comments { get; set; }
                 public string CorrectiveAction { get; set; }
-                public string DateAnswered { get; set; }
-                public string DateCorrected { get; set; }
+                public DateTime DateAnswered { get; set; }
+                public DateTime DateCorrected { get; set; }
                 public Int32 QuestionId { get; set; }
                 public string Status { get; set; }
             }

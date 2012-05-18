@@ -159,6 +159,7 @@
                                         var selectTabid = selectTabContentDiv.getId();
                                         if (Csw.tryExec(internal.onBeforeTabSelect, selectedtabid)) {
                                             if (false === Csw.isNullOrEmpty(selectTabContentDiv)) {
+                                                internal.form.empty();
                                                 internal.getProps(selectTabContentDiv, selectTabid);
                                                 Csw.tryExec(internal.onTabSelect, selectTabid);
                                                 ret = true;

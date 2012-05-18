@@ -37,7 +37,7 @@
                 }
             });
             
-            openDialog(div, 300, 150, Csw.clientSession.logout, 'Expire Warning');
+            openDialog(div, 300, 150, null, 'Expire Warning');
 
         }, // ExpireDialog
         AddWelcomeItemDialog: function (options) {

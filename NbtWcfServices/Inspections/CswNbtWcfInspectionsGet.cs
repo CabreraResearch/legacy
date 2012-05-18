@@ -48,7 +48,7 @@ namespace NbtWebAppServices.Response
 
                 foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NewInspectionNodeType.getNodeTypeTabs() )
                 {
-                    var ResponseSection = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSection
+                    var ResponseSection = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.Section
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
@@ -57,7 +57,7 @@ namespace NbtWebAppServices.Response
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeTab.getNodeTypePropsByDisplayOrder() )
                     {
-                        var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionDesignSectionProperty
+                        var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
                         {
                             HelpText = NodeTypeProp.HelpText
                         };
@@ -66,7 +66,7 @@ namespace NbtWebAppServices.Response
 
                         if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                         {
-                            ResponseProperty.Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName;
+                            ResponseProperty.Text = "QuestionAnswer " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName;
                             ResponseProperty.QuestionId = NodeTypeProp.PropId;
                             CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
                             PossibleAnswers.FromString( NodeTypeProp.ListOptions );
@@ -75,7 +75,7 @@ namespace NbtWebAppServices.Response
                             foreach( string Answer in PossibleAnswers )
                             {
                                 var Choice =
-                                    new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.CswNbtInspectionChoice
+                                    new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.AnswerChoice
                                         {
                                             Text = Answer,
                                             IsCompliant = CompliantAnswers.Contains( Answer, false )
@@ -86,8 +86,8 @@ namespace NbtWebAppServices.Response
                         ResponseSection.Properties.Add( ResponseProperty );
                     }
                     ResponseDesign.Sections.Add( ResponseSection );
-                    _InspectionsResponse.Data.Designs.Add( ResponseDesign );
                 }
+                _InspectionsResponse.Data.Designs.Add( ResponseDesign );
             }
         }
 
@@ -97,12 +97,11 @@ namespace NbtWebAppServices.Response
             {
                 InspectionDesignNodeIds.Add( InspectionNode.NodeId );
                 CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
-                CswDateTime DueDate = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, NodeAsInspectionDesign.Date.DateTimeValue );
                 var ResponseInspection = new CswNbtWcfInspectionsDataModel.CswNbtInspection
                 {
                     DesignId = InspectionNode.NodeTypeId,
-                    
-                    DueDate = DueDate.ToClientAsJavascriptString(),
+
+                    DueDate = NodeAsInspectionDesign.Date.DateTimeValue,
                     InspectionId = NodeAsInspectionDesign.NodeId.PrimaryKey,
                     InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
                     LocationPath = NodeAsInspectionDesign.Location.Gestalt,
@@ -115,18 +114,16 @@ namespace NbtWebAppServices.Response
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
-                        CswDateTime DateAnswered = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, PropAsQuestion.DateAnswered );
-                        CswDateTime DateCorrected = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, PropAsQuestion.DateCorrected );
-                        var ResponseQuestion = new CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion
+                        var ResponseQuestion = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer
                         {
                             Answer = PropAsQuestion.Answer,
                             AnswerId = PropAsQuestion.JctNodePropId,
                             Comments = PropAsQuestion.Comments,
                             CorrectiveAction = PropAsQuestion.CorrectiveAction,
-                            DateAnswered = DateAnswered.ToClientAsJavascriptString(),
+                            DateAnswered = PropAsQuestion.DateAnswered,
                             QuestionId = PropAsQuestion.NodeTypePropId,
                             Status = NodeAsInspectionDesign.Status.Value,
-                            DateCorrected = DateCorrected.ToClientAsJavascriptString()
+                            DateCorrected = PropAsQuestion.DateCorrected
                         };
 
                         ResponseInspection.Questions.Add( ResponseQuestion );

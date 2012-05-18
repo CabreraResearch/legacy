@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.WebServices
             return DemoNodesTable.Rows.Count > 0;
         }
 
-        public JObject getHeaderMenu(CswSessionResourcesNbt CswSessionResources)
+        public JObject getHeaderMenu( CswSessionResourcesNbt CswSessionResources )
         {
             JObject Ret = new JObject();
 
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Ret["Admin"]["View Log"] = new JObject();
                         Ret["Admin"]["View Log"]["href"] = "DisplayLog.aspx";
-                        
+
                         Ret["Admin"]["Modules"] = new JObject();
                         Ret["Admin"]["Modules"]["action"] = "Modules";
                     }
@@ -155,15 +155,15 @@ namespace ChemSW.Nbt.WebServices
                                         new JProperty( "href", "Subscriptions.aspx" )
                                     ) )
                         );
-            Ret["Help"] = new JObject(
-                                new JProperty( "haschildren", true ),
-                                new JProperty( "Help", new JObject(
-                                    new JProperty( "popup", "help/index.htm" )
-                                ) ),
-                                new JProperty( "About", new JObject(
-                                    new JProperty( "action", "About" )
-                                ) )
-                        );
+            Ret["Help"] = new JObject();
+            Ret["Help"]["haschildren"] = true;
+            Ret["Help"]["Help"] = new JObject();
+            Ret["Help"]["Help"]["popup"] = "help/index.htm";
+            Ret["Help"]["Clear Cache"] = new JObject();
+            Ret["Help"]["Clear Cache"]["action"] = "Clear Cache";
+            Ret["Help"]["About"] = new JObject();
+            Ret["Help"]["About"]["action"] = "About";
+
             Ret["Logout"] = new JObject( new JProperty( "action", "Logout" ) );
 
             return Ret;

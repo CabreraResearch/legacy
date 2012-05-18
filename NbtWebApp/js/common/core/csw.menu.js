@@ -27,6 +27,7 @@
                 onMultiEdit: null, //function () { },
                 onEditView: null, //function (viewid) { },
                 onSaveView: null, //function (newviewid) { },
+                onPrintView: null,  // function () { },
                 onQuotas: null, // function () { },
                 onModules: null, // function () { },
                 onSessions: null, // function () { },
@@ -78,6 +79,11 @@
                                 onAddNode: o.onAlterNode
                             });
                             return false;
+                        });
+                        break;
+                    case 'Clear Cache':
+                        $a.click(function () {
+                            return window.location.reload(true);
                         });
                         break;
                     case 'DeleteNode':
