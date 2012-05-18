@@ -250,17 +250,15 @@
                         return ret;
                     }
 
-                    var inspectionTable, $newDesignLabel,
+                    var inspectionTable,
                         tempInspectionName = makeTempInspectionDesignName(internal.selectedInspectionTarget),
                         tempCategoryName = internal.selectedInspectionTarget;
 
                     var toggleNewDesignName = function () {
                         if (internal.isNewInspectionDesign()) {
                             internal.newDesignName.show();
-                            $newDesignLabel.show();
                         } else {
                             internal.newDesignName.hide();
-                            $newDesignLabel.hide();
                         }
                     };
                     var nextBtnEnabled = function () {
@@ -296,11 +294,12 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'Select an Inspection Design&nbsp' });
 
-                        internal.inspectionDesignSelect = inspectionTable.cell(1, 2);
-                        internal.inspectionDesignSelect.div()
+                        internal.inspectionDesignSelect = inspectionTable.cell(1, 2)
+                            .div()
                             .nodeTypeSelect({
                                 ID: Csw.makeSafeId('nodeTypeSelect'),
                                 objectClassName: 'InspectionDesignClass',
+                                addNewOption: true,
                                 blankOptionText: '[Create New]'
                             })
                             .change(function () {
@@ -311,22 +310,16 @@
                                 } else {
                                     internal.selectedInspectionDesign.name = selected.text();
                                 }
-                                tempCategoryName = makeTempInspectionDesignName(internal.selectedInspectionTarget);
-                                internal.categoryNameInput.val(tempCategoryName);
                                 Csw.publish(internal.createInspectionEvents.designNameChanged);
                                 toggleNewDesignName();
                             });
                         //Create New is selected by default
-                        internal.selectedInspectionDesign.id = internal.inspectionDesignSelect.find(':selected').val();
+                        internal.selectedInspectionDesign.id = internal.inspectionDesignSelect.val();
                         internal.selectedInspectionDesign.name = tempInspectionName;
 
                         inspectionTable.cell(2, 1).br();
 
                         //2. New Inspection Design Name
-                        $newDesignLabel = inspectionTable.cell(3, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ cssclass: 'required', text: 'New Inspection Design Name&nbsp' });
-
                         internal.newDesignName = inspectionTable.cell(3, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .input({
@@ -346,7 +339,6 @@
                                     Csw.publish(internal.createInspectionEvents.designNameChanged);
                                 }, 10);
                             });
-                            $.validator.addMethod(internal.newDesignName.getId(), internal.checkTargetIsClientSideUnique, 'An Inspection Design and an Inspection Target cannot have the same name.');
                             
                         inspectionTable.cell(5, 1).br();
 

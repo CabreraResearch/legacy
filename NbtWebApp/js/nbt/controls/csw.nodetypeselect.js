@@ -43,6 +43,13 @@
                     Csw.tryExec(internal.onSelect, external.val(), internal.nodetypecount);
                 });
 
+                if (false === Csw.isNullOrEmpty(internal.blankOptionText)) {
+                    external.option({
+                        value: internal.blankOptionText,
+                        isSelected: true
+                    });
+                }
+
                 Csw.ajax.post({
                     urlMethod: internal.nodeTypesUrlMethod,
                     data: {
@@ -74,12 +81,7 @@
                             }
                         });
                         internal.nodetypecount = ret.nodetypecount;
-                        if (false === Csw.isNullOrEmpty(internal.blankOptionText) && internal.nodetypecount > 1) {
-                            external.option({ 
-                                value: internal.blankOptionText,
-                                isSelected: true
-                            });
-                        }
+                        
                         Csw.tryExec(internal.onSuccess, ret, internal.nodetypecount);
                         external.css('width', Csw.string(internal.width));
                     }
