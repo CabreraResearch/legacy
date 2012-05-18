@@ -445,7 +445,7 @@
                         if (tabcount === 1 || o.Multi) {
                             div.$.dialog('close');
                         }
-                        setupTabs(date);
+                        //setupTabs(date);//case 26107
                         Csw.tryExec(o.onEditNode, nodeids, nodekeys);
                     },
                     onBeforeTabSelect: function () {
