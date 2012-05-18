@@ -66,6 +66,7 @@
                                         Csw.openPopup(data.actiondata, 600, 800);
                                         break;
                                     default:
+                                        $btn.button({disabled: false});
                                         break;
                                 }
                             }
