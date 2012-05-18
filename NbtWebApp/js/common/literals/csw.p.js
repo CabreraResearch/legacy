@@ -17,7 +17,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="p">A p object</returns>
-            var internal = {
+            var cswPrivateVar = {
                 $parent: '',
                 ID: '',
                 name: '',
@@ -25,11 +25,11 @@
                 text: '',
                 styles: { }
             };
-            var external = { };
+            var cswPublicRet = { };
 
             (function() {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivateVar, options);
                 }
                 var html = '',
                     attr = Csw.makeAttr(),
@@ -37,9 +37,9 @@
 
                 var $p;
 
-                attr.add('id', internal.ID);
-                attr.add('class', internal.cssclass);
-                style.set(internal.styles);
+                attr.add('id', cswPrivateVar.ID);
+                attr.add('class', cswPrivateVar.cssclass);
+                style.set(cswPrivateVar.styles);
 
                 html += '<p ';
 
@@ -47,20 +47,20 @@
                 html += style.get();
 
                 html += '>';
-                html += Csw.string(internal.text);
+                html += Csw.string(cswPrivateVar.text);
                 html += '</p>';
                 $p = $(html);
-                Csw.literals.factory($p, external);
+                Csw.literals.factory($p, cswPublicRet);
 
-                if (Csw.isFunction(internal.onClick)) {
-                    external.bind('click', internal.onClick);
+                if (Csw.isFunction(cswPrivateVar.onClick)) {
+                    cswPublicRet.bind('click', cswPrivateVar.onClick);
                 }
-                if (internal.$parent) {
-                    internal.$parent.append(external.$);
+                if (cswPrivateVar.$parent) {
+                    cswPrivateVar.$parent.append(cswPublicRet.$);
                 }
             }());
 
-            return external;
+            return cswPublicRet;
         });
 
 } ());

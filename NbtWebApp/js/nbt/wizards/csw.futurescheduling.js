@@ -6,7 +6,7 @@
         Csw.nbt.register('futureSchedulingWizard', function (cswParent, options) {
             'use strict';
             
-            var internal = {
+            var cswPrivateVar = {
                 ID: 'CswFutureScheduling',
                 $parent: null,
                 onCancel: null, //function ($wizard) {},
@@ -26,12 +26,12 @@
                 resultsviewmode: ''
             };
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivateVar, options);
             }
-            var external = {};
+            var cswPublicRet = {};
 
-            internal.onBeforeNext = function () {
-                if (internal.generatorTree.checkedNodes().length === 0) {
+            cswPrivateVar.onBeforeNext = function () {
+                if (cswPrivateVar.generatorTree.checkedNodes().length === 0) {
                     $.CswDialog('AlertDialog', 'You must select at least one Generator to continue.');
                     return false;
                 } else {
@@ -39,49 +39,49 @@
                 }
             };
 
-            internal.handleNext = function () {
+            cswPrivateVar.handleNext = function () {
 
-                internal.resultscell.empty();
+                cswPrivateVar.resultscell.empty();
 
                 // Disable all buttons until Ajax finishes
-                internal.wizard.previous.disable();
-                internal.wizard.next.disable();
-                internal.wizard.finish.disable();
-                internal.wizard.cancel.disable();
+                cswPrivateVar.wizard.previous.disable();
+                cswPrivateVar.wizard.next.disable();
+                cswPrivateVar.wizard.finish.disable();
+                cswPrivateVar.wizard.cancel.disable();
 
                 var checkedNodeKeys = '';
 
-                Csw.each(internal.generatorTree.checkedNodes(), function (thisObj) {
+                Csw.each(cswPrivateVar.generatorTree.checkedNodes(), function (thisObj) {
                     if (checkedNodeKeys !== '') checkedNodeKeys += ',';
                     checkedNodeKeys += thisObj.cswnbtnodekey;
                 });
 
                 Csw.ajax.post({
-                    url: internal.futureurl,
+                    url: cswPrivateVar.futureurl,
                     data: {
                         SelectedGeneratorNodeKeys: checkedNodeKeys,
-                        EndDate: internal.endDatePicker.val().date
+                        EndDate: cswPrivateVar.endDatePicker.val().date
                     },
                     success: function (data) {
 
                         if (Csw.number(data.result) > 0) {
                             var resultstree = Csw.nbt.nodeTree({
-                                ID: Csw.makeId(internal.ID, '', 'resultstree'),
+                                ID: Csw.makeId(cswPrivateVar.ID, '', 'resultstree'),
                                 height: '250px',
                                 width: '500px',
-                                parent: internal.resultscell
+                                parent: cswPrivateVar.resultscell
                             });
                             resultstree.makeTree(data.treedata);
 
-                            internal.resultsviewid = data.sessionviewid;
-                            internal.resultsviewmode = data.viewmode;
+                            cswPrivateVar.resultsviewid = data.sessionviewid;
+                            cswPrivateVar.resultsviewmode = data.viewmode;
 
                             // Only Finish for step 2
-                            internal.wizard.finish.enable();
+                            cswPrivateVar.wizard.finish.enable();
                         } else {
-                            internal.resultscell.append('<br>No results');
-                            internal.wizard.cancel.enable();
-                            internal.wizard.previous.enable();
+                            cswPrivateVar.resultscell.append('<br>No results');
+                            cswPrivateVar.wizard.cancel.enable();
+                            cswPrivateVar.wizard.previous.enable();
                         }
                     } // success
                 }); // ajax 
@@ -98,32 +98,32 @@
                     2: Csw.enums.wizardSteps_FutureScheduling.step2.description
                 };
 
-                internal.wizard = Csw.layouts.wizard(div, {
-                    ID: Csw.makeId(internal.ID, '', 'wizard'),
+                cswPrivateVar.wizard = Csw.layouts.wizard(div, {
+                    ID: Csw.makeId(cswPrivateVar.ID, '', 'wizard'),
                     Title: 'Future Scheduling Wizard',
                     StepCount: Csw.enums.wizardSteps_FutureScheduling.stepcount,
                     Steps: wizardSteps,
-                    StartingStep: internal.startingStep,
+                    StartingStep: cswPrivateVar.startingStep,
                     FinishText: 'Finish',
-                    onBeforeNext: internal.onBeforeNext,
-                    onNext: internal.handleNext,
-                    onCancel: internal.onCancel,
+                    onBeforeNext: cswPrivateVar.onBeforeNext,
+                    onNext: cswPrivateVar.handleNext,
+                    onCancel: cswPrivateVar.onCancel,
                     onFinish: function () {
-                        Csw.tryExec(internal.onFinish, internal.resultsviewid, internal.resultsviewmode);
+                        Csw.tryExec(cswPrivateVar.onFinish, cswPrivateVar.resultsviewid, cswPrivateVar.resultsviewmode);
                     },
                     doNextOnInit: false
                 });
 
                 // Only Next and Cancel for step 1
-                internal.wizard.previous.disable();
-                internal.wizard.next.enable();
-                internal.wizard.finish.disable();
-                internal.wizard.cancel.enable();
+                cswPrivateVar.wizard.previous.disable();
+                cswPrivateVar.wizard.next.enable();
+                cswPrivateVar.wizard.finish.disable();
+                cswPrivateVar.wizard.cancel.enable();
 
-                internal.step1div = internal.wizard.div(Csw.enums.wizardSteps_FutureScheduling.step1.step);
+                cswPrivateVar.step1div = cswPrivateVar.wizard.div(Csw.enums.wizardSteps_FutureScheduling.step1.step);
 
-                var step1table = internal.step1div.table({
-                    ID: Csw.makeId(internal.ID, '', 'table1'),
+                var step1table = cswPrivateVar.step1div.table({
+                    ID: Csw.makeId(cswPrivateVar.ID, '', 'table1'),
                     FirstCellRightAlign: true,
                     width: '100%',
                     cellpadding: 2
@@ -131,8 +131,8 @@
 
                 step1table.cell(1, 1).span({ text: 'Select future date:' });
 
-                internal.endDatePicker = step1table.cell(1, 2).dateTimePicker({
-                    ID: Csw.makeId(internal.ID, '', 'date'),
+                cswPrivateVar.endDatePicker = step1table.cell(1, 2).dateTimePicker({
+                    ID: Csw.makeId(cswPrivateVar.ID, '', 'date'),
                     DisplayMode: 'Date',
                     Date: Csw.date().addDays(90).toString()
                 });
@@ -144,32 +144,32 @@
                 var cell42 = step1table.cell(4, 2);
 
                 Csw.ajax.post({
-                    url: internal.treeurl,
+                    url: cswPrivateVar.treeurl,
                     data: {},
                     success: function (data) {
 
-                        internal.generatorTree = Csw.nbt.nodeTree({
-                            ID: Csw.makeId(internal.ID, '', 'gentree'),
+                        cswPrivateVar.generatorTree = Csw.nbt.nodeTree({
+                            ID: Csw.makeId(cswPrivateVar.ID, '', 'gentree'),
                             height: '225px',
                             width: '500px',
                             parent: cell42,
                             ShowCheckboxes: true,
                             ValidateCheckboxes: false
                         });
-                        internal.generatorTree.makeTree(data);
+                        cswPrivateVar.generatorTree.makeTree(data);
 
                     } // success
                 }); // ajax
 
-                internal.step2div = internal.wizard.div(Csw.enums.wizardSteps_FutureScheduling.step2.step);
+                cswPrivateVar.step2div = cswPrivateVar.wizard.div(Csw.enums.wizardSteps_FutureScheduling.step2.step);
 
-                var step2table = internal.step2div.table({ ID: Csw.makeId(internal.ID, '', 'table2'), width: '100%' });
+                var step2table = cswPrivateVar.step2div.table({ ID: Csw.makeId(cswPrivateVar.ID, '', 'table2'), width: '100%' });
                 step2table.cell(1, 1).span({ text: 'Results:' });
-                internal.resultscell = step2table.cell(2, 1);
+                cswPrivateVar.resultscell = step2table.cell(2, 1);
 
             })(); // init
 
-            return external;
+            return cswPublicRet;
         });
 
 })();

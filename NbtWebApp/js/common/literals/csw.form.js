@@ -15,11 +15,11 @@
         /// <para>options.ID: An ID for the form.</para>
         /// </param>
         /// <returns type="form">A form object</returns>
-        var internal = {
+        var cswPrivateVar = {
             $parent: '',
             ID: ''
         };
-        var external = {};
+        var cswPublicRet = {};
 
         (function () {
             var html = '',
@@ -27,23 +27,23 @@
             var $form;
             
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivateVar, options);
             }
             
             html += '<form ';
-            attr.add('id', internal.ID);
+            attr.add('id', cswPrivateVar.ID);
             html += attr.get();
             html += '>';
             html += '</form>';
             $form = $(html);
             
-            Csw.literals.factory($form, external);
+            Csw.literals.factory($form, cswPublicRet);
 
-            internal.$parent.append(external.$);
+            cswPrivateVar.$parent.append(cswPublicRet.$);
             
         } ());
 
-        return external;
+        return cswPublicRet;
     }
     Csw.literals.register('form', form);
     Csw.literals.form = Csw.literals.form || form;

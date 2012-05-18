@@ -4,21 +4,21 @@
 (function () {
     'use strict';
 
-    var internal = {
+    var cswPrivateVar = {
         changed: 0,
         attachedToWindow: false,
         checkChangesEnabled: true
     };
 
-    internal.checkChanges = function () {
+    cswPrivateVar.checkChanges = function () {
         /// <summary>Check if changes have been made.</summary>
         /// <returns type="String">Confirmation text if changes have been made.</returns>
-        if (internal.checkChangesEnabled && internal.changed === 1) {
+        if (cswPrivateVar.checkChangesEnabled && cswPrivateVar.changed === 1) {
             return 'If you continue, you will lose any changes made on this page.  To save your changes, click Cancel and then click the Save button.';
         }
     };
 
-    internal.initCheckChanges = function () {
+    cswPrivateVar.initCheckChanges = function () {
         /// <summary>Register the check change event on the window.onbeforeunload event.</summary>
         /// <returns type="Boolean">Always true</returns>
         // Assign the checkchanges event to happen onbeforeunload
@@ -27,21 +27,21 @@
                 var f = window.onbeforeunload;
                 var ret = f();
                 if (ret) {
-                    return internal.checkChanges();
+                    return cswPrivateVar.checkChanges();
                 } else {
                     return false;
                 }
             };
         } else {
             window.onbeforeunload = function () {
-                return internal.checkChanges();
+                return cswPrivateVar.checkChanges();
             };
         }
     };
 
-    if (false === internal.attachedToWindow) {
-        $(window).load(internal.initCheckChanges);
-        internal.attachedToWindow = true;
+    if (false === cswPrivateVar.attachedToWindow) {
+        $(window).load(cswPrivateVar.initCheckChanges);
+        cswPrivateVar.attachedToWindow = true;
     }
 
     Csw.clientChanges = Csw.clientChanges ||
@@ -50,19 +50,19 @@
     Csw.clientChanges.register('setChanged', function () {
         /// <summary>Register a change.</summary>
         /// <returns type="Boolean">True if registered.</returns>
-        if (internal.checkChangesEnabled) {
-            internal.changed = 1;
+        if (cswPrivateVar.checkChangesEnabled) {
+            cswPrivateVar.changed = 1;
         }
-        return internal.checkChangesEnabled;
+        return cswPrivateVar.checkChangesEnabled;
     });
 
     Csw.clientChanges.register('unsetChanged', function () {
         /// <summary>Unregister a change.</summary>
         /// <returns type="Boolean">True if unregistered.</returns>
-        if (internal.checkChangesEnabled) {
-            internal.changed = 0;
+        if (cswPrivateVar.checkChangesEnabled) {
+            cswPrivateVar.changed = 0;
         }
-        return internal.checkChangesEnabled;
+        return cswPrivateVar.checkChangesEnabled;
     });
 
     Csw.clientChanges.register('manuallyCheckChanges', function () {
@@ -70,7 +70,7 @@
         /// <returns type="Boolean">True if no changes are registered or the user clicks OK.</returns>
         var ret = true,
             confirmString = '';
-        if (internal.checkChangesEnabled && internal.changed === 1) {
+        if (cswPrivateVar.checkChangesEnabled && cswPrivateVar.changed === 1) {
             /* remember: confirm is globally blocking call */
             confirmString += 'Are you sure you want to navigate away from this page?\n\n';
             confirmString += 'If you continue, you will lose any changes made on this page.  ';
@@ -82,7 +82,7 @@
             // 1. after you've been prompted to lose this change, you won't be prompted again for the same change later
             // 2. multiple calls to manuallyCheckChanges() in the same event won't prompt more than once
             if (ret) {
-                internal.changed = 0;
+                cswPrivateVar.changed = 0;
             }
         }
         return ret;

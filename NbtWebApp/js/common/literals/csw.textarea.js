@@ -16,7 +16,7 @@
         /// <para>options.value: Text to display</para>
         /// </param>
         /// <returns type="textarea">A textarea object</returns>
-        var internal = {
+        var cswPrivateVar = {
             $parent: '',
             ID: '',
             name: '',
@@ -35,48 +35,48 @@
             wrap: '',
             onChange: null //function () {}
         };
-        var external = {};
+        var cswPublicRet = {};
 
         (function () {
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivateVar, options);
             }
 
             var html = '',
-                value = Csw.string(internal.value, internal.text),
+                value = Csw.string(cswPrivateVar.value, cswPrivateVar.text),
                 attr = Csw.makeAttr(),
                 style = Csw.makeStyle();
             var $textArea;
 
-            internal.name = Csw.string(internal.name, internal.ID);
-            internal.ID = Csw.string(internal.ID, internal.name);
+            cswPrivateVar.name = Csw.string(cswPrivateVar.name, cswPrivateVar.ID);
+            cswPrivateVar.ID = Csw.string(cswPrivateVar.ID, cswPrivateVar.name);
 
             html += '<textarea ';
-            attr.add('id', internal.ID);
-            attr.add('name', internal.name);
-            attr.add('placeholder', internal.placeholder);
-            attr.add('maxlength', internal.maxlength);
-            if (Csw.bool(internal.disabled)) {
+            attr.add('id', cswPrivateVar.ID);
+            attr.add('name', cswPrivateVar.name);
+            attr.add('placeholder', cswPrivateVar.placeholder);
+            attr.add('maxlength', cswPrivateVar.maxlength);
+            if (Csw.bool(cswPrivateVar.disabled)) {
                 attr.add('disabled', 'disabled');
             }
-            if (Csw.bool(internal.required)) {
+            if (Csw.bool(cswPrivateVar.required)) {
                 attr.add('required', 'required');
-                internal.cssclass += ' required ';
+                cswPrivateVar.cssclass += ' required ';
             }
-            if (Csw.bool(internal.readonly)) {
+            if (Csw.bool(cswPrivateVar.readonly)) {
                 attr.add('readonly', 'readonly');
             }
-            if (Csw.bool(internal.autofocus)) {
-                attr.add('autofocus', internal.autofocus);
+            if (Csw.bool(cswPrivateVar.autofocus)) {
+                attr.add('autofocus', cswPrivateVar.autofocus);
             }
-            attr.add('class', internal.cssclass);
-            attr.add('maxlength', internal.maxlength);
-            attr.add('form', internal.form);
-            if (internal.wrap === 'hard' || internal.wrap === 'soft') {
-                attr.add('wrap', internal.wrap);
+            attr.add('class', cswPrivateVar.cssclass);
+            attr.add('maxlength', cswPrivateVar.maxlength);
+            attr.add('form', cswPrivateVar.form);
+            if (cswPrivateVar.wrap === 'hard' || cswPrivateVar.wrap === 'soft') {
+                attr.add('wrap', cswPrivateVar.wrap);
             }
-            attr.add('rows', internal.rows);
-            attr.add('cols', internal.cols);
+            attr.add('rows', cswPrivateVar.rows);
+            attr.add('cols', cswPrivateVar.cols);
 
             html += attr.get();
             html += style.get();
@@ -84,24 +84,24 @@
             html += value;
             html += '</textarea>';
             $textArea = $(html);
-            Csw.literals.factory($textArea, external);
-            internal.$parent.append(external.$);
+            Csw.literals.factory($textArea, cswPublicRet);
+            cswPrivateVar.$parent.append(cswPublicRet.$);
 
-            if (Csw.isFunction(internal.onChange)) {
-                external.bind('change', internal.onChange);
+            if (Csw.isFunction(cswPrivateVar.onChange)) {
+                cswPublicRet.bind('change', cswPrivateVar.onChange);
             }
 
         } ());
 
-        external.change = function (func) {
+        cswPublicRet.change = function (func) {
             if (Csw.isFunction(func)) {
-                external.bind('change', func);
+                cswPublicRet.bind('change', func);
             } else {
-                external.trigger('change');
+                cswPublicRet.trigger('change');
             }
         };
 
-        return external;
+        return cswPublicRet;
     }
     Csw.literals.register('textArea', textArea);
     Csw.literals.textArea = Csw.literals.textArea || textArea;

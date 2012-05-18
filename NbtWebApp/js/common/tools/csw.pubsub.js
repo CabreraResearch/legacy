@@ -3,7 +3,7 @@
 
 (function () {
     'use strict';
-    var internal = {
+    var cswPrivateVar = {
         bindingObj: $({})
     };
 
@@ -27,7 +27,7 @@
             ///     A function to execute when the event is triggered. The value false is also allowed as a shorthand for a function that simply does return false.
             /// </param>
             /// <returns type="jQuery" />
-            internal.bindingObj.on.apply(internal.bindingObj, arguments);
+            cswPrivateVar.bindingObj.on.apply(cswPrivateVar.bindingObj, arguments);
         });
 
     Csw.unsubscribe = Csw.unsubscribe ||
@@ -47,7 +47,7 @@
             ///     A handler function previously attached for the event(s), or the special value false.
             /// </param>
             /// <returns type="jQuery" />
-            internal.bindingObj.off.apply(internal.bindingObj, arguments);
+            cswPrivateVar.bindingObj.off.apply(cswPrivateVar.bindingObj, arguments);
         });
 
     Csw.publish = Csw.publish ||
@@ -64,7 +64,7 @@
             ///     Additional parameters to pass along to the event handler.
             /// </param>
             /// <returns type="jQuery" />
-            internal.bindingObj.trigger.apply(internal.bindingObj, arguments);
+            cswPrivateVar.bindingObj.trigger.apply(cswPrivateVar.bindingObj, arguments);
         });
 
 } ());

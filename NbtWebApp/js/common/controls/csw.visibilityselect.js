@@ -16,7 +16,7 @@
             /// <para>$visuserselect: User picklist</para>
             ///</returns>
             'use strict';
-            var external = {
+            var cswPublicRet = {
                 $visibilityselect: '',
                 $visroleselect: '',
                 $visuserselect: ''
@@ -29,38 +29,38 @@
                     var parent = table.cell(rownum, 2);
                     var id = table.id;
                     /* NO! Refactor to use Csw.literals and more wholesome methods. */
-                    external.$visibilityselect = $('<select id="' + id + '_vissel" />')
+                    cswPublicRet.$visibilityselect = $('<select id="' + id + '_vissel" />')
                         .appendTo(parent.$);
-                    external.$visibilityselect.append('<option value="User">User:</option>');
-                    external.$visibilityselect.append('<option value="Role">Role:</option>');
-                    external.$visibilityselect.append('<option value="Global">Global</option>');
+                    cswPublicRet.$visibilityselect.append('<option value="User">User:</option>');
+                    cswPublicRet.$visibilityselect.append('<option value="Role">Role:</option>');
+                    cswPublicRet.$visibilityselect.append('<option value="Global">Global</option>');
 
-                    external.$visroleselect = parent.$.CswNodeSelect('init', {
+                    cswPublicRet.$visroleselect = parent.$.CswNodeSelect('init', {
                         ID: Csw.makeId(id, 'visrolesel'),
                         objectclass: 'RoleClass'
                     }).hide();
-                    external.$visuserselect = parent.$.CswNodeSelect('init', {
+                    cswPublicRet.$visuserselect = parent.$.CswNodeSelect('init', {
                         ID: Csw.makeId(id, 'visusersel'),
                         objectclass: 'UserClass'
                     });
 
-                    external.$visibilityselect.change(function() {
-                        var val = external.$visibilityselect.val();
+                    cswPublicRet.$visibilityselect.change(function() {
+                        var val = cswPublicRet.$visibilityselect.val();
                         if (val === 'Role') {
-                            external.$visroleselect.show();
-                            external.$visuserselect.hide();
+                            cswPublicRet.$visroleselect.show();
+                            cswPublicRet.$visuserselect.hide();
                         } else if (val === 'User') {
-                            external.$visroleselect.hide();
-                            external.$visuserselect.show();
+                            cswPublicRet.$visroleselect.hide();
+                            cswPublicRet.$visuserselect.show();
                         } else {
-                            external.$visroleselect.hide();
-                            external.$visuserselect.hide();
+                            cswPublicRet.$visroleselect.hide();
+                            cswPublicRet.$visuserselect.hide();
                         }
                     }); // change
                 } // yes
             }); // IsAdministrator
 
-            return external;
+            return cswPublicRet;
 
         });
 

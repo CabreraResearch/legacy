@@ -18,7 +18,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="div">A div object</returns>
-            var internal = {
+            var cswPrivateVar = {
                 $parent: '',
                 ID: '',
                 name: '',
@@ -32,27 +32,27 @@
                 styles: { },
                 onClick: null
             };
-            var external = { };
+            var cswPublicRet = { };
 
             (function() {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivateVar, options);
                 }
                 var html = '',
                     attr = Csw.makeAttr(),
                     style = Csw.makeStyle(),
-                    divText = Csw.string(internal.text);
+                    divText = Csw.string(cswPrivateVar.text);
                 var $div;
 
-                attr.add('id', internal.ID);
-                attr.add('name', Csw.string(internal.name, internal.ID));
-                attr.add('class', internal.cssclass);
-                attr.add('value', internal.value);
-                attr.add('align', internal.align);
-                internal.styles.align = internal.align;
-                internal.styles.height = internal.height;
-                internal.styles.width = internal.width;
-                style.set(internal.styles);
+                attr.add('id', cswPrivateVar.ID);
+                attr.add('name', Csw.string(cswPrivateVar.name, cswPrivateVar.ID));
+                attr.add('class', cswPrivateVar.cssclass);
+                attr.add('value', cswPrivateVar.value);
+                attr.add('align', cswPrivateVar.align);
+                cswPrivateVar.styles.align = cswPrivateVar.align;
+                cswPrivateVar.styles.height = cswPrivateVar.height;
+                cswPrivateVar.styles.width = cswPrivateVar.width;
+                style.set(cswPrivateVar.styles);
 
                 html += '<div ';
 
@@ -63,17 +63,17 @@
                 html += divText;
                 html += '</div>';
                 $div = $(html);
-                Csw.literals.factory($div, external);
+                Csw.literals.factory($div, cswPublicRet);
 
-                if (Csw.isFunction(internal.onClick)) {
-                    external.bind('click', internal.onClick);
+                if (Csw.isFunction(cswPrivateVar.onClick)) {
+                    cswPublicRet.bind('click', cswPrivateVar.onClick);
                 }
-                if (false === Csw.isNullOrEmpty(internal.$parent)) {
-                    internal.$parent.append(external.$);
+                if (false === Csw.isNullOrEmpty(cswPrivateVar.$parent)) {
+                    cswPrivateVar.$parent.append(cswPublicRet.$);
                 }
             }());
 
-            return external;
+            return cswPublicRet;
         });
 
 } ());

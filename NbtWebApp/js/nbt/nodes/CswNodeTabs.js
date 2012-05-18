@@ -715,7 +715,7 @@
 //                                    Csw.tryExec(onSuccess);
 //                                });
 //                            } else {
-//                                // external events
+//                                // cswPublicRet events
 //                                Csw.tryExec(o.onSave, successData.nodeid, successData.cswnbtnodekey, tabcnt);
 //                                Csw.tryExec(onSuccess);
 //                            }

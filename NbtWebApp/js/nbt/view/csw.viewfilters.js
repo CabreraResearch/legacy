@@ -7,7 +7,7 @@
         Csw.nbt.register('viewFilters', function (options) {
             'use strict';
 
-            var internal = {
+            var cswPrivateVar = {
                 ID: '',
                 parent: '',
                 filtersMethod: 'getRuntimeViewFilters',
@@ -15,13 +15,13 @@
                 viewid: '',
                 onEditFilters: null
             };
-            var external = {};
+            var cswPublicRet = {};
 
 
-            internal.renderLinks = function(data)
+            cswPrivateVar.renderLinks = function(data)
             {
                 var editbtn;
-                var outertbl = internal.div.table();
+                var outertbl = cswPrivateVar.div.table();
                 var outercell11 = outertbl.cell(1,1);
                 var outercell12 = outertbl.cell(1,2);
                 var outercell11div = outercell11.div()
@@ -36,7 +36,7 @@
                     ID: 'editfilterbtn',
                     onClick: function() {
                         
-                        internal.renderDialog(data);
+                        cswPrivateVar.renderDialog(data);
 
                     } // onClick
                 }); // imageButton
@@ -47,7 +47,7 @@
                     Csw.each(propJson.filters, function (filtJson) {
                         viewPropFilters[filtJson.arbitraryid] = Csw.nbt.viewPropFilter({
                                 parent: tbl,
-                                viewid: internal.viewid,
+                                viewid: cswPrivateVar.viewid,
                                 viewJson: '',
                                 propsData: propJson,
                                 propname: propJson.name,
@@ -70,15 +70,15 @@
                 }); //each()
 
                 if(row > 1) {   // at least one filter
-                    internal.div.show();
+                    cswPrivateVar.div.show();
                 }
-            }; // internal.renderLinks()
+            }; // cswPrivateVar.renderLinks()
 
 
-            internal.renderDialog = function(data)
+            cswPrivateVar.renderDialog = function(data)
             {
                 var filterbtn;
-                var dialogdiv = Csw.literals.div({ ID: internal.ID })
+                var dialogdiv = Csw.literals.div({ ID: cswPrivateVar.ID })
                                 //.addClass('viewfilters')
                                 .hide();
 
@@ -92,7 +92,7 @@
 
                         viewPropFilters[filtJson.arbitraryid] = Csw.nbt.viewPropFilter({
                                 parent: tbl,
-                                viewid: internal.viewid,
+                                viewid: cswPrivateVar.viewid,
                                 viewJson: '',
                                 propsData: null,   // to fully populate the filter options
                                 proparbitraryid: propJson.arbitraryid,
@@ -102,7 +102,7 @@
                                 firstColumn: 1,
                                 showPropertyName: true,
                                 showSubfield: false,
-                                readOnly: internal.readOnly,
+                                readOnly: cswPrivateVar.readOnly,
                                 selectedSubFieldName: filtJson.subfieldname,
                                 selectedFilterMode: filtJson.filtermode,
                                 selectedValue: filtJson.value,
@@ -126,38 +126,38 @@
                         });
                                     
                         Csw.ajax.post({
-                            urlMethod: internal.applyMethod,
+                            urlMethod: cswPrivateVar.applyMethod,
                             data: { 
-                                ViewId: internal.viewid, 
+                                ViewId: cswPrivateVar.viewid, 
                                 FiltersJson: JSON.stringify(filtersJson) 
                             },
                             success: function(data) {
-                                Csw.tryExec(internal.onEditFilters, data.newviewid);
+                                Csw.tryExec(cswPrivateVar.onEditFilters, data.newviewid);
                             }
                         });
                     } // onOk
                 }); // CswDialog
-            }; // internal.renderEditable()
+            }; // cswPrivateVar.renderEditable()
             
             
             // constructor
             (function () {
 
-                if (options) $.extend(internal, options);
+                if (options) $.extend(cswPrivateVar, options);
 
-                internal.div = internal.parent.div({ ID: internal.ID })
+                cswPrivateVar.div = cswPrivateVar.parent.div({ ID: cswPrivateVar.ID })
                                 .addClass('viewfilters')
                                 .hide();
 
                 Csw.ajax.post({
-                    urlMethod: internal.filtersMethod,
-                    data: { ViewId: internal.viewid },
+                    urlMethod: cswPrivateVar.filtersMethod,
+                    data: { ViewId: cswPrivateVar.viewid },
                     success: function (data) {
 
                         // case 26331
                         // render as text and links first
                         // edit filters in dialog
-                        internal.renderLinks(data);
+                        cswPrivateVar.renderLinks(data);
 
                     } // success
                 }); // ajax

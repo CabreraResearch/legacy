@@ -7,7 +7,7 @@
         Csw.nbt.register('scheduledRulesWizard', function (cswParent, options) {
             'use strict';
 
-            var internal = {
+            var cswPrivateVar = {
                 ID: 'cswScheduledRulesGrid',
                 exitFunc: null, //function ($wizard) {},
                 startingStep: 1,
@@ -26,57 +26,57 @@
             };
 
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivateVar, options);
             }
 
-            var external = cswParent.div();
+            var cswPublicRet = cswParent.div();
 
-            internal.wizardSteps = {
+            cswPrivateVar.wizardSteps = {
                 1: Csw.enums.wizardSteps_ScheduleRulesGrid.step1.description,
                 2: Csw.enums.wizardSteps_ScheduleRulesGrid.step2.description
             };
                         
 
-            internal.currentStepNo = internal.startingStep;
+            cswPrivateVar.currentStepNo = cswPrivateVar.startingStep;
 
-            internal.toggleButton = function (button, isEnabled, doClick) {
+            cswPrivateVar.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
                 if (Csw.bool(isEnabled)) {
-                    btn = internal.wizard[button].enable();
+                    btn = cswPrivateVar.wizard[button].enable();
                     if (Csw.bool(doClick)) {
                         btn.click();
                     }
                 } else {
-                    internal.wizard[button].disable();
+                    cswPrivateVar.wizard[button].disable();
                 }
                 return false;
             };
 
-            internal.makeStepId = function (suffix, stepNo) {
-                var step = stepNo || internal.currentStepNo;
-                return Csw.makeId({ prefix: 'step_' + step, ID: internal.ID, suffix: suffix });
+            cswPrivateVar.makeStepId = function (suffix, stepNo) {
+                var step = stepNo || cswPrivateVar.currentStepNo;
+                return Csw.makeId({ prefix: 'step_' + step, ID: cswPrivateVar.ID, suffix: suffix });
             };
 
-            internal.makeStepOne = (function () {
+            cswPrivateVar.makeStepOne = (function () {
                 var stepOneComplete = false;
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        return (false === Csw.isNullOrEmpty(internal.selectedCustomerId));
+                        return (false === Csw.isNullOrEmpty(cswPrivateVar.selectedCustomerId));
                     };
                     var customerIdTable, customerIdSelect;
 
-                    internal.toggleButton(internal.buttons.prev, false);
-                    internal.toggleButton(internal.buttons.cancel, true);
-                    internal.toggleButton(internal.buttons.finish, false);
-                    internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                    cswPrivateVar.toggleButton(cswPrivateVar.buttons.prev, false);
+                    cswPrivateVar.toggleButton(cswPrivateVar.buttons.cancel, true);
+                    cswPrivateVar.toggleButton(cswPrivateVar.buttons.finish, false);
+                    cswPrivateVar.toggleButton(cswPrivateVar.buttons.next, nextBtnEnabled());
 
                     if (false === stepOneComplete) {
-                        internal.divStep1 = internal.wizard.div(Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step);
-                        internal.divStep1.br();
+                        cswPrivateVar.divStep1 = cswPrivateVar.wizard.div(Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step);
+                        cswPrivateVar.divStep1.br();
 
-                        customerIdTable = internal.divStep1.table({
-                            ID: internal.makeStepId('inspectionTable'),
+                        customerIdTable = cswPrivateVar.divStep1.table({
+                            ID: cswPrivateVar.makeStepId('inspectionTable'),
                             FirstCellRightAlign: true
                         });
 
@@ -90,8 +90,8 @@
                                 values: [{ value: '[ None ]', display: '[ None ]'}],
                                 onChange: function () {
                                     var selected = customerIdSelect.find(':selected');
-                                    internal.selectedCustomerId = selected.val();
-                                    internal.toggleButton(internal.buttons.next, (false === Csw.isNullOrEmpty(internal.selectedCustomerId) && internal.selectedCustomerId !== '[ None ]'));
+                                    cswPrivateVar.selectedCustomerId = selected.val();
+                                    cswPrivateVar.toggleButton(cswPrivateVar.buttons.next, (false === Csw.isNullOrEmpty(cswPrivateVar.selectedCustomerId) && cswPrivateVar.selectedCustomerId !== '[ None ]'));
                                 }
                             });
 
@@ -100,27 +100,27 @@
                             success: function (data) {
                                 var values = data.customerids;
                                 customerIdSelect.setOptions(values);
-                                internal.selectedCustomerId = customerIdSelect.find(':selected').val();
+                                cswPrivateVar.selectedCustomerId = customerIdSelect.find(':selected').val();
                             }
                         });
 
-                        internal.selectedCustomerId = customerIdSelect.find(':selected').val();
+                        cswPrivateVar.selectedCustomerId = customerIdSelect.find(':selected').val();
                     }
                     stepOneComplete = true;
                 };
             } ());
 
             //Step 2: Review Scheduled Rules
-            internal.makeStepTwo = function() {
-                var rulesGridId = internal.makeStepId('previewGrid_outer', 3),
+            cswPrivateVar.makeStepTwo = function() {
+                var rulesGridId = cswPrivateVar.makeStepId('previewGrid_outer', 3),
                     rulesGridDiv, headerTable;
 
                 var makeRulesGrid = function() {
-                    rulesGridDiv = rulesGridDiv || internal.divStep2.div({ID: rulesGridId });
+                    rulesGridDiv = rulesGridDiv || cswPrivateVar.divStep2.div({ID: rulesGridId });
                     rulesGridDiv.empty();
 
-                    internal.gridOptions = {
-                        ID: internal.makeStepId('rulesGrid'),
+                    cswPrivateVar.gridOptions = {
+                        ID: cswPrivateVar.makeStepId('rulesGrid'),
                         pagermode: 'default',
                         gridOpts: {
                             autowidth: true,
@@ -134,40 +134,40 @@
                             editfunc: function(rowid) {
                                 var onEdit = {
                                     url: '/NbtWebApp/wsNBT.asmx/updateScheduledRule',
-                                    editData: { AccessId: internal.selectedCustomerId },
+                                    editData: { AccessId: cswPrivateVar.selectedCustomerId },
                                     reloadAfterSubmit: false,
                                     checkOnSubmit: true,
                                     closeAfterEdit: true,
                                     afterComplete: makeRulesGrid
                                 };
-                                return internal.scheduledRulesGrid.gridTable.$.jqGrid('editGridRow', rowid, onEdit);
+                                return cswPrivateVar.scheduledRulesGrid.gridTable.$.jqGrid('editGridRow', rowid, onEdit);
                             }
                         }
                     };
 
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
-                        data: { AccessId: internal.selectedCustomerId },
+                        data: { AccessId: cswPrivateVar.selectedCustomerId },
                         success: function(data) {
-                            $.extend(internal.gridOptions.gridOpts, data);
-                            internal.scheduledRulesGrid = rulesGridDiv.grid(internal.gridOptions);
+                            $.extend(cswPrivateVar.gridOptions.gridOpts, data);
+                            cswPrivateVar.scheduledRulesGrid = rulesGridDiv.grid(cswPrivateVar.gridOptions);
                         }
                     });
                 };
 
-                internal.divStep2 = internal.divStep2 || internal.wizard.div(Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step);
-                internal.divStep2.empty();
+                cswPrivateVar.divStep2 = cswPrivateVar.divStep2 || cswPrivateVar.wizard.div(Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step);
+                cswPrivateVar.divStep2.empty();
 
-                internal.toggleButton(internal.buttons.next, false);
-                internal.toggleButton(internal.buttons.cancel, false);
-                internal.toggleButton(internal.buttons.finish, true);
-                internal.toggleButton(internal.buttons.prev, true);
+                cswPrivateVar.toggleButton(cswPrivateVar.buttons.next, false);
+                cswPrivateVar.toggleButton(cswPrivateVar.buttons.cancel, false);
+                cswPrivateVar.toggleButton(cswPrivateVar.buttons.finish, true);
+                cswPrivateVar.toggleButton(cswPrivateVar.buttons.prev, true);
 
-                headerTable = internal.divStep2.table({
-                    ID: internal.makeStepId('headerTable')
+                headerTable = cswPrivateVar.divStep2.table({
+                    ID: cswPrivateVar.makeStepId('headerTable')
                 });
                 headerTable.cell(1, 1)
-                    .span({ text: 'Review Customer ID <b>' + internal.selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.' });
+                    .span({ text: 'Review Customer ID <b>' + cswPrivateVar.selectedCustomerId + '\'s</b> Scheduled Rules. Make any necessary edits.' });
 
                 headerTable.cell(1, 2)
                     .button({
@@ -177,51 +177,51 @@
                         onClick: function() {
                             Csw.ajax.post({
                                 url: '/NbtWebApp/wsNBT.asmx/updateAllScheduledRules',
-                                data: { AccessId: internal.selectedCustomerId, Action: 'ClearAllReprobates' },
-                                success: internal.makeStepTwo
+                                data: { AccessId: cswPrivateVar.selectedCustomerId, Action: 'ClearAllReprobates' },
+                                success: cswPrivateVar.makeStepTwo
                             });
                         }
                     });
-                internal.divStep2.br();
+                cswPrivateVar.divStep2.br();
 
                 makeRulesGrid();
 
             };
 
-            internal.handleNext = function(newStepNo) {
-                internal.currentStepNo = newStepNo;
+            cswPrivateVar.handleNext = function(newStepNo) {
+                cswPrivateVar.currentStepNo = newStepNo;
                 switch (newStepNo) {
                 case Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step:
-                    internal.makeStepTwo();
+                    cswPrivateVar.makeStepTwo();
                     break;
                 } // switch(newstepno)
             }; // handleNext()
 
-            internal.handlePrevious = function (newStepNo) {
-                    internal.currentStepNo = newStepNo;
+            cswPrivateVar.handlePrevious = function (newStepNo) {
+                    cswPrivateVar.currentStepNo = newStepNo;
                     switch (newStepNo) {
                         case Csw.enums.wizardSteps_ScheduleRulesGrid.step1.step:
-                            internal.makeStepOne();
+                            cswPrivateVar.makeStepOne();
                             break;
                     }
                 },
 
-            internal.wizard = Csw.layouts.wizard(external, {
-                ID: Csw.makeId({ ID: internal.ID, suffix: 'wizard' }),
+            cswPrivateVar.wizard = Csw.layouts.wizard(cswPublicRet, {
+                ID: Csw.makeId({ ID: cswPrivateVar.ID, suffix: 'wizard' }),
                 Title: 'View Nbt Scheduler Rules by Schema',
                 StepCount: Csw.enums.wizardSteps_ScheduleRulesGrid.stepcount,
-                Steps: internal.wizardSteps,
-                StartingStep: internal.startingStep,
+                Steps: cswPrivateVar.wizardSteps,
+                StartingStep: cswPrivateVar.startingStep,
                 FinishText: 'Finish',
-                onNext: internal.handleNext,
-                onPrevious: internal.handlePrevious,
-                onCancel: internal.exitFunc, //There is nothing to finish or cancel, just exixt the wizard
-                onFinish: internal.exitFunc,
+                onNext: cswPrivateVar.handleNext,
+                onPrevious: cswPrivateVar.handlePrevious,
+                onCancel: cswPrivateVar.exitFunc, //There is nothing to finish or cancel, just exixt the wizard
+                onFinish: cswPrivateVar.exitFunc,
                 doNextOnInit: false
             });
 
-            internal.makeStepOne();
+            cswPrivateVar.makeStepOne();
 
-            return external;
+            return cswPublicRet;
         });
 } ());

@@ -16,7 +16,7 @@
         /// <para>options.text: Text to display</para>
         /// </param>
         /// <returns type="img">A img object</returns>
-        var internal = {
+        var cswPrivateVar = {
             $parent: '',
             ID: '',
             cssclass: '',
@@ -30,7 +30,7 @@
             width: '',
             onClick: null //function () {}
         };
-        var external = {};
+        var cswPublicRet = {};
 
         (function () {
             var html = '',
@@ -40,23 +40,23 @@
             var $img;
 
             if (options) {
-                $.extend(internal, options);
+                $.extend(cswPrivateVar, options);
             }
 
-            internal.ID = Csw.string(internal.ID, internal.name);
+            cswPrivateVar.ID = Csw.string(cswPrivateVar.ID, cswPrivateVar.name);
 
             html += '<img ';
-            attr.add('id', internal.ID);
-            attr.add('class', internal.cssclass);
-            attr.add('src', internal.src);
-            attr.add('alt', internal.alt);
-            attr.add('title', internal.title);
-            attr.add('height', internal.height);
-            attr.add('ismap', internal.ismap);
-            attr.add('usemap', internal.usemap);
-            attr.add('width', internal.width);
+            attr.add('id', cswPrivateVar.ID);
+            attr.add('class', cswPrivateVar.cssclass);
+            attr.add('src', cswPrivateVar.src);
+            attr.add('alt', cswPrivateVar.alt);
+            attr.add('title', cswPrivateVar.title);
+            attr.add('height', cswPrivateVar.height);
+            attr.add('ismap', cswPrivateVar.ismap);
+            attr.add('usemap', cswPrivateVar.usemap);
+            attr.add('width', cswPrivateVar.width);
             
-            style.add('border', internal.border);
+            style.add('border', cswPrivateVar.border);
 
             html += attr.get();
             html += style.get();
@@ -64,22 +64,22 @@
             html += ' />';
             $img = $(html);
 
-            Csw.literals.factory($img, external);
-            if (Csw.isFunction(internal.onClick)) {
-                external.bind('click', internal.onClick);
+            Csw.literals.factory($img, cswPublicRet);
+            if (Csw.isFunction(cswPrivateVar.onClick)) {
+                cswPublicRet.bind('click', cswPrivateVar.onClick);
             }
 
-            internal.$parent.append(external.$);
+            cswPrivateVar.$parent.append(cswPublicRet.$);
 
         } ());
 
-        external.click = function (func) {
+        cswPublicRet.click = function (func) {
             if (Csw.isFunction(func)) {
-                external.bind('click', func);
+                cswPublicRet.bind('click', func);
             }
         };
 
-        return external;
+        return cswPublicRet;
     }
     Csw.literals.register('img', img);
     Csw.literals.img = Csw.literals.img || img;

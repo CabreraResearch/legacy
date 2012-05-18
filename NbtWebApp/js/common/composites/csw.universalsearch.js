@@ -7,7 +7,7 @@
     Csw.composites.universalSearch = Csw.composites.universalSearch ||
         Csw.composites.register('universalSearch', function (cswParent, params) {
             'use strict';
-            var internal = {
+            var cswPrivateVar = {
                 ID: 'newsearch',
                 $searchbox_parent: null,
                 $searchresults_parent: null,
@@ -39,80 +39,80 @@
                 buttonMultiColumn: ''
             };
             if (params) {
-                $.extend(internal, params);
+                $.extend(cswPrivateVar, params);
             }
-            var external = {};
+            var cswPublicRet = {};
 
             // Constructor
             // Adds a searchbox to the form
             (function () {
                 
                 var cswtable = Csw.literals.table({
-                    ID: Csw.makeId(internal.ID, '', '_div'),
-                    $parent: internal.$searchbox_parent
+                    ID: Csw.makeId(cswPrivateVar.ID, '', '_div'),
+                    $parent: cswPrivateVar.$searchbox_parent
                 });
 
-                internal.searchinput = cswtable.cell(1, 1).input({
-                    ID: Csw.makeId(internal.ID, '', '_input'),
+                cswPrivateVar.searchinput = cswtable.cell(1, 1).input({
+                    ID: Csw.makeId(cswPrivateVar.ID, '', '_input'),
                     type: Csw.enums.inputTypes.text,
-                    width: internal.searchbox_width
+                    width: cswPrivateVar.searchbox_width
                 });
 
-                internal.searchbutton = cswtable.cell(1, 2).button({
-                    ID: Csw.makeId(internal.ID, '', '_srchbtn'),
+                cswPrivateVar.searchbutton = cswtable.cell(1, 2).button({
+                    ID: Csw.makeId(cswPrivateVar.ID, '', '_srchbtn'),
                     enabledText: 'Search',
                     disabledText: 'Searching...',
                     onClick: function () {
-                        internal.searchterm = internal.searchinput.val();
-                        //internal.filters = {};
-                        internal.newsearch();
+                        cswPrivateVar.searchterm = cswPrivateVar.searchinput.val();
+                        //cswPrivateVar.filters = {};
+                        cswPrivateVar.newsearch();
                     }
                 });
 
-                internal.searchinput.clickOnEnter(internal.searchbutton);
+                cswPrivateVar.searchinput.clickOnEnter(cswPrivateVar.searchbutton);
             })();
 
             // Handle search submission
-            internal.newsearch = function () {
-                Csw.tryExec(internal.onBeforeSearch);
+            cswPrivateVar.newsearch = function () {
+                Csw.tryExec(cswPrivateVar.onBeforeSearch);
 
                 Csw.ajax.post({
-                    url: internal.newsearchurl,
+                    url: cswPrivateVar.newsearchurl,
                     data: { 
-                        SearchTerm: internal.searchterm,
-                        NodeTypeId: internal.nodetypeid,
-                        ObjectClassId: internal.objectclassid
+                        SearchTerm: cswPrivateVar.searchterm,
+                        NodeTypeId: cswPrivateVar.nodetypeid,
+                        ObjectClassId: cswPrivateVar.objectclassid
                     },
                     success: function (data) {
-                        internal.handleResults(data);
-                        Csw.tryExec(internal.onAfterNewSearch, internal.sessiondataid);
+                        cswPrivateVar.handleResults(data);
+                        Csw.tryExec(cswPrivateVar.onAfterNewSearch, cswPrivateVar.sessiondataid);
                     }
                 });
             }; // search()
 
-            internal.handleResults = function (data) {
+            cswPrivateVar.handleResults = function (data) {
                 var fdiv, ftable, filtersdivid;
 
-                internal.sessiondataid = data.sessiondataid;
+                cswPrivateVar.sessiondataid = data.sessiondataid;
 
                 // Search results
 
                 function _renderResultsTable(columns) {
                     
-                    internal.$searchresults_parent.contents().remove();
-                    internal.$searchresults_parent.css({ paddingTop: '15px' });
+                    cswPrivateVar.$searchresults_parent.contents().remove();
+                    cswPrivateVar.$searchresults_parent.css({ paddingTop: '15px' });
 
                     var resultstable = Csw.literals.table({
-                        ID: Csw.makeId(internal.ID, '', 'resultstbl'),
-                        $parent: internal.$searchresults_parent,
+                        ID: Csw.makeId(cswPrivateVar.ID, '', 'resultstbl'),
+                        $parent: cswPrivateVar.$searchresults_parent,
                         width: '100%'
                     });
 
                     resultstable.cell(1, 1).append('<b>Search Results: (' + data.table.results + ')</b>');
 
                     resultstable.cell(1, 2).css({ width: '18px' });
-                    internal.buttonSingleColumn = resultstable.cell(1, 2).imageButton({
-                        ID: Csw.makeId(internal.ID, '', '_singlecol'),
+                    cswPrivateVar.buttonSingleColumn = resultstable.cell(1, 2).imageButton({
+                        ID: Csw.makeId(cswPrivateVar.ID, '', '_singlecol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableSingleColumn,
                         Active: (columns === 1),
                         AlternateText: 'Single Column',
@@ -124,8 +124,8 @@
                     });
 
                     resultstable.cell(1, 3).css({ width: '18px' });
-                    internal.buttonMultiColumn = resultstable.cell(1, 3).imageButton({
-                        ID: Csw.makeId(internal.ID, '', '_multicol'),
+                    cswPrivateVar.buttonMultiColumn = resultstable.cell(1, 3).imageButton({
+                        ID: Csw.makeId(cswPrivateVar.ID, '', '_multicol'),
                         ButtonType: Csw.enums.imageButton_ButtonType.TableMultiColumn,
                         Active: (columns !== 1),
                         AlternateText: 'Multi Column',
@@ -139,38 +139,38 @@
                     resultstable.cell(2, 1).propDom({ 'colspan': 3 });
 
                     resultstable.cell(2, 1).$.CswNodeTable({
-                        ID: Csw.makeId(internal.ID, '', 'srchresults'),
+                        ID: Csw.makeId(cswPrivateVar.ID, '', 'srchresults'),
                         onEditNode: null,
                         onDeleteNode: function () {
                             // case 25380 - refresh on delete
-                            external.restoreSearch(internal.sessiondataid);
+                            cswPublicRet.restoreSearch(cswPrivateVar.sessiondataid);
                         },
-                        //onSuccess: internal.onAfterSearch,
+                        //onSuccess: cswPrivateVar.onAfterSearch,
                         onNoResults: function () {
                             resultstable.cell(2, 1).text('No Results Found');
                         },
                         tabledata: data.table,
-                        //maxheight: internal.searchresults_maxheight
+                        //maxheight: cswPrivateVar.searchresults_maxheight
                         columns: columns,
-                        allowEdit: internal.allowEdit,
-                        allowDelete: internal.allowEdit,
-                        extraAction: internal.extraAction,
-                        onExtraAction: internal.onExtraAction
+                        allowEdit: cswPrivateVar.allowEdit,
+                        allowDelete: cswPrivateVar.allowEdit,
+                        extraAction: cswPrivateVar.extraAction,
+                        onExtraAction: cswPrivateVar.onExtraAction
                     });
                 }
 
                 _renderResultsTable(1);
 
                 // Filter panel
-                internal.$searchfilters_parent.contents().remove();
+                cswPrivateVar.$searchfilters_parent.contents().remove();
 
-                filtersdivid = Csw.makeId(internal.ID, '', 'filtersdiv');
+                filtersdivid = Csw.makeId(cswPrivateVar.ID, '', 'filtersdiv');
                 fdiv = Csw.literals.div({
                     ID: filtersdivid,
-                    $parent: internal.$searchfilters_parent
+                    $parent: cswPrivateVar.$searchfilters_parent
                 }).css({
                     paddingTop: '15px'
-                    //height: internal.searchresults_maxheight + 'px',
+                    //height: cswPrivateVar.searchresults_maxheight + 'px',
                     //overflow: 'auto'
                 });
 
@@ -196,7 +196,7 @@
                             ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                             AlternateText: 'Remove Filter',
                             onClick: function () {
-                                internal.filter(thisFilter, 'remove');
+                                cswPrivateVar.filter(thisFilter, 'remove');
                             }
                         });
                     }
@@ -206,13 +206,13 @@
 
                 Csw.each(data.filtersapplied, showFilter);
 
-                if (hasFilters && internal.showSaveAsView) {
+                if (hasFilters && cswPrivateVar.showSaveAsView) {
                     fdiv.br();
                     fdiv.button({
                         ID: Csw.makeId(filtersdivid, '', "saveview"),
                         enabledText: 'Save as View',
                         disableOnClick: false,
-                        onClick: internal.saveAsView
+                        onClick: cswPrivateVar.saveAsView
                     });
                 }
                 fdiv.br();
@@ -225,7 +225,7 @@
                         ID: Csw.makeId(filtersdivid, '', thisFilter.filterid),
                         text: thisFilter.filtervalue + ' (' + thisFilter.count + ')',
                         onClick: function () {
-                            internal.filter(thisFilter, 'add');
+                            cswPrivateVar.filter(thisFilter, 'add');
                             return false;
                         }
                     });
@@ -247,7 +247,7 @@
                     var thisdiv = moreDiv.shownDiv;
                     moreDiv.moreLink.hide();
                     Csw.each(thisFilterSet, function (thisFilter) {
-                        if (filterCount === internal.filterHideThreshold) {
+                        if (filterCount === cswPrivateVar.filterHideThreshold) {
                             moreDiv.moreLink.show();
                             thisdiv = moreDiv.hiddenDiv;
                         }
@@ -260,41 +260,41 @@
 
                 Csw.each(data.filters, makeFilterSet);
 
-                Csw.tryExec(internal.onAfterSearch);
+                Csw.tryExec(cswPrivateVar.onAfterSearch);
             } // handleResults()
 
 
-            internal.filter = function (thisFilter, action) {
-                //internal.filters[thisFilter.filterid] = thisFilter;
+            cswPrivateVar.filter = function (thisFilter, action) {
+                //cswPrivateVar.filters[thisFilter.filterid] = thisFilter;
 
-                Csw.tryExec(internal.onBeforeSearch);
+                Csw.tryExec(cswPrivateVar.onBeforeSearch);
                 Csw.ajax.post({
-                    url: internal.filtersearchurl,
+                    url: cswPrivateVar.filtersearchurl,
                     data: {
-                        SessionDataId: internal.sessiondataid,
+                        SessionDataId: cswPrivateVar.sessiondataid,
                         Filter: JSON.stringify(thisFilter),
                         Action: action
                     },
-                    success: internal.handleResults
+                    success: cswPrivateVar.handleResults
                 });
             }; // filter()
 
-            internal.saveAsView = function () {
+            cswPrivateVar.saveAsView = function () {
                 $.CswDialog('AddViewDialog', {
-                    ID: Csw.makeId(internal.ID, '', 'addviewdialog'),
+                    ID: Csw.makeId(cswPrivateVar.ID, '', 'addviewdialog'),
                     //viewmode: 'table',
                 category: 'Saved Searches',
                     onAddView: function (newviewid, viewmode) {
 
                         Csw.ajax.post({
-                            url: internal.saveurl,
+                            url: cswPrivateVar.saveurl,
                             data: {
-                                SessionDataId: internal.sessiondataid,
+                                SessionDataId: cswPrivateVar.sessiondataid,
                                 ViewId: newviewid
                             },
                             success: function (data) {
-                            Csw.tryExec(internal.onAddView, newviewid, viewmode);
-                                Csw.tryExec(internal.onLoadView, newviewid, viewmode);
+                            Csw.tryExec(cswPrivateVar.onAddView, newviewid, viewmode);
+                                Csw.tryExec(cswPrivateVar.onLoadView, newviewid, viewmode);
                             }
                         }); // ajax  
 
@@ -302,24 +302,24 @@
                 }); // CswDialog
             }; // saveAsView()
 
-            external.restoreSearch = function (searchid) {
+            cswPublicRet.restoreSearch = function (searchid) {
 
-                internal.sessiondataid = searchid;
+                cswPrivateVar.sessiondataid = searchid;
 
-                Csw.tryExec(internal.onBeforeSearch);
+                Csw.tryExec(cswPrivateVar.onBeforeSearch);
                 Csw.ajax.post({
-                    url: internal.restoresearchurl,
+                    url: cswPrivateVar.restoresearchurl,
                     data: {
-                        SessionDataId: internal.sessiondataid
+                        SessionDataId: cswPrivateVar.sessiondataid
                     },
                     success: function (data) {
-                        internal.handleResults(data);
-                        Csw.tryExec(internal.onAfterNewSearch, internal.sessiondataid);
+                        cswPrivateVar.handleResults(data);
+                        Csw.tryExec(cswPrivateVar.onAfterNewSearch, cswPrivateVar.sessiondataid);
                     }
                 });
             }; // restoreSearch()
 
-            return external;
+            return cswPublicRet;
         });
 
 })();

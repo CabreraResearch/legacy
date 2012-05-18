@@ -6,7 +6,7 @@
     Csw.literals.select = Csw.literals.select ||
         Csw.literals.register('select', function select(options) {
 
-            var internal = {
+            var cswPrivateVar = {
                 ID: '',
                 selected: '',
                 values: [],
@@ -15,26 +15,26 @@
                 width: '',
                 onChange: null //function () {}
             };
-            var external = {};
+            var cswPublicRet = {};
 
 
-            external.change = function (func) {
+            cswPublicRet.change = function (func) {
                 /// <summary>Trigger or assign a button click event.</summary>
                 /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
                 /// <returns type="button">The button object.</returns>
                 if (Csw.isFunction(func)) {
-                    external.bind('change', func);
+                    cswPublicRet.bind('change', func);
                 } else {
-                    external.trigger('change');
+                    cswPublicRet.trigger('change');
                 }
-                return external;
+                return cswPublicRet;
             };
 
-            external.selectedText = function () {
-                return external.$.find('option:selected').text();
+            cswPublicRet.selectedText = function () {
+                return cswPublicRet.$.find('option:selected').text();
             };
 
-            external.makeOption = function (opt) {
+            cswPublicRet.makeOption = function (opt) {
                 var ret, display, value;
                 if (Csw.contains(opt, 'value') && Csw.contains(opt, 'display')) {
                     ret = opt;
@@ -50,10 +50,10 @@
                 return ret;
             };
 
-            external.makeOptions = function (valueArray) {
+            cswPublicRet.makeOptions = function (valueArray) {
                 var values = [];
                 Csw.crawlObject(valueArray, function (val) {
-                    var value = external.makeOption(val);
+                    var value = cswPublicRet.makeOption(val);
                     if (false === Csw.isNullOrEmpty(value)) {
                         values.push(value);
                     }
@@ -61,10 +61,10 @@
                 return values;
             };
 
-            external.addOption = function (thisOpt, isSelected) {
+            cswPublicRet.addOption = function (thisOpt, isSelected) {
                 var value = Csw.string(thisOpt.value),
                     display = Csw.string(thisOpt.display),
-                    opt = external.option({ value: value, display: display, isSelected: isSelected });
+                    opt = cswPublicRet.option({ value: value, display: display, isSelected: isSelected });
 
                 if (false === Csw.isNullOrEmpty(value.data)) {
                     opt.data(value.dataName, value.data);
@@ -72,20 +72,20 @@
                 return opt;
             };
 
-            external.setOptions = function (values, doEmpty) {
+            cswPublicRet.setOptions = function (values, doEmpty) {
                 if (Csw.isArray(values) && values.length > 0) {
                     if (doEmpty) {
-                        external.empty();
+                        cswPublicRet.empty();
                     }
                     Csw.each(values, function (thisOpt) {
-                        var opt = external.makeOption(thisOpt);
-                        external.addOption(opt, (opt.value === internal.selected));
+                        var opt = cswPublicRet.makeOption(thisOpt);
+                        cswPublicRet.addOption(opt, (opt.value === cswPrivateVar.selected));
                     });
                 }
-                return external;
+                return cswPublicRet;
             };
 
-            external.option = function (optionOpts) {
+            cswPublicRet.option = function (optionOpts) {
                 var optInternal = {
                     value: '',
                     display: '',
@@ -120,7 +120,7 @@
                     $option = $(html);
 
                     Csw.literals.factory($option, optExternal);
-                    external.append($option);
+                    cswPublicRet.append($option);
                 } ());
 
                 return optExternal;
@@ -132,15 +132,15 @@
                     style = Csw.makeStyle();
 
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivateVar, options);
                 }
 
-                internal.ID = Csw.string(internal.ID, internal.name);
+                cswPrivateVar.ID = Csw.string(cswPrivateVar.ID, cswPrivateVar.name);
 
-                attr.add('id', internal.ID);
-                attr.add('class', internal.cssclass);
-                attr.add('name', internal.name);
-                style.add('width', internal.width);
+                attr.add('id', cswPrivateVar.ID);
+                attr.add('class', cswPrivateVar.cssclass);
+                attr.add('name', cswPrivateVar.name);
+                style.add('width', cswPrivateVar.width);
 
                 html += '<select ';
                 html += attr.get();
@@ -148,30 +148,30 @@
                 html += '>';
                 html += '</select>';
 
-                Csw.literals.factory($(html), external);
+                Csw.literals.factory($(html), cswPublicRet);
 
-                if (false === Csw.isNullOrEmpty(internal.$parent)) {
-                    internal.$parent.append(external.$);
+                if (false === Csw.isNullOrEmpty(cswPrivateVar.$parent)) {
+                    cswPrivateVar.$parent.append(cswPublicRet.$);
                 }
 
-                if (Csw.isFunction(internal.onChange)) {
-                    external.change(internal.onChange);
+                if (Csw.isFunction(cswPrivateVar.onChange)) {
+                    cswPublicRet.change(cswPrivateVar.onChange);
                 }
 
-                var values = external.makeOptions(internal.values);
-                external.setOptions(values);
+                var values = cswPublicRet.makeOptions(cswPrivateVar.values);
+                cswPublicRet.setOptions(values);
 
-                if (false === Csw.isNullOrEmpty(internal.value)) {
-                    external.text(internal.value);
+                if (false === Csw.isNullOrEmpty(cswPrivateVar.value)) {
+                    cswPublicRet.text(cswPrivateVar.value);
                 }
 
-                if (Csw.bool(internal.multiple)) {
-                    external.propDom('multiple', 'multiple');
+                if (Csw.bool(cswPrivateVar.multiple)) {
+                    cswPublicRet.propDom('multiple', 'multiple');
                 }
 
             }());
 
-            return external;
+            return cswPublicRet;
         });
 
 } ());

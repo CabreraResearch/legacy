@@ -22,7 +22,7 @@
             /// </param>
             /// <returns type="thinGrid">A thinGrid object</returns>
             'use strict';
-            var internal = {
+            var cswPrivateVar = {
                 ID: '',
                 cssclass: '',
                 rows: [],
@@ -37,63 +37,63 @@
                 TableCssClass: 'CswThinGridTable',
                 CellCssClass: 'CswThinGridCells'
             };
-            var external = {};
+            var cswPublicRet = {};
 
             (function () {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivateVar, options);
                 }
 
-                internal.table = cswParent.table(internal);
-                external = Csw.dom({}, internal.table);
+                cswPrivateVar.table = cswParent.table(cswPrivateVar);
+                cswPublicRet = Csw.dom({}, cswPrivateVar.table);
             } ());
 
-            external.addCell = function (value, row, col) {
+            cswPublicRet.addCell = function (value, row, col) {
                 var cssClass = '';
                 if (row === 1) {
-                    if (internal.hasHeader) {
+                    if (cswPrivateVar.hasHeader) {
                         cssClass = 'CswThinGridHeaderShow';
                     } else {
                         cssClass = 'CswThinGridHeaderHide';
                     }
                 }
-                internal.table.cell(row, col).append(Csw.string(value, '&nbsp;')).addClass(cssClass);
+                cswPrivateVar.table.cell(row, col).append(Csw.string(value, '&nbsp;')).addClass(cssClass);
             };
 
-            external.addRows = function (dataRows, row, col) {
+            cswPublicRet.addRows = function (dataRows, row, col) {
                 col = col || 0;
-                row = row || internal.rowCount;
+                row = row || cswPrivateVar.rowCount;
                 if (Csw.isArray(dataRows)) {
                     Csw.each(dataRows, function (cellVal) {
                         if (Csw.isArray(cellVal)) {
-                            external.addRows(cellVal, row, col);
+                            cswPublicRet.addRows(cellVal, row, col);
                         } else {
                             col += 1;
-                            external.addCell(cellVal, internal.rowCount, col);
+                            cswPublicRet.addCell(cellVal, cswPrivateVar.rowCount, col);
                         }
                     });
                 }
-                internal.rowCount += 1;
+                cswPrivateVar.rowCount += 1;
             };
 
             (function () {
-                if (internal.rows.length > 0) {
-                    internal.rowCount = 1;
+                if (cswPrivateVar.rows.length > 0) {
+                    cswPrivateVar.rowCount = 1;
                 } else {
-                    internal.rowCount = 0;
+                    cswPrivateVar.rowCount = 0;
                 }
 
-                external.addRows(internal.rows);
+                cswPublicRet.addRows(cswPrivateVar.rows);
 
-                internal.table.cell(internal.rowCount, 1).a({
-                    text: internal.linkText,
-                    onClick: internal.onLinkClick
+                cswPrivateVar.table.cell(cswPrivateVar.rowCount, 1).a({
+                    text: cswPrivateVar.linkText,
+                    onClick: cswPrivateVar.onLinkClick
                 });
 
             } ());
 
 
-            return external;
+            return cswPublicRet;
         });
 
 } ());

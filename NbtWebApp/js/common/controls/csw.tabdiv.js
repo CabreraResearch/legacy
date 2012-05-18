@@ -19,7 +19,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="tabdiv">A tabdiv object</returns>
-            var internal = {
+            var cswPrivateVar = {
                 ID: '',
                 name: '',
                 cssclass: '',
@@ -27,26 +27,26 @@
                 title: '',
                 align: ''
             };
-            var external = {};
+            var cswPublicRet = {};
 
             (function () {
-                $.extend(internal, options);
-                external = cswParent.div(internal);
-                //$.extend(external, Csw.literals.div(internal));
+                $.extend(cswPrivateVar, options);
+                cswPublicRet = cswParent.div(cswPrivateVar);
+                //$.extend(cswPublicRet, Csw.literals.div(cswPrivateVar));
             } ());
 
-            external.tabs = function () {
+            cswPublicRet.tabs = function () {
                 var ret,
-                    tryRet = Csw.tryJqExec(external, 'tabs', arguments);
+                    tryRet = Csw.tryJqExec(cswPublicRet, 'tabs', arguments);
                 if (Csw.isJQuery(tryRet)) {
-                    ret = external.jquery(tryRet);
+                    ret = cswPublicRet.jquery(tryRet);
                 } else {
                     ret = tryRet;
                 }
                 return ret;
             };
 
-            return external;
+            return cswPublicRet;
         });
 
 } ());

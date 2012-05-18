@@ -6,7 +6,7 @@
     Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
         Csw.controls.register('nodeSelect', function (cswParent, options) {
             'use strict';
-            var internal = {
+            var cswPrivateVar = {
                 $parent: '',
                 ID: '',
                 nodesUrlMethod: 'getNodes',
@@ -21,31 +21,31 @@
                 excludeNodeTypeIds: '',
                 canAdd: false
             };
-            var external = {};
+            var cswPublicRet = {};
 
             (function () {
 
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivateVar, options);
                 }
-                internal.ID += '_nodesel';
+                cswPrivateVar.ID += '_nodesel';
 
-                internal.table = cswParent.table();
-                internal.select = internal.table.cell(1, 1).select(internal);
+                cswPrivateVar.table = cswParent.table();
+                cswPrivateVar.select = cswPrivateVar.table.cell(1, 1).select(cswPrivateVar);
 
-                external = Csw.dom({}, internal.select);
+                cswPublicRet = Csw.dom({}, cswPrivateVar.select);
 
-                external.bind('change', function () {
-                    Csw.tryExec(internal.onChange, external);
-                    Csw.tryExec(internal.onSelect, external.val());
+                cswPublicRet.bind('change', function () {
+                    Csw.tryExec(cswPrivateVar.onChange, cswPublicRet);
+                    Csw.tryExec(cswPrivateVar.onSelect, cswPublicRet.val());
                 });
 
                 Csw.ajax.post({
-                    urlMethod: internal.nodesUrlMethod,
+                    urlMethod: cswPrivateVar.nodesUrlMethod,
                     data: {
-                        NodeTypeId: Csw.string(internal.nodeTypeId),
-                        ObjectClassId: Csw.string(internal.objectClassId),
-                        ObjectClass: Csw.string(internal.objectClassName)
+                        NodeTypeId: Csw.string(cswPrivateVar.nodeTypeId),
+                        ObjectClassId: Csw.string(cswPrivateVar.objectClassId),
+                        ObjectClass: Csw.string(cswPrivateVar.objectClassName)
                     },
                     success: function (data) {
                         var ret = data;
@@ -56,22 +56,22 @@
                         //Case 24155
                         Csw.each(ret, function (nodeName, nodeId) {
                             nodecount += 1;
-                            external.option({ value: nodeId, display: nodeName });
+                            cswPublicRet.option({ value: nodeId, display: nodeName });
                         });
 
-                        Csw.tryExec(internal.onSuccess, ret);
-                        external.css('width', Csw.string(internal.width));
+                        Csw.tryExec(cswPrivateVar.onSuccess, ret);
+                        cswPublicRet.css('width', Csw.string(cswPrivateVar.width));
                         
                         if (canAdd) {
-                            internal.table.cell(1, 2)
+                            cswPrivateVar.table.cell(1, 2)
                                 .imageButton({
                                     ButtonType: Csw.enums.imageButton_ButtonType.Add,
                                     AlternateText: 'Add New',
                                     onClick: function() {
                                         $.CswDialog('AddNodeDialog', {
-                                            nodetypeid: internal.nodeTypeId,
+                                            nodetypeid: cswPrivateVar.nodeTypeId,
                                             onAddNode: function(nodeid, nodekey, nodename) {
-                                                external.option({ value: nodeid, display: nodename, selected: true });
+                                                cswPublicRet.option({ value: nodeid, display: nodename, selected: true });
                                             }
                                         });
                                     }
@@ -82,7 +82,7 @@
                 });
             } ());
 
-            return external;
+            return cswPublicRet;
         });
 } ());
 

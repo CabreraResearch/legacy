@@ -6,7 +6,7 @@
     Csw.controls.nodeTypeSelect = Csw.controls.nodeTypeSelect ||
         Csw.controls.register('nodeTypeSelect', function (cswParent, options) {
             'use strict';
-            var internal = {
+            var cswPrivateVar = {
                 $parent: '',
                 ID: '',
                 nodeTypesUrlMethod: 'getNodeTypes',
@@ -23,42 +23,42 @@
                 relatedToNodeTypeId: '',
                 relatedObjectClassPropName: ''
             };
-            var external = {};
+            var cswPublicRet = {};
 
             (function () {
 
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivateVar, options);
                 }
-                internal.ID += '_sel';
+                cswPrivateVar.ID += '_sel';
 
-                internal.select = cswParent.select(internal);
+                cswPrivateVar.select = cswParent.select(cswPrivateVar);
 
-                external = Csw.dom({}, internal.select);
+                cswPublicRet = Csw.dom({}, cswPrivateVar.select);
 
-                //$.extend(external, Csw.literals.select(internal));
+                //$.extend(cswPublicRet, Csw.literals.select(cswPrivateVar));
 
-                external.bind('change', function () {
-                    Csw.tryExec(internal.onChange, external, internal.nodetypecount);
-                    Csw.tryExec(internal.onSelect, external.val(), internal.nodetypecount);
+                cswPublicRet.bind('change', function () {
+                    Csw.tryExec(cswPrivateVar.onChange, cswPublicRet, cswPrivateVar.nodetypecount);
+                    Csw.tryExec(cswPrivateVar.onSelect, cswPublicRet.val(), cswPrivateVar.nodetypecount);
                 });
 
-                if (false === Csw.isNullOrEmpty(internal.blankOptionText)) {
-                    external.option({
-                        value: internal.blankOptionText,
+                if (false === Csw.isNullOrEmpty(cswPrivateVar.blankOptionText)) {
+                    cswPublicRet.option({
+                        value: cswPrivateVar.blankOptionText,
                         isSelected: true
                     });
                 }
 
                 Csw.ajax.post({
-                    urlMethod: internal.nodeTypesUrlMethod,
+                    urlMethod: cswPrivateVar.nodeTypesUrlMethod,
                     data: {
-                        ObjectClassName: Csw.string(internal.objectClassName),
-                        ObjectClassId: Csw.string(internal.objectClassId),
-                        ExcludeNodeTypeIds: internal.excludeNodeTypeIds,
-                        RelatedToNodeTypeId: internal.relatedToNodeTypeId,
-                        RelatedObjectClassPropName: internal.relatedObjectClassPropName,
-                        FilterToPermission: internal.filterToPermission
+                        ObjectClassName: Csw.string(cswPrivateVar.objectClassName),
+                        ObjectClassId: Csw.string(cswPrivateVar.objectClassId),
+                        ExcludeNodeTypeIds: cswPrivateVar.excludeNodeTypeIds,
+                        RelatedToNodeTypeId: cswPrivateVar.relatedToNodeTypeId,
+                        RelatedObjectClassPropName: cswPrivateVar.relatedObjectClassPropName,
+                        FilterToPermission: cswPrivateVar.filterToPermission
                     },
                     success: function (data) {
                         var ret = data;
@@ -73,22 +73,22 @@
                                 delete thisNodeType.name;
 
                                 ret.nodetypecount += 1;
-                                var option = external.option({ value: id, display: name });
+                                var option = cswPublicRet.option({ value: id, display: name });
 
                                 Csw.each(thisNodeType, function (value, key) {
                                     option.propNonDom(key, value);
                                 });
                             }
                         });
-                        internal.nodetypecount = ret.nodetypecount;
+                        cswPrivateVar.nodetypecount = ret.nodetypecount;
                         
-                        Csw.tryExec(internal.onSuccess, ret, internal.nodetypecount);
-                        external.css('width', Csw.string(internal.width));
+                        Csw.tryExec(cswPrivateVar.onSuccess, ret, cswPrivateVar.nodetypecount);
+                        cswPublicRet.css('width', Csw.string(cswPrivateVar.width));
                     }
                 });
             } ());
 
-            return external;
+            return cswPublicRet;
         });
 } ());
 
