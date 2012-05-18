@@ -341,6 +341,7 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonAction = NbtButtonAction.Unknown;
             if( null != NodeTypeProp )
             {
+                ButtonAction = NbtButtonAction.refresh;
                 CswNbtMetaDataObjectClassProp ButtonOCP = NodeTypeProp.getObjectClassProp();
                 if( ButtonOCP.PropName == FinishPropertyName )
                 {
@@ -375,7 +376,6 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             string StatusValue = InspectionStatusAsString( _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.Completed_Late );
                             Message = "Inspection marked " + StatusValue + ".";
-                            ButtonAction = NbtButtonAction.refresh;
                             this.Status.Value = StatusValue;
                         }
                         if( true == this.InspectionDate.Empty )
@@ -406,7 +406,6 @@ namespace ChemSW.Nbt.ObjClasses
                 else if( ButtonOCP.PropName == CancelPropertyName )
                 {
                     Message = "Inspection has been cancelled.";
-                    ButtonAction = NbtButtonAction.refresh;
                     this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
                 }
 
