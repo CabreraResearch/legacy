@@ -1322,6 +1322,7 @@ ul li div {
     border: 1px solid &cswheaderbordercolor;
     background-color: &cswheaderbgcolor;
     text-align: left;
+    width: 270px;
 }
 .viewfiltersdiv
 {

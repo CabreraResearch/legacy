@@ -75,7 +75,7 @@ namespace NbtWebAppServices.Response
                         else
                         {
                             /* We loop once to set the property values */
-                            foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion Question in Inspection.Questions )
+                            foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                             {
                                 CswNbtMetaDataNodeTypeProp Ntp = InspectionNode.getNodeType().getNodeTypeProp( Question.QuestionId );
                                 if( null != Ntp )
@@ -104,14 +104,13 @@ namespace NbtWebAppServices.Response
                             else if( NodeAsDesign.Status.Value == ActionRequired )
                             {
                                 Inspection.Status = NodeAsDesign.Status.Value;
-                                /* We loop again to modify the return with the status of the Inspection per Question */
-                                foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.CswNbtInspectionQuestion Question in Inspection.Questions )
+                                /* We loop again to modify the return with the status of the Inspection per QuestionAnswer */
+                                foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                                 {
                                     Question.Status = NodeAsDesign.Status.Value;
                                 }
                                 /* In case the Inspection has been modified by someone else */
-                                CswDateTime DueDate = new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, NodeAsDesign.InspectionDate.DateTimeValue );
-                                Inspection.DueDate = DueDate.ToClientAsJavascriptString();
+                                Inspection.DueDate = NodeAsDesign.InspectionDate.DateTimeValue;
                                 Inspection.InspectionPointName = NodeAsDesign.Target.CachedNodeName;
                                 Inspection.LocationPath = NodeAsDesign.Location.CachedValue;
                                 _InspectionsResponse.ActionRequired.Add( Inspection );

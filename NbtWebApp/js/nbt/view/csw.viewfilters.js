@@ -79,7 +79,7 @@
             {
                 var filterbtn;
                 var dialogdiv = Csw.literals.div({ ID: internal.ID })
-                                .addClass('viewfilters')
+                                //.addClass('viewfilters')
                                 .hide();
 
                 var tbl = dialogdiv.table({ cellpadding: '2px' });

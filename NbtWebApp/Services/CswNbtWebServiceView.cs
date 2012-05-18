@@ -380,7 +380,7 @@ namespace ChemSW.Nbt.WebServices
                             //else
                             //    throw new CswDniException( "A Data Misconfiguration has occurred", "CswViewEditor2._initNextOptions() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
 
-                            foreach( CswNbtViewRelationship R in Relationships )
+                            foreach( CswNbtViewRelationship R in from CswNbtViewRelationship _R in Relationships orderby _R.SecondName select _R )
                             {
                                 if( !CurrentRelationship.ChildRelationships.Contains( R ) )
                                 {
@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.WebServices
                                 throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
                             }
 
-                            foreach( CswNbtMetaDataNodeTypeProp ThisProp in PropsCollection )
+                            foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in PropsCollection orderby _ThisProp.PropName select _ThisProp )
                             {
                                 // BZs 7085, 6651, 6644, 7092
                                 if( ThisProp.getFieldTypeRule().SearchAllowed ||
@@ -454,7 +454,7 @@ namespace ChemSW.Nbt.WebServices
                     else if( SelectedViewNode is CswNbtViewRoot )
                     {
                         // Set NextOptions to be all viewable nodetypes and objectclasses
-                        foreach( CswNbtMetaDataNodeType LatestNodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
+                        foreach( CswNbtMetaDataNodeType LatestNodeType in from CswNbtMetaDataNodeType _LatestNodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() orderby _LatestNodeType.NodeTypeName select _LatestNodeType )
                         {
                             if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, LatestNodeType ) )
                             {
@@ -468,10 +468,12 @@ namespace ChemSW.Nbt.WebServices
                                 //    R.Selectable = false;
 
                                 bool IsChildAlready = false;
-                                foreach( CswNbtViewRelationship ChildRel in ( (CswNbtViewRoot) SelectedViewNode ).ChildRelationships )
+                                foreach( CswNbtViewRelationship ChildRel in from CswNbtViewRelationship _ChildRel in ( (CswNbtViewRoot) SelectedViewNode ).ChildRelationships orderby _ChildRel.SecondName select _ChildRel )
                                 {
                                     if( ChildRel.SecondType == R.SecondType && ChildRel.SecondId == R.SecondId )
+                                    {
                                         IsChildAlready = true;
+                                    }
                                 }
 
                                 if( !IsChildAlready )
@@ -482,7 +484,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
 
-                        foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
+                        foreach( CswNbtMetaDataObjectClass ObjectClass in from CswNbtMetaDataObjectClass _ObjectClass in _CswNbtResources.MetaData.getObjectClasses() orderby _ObjectClass.ObjectClass select _ObjectClass )
                         {
                             // This is purposefully not the typical way of creating CswNbtViewRelationships.
                             CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, ObjectClass, false );
@@ -521,7 +523,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 // We need the property arbitrary id, so we're doing this by property, not by filter.  
                 // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
-                foreach( CswNbtViewProperty Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) orderby _Property.Name select _Property )
                 {
                     JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
@@ -535,7 +537,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject updateRuntimeViewFilters( CswNbtView View, JObject NewFiltersJson )
         {
-            foreach( CswNbtViewPropertyFilter PropFilter in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) )
+            foreach( CswNbtViewPropertyFilter PropFilter in from CswNbtViewPropertyFilter _PropFilter in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) orderby _PropFilter.FilterMode.ToString() select _PropFilter )
             {
                 if( null != NewFiltersJson[PropFilter.ArbitraryId] )
                 {
@@ -548,7 +550,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
             }
-            
+
             View.SaveToCache( true, true );
 
             JObject ret = new JObject();
@@ -569,7 +571,6 @@ namespace ChemSW.Nbt.WebServices
                             ( View.Visibility != NbtViewVisibility.Property || Level >= 2 );
 
             CswNbtMetaDataNodeType FirstVersionNodeType = _CswNbtResources.MetaData.getNodeType( FirstVersionId );
-            CswNbtMetaDataNodeType LatestVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( FirstVersionNodeType );
             CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
@@ -825,7 +826,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType ThisVersionNodeType = _CswNbtResources.MetaData.getNodeTypeLatestVersion( NodeType );
             while( ThisVersionNodeType != null )
             {
-                foreach( CswNbtMetaDataNodeTypeProp ThisProp in ThisVersionNodeType.getNodeTypeProps() )
+                foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in ThisVersionNodeType.getNodeTypeProps() orderby _ThisProp.PropName select _ThisProp )
                 {
                     //string ThisKey = ThisProp.PropName.ToLower(); //+ "_" + ThisProp.FirstPropVersionId.ToString();
                     if( !PropsByName.ContainsKey( ThisProp.PropNameWithQuestionNo.ToLower() ) &&
@@ -845,10 +846,10 @@ namespace ChemSW.Nbt.WebServices
             // Need to generate all properties on all nodetypes of this object class
             SortedList AllProps = new SortedList();
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+            foreach( CswNbtMetaDataNodeType NodeType in from CswNbtMetaDataNodeType _NodeType in ObjectClass.getNodeTypes() orderby _NodeType.NodeTypeName select _NodeType )
             {
                 ICollection NodeTypeProps = _getNodeTypePropsCollection( NodeType.NodeTypeId );
-                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeProps )
+                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp in NodeTypeProps orderby _NodeTypeProp.PropName select _NodeTypeProp )
                 {
                     string ThisKey = NodeTypeProp.PropName.ToLower(); //+ "_" + NodeTypeProp.FirstPropVersionId.ToString();
                     if( !AllProps.ContainsKey( ThisKey ) )

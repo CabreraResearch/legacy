@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using System.Linq;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -88,7 +89,9 @@ namespace ChemSW.Nbt.WebServices
             JArray CustomerIds = new JArray();
             RetObj["customerids"] = CustomerIds;
 
-            foreach( string AccessId in _NbtManagerResources.CswDbCfgInfo.AccessIds )
+            foreach( string AccessId in from string _AccessId in _NbtManagerResources.CswDbCfgInfo.AccessIds
+                                        orderby _AccessId
+                                        select _AccessId )
             {
                 if( _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
                 {
