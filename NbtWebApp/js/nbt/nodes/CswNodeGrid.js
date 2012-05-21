@@ -139,7 +139,9 @@
                             pagermode: 'default',
                             gridOpts: {
                                 onSelectRow: function () {
-                                    ret.resetSelection();
+                                    if (false === ret.isMulti()) {
+                                        ret.resetSelection();
+                                    }
                                 }
                             }, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                             optNav: {},
