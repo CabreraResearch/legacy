@@ -71,7 +71,7 @@ namespace NbtWebAppServices.Response
 
                             if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                             {
-                                ResponseProperty.Text = "QuestionAnswer " + NodeTypeProp.QuestionNo + ": " +
+                                ResponseProperty.Text = "Question " + NodeTypeProp.QuestionNo + ": " +
                                                         NodeTypeProp.PropName;
 
                                 CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
