@@ -502,9 +502,14 @@ namespace ChemSW.Nbt.WebServices
                 string ThisNodeKeyString = ThisNodeKey.ToString();
                 string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
                 JArray Actions = new JArray();
+
                 if( Tree.getNodeLockedForCurrentPosition() )
                 {
                     Actions.Add( "islocked" );
+                    if( CanView )
+                    {
+                        Actions.Add( "canview" );
+                    }
                 }
                 else if( CanEdit )
                 {

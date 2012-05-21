@@ -241,17 +241,20 @@
                                 var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
                                 var buttonStr = '';
                                 if (Csw.contains(cellData, 'islocked')) {
-                                    buttonStr += '<img id="' + rowId + '_locked" src="Images/quota/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
+                                    buttonStr += '<img id="' + rowId + '_locked" src="Images/icons/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
+                                    if (Csw.contains(cellData, 'canview')) {
+                                        buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                    }
                                 } else if (Csw.contains(cellData, 'canedit')) {
-                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/pencil.png" class="csw-grid-edit" alt="Edit" title="Edit" />';
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
                                 } else if (Csw.contains(cellData, 'canview')) {
-                                    buttonStr += '<img id="' + rowId + '_view" src="Images/view/viewgrid.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
+                                    buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
                                 }
                                 if (buttonStr.length > 0) {
                                     buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
                                 }
                                 if (Csw.contains(cellData, 'candelete')) {
-                                    buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/minus-circle.png" class="csw-grid-delete" alt="Delete" title="Delete"/>';
+                                    buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/trash.gif" class="csw-grid-delete" alt="Delete" title="Delete"/>';
                                 }
                                 grid.setRowData(rowId, 'Action', buttonStr);
                             }
