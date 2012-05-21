@@ -29,16 +29,16 @@
             else if (rows > 0) {
                 height = Math.round(rows + 0.5 + (rows / 5)) + 'em';
             }
-            if (false === Csw.isNullOrEmpty(text)) {
-                propDiv.div({
-                    cssclass: 'staticvalue',
-                    text: text
-                }).css({
-                    overflow: overflow,
-                    width: width,
-                    height: height
-                });
-            }
+            
+            propDiv.div({
+                cssclass: 'staticvalue',
+                text: Csw.string(text, '&nbsp;&nbsp;')
+            }).css({
+                overflow: overflow,
+                width: width,
+                height: height
+            });
+            
         },
         save: function (o) {
             Csw.preparePropJsonForSave(o.propData);
