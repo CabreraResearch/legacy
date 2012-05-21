@@ -497,7 +497,7 @@
                         if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
                             rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
                             cswViewGrid.setSelection(rowid);
-                            cswViewGrid.scrollToRow();
+                            cswViewGrid.scrollToRow(rowid);
                         }
                     } // success
                 }); // ajax

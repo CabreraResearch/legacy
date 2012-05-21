@@ -272,8 +272,8 @@
 
             cswPublic.setSelection = function (rowid) {
                 ///<summary>Sets the selected row by jqGrid's rowid</summary>
-                if (Csw.isNullOrEmpty) {
-                    rowid = cswPublic.getSelectedRowsId();
+                if (Csw.isNullOrEmpty(rowid)) {
+                    rowid = cswPublic.getSelectedRowId();
                 }
                 if (false === Csw.isNullOrEmpty(rowid)) {
                     cswPublic.gridTable.$.jqGrid('setSelection', rowid);
