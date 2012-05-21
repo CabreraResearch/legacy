@@ -36,10 +36,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 NodeTypeId = NodeType.FirstVersionNodeTypeId;
                 CanEdit = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType );
+                CanView = Resources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType );
                 CanDelete = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeType );
             }
 
             public Int32 NodeTypeId { get; private set; }
+            public bool CanView { get; private set; }
             public bool CanEdit { get; private set; }
             public bool CanDelete { get; private set; }
         }
@@ -97,7 +99,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     _NodeTypePermission Permission = new _NodeTypePermission( NodeType, _CswNbtResources );
                     _ActionEnabled = false == _ForReport &&
-                                     ( _ActionEnabled || Permission.CanDelete || Permission.CanDelete );
+                                     ( _ActionEnabled || Permission.CanView || Permission.CanDelete || Permission.CanDelete );
                     _Permissions.Add( NodeType.FirstVersionNodeTypeId, Permission );
                 }
             }
@@ -490,6 +492,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 bool ActionEnabled = false == _ForReport &&
                                      _Permissions.ContainsKey( ThisNodeType.FirstVersionNodeTypeId );
+                bool CanView = ActionEnabled &&
+                               _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanView;
                 bool CanEdit = ActionEnabled &&
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanEdit;
                 bool CanDelete = ActionEnabled &&
@@ -505,6 +509,10 @@ namespace ChemSW.Nbt.WebServices
                 else if( CanEdit )
                 {
                     Actions.Add( "canedit" );
+                }
+                else if( CanView )
+                {
+                    Actions.Add( "canview" );
                 }
                 if( CanDelete )
                 {
