@@ -28,7 +28,8 @@
                     loadtext: 'Loading...',
                     multiselect: false,
                     toppager: false,
-                    shrinkToFit: true,
+                    forceFit: true,
+                    //shrinkToFit: true,
                     sortname: '',
                     sortorder: 'asc',
                     //width: '600px',
@@ -225,8 +226,9 @@
                 return ret;
             };
 
-            cswPublic.hideColumn = function (id) {
-                cswPublic.gridTable.$.jqGrid('hideCol', id);
+            cswPublic.hideColumn = function (colName) {
+                ///<summary>Hides a column by name</summary>
+                cswPublic.gridTable.$.jqGrid('hideCol', colName);
             };
 
             cswPublic.scrollToRow = function (rowid) {
@@ -438,7 +440,8 @@
                     Csw.tryExec(onSuccess, newDiv);
                     /* Get a new Csw.newGrid */
                     newGrid = newDiv.grid(printOpts);
-
+                    newGrid.gridTable.$.jqGrid('hideCol', 'Action');
+                    
                     if (Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
                         Csw.ajax.get({
                             url: printOpts.printUrl,
