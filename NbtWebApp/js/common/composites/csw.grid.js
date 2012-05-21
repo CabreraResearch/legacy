@@ -300,7 +300,7 @@
                         }
                     }
                 }
-                cswPublic.resizeWithParent();
+                cswPublic.resizeWithParent(cswPrivate.resizeWithParentElement);
             };
 
             cswPublic.opGridRows = function (opts, rowid, onSelect, onEmpty) {
@@ -415,7 +415,8 @@
 
                     /*
                     jqGrid cannot seem to handle the communication of the data property between window objects.
-                    Just delete it and rebuild instead.
+                    --Just delete it and rebuild instead.
+                    DON'T just delete it. You're deleting the reference to the current grid rows. Bad idea.
                     */
                     data = cswPrivate.gridOpts.data;
 
@@ -440,9 +441,9 @@
                         /* Get the data (rows) from the current grid */
                         addRowsToGrid(data);
                     }
-                    
 
-                    
+
+
                     Csw.newWindow(outerDiv.$.html());
                     outerDiv.remove();
 
@@ -474,7 +475,8 @@
             };
 
             cswPublic.resizeWithParent = function () {
-                cswPublic.gridTable.$.jqGrid('setGridWidth', cswParent.$.width() - 100);
+                var element = cswPrivate.resizeWithParentElement || cswParent.$;
+                cswPublic.gridTable.$.jqGrid('setGridWidth', element.width() - 100);
             };
 
             /* "Constuctor" */
@@ -512,9 +514,12 @@
                 });
                 //$.extend(cswPublic, Csw.literals.div(cswPrivate));
                 if (cswPrivate.resizeWithParent) {
-                    $(window).bind('resize', cswPublic.resizeWithParent);
+                    $(window).resize(cswPublic.resizeWithParent); //$(window).bind('resize restore', cswPublic.resizeWithParent);
                 }
                 cswPrivate.makeGrid();
+                if (cswPrivate.resizeWithParent) {
+                    cswPublic.resizeWithParent();
+                }
             } ());
 
 

@@ -45,7 +45,8 @@
 
                     var gridOpts = {
                         ID: o.ID + '_fieldtypegrid',
-                        resizeWithParent: false,
+                        resizeWithParent: true,
+                        resizeWithParentElement: $('#nodetabs_props'),
                         viewid: viewid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey,

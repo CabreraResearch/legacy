@@ -133,6 +133,7 @@
                         var cswGridOpts = {
                             ID: o.ID,
                             resizeWithParent: o.resizeWithParent,
+                            resizeWithParentElement: o.resizeWithParentElement,
                             canEdit: false,
                             canDelete: false,
                             pagermode: 'default',
@@ -142,6 +143,7 @@
                             optNavEdit: {},
                             optNavDelete: {}
                         };
+
                         $.extend(true, cswGridOpts.gridOpts, jqGridOpt);
 
                         if (Csw.isNullOrEmpty(cswGridOpts.gridOpts.width)) {
@@ -233,14 +235,14 @@
                         var ids = ret.gridTable.$.jqGrid('getDataIDs');
 
 
-                        for (var i = 0; i < ids.length; i+=1) {
+                        for (var i = 0; i < ids.length; i += 1) {
                             var edit = '<img src="Images/icons/pencil.png" class="csw-grid-edit" />';
                             var spacer = '<img src="Images/icons/spacer.png" />';
                             var del = '<img src="Images/icons/minus-circle.png" class="csw-grid-delete" />';
 
                             ret.gridTable.$.jqGrid('setRowData', ids[i], { Action: edit + spacer + del });
                         }
-                        
+
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
