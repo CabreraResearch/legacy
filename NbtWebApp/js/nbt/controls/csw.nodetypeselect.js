@@ -63,6 +63,7 @@
                     success: function (data) {
                         var ret = data;
                         ret.nodetypecount = 0;
+                        var lastNodeTypeId;
                         //Case 24155
                         Csw.each(ret, function (thisNodeType) {
                             if (Csw.contains(thisNodeType, 'id') &&
@@ -71,7 +72,7 @@
                                     name = thisNodeType.name;
                                 delete thisNodeType.id;
                                 delete thisNodeType.name;
-
+                                lastNodeTypeId = id;
                                 ret.nodetypecount += 1;
                                 var option = cswPublic.option({ value: id, display: name });
 
@@ -81,8 +82,9 @@
                             }
                         });
                         cswPrivate.nodetypecount = ret.nodetypecount;
-                        
-                        Csw.tryExec(cswPrivate.onSuccess, ret, cswPrivate.nodetypecount);
+                        cswPrivate.lastNodeTypeId = lastNodeTypeId;
+
+                        Csw.tryExec(cswPrivate.onSuccess, ret, cswPrivate.nodetypecount, cswPrivate.lastNodeTypeId);
                         cswPublic.css('width', Csw.string(cswPrivate.width));
                     }
                 });
