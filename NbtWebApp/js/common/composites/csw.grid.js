@@ -36,7 +36,8 @@
                     rowList: [10, 25, 50],        /* page size dropdown */
                     pgbuttons: true,     /* page control like next, back button */
                     /*pgtext: null,         pager text like 'Page 0 of 10' */
-                    viewrecords: true    /* current view record text like 'View 1-10 of 100' */
+                    viewrecords: true,    /* current view record text like 'View 1-10 of 100' */
+                    onSelectRow: function () { }
                 },
                 optSearch: {
                     caption: "Search...",
@@ -269,9 +270,17 @@
 
             cswPublic.setSelection = function (rowid) {
                 ///<summary>Sets the selected row by jqGrid's rowid</summary>
-                if (false === Csw.isNullOrEmpty(rowid)) {
-                    cswPublic.gridTable.$.setSelection(rowid);
+                if (Csw.isNullOrEmpty) {
+                    rowid = cswPublic.getSelectedRowsId();
                 }
+                if (false === Csw.isNullOrEmpty(rowid)) {
+                    cswPublic.gridTable.$.jqGrid('setSelection', rowid);
+                }
+            };
+
+            cswPublic.resetSelection = function () {
+                ///<summary>Deselects all grid rows.</summary>
+                cswPublic.gridTable.$.jqGrid('resetSelection');
             };
 
             cswPublic.changeGridOpts = function (opts, toggleColumns) {

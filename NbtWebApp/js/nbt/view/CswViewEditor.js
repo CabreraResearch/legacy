@@ -480,6 +480,7 @@
                                         deleteViewBtn.disable();
                                         $selview_span.text("");
                                         $wizard.CswWizard('button', 'next', 'disable');
+                                        cswViewGrid.resetSelection();
                                     }
                                 }
                             }
@@ -496,7 +497,7 @@
                         if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
                             rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
                             cswViewGrid.setSelection(rowid);
-                            cswViewGrid.scrollToRow(rowid);
+                            cswViewGrid.scrollToRow();
                         }
                     } // success
                 }); // ajax
