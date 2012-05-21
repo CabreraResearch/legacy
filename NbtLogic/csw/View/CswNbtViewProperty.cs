@@ -177,7 +177,7 @@ namespace ChemSW.Nbt
                 this.ObjectClassPropId = ( (CswNbtMetaDataObjectClassProp) Prop ).PropId;
             }
             this.FieldType = Prop.getFieldType().FieldType;
-            this.Name = Prop.PropNameWithQuestionNo;
+            this.Name = Prop.PropName;
         }
 
         /// <summary>
@@ -486,7 +486,7 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewPropertyFilter Filter in this.Filters )
                 {
-                    if(false == ShowAtRuntimeOnly || Filter.ShowAtRuntime)
+                    if( false == ShowAtRuntimeOnly || Filter.ShowAtRuntime )
                     {
                         FilterObj.Add( Filter.ToJson() );
                     }
