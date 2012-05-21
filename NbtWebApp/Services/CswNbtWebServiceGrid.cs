@@ -461,8 +461,7 @@ namespace ChemSW.Nbt.WebServices
                 ColumnDefArray.Add( new JObject(
                                             new JProperty( "name", "Action" ),
                                             new JProperty( "index", "Action" ),
-                                            new JProperty( "formatter", "image" ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "40" )
+                                            new JProperty( "formatter", "image" ) //,new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "40" )
                                             ) );
 
 

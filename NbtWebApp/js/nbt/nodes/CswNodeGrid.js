@@ -5,13 +5,13 @@
     "use strict";
     var pluginName = 'CswNodeGrid';
 
-    var internal = {
+    var cswPrivate = {
         selectedRowId: ''
     };
 
     function deleteRows(rowid, grid, func) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = internal.selectedRowId;
+            rowid = cswPrivate.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -37,7 +37,7 @@
 
     function editRows(rowid, grid, func, editViewFunc) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = internal.selectedRowId;
+            rowid = cswPrivate.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -137,7 +137,11 @@
                             canEdit: false,
                             canDelete: false,
                             pagermode: 'default',
-                            gridOpts: {}, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
+                            gridOpts: {
+                                onSelectRow: function () {
+                                    ret.resetSelection();
+                                }
+                            }, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                             optNav: {},
                             optSearch: {},
                             optNavEdit: {},
@@ -164,7 +168,7 @@
                                         deleteRows(rowid, ret, o.onDeleteNode);
                                     }
                                 }
-                                internal.selectedRowId = rowid;
+                                cswPrivate.selectedRowId = rowid;
                                 if (false === isMulti) {
                                     if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
                                         validateNode(eventObj.toElement.className);
