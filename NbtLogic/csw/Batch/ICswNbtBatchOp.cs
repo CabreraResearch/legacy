@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Batch
 {
@@ -11,9 +12,9 @@ namespace ChemSW.Nbt.Batch
     {
 
         // This needs to be present, but the syntax will be different for each operation
-        //CswNbtBatchRow makeBatchOp();
+        //CswNbtObjClassBatchOp makeBatchOp();
 
-        void runBatchOp( CswNbtBatchRow BatchRow );
+        void runBatchOp( CswNbtObjClassBatchOp BatchNode );
 
     } // interface ICswNbtBatchOp
 } // namespace ChemSW.Nbt.Batch

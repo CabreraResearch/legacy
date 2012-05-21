@@ -25,21 +25,6 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", "enabled", "Whether the nodetype is enabled according to module settings", false, false );
             }
 
-            // case 25978
-            // FOR PROSPERO
-            if( false == _CswNbtSchemaModTrnsctn.isTableDefinedInDataBase( "batch" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addTable( "batch", "batchid" );
-                _CswNbtSchemaModTrnsctn.addStringColumn( "batch", "opname", "Batch operation name", false, true, 30 );
-                _CswNbtSchemaModTrnsctn.addClobColumn( "batch", "batchdata", "Data for batch operation", false, false );
-                _CswNbtSchemaModTrnsctn.addDateColumn( "batch", "startdate", "Date batch operation was created", false, false );
-                _CswNbtSchemaModTrnsctn.addDateColumn( "batch", "enddate", "Date batch operation was finished", false, false );
-                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( "batch", "userid", "User requesting batch operation", false, false, "nodes", "nodeid" );
-                _CswNbtSchemaModTrnsctn.addClobColumn( "batch", "log", "Operation log", false, false );
-                _CswNbtSchemaModTrnsctn.addLongColumn( "batch", "priority", "Numeric priority value", false, false );
-                _CswNbtSchemaModTrnsctn.addStringColumn( "batch", "status", "Status of operation", false, false, 20 );
-            }
-            
 
         }//Update()
 

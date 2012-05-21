@@ -29,63 +29,73 @@ namespace ChemSW.Nbt.Batch
         /// Create a new batch operation to handle future node generation
         /// </summary>
         /// <param name="GeneratorNodeId">Primary key of Generator</param>
-        public CswNbtBatchRow makeBatchOp( CswPrimaryKey GeneratorNodeId, DateTime FinalDate )
+        public CswNbtObjClassBatchOp makeBatchOp( CswPrimaryKey GeneratorNodeId, DateTime FinalDate )
         {
-            CswNbtBatchRow BatchRow = null;
+            CswNbtObjClassBatchOp BatchNode = null;
             if( null != GeneratorNodeId )
             {
                 CswNbtNode GenNode = _CswNbtResources.Nodes[GeneratorNodeId];
-                if( null != GenNode )
+                BatchNode = makeBatchOp( GenNode, FinalDate );
+            }
+            return BatchNode;
+        } // makeBatchOp()
+
+        /// <summary>
+        /// Create a new batch operation to handle future node generation
+        /// </summary>
+        /// <param name="GeneratorNodeId">Primary key of Generator</param>
+        public CswNbtObjClassBatchOp makeBatchOp( CswNbtNode GenNode, DateTime FinalDate )
+        {
+            CswNbtObjClassBatchOp BatchNode = null;
+            if( null != GenNode )
+            {
+                CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( GenNode );
+
+
+                // BZ 6752 - The first future node is the first node generated 
+                // after today + warning days, according to the time interval
+                // But it has to include initial due date, no matter what the time interval.
+
+                CswNbtNodePropTimeInterval NextDueDateTimeInterval = GeneratorNode.DueDateInterval;
+                Double WarningDays = 0;
+                if( GeneratorNode.WarningDays.Value > 0 )
                 {
-                    CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( GenNode );
+                    WarningDays = GeneratorNode.WarningDays.Value;
+                }
+                DateTime StartDate = DateTime.Now.AddDays( WarningDays ).Date; //bz# 6937 (capture date only, not time)
 
+                DateTime DateOfNextOccurance = DateTime.MinValue;
+                if( GeneratorNode.DueDateInterval.getStartDate().Date >= StartDate ) //bz # 6937 (change gt to gteq)
+                {
+                    StartDate = GeneratorNode.DueDateInterval.getStartDate().Date;
+                    DateOfNextOccurance = StartDate;
+                }
+                else
+                {
+                    DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( StartDate );
+                }
 
-                    // BZ 6752 - The first future node is the first node generated 
-                    // after today + warning days, according to the time interval
-                    // But it has to include initial due date, no matter what the time interval.
+                FutureNodesBatchData BatchData = new FutureNodesBatchData( string.Empty );
+                BatchData.GeneratorNodeId = GenNode.NodeId;
+                BatchData.NextStartDate = DateOfNextOccurance;
+                BatchData.FinalDate = FinalDate;
 
-                    CswNbtNodePropTimeInterval NextDueDateTimeInterval = GeneratorNode.DueDateInterval;
-                    Double WarningDays = 0;
-                    if( GeneratorNode.WarningDays.Value > 0 )
-                    {
-                        WarningDays = GeneratorNode.WarningDays.Value;
-                    }
-                    DateTime StartDate = DateTime.Now.AddDays( WarningDays ).Date; //bz# 6937 (capture date only, not time)
+                BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
 
-                    DateTime DateOfNextOccurance = DateTime.MinValue;
-                    if( GeneratorNode.DueDateInterval.getStartDate().Date >= StartDate ) //bz # 6937 (change gt to gteq)
-                    {
-                        StartDate = GeneratorNode.DueDateInterval.getStartDate().Date;
-                        DateOfNextOccurance = StartDate;
-                    }
-                    else
-                    {
-                        DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( StartDate );
-                    }
-
-                    FutureNodesBatchData BatchData = new FutureNodesBatchData( string.Empty );
-                    BatchData.GeneratorNodeId = GeneratorNodeId;
-                    BatchData.NextStartDate = DateOfNextOccurance;
-                    BatchData.FinalDate = FinalDate;
-
-                    BatchRow = new CswNbtBatchRow( _CswNbtResources, _BatchOpName, BatchData.ToString() );
-
-                } // if(null != GeneratorNode)
-            } // if( null != GeneratorNodeId )
-            return BatchRow;
+            } // if(null != GeneratorNode)
+            return BatchNode;
         } // makeBatchOp()
 
         /// <summary>
         /// Run the next iteration of this batch operation
         /// </summary>
-        /// <param name="BatchRow"></param>
-        public void runBatchOp( CswNbtBatchRow BatchRow )
+        public void runBatchOp( CswNbtObjClassBatchOp BatchNode )
         {
             try
             {
-                BatchRow.start();
+                BatchNode.start();
 
-                FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchRow.BatchData );
+                FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );
                 if( BatchData.GeneratorNodeId != null && BatchData.NextStartDate != DateTime.MinValue )
                 {
                     CswNbtNode GenNode = _CswNbtResources.Nodes[BatchData.GeneratorNodeId];
@@ -102,11 +112,11 @@ namespace ChemSW.Nbt.Batch
                             ( GeneratorNode.FinalDueDate.Empty || ThisDate.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
                         {
                             CswNbtActGenerateNodes.makeNode( GenNode, ThisDate );
-                            BatchRow.appendToLog( "Created future task for " + ThisDate.ToString() + "." );
+                            BatchNode.appendToLog( "Created future task for " + ThisDate.ToString() + "." );
                         }
                         else
                         {
-                            BatchRow.finish();
+                            BatchNode.finish();
                         }
 
                         // Setup for next iteration
@@ -116,16 +126,16 @@ namespace ChemSW.Nbt.Batch
                             BatchData.NextStartDate = DateTime.MinValue;
                         }
 
-                        BatchRow.BatchData = BatchData.ToString();
+                        BatchNode.BatchData.Text = BatchData.ToString();
 
                     } // if( null != GenNode )
                 } // if( _BatchData.GeneratorNodeId != null && _BatchData.NextStartDate != DateTime.MinValue )
 
-                BatchRow.save();
+                BatchNode.postChanges(false);
             }
             catch( Exception ex )
             {
-                BatchRow.error( ex );
+                BatchNode.error( ex );
             }
         } // runBatchOp()
 

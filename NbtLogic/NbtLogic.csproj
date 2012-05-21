@@ -68,7 +68,8 @@
     <Compile Include="csw\Batch\CswNbtBatchEnums.cs" />
     <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpFutureNodes.cs" />
-    <Compile Include="csw\Batch\CswNbtBatchRow.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchManager.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassBatchOp.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25978.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26217.cs" />
