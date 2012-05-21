@@ -16,6 +16,7 @@
                 pagermode: 'default',
                 ID: '',
                 resizeWithParent: false,
+                onSuccess: null,
                 gridOpts: {
                     autoencode: true,
                     autowidth: true,
@@ -28,8 +29,8 @@
                     loadtext: 'Loading...',
                     multiselect: false,
                     toppager: false,
-                    forceFit: true,
-                    //shrinkToFit: true,
+                    //forceFit: true,
+                    shrinkToFit: true,
                     sortname: '',
                     sortorder: 'asc',
                     //width: '600px',
@@ -197,14 +198,21 @@
                 } else {
                     cswPublic.gridTable.$.jqGrid(cswPrivate.gridOpts);
                 }
+                Csw.tryExec(cswPrivate.onSuccess, cswPublic);
             };
 
-            cswPrivate.getCell = function (rowid, key) {
+            cswPublic.getCell = function (rowid, key) {
+                ///<summary>Gets the contents of a jqGrid cell by rowid and column key</summary>
                 var ret = '';
                 if (false === Csw.isNullOrEmpty(rowid) && false === Csw.isNullOrEmpty(key)) {
                     ret = cswPublic.gridTable.$.jqGrid('getCell', rowid, key);
                 }
                 return ret;
+            };
+
+            cswPublic.getDataIds = function () {
+                ///<summary>Gets the contents of a jqGrid column</summary>
+                return cswPublic.gridTable.$.jqGrid('getDataIDs');
             };
 
             cswPublic.getSelectedRowId = function () {
@@ -266,8 +274,15 @@
                 if (Csw.isNullOrEmpty(rowid)) {
                     rowid = cswPublic.getSelectedRowId();
                 }
-                var ret = cswPrivate.getCell(rowid, columnname);
+                var ret = cswPublic.getCell(rowid, columnname);
                 return ret;
+            };
+
+            cswPublic.setRowData = function (rowId, columnName, columnData) {
+                ///<summary>Update a cell with new content.</summary>
+                var cellData = {};
+                cellData[columnName] = columnData;
+                return cswPublic.gridTable.$.jqGrid('setRowData', rowId, cellData);
             };
 
             cswPublic.setSelection = function (rowid) {

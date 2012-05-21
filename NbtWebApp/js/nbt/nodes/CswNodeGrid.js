@@ -232,20 +232,30 @@
                                 break;
                         }
 
+                        var makeRowButtons = function (grid) {
+                            var ids = grid.getDataIds();
+                            for (var i = 0; i < ids.length; i += 1) {
+                                var rowId = ids[i];
+                                var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
+                                var buttonStr = '';
+                                if (Csw.contains(cellData, 'islocked')) {
+                                    buttonStr += '<img id="' + rowId + '_locked" src="Images/quota/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
+                                } else if (Csw.contains(cellData, 'canedit')) {
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/pencil.png" class="csw-grid-edit" alt="Edit" title="Edit" />';
+                                }
+                                if (buttonStr.length > 0) {
+                                    buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
+                                }
+                                if (Csw.contains(cellData, 'candelete')) {
+                                    buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/minus-circle.png" class="csw-grid-delete" alt="Delete" title="Delete"/>';
+                                }
+                                grid.setRowData(rowId, 'Action', buttonStr);
+                            }
+                        };
+                        cswGridOpts.onSuccess = makeRowButtons;
                         cswGridOpts.printUrl = getGridRowsUrl(true);
                         var parent = Csw.literals.factory($parent);
                         ret = parent.grid(cswGridOpts);
-
-                        var ids = ret.gridTable.$.jqGrid('getDataIDs');
-
-
-                        for (var i = 0; i < ids.length; i += 1) {
-                            var edit = '<img src="Images/icons/pencil.png" class="csw-grid-edit" />';
-                            var spacer = '<img src="Images/icons/spacer.png" />';
-                            var del = '<img src="Images/icons/minus-circle.png" class="csw-grid-delete" />';
-
-                            ret.gridTable.$.jqGrid('setRowData', ids[i], { Action: edit + spacer + del });
-                        }
 
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);

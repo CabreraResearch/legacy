@@ -495,29 +495,26 @@ namespace ChemSW.Nbt.WebServices
                 bool CanDelete = ActionEnabled &&
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanDelete;
 
-                string ThisNodeIcon = ThisNodeType.IconFileName;
                 string ThisNodeKeyString = ThisNodeKey.ToString();
                 string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
-                bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
-
-                string Action = string.Empty;
-
-
-
-                ThisNodeObj["Action"] = Action;
+                JArray Actions = new JArray();
+                if( Tree.getNodeLockedForCurrentPosition() )
+                {
+                    Actions.Add( "islocked" );
+                }
+                else if( CanEdit )
+                {
+                    Actions.Add( "canedit" );
+                }
+                if( CanDelete )
+                {
+                    Actions.Add( "candelete" );
+                }
+                ThisNodeObj["Action"] = Actions;
 
                 ThisNodeObj["jqgridid"] = ThisNodeId;
                 ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
-                string Icon = "<img src=\'";
-                if( ThisNodeLocked )
-                {
-                    Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
-                }
-                else
-                {
-                    Icon += "Images/icons/" + ThisNodeIcon;
-                }
-                Icon += "\'/>";
+
                 //ThisNodeObj["Icon"] = Icon;
                 ThisNodeObj["nodename"] = ThisNodeName;
 
