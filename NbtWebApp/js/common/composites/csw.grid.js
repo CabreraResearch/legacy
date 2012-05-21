@@ -441,7 +441,7 @@
                     /* Get a new Csw.newGrid */
                     newGrid = newDiv.grid(printOpts);
                     newGrid.gridTable.$.jqGrid('hideCol', 'Action');
-                    
+
                     if (Csw.isNullOrEmpty(data) && false === Csw.isNullOrEmpty(printOpts.printUrl)) {
                         Csw.ajax.get({
                             url: printOpts.printUrl,
@@ -487,8 +487,23 @@
             };
 
             cswPublic.resizeWithParent = function () {
+                var i = 0;
+                function handleRestoreDownRecursive($elem) {
+                    i += 1;
+                    if ($elem.width() !== null &&
+                        $elem.parent().width() !== null) {
+                        if ($elem.parent().width() < $elem.width()) {
+                            element = $elem.parent();
+                        } else if (i <= 15) {
+                            handleRestoreDownRecursive($elem.parent());
+                        }
+                    }
+                }
                 var element = cswPrivate.resizeWithParentElement || cswParent.$;
-                cswPublic.gridTable.$.jqGrid('setGridWidth', element.width() - 100);
+                handleRestoreDownRecursive(element);
+                var width = element.width() - 100;
+
+                cswPublic.gridTable.$.jqGrid('setGridWidth', width);
             };
 
             /* "Constuctor" */
@@ -526,12 +541,10 @@
                 });
                 //$.extend(cswPublic, Csw.literals.div(cswPrivate));
                 if (cswPrivate.resizeWithParent) {
-                    $(window).resize(cswPublic.resizeWithParent); //$(window).bind('resize restore', cswPublic.resizeWithParent);
+                    $(window).bind('resize', cswPublic.resizeWithParent);
                 }
                 cswPrivate.makeGrid();
-                if (cswPrivate.resizeWithParent) {
-                    cswPublic.resizeWithParent();
-                }
+                cswPublic.resizeWithParent();
             } ());
 
 
