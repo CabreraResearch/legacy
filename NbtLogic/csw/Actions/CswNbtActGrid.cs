@@ -302,15 +302,15 @@ namespace ChemSW.Nbt.Logic
             }
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
-            if( GridWidth == Int32.MinValue )
-            {
-                Int32 ColWidth = _ColumnsWidth * 14;
-                GridWidth = ColWidth < 800 ? ColWidth : 450;
-            }
-            Ret[JqGridJsonOptions.width.ToString()] = GridWidth;
+            //if( GridWidth == Int32.MinValue )
+            //{
+            //    Int32 ColWidth = _ColumnsWidth * 14;
+            //    GridWidth = ColWidth < 800 ? ColWidth : 450;
+            //}
+            //Ret[JqGridJsonOptions.width.ToString()] = GridWidth;
             //Ret[JqGridJsonOptions.autowidth.ToString()] = true;
             Ret[JqGridJsonOptions.sortname.ToString()] = GridSortName;
-            Ret[JqGridJsonOptions.autoencode.ToString()] = GridAutoEncode;
+            //Ret[JqGridJsonOptions.autoencode.ToString()] = GridAutoEncode;
             //Ret[JqGridJsonOptions.height.ToString()] = GridHeight;
             Ret[JqGridJsonOptions.caption.ToString()] = GridTitle;
             Ret["HasOneCanEdit"] = HasOneCanEdit;
