@@ -10,17 +10,6 @@ namespace ChemSW.Nbt.Schema
     public class CswUpdateSchemaCase26280 : CswUpdateSchemaTo
     {
         private CswNbtMetaDataObjectClass DocumentOc;
-        private CswNbtMetaDataObjectClassProp TitleOcp;
-        private CswNbtMetaDataObjectClassProp AcquiredDateOcp;
-        private CswNbtMetaDataObjectClassProp ExpirationDateOcp;
-        private CswNbtMetaDataObjectClassProp FileOcp;
-        private CswNbtMetaDataObjectClassProp LinkOcp;
-        private CswNbtMetaDataObjectClassProp FileTypeOcp;
-        private CswNbtMetaDataObjectClassProp DocumentClassOcp;
-        //private CswNbtMetaDataObjectClassProp OpenOcp;
-        private CswNbtMetaDataObjectClassProp OwnerOcp;
-        private CswNbtMetaDataObjectClassProp ArchivedOcp;
-
 
         private CswNbtView _getDocumentsTabGridView( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataObjectClass ObjectClass, CswNbtMetaDataNodeType DocumentNodeType )
         {
@@ -31,6 +20,11 @@ namespace ChemSW.Nbt.Schema
             if( null == DocumentsProp )
             {
                 DocumentsProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( NodeType, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Documents", DocumentsTab.TabId );
+                CswNbtMetaDataObjectClassProp TitleOcp = DocumentOc.getObjectClassProp(CswNbtObjClassDocument.TitlePropertyName);
+                CswNbtMetaDataObjectClassProp AcquiredDateOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.AcquiredDatePropertyName );
+                CswNbtMetaDataObjectClassProp ExpirationDateOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.ExpirationDatePropertyName );
+                CswNbtMetaDataObjectClassProp OwnerOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.OwnerPropertyName );
+                CswNbtMetaDataObjectClassProp ArchivedOcp = DocumentOc.getObjectClassProp( CswNbtObjClassDocument.ArchivedPropertyName );
                 CswNbtMetaDataNodeTypeProp OwnerProp = DocumentNodeType.getNodeTypePropByObjectClassProp( OwnerOcp.PropName );
 
                 Ret = _CswNbtSchemaModTrnsctn.restoreView( DocumentsProp.ViewId );
