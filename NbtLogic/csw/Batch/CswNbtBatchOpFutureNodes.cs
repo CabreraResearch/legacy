@@ -105,6 +105,7 @@ namespace ChemSW.Nbt.Batch
                         DateTime ThisDate = BatchData.NextStartDate;
 
                         CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+                        CswNbtActGenerateNodes.MarkFuture = true;
 
                         // Run this iteration
                         if( ThisDate != DateTime.MinValue &&
