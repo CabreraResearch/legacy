@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.Nbt;
@@ -46,7 +50,10 @@ namespace NbtWebAppServices.Response
                     Name = NewInspectionNodeType.NodeTypeName
                 };
 
-                foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in NewInspectionNodeType.getNodeTypeTabs() )
+                foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in from CswNbtMetaDataNodeTypeTab _NodeTypeTab
+                                                                      in NewInspectionNodeType.getNodeTypeTabs()
+                                                                  orderby _NodeTypeTab.TabOrder
+                                                                  select _NodeTypeTab )
                 {
                     var ResponseSection = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.Section
                     {
@@ -54,50 +61,59 @@ namespace NbtWebAppServices.Response
                         Order = NodeTypeTab.TabOrder,
                         SectionId = NodeTypeTab.TabId
                     };
-
-                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NodeTypeTab.getNodeTypePropsByDisplayOrder() )
+                    
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
+                    //Debug.Assert( NodeTypeProps != null, "NodeTypeProps != null" );
+                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
+                                                                            in NodeTypeProps
+                                                                        where _NodeTypeProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                              _propIsSupportedInMobile( _NodeTypeProp.getFieldType().FieldType )
+                                                                        select _NodeTypeProp )
                     {
-                        CswNbtMetaDataFieldType.NbtFieldType FieldType = NodeTypeProp.getFieldType().FieldType;
-                        if( _propIsSupportedInMobile( FieldType ) )
-                        {
-                            var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.
-                                SectionProperty
-                                                       {
-                                                           HelpText = NodeTypeProp.HelpText,
-                                                           Type = FieldType.ToString(),
-                                                           QuestionId = NodeTypeProp.PropId
-                                                       };
 
+                        var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
+                                                   {
+                                                       HelpText = NodeTypeProp.HelpText,
+                                                       Type = NodeTypeProp.getFieldType().FieldType.ToString(),
+                                                       QuestionId = NodeTypeProp.PropId,
+                                                       Text = NodeTypeProp.PropName,
+                                                       Choices = null
+                                                   };
+                        ResponseSection.Properties.Add( ResponseProperty );
 
-                            if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
-                            {
-                                ResponseProperty.Text = "Question " + NodeTypeProp.QuestionNo + ": " +
-                                                        NodeTypeProp.PropName;
-
-                                CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
-                                PossibleAnswers.FromString( NodeTypeProp.ListOptions );
-                                CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
-                                CompliantAnswers.FromString( NodeTypeProp.ValueOptions );
-                                foreach( string Answer in PossibleAnswers )
-                                {
-                                    var Choice =
-                                        new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.AnswerChoice
-                                            {
-                                                Text = Answer,
-                                                IsCompliant = CompliantAnswers.Contains( Answer, false )
-                                            };
-                                    ResponseProperty.Choices.Add( Choice );
-                                }
-                            }
-                            else
-                            {
-                                ResponseProperty.Text = NodeTypeProp.PropName;
-                                ResponseProperty.Choices = null;
-                            }
-
-                            ResponseSection.Properties.Add( ResponseProperty );
-                        }
                     }
+                    
+                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
+                                                                            in NodeTypeProps
+                                                                        orderby _NodeTypeProp.PropNameWithQuestionNo
+                                                                        where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question
+                                                                        select _NodeTypeProp )
+                    {
+                        var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
+                        {
+                            HelpText = NodeTypeProp.HelpText,
+                            Type = CswNbtMetaDataFieldType.NbtFieldType.Question.ToString(),
+                            QuestionId = NodeTypeProp.PropId,
+                            Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName
+                        };
+
+                        CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                        PossibleAnswers.FromString( NodeTypeProp.ListOptions );
+                        CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+                        CompliantAnswers.FromString( NodeTypeProp.ValueOptions );
+                        foreach( string Answer in PossibleAnswers )
+                        {
+                            var Choice =
+                                new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.AnswerChoice
+                                {
+                                    Text = Answer,
+                                    IsCompliant = CompliantAnswers.Contains( Answer, false )
+                                };
+                            ResponseProperty.Choices.Add( Choice );
+                        }
+                        ResponseSection.Properties.Add( ResponseProperty );
+                    }
+
                     if( ResponseSection.Properties.Count > 0 )
                     {
                         ResponseDesign.Sections.Add( ResponseSection );
