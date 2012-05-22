@@ -152,9 +152,6 @@
 
                         $.extend(true, cswGridOpts.gridOpts, jqGridOpt);
 
-                        if (Csw.isNullOrEmpty(cswGridOpts.gridOpts.width)) {
-                            cswGridOpts.gridOpts.width = '650px';
-                        }
                         var hasActions = (false === forReporting && false === Csw.bool(cswGridOpts.gridOpts.multiselect));
                         if (forReporting) {
                             cswGridOpts.gridOpts.caption = '';
@@ -267,7 +264,7 @@
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
-
+                        ret.resizeWithParent();
                         if (wasTruncated) {
                             parent.append('<p>Results were truncated.</p>');
                         }

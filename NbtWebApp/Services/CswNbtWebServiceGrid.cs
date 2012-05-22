@@ -129,7 +129,11 @@ namespace ChemSW.Nbt.WebServices
             //Iterate all Relationships at this level first. This ensures our properties are properly collected.
             foreach( CswNbtViewRelationship Relationship in ChildRelationships )
             {
-                foreach( CswNbtViewProperty Property in Relationship.Properties )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property
+                                                        in Relationship.Properties
+                                                        orderby _Property.Order, _Property.Name
+                                                        where _Property.ShowInGrid
+                                                        select _Property )
                 {
                     PropsAtThisLevel.Add( Property );
                 }
@@ -187,7 +191,6 @@ namespace ChemSW.Nbt.WebServices
             JArray GridColumnDefinitions = _CswNbtActGrid.getGridColumnDefinitionJson( _PropsInGrid );
             _addDefaultColumnDefiniton( GridColumnDefinitions );
 
-            _CswNbtActGrid.GridWidth = ( _View.Width * 7 );
             if( _View.Visibility != NbtViewVisibility.Property )
             {
                 _CswNbtActGrid.GridTitle = _View.ViewName;
@@ -463,7 +466,8 @@ namespace ChemSW.Nbt.WebServices
                 ColumnDefArray.Add( new JObject(
                                             new JProperty( "name", "Action" ),
                                             new JProperty( "index", "Action" ),
-                                            new JProperty( "formatter", "image" ) //,new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "40" )
+                                            new JProperty( "formatter", "image" ),
+                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "15" )
                                             ) );
 
 
