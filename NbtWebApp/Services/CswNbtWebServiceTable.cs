@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.WebServices
                     if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image.ToString() ) //||
                     // FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL.ToString() )
                     {
-                        ret["thumbnailurl"] = CswNbtNodePropImage.makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
+                        ret["thumbnailurl"] = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
                     }
                     else
                     {

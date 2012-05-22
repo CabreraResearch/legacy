@@ -385,6 +385,8 @@ namespace ChemSW.Nbt.Logic
                 //case CswNbtMetaDataFieldType.NbtFieldType.Time:
                 //    _JqFieldType = JqFieldType.time;
                 //    break;
+                case CswNbtMetaDataFieldType.NbtFieldType.File:
+                case CswNbtMetaDataFieldType.NbtFieldType.Image:
                 case CswNbtMetaDataFieldType.NbtFieldType.Link:
                     _JqFieldType = JqFieldType.link;
                     break;

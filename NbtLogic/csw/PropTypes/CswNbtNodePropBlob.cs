@@ -80,15 +80,17 @@ namespace ChemSW.Nbt.PropTypes
 
         public string Href
         {
-            get
+            get { return getLink( JctNodePropId, NodeId, NodeTypePropId ); }
+        }
+
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        {
+            string ret = string.Empty;
+            if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
             {
-                string ret = string.Empty;
-                if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
-                {
-                    ret = "wsNBT.asmx/getBlob?mode=doc&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&propid=" + NodeTypePropId.ToString();
-                }
-                return ret;
+                ret = "wsNBT.asmx/getBlob?mode=doc&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
             }
+            return ret;
         }
 
         public override void ToXml( XmlNode ParentNode )
