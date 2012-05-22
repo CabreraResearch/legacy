@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Batch
                                                      NbtBatchOpName BatchOpName,
                                                      string BatchData,
                                                      CswPrimaryKey UserId = null,
-                                                     Int32 Priority = Int32.MinValue )
+                                                     Double Priority = Double.NaN )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass );
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.Batch
                 CswNbtMetaDataNodeType BatchOpNT = BatchOpOC.getNodeTypes().First();
                 if( BatchOpNT != null )
                 {
-                    CswNbtNode Node = CswNbtResources.Nodes.makeNodeFromNodeTypeId( BatchOpNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
+                    CswNbtNode Node = CswNbtResources.Nodes.makeNodeFromNodeTypeId( BatchOpNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                     BatchNode = (CswNbtObjClassBatchOp) Node;
                     
                     BatchNode.BatchData.Text = BatchData;
