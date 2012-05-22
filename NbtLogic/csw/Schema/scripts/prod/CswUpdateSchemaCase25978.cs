@@ -103,6 +103,10 @@ namespace ChemSW.Nbt.Schema
             // Batch operation scheduled rule
             _CswNbtSchemaModTrnsctn.createScheduledRule(Sched.NbtScheduleRuleNames.BatchOp, MtSched.Core.Recurrence.NSeconds, 5);
 
+
+            // Batch threshold config var
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( "batchthreshold", "If an operation affects this number of nodes, run as a batch operation instead", "10", false );
+
         }//Update()
 
     }//class CswUpdateSchemaCase25978

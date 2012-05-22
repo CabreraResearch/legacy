@@ -15,6 +15,19 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchManager
     {
         /// <summary>
+        /// If an operation affects this number of nodes, run as a batch operation instead
+        /// </summary>
+        public static Int32 getBatchThreshold( CswNbtResources CswNbtResources )
+        {
+            Int32 ret = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( "batchthreshold" ) );
+            if( Int32.MinValue == ret )
+            {
+                ret = 10;
+            }
+            return ret;
+        }
+
+        /// <summary>
         /// Restore an existing batch row from the database
         /// </summary>
         public static CswNbtObjClassBatchOp restore( CswNbtResources CswNbtResources, CswPrimaryKey BatchId )
@@ -83,16 +96,20 @@ namespace ChemSW.Nbt.Batch
                 BatchOpTree.goToNthChild( 0 );
                 CswNbtNode Node = BatchOpTree.getNodeForCurrentPosition();
                 CswNbtObjClassBatchOp BatchNode = (CswNbtObjClassBatchOp) Node;
-                
+
                 NbtBatchOpName OpName = (NbtBatchOpName) BatchNode.OpName.Value;
                 if( OpName == NbtBatchOpName.FutureNodes )
                 {
                     CswNbtBatchOpFutureNodes op = new CswNbtBatchOpFutureNodes( CswNbtResources );
                     op.runBatchOp( BatchNode );
                 }
+                else if( OpName == NbtBatchOpName.MultiEdit )
+                {
+                    CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( CswNbtResources );
+                    op.runBatchOp( BatchNode );
+                }
                 // New batch ops go here
-                // else if( OpName == NbtBatchOpName.NEWNAME ) {
-                // }
+                // else if( OpName == NbtBatchOpName.NEWNAME ) 
             }
         }
 

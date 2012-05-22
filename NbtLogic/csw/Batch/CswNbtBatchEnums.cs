@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.Batch
         public static readonly NbtBatchOpName Unknown = new NbtBatchOpName( "Unknown" );
 
         public static readonly NbtBatchOpName FutureNodes = new NbtBatchOpName( "FutureNodes" );
+        public static readonly NbtBatchOpName MultiEdit = new NbtBatchOpName( "MultiEdit" );
     }
 
     /// <summary>

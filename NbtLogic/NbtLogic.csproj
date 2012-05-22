@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Batch\CswNbtBatchOpMultiEdit.cs" />
     <Compile Include="csw\Batch\CswNbtBatchEnums.cs" />
     <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
     <Compile Include="csw\Batch\CswNbtBatchOpFutureNodes.cs" />
