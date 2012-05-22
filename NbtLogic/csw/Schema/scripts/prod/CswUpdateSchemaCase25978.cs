@@ -26,7 +26,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp StartDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StartDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, ServerManaged: true );
             CswNbtMetaDataObjectClassProp UserOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.UserPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship, 
-                                                                                                   FkType: NbtViewRelatedIdType.ObjectClassId.ToString(), FkValue: UserOC.ObjectClassId );
+                                                                                                   IsFk:true, 
+                                                                                                   FkType: NbtViewRelatedIdType.ObjectClassId.ToString(), 
+                                                                                                   FkValue: UserOC.ObjectClassId );
 
             CswNbtMetaDataNodeType BatchOpNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( BatchOpOC.ObjectClassId, "Batch Operation", "System" );
             BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( StartDateOCP.PropName ) );
@@ -65,6 +67,9 @@ namespace ChemSW.Nbt.Schema
                                                   Value: NbtBatchOpStatus.Completed.ToString(),
                                                   FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             BatchOpView.save();
+
+            // Batch operation scheduled rule
+            _CswNbtSchemaModTrnsctn.createScheduledRule(Sched.NbtScheduleRuleNames.BatchOp, MtSched.Core.Recurrence.NSeconds, 5);
 
         }//Update()
 

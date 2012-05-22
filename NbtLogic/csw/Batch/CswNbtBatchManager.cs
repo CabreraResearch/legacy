@@ -49,18 +49,52 @@ namespace ChemSW.Nbt.Batch
                 {
                     CswNbtNode Node = CswNbtResources.Nodes.makeNodeFromNodeTypeId( BatchOpNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
                     BatchNode = (CswNbtObjClassBatchOp) Node;
-                    
+
                     BatchNode.BatchData.Text = BatchData;
                     BatchNode.OpName.Value = BatchOpName.ToString();
                     BatchNode.Priority.Value = Priority;
                     BatchNode.Status.Value = NbtBatchOpStatus.Pending.ToString();
                     BatchNode.User.RelatedNodeId = UserId ?? CswNbtResources.CurrentNbtUser.UserId;
-                    
+
                     BatchNode.postChanges( true );
                 }
             }
             return BatchNode;
         } // makeNew()
+
+        public static void runNextBatchOp( CswNbtResources CswNbtResources )
+        {
+            CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.StatusPropertyName );
+            CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PriorityPropertyName );
+
+            CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
+            CswNbtViewRelationship BatchVR = NextBatchOpView.AddViewRelationship( BatchOpOC, false );
+            CswNbtViewProperty StatusVP = NextBatchOpView.AddViewProperty( BatchVR, StatusOCP );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Completed.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Error.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: NbtBatchOpStatus.Unknown.ToString() );
+            CswNbtViewProperty PriorityVP = NextBatchOpView.AddViewProperty( BatchVR, PriorityOCP );
+            NextBatchOpView.setSortProperty( PriorityVP, NbtViewPropertySortMethod.Descending );
+
+            ICswNbtTree BatchOpTree = CswNbtResources.Trees.getTreeFromView( NextBatchOpView, false, true );
+            if( BatchOpTree.getChildNodeCount() > 0 )
+            {
+                BatchOpTree.goToNthChild( 0 );
+                CswNbtNode Node = BatchOpTree.getNodeForCurrentPosition();
+                CswNbtObjClassBatchOp BatchNode = (CswNbtObjClassBatchOp) Node;
+                
+                NbtBatchOpName OpName = (NbtBatchOpName) BatchNode.OpName.Value;
+                if( OpName == NbtBatchOpName.FutureNodes )
+                {
+                    CswNbtBatchOpFutureNodes op = new CswNbtBatchOpFutureNodes( CswNbtResources );
+                    op.runBatchOp( BatchNode );
+                }
+                // New batch ops go here
+                // else if( OpName == NbtBatchOpName.NEWNAME ) {
+                // }
+            }
+        }
 
     } // class CswNbtBatchManager
 } // namespace ChemSW.Nbt.Batch

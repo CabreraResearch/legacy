@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.Batch
                             ( GeneratorNode.FinalDueDate.Empty || ThisDate.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
                         {
                             CswNbtActGenerateNodes.makeNode( GenNode, ThisDate );
-                            BatchNode.appendToLog( "Created future task for " + ThisDate.ToString() + "." );
+                            BatchNode.appendToLog( "Created future task for " + ThisDate.ToShortDateString() + "." );
                         }
                         else
                         {
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Batch
             {
                 get
                 {
-                    if( null == _NextStartDate )
+                    if( DateTime.MinValue == _NextStartDate )
                     {
                         if( null != _BatchData["nextstartdate"] )
                         {
@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.Batch
             {
                 get
                 {
-                    if( null == _FinalDate )
+                    if( DateTime.MinValue == _FinalDate )
                     {
                         if( null != _BatchData["finaldate"] )
                         {
