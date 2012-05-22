@@ -368,8 +368,7 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewProperty Property in ChildRelationship.Properties )
                 {
-                    if( ( null != Property.NodeTypeProp && Property.NodeTypeProp.FirstPropVersionId == MetaDataProp.FirstPropVersionId )
-                        || ( null != Property.ObjectClassProp && Property.ObjectClassProp.FirstPropVersionId == MetaDataProp.FirstPropVersionId ) )
+                    if( null != Property.MetaDataProp && Property.MetaDataProp.FirstPropVersionId == MetaDataProp.FirstPropVersionId )
                     {
                         DoomedProps.Add( Property );
                     }
@@ -386,7 +385,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Creates a new <see cref="CswNbtViewProperty"/> for this view by property name
+        /// Removes a <see cref="CswNbtViewProperty"/> by matching MetaDataProp from every relationship of this view.
         /// </summary>
         public void removeViewProperty( ICswNbtMetaDataProp MetaDataProp )
         {
