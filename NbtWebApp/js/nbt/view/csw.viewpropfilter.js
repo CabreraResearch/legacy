@@ -237,6 +237,7 @@
 
                     if (cswPrivate.filterModeControl.val() === 'Null' || cswPrivate.filterModeControl.val() === 'NotNull') {
                         cswPrivate.valueControl.hide();
+                        cswPrivate.selectedValue = '';
                     }
                 } // if(cswPrivate.readOnly)
             }; // makeFilterValueControl()
