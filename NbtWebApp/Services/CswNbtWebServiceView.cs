@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.WebServices
                                 throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
                             }
 
-                            foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in PropsCollection orderby _ThisProp.PropName select _ThisProp )
+                            foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in PropsCollection orderby _ThisProp.PropNameWithQuestionNo select _ThisProp )
                             {
                                 // BZs 7085, 6651, 6644, 7092
                                 if( ThisProp.getFieldTypeRule().SearchAllowed ||
@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         ViewProp.Parent = CurrentRelationship;
 
-                                        string PropName = ViewProp.Name;
+                                        string PropName = ViewProp.MetaDataProp.PropNameWithQuestionNo;
                                         if( false == ThisProp.getNodeType().IsLatestVersion() )
                                             PropName += "&nbsp;(v" + ThisProp.getNodeType().VersionNo + ")";
 
@@ -523,7 +523,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 // We need the property arbitrary id, so we're doing this by property, not by filter.  
                 // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
-                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) orderby _Property.Name select _Property )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) orderby _Property.MetaDataProp.PropNameWithQuestionNo select _Property )
                 {
                     JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )

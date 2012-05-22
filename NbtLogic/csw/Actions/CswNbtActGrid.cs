@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.Logic
                from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
                where ViewProp != null
                orderby ViewProp.ViewProp.Order
-               select ViewProp.PropName
+               select ViewProp.MetaDataPropNameWithQuestionNo
                );
             return ColumnArrary;
         }
@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.Logic
             ColumnArrary.Add(
                 from VbProp in PropCollection
                 orderby VbProp.ViewProp.Order
-                select VbProp.PropName
+                select VbProp.MetaDataPropNameWithQuestionNo
             );
 
             return ColumnArrary;
