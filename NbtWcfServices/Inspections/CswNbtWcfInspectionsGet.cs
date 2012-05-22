@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Web;
 using ChemSW.Core;
@@ -51,7 +50,7 @@ namespace NbtWebAppServices.Response
                 };
 
                 foreach( CswNbtMetaDataNodeTypeTab NodeTypeTab in from CswNbtMetaDataNodeTypeTab _NodeTypeTab
-                                                                      in NewInspectionNodeType.getNodeTypeTabs()
+                                                                      in NewInspectionNodeType.getVisibleNodeTypeTabs()
                                                                   orderby _NodeTypeTab.TabOrder
                                                                   select _NodeTypeTab )
                 {
@@ -61,12 +60,13 @@ namespace NbtWebAppServices.Response
                         Order = NodeTypeTab.TabOrder,
                         SectionId = NodeTypeTab.TabId
                     };
-                    
+
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
                     //Debug.Assert( NodeTypeProps != null, "NodeTypeProps != null" );
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in NodeTypeProps
-                                                                        where _NodeTypeProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                        where true != _NodeTypeProp.HideInMobile &&
+                                                                              _NodeTypeProp.getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Question &&
                                                                               _propIsSupportedInMobile( _NodeTypeProp.getFieldType().FieldType )
                                                                         select _NodeTypeProp )
                     {
@@ -82,11 +82,12 @@ namespace NbtWebAppServices.Response
                         ResponseSection.Properties.Add( ResponseProperty );
 
                     }
-                    
+
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in NodeTypeProps
                                                                         orderby _NodeTypeProp.PropNameWithQuestionNo
-                                                                        where _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question
+                                                                        where true != _NodeTypeProp.HideInMobile &&
+                                                                              _NodeTypeProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question
                                                                         select _NodeTypeProp )
                     {
                         var ResponseProperty = new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.SectionProperty
