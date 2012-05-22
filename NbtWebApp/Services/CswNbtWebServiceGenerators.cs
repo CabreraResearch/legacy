@@ -36,18 +36,40 @@ namespace ChemSW.Nbt.WebServices
             CswNbtActGenerateFutureNodes CswNbtActGenerateFutureNodes = new CswNbtActGenerateFutureNodes( _CswNbtResources );
 
             //Int32 TotalNodes = 0;
-            Collection<CswNbtNode> SelectedGeneratorNodes = new Collection<CswNbtNode>();
+            //Collection<CswNbtNode> SelectedGeneratorNodes = new Collection<CswNbtNode>();
+            Collection<CswNbtObjClassBatchOp> BatchNodes = new Collection<CswNbtObjClassBatchOp>();
             foreach( string NodeKeyStr in SelectedGeneratorNodeKeys )
             {
                 CswNbtNodeKey CurrentNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKeyStr );
 
                 CswNbtNode CurrentGeneratorNode = _CswNbtResources.Nodes[CurrentNodeKey.NodeId];
-                SelectedGeneratorNodes.Add( CurrentGeneratorNode );
+                //SelectedGeneratorNodes.Add( CurrentGeneratorNode );
 
                 //TotalNodes += CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate );
-                CswNbtObjClassBatchOp BatchNode = CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate );
-
+                BatchNodes.Add( CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate ) );
+                
             }//iterate selected Generator notes
+
+            if( BatchNodes.Count > 0 )
+            {
+                ret["result"] = BatchNodes.Count.ToString();
+
+                CswNbtView BatchOpsView = new CswNbtView( _CswNbtResources );
+                BatchOpsView.ViewName = "New Batch Operations";
+                BatchOpsView.ViewMode = NbtViewRenderingMode.Tree;
+                CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( BatchNodes[0].NodeType, false );
+                foreach( CswNbtObjClassBatchOp BatchNode in BatchNodes )
+                {
+                    BatchRel.NodeIdsToFilterIn.Add( BatchNode.NodeId );
+                }
+
+                CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources, BatchOpsView );
+                ret["treedata"] = ws.runTree( null, null, false, true, string.Empty );
+
+                BatchOpsView.SaveToCache( true );
+                ret["sessionviewid"] = BatchOpsView.SessionViewId.ToString();
+                ret["viewmode"] = BatchOpsView.ViewMode.ToString();
+            }
 
             //ret["result"] = TotalNodes.ToString();
             //if( TotalNodes > 0 )
