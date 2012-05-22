@@ -56,8 +56,11 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 
+            // Batch Operations (all) view for chemsw_admin_role
+            CswNbtNode ChemSwAdminRole = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+
             CswNbtView BatchOpView = _CswNbtSchemaModTrnsctn.makeView();
-            BatchOpView.makeNew( "Batch Operations", NbtViewVisibility.Global );
+            BatchOpView.makeNew( "Batch Operations (all)", NbtViewVisibility.Role, ChemSwAdminRole.NodeId );
             BatchOpView.Category = "System";
             BatchOpView.SetViewMode( NbtViewRenderingMode.Tree );
 
@@ -65,8 +68,37 @@ namespace ChemSW.Nbt.Schema
             BatchOpView.AddViewPropertyAndFilter( BatchOpViewRel,
                                                   StatusOCP,
                                                   Value: NbtBatchOpStatus.Completed.ToString(),
-                                                  FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+                                                  FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                  ShowAtRuntime: true );
             BatchOpView.save();
+
+            // Batch Operations (all) view for Administrator
+            CswNbtNode AdminRole = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+            if( AdminRole != null )
+            {
+                CswNbtView BatchOpView2 = _CswNbtSchemaModTrnsctn.makeView();
+                BatchOpView2.makeNew( "Batch Operations (all)", NbtViewVisibility.Role, AdminRole.NodeId, null, BatchOpView );
+                BatchOpView2.save();
+            }
+
+
+            // My Batch Operations view for everyone else
+            CswNbtView BatchOpView3 = _CswNbtSchemaModTrnsctn.makeView();
+            BatchOpView3.makeNew( "My Batch Operations", NbtViewVisibility.Global );
+            BatchOpView3.Category = "System";
+            BatchOpView3.SetViewMode( NbtViewRenderingMode.Tree );
+
+            CswNbtViewRelationship BatchOpViewRel3 = BatchOpView3.AddViewRelationship( BatchOpOC, true );
+            BatchOpView3.AddViewPropertyAndFilter( BatchOpViewRel3,
+                                                   StatusOCP,
+                                                   Value: NbtBatchOpStatus.Completed.ToString(),
+                                                   FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                   ShowAtRuntime: true );
+            BatchOpView3.AddViewPropertyAndFilter( BatchOpViewRel3,
+                                                   UserOCP,
+                                                   Value: "me",
+                                                   FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            BatchOpView3.save();
 
             // Batch operation scheduled rule
             _CswNbtSchemaModTrnsctn.createScheduledRule(Sched.NbtScheduleRuleNames.BatchOp, MtSched.Core.Recurrence.NSeconds, 5);
