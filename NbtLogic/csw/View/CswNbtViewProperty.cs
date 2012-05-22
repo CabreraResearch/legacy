@@ -111,7 +111,7 @@ namespace ChemSW.Nbt
         }
 
         public NbtViewPropType Type = NbtViewPropType.Unknown;
-        public string Name = String.Empty;
+        public string Name = string.Empty;
         public ArrayList Filters = new ArrayList();
 
         public override string IconFileName
@@ -132,11 +132,11 @@ namespace ChemSW.Nbt
             {
                 string ArbId = string.Empty;
                 if( Parent != null )
-                    ArbId += Parent.ArbitraryId + "_";
+                { ArbId += Parent.ArbitraryId + "_"; }
                 if( this.NodeTypePropId != Int32.MinValue )
-                    ArbId += "NTP_" + NodeTypePropId.ToString();
+                { ArbId += "NTP_" + NodeTypePropId.ToString(); }
                 else if( this.ObjectClassPropId != Int32.MinValue )
-                    ArbId += "OCP_" + ObjectClassPropId.ToString();
+                { ArbId += "OCP_" + ObjectClassPropId.ToString(); }
                 return ArbId;
             }
         }
@@ -157,8 +157,8 @@ namespace ChemSW.Nbt
         //public CswNbtMetaDataFieldType FieldType = null;
         public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
         public Int32 Order = Int32.MinValue;
-        public Int32 Width = Int32.MinValue;
-
+        public Int32 Width = 40;
+        public bool ShowInGrid = true;
 
         /// <summary>
         /// View property constructor
@@ -190,35 +190,37 @@ namespace ChemSW.Nbt
             {
                 //while( PropertyString.Count < 11 )
                 //{
-                //    PropertyString.Add( String.Empty );
+                //    PropertyString.Add( string.Empty );
                 //}
 
-                if( PropertyString[1] != String.Empty )
+                if( PropertyString[1] != string.Empty )
                 {
                     //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
                     Type = (NbtViewPropType) PropertyString[1];
                 }
-                if( PropertyString[2] != String.Empty )
-                    NodeTypePropId = CswConvert.ToInt32( PropertyString[2] );
-                if( PropertyString[3] != String.Empty )
-                    Name = PropertyString[3];
-                //if( Values[4] != String.Empty )
+                if( PropertyString[2] != string.Empty )
+                { NodeTypePropId = CswConvert.ToInt32( PropertyString[2] ); }
+                if( PropertyString[3] != string.Empty )
+                { Name = PropertyString[3]; }
+                //if( Values[4] != string.Empty )
                 //    ArbitraryId = Values[4];
-                if( PropertyString[5] != String.Empty )
-                    SortBy = Convert.ToBoolean( PropertyString[5] );
-                if( PropertyString[6] != String.Empty )
+                if( PropertyString[5] != string.Empty )
+                { SortBy = Convert.ToBoolean( PropertyString[5] ); }
+                if( PropertyString[6] != string.Empty )
                 {
                     //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropertyString[6], true );
                     SortMethod = (NbtViewPropertySortMethod) PropertyString[6];
                 }
-                if( PropertyString[7] != String.Empty )
-                    FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] );
-                if( PropertyString[8] != String.Empty )
-                    Order = CswConvert.ToInt32( PropertyString[8] );
-                if( PropertyString[9] != String.Empty )
-                    Width = CswConvert.ToInt32( PropertyString[9] );
-                if( PropertyString[10] != String.Empty )
-                    ObjectClassPropId = CswConvert.ToInt32( PropertyString[10] );
+                if( PropertyString[7] != string.Empty )
+                { FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] ); }
+                if( PropertyString[8] != string.Empty )
+                { Order = CswConvert.ToInt32( PropertyString[8] ); }
+                if( PropertyString[9] != string.Empty )
+                { Width = CswConvert.ToInt32( PropertyString[9] ); }
+                if( PropertyString[10] != string.Empty )
+                { ObjectClassPropId = CswConvert.ToInt32( PropertyString[10] ); }
+                if( PropertyString[11] != string.Empty )
+                { ShowInGrid = CswConvert.ToBoolean( PropertyString[11] ); }
             }
         }
 
@@ -243,26 +245,28 @@ namespace ChemSW.Nbt
                         ObjectClassPropId = CswConvert.ToInt32( PropNode.Attributes["value"].Value );
                 }
                 if( PropNode.Attributes["nodetypepropid"] != null )
-                    NodeTypePropId = CswConvert.ToInt32( PropNode.Attributes["nodetypepropid"].Value );
+                { NodeTypePropId = CswConvert.ToInt32( PropNode.Attributes["nodetypepropid"].Value ); }
                 if( PropNode.Attributes["objectclasspropid"] != null )
-                    ObjectClassPropId = CswConvert.ToInt32( PropNode.Attributes["objectclasspropid"].Value );
+                { ObjectClassPropId = CswConvert.ToInt32( PropNode.Attributes["objectclasspropid"].Value ); }
                 if( PropNode.Attributes["name"] != null )
-                    Name = PropNode.Attributes["name"].Value;
+                { Name = PropNode.Attributes["name"].Value; }
                 //if( PropNode.Attributes["arbitraryid"] != null )
                 //    ArbitraryId = PropNode.Attributes["arbitraryid"].Value;
                 if( PropNode.Attributes["sortby"] != null )
-                    SortBy = Convert.ToBoolean( PropNode.Attributes["sortby"].Value );
+                { SortBy = Convert.ToBoolean( PropNode.Attributes["sortby"].Value ); }
                 if( PropNode.Attributes["sortmethod"] != null )
                 {
                     //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropNode.Attributes["sortmethod"].Value, true );
                     SortMethod = (NbtViewPropertySortMethod) PropNode.Attributes["sortmethod"].Value;
                 }
                 if( PropNode.Attributes["fieldtype"] != null && PropNode.Attributes["fieldtype"].Value != string.Empty )
-                    FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value );
+                { FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value ); }
                 if( PropNode.Attributes["order"] != null && PropNode.Attributes["order"].Value != string.Empty )
-                    Order = CswConvert.ToInt32( PropNode.Attributes["order"].Value );
+                { Order = CswConvert.ToInt32( PropNode.Attributes["order"].Value ); }
                 if( PropNode.Attributes["width"] != null && PropNode.Attributes["width"].Value != string.Empty )
-                    Width = CswConvert.ToInt32( PropNode.Attributes["width"].Value );
+                { Width = CswConvert.ToInt32( PropNode.Attributes["width"].Value ); }
+                if( PropNode.Attributes["showingrid"] != null && PropNode.Attributes["showingrid"].Value != string.Empty )
+                { ShowInGrid = CswConvert.ToBoolean( PropNode.Attributes["showingrid"].Value ); }
             }
             catch( Exception ex )
             {
@@ -308,9 +312,9 @@ namespace ChemSW.Nbt
                 if( Int32.MinValue != _Value ) //backwards compatibility
                 {
                     if( Type == NbtViewPropType.NodeTypePropId )
-                        NodeTypePropId = _Value;
+                    { NodeTypePropId = _Value; }
                     else
-                        ObjectClassPropId = _Value;
+                    { ObjectClassPropId = _Value; }
                 }
 
                 Int32 _NtPropId = CswConvert.ToInt32( PropObj["nodetypepropid"] );
@@ -362,6 +366,8 @@ namespace ChemSW.Nbt
                 {
                     Width = _Width;
                 }
+
+                ShowInGrid = CswConvert.ToBoolean( PropObj["showingrid"] );
             }
             catch( Exception ex )
             {
@@ -430,24 +436,28 @@ namespace ChemSW.Nbt
 
             XmlAttribute FieldTypeAttribute = XmlDoc.CreateAttribute( "fieldtype" );
             if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown )
-                FieldTypeAttribute.Value = FieldType.ToString();
+            { FieldTypeAttribute.Value = FieldType.ToString(); }
             else
-                FieldTypeAttribute.Value = string.Empty;
+            { FieldTypeAttribute.Value = string.Empty; }
             NewPropNode.Attributes.Append( FieldTypeAttribute );
 
             XmlAttribute OrderAttribute = XmlDoc.CreateAttribute( "order" );
             if( Order != Int32.MinValue )
-                OrderAttribute.Value = Order.ToString();
+            { OrderAttribute.Value = Order.ToString(); }
             else
-                OrderAttribute.Value = string.Empty;
+            { OrderAttribute.Value = string.Empty; }
             NewPropNode.Attributes.Append( OrderAttribute );
 
             XmlAttribute WidthAttribute = XmlDoc.CreateAttribute( "width" );
             if( Width != Int32.MinValue )
-                WidthAttribute.Value = Width.ToString();
+            { WidthAttribute.Value = Width.ToString(); }
             else
-                WidthAttribute.Value = string.Empty;
+            { WidthAttribute.Value = string.Empty; }
             NewPropNode.Attributes.Append( WidthAttribute );
+
+            XmlAttribute ShowInGridAttribute = XmlDoc.CreateAttribute( "showingrid" );
+            ShowInGridAttribute.Value = ShowInGrid.ToString();
+            NewPropNode.Attributes.Append( ShowInGridAttribute );
 
             foreach( CswNbtViewPropertyFilter Filter in this.Filters )
             {
@@ -479,7 +489,8 @@ namespace ChemSW.Nbt
                                             new JProperty( "fieldtype", ( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown ) ? FieldType.ToString() : "" ),
                                             new JProperty( "order", ( Order != Int32.MinValue ) ? Order.ToString() : "" ),
                                             new JProperty( "width", ( Width != Int32.MinValue ) ? Width.ToString() : "" ),
-                                            new JProperty( "filters", FilterObj )
+                                            new JProperty( "filters", FilterObj ),
+                                            new JProperty( "showingrid", ShowInGrid )
                                         )
             );
             if( !FirstLevelOnly )
@@ -512,19 +523,21 @@ namespace ChemSW.Nbt
             ret.Add( SortMethod.ToString() );
 
             if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown )
-                ret.Add( FieldType.ToString() );
+            { ret.Add( FieldType.ToString() ); }
             else
-                ret.Add( "" );
+            { ret.Add( "" ); }
 
             if( Order != Int32.MinValue )
-                ret.Add( Order.ToString() );
+            { ret.Add( Order.ToString() ); }
             else
-                ret.Add( "" );
+            { ret.Add( "" ); }
 
             if( Width != Int32.MinValue )
-                ret.Add( Width.ToString() );
+            { ret.Add( Width.ToString() ); }
             else
-                ret.Add( "" );
+            { ret.Add( "" ); }
+
+            ret.Add( ShowInGrid.ToString() );
 
             ret.Add( ObjectClassPropId.ToString() );
             return ret;
