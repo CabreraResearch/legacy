@@ -6,6 +6,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Batch;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -34,7 +35,7 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtActGenerateFutureNodes CswNbtActGenerateFutureNodes = new CswNbtActGenerateFutureNodes( _CswNbtResources );
 
-            Int32 TotalNodes = 0;
+            //Int32 TotalNodes = 0;
             Collection<CswNbtNode> SelectedGeneratorNodes = new Collection<CswNbtNode>();
             foreach( string NodeKeyStr in SelectedGeneratorNodeKeys )
             {
@@ -43,21 +44,22 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtNode CurrentGeneratorNode = _CswNbtResources.Nodes[CurrentNodeKey.NodeId];
                 SelectedGeneratorNodes.Add( CurrentGeneratorNode );
 
-                TotalNodes += CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate );
+                //TotalNodes += CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate );
+                CswNbtObjClassBatchOp BatchNode = CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate );
 
             }//iterate selected Generator notes
 
-            ret["result"] = TotalNodes.ToString();
-            if( TotalNodes > 0 )
-            {
-                CswNbtView NodesView = CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes( SelectedGeneratorNodes );
-                CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources, NodesView );
-                ret["treedata"] = ws.runTree( null, null, false, true, string.Empty );
+            //ret["result"] = TotalNodes.ToString();
+            //if( TotalNodes > 0 )
+            //{
+            //    CswNbtView NodesView = CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes( SelectedGeneratorNodes );
+            //    CswNbtWebServiceTree ws = new CswNbtWebServiceTree( _CswNbtResources, NodesView );
+            //    ret["treedata"] = ws.runTree( null, null, false, true, string.Empty );
 
-                NodesView.SaveToCache( true );
-                ret["sessionviewid"] = NodesView.SessionViewId.ToString();
-                ret["viewmode"] = NodesView.ViewMode.ToString();
-            }
+            //    NodesView.SaveToCache( true );
+            //    ret["sessionviewid"] = NodesView.SessionViewId.ToString();
+            //    ret["viewmode"] = NodesView.ViewMode.ToString();
+            //}
 
             return ret;
         } // futureScheduling()
