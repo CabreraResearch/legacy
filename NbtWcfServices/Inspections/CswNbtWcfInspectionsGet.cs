@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.Nbt;
@@ -271,22 +270,6 @@ namespace NbtWebAppServices.Response
             }
         }
 
-                        CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
-                        PossibleAnswers.FromString( NodeTypeProp.ListOptions );
-                        CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
-                        CompliantAnswers.FromString( NodeTypeProp.ValueOptions );
-                        foreach( string Answer in PossibleAnswers )
-                        {
-                            var Choice =
-                                new CswNbtWcfInspectionsDataModel.CswNbtInspectionDesign.AnswerChoice
-                                {
-                                    Text = Answer,
-                                    IsCompliant = CompliantAnswers.Contains( Answer, false )
-                                };
-                            ResponseProperty.Choices.Add( Choice );
-                        }
-                        ResponseSection.Properties.Add( ResponseProperty );
-                    }
 
 
         public CswNbtWcfInspectionsResponseWithDesigns finalize()
