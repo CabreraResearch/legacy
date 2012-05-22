@@ -57,10 +57,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataNodeTypeProp DocClassNtp = DocumentNt.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.DocumentClassPropertyName );
             OwnerNtp.PropName = OwnerName;
-            DocClassNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-            DocClassNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
-            DocClassNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
-            DocClassNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+            _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.removePropFromAllLayouts( DocClassNtp );
             DocClassNtp.IsRequired = false;
             return DocClassNtp;
         }
