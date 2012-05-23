@@ -9,6 +9,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -129,7 +130,11 @@ namespace ChemSW.Nbt.WebServices
             //Iterate all Relationships at this level first. This ensures our properties are properly collected.
             foreach( CswNbtViewRelationship Relationship in ChildRelationships )
             {
-                foreach( CswNbtViewProperty Property in Relationship.Properties )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property
+                                                        in Relationship.Properties
+                                                        orderby _Property.Order, _Property.Name
+                                                        where _Property.ShowInGrid
+                                                        select _Property )
                 {
                     PropsAtThisLevel.Add( Property );
                 }
@@ -187,7 +192,6 @@ namespace ChemSW.Nbt.WebServices
             JArray GridColumnDefinitions = _CswNbtActGrid.getGridColumnDefinitionJson( _PropsInGrid );
             _addDefaultColumnDefiniton( GridColumnDefinitions );
 
-            _CswNbtActGrid.GridWidth = ( _View.Width * 7 );
             if( _View.Visibility != NbtViewVisibility.Property )
             {
                 _CswNbtActGrid.GridTitle = _View.ViewName;
@@ -463,7 +467,8 @@ namespace ChemSW.Nbt.WebServices
                 ColumnDefArray.Add( new JObject(
                                             new JProperty( "name", "Action" ),
                                             new JProperty( "index", "Action" ),
-                                            new JProperty( "formatter", "image" ) //,new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "40" )
+                                            new JProperty( "formatter", "image" ),
+                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "15" )
                                             ) );
 
 
@@ -531,23 +536,23 @@ namespace ChemSW.Nbt.WebServices
                 //ThisNodeObj["Icon"] = Icon;
                 ThisNodeObj["nodename"] = ThisNodeName;
 
-                _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid );
+                _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid, ThisNodeKey );
             }
             return ThisNodeObj;
 
         } // _treeNodeJObject()
 
-        private void _addPropsRecursive( ICswNbtTree Tree, JObject NodeObj, Collection<CswViewBuilderProp> PropsInGrid )
+        private void _addPropsRecursive( ICswNbtTree Tree, JObject NodeObj, Collection<CswViewBuilderProp> PropsInGrid, CswNbtNodeKey NodeKey )
         {
             foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
             {
-                _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid );
+                _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid, NodeKey );
             }
             // Recurse
             for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
             {
                 Tree.goToNthChild( i );
-                _addPropsRecursive( Tree, NodeObj, PropsInGrid );
+                _addPropsRecursive( Tree, NodeObj, PropsInGrid, NodeKey );
                 Tree.goToParentNode();
             }
         } // _addPropsRecursive()
@@ -582,18 +587,20 @@ namespace ChemSW.Nbt.WebServices
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private void _addSafeCellContent( CswNbtResources CswNbtResources, JObject DirtyElement, JObject ParentObj, IEnumerable<CswViewBuilderProp> PropsInGrid )
+        private void _addSafeCellContent( CswNbtResources CswNbtResources, JObject TreePropObj, JObject RetObj, IEnumerable<CswViewBuilderProp> PropsInGrid, CswNbtNodeKey NodeKey )
         {
-            if( null != DirtyElement )
+            if( null != TreePropObj )
             {
-                string CleanPropName = DirtyElement["propname"].ToString().Trim().ToLower().Replace( " ", "_" );
-                string DirtyValue = DirtyElement["gestalt"].ToString();
-                string PropFieldTypeString = DirtyElement["fieldtype"].ToString();
-                string PropId = DirtyElement["nodetypepropid"].ToString();
-                CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
+                string CleanPropName = TreePropObj["propname"].ToString().Trim().ToLower().Replace( " ", "_" );
+                string DirtyValue = TreePropObj["gestalt"].ToString();
+                string PropFieldTypeString = TreePropObj["fieldtype"].ToString();
+                Int32 PropId = CswConvert.ToInt32( TreePropObj["nodetypepropid"] );
+                Int32 JctNodePropId = CswConvert.ToInt32( TreePropObj["jctnodepropid"] );
+                CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( PropId );
 
                 var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-                string CleanValue;
+                string CleanValue = "";
+                string UrlString = "";
                 switch( PropFieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
@@ -603,6 +610,28 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswDateTime CswDate = new CswDateTime( CswNbtResources, Date, CswDateTime.DateFormat.yyyyMMdd_Dashes, CswDateTime.TimeFormat.Hmmss );
                             CleanValue = CswDate.ToClientAsDateString();
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.File:
+                        UrlString = CswNbtNodePropBlob.getLink( JctNodePropId, NodeKey.NodeId, PropId );
+                        if( false == string.IsNullOrEmpty( UrlString ) )
+                        {
+                            if( string.IsNullOrEmpty( DirtyValue ) )
+                            {
+                                DirtyValue = "File";
+                            }
+                            CleanValue = "<a href='" + UrlString + "'>" + DirtyValue + "</a>";
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                        UrlString = CswNbtNodePropImage.getLink( JctNodePropId, NodeKey.NodeId, PropId );
+                        if( false == string.IsNullOrEmpty( UrlString ) )
+                        {
+                            if( string.IsNullOrEmpty( DirtyValue ) )
+                            {
+                                DirtyValue = "Image";
+                            }
+                            CleanValue = "<a href='" + UrlString + "'>" + DirtyValue + "</a>";
                         }
                         break;
                     case CswNbtMetaDataFieldType.NbtFieldType.Logical:
@@ -625,7 +654,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     _FirstPropInGrid = CleanPropName;
                 }
-                ParentObj[CleanPropName] = CleanValue;
+                RetObj[CleanPropName] = CleanValue;
             }
         }
 

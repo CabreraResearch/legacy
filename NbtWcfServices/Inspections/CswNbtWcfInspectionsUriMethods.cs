@@ -59,22 +59,24 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet]
-        [Description( "Get all Inspections whose Target location path contains the supplied parameter (optional)." )]
+        [Description( "Get all Inspections whose Target location path contains the supplied parameter." )]
         public CswNbtWcfInspectionsResponseWithDesigns byLocation( string LocationName )
         {
+            LocationName = LocationName ?? "null";
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyLocation );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.LocationPropertyName, LocationName );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.LocationPropertyName, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
             return WcfInspectionsGet.finalize();
         } // get()
 
         [OperationContract]
         [WebGet]
-        [Description( "Get all Inspections whose Target or Location barcode contains the supplied parameter (optional)." )]
+        [Description( "Get all Inspections whose Target or Location barcode contains the supplied parameter." )]
         public CswNbtWcfInspectionsResponseWithDesigns byBarcode( string Barcode )
         {
+            Barcode = Barcode ?? "null";
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyBarcode );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass, CswNbtObjClassLocation.BarcodePropertyName, Barcode );
-            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass, CswNbtObjClassInspectionTarget.BarcodePropertyName, Barcode );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass, CswNbtObjClassLocation.BarcodePropertyName, Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            WcfInspectionsGet.addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass, CswNbtObjClassInspectionTarget.BarcodePropertyName, Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins );
             return WcfInspectionsGet.finalize();
         } // get()
 

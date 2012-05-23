@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
+                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, value );
             }
         }
         public string ContentType
@@ -106,21 +107,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return makeImageUrl( JctNodePropId, NodeId, NodeTypePropId );
+                return getLink( JctNodePropId, NodeId, NodeTypePropId );
             }
         }
 
-        public static string makeImageUrl( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
         {
-            string NodeIdStr = string.Empty;
-            if( null != NodeId )
+            string ret = string.Empty;
+            if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
             {
-                NodeIdStr = CswConvert.ToString( NodeId.PrimaryKey );
+                ret = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
             }
-            string PropIdStr = CswConvert.ToString( NodeTypePropId );
-            string JctNpId = CswConvert.ToString( JctNodePropId );
-
-            return "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNpId + "&nodeid=" + NodeIdStr + "&propid=" + PropIdStr;
+            return ret;
         }
 
 

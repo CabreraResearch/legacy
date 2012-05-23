@@ -405,8 +405,11 @@
             // onRemove()
 
             cswPrivate.onSwap = function (tabid, onSwapData) {
-                cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
-                cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
+                //case 26418
+                var propIdOrig = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.cellSet), tabid, onSwapData.swaprow, onSwapData.swapcolumn, onSwapData.cellSet[1][1].propNonDom('propid'));
+                var propIdSwap = cswPrivate.moveProp(cswPrivate.getPropertyCell(onSwapData.swapcellset), tabid, onSwapData.row, onSwapData.column, onSwapData.swapcellset[1][1].propNonDom('propid'));
+                onSwapData.cellSet[1][1].propNonDom('propid', propIdSwap);
+                onSwapData.swapcellset[1][1].propNonDom('propid', propIdOrig);
             };
 
             // onSwap()
@@ -429,6 +432,7 @@
                         data: dataJson
                     });
                 }
+                return propid;
             };
 
             // _moveProp()
@@ -803,7 +807,7 @@
                                 dataJson.CopyNodeIds = cswPrivate.nodeids;
                                 dataJson.PropIds = propIds;
                                 copyNodeProps( /* Case 26134. We're already doing a clear:all, we don't need this. 
-                                                function () { Csw.window.location().reload();  } */ ); 
+                                                function () { Csw.window.location().reload();  } */);
                             }
 
                             cswPrivate.enableSaveBtn();

@@ -51,7 +51,7 @@ namespace NbtWebAppServices.WebServices
 
                 if( AuthenticationStatus == AuthenticationStatus.Unknown )
                 {
-                    AuthenticationStatus = _CswNbtWcfSessionResources.CswSessionManager.beginSession( request.UserName, request.Password, CswNbtWcfTools.getIpAddress() );
+                    AuthenticationStatus = _CswNbtWcfSessionResources.CswSessionManager.beginSession( request.UserName, request.Password, CswNbtWcfTools.getIpAddress(), request.IsMobile );
                 }
 
                 // case 21211

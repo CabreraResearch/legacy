@@ -30,7 +30,7 @@
                     multiselect: false,
                     toppager: false,
                     //forceFit: true,
-                    shrinkToFit: true,
+                    //shrinkToFit: true,
                     sortname: '',
                     sortorder: 'asc',
                     //width: '600px',
