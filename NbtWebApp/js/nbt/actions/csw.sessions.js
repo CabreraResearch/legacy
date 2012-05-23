@@ -31,6 +31,7 @@
                 table.cell(row, 4).b({ text: 'Timeout Date' });
                 table.cell(row, 5).b({ text: 'Access ID' });
                 table.cell(row, 6).b({ text: 'Session ID' });
+                table.cell(row, 7).b({ text: 'Is Mobile' });
                 row += 1;
 
                 // Sessions table
@@ -57,7 +58,7 @@
                             table.cell(row, 4).text(childObj.timeoutdate);
                             table.cell(row, 5).text(childObj.accessid);
                             table.cell(row, 6).text(childObj.sessionid);
-
+                            table.cell(row, 7).text(childObj.ismobile);
                             row += 1;
                         }, false); // Csw.crawlObject()
 

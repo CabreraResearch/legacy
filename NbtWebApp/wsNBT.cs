@@ -149,6 +149,7 @@ namespace ChemSW.Nbt.WebServices
                             JSession["logindate"] = Entry.LoginDate.ToString();
                             JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
                             JSession["accessid"] = Entry.AccessId;
+                            JSession["ismobile"] = Entry.IsMobile;
                             ReturnVal[Entry.SessionId] = JSession;
                         } // if (Entry.AccessId == Master.AccessID)
                     } // foreach (CswAuthenticator.SessionListEntry Entry in SessionList.Values)
@@ -353,7 +354,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             if( AuthenticationStatus == AuthenticationStatus.Unknown )
-                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress(), false );
+                AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebControls.CswNbtWebTools.getIpAddress() );
 
             // case 21211
             if( AuthenticationStatus == AuthenticationStatus.Authenticated )
@@ -1938,7 +1939,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ReturnVal = ws.getVbProperties( View );
                     }
-                    ws.getVbProperties(ReturnVal, NewPropArbIds, ViewJson);
+                    ws.getVbProperties( ReturnVal, NewPropArbIds, ViewJson );
                 }
 
                 _deInitResources();

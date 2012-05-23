@@ -223,10 +223,10 @@ namespace NbtWebAppServices.Response
             }
         }
 
-        public CswNbtWcfInspectionsGet( HttpContext Context, CswNbtActSystemViews.SystemViewName ViewName )
+        public CswNbtWcfInspectionsGet( HttpContext Context, CswNbtActSystemViews.SystemViewName ViewName, bool IsMobile = true )
         {
             _Context = Context;
-            _InspectionsResponse = new CswNbtWcfInspectionsResponseWithDesigns( _Context );
+            _InspectionsResponse = new CswNbtWcfInspectionsResponseWithDesigns( _Context, IsMobile );
             if( _InspectionsResponse.Status.Success )
             {
                 try

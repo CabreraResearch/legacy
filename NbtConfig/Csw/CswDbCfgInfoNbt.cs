@@ -8,9 +8,12 @@ namespace ChemSW.Nbt.Config
     {
 
         private CswDbCfgInfo _CswDbCfgInfo = null;
-        public CswDbCfgInfoNbt( SetupMode SetupMode )
+        private bool _IsMobile;
+
+        public CswDbCfgInfoNbt( SetupMode SetupMode, bool IsMobile )
         {
-            _CswDbCfgInfo = new CswDbCfgInfo( SetupMode );
+            _CswDbCfgInfo = new CswDbCfgInfo( SetupMode, IsMobile );
+            _IsMobile = IsMobile;
         }//ctor 
 
         public void fill() { _CswDbCfgInfo.fill(); }
@@ -24,7 +27,7 @@ namespace ChemSW.Nbt.Config
 
             get
             {
-                return ( _CswDbCfgInfo.MasterAccessId ); 
+                return ( _CswDbCfgInfo.MasterAccessId );
             }
 
         }
@@ -143,7 +146,10 @@ namespace ChemSW.Nbt.Config
         {
             set
             {
-                _CswDbCfgInfo.CurrentUserCount = value;
+                if( false == _IsMobile )
+                {
+                    _CswDbCfgInfo.CurrentUserCount = value;
+                }
             }
             get
             {

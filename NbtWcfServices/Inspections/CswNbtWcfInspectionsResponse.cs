@@ -9,8 +9,8 @@ namespace NbtWebAppServices.Response
     [Description( "Returns Inspections submitted for update which require further attention. Completed Inspections are not returned." )]
     public class CswNbtWcfInspectionsResponse : CswNbtWcfResponseBase
     {
-        public CswNbtWcfInspectionsResponse( HttpContext Context )
-            : base( Context )
+        public CswNbtWcfInspectionsResponse( HttpContext Context, bool IsMobile, bool AttemptRefresh = true )
+            : base( Context, IsMobile, AttemptRefresh )
         {
             ActionRequired = new Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection>();
             InComplete = new Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection>();

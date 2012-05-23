@@ -17,10 +17,11 @@ namespace NbtWebAppServices.Response
         private Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> _Inspections;
         private CswNbtWcfInspectionsResponse _InspectionsResponse;
 
-        public CswNbtWcfInspectionsPost( HttpContext Context, Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> Inspections )
+        public CswNbtWcfInspectionsPost( HttpContext Context, Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> Inspections, bool IsMobile = true )
         {
             _Context = Context;
-            _InspectionsResponse = new CswNbtWcfInspectionsResponse( _Context );
+
+            _InspectionsResponse = new CswNbtWcfInspectionsResponse( _Context, IsMobile );
             if( _InspectionsResponse.Status.Success )
             {
                 try

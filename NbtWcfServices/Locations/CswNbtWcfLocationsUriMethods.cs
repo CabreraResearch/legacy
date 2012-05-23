@@ -24,9 +24,9 @@ namespace NbtWebAppServices.WebServices
         [OperationContract]
         [WebGet]
         [Description( "Generate a list of Locations" )]
-        public CswNbtWcfLocationsResponse list()
+        public CswNbtWcfLocationsResponse list( bool IsMobile = true )
         {
-            CswNbtWcfLocationsResponse Ret = new CswNbtWcfLocationsResponse( _Context );
+            CswNbtWcfLocationsResponse Ret = new CswNbtWcfLocationsResponse( _Context, IsMobile );
             try
             {
                 _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
