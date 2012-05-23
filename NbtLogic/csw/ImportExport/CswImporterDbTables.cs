@@ -662,8 +662,8 @@ namespace ChemSW.Nbt.ImportExport
                                         foreach( DataRow CurrentImportProprow in CurrentUnprocssedPropsTable.Rows )
                                         {
                                             // previous errors shouldn't prevent us from continuing to import
-                                            CurrentErrorStatus = ImportProcessStati.Imported; 
-                                            
+                                            CurrentErrorStatus = ImportProcessStati.Imported;
+
                                             string CurrentNodeTypePropname = CurrentImportProprow["nodetypepropname"].ToString();
 
                                             if( ( "user" != NodeType.NodeTypeName.ToLower() ) && ( "role" != CurrentNodeTypePropname.ToLower() ) )
@@ -682,7 +682,7 @@ namespace ChemSW.Nbt.ImportExport
                                                     {
                                                         string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
 
-                                                        if( ( false == CurrentImportTargetNodeId.Contains( "--" ) ) || 
+                                                        if( ( false == CurrentImportTargetNodeId.Contains( "--" ) ) ||
                                                             3 == CurrentImportTargetNodeId.Split( new string[] { "--" }, StringSplitOptions.RemoveEmptyEntries ).Length ) //IMCS import references must have all three components in order to be not null
                                                         {
 
@@ -955,6 +955,7 @@ namespace ChemSW.Nbt.ImportExport
                                 //First check for dundancy
                                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( CurrentNbtNode.NodeTypeId ) )
                                 {
+                                    //probably  just add MetaDataProp.IsRequired() to condition? 
                                     if( MetaDataProp.IsUnique() )
                                     {
                                         CswNbtNode OtherNode = _CswNbtResources.Nodes.FindNodeByUniqueProperty( MetaDataProp, CurrentNbtNode.Properties[MetaDataProp] );
