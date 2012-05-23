@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Actions
                 View.VisibilityRoleId == ChemSwAdminRoleNode.NodeId );
         }
 
-        private CswNbtView _getSiInspectionBaseView( SystemViewName ViewName )
+        private CswNbtView _getSiInspectionBaseView( SystemViewName ViewName, bool ReInit )
         {
             CswNbtView Ret = _getSystemView( ViewName );
             if( null == Ret )
@@ -54,7 +54,11 @@ namespace ChemSW.Nbt.Actions
                 Ret.makeNew( ViewName.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
-
+                ReInit = true;
+            }
+            if( ReInit )
+            {
+                Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                 CswNbtViewRelationship InspectionDesignVr = Ret.AddViewRelationship( InspectionDesignOc, true );
 
@@ -88,7 +92,7 @@ namespace ChemSW.Nbt.Actions
             View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Missed, false );
         }
 
-        private CswNbtView _getSiInspectionUserView()
+        private CswNbtView _getSiInspectionUserView( bool ReInit )
         {
             CswNbtView Ret = _getSystemView( SystemViewName.SIInspectionsbyUser );
             if( null == Ret )
@@ -98,7 +102,11 @@ namespace ChemSW.Nbt.Actions
                 Ret.makeNew( SystemViewName.SIInspectionsbyUser.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
-
+                ReInit = true;
+            }
+            if( ReInit )
+            {
+                Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
                 CswNbtViewRelationship InspectionDesignVr = Ret.AddViewRelationship( InspectionDesignOc, true );
 
@@ -112,7 +120,7 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        private CswNbtView _getSiInspectionBarcodeView()
+        private CswNbtView _getSiInspectionBarcodeView( bool ReInit )
         {
             CswNbtView Ret = _getSystemView( SystemViewName.SIInspectionsbyBarcode );
             if( null == Ret )
@@ -122,7 +130,11 @@ namespace ChemSW.Nbt.Actions
                 Ret.makeNew( SystemViewName.SIInspectionsbyBarcode.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
-
+                ReInit = true;
+            }
+            if( ReInit )
+            {
+                Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass );
                 CswNbtMetaDataObjectClassProp InspectionTargetLocationOcp = InspectionTargetOc.getObjectClassProp( CswNbtObjClassInspectionTarget.LocationPropertyName );
@@ -146,7 +158,7 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        private CswNbtView _siLocationsTreeView()
+        private CswNbtView _siLocationsTreeView( bool ReInit )
         {
             CswNbtView Ret = _getSystemView( SystemViewName.SILocationsTree );
             if( null == Ret )
@@ -156,7 +168,11 @@ namespace ChemSW.Nbt.Actions
                 Ret.makeNew( SystemViewName.SILocationsTree.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.Tree;
-
+                ReInit = true;
+            }
+            if( ReInit )
+            {
+                Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
                 CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
@@ -167,17 +183,23 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        private CswNbtView _siLocationsListView()
+        private CswNbtView _siLocationsListView( bool ReInit )
         {
             CswNbtView Ret = _getSystemView( SystemViewName.SILocationsList );
             if( null == Ret )
             {
-                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                CswNbtNode ChemSwAdminRoleNode =
+                    _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.makeNew( SystemViewName.SILocationsList.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.makeNew( SystemViewName.SILocationsList.ToString(), NbtViewVisibility.Role,
+                            ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
                 Ret.ViewMode = NbtViewRenderingMode.List;
-
+                ReInit = true;
+            }
+            if( ReInit )
+            {
+                Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
                 CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
@@ -197,71 +219,26 @@ namespace ChemSW.Nbt.Actions
         private CswNbtView _initView( SystemViewName ViewName, bool ReInit )
         {
             CswNbtView RetView = null;
-            CswNbtView TmpView = null;
+
             if( ViewName == SystemViewName.SILocationsList )
             {
-                TmpView = _siLocationsListView();
-                if( ReInit )
-                {
-                    TmpView.Delete();
-                    RetView = _siLocationsListView();
-                }
-                else
-                {
-                    RetView = TmpView;
-                }
+                RetView = _siLocationsListView( ReInit );
             }
             else if( ViewName == SystemViewName.SILocationsTree )
             {
-                TmpView = _siLocationsTreeView();
-                if( ReInit )
-                {
-                    TmpView.Delete();
-                    RetView = _siLocationsTreeView();
-                }
-                else
-                {
-                    RetView = TmpView;
-                }
+                RetView = _siLocationsTreeView( ReInit );
             }
             else if( ViewName == SystemViewName.SIInspectionsbyUser )
             {
-                TmpView = _getSiInspectionUserView();
-                if( ReInit )
-                {
-                    TmpView.Delete();
-                    RetView = _getSiInspectionUserView();
-                }
-                else
-                {
-                    RetView = TmpView;
-                }
+                RetView = _getSiInspectionUserView( ReInit );
             }
             else if( ViewName == SystemViewName.SIInspectionsbyBarcode )
             {
-                TmpView = _getSiInspectionBarcodeView();
-                if( ReInit )
-                {
-                    TmpView.Delete();
-                    RetView = _getSiInspectionBarcodeView();
-                }
-                else
-                {
-                    RetView = TmpView;
-                }
+                RetView = _getSiInspectionBarcodeView( ReInit );
             }
             else if( ViewName != SystemViewName.Unknown )
             {
-                TmpView = _getSiInspectionBaseView( ViewName );
-                if( ReInit )
-                {
-                    TmpView.Delete();
-                    RetView = _getSiInspectionBaseView( ViewName );
-                }
-                else
-                {
-                    RetView = TmpView;
-                }
+                RetView = _getSiInspectionBaseView( ViewName, ReInit );
             }
             return RetView;
         }
