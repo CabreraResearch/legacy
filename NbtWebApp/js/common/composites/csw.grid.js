@@ -511,7 +511,7 @@
                 }
                 var element = cswPrivate.resizeWithParentElement || cswParent.$;
                 handleRestoreDownRecursive(element);
-                var width = element.width();
+                var width = element.width() - 50;
                 cswPublic.setWidth(width);
             };
 
