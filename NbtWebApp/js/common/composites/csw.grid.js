@@ -464,13 +464,8 @@
                                 addRowsToGrid(rows.rows);
                             }
                         });
-                    } else {
-                        /* Get the data (rows) from the current grid */
-                        addRowsToGrid(data);
-                    }
-
-
-
+                    } 
+                    
                     Csw.newWindow(outerDiv.$.html());
                     outerDiv.remove();
 
