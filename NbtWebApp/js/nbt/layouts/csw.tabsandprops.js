@@ -768,7 +768,7 @@
                                     urlMethod: cswPrivate.CopyPropValuesUrlMethod,
                                     data: dataJson,
                                     success: function (data) {
-                                        if(false == Csw.isNullOrEmpty(data.batch)) {
+                                        if(false === Csw.isNullOrEmpty(data.batch)) {
                                             $.CswDialog('AlertDialog', {
                                                 title: 'Batch Operation',
                                                 message: 'This multi-edit will be processed as a batch operation.'

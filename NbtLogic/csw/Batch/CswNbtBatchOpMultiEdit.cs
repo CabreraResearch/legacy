@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpMultiEdit : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.FutureNodes;
+        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MultiEdit;
 
         public CswNbtBatchOpMultiEdit( CswNbtResources CswNbtResources )
         {

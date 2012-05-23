@@ -124,7 +124,7 @@ namespace ChemSW.Nbt.Batch
                         BatchData.NextStartDate = GeneratorNode.DueDateInterval.getNextOccuranceAfter( ThisDate );
                         if( BatchData.NextStartDate.Date == ThisDate.Date ) // infinite loop guard
                         {
-                            BatchData.NextStartDate = DateTime.MinValue;
+                            BatchNode.finish();
                         }
 
                         BatchNode.BatchData.Text = BatchData.ToString();
