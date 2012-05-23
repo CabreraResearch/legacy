@@ -26,12 +26,12 @@
 
                 // Header row
                 table.cell(row, 1).b({ text: 'End' });
-                table.cell(row, 2).b({ text: 'Username' });
-                table.cell(row, 3).b({ text: 'Login Date' });
-                table.cell(row, 4).b({ text: 'Timeout Date' });
-                table.cell(row, 5).b({ text: 'Access ID' });
-                table.cell(row, 6).b({ text: 'Session ID' });
-                table.cell(row, 7).b({ text: 'Is Mobile' });
+                table.cell(row, 2).b({ text: 'Access ID' });
+                table.cell(row, 3).b({ text: 'Username' });
+                table.cell(row, 4).b({ text: 'Login Date' });
+                table.cell(row, 5).b({ text: 'Timeout Date' });
+                table.cell(row, 6).b({ text: 'Is Mobile' });
+                table.cell(row, 7).b({ text: 'Session ID' });
                 row += 1;
 
                 // Sessions table
@@ -53,12 +53,12 @@
                             if (childObj.sessionid === Csw.cookie.get(Csw.cookie.cookieNames.SessionId)) {
                                 cell2name += "&nbsp;(you)";
                             }
-                            table.cell(row, 2).append(cell2name);
-                            table.cell(row, 3).text(childObj.logindate);
-                            table.cell(row, 4).text(childObj.timeoutdate);
-                            table.cell(row, 5).text(childObj.accessid);
-                            table.cell(row, 6).text(childObj.sessionid);
-                            table.cell(row, 7).text(childObj.ismobile);
+                            table.cell(row, 2).text(childObj.accessid);
+                            table.cell(row, 3).append(cell2name);
+                            table.cell(row, 4).text(childObj.logindate);
+                            table.cell(row, 5).text(childObj.timeoutdate);
+                            table.cell(row, 6).text(childObj.ismobile);
+                            table.cell(row, 7).text(childObj.sessionid);
                             row += 1;
                         }, false); // Csw.crawlObject()
 
