@@ -149,6 +149,7 @@ namespace ChemSW.Nbt.WebServices
                             JSession["logindate"] = Entry.LoginDate.ToString();
                             JSession["timeoutdate"] = Entry.TimeoutDate.ToString();
                             JSession["accessid"] = Entry.AccessId;
+                            JSession["ismobile"] = "false"; //Entry.IsMobile;
                             ReturnVal[Entry.SessionId] = JSession;
                         } // if (Entry.AccessId == Master.AccessID)
                     } // foreach (CswAuthenticator.SessionListEntry Entry in SessionList.Values)
