@@ -10,6 +10,7 @@ using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Security;
 using NbtWebAppServices.Response;
 using NbtWebAppServices.Session;
@@ -62,7 +63,7 @@ namespace NbtWebAppServices.WebServices
                                 {
                                     if( CswConvert.ToString( Prop["fieldtype"] ).ToLower() == CswNbtMetaDataFieldType.NbtFieldType.Location.ToString().ToLower() )
                                     {
-                                        LocationNode.Name = CswConvert.ToString( Prop["gestalt"] ) + " > " + Tree.getNodeNameForCurrentPosition(); ;
+                                        LocationNode.Name = CswConvert.ToString( Prop["gestalt"] ) + CswNbtNodePropLocation.PathDelimiter + Tree.getNodeNameForCurrentPosition();
                                     }
                                 }
                                 Locations.Add( LocationNode );
