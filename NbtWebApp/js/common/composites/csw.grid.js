@@ -516,9 +516,8 @@
                 }
                 var element = cswPrivate.resizeWithParentElement || cswParent.$;
                 handleRestoreDownRecursive(element);
-                var width = element.width() - 100;
-
-                cswPublic.gridTable.$.jqGrid('setGridWidth', width);
+                var width = element.width();
+                cswPublic.setWidth(width);
             };
 
             /* "Constuctor" */

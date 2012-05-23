@@ -184,10 +184,6 @@ namespace ChemSW.Nbt.WebServices
 
             JArray GridOrderedColumnDisplayNames = _makeDefaultColumnNames();
             _CswNbtActGrid.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
-            if( _ActionEnabled )
-            {
-                GridOrderedColumnDisplayNames.Add( "Action" );
-            }
 
             JArray GridColumnDefinitions = _CswNbtActGrid.getGridColumnDefinitionJson( _PropsInGrid );
             _addDefaultColumnDefiniton( GridColumnDefinitions );
@@ -432,6 +428,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.Add( "jqgridid" ); //better to use int for jqGrid key
             Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
             Ret.Add( "nodename" );
+            Ret.Add( "Action" );
             return Ret;
         } // _makeDefaultColumnNames()
 
@@ -440,18 +437,29 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private void _addDefaultColumnDefiniton( JArray ColumnDefArray )
         {
+            if( _ActionEnabled )
+            {
+                ColumnDefArray.AddFirst( new JObject(
+                                            new JProperty( "name", "Action" ),
+                                            new JProperty( "index", "Action" ),
+                                            new JProperty( "formatter", "image" )
+                                            ) );
+            }
+
             //we'll want NodeName for edit/delete
             ColumnDefArray.AddFirst( new JObject(
                                 new JProperty( "name", "nodename" ),
                                 new JProperty( "index", "nodename" ),
-                                new JProperty( "hidden", true )
+                                new JProperty( "hidden", true ),
+                                new JProperty( "columnwidth", 0 )
                                 ) );
 
             //we'll want CswNbtNodeKey for add/edit/delete
             ColumnDefArray.AddFirst( new JObject(
                                 new JProperty( "name", "cswnbtnodekey" ),
                                 new JProperty( "index", "cswnbtnodekey" ),
-                                new JProperty( "hidden", true )
+                                new JProperty( "hidden", true ),
+                                new JProperty( "columnwidth", 0 )
                                 ) );
 
             //better to use int for jqGrid key
@@ -459,22 +467,9 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "name", "jqgridid" ),
                                 new JProperty( "index", "jqgridid" ),
                                 new JProperty( "key", true ),
-                                new JProperty( "hidden", true )
+                                new JProperty( "hidden", true ),
+                                new JProperty( "columnwidth", 0 )
                                 ) );
-
-            if( _ActionEnabled )
-            {
-                ColumnDefArray.Add( new JObject(
-                                            new JProperty( "name", "Action" ),
-                                            new JProperty( "index", "Action" ),
-                                            new JProperty( "formatter", "image" ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "15" )
-                                            ) );
-
-
-            }
-
-
 
         } // _addDefaultColumnDefiniton()
 
