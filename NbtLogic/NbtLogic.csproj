@@ -66,6 +66,8 @@
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26117Part2.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26450.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26428.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26280.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26217.cs" />

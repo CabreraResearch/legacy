@@ -159,9 +159,9 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
-                CswNbtMetaDataObjectClassProp NameOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.NamePropertyName );
-                CswNbtViewProperty NameVp = Ret.AddViewProperty( LocationVr, NameOcp );
-                NameVp.SortBy = true;
+                CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
+                CswNbtViewProperty LocationLocationVp = Ret.AddViewProperty( LocationVr, LocationLocationOcp );
+                LocationLocationVp.SortBy = true;
                 Ret.save();
             }
             return Ret;
@@ -180,9 +180,9 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
-                CswNbtMetaDataObjectClassProp NameOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.NamePropertyName );
-                CswNbtViewProperty NameVp = Ret.AddViewProperty( LocationVr, NameOcp );
-                NameVp.SortBy = true;
+                CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
+                CswNbtViewProperty LocationLocationVp = Ret.AddViewProperty( LocationVr, LocationLocationOcp );
+                LocationLocationVp.SortBy = true;
                 Ret.save();
             }
             return Ret;
@@ -194,31 +194,84 @@ namespace ChemSW.Nbt.Actions
 
         #region Constructor
 
+        private CswNbtView _initView( SystemViewName ViewName, bool ReInit )
+        {
+            CswNbtView RetView = null;
+            CswNbtView TmpView = null;
+            if( ViewName == SystemViewName.SILocationsList )
+            {
+                TmpView = _siLocationsListView();
+                if( ReInit )
+                {
+                    TmpView.Delete();
+                    RetView = _siLocationsListView();
+                }
+                else
+                {
+                    RetView = TmpView;
+                }
+            }
+            else if( ViewName == SystemViewName.SILocationsTree )
+            {
+                TmpView = _siLocationsTreeView();
+                if( ReInit )
+                {
+                    TmpView.Delete();
+                    RetView = _siLocationsTreeView();
+                }
+                else
+                {
+                    RetView = TmpView;
+                }
+            }
+            else if( ViewName == SystemViewName.SIInspectionsbyUser )
+            {
+                TmpView = _getSiInspectionUserView();
+                if( ReInit )
+                {
+                    TmpView.Delete();
+                    RetView = _getSiInspectionUserView();
+                }
+                else
+                {
+                    RetView = TmpView;
+                }
+            }
+            else if( ViewName == SystemViewName.SIInspectionsbyBarcode )
+            {
+                TmpView = _getSiInspectionBarcodeView();
+                if( ReInit )
+                {
+                    TmpView.Delete();
+                    RetView = _getSiInspectionBarcodeView();
+                }
+                else
+                {
+                    RetView = TmpView;
+                }
+            }
+            else if( ViewName != SystemViewName.Unknown )
+            {
+                TmpView = _getSiInspectionBaseView( ViewName );
+                if( ReInit )
+                {
+                    TmpView.Delete();
+                    RetView = _getSiInspectionBaseView( ViewName );
+                }
+                else
+                {
+                    RetView = TmpView;
+                }
+            }
+            return RetView;
+        }
+
         public CswNbtActSystemViews( CswNbtResources CswNbtResources, SystemViewName ViewName, CswNbtMetaDataObjectClass EnforceObjectClassRelationship )
         {
             _CswNbtResources = CswNbtResources;
             _EnforceObjectClassRelationship = EnforceObjectClassRelationship;
 
-            if( ViewName == SystemViewName.SILocationsList )
-            {
-                SystemView = _siLocationsListView();
-            }
-            else if( ViewName == SystemViewName.SILocationsTree )
-            {
-                SystemView = _siLocationsTreeView();
-            }
-            else if( ViewName == SystemViewName.SIInspectionsbyUser )
-            {
-                SystemView = _getSiInspectionUserView();
-            }
-            else if( ViewName == SystemViewName.SIInspectionsbyBarcode )
-            {
-                SystemView = _getSiInspectionBarcodeView();
-            }
-            else if( ViewName != SystemViewName.Unknown )
-            {
-                SystemView = _getSiInspectionBaseView( ViewName );
-            }
+            SystemView = _initView( ViewName, false );
         }
 
         #endregion Constructor
@@ -264,6 +317,11 @@ namespace ChemSW.Nbt.Actions
         public bool addSystemViewFilter( SystemViewPropFilterDefinition FilterDefinition, CswNbtMetaDataObjectClass MatchObjectClass = null )
         {
             return _addSystemViewFilterRecursive( SystemView.Root.ChildRelationships, FilterDefinition, MatchObjectClass );
+        }
+
+        public void reInitSystemView( SystemViewName ViewName )
+        {
+            SystemView = _initView( ViewName, true );
         }
 
         #endregion Public methods
