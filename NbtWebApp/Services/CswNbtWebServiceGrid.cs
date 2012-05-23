@@ -442,7 +442,9 @@ namespace ChemSW.Nbt.WebServices
                 ColumnDefArray.AddFirst( new JObject(
                                             new JProperty( "name", "Action" ),
                                             new JProperty( "index", "Action" ),
-                                            new JProperty( "formatter", "image" )
+                                            new JProperty( "formatter", "image" ),
+                                            new JProperty( "fixed", true ),
+                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 50 )
                                             ) );
             }
 
@@ -451,7 +453,7 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "name", "nodename" ),
                                 new JProperty( "index", "nodename" ),
                                 new JProperty( "hidden", true ),
-                                new JProperty( "columnwidth", 0 )
+                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
             //we'll want CswNbtNodeKey for add/edit/delete
@@ -459,7 +461,7 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "name", "cswnbtnodekey" ),
                                 new JProperty( "index", "cswnbtnodekey" ),
                                 new JProperty( "hidden", true ),
-                                new JProperty( "columnwidth", 0 )
+                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
             //better to use int for jqGrid key
@@ -468,7 +470,7 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "index", "jqgridid" ),
                                 new JProperty( "key", true ),
                                 new JProperty( "hidden", true ),
-                                new JProperty( "columnwidth", 0 )
+                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
         } // _addDefaultColumnDefiniton()
