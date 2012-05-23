@@ -14,7 +14,7 @@
         These "Terms of Use" set forth the terms and conditions that apply to your use of ChemSWLive (the "Web Site"). By using the Web Site (other than to read this page for the first time), you agree to comply with all of the Terms of Use set forth herein. The right to use the Web Site is personal to you and is not transferable to any other person or entity.<br />
         <br />
         <b>Copyrights and Trademarks</b><br />
-            A. All materials contained on the Web Site are Copyright 2006-2009, ChemSW, Inc. All rights reserved.<br />
+            A. All materials contained on the Web Site are Copyright 2006-<%=DateTime.Now.Year.ToString() %>, ChemSW, Inc. All rights reserved.<br />
             B. No person is authorized to use, copy or distribute any portion the Web Site including related graphics.<br />
             C. ChemSWLive and other trademarks and/or service marks (including logos and designs) found on the Web Site are trademarks/service marks that identify ChemSW, Inc. and the goods and/or services provided by ChemSW, Inc.. Such marks may not be used under any circumstances without the prior written authorization of ChemSW, Inc. <br />
         <br />
