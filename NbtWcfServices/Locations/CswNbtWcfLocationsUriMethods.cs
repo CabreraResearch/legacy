@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -8,7 +10,6 @@ using ChemSW.Core;
 using ChemSW.Nbt;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Security;
 using NbtWebAppServices.Response;
 using NbtWebAppServices.Session;
@@ -44,7 +45,7 @@ namespace NbtWebAppServices.WebServices
                     if( LocationCount > 0 )
                     {
                         CswNbtMetaDataObjectClass LocationsOc = _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-
+                        Collection<CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel> Locations = new Collection<CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel>();
                         for( Int32 N = 0; N < LocationCount; N += 1 )
                         {
                             Tree.goToNthChild( N );
@@ -64,9 +65,16 @@ namespace NbtWebAppServices.WebServices
                                         LocationNode.Name = CswConvert.ToString( Prop["gestalt"] ) + " > " + Tree.getNodeNameForCurrentPosition(); ;
                                     }
                                 }
-                                WcfLocationModel.Add( LocationNode );
+                                Locations.Add( LocationNode );
                             }
                             Tree.goToParentNode();
+                        }
+                        foreach( var Location in from CswNbtWcfLocationsDataModel.CswNbtLocationNodeModel _Location
+                                                                                                            in Locations
+                                                 orderby _Location.Name
+                                                 select _Location )
+                        {
+                            WcfLocationModel.Locations.Add( Location );
                         }
                         Ret.Data = WcfLocationModel;
                     }
