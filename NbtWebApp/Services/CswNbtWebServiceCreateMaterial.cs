@@ -210,7 +210,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     Tree.goToNthChild( 0 );
                     CswNbtNode Node = Tree.getNodeForCurrentPosition();
-                    CswNbtObjClassMaterial NodeAsMaterial = CswNbtNodeCaster.AsMaterial( Node );
+                    CswNbtObjClassMaterial NodeAsMaterial = (CswNbtObjClassMaterial) Node;
 
                     string TradeName = NodeAsMaterial.TradeName.Text;
                     string SupplierName = NodeAsMaterial.Supplier.Gestalt;
@@ -253,7 +253,7 @@ namespace ChemSW.Nbt.WebServices
             SizeNode = CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing, true );
             CswNbtWebServiceNode NodeWs = new CswNbtWebServiceNode( CswNbtResources, CswNbtStatisticsEvents );
             NodeWs.addNodeProps( SizeNode, SizeObj, null );
-            CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
+            CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
             JArray Row = new JArray();
             Ret["row"] = Row;
 
@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.WebServices
             string PartNo;
             _getMaterialPropsFromObject( MaterialObj, out Tradename, out SupplierId, out PartNo );
 
-            CswNbtObjClassMaterial NodeAsMaterial = CswNbtNodeCaster.AsMaterial( Ret );
+            CswNbtObjClassMaterial NodeAsMaterial = (CswNbtObjClassMaterial) Ret;
             NodeAsMaterial.TradeName.Text = Tradename;
             NodeAsMaterial.Supplier.RelatedNodeId = SupplierId;
             NodeAsMaterial.PartNumber.Text = PartNo;
@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.WebServices
                         getSizeNodeProps( _CswNbtResources, _CswNbtStatisticsEvents, SizeNtId, SizeDef, true, out SizeNode );
                         if( null != SizeNode )
                         {
-                            CswNbtObjClassSize NodeAsSize = CswNbtNodeCaster.AsSize( SizeNode );
+                            CswNbtObjClassSize NodeAsSize = (CswNbtObjClassSize) SizeNode;
                             NodeAsSize.Material.RelatedNodeId = MaterialNode.NodeId;
                             SizeNode.postChanges( true );
                         }

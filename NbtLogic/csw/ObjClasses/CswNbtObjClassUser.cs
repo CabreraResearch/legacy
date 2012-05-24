@@ -96,14 +96,14 @@ namespace ChemSW.Nbt.ObjClasses
                 //    {
                 //        UserTree.goToNthChild( 0 );
                 //        _RoleNode = UserTree.getNodeForCurrentPosition();
-                //        _RoleNodeObjClass = CswNbtNodeCaster.AsRole( _RoleNode );
+                //        _RoleNodeObjClass = (CswNbtObjClassRole) _RoleNode;
                 //    }
                 //}
 
                 __RoleNode = _CswNbtResources.Nodes[RoleId];
                 if( __RoleNode != null )
                 {
-                    __RoleNodeObjClass = CswNbtNodeCaster.AsRole( __RoleNode );
+                    __RoleNodeObjClass = (CswNbtObjClassRole) __RoleNode;
                 }
 
             } // if( Node.NodeId != null )
@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
                     throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit a user role." );
                 }
                 if( this.Username != ChemSWAdminUsername &&
-                    CswNbtNodeCaster.AsRole( _CswNbtResources.Nodes[Role.RelatedNodeId] ).Name.Text == CswNbtObjClassRole.ChemSWAdminRoleName )
+                    ( (CswNbtObjClassRole) _CswNbtResources.Nodes[Role.RelatedNodeId] ).Name.Text == CswNbtObjClassRole.ChemSWAdminRoleName )
                 {
                     throw new CswDniException( ErrorType.Warning, "New users may not be assigned to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role", "Current user (" + _CswNbtResources.CurrentUser.Username + ") attempted to assign a new user to the '" + CswNbtObjClassRole.ChemSWAdminRoleName + "' role." );
                 }

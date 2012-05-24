@@ -746,7 +746,7 @@ namespace ChemSW.Nbt
                 {
                     UserTree.goToNthChild( u );
                     CswNbtNode UserNode = UserTree.getNodeForCurrentPosition();
-                    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
+                    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
                     // case 23924
                     if( UserNodeAsUser.Username != CswNbtObjClassUser.ChemSWAdminUsername )
                     {

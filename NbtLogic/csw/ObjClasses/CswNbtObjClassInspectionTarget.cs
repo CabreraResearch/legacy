@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
             //    {
             //        SchedulesTree.goToNthChild( i );
             //        CswNbtNode ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
-            //        CswNbtObjClassGenerator ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
+            //        CswNbtObjClassGenerator ScheduleOC = (CswNbtObjClassGenerator) ScheduleNode;
 
             //        CswCommaDelimitedString NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
             //        //For each target node type on the generator
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
             //                                                                                              CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             //                if( null != PastInspectionNode )
             //                {
-            //                    CswNbtObjClassInspectionDesign InspectionOC = CswNbtNodeCaster.AsInspectionDesign( PastInspectionNode );
+            //                    CswNbtObjClassInspectionDesign InspectionOC = (CswNbtObjClassInspectionDesign) PastInspectionNode;
             //                    InspectionOC.Owner.RelatedNodeId = this.NodeId;
             //                    InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
             //                    CswRateInterval ScheduleInterval = ScheduleOC.DueDateInterval.RateInterval;

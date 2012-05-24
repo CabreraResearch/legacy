@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode TypeNode = _CswNbtResources.Nodes[Type.RelatedNodeId];
                 if( TypeNode != null )
                 {
-                    CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
+                    CswNbtObjClassEquipmentType TypeNodeAsType = (CswNbtObjClassEquipmentType) TypeNode;
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
                     PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
                     this.Parts.YValues = PartsString;

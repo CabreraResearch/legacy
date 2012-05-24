@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Batch
             CswNbtObjClassBatchOp BatchNode = null;
             if( null != GenNode )
             {
-                CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( GenNode );
+                CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) GenNode;
 
 
                 // BZ 6752 - The first future node is the first node generated 
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Batch
                     CswNbtNode GenNode = _CswNbtResources.Nodes[BatchData.GeneratorNodeId];
                     if( null != GenNode )
                     {
-                        CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( GenNode );
+                        CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) GenNode;
                         DateTime ThisDate = BatchData.NextStartDate;
 
                         CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );

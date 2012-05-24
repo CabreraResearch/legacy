@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtNode ReturnVal = null;
 
-            CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
+            CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
 
             if( GeneratorNode.TargetType.SelectMode == PropertySelectMode.Single )
             {
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt.Actions
         {
             Int32 ret = 0;
 
-            CswNbtObjClassGenerator GeneratorNodeAsGenerator = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
+            CswNbtObjClassGenerator GeneratorNodeAsGenerator = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
 
             string SelectedNodeTypeIdStr = string.Empty;
             Int32 SelectedNodeTypeId = Int32.MinValue;

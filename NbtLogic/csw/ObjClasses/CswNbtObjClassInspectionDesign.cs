@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.ObjClasses
                         .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
                     foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
                     {
-                        CswNbtObjClassInspectionDesign PriorInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                        CswNbtObjClassInspectionDesign PriorInspection = (CswNbtObjClassInspectionDesign) InspectionNode;
                         NodeStatus = PriorInspection.Status.Value;
 
                         if( //Inspection status is Pending, Overdue or not set

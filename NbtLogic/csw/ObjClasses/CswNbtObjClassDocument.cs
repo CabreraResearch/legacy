@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtNode DocNode = Tree.getNodeForCurrentPosition();
                             if( DocNode.NodeId != NodeId )
                             {
-                                CswNbtObjClassDocument DocNodeAsDocument = CswNbtNodeCaster.AsDocument( DocNode );
+                                CswNbtObjClassDocument DocNodeAsDocument = (CswNbtObjClassDocument) DocNode;
                                 DocNodeAsDocument.Archived.Checked = Tristate.True;
                                 DocNode.postChanges( true );
                             }

@@ -196,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             //foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
             //{
-            //    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+            //    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
             //    if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
             //    {
             //        throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,

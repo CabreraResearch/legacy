@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                 if( MaterialNode != null )
                 {
-                    CswNbtObjClassMaterial MaterialNodeAsMaterial = CswNbtNodeCaster.AsMaterial( MaterialNode );
+                    CswNbtObjClassMaterial MaterialNodeAsMaterial = (CswNbtObjClassMaterial) MaterialNode;
 
                     // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
                     // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.

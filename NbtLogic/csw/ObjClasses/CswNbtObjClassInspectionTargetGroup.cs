@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
                         GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                         if( null != GeneratorNode )
                         {
-                            NewGenerator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
+                            NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;
                             NewGenerator.Owner.RelatedNodeId = this.NodeId;
                             NewGenerator.Owner.RefreshNodeName(); // 20959
                             GeneratorNode.postChanges( true );

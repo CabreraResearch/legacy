@@ -536,7 +536,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtNode UserNode = _CswNbtResources.Nodes[UserPk];
                         if( UserNode != null )
                         {
-                            CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+                            CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
                             if( _validateImpersonation( UserNodeAsUser ) )
                             {
                                 // clear Recent 
@@ -624,7 +624,7 @@ namespace ChemSW.Nbt.WebServices
                         JArray UsersArray = new JArray();
                         CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                         foreach( CswNbtObjClassUser ThisUser in ( from _UserNode in UserOC.getNodes( false, false )
-                                                                  select _UserNode ).Select( CswNbtNodeCaster.AsUser ) )
+                                                                  select (CswNbtObjClassUser) _UserNode ) )
                         {
                             if( _validateImpersonation( ThisUser ) )
                             {
@@ -2471,7 +2471,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
-                    CswNbtObjClassReport rptAsReport = CswNbtNodeCaster.AsReport( rpt );
+                    CswNbtObjClassReport rptAsReport = (CswNbtObjClassReport) rpt;
                     ReturnVal["result"] = ( false == rptAsReport.RPTFile.Empty ).ToString().ToLower();
 
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)

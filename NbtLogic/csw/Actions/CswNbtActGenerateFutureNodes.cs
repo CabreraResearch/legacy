@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Actions
         public CswNbtObjClassBatchOp makeNodes( CswNbtNode CswNbtNodeGenerator, DateTime FutureDate )
         {
             CswNbtObjClassBatchOp BatchNode = null;
-            CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
+            CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
             Int32 TargetNodeTypeId = CswConvert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds );
             //Int32 ReturnVal = 0;
 
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Actions
             foreach( CswNbtNode CurrentGeneratorNode in GeneratorNodes )
             {
                 GeneratorRelationship.NodeIdsToFilterIn.Add( CurrentGeneratorNode.NodeId );
-                CswNbtObjClassGenerator Generator = CswNbtNodeCaster.AsGenerator( CurrentGeneratorNode );
+                CswNbtObjClassGenerator Generator = (CswNbtObjClassGenerator) CurrentGeneratorNode;
                 //if( Generator.TargetType.SelectedNodeTypeIds.Count != 0 )   // BZ 8544
                 foreach( String nodeTypeId in Generator.TargetType.SelectedNodeTypeIds )
                 {
