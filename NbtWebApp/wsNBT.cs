@@ -2258,8 +2258,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    bool ret = ws.copyPropValues( SourceNodeKey, CopyNodeIds, PropIds );
-                    ReturnVal.Add( new JProperty( "succeeded", ret ) );
+                    ReturnVal = ws.copyPropValues( SourceNodeKey, CopyNodeIds, PropIds );
                 }
 
                 _deInitResources();

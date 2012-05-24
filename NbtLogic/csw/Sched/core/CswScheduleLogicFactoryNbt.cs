@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.Sched
         {
             List<ICswScheduleLogic> ReturnVal = new List<ICswScheduleLogic>();
 
+            ReturnVal.Add( new CswScheduleLogicNbtBatchOps() );
             ReturnVal.Add( new CswScheduleLogicNbtGenEmailRpt() );
             ReturnVal.Add( new CswScheduleLogicNbtGenNode() );
             ReturnVal.Add( new CswScheduleLogicNbtUpdtInspection() );
