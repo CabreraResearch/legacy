@@ -1,19 +1,23 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
-
+using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.Sched
 {
 
-    public class CswScheduleLogicNbtDisableCswAdmin : ICswScheduleLogic
+    public class CswScheduleLogicNbtBatchOps : ICswScheduleLogic
     {
+        private Int32 _GeneratorLimit = 1;
+
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.DisableChemSwAdmin.ToString() ); }
+            get { return ( NbtScheduleRuleNames.BatchOp.ToString() ); }
         }
 
         public bool doesItemRunNow()
@@ -28,7 +32,6 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public CswScheduleLogicDetail CswScheduleLogicDetail
@@ -36,12 +39,15 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
+        private CswScheduleNodeUpdater _CswScheduleNodeUpdater = null;
+        private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
         private CswNbtResources _CswNbtResources = null;
         public void init( ICswResources RuleResources, CswScheduleLogicDetail CswScheduleLogicDetail )
         {
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            //_CswNbtResources.AuditContext = "Scheduler Task: Disable ChemSW Admin User";
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
+            _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
         }//init()
@@ -52,44 +58,24 @@ namespace ChemSW.Nbt.Sched
 
             if( LogicRunStatus.Stopping != _LogicRunStatus )
             {
+
                 try
                 {
-                    CswNbtNode ChemSWAdminUserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                    CswNbtObjClassUser CswAdminAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
-                    if( false == _CswNbtResources.ModulesEnabled().Contains( CswNbtResources.CswNbtModule.NBTManager ) )
-                    {
-                        CswAdminAsUser.AccountLocked.Checked = Tristate.True;
-                        CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
-                    }
-                    else
-                    {
-                        CswAdminAsUser.AccountLocked.Checked = Tristate.False;
-                        CswAdminAsUser.FailedLoginCount.Value = 0;
-                        _CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.password_length.ToString(), "16" );
-                        _CswNbtResources.ConfigVbls.setConfigVariableValue( CswNbtResources.ConfigurationVariables.passwordexpiry_days.ToString(), "30" );
-                    }
-                    ChemSWAdminUserNode.postChanges( true );
-
-                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                    CswNbtBatchManager.runNextBatchOp( _CswNbtResources );
                     _LogicRunStatus = LogicRunStatus.Succeeded; //last line
-
-
                 }//try
 
                 catch( Exception Exception )
                 {
-
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtDisableCswAdmin::GetUpdatedItems() exception: " + Exception.Message;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = LogicRunStatus.Failed;
-
                 }//catch
 
             }//if we're not shutting down
 
 
         }//threadCallBack()
-
 
         public void stop()
         {
@@ -98,7 +84,7 @@ namespace ChemSW.Nbt.Sched
 
         public void reset()
         {
-            _LogicRunStatus = LogicRunStatus.Idle;
+            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
         }
 
         public void releaseResources()
@@ -106,7 +92,7 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources.release();
         }
 
-    }//CswScheduleLogicNbtDisableCswAdmin
+    }//CswScheduleLogicNbtGenNode
 
 
 }//namespace ChemSW.Nbt.Sched

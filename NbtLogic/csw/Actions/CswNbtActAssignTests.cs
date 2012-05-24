@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode AliquotNode = _CswNbtResources.Nodes[AliquotNodeKey];
                 foreach( CswNbtNode ParamNode in ParamNodes )
                 {
-                    CswNbtObjClassParameter ParameterObjClass = CswNbtNodeCaster.AsParameter( ParamNode );
+                    CswNbtObjClassParameter ParameterObjClass = (CswNbtObjClassParameter) ParamNode;
                     CswNbtMetaDataNodeType ResultNodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ParameterObjClass.ResultType.SelectedNodeTypeIds ) );
 
                     if( ResultNodeType != null )
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Actions
                         // Make a new result as a child of current Aliquot
                         CswNbtNode NewResultNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ResultNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                         NewResultNode.copyPropertyValues( ParamNode );
-                        CswNbtObjClassResult NewResultObjClass = CswNbtNodeCaster.AsResult( NewResultNode );
+                        CswNbtObjClassResult NewResultObjClass = (CswNbtObjClassResult) NewResultNode;
                         NewResultObjClass.Aliquot.RelatedNodeId = AliquotNode.NodeId;
                         NewResultObjClass.Aliquot.CachedNodeName = AliquotNode.NodeName;
                         NewResultObjClass.Parameter.RelatedNodeId = ParamNode.NodeId;

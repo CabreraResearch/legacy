@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.WebServices
 			PrintLabelId.FromString( PrintLabelNodeIdStr );
 
 			CswNbtNode PrintLabelNode = _CswNbtResources.Nodes.GetNode( PrintLabelId );
-			CswNbtObjClassPrintLabel NodeAsPrintLabel = (CswNbtObjClassPrintLabel) CswNbtNodeCaster.AsPrintLabel( PrintLabelNode );
+            CswNbtObjClassPrintLabel NodeAsPrintLabel = (CswNbtObjClassPrintLabel) PrintLabelNode;
 
 			CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 			CswNbtNode TargetNode = _CswNbtResources.Nodes.GetNode( PropId.NodeId );

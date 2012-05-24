@@ -1399,7 +1399,7 @@ namespace ChemSW.Nbt.MetaData
             //validate role nodetype permissions
             foreach( CswNbtNode roleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ).getNodes( false, true ) )
             {
-                CswNbtObjClassRole nodeAsRole = CswNbtNodeCaster.AsRole( roleNode );
+                CswNbtObjClassRole nodeAsRole = (CswNbtObjClassRole) roleNode;
                 CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;
                 prop.ValidateValues();
             }

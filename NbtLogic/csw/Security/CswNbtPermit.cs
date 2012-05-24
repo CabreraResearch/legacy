@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Security
         private CswNbtObjClassRole _getRole( CswPrimaryKey RoleId )
         {
             CswNbtNode RoleNode = _CswNbtResources.Nodes[RoleId];
-            return CswNbtNodeCaster.AsRole( RoleNode );
+            return (CswNbtObjClassRole) RoleNode;
         }
 
         #region NodeTypes
@@ -541,7 +541,7 @@ namespace ChemSW.Nbt.Security
                                 }
                                 InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
                                 CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                                CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = CswNbtNodeCaster.AsInventoryGroupPermission( PermNode );
+                                CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = (CswNbtObjClassInventoryGroupPermission) PermNode;
                                 //if( Permission != null )
                                 //{
                                 if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||

@@ -57,7 +57,7 @@ namespace NbtWebAppServices.Response
                     CswNbtNode InspectionNode = _CswNbtWcfSessionResources.CswNbtResources.Nodes.GetNode( InspectionPk, Inspection.DesignId );
                     if( null != InspectionNode )
                     {
-                        CswNbtObjClassInspectionDesign NodeAsDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                        CswNbtObjClassInspectionDesign NodeAsDesign = (CswNbtObjClassInspectionDesign) InspectionNode;
                         if( NodeAsDesign.Status.Value == Completed || NodeAsDesign.Status.Value == CompletedLate )
                         {
                             Processed = true;
@@ -96,7 +96,7 @@ namespace NbtWebAppServices.Response
                             Processed = true;
 
                             /* Reinit since state has changed. */
-                            NodeAsDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                            NodeAsDesign = (CswNbtObjClassInspectionDesign) InspectionNode;
 
                             if( NodeAsDesign.Status.Value == Completed || NodeAsDesign.Status.Value == CompletedLate )
                             {

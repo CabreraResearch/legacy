@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.MetaData
         {
             Unknown,
             AliquotClass,
+            BatchOpClass,
             BiologicalClass,
             MaterialComponentClass,
             ContainerClass,

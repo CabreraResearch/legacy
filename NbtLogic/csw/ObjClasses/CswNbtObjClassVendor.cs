@@ -20,6 +20,19 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ); }
         }
+        
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassVendor
+        /// </summary>
+        public static explicit operator CswNbtObjClassVendor( CswNbtNode Node )
+        {
+            CswNbtObjClassVendor ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ) )
+            {
+                ret = (CswNbtObjClassVendor) Node.ObjClass;
+            }
+            return ret;
+        }
 
         #region Inherited Events
 

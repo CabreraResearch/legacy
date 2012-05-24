@@ -33,6 +33,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassReport
+        /// </summary>
+        public static explicit operator CswNbtObjClassReport( CswNbtNode Node )
+        {
+            CswNbtObjClassReport ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass ) )
+            {
+                ret = (CswNbtObjClassReport) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Object class specific Events
 
         public delegate void AfterModifyReportEventHandler();
