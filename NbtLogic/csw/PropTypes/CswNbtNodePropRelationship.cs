@@ -15,6 +15,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropRelationship : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropRelationship( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsRelationship;
+        }
+
         public CswNbtNodePropRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
@@ -332,13 +337,13 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["allowadd"] = "true";
             }
-            
+
             ParentObject["relatednodeid"] = default( string );
             if( null != RelatedNodeId && Int32.MinValue != RelatedNodeId.PrimaryKey )
             {
                 ParentObject["relatednodeid"] = RelatedNodeId.ToString();
             }
-            
+
             ParentObject["usesearch"] = false;
             Dictionary<CswPrimaryKey, string> Options = getOptions();
             if( Options.Count > _SearchThreshold )

@@ -762,13 +762,18 @@
                                 PropIds: []
                             };
 
-                            function copyNodeProps(onSuccess) {
+                            function copyNodeProps() {
                                 Csw.ajax.post({
                                     watchGlobal: cswPrivate.AjaxWatchGlobal,
                                     urlMethod: cswPrivate.CopyPropValuesUrlMethod,
                                     data: dataJson,
-                                    success: function (copy) {
-                                        Csw.tryExec(onSuccess, copy);
+                                    success: function (data) {
+                                        if(false === Csw.isNullOrEmpty(data.batch)) {
+                                            $.CswDialog('AlertDialog', {
+                                                title: 'Batch Operation',
+                                                message: 'This multi-edit will be processed as a batch operation.'
+                                            });
+                                        }
                                     }
                                 }); // ajax						        
                             }

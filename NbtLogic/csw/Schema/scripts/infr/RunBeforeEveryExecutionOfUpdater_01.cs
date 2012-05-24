@@ -25,6 +25,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", "enabled", "Whether the nodetype is enabled according to module settings", false, false );
             }
 
+
         }//Update()
 
     }//class RunBeforeEveryExecutionOfUpdater_01

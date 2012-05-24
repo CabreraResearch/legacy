@@ -12,6 +12,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropTimeInterval : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropTimeInterval( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsTimeInterval;
+        }
+
         public CswNbtNodePropTimeInterval( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
