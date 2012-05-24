@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 return null;
             }
-        }//AsPropertySetScheduler
+        }//AsPropertySetInspectionParent
 
     }
 }
