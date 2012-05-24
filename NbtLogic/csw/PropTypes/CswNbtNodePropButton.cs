@@ -14,6 +14,11 @@ namespace ChemSW.Nbt.PropTypes
     {
         public enum ButtonMode { button, link };
 
+        public static implicit operator CswNbtNodePropButton( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsButton;
+        }
+
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
