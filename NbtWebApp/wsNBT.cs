@@ -4360,7 +4360,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-                    ReturnVal["result"] = Math.Round( ws.GetQuotaPercent() ).ToString();
+                    ReturnVal["result"] = Math.Round( ws.GetHighestQuotaPercent() ).ToString();
                 }
 
                 _deInitResources();
