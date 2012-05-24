@@ -26,6 +26,16 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly PropertyName Unknown = new PropertyName( "Unknown" );
         }
 
+        public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
+        {
+            CswNbtObjClassRequest ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass ) )
+            {
+                ret = (CswNbtObjClassRequest) Node.ObjClass;
+            }
+            return ret;
+        }
+
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public CswNbtObjClassRequest( CswNbtResources CswNbtResources, CswNbtNode Node )
@@ -95,27 +105,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Requestor
         {
-            get { return _CswNbtNode.Properties[PropertyName.Requestor.ToString()].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.Requestor.ToString()]; }
         }
 
         public CswNbtNodePropRelationship InventoryGroup
         {
-            get { return _CswNbtNode.Properties[PropertyName.InventoryGroup.ToString()].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.InventoryGroup.ToString()]; }
         }
 
         public CswNbtNodePropText Name
         {
-            get { return _CswNbtNode.Properties[PropertyName.Name.ToString()].AsText; }
+            get { return _CswNbtNode.Properties[PropertyName.Name.ToString()]; }
         }
 
         public CswNbtNodePropDateTime SubmittedDate
         {
-            get { return _CswNbtNode.Properties[PropertyName.SubmittedDate.ToString()].AsDateTime; }
+            get { return _CswNbtNode.Properties[PropertyName.SubmittedDate.ToString()]; }
         }
 
         public CswNbtNodePropDateTime CompletedDate
         {
-            get { return _CswNbtNode.Properties[PropertyName.CompletedDate.ToString()].AsDateTime; }
+            get { return _CswNbtNode.Properties[PropertyName.CompletedDate.ToString()]; }
         }
 
         #endregion

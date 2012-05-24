@@ -69,6 +69,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
+        public static implicit operator CswNbtObjClassRequestItem( CswNbtNode Node )
+        {
+            CswNbtObjClassRequestItem ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ) )
+            {
+                ret = (CswNbtObjClassRequestItem) Node.ObjClass;
+            }
+            return ret;
+        }
+
         public CswNbtObjClassRequestItem( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
@@ -138,52 +148,52 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship Request
         {
-            get { return _CswNbtNode.Properties[PropertyName.Request.ToString()].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.Request.ToString()]; }
         }
 
         public CswNbtNodePropList Type
         {
-            get { return _CswNbtNode.Properties[PropertyName.Type.ToString()].AsList; }
+            get { return _CswNbtNode.Properties[PropertyName.Type.ToString()]; }
         }
 
         public CswNbtNodePropRelationship Size
         {
-            get { return _CswNbtNode.Properties[PropertyName.Size.ToString()].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.Size.ToString()]; }
         }
 
         public CswNbtNodePropQuantity Count
         {
-            get { return _CswNbtNode.Properties[PropertyName.Count.ToString()].AsQuantity; }
+            get { return _CswNbtNode.Properties[PropertyName.Count.ToString()]; }
         }
 
         public CswNbtNodePropRelationship Material
         {
-            get { return _CswNbtNode.Properties[PropertyName.Material.ToString()].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.Material.ToString()]; }
         }
 
         public CswNbtNodePropRelationship Container
         {
-            get { return _CswNbtNode.Properties[PropertyName.Container.ToString()].AsRelationship; }
+            get { return _CswNbtNode.Properties[PropertyName.Container.ToString()]; }
         }
 
         public CswNbtNodePropComments Comments
         {
-            get { return _CswNbtNode.Properties[PropertyName.Comments.ToString()].AsComments; }
+            get { return _CswNbtNode.Properties[PropertyName.Comments.ToString()]; }
         }
 
         public CswNbtNodePropList Status
         {
-            get { return _CswNbtNode.Properties[PropertyName.Status.ToString()].AsList; }
+            get { return _CswNbtNode.Properties[PropertyName.Status.ToString()]; }
         }
 
         public CswNbtNodePropSequence Number
         {
-            get { return _CswNbtNode.Properties[PropertyName.Number.ToString()].AsSequence; }
+            get { return _CswNbtNode.Properties[PropertyName.Number.ToString()]; }
         }
 
         public CswNbtNodePropText ExternalOrderNumber
         {
-            get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber.ToString()].AsText; }
+            get { return _CswNbtNode.Properties[PropertyName.ExternalOrderNumber.ToString()]; }
         }
 
         #endregion
