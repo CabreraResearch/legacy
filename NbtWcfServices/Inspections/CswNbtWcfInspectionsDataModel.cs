@@ -40,6 +40,7 @@ namespace NbtWebAppServices.Response
                 public Int32 SectionId { get; set; }
                 public string Name { get; set; }
                 public Int32 Order { get; set; }
+                public bool ReadOnly { get; set; }
                 public Collection<SectionProperty> Properties { get; set; }
             }
 
