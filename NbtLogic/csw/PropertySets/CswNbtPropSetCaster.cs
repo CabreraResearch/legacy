@@ -6,18 +6,6 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtPropSetCaster
     {
-        public static CswNbtObjClassRequest AsRequest( CswNbtNode Node )
-        {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-            return ( (CswNbtObjClassRequest) Node.ObjClass );
-        }//AsResult
-
-        public static CswNbtObjClassRequestItem AsRequestItem( CswNbtNode Node )
-        {
-            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-            return ( (CswNbtObjClassRequestItem) Node.ObjClass );
-        }//AsResult
-
         public static ICswNbtPropertySetGeneratorTarget AsPropertySetGeneratorTarget( CswNbtNode Node )
         {
             if( Node != null )
