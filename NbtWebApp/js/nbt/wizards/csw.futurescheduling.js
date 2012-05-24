@@ -164,7 +164,7 @@
                 cswPrivate.step2div = cswPrivate.wizard.div(Csw.enums.wizardSteps_FutureScheduling.step2.step);
 
                 var step2table = cswPrivate.step2div.table({ ID: Csw.makeId(cswPrivate.ID, '', 'table2'), width: '100%' });
-                step2table.cell(1, 1).span({ text: 'Results:' });
+                step2table.cell(1, 1).span({ text: 'This operation will be completed by the following Batch Operations:' });
                 cswPrivate.resultscell = step2table.cell(2, 1);
 
             })(); // init
