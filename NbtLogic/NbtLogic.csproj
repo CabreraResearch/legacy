@@ -254,7 +254,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassSample.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassTask.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassTest.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassTestGroup.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassUnitOfMeasure.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassUser.cs" />
     <Compile Include="csw\ObjClasses\ICswNbtObjClassFactory.cs" />
