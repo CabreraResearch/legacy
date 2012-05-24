@@ -56,6 +56,8 @@ namespace ChemSW.Nbt.ImportExport
 
         }//reset()
 
+
+
         private bool _Stop = false;
         public void stop()
         {
@@ -133,6 +135,21 @@ namespace ChemSW.Nbt.ImportExport
             return ( ReturnVal );
         }//_importTablesAreAbsent()
 
+
+
+        private void _commitAndRelease()
+        {
+            string AccessId = _CswNbtResources.AccessId;
+
+            _CswNbtResources.finalize();
+            _CswNbtResources.clearUpdates();
+            _CswNbtResources.releaseDbResources();
+
+            _CswNbtResources.AccessId = AccessId; //force re-init of resources
+            _CswNbtResources.refreshDataDictionary();
+
+            System.GC.Collect();
+        }//_commitAndRelease()
 
         /// <summary>
         /// Imports data from an Xml String
@@ -401,9 +418,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         if( RawNodesTable.Rows.Count > 0 )
                         {
-                            _CswNbtResources.finalize();
-                            _CswNbtResources.clearUpdates();
-                            //                            _CswNbtResources.releaseDbResources();
+                            _commitAndRelease();
                         }
 
                     }//if we're not on the first iteration
@@ -880,8 +895,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         }//iterate rows of node records to process
 
-                        _CswNbtResources.finalize();
-                        _CswNbtResources.clearUpdates();
+                        _commitAndRelease();
                         //                        _CswNbtResources.releaseDbResources();
                         _CswImportExportStatusReporter.reportTiming( CommitNNodesTimer, "Add and commit props for " + _CswNbtImportOptions.NodeAddPropsPageSize.ToString() + " nodes" );
 
@@ -1055,9 +1069,7 @@ namespace ChemSW.Nbt.ImportExport
 
                         //CswCommaDelimitedStringOfPendingUpdateNodes
 
-                        _CswNbtResources.finalize();
-                        _CswNbtResources.clearUpdates();
-                        //                        _CswNbtResources.releaseDbResources();
+                        _commitAndRelease();
                         _CswImportExportStatusReporter.reportTiming( PostProcessNodesAndPropsTimer, "Post processing of " + _CswNbtImportOptions.NodeAddPropsPageSize.ToString() + " Nodes" );
 
                     }//if we have node records to process
@@ -1172,7 +1184,8 @@ namespace ChemSW.Nbt.ImportExport
                 if( ( ( TotalInsertsThisTransaction >= _CswNbtImportOptions.MaxInsertRecordsPerTransaction ) && ( false == MoreOfSameRecordToImportIETheseArePropRecords_IAgreeThisIsAKludge_SoSueMe ) ) || ( TotalRecordsInsertedSoFar >= TotalRecordsToInsert ) )
                 {
                     CswTableUpdate.update( DestinationDataTable );
-                    _CswNbtSchemaModTrnsctn.commitTransaction();
+                    _commitAndRelease();
+
                     _CswNbtSchemaModTrnsctn.beginTransaction();
                     TotalInsertsThisTransaction = 0;
                 }
