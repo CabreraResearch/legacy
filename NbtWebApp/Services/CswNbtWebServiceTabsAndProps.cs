@@ -13,6 +13,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -604,39 +605,57 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
+        public JObject copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
         {
-            bool ret = true;
+            JObject ret = new JObject();
             CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
             if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
             {
                 CswNbtNode SourceNode = _CswNbtResources.Nodes[SourceNodeKey];
                 if( SourceNode != null )
                 {
-                    foreach( string NodeIdStr in CopyNodeIds )
+                    if( CopyNodeIds.Length < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
                     {
-                        CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
-                        CopyToNodePk.FromString( NodeIdStr );
-                        if( Int32.MinValue != CopyToNodePk.PrimaryKey )
+                        bool Succeeded = true;
+                        foreach( string NodeIdStr in CopyNodeIds )
                         {
-                            CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
-                            if( CopyToNode != null &&
-                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
+                            CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
+                            CopyToNodePk.FromString( NodeIdStr );
+                            if( Int32.MinValue != CopyToNodePk.PrimaryKey )
                             {
-                                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
-                                    .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+                                CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
+                                if( CopyToNode != null &&
+                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
                                 {
-                                    CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-                                }
+                                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
+                                        .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
+                                    {
+                                        CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+                                    }
 
-                                CopyToNode.postChanges( false );
-                            } // if( CopyToNode != null )
-                        }
-                        else
+                                    CopyToNode.postChanges( false );
+                                } // if( CopyToNode != null )
+                            }
+                            else
+                            {
+                                Succeeded = false;
+                            }
+                        } // foreach( string NodeIdStr in CopyNodeIds )
+                        ret["result"] = Succeeded.ToString().ToLower();
+                    } // if( CopyNodeIds.Length < _CswNbtResources.ConfigVbls.getConfigVariableValue( "batchthreshold" ) )
+                    else
+                    {
+                        // Shelve this to a batch operation
+                        Collection<Int32> NodeTypePropIds = new Collection<Int32>();
+                        foreach( string PropIdAttrStr in PropIds )
                         {
-                            ret = false;
+                            CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdAttrStr );
+                            NodeTypePropIds.Add( PropIdAttr.NodeTypePropId );
                         }
-                    } // foreach( string NodeIdStr in CopyNodeIds )
+                        CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( _CswNbtResources );
+                        CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( SourceNode, CopyNodeIds, NodeTypePropIds );
+                        ret["batch"] = BatchNode.NodeId.ToString();
+                    }
                 } // if(SourceNode != null)
             } // if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
             return ret;
