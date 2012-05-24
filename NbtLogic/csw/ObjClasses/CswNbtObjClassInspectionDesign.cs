@@ -305,7 +305,7 @@ namespace ChemSW.Nbt.ObjClasses
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
             ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-            //CswNbtObjClassInspectionTarget pnodeAsTarget = CswNbtNodeCaster.AsInspectionTarget( ParentNode );
+            //CswNbtObjClassInspectionTarget pnodeAsTarget = (CswNbtObjClassInspectionTarget) ParentNode;
             bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
             bool _Deficient = areMoreActionsRequired();
             if( _Deficient != _alreadyDeficient )
