@@ -320,6 +320,17 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId );
         }
+        public IEnumerable<CswNbtMetaDataNodeTypeTab> getVisibleNodeTypeTabs()
+        {
+            foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
+            {
+                if( _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, this, NodeTypeTab: Tab ) )
+                {
+                    yield return Tab;
+                }
+            }
+        }
+
         public Collection<Int32> getNodeTypePropIds()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypePropIds( NodeTypeId );

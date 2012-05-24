@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.MetaData
                 _FieldTypeRule = _CswNbtMetaDataResources.makeFieldTypeRule( this.getFieldType().FieldType );
             return _FieldTypeRule;
         }
-
+        public Int32 FirstPropVersionId { get { return PropId; } }
         public Int32 PropId
         {
             get { return ObjectClassPropId; }

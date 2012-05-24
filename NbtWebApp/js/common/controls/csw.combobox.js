@@ -6,7 +6,7 @@
     Csw.controls.comboBox = Csw.controls.comboBox ||
         Csw.controls.register('comboBox', function (cswParent, options) {
             'use strict';
-            var internal = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 topContent: '',
@@ -20,101 +20,101 @@
 
                 hideTo: null
             };
-            var external = {};
+            var cswPublic = {};
 
-            internal.hoverIn = function () {
-                clearTimeout(internal.hideTo);
+            cswPrivate.hoverIn = function () {
+                clearTimeout(cswPrivate.hideTo);
             };
 
-            internal.hoverOut = function () {
-            internal.hideTo = setTimeout(external.pickList.hide, internal.hidedelay);
+            cswPrivate.hoverOut = function () {
+            cswPrivate.hideTo = setTimeout(cswPublic.pickList.hide, cswPrivate.hidedelay);
             };
             
             (function () {
 
                 function handleClick() {
-                    if (Csw.tryExec(internal.onClick)) {
-                        external.toggle();
+                    if (Csw.tryExec(cswPrivate.onClick)) {
+                        cswPublic.toggle();
                     }
                 }
 
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
-                internal.comboDiv = cswParent.div({
-                    ID: internal.ID
+                cswPrivate.comboDiv = cswParent.div({
+                    ID: cswPrivate.ID
                 });
-                external = Csw.dom({ }, internal.comboDiv);
-                //$.extend(external, Csw.literals.div(internal));
+                cswPublic = Csw.dom({ }, cswPrivate.comboDiv);
+                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
 
-                internal.topDiv = internal.comboDiv.div({
-                    ID: internal.ID + '_top',
+                cswPrivate.topDiv = cswPrivate.comboDiv.div({
+                    ID: cswPrivate.ID + '_top',
                     cssclass: 'CswComboBox_TopDiv',
-                    width: internal.width
+                    width: cswPrivate.width
                 });
 
-                internal.topTable = internal.topDiv.table({
-                    ID: Csw.makeId(internal.ID, 'tbl'),
-                    width: internal.width
+                cswPrivate.topTable = cswPrivate.topDiv.table({
+                    ID: Csw.makeId(cswPrivate.ID, 'tbl'),
+                    width: cswPrivate.width
                 });
 
-                internal.topTable.cell(1, 1).append(internal.topContent)
-                    .propDom('width', internal.width)
+                cswPrivate.topTable.cell(1, 1).append(cswPrivate.topContent)
+                    .propDom('width', cswPrivate.width)
                     .bind('click', handleClick);
 
-                internal.topTable.cell(1, 2)
+                cswPrivate.topTable.cell(1, 2)
                     .addClass('CswComboBox_ImageCell')
                     .imageButton({
                         'ButtonType': Csw.enums.imageButton_ButtonType.Select,
-                        ID: internal.ID + '_top_img',
+                        ID: cswPrivate.ID + '_top_img',
                         AlternateText: '',
                         onClick: handleClick
                     });
 
-                external.pickList = internal.comboDiv.div({
-                    ID: internal.ID + '_child',
+                cswPublic.pickList = cswPrivate.comboDiv.div({
+                    ID: cswPrivate.ID + '_child',
                     cssclass: 'CswComboBox_ChildDiv',
-                    width: internal.width
+                    width: cswPrivate.width
                 })
                 .bind('click', handleClick)
-                .append(internal.selectContent);
+                .append(cswPrivate.selectContent);
 
-                external.pickList.$.hover(internal.hoverIn, internal.hoverOut);
+                cswPublic.pickList.$.hover(cswPrivate.hoverIn, cswPrivate.hoverOut);
             } ());
 
-            external.topContent = function (content, itemid) {
-                var cell1 = internal.topTable.cell(1, 1);
+            cswPublic.topContent = function (content, itemid) {
+                var cell1 = cswPrivate.topTable.cell(1, 1);
                 cell1.text('');
                 cell1.empty();
                 cell1.append(content);
-                external.val(itemid);
+                cswPublic.val(itemid);
             };
-            external.toggle = function () {
-                internal.topDiv.$.toggleClass('CswComboBox_TopDiv_click');
-                external.pickList.$.toggle();
+            cswPublic.toggle = function () {
+                cswPrivate.topDiv.$.toggleClass('CswComboBox_TopDiv_click');
+                cswPublic.pickList.$.toggle();
             };
-            external.close = function () {
-                internal.topDiv.$.removeClass('CswComboBox_TopDiv_click');
-                external.pickList.hide();
+            cswPublic.close = function () {
+                cswPrivate.topDiv.$.removeClass('CswComboBox_TopDiv_click');
+                cswPublic.pickList.hide();
             };
-            external.open = function () {
-                internal.topDiv.$.addClass('CswComboBox_TopDiv_click');
-                external.pickList.show();
+            cswPublic.open = function () {
+                cswPrivate.topDiv.$.addClass('CswComboBox_TopDiv_click');
+                cswPublic.pickList.show();
             };
 
-            external.val = function (value) {
+            cswPublic.val = function (value) {
                 var ret;
                 if (Csw.isNullOrEmpty(value)) {
-                    ret = internal.value;
+                    ret = cswPrivate.value;
                 } else {
-                    ret = external;
-                    external.propNonDom('value', value);
-                    internal.value = value;
+                    ret = cswPublic;
+                    cswPublic.propNonDom('value', value);
+                    cswPrivate.value = value;
                 }
                 return ret;
             };
 
-            return external;
+            return cswPublic;
         });
 
 } ());

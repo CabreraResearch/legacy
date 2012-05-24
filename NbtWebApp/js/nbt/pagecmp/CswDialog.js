@@ -435,7 +435,7 @@
                     //title: o.title,
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     date: date,
-                    ReloadTabOnSave: false,
+                    ReloadTabOnSave: true,
                     onEditView: function (viewid) {
                         div.$.dialog('close');
                         Csw.tryExec(o.onEditView, viewid);
@@ -445,7 +445,7 @@
                         if (tabcount === 1 || o.Multi) {
                             div.$.dialog('close');
                         }
-                        setupTabs(date);
+                        //setupTabs(date);//case 26107
                         Csw.tryExec(o.onEditNode, nodeids, nodekeys);
                     },
                     onBeforeTabSelect: function () {

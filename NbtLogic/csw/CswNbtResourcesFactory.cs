@@ -38,7 +38,7 @@ namespace ChemSW.Nbt
             }
 
             CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode );
-            CswDbCfgInfoNbt ConfigInfo = new CswDbCfgInfoNbt( SetupMode );
+            CswDbCfgInfoNbt ConfigInfo = new CswDbCfgInfoNbt( SetupMode, IsMobile: false );
 
             string FilesPath = CswTools.getConfigurationFilePath( SetupMode );
 

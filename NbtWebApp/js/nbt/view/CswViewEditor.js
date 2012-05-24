@@ -480,6 +480,7 @@
                                         deleteViewBtn.disable();
                                         $selview_span.text("");
                                         $wizard.CswWizard('button', 'next', 'disable');
+                                        cswViewGrid.resetSelection();
                                     }
                                 }
                             }
@@ -664,46 +665,70 @@
 
                     var gridTable = table6.cell(1, 2).table({
                         ID: o.ID + '_editprop',
-                        FirstCellRightAlign: true
+                        FirstCellRightAlign: false
                     });
 
-                    gridTable.cell(1, 1).text('Sort By');
-                    var sortByCheckCell = gridTable.cell(1, 2);
-                    var $sortbycheck = sortByCheckCell.$.CswInput('init',
-                                                            { ID: o.ID + '_sortcb',
-                                                                type: Csw.enums.inputTypes.checkbox,
-                                                                onChange: function () {
-                                                                    var $this = $(this);
-                                                                    viewNodeData.sortby = $this.is(':checked');
-                                                                }
-                                                            });
-                    if (Csw.bool(viewNodeData.sortby)) {
-                        $sortbycheck.CswAttrDom('checked', 'true');
+                    var toggleShowInGridAttr = function () {
+                        if (Csw.bool(viewNodeData.showingrid)) {
+                            showInGridTable.show();
+                        } else {
+                            showInGridTable.hide();
+                        }
+                    };
+
+                    var showInGridcheck = gridTable.cell(1, 1)
+                                                   .append('Show In Grid')
+                                                   .input({ 
+                                                            ID: o.ID + '_showingrid',
+                                                            type: Csw.enums.inputTypes.checkbox,
+                                                            onChange: function () {
+                                                                viewNodeData.showingrid = showInGridcheck.$.is(':checked');
+                                                                toggleShowInGridAttr();
+                                                            }
+                                                    });
+                    if (Csw.bool(viewNodeData.showingrid)) {
+                        showInGridcheck.propDom('checked', 'true');
                     }
 
-                    gridTable.cell(2, 1).text('Grid Column Order');
-                    var colOrderTextCell = gridTable.cell(2, 2);
-                    var $colordertextbox = colOrderTextCell.$.CswInput('init',
-                                                                { ID: o.ID + '_gcotb',
-                                                                    type: Csw.enums.inputTypes.text,
-                                                                    onChange: function () {
-                                                                        var $this = $(this);
-                                                                        viewNodeData.order = $this.val();
-                                                                    }
-                                                                });
-                    $colordertextbox.val(viewNodeData.order);
+                    var showInGridTable = gridTable.cell(2, 1).table();
 
-                    gridTable.cell(3, 1).text('Grid Column Width (in characters)');
-                    var colWidthTextCell = gridTable.cell(3, 2);
-                    var $colwidthtextbox = colWidthTextCell.$.CswInput('init',
-                                                                { ID: o.ID + '_gcwtb',
-                                                                    type: Csw.enums.inputTypes.text,
-                                                                    onChange: function () {
-                                                                        var $this = $(this);
-                                                                        viewNodeData.width = $this.val();
-                                                                    }
-                                                                });
-                    $colwidthtextbox.val(viewNodeData.width);
+                    showInGridTable.cell(1, 1).text('Sort By');
+                    var sortByCheckCell = showInGridTable.cell(1, 2);
+                    var sortbycheck = sortByCheckCell.input({
+                                ID: o.ID + '_sortcb',
+                                type: Csw.enums.inputTypes.checkbox,
+                                onChange: function () {
+                                    viewNodeData.sortby = sortbycheck.$.is(':checked');
+                                }
+                            });
+                    if (Csw.bool(viewNodeData.sortby)) {
+                        sortbycheck.propDom('checked', 'true');
+                    }
+
+                    showInGridTable.cell(2, 1).text('Grid Column Order');
+                    var colOrderTextCell = showInGridTable.cell(2, 2);
+                    var colordertextbox = colOrderTextCell.input({
+                                ID: o.ID + '_gcotb',
+                                type: Csw.enums.inputTypes.text,
+                                onChange: function () {
+                                    viewNodeData.order = colordertextbox.val();
+                                }
+                            });
+                    colordertextbox.val(viewNodeData.order);
+
+                    showInGridTable.cell(3, 1).text('Grid Column Width (in characters)');
+                    var colWidthTextCell = showInGridTable.cell(3, 2);
+                    var colwidthtextbox = colWidthTextCell.input(
+                            {
+                                ID: o.ID + '_gcwtb',
+                                type: Csw.enums.inputTypes.text,
+                                onChange: function () {
+                                    viewNodeData.width = colwidthtextbox.val();
+                                }
+                            });
+                    colwidthtextbox.val(viewNodeData.width);
+
+                    toggleShowInGridAttr();
                 }
             });
 

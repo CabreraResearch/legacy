@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.Logic
                from ViewProp in PropCollection.Select( Prop => new CswViewBuilderProp( Prop ) )
                where ViewProp != null
                orderby ViewProp.ViewProp.Order
-               select ViewProp.PropName
+               select ViewProp.MetaDataPropNameWithQuestionNo
                );
             return ColumnArrary;
         }
@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.Logic
             ColumnArrary.Add(
                 from VbProp in PropCollection
                 orderby VbProp.ViewProp.Order
-                select VbProp.PropName
+                select VbProp.MetaDataPropNameWithQuestionNo
             );
 
             return ColumnArrary;
@@ -302,15 +302,15 @@ namespace ChemSW.Nbt.Logic
             }
             Ret[JqGridJsonOptions.viewrecords.ToString()] = true;
             Ret[JqGridJsonOptions.emptyrecords.ToString()] = _NoResultsDisplayString;
-            if( GridWidth == Int32.MinValue )
-            {
-                Int32 ColWidth = _ColumnsWidth * 14;
-                GridWidth = ColWidth < 800 ? ColWidth : 450;
-            }
-            Ret[JqGridJsonOptions.width.ToString()] = GridWidth;
+            //if( GridWidth == Int32.MinValue )
+            //{
+            //    Int32 ColWidth = _ColumnsWidth * 14;
+            //    GridWidth = ColWidth < 800 ? ColWidth : 450;
+            //}
+            //Ret[JqGridJsonOptions.width.ToString()] = GridWidth;
             //Ret[JqGridJsonOptions.autowidth.ToString()] = true;
             Ret[JqGridJsonOptions.sortname.ToString()] = GridSortName;
-            Ret[JqGridJsonOptions.autoencode.ToString()] = GridAutoEncode;
+            //Ret[JqGridJsonOptions.autoencode.ToString()] = GridAutoEncode;
             //Ret[JqGridJsonOptions.height.ToString()] = GridHeight;
             Ret[JqGridJsonOptions.caption.ToString()] = GridTitle;
             Ret["HasOneCanEdit"] = HasOneCanEdit;
@@ -385,6 +385,8 @@ namespace ChemSW.Nbt.Logic
                 //case CswNbtMetaDataFieldType.NbtFieldType.Time:
                 //    _JqFieldType = JqFieldType.time;
                 //    break;
+                case CswNbtMetaDataFieldType.NbtFieldType.File:
+                case CswNbtMetaDataFieldType.NbtFieldType.Image:
                 case CswNbtMetaDataFieldType.NbtFieldType.Link:
                     _JqFieldType = JqFieldType.link;
                     break;

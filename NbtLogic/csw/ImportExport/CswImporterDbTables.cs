@@ -661,7 +661,9 @@ namespace ChemSW.Nbt.ImportExport
 
                                         foreach( DataRow CurrentImportProprow in CurrentUnprocssedPropsTable.Rows )
                                         {
-
+                                            // previous errors shouldn't prevent us from continuing to import
+                                            CurrentErrorStatus = ImportProcessStati.Imported; 
+                                            
                                             string CurrentNodeTypePropname = CurrentImportProprow["nodetypepropname"].ToString();
 
                                             if( ( "user" != NodeType.NodeTypeName.ToLower() ) && ( "role" != CurrentNodeTypePropname.ToLower() ) )
@@ -684,7 +686,7 @@ namespace ChemSW.Nbt.ImportExport
                                                             3 == CurrentImportTargetNodeId.Split( new string[] { "--" }, StringSplitOptions.RemoveEmptyEntries ).Length ) //IMCS import references must have all three components in order to be not null
                                                         {
 
-                                                            string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where " + _ColName_ImportNodeId + "='" + CurrentImportTargetNodeId + "'";
+                                                            string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where lower(" + _ColName_ImportNodeId + ")=lower('" + CurrentImportTargetNodeId + "')";
                                                             CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "findtargetnodeid", Query );
                                                             DataTable DataTable = CswArbitrarySelect.getTable();
                                                             if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )

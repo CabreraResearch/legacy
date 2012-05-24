@@ -19,7 +19,7 @@ namespace NbtWebAppServices.WebServices
         [WebInvoke( Method = "POST" )]
         public CswNbtWcfResponseBase post( CswNbtWcfRequest.CswNbtSessionRequest request )
         {
-            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context, request.IsMobile );
             if( Ret.Status.Success )
             {
                 try
@@ -37,9 +37,9 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet]
-        public CswNbtWcfResponseBase get()
+        public CswNbtWcfResponseBase get( bool IsMobile )
         {
-            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context, IsMobile );
             if( Ret.Status.Success )
             {
                 try

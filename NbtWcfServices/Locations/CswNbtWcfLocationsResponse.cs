@@ -6,8 +6,8 @@ namespace NbtWebAppServices.Response
     [DataContract]
     public class CswNbtWcfLocationsResponse : CswNbtWcfResponseBase
     {
-        public CswNbtWcfLocationsResponse( HttpContext Context )
-            : base( Context )
+        public CswNbtWcfLocationsResponse( HttpContext Context, bool IsMobile, bool AttemptRefresh = true )
+            : base( Context, IsMobile, AttemptRefresh )
         {
         }
 

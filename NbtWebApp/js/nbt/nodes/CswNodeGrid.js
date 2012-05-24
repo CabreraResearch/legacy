@@ -5,13 +5,13 @@
     "use strict";
     var pluginName = 'CswNodeGrid';
 
-    var internal = {
+    var cswPrivate = {
         selectedRowId: ''
     };
 
     function deleteRows(rowid, grid, func) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = internal.selectedRowId;
+            rowid = cswPrivate.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -37,7 +37,7 @@
 
     function editRows(rowid, grid, func, editViewFunc) {
         if (Csw.isNullOrEmpty(rowid)) {
-            rowid = internal.selectedRowId;
+            rowid = cswPrivate.selectedRowId;
         }
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = grid.getSelectedRowId();
@@ -133,20 +133,25 @@
                         var cswGridOpts = {
                             ID: o.ID,
                             resizeWithParent: o.resizeWithParent,
+                            resizeWithParentElement: o.resizeWithParentElement,
                             canEdit: false,
                             canDelete: false,
                             pagermode: 'default',
-                            gridOpts: {}, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
+                            gridOpts: {
+                                onSelectRow: function () {
+                                    if (false === ret.isMulti()) {
+                                        ret.resetSelection();
+                                    }
+                                }
+                            }, //toppager: (jqGridOpt.rowNum >= 50 && Csw.contains(gridJson, 'rows') && gridJson.rows.length >= 49)
                             optNav: {},
                             optSearch: {},
                             optNavEdit: {},
                             optNavDelete: {}
                         };
+
                         $.extend(true, cswGridOpts.gridOpts, jqGridOpt);
 
-                        if (Csw.isNullOrEmpty(cswGridOpts.gridOpts.width)) {
-                            cswGridOpts.gridOpts.width = '650px';
-                        }
                         var hasActions = (false === forReporting && false === Csw.bool(cswGridOpts.gridOpts.multiselect));
                         if (forReporting) {
                             cswGridOpts.gridOpts.caption = '';
@@ -162,7 +167,7 @@
                                         deleteRows(rowid, ret, o.onDeleteNode);
                                     }
                                 }
-                                internal.selectedRowId = rowid;
+                                cswPrivate.selectedRowId = rowid;
                                 if (false === isMulti) {
                                     if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
                                         validateNode(eventObj.toElement.className);
@@ -172,6 +177,7 @@
                                 }
                                 return true;
                             };
+
                         }
                         /* We need this to be defined upfront for multi-edit */
                         cswGridOpts.optNavEdit = {
@@ -225,6 +231,32 @@
                                 break;
                         }
 
+                        var makeRowButtons = function (grid) {
+                            var ids = grid.getDataIds();
+                            for (var i = 0; i < ids.length; i += 1) {
+                                var rowId = ids[i];
+                                var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
+                                var buttonStr = '';
+                                if (Csw.contains(cellData, 'islocked')) {
+                                    buttonStr += '<img id="' + rowId + '_locked" src="Images/icons/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
+                                    if (Csw.contains(cellData, 'canview')) {
+                                        buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                    }
+                                } else if (Csw.contains(cellData, 'canedit')) {
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
+                                } else if (Csw.contains(cellData, 'canview')) {
+                                    buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                }
+                                if (buttonStr.length > 0) {
+                                    buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
+                                }
+                                if (Csw.contains(cellData, 'candelete')) {
+                                    buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/trash.gif" class="csw-grid-delete" alt="Delete" title="Delete"/>';
+                                }
+                                grid.setRowData(rowId, 'Action', buttonStr);
+                            }
+                        };
+                        cswGridOpts.onSuccess = makeRowButtons;
                         cswGridOpts.printUrl = getGridRowsUrl(true);
                         var parent = Csw.literals.factory($parent);
                         ret = parent.grid(cswGridOpts);
@@ -232,7 +264,7 @@
                         if (Csw.isFunction(o.onSuccess)) {
                             o.onSuccess(ret);
                         }
-
+                        ret.resizeWithParent();
                         if (wasTruncated) {
                             parent.append('<p>Results were truncated.</p>');
                         }

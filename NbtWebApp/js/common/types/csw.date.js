@@ -17,7 +17,7 @@
             //        }
             //        return retDate;
 
-            var internal = {
+            var cswPrivate = {
                 dateFormat: 'mm/dd/yyyy',   // need to derive from current user eventually
                 timeFormat: 'hh:MM:ss',   // need to derive from current user eventually
                 secondms: 1000,
@@ -27,35 +27,35 @@
                 yearms: (1000 * 60 * 60 * 24 * 365)   // leap year will throw this off by a day
             };
 
-            var external = {};
+            var cswPublic = {};
 
-            external.value = Csw.number(value); // converts a Date() to milliseconds
-            if (isNaN(external.value) || external.value <= 0) {
-                external.value = Csw.number(new Date()); //default to today
+            cswPublic.value = Csw.number(value); // converts a Date() to milliseconds
+            if (isNaN(cswPublic.value) || cswPublic.value <= 0) {
+                cswPublic.value = Csw.number(new Date()); //default to today
             }
 
-            external.addSeconds = function (s) {
-                external.value += s * internal.secondms;
-                return external; // chaining
+            cswPublic.addSeconds = function (s) {
+                cswPublic.value += s * cswPrivate.secondms;
+                return cswPublic; // chaining
             };
-            external.addMinutes = function (m) {
-                external.value += m * internal.minutems;
-                return external; // chaining
+            cswPublic.addMinutes = function (m) {
+                cswPublic.value += m * cswPrivate.minutems;
+                return cswPublic; // chaining
             };
-            external.addHours = function (h) {
-                external.value += h * internal.hourms;
-                return external; // chaining
+            cswPublic.addHours = function (h) {
+                cswPublic.value += h * cswPrivate.hourms;
+                return cswPublic; // chaining
             };
-            external.addDays = function (d) {
-                external.value += d * internal.dayms;
-                return external; // chaining
+            cswPublic.addDays = function (d) {
+                cswPublic.value += d * cswPrivate.dayms;
+                return cswPublic; // chaining
             };
-            external.addYears = function (y) {
-                external.value += y * internal.yearms;
-                return external; // chaining
+            cswPublic.addYears = function (y) {
+                cswPublic.value += y * cswPrivate.yearms;
+                return cswPublic; // chaining
             };
-            external.toDate = function () {
-                return new Date(external.value);
+            cswPublic.toDate = function () {
+                return new Date(cswPublic.value);
             };
 
 
@@ -192,14 +192,14 @@
             // END EXTERNAL CODE
             // ***********************************************************************************
 
-            external.format = function (mask, utc) {
-                return dateFormat(new Date(external.value), mask, utc);
+            cswPublic.format = function (mask, utc) {
+                return dateFormat(new Date(cswPublic.value), mask, utc);
             };
 
-            external.toString = function () {
-                return external.format(internal.dateFormat + ' ' + internal.timeFormat);
+            cswPublic.toString = function () {
+                return cswPublic.format(cswPrivate.dateFormat + ' ' + cswPrivate.timeFormat);
             };
-            return external;
+            return cswPublic;
         });
 
 

@@ -11,7 +11,7 @@
             ///<param name="options" type="Object">Object defining paramaters for imageButton construction.</param>
             ///<returns type="Csw.controls.imageButton">Object representing an imageButton</returns>
             'use strict';
-            var internal = {
+            var cswPrivate = {
                 ButtonType: Csw.enums.imageButton_ButtonType.None,
                 Active: false,
                 AlternateText: '',
@@ -20,18 +20,18 @@
                 Required: false,
                 onClick: null
             };
-            var external = { };
+            var cswPublic = { };
 
             (function() {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
 
-                internal.imageButton = cswParent.div(internal);
-                external = Csw.dom({ }, internal.imageButton);
+                cswPrivate.imageButton = cswParent.div(cswPrivate);
+                cswPublic = Csw.dom({ }, cswPrivate.imageButton);
             }());
 
-            external.setButtonType = function(newButtonType) {
+            cswPublic.setButtonType = function(newButtonType) {
                 var multiplier = -18;
                 //Case 24112: IE7 processes url() using https but randles the response as http--prompting the security dialog.
                 var port = document.location.port;
@@ -43,52 +43,52 @@
                 if (newButtonType !== undefined && newButtonType !== Csw.enums.imageButton_ButtonType.None) {
 
                     var offset = 0;
-                    if (internal.Active) {
+                    if (cswPrivate.Active) {
                         offset = -36;
                     }
-                    external.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') ' + offset + 'px ' + newButtonType * multiplier + 'px no-repeat';
+                    cswPublic.$.get(0).style.background = 'url(\'' + prefix + '/Images/buttons/buttons18.gif\') ' + offset + 'px ' + newButtonType * multiplier + 'px no-repeat';
 
-                    external.unbind('mouseover');
-                    external.unbind('mouseout');
-                    external.unbind('mousedown');
-                    external.unbind('mouseup');
-                    external.bind('mouseover', function() {
-                        external.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
+                    cswPublic.unbind('mouseover');
+                    cswPublic.unbind('mouseout');
+                    cswPublic.unbind('mousedown');
+                    cswPublic.unbind('mouseup');
+                    cswPublic.bind('mouseover', function() {
+                        cswPublic.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                     });
-                    external.bind('mouseout', function() {
-                        external.css('background-position', offset + 'px ' + newButtonType * multiplier + 'px');
+                    cswPublic.bind('mouseout', function() {
+                        cswPublic.css('background-position', offset + 'px ' + newButtonType * multiplier + 'px');
                     });
-                    external.bind('mousedown', function() {
-                        external.css('background-position', '-36px ' + newButtonType * multiplier + 'px');
+                    cswPublic.bind('mousedown', function() {
+                        cswPublic.css('background-position', '-36px ' + newButtonType * multiplier + 'px');
                     });
-                    external.bind('mouseup', function() {
-                        external.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
+                    cswPublic.bind('mouseup', function() {
+                        cswPublic.css('background-position', '-18px ' + newButtonType * multiplier + 'px');
                     });
                 }
-                internal.ButtonType = newButtonType;
+                cswPrivate.ButtonType = newButtonType;
                 return false;
             };
 
-            external.getButtonType = function() {
-                return internal.ButtonType;
+            cswPublic.getButtonType = function() {
+                return cswPrivate.ButtonType;
             };
 
 
-            external.click = function(newButtonType, func) {
+            cswPublic.click = function(newButtonType, func) {
                 if (Csw.isFunction(func)) {
-                    return external.bind('click', func);
+                    return cswPublic.bind('click', func);
                 } else {
-                    return external.setButtonType(newButtonType);
+                    return cswPublic.setButtonType(newButtonType);
                 }
             };
 
             (function() {
-                external.addClass('divbutton');
-                external.propNonDom('title', internal.AlternateText);
-                external.css('display', 'inline-block');
-                external.setButtonType(internal.ButtonType);
+                cswPublic.addClass('divbutton');
+                cswPublic.propNonDom('title', cswPrivate.AlternateText);
+                cswPublic.css('display', 'inline-block');
+                cswPublic.setButtonType(cswPrivate.ButtonType);
             }());
-            return external;
+            return cswPublic;
         });
 
 

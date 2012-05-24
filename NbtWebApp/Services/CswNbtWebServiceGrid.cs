@@ -9,6 +9,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -36,10 +37,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 NodeTypeId = NodeType.FirstVersionNodeTypeId;
                 CanEdit = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType );
+                CanView = Resources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType );
                 CanDelete = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeType );
             }
 
             public Int32 NodeTypeId { get; private set; }
+            public bool CanView { get; private set; }
             public bool CanEdit { get; private set; }
             public bool CanDelete { get; private set; }
         }
@@ -97,7 +100,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     _NodeTypePermission Permission = new _NodeTypePermission( NodeType, _CswNbtResources );
                     _ActionEnabled = false == _ForReport &&
-                                     ( _ActionEnabled || Permission.CanDelete || Permission.CanDelete );
+                                     ( _ActionEnabled || Permission.CanView || Permission.CanDelete || Permission.CanDelete );
                     _Permissions.Add( NodeType.FirstVersionNodeTypeId, Permission );
                 }
             }
@@ -118,7 +121,7 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         } // getGrid()
 
-        private void _getGridProperties( Collection<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
+        private void _getGridProperties( IEnumerable<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
         {
             CswCommaDelimitedString ColumnNames = new CswCommaDelimitedString();
             Collection<CswNbtViewProperty> PropsAtThisLevel = new Collection<CswNbtViewProperty>();
@@ -127,7 +130,11 @@ namespace ChemSW.Nbt.WebServices
             //Iterate all Relationships at this level first. This ensures our properties are properly collected.
             foreach( CswNbtViewRelationship Relationship in ChildRelationships )
             {
-                foreach( CswNbtViewProperty Property in Relationship.Properties )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property
+                                                        in Relationship.Properties
+                                                        orderby _Property.Order, _Property.Name
+                                                        where _Property.ShowInGrid
+                                                        select _Property )
                 {
                     PropsAtThisLevel.Add( Property );
                 }
@@ -177,14 +184,10 @@ namespace ChemSW.Nbt.WebServices
 
             JArray GridOrderedColumnDisplayNames = _makeDefaultColumnNames();
             _CswNbtActGrid.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
-            if( _ActionEnabled )
-            {
-                GridOrderedColumnDisplayNames.Add( "Delete" );
-            }
+
             JArray GridColumnDefinitions = _CswNbtActGrid.getGridColumnDefinitionJson( _PropsInGrid );
             _addDefaultColumnDefiniton( GridColumnDefinitions );
 
-            _CswNbtActGrid.GridWidth = ( _View.Width * 7 );
             if( _View.Visibility != NbtViewVisibility.Property )
             {
                 _CswNbtActGrid.GridTitle = _View.ViewName;
@@ -422,14 +425,10 @@ namespace ChemSW.Nbt.WebServices
         private JArray _makeDefaultColumnNames()
         {
             JArray Ret = new JArray();
-            Ret.Add( "Icon" );
-            if( _ActionEnabled )
-            {
-                Ret.Add( "Action" );
-            }
             Ret.Add( "jqgridid" ); //better to use int for jqGrid key
             Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
             Ret.Add( "nodename" );
+            Ret.Add( "Action" );
             return Ret;
         } // _makeDefaultColumnNames()
 
@@ -438,18 +437,31 @@ namespace ChemSW.Nbt.WebServices
         /// </summary>
         private void _addDefaultColumnDefiniton( JArray ColumnDefArray )
         {
+            if( _ActionEnabled )
+            {
+                ColumnDefArray.AddFirst( new JObject(
+                                            new JProperty( "name", "Action" ),
+                                            new JProperty( "index", "Action" ),
+                                            new JProperty( "formatter", "image" ),
+                                            new JProperty( "fixed", true ),
+                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 50 )
+                                            ) );
+            }
+
             //we'll want NodeName for edit/delete
             ColumnDefArray.AddFirst( new JObject(
                                 new JProperty( "name", "nodename" ),
                                 new JProperty( "index", "nodename" ),
-                                new JProperty( "hidden", true )
+                                new JProperty( "hidden", true ),
+                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
             //we'll want CswNbtNodeKey for add/edit/delete
             ColumnDefArray.AddFirst( new JObject(
                                 new JProperty( "name", "cswnbtnodekey" ),
                                 new JProperty( "index", "cswnbtnodekey" ),
-                                new JProperty( "hidden", true )
+                                new JProperty( "hidden", true ),
+                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
             //better to use int for jqGrid key
@@ -457,32 +469,8 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "name", "jqgridid" ),
                                 new JProperty( "index", "jqgridid" ),
                                 new JProperty( "key", true ),
-                                new JProperty( "hidden", true )
-                                ) );
-
-            if( _ActionEnabled )
-            {
-                ColumnDefArray.AddFirst( new JObject(
-                                            new JProperty( "name", "Action" ),
-                                            new JProperty( "index", "Action" ),
-                                            new JProperty( "formatter", "image" ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "90" )
-                                            ) );
-
-                /* We want Delete at the end of this array */
-                ColumnDefArray.Add( new JObject(
-                                            new JProperty( "name", "Delete" ),
-                                            new JProperty( "index", "Delete" ),
-                                            new JProperty( "formatter", "image" ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "80" )
-                                            ) );
-            }
-
-            ColumnDefArray.AddFirst( new JObject(
-                                new JProperty( "name", "Icon" ),
-                                new JProperty( "index", "Icon" ),
-                                new JProperty( "formatter", "image" ),
-                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), "60" )
+                                new JProperty( "hidden", true ),
+                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
         } // _addDefaultColumnDefiniton()
@@ -506,68 +494,62 @@ namespace ChemSW.Nbt.WebServices
             {
                 bool ActionEnabled = false == _ForReport &&
                                      _Permissions.ContainsKey( ThisNodeType.FirstVersionNodeTypeId );
+                bool CanView = ActionEnabled &&
+                               _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanView;
                 bool CanEdit = ActionEnabled &&
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanEdit;
                 bool CanDelete = ActionEnabled &&
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanDelete;
 
-                string ThisNodeIcon = ThisNodeType.IconFileName;
                 string ThisNodeKeyString = ThisNodeKey.ToString();
                 string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
-                bool ThisNodeLocked = Tree.getNodeLockedForCurrentPosition();
+                JArray Actions = new JArray();
 
-                string Action = string.Empty;
-                string Delete = string.Empty;
-                if( ActionEnabled )
+                if( Tree.getNodeLockedForCurrentPosition() )
                 {
-                    if( CanEdit )
+                    Actions.Add( "islocked" );
+                    if( CanView )
                     {
-                        Action = "<span class=\"ui-icon ui-icon-pencil csw-grid-edit\" />";
-                    }
-                    else
-                    {
-                        Action = "<span class=\"ui-icon ui-icon-document csw-grid-edit\" />";
-                    }
-                    if( CanDelete )
-                    {
-                        Delete = "<span class=\"ui-icon ui-icon-trash csw-grid-delete\" />";
+                        Actions.Add( "canview" );
                     }
                 }
+                else if( CanEdit )
+                {
+                    Actions.Add( "canedit" );
+                }
+                else if( CanView )
+                {
+                    Actions.Add( "canview" );
+                }
+                if( CanDelete )
+                {
+                    Actions.Add( "candelete" );
+                }
+                ThisNodeObj["Action"] = Actions;
 
-                ThisNodeObj["Action"] = Action;
-                ThisNodeObj["Delete"] = Delete;
                 ThisNodeObj["jqgridid"] = ThisNodeId;
                 ThisNodeObj["cswnbtnodekey"] = ThisNodeKeyString;
-                string Icon = "<img src=\'";
-                if( ThisNodeLocked )
-                {
-                    Icon += "Images/quota/lock.gif\' title=\'Quota exceeded";
-                }
-                else
-                {
-                    Icon += "Images/icons/" + ThisNodeIcon;
-                }
-                Icon += "\'/>";
-                ThisNodeObj["Icon"] = Icon;
+
+                //ThisNodeObj["Icon"] = Icon;
                 ThisNodeObj["nodename"] = ThisNodeName;
 
-                _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid );
+                _addPropsRecursive( Tree, ThisNodeObj, PropsInGrid, ThisNodeKey );
             }
             return ThisNodeObj;
 
         } // _treeNodeJObject()
 
-        private void _addPropsRecursive( ICswNbtTree Tree, JObject NodeObj, Collection<CswViewBuilderProp> PropsInGrid )
+        private void _addPropsRecursive( ICswNbtTree Tree, JObject NodeObj, Collection<CswViewBuilderProp> PropsInGrid, CswNbtNodeKey NodeKey )
         {
             foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
             {
-                _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid );
+                _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid, NodeKey );
             }
             // Recurse
             for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
             {
                 Tree.goToNthChild( i );
-                _addPropsRecursive( Tree, NodeObj, PropsInGrid );
+                _addPropsRecursive( Tree, NodeObj, PropsInGrid, NodeKey );
                 Tree.goToParentNode();
             }
         } // _addPropsRecursive()
@@ -602,18 +584,20 @@ namespace ChemSW.Nbt.WebServices
         /// Translates property value into human readable text.
         /// Currently only handles Logical fieldtype.
         /// </summary>
-        private void _addSafeCellContent( CswNbtResources CswNbtResources, JObject DirtyElement, JObject ParentObj, IEnumerable<CswViewBuilderProp> PropsInGrid )
+        private void _addSafeCellContent( CswNbtResources CswNbtResources, JObject TreePropObj, JObject RetObj, IEnumerable<CswViewBuilderProp> PropsInGrid, CswNbtNodeKey NodeKey )
         {
-            if( null != DirtyElement )
+            if( null != TreePropObj )
             {
-                string CleanPropName = DirtyElement["propname"].ToString().Trim().ToLower().Replace( " ", "_" );
-                string DirtyValue = DirtyElement["gestalt"].ToString();
-                string PropFieldTypeString = DirtyElement["fieldtype"].ToString();
-                string PropId = DirtyElement["nodetypepropid"].ToString();
-                CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) );
+                string CleanPropName = TreePropObj["propname"].ToString().Trim().ToLower().Replace( " ", "_" );
+                string DirtyValue = TreePropObj["gestalt"].ToString();
+                string PropFieldTypeString = TreePropObj["fieldtype"].ToString();
+                Int32 PropId = CswConvert.ToInt32( TreePropObj["nodetypepropid"] );
+                Int32 JctNodePropId = CswConvert.ToInt32( TreePropObj["jctnodepropid"] );
+                CswNbtMetaDataNodeTypeProp Prop = CswNbtResources.MetaData.getNodeTypeProp( PropId );
 
                 var PropFieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropFieldTypeString );
-                string CleanValue;
+                string CleanValue = "";
+                string UrlString = "";
                 switch( PropFieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
@@ -623,6 +607,28 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswDateTime CswDate = new CswDateTime( CswNbtResources, Date, CswDateTime.DateFormat.yyyyMMdd_Dashes, CswDateTime.TimeFormat.Hmmss );
                             CleanValue = CswDate.ToClientAsDateString();
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.File:
+                        UrlString = CswNbtNodePropBlob.getLink( JctNodePropId, NodeKey.NodeId, PropId );
+                        if( false == string.IsNullOrEmpty( UrlString ) )
+                        {
+                            if( string.IsNullOrEmpty( DirtyValue ) )
+                            {
+                                DirtyValue = "File";
+                            }
+                            CleanValue = "<a href='" + UrlString + "'>" + DirtyValue + "</a>";
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                        UrlString = CswNbtNodePropImage.getLink( JctNodePropId, NodeKey.NodeId, PropId );
+                        if( false == string.IsNullOrEmpty( UrlString ) )
+                        {
+                            if( string.IsNullOrEmpty( DirtyValue ) )
+                            {
+                                DirtyValue = "Image";
+                            }
+                            CleanValue = "<a href='" + UrlString + "'>" + DirtyValue + "</a>";
                         }
                         break;
                     case CswNbtMetaDataFieldType.NbtFieldType.Logical:
@@ -645,7 +651,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     _FirstPropInGrid = CleanPropName;
                 }
-                ParentObj[CleanPropName] = CleanValue;
+                RetObj[CleanPropName] = CleanValue;
             }
         }
 

@@ -8,7 +8,7 @@
             'use strict';
 
             //#region Variable Declaration
-            var internal = {
+            var cswPrivate = {
                 ID: 'cswInspectionDesignWizard',
                 onCancel: null, //function ($wizard) {},
                 onFinish: null, //function ($wizard) {},
@@ -39,16 +39,16 @@
                 inspectionGrid: '',
                 gridOptions: {}
             };
-            if (options) $.extend(internal, options);
+            if (options) $.extend(cswPrivate, options);
 
-            var external = cswParent.div();
-            internal.currentStepNo = internal.startingStep;
+            var cswPublic = cswParent.div();
+            cswPrivate.currentStepNo = cswPrivate.startingStep;
 
-            internal.isNewInspectionDesign = function () {
-                return ('[Create New]' === internal.selectedInspectionDesign.id);
+            cswPrivate.isNewInspectionDesign = function () {
+                return ('[Create New]' === cswPrivate.selectedInspectionDesign.id);
             };
 
-            internal.isNewTarget = (function () {
+            cswPrivate.isNewTarget = (function () {
                 var ret = false;
                 return function (isNew) {
                     if (arguments.length > 0) {
@@ -58,54 +58,54 @@
                 };
             } ());
 
-            internal.createInspectionEvents = {
+            cswPrivate.createInspectionEvents = {
                 targetNameChanged: 'targetNameChanged',
                 designNameChanged: 'designNameChanged'
             };
 
-            internal.toggleButton = function (button, isEnabled, doClick) {
+            cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
                 if (Csw.bool(isEnabled)) {
-                    btn = internal.wizard[button].enable();
+                    btn = cswPrivate.wizard[button].enable();
                     if (Csw.bool(doClick)) {
                         btn.click();
                     }
                 } else {
-                    internal.wizard[button].disable();
+                    cswPrivate.wizard[button].disable();
                 }
-                if (button !== internal.buttons.finish) {
-                    internal.toggleButton(internal.buttons.finish, (internal.currentStepNo === 5));
+                if (button !== cswPrivate.buttons.finish) {
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, (cswPrivate.currentStepNo === 5));
                 }
 
                 return false;
             };
 
-            internal.makeStepId = function (suffix, stepNo) {
-                var step = stepNo || internal.currentStepNo;
-                return Csw.makeId({ prefix: 'step_' + step, ID: internal.ID, suffix: suffix });
+            cswPrivate.makeStepId = function (suffix, stepNo) {
+                var step = stepNo || cswPrivate.currentStepNo;
+                return Csw.makeId({ prefix: 'step_' + step, ID: cswPrivate.ID, suffix: suffix });
             };
 
-            internal.validationFailed = function () {
-                internal.toggleButton(internal.buttons.next, true);
-                internal.toggleButton(internal.buttons.prev, true, true);
+            cswPrivate.validationFailed = function () {
+                cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
             };
 
-            internal.checkTargetIsClientSideUnique = function () {
+            cswPrivate.checkTargetIsClientSideUnique = function () {
                 var ret = false;
-                if (Csw.string(internal.selectedInspectionTarget).trim().toLowerCase() != Csw.string(internal.selectedInspectionDesign.name).trim().toLowerCase()) {
+                if (Csw.string(cswPrivate.selectedInspectionTarget).trim().toLowerCase() != Csw.string(cswPrivate.selectedInspectionDesign.name).trim().toLowerCase()) {
                     ret = true;
                 } else {
-                    internal.validationFailed();
+                    cswPrivate.validationFailed();
                     var err = Csw.error.makeErrorObj(Csw.enums.errorType.error,
                                                      'An Inspection Design and an Inspection Target cannot have the same name.',
-                                                     'Attempted to create Inspection Target ' + internal.selectedInspectionTarget + ' against Inspection Design ' + internal.selectedInspectionDesign.name);
+                                                     'Attempted to create Inspection Target ' + cswPrivate.selectedInspectionTarget + ' against Inspection Design ' + cswPrivate.selectedInspectionDesign.name);
                     Csw.error.showError(err);
                 }
                 return ret;
             };
 
-            internal.checkIsNodeTypeNameUnique = function (name, success, error) {
-                if (internal.checkTargetIsClientSideUnique()) {
+            cswPrivate.checkIsNodeTypeNameUnique = function (name, success, error) {
+                if (cswPrivate.checkTargetIsClientSideUnique()) {
                     Csw.ajax.post({
                         url: '/NbtWebApp/wsNBT.asmx/IsNodeTypeNameUnique',
                         async: false,
@@ -114,7 +114,7 @@
                             Csw.tryExec(success, data);
                         },
                         error: function (data) {
-                            internal.validationFailed();
+                            cswPrivate.validationFailed();
                             Csw.tryExec(error, data);
                         }
                     });
@@ -122,7 +122,7 @@
             };
 
             //Step 1. Select an Inspection Target.
-            internal.makeStepOne = (function () {
+            cswPrivate.makeStepOne = (function () {
                 var stepOneComplete = false,
                     inspectionTable, addBtn, rowOneTable;
                 return function () {
@@ -130,10 +130,10 @@
                     var onNodeTypeSelectSuccess = function (data) {
                         //If the picklist is empty, we have to add a new Target
                         if (data.nodetypecount === 0) {
-                            internal.inspectionTargetSelect.hide();
-                            internal.isNewTarget(true);
-                            internal.addNewTarget = rowOneTable.cell(2, 2);
-                            internal.addNewTarget.css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            cswPrivate.inspectionTargetSelect.hide();
+                            cswPrivate.isNewTarget(true);
+                            cswPrivate.addNewTarget = rowOneTable.cell(2, 2);
+                            cswPrivate.addNewTarget.css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .input({
                                     suffix: 'newTargetName',
                                     value: '',
@@ -142,40 +142,40 @@
                                 .propNonDom('maxlength', 40)
                                 .$.keypress(function () {
                                     setTimeout(function () {
-                                        var newTargetName = internal.addNewTarget.val();
+                                        var newTargetName = cswPrivate.addNewTarget.val();
                                         if (false === Csw.isNullOrEmpty(newTargetName)) {
-                                            internal.wizard.next.enable();
+                                            cswPrivate.wizard.next.enable();
                                         }
                                     }, 100);
                                 });
                         } else { //Select an existing Target or add a new Target
-                            internal.selectedInspectionTarget = internal.inspectionTargetSelect.find(':selected').text();
-                            internal.wizard.next.enable();
+                            cswPrivate.selectedInspectionTarget = cswPrivate.inspectionTargetSelect.find(':selected').text();
+                            cswPrivate.wizard.next.enable();
 
                             addBtn = addBtn || rowOneTable.cell(2, 3);
                             addBtn.css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .div()
                                 .button({
-                                    ID: internal.makeStepId('addNewInspectionTarget'),
+                                    ID: cswPrivate.makeStepId('addNewInspectionTarget'),
                                     enabledText: 'Add New',
                                     disableOnClick: false,
                                     onClick: function () {
                                         $.CswDialog('AddNodeTypeDialog', {
-                                            objectclassid: internal.inspectionTargetSelect.find(':selected').data('objectClassId'),
+                                            objectclassid: cswPrivate.inspectionTargetSelect.find(':selected').data('objectClassId'),
                                             nodetypename: '',
                                             category: 'do not show',
-                                            select: internal.inspectionTargetSelect,
+                                            select: cswPrivate.inspectionTargetSelect,
                                             nodeTypeDescriptor: 'Target',
                                             maxlength: 40,
                                             onSuccess: function (newData) {
                                                 var proposedInspectionTarget = newData.nodetypename;
-                                                if (internal.checkTargetIsClientSideUnique(proposedInspectionTarget)) {
-                                                    internal.selectedInspectionTarget = proposedInspectionTarget;
-                                                    internal.isNewTarget(true);
-                                                    internal.wizard.next.enable();
-                                                    Csw.publish(internal.createInspectionEvents.targetNameChanged);
+                                                if (cswPrivate.checkTargetIsClientSideUnique(proposedInspectionTarget)) {
+                                                    cswPrivate.selectedInspectionTarget = proposedInspectionTarget;
+                                                    cswPrivate.isNewTarget(true);
+                                                    cswPrivate.wizard.next.enable();
+                                                    Csw.publish(cswPrivate.createInspectionEvents.targetNameChanged);
                                                 } else {
-                                                    internal.inspectionTargetSelect.find('option[value="' + proposedInspectionTarget + '"]').remove();
+                                                    cswPrivate.inspectionTargetSelect.find('option[value="' + proposedInspectionTarget + '"]').remove();
                                                 }
                                             },
                                             title: 'Create a New Inspection Target Type.'
@@ -189,35 +189,35 @@
                     var makeTargetSelect = function () {
                         //Normally this would be written as $inspectionTarget = $inspectionTarget || ...
                         //However, the variable assignment is sufficiently complex that this deviation is justified.
-                        if (false === Csw.isNullOrEmpty(internal.inspectionTargetSelect, true)) {
-                            internal.inspectionTargetSelect.remove();
+                        if (false === Csw.isNullOrEmpty(cswPrivate.inspectionTargetSelect, true)) {
+                            cswPrivate.inspectionTargetSelect.remove();
                         }
 
-                        internal.inspectionTargetSelect = rowOneTable.cell(2, 1)
+                        cswPrivate.inspectionTargetSelect = rowOneTable.cell(2, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .div()
                             .nodeTypeSelect({
-                                ID: internal.makeStepId('nodeTypeSelect'),
+                                ID: cswPrivate.makeStepId('nodeTypeSelect'),
                                 objectClassName: 'InspectionTargetClass',
                                 onSelect: function () {
-                                    var selected = internal.inspectionTargetSelect.find(':selected');
-                                    internal.isNewTarget(selected.propNonDom('data-newNodeType'));
-                                    internal.selectedInspectionTarget = selected.text();
-                                    Csw.publish(internal.createInspectionEvents.targetNameChanged);
+                                    var selected = cswPrivate.inspectionTargetSelect.find(':selected');
+                                    cswPrivate.isNewTarget(selected.propNonDom('data-newNodeType'));
+                                    cswPrivate.selectedInspectionTarget = selected.text();
+                                    Csw.publish(cswPrivate.createInspectionEvents.targetNameChanged);
                                 },
                                 onSuccess: function (data) {
                                     onNodeTypeSelectSuccess(data);
-                                    internal.selectedInspectionTarget = internal.inspectionTargetSelect.find(':selected').text();
+                                    cswPrivate.selectedInspectionTarget = cswPrivate.inspectionTargetSelect.find(':selected').text();
                                 }
                             });
                     };
 
                     if (false === stepOneComplete) {
-                        internal.divStep1 = internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step1.step);
-                        internal.divStep1.br();
+                        cswPrivate.divStep1 = cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step1.step);
+                        cswPrivate.divStep1.br();
 
-                        inspectionTable = internal.divStep1.table({
-                            ID: internal.makeStepId('setInspectionTargetTable')
+                        inspectionTable = cswPrivate.divStep1.table({
+                            ID: cswPrivate.makeStepId('setInspectionTargetTable')
                         });
 
                         rowOneTable = inspectionTable.cell(1, 1).table({
@@ -232,13 +232,13 @@
                         stepOneComplete = true;
                     } // if (false === stepOneComplete)
 
-                    internal.toggleButton(internal.buttons.prev, false);
-                    internal.toggleButton(internal.buttons.next, (false === Csw.isNullOrEmpty(internal.selectedInspectionTarget)));
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, (false === Csw.isNullOrEmpty(cswPrivate.selectedInspectionTarget)));
                 };
             } ());
 
             //Step 2. Select an Inspection Design Design.
-            internal.makeStepTwo = (function () {
+            cswPrivate.makeStepTwo = (function () {
                 var stepTwoComplete = false;
 
                 return function () {
@@ -250,44 +250,42 @@
                         return ret;
                     }
 
-                    var inspectionTable, $newDesignLabel,
-                        tempInspectionName = makeTempInspectionDesignName(internal.selectedInspectionTarget),
-                        tempCategoryName = internal.selectedInspectionTarget;
+                    var inspectionTable,
+                        tempInspectionName = makeTempInspectionDesignName(cswPrivate.selectedInspectionTarget),
+                        tempCategoryName = cswPrivate.selectedInspectionTarget;
 
                     var toggleNewDesignName = function () {
-                        if (internal.isNewInspectionDesign()) {
-                            internal.newDesignName.show();
-                            $newDesignLabel.show();
+                        if (cswPrivate.isNewInspectionDesign()) {
+                            cswPrivate.newDesignName.show();
                         } else {
-                            internal.newDesignName.hide();
-                            $newDesignLabel.hide();
+                            cswPrivate.newDesignName.hide();
                         }
                     };
                     var nextBtnEnabled = function () {
-                        return (false === Csw.isNullOrEmpty(internal.selectedInspectionDesign.name));
+                        return (false === Csw.isNullOrEmpty(cswPrivate.selectedInspectionDesign.name));
                     };
 
                     var targetChangedHandle = function () {
-                        internal.newDesignName.val(internal.selectedInspectionTarget);
-                        internal.categoryNameInput.val(internal.selectedInspectionTarget);
-                        if (internal.isNewInspectionDesign()) {
-                            internal.selectedInspectionDesign.name = internal.selectedInspectionTarget;
+                        cswPrivate.newDesignName.val(cswPrivate.selectedInspectionTarget);
+                        cswPrivate.categoryNameInput.val(cswPrivate.selectedInspectionTarget);
+                        if (cswPrivate.isNewInspectionDesign()) {
+                            cswPrivate.selectedInspectionDesign.name = cswPrivate.selectedInspectionTarget;
                         }
-                        Csw.publish(internal.createInspectionEvents.designNameChanged);
+                        Csw.publish(cswPrivate.createInspectionEvents.designNameChanged);
                     };
 
-                    internal.toggleButton(internal.buttons.prev, true);
-                    internal.toggleButton(internal.buttons.next, nextBtnEnabled());
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
 
                     if (false === stepTwoComplete) {
-                        internal.divStep2 = internal.divStep2 || internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step2.step);
-                        internal.divStep2.empty();
-                        internal.divStep2.br();
+                        cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step2.step);
+                        cswPrivate.divStep2.empty();
+                        cswPrivate.divStep2.br();
 
-                        Csw.subscribe(internal.createInspectionEvents.targetNameChanged, targetChangedHandle);
+                        Csw.subscribe(cswPrivate.createInspectionEvents.targetNameChanged, targetChangedHandle);
 
-                        inspectionTable = internal.divStep2.table({
-                            ID: internal.makeStepId('inspectionTable'),
+                        inspectionTable = cswPrivate.divStep2.table({
+                            ID: cswPrivate.makeStepId('inspectionTable'),
                             FirstCellRightAlign: true
                         });
 
@@ -296,41 +294,35 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'Select an Inspection Design&nbsp' });
 
-                        internal.inspectionDesignSelect = inspectionTable.cell(1, 2);
-                        internal.inspectionDesignSelect.div()
+                        cswPrivate.inspectionDesignSelect = inspectionTable.cell(1, 2)
+                            .div()
                             .nodeTypeSelect({
                                 ID: Csw.makeSafeId('nodeTypeSelect'),
                                 objectClassName: 'InspectionDesignClass',
                                 blankOptionText: '[Create New]'
                             })
                             .change(function () {
-                                var selected = internal.inspectionDesignSelect.find(':selected');
-                                internal.selectedInspectionDesign.id = selected.val();
-                                if (internal.isNewInspectionDesign() && internal.newDesignName && false === Csw.isNullOrEmpty(internal.newDesignName.val())) {
-                                    internal.selectedInspectionDesign.name = internal.newDesignName.val();
+                                var selected = cswPrivate.inspectionDesignSelect.find(':selected');
+                                cswPrivate.selectedInspectionDesign.id = selected.val();
+                                if (cswPrivate.isNewInspectionDesign() && cswPrivate.newDesignName && false === Csw.isNullOrEmpty(cswPrivate.newDesignName.val())) {
+                                    cswPrivate.selectedInspectionDesign.name = cswPrivate.newDesignName.val();
                                 } else {
-                                    internal.selectedInspectionDesign.name = selected.text();
+                                    cswPrivate.selectedInspectionDesign.name = selected.text();
                                 }
-                                tempCategoryName = makeTempInspectionDesignName(internal.selectedInspectionTarget);
-                                internal.categoryNameInput.val(tempCategoryName);
-                                Csw.publish(internal.createInspectionEvents.designNameChanged);
+                                Csw.publish(cswPrivate.createInspectionEvents.designNameChanged);
                                 toggleNewDesignName();
                             });
                         //Create New is selected by default
-                        internal.selectedInspectionDesign.id = internal.inspectionDesignSelect.find(':selected').val();
-                        internal.selectedInspectionDesign.name = tempInspectionName;
+                        cswPrivate.selectedInspectionDesign.id = cswPrivate.inspectionDesignSelect.val();
+                        cswPrivate.selectedInspectionDesign.name = tempInspectionName;
 
                         inspectionTable.cell(2, 1).br();
 
                         //2. New Inspection Design Name
-                        $newDesignLabel = inspectionTable.cell(3, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ cssclass: 'required', text: 'New Inspection Design Name&nbsp' });
-
-                        internal.newDesignName = inspectionTable.cell(3, 2)
+                        cswPrivate.newDesignName = inspectionTable.cell(3, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .input({
-                                ID: internal.ID + '_newDesignName',
+                                ID: cswPrivate.ID + '_newDesignName',
                                 type: Csw.enums.inputTypes.text,
                                 cssclass: 'required',
                                 maxlength: 50,
@@ -339,14 +331,13 @@
                             })
                             .bind('change keypress keydown keyup', function () {
                                 setTimeout(function () {
-                                    var newInspectionDesignName = internal.newDesignName.val();
-                                    internal.selectedInspectionDesign.id = '[Create New]';
-                                    internal.selectedInspectionDesign.name = newInspectionDesignName;
-                                    internal.toggleButton(internal.buttons.next, nextBtnEnabled());
-                                    Csw.publish(internal.createInspectionEvents.designNameChanged);
+                                    var newInspectionDesignName = cswPrivate.newDesignName.val();
+                                    cswPrivate.selectedInspectionDesign.id = '[Create New]';
+                                    cswPrivate.selectedInspectionDesign.name = newInspectionDesignName;
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                                    Csw.publish(cswPrivate.createInspectionEvents.designNameChanged);
                                 }, 10);
                             });
-                            $.validator.addMethod(internal.newDesignName.getId(), internal.checkTargetIsClientSideUnique, 'An Inspection Design and an Inspection Target cannot have the same name.');
                             
                         inspectionTable.cell(5, 1).br();
 
@@ -355,11 +346,11 @@
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'Category Name&nbsp' });
 
-                        internal.categoryNameInput = internal.categoryNameInput ||
+                        cswPrivate.categoryNameInput = cswPrivate.categoryNameInput ||
                             inspectionTable.cell(6, 2)
                                 .css({ 'padding': '1px', 'vertical-align': 'middle' })
                                 .input({
-                                    ID: internal.ID + '_newDesignCategory',
+                                    ID: cswPrivate.ID + '_newDesignCategory',
                                     type: Csw.enums.inputTypes.text,
                                     value: tempCategoryName,
                                     maxlength: 40,
@@ -375,27 +366,27 @@
             } ());
             
             //File upload onSuccess event to prep Step 4
-            internal.makeInspectionDesignGrid = function (jqGridOpts, onSuccess) {
+            cswPrivate.makeInspectionDesignGrid = function (jqGridOpts, onSuccess) {
                 Csw.tryExec(onSuccess);
-                internal.gridIsPopulated = true;
+                cswPrivate.gridIsPopulated = true;
 
                 //This is ugly. Abstract the step div from this function.
-                internal.divStep4.empty();
-                var previewGridId = internal.makeStepId('previewGrid_outer', 4);
+                cswPrivate.divStep4.empty();
+                var previewGridId = cswPrivate.makeStepId('previewGrid_outer', 4);
 
-                var helpText = internal.divStep4.p({ text: '<p>Review the <b>' + internal.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
+                var helpText = cswPrivate.divStep4.p({ text: '<p>Review the <b>' + cswPrivate.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
 
                 var designChangeHandle = function () {
                     helpText.remove();
-                    helpText = internal.divStep4.p({ text: '<p>Review the <b>' + internal.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
-                    internal.toggleButton(internal.buttons.next, true);
+                    helpText = cswPrivate.divStep4.p({ text: '<p>Review the <b>' + cswPrivate.selectedInspectionDesign.name + '</b> upload results. Make any necessary edits.' });
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                 };
-                Csw.subscribe(internal.createInspectionEvents.designNameChanged, designChangeHandle);
+                Csw.subscribe(cswPrivate.createInspectionEvents.designNameChanged, designChangeHandle);
 
-                internal.inspectionGridDiv = internal.divStep4.div({ ID: previewGridId });
+                cswPrivate.inspectionGridDiv = cswPrivate.divStep4.div({ ID: previewGridId });
                 
-                internal.gridOptions = {
-                    ID: internal.makeStepId('previewGrid'),
+                cswPrivate.gridOptions = {
+                    ID: cswPrivate.makeStepId('previewGrid'),
                     pagermode: 'default',
                     gridOpts: {
                         autowidth: true,
@@ -407,13 +398,13 @@
                         edit: true,
                         view: false,
                         editfunc: function (rowid) {
-                            return internal.inspectionGrid.gridTable.$.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
+                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
                         },
                         addfunc: function () {
-                            return internal.inspectionGrid.gridTable.$.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
+                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
                         },
                         delfunc: function (rowid) {
-                            return internal.inspectionGrid.gridTable.$.jqGrid('delRowData', rowid);
+                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('delRowData', rowid);
                         }
                     }
                 };
@@ -422,20 +413,20 @@
                     false === Csw.contains(jqGridOpts, 'colNames') ||
                         jqGridOpts.colNames.length === 0) {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
-                    internal.toggleButton(internal.buttons.next, false);
-                    internal.toggleButton(internal.buttons.prev, true, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                 } else {
-                    $.extend(internal.gridOptions.gridOpts, jqGridOpts);
+                    $.extend(cswPrivate.gridOptions.gridOpts, jqGridOpts);
                 }
-                internal.inspectionGrid = internal.inspectionGridDiv.grid(internal.gridOptions);
+                cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
             };
 
             //File upload button for Step 3
-            internal.makeInspectionDesignUpload = function (control) {
+            cswPrivate.makeInspectionDesignUpload = function (control) {
                 var f = {
                     url: '/NbtWebApp/wsNBT.asmx/previewInspectionFile',
                     onSuccess: function () {
-                        internal.wizard.next.enable().click();
+                        cswPrivate.wizard.next.enable().click();
                     },
                     stepNo: Csw.enums.wizardSteps_InspectionDesign.step3.step,
                     uploadName: 'design'
@@ -450,26 +441,26 @@
                         var gridData = {};
                         if (Csw.contains(ret, 'result') && Csw.contains(ret.result, 'jqGridOpt')) {
                             gridData = ret.result.jqGridOpt;
-                            internal.makeInspectionDesignGrid(gridData, f.onSuccess);
+                            cswPrivate.makeInspectionDesignGrid(gridData, f.onSuccess);
                         }
                     }
                 });
             };
 
             //If this is a new Design, upload the template. Otherwise skip to step 5.
-            internal.makeStepThree = (function () {
+            cswPrivate.makeStepThree = (function () {
                 var stepThreeComplete = false;
 
                 return function (forward) {
                     //this is somewhat dundant, but these calls are cheap and it improves readability until we have time to tighten our shot group
                     var nextIsEnabled = function () {
-                        return internal.gridIsPopulated || false === internal.isNewInspectionDesign();
+                        return cswPrivate.gridIsPopulated || false === cswPrivate.isNewInspectionDesign();
                     };
                     var doNextClick = function () {
-                        return false === internal.isNewInspectionDesign() && forward;
+                        return false === cswPrivate.isNewInspectionDesign() && forward;
                     };
                     var doPrevClick = function () {
-                        return false === internal.isNewInspectionDesign() && false === Csw.bool(forward);
+                        return false === cswPrivate.isNewInspectionDesign() && false === Csw.bool(forward);
                     };
 
                     var doStepThree = function () {
@@ -477,25 +468,25 @@
                         var designChangeHandle = function (help) {
 
                             helpText.empty();
-                            helpText.span({ text: 'Create a new <b>' + internal.selectedInspectionDesign.name + '</b> Design using the Excel template.' })
+                            helpText.span({ text: 'Create a new <b>' + cswPrivate.selectedInspectionDesign.name + '</b> Design using the Excel template.' })
                                 .p()
                                 .a({ href: '/NbtWebApp/etc/InspectionDesign.xls', text: 'Download Template' })
                                 .$.button();
                         };
                         if (false === stepThreeComplete) {
-                            internal.divStep3 = internal.divStep3 || internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step3.step);
-                            internal.divStep3.empty();
+                            cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step3.step);
+                            cswPrivate.divStep3.empty();
 
                             //Ordered instructions
-                            step3List = internal.divStep3.ol({
-                                ID: internal.makeStepId('uploadTemplateList')
+                            step3List = cswPrivate.divStep3.ol({
+                                ID: cswPrivate.makeStepId('uploadTemplateList')
                             });
 
                             //1. Download template
 
                             helpText = step3List.li();
                             designChangeHandle();
-                            Csw.subscribe(internal.createInspectionEvents.designNameChanged, designChangeHandle);
+                            Csw.subscribe(cswPrivate.createInspectionEvents.designNameChanged, designChangeHandle);
 
                             //2. Edit the template.
                             step3List.li().span({ text: 'Edit the Inspection template.' });
@@ -504,8 +495,8 @@
                             uploadP = step3List.li()
                                                 .span({ text: 'Upload the completed Inspection Design.' })
                                                 .p()
-                                                .input({ ID: internal.makeStepId('fileUploadBtn'), type: Csw.enums.inputTypes.file, name: 'fileupload', value: 'Upload' });
-                            internal.makeInspectionDesignUpload(uploadP);
+                                                .input({ ID: cswPrivate.makeStepId('fileUploadBtn'), type: Csw.enums.inputTypes.file, name: 'fileupload', value: 'Upload' });
+                            cswPrivate.makeInspectionDesignUpload(uploadP);
 
 
 
@@ -514,69 +505,69 @@
                         }
                     }; //doStepTwo
 
-                    if (internal.isNewInspectionDesign()) {
+                    if (cswPrivate.isNewInspectionDesign()) {
                         doStepThree();
                     }
 
-                    internal.toggleButton(internal.buttons.next, nextIsEnabled(), doNextClick());
-                    internal.toggleButton(internal.buttons.prev, true, doPrevClick());
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextIsEnabled(), doNextClick());
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, doPrevClick());
                 };
             } ());
 
             //Step 4. Review the Design grid.
-            internal.makeStepFour = (function () {
+            cswPrivate.makeStepFour = (function () {
                 var stepFourComplete = false;
                 //We populate this step as the result of the async design upload. Improve the readability of this code when you next visit.
                 return function (forward) {
                     var skipStepFour = false;
                     var doNextClick = function () {
-                        skipStepFour = (false === internal.isNewInspectionDesign() && forward);
+                        skipStepFour = (false === cswPrivate.isNewInspectionDesign() && forward);
                         return skipStepFour;
                     };
                     var doPrevClick = function () {
-                        skipStepFour = (false === internal.isNewInspectionDesign() && false == Csw.bool(forward));
+                        skipStepFour = (false === cswPrivate.isNewInspectionDesign() && false == Csw.bool(forward));
                         return skipStepFour;
                     };
 
-                    internal.toggleButton(internal.buttons.next, true, doNextClick());
-                    internal.toggleButton(internal.buttons.prev, true, doPrevClick());
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true, doNextClick());
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, doPrevClick());
 
                     if (false === stepFourComplete &&
                         false === skipStepFour) {
-                        internal.divStep4 = internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step4.step);
+                        cswPrivate.divStep4 = cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step4.step);
                         stepFourComplete = true;
                     }
                 };
             } ());
 
             //Step 5. Preview and Finish.
-            internal.makeStepFive = (function () {
+            cswPrivate.makeStepFive = (function () {
 
                 return function () {
                     var confirmationList, confirmTypesList, confirmViewsList, confirmGridOptions = {};
 
-                    if (internal.checkTargetIsClientSideUnique()) {
+                    if (cswPrivate.checkTargetIsClientSideUnique()) {
 
-                        internal.toggleButton(internal.buttons.prev, true);
-                        internal.toggleButton(internal.buttons.next, false);
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
-                        internal.categoryName = internal.categoryNameInput.val();
+                        cswPrivate.categoryName = cswPrivate.categoryNameInput.val();
 
-                        internal.divStep5 = internal.divStep5 || internal.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step5.step);
-                        internal.divStep5.empty();
+                        cswPrivate.divStep5 = cswPrivate.divStep5 || cswPrivate.wizard.div(Csw.enums.wizardSteps_InspectionDesign.step5.step);
+                        cswPrivate.divStep5.empty();
 
-                        internal.divStep5.p({ text: 'You are about to create the following items. Click Finish to create the design.' });
-                        confirmationList = internal.divStep5.ol({
-                            ID: internal.makeStepId('confirmationList')
+                        cswPrivate.divStep5.p({ text: 'You are about to create the following items. Click Finish to create the design.' });
+                        confirmationList = cswPrivate.divStep5.ol({
+                            ID: cswPrivate.makeStepId('confirmationList')
                         });
 
-                        if (internal.isNewInspectionDesign()) {
-                            if (internal.gridOptions) {
-                                $.extend(true, confirmGridOptions, internal.gridOptions);
+                        if (cswPrivate.isNewInspectionDesign()) {
+                            if (cswPrivate.gridOptions) {
+                                $.extend(true, confirmGridOptions, cswPrivate.gridOptions);
                             }
 
-                            confirmGridOptions.ID = internal.makeStepId('confirmGrid');
-                            confirmGridOptions.gridOpts.data = internal.inspectionGrid.gridTable.$.jqGrid('getRowData');
+                            confirmGridOptions.ID = cswPrivate.makeStepId('confirmGrid');
+                            confirmGridOptions.gridOpts.data = cswPrivate.inspectionGrid.gridTable.$.jqGrid('getRowData');
                             confirmGridOptions.gridOpts.autowidth = false;
                             confirmGridOptions.gridOpts.shrinkToFit = true;
                             confirmGridOptions.gridOpts.height = 150;
@@ -597,36 +588,36 @@
                             });
 
                             var confirmGridParent = confirmationList.li({
-                                text: 'Creating a new Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b>.'
+                                text: 'Creating a new Inspection Design <b>' + cswPrivate.selectedInspectionDesign.name + '</b>.'
                             });
                             confirmGridParent.div().grid(confirmGridOptions);
                         } else {
                             confirmationList.li({
-                                text: 'Assigning Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + internal.selectedInspectionTarget + '</b>.'
+                                text: 'Assigning Inspection Design <b>' + cswPrivate.selectedInspectionDesign.name + '</b> to Inspection Target <b> ' + cswPrivate.selectedInspectionTarget + '</b>.'
                             }).br();
                         }
 
-                        if (internal.isNewInspectionDesign() || internal.isNewTarget()) {
+                        if (cswPrivate.isNewInspectionDesign() || cswPrivate.isNewTarget()) {
                             confirmTypesList = confirmationList.li({
                                 text: 'New Types'
                             })
                                 .ul({
-                                    ID: internal.makeStepId('confirmationTypes')
+                                    ID: cswPrivate.makeStepId('confirmationTypes')
                                 });
 
-                            if (internal.isNewInspectionDesign()) {
+                            if (cswPrivate.isNewInspectionDesign()) {
                                 confirmTypesList.li({
-                                    text: 'New Inspection Design <b>' + internal.selectedInspectionDesign.name + '</b> on Inspection Target <b>' + internal.selectedInspectionTarget + '</b>'
+                                    text: 'New Inspection Design <b>' + cswPrivate.selectedInspectionDesign.name + '</b> on Inspection Target <b>' + cswPrivate.selectedInspectionTarget + '</b>'
                                 });
                             }
 
-                            if (internal.isNewTarget) {
+                            if (cswPrivate.isNewTarget) {
                                 confirmTypesList.li({
-                                    text: 'New Inspection Target <b>' + internal.selectedInspectionTarget + '</b>'
+                                    text: 'New Inspection Target <b>' + cswPrivate.selectedInspectionTarget + '</b>'
                                 });
 
                                 confirmTypesList.li({
-                                    text: 'New Inspection Target Group <b>' + internal.selectedInspectionTarget + ' Group</b>'
+                                    text: 'New Inspection Target Group <b>' + cswPrivate.selectedInspectionTarget + ' Group</b>'
                                 });
                             }
                         }
@@ -635,79 +626,79 @@
                             text: 'New Views'
                         })
                             .ul({
-                                ID: internal.makeStepId('confirmationViews')
+                                ID: cswPrivate.makeStepId('confirmationViews')
                             });
                         confirmViewsList.li({
-                            text: '<b>Scheduling, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
+                            text: '<b>Scheduling, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                         confirmViewsList.li({
-                            text: '<b>Groups, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
+                            text: '<b>Groups, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                         confirmViewsList.li({
-                            text: '<b>Inspections, ' + internal.selectedInspectionDesign.name + ': ' + internal.selectedInspectionTarget + '</b>'
+                            text: '<b>Inspections, ' + cswPrivate.selectedInspectionDesign.name + ': ' + cswPrivate.selectedInspectionTarget + '</b>'
                         });
                     } /*else {
-                        internal.toggleButton(internal.buttons.prev, true, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                     }*/
                 };
             } ());
 
-            internal.handleNext = function (newStepNo) {
-                internal.currentStepNo = newStepNo;
+            cswPrivate.handleNext = function (newStepNo) {
+                cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case Csw.enums.wizardSteps_InspectionDesign.step2.step:
-                        internal.makeStepTwo();
+                        cswPrivate.makeStepTwo();
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step3.step:
-                        internal.checkIsNodeTypeNameUnique(internal.selectedInspectionDesign.name);
-                        internal.makeStepThree(true); //we're moving forward
+                        cswPrivate.checkIsNodeTypeNameUnique(cswPrivate.selectedInspectionDesign.name);
+                        cswPrivate.makeStepThree(true); //we're moving forward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step4.step:
-                        internal.makeStepFour(true); //we're moving forward
+                        cswPrivate.makeStepFour(true); //we're moving forward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step5.step:
-                        internal.makeStepFive();
+                        cswPrivate.makeStepFive();
                         break;
                 } // switch(newstepno)
             }; // handleNext()
 
-            internal.handlePrevious = function (newStepNo) {
-                internal.currentStepNo = newStepNo;
+            cswPrivate.handlePrevious = function (newStepNo) {
+                cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case Csw.enums.wizardSteps_InspectionDesign.step1.step:
-                        internal.makeStepOne();
+                        cswPrivate.makeStepOne();
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step2.step:
-                        internal.makeStepTwo(); //we're moving backward
+                        cswPrivate.makeStepTwo(); //we're moving backward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step3.step:
-                        internal.makeStepThree(false); //we're moving backward
+                        cswPrivate.makeStepThree(false); //we're moving backward
                         break;
                     case Csw.enums.wizardSteps_InspectionDesign.step4.step:
-                        internal.makeStepFour(false);
+                        cswPrivate.makeStepFour(false);
                         break;
                 }
             };
 
-            internal.onConfirmFinish = function () {
+            cswPrivate.onConfirmFinish = function () {
                 var designGrid = '';
 
-                internal.toggleButton(internal.buttons.prev, false);
-                internal.toggleButton(internal.buttons.next, false);
-                internal.toggleButton(internal.buttons.cancel, false);
-                internal.toggleButton(internal.buttons.finish, false);                
+                cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
+                cswPrivate.toggleButton(cswPrivate.buttons.finish, false);                
 
-                if (false === Csw.isNullOrEmpty(internal.inspectionGrid)) {
-                    designGrid = JSON.stringify(internal.inspectionGrid.getAllGridRows());
+                if (false === Csw.isNullOrEmpty(cswPrivate.inspectionGrid)) {
+                    designGrid = JSON.stringify(cswPrivate.inspectionGrid.getAllGridRows());
                 }
 
                 var jsonData = {
                     DesignGrid: designGrid,
-                    InspectionDesignName: Csw.string(internal.selectedInspectionDesign.name),
-                    InspectionTargetName: Csw.string(internal.selectedInspectionTarget),
-                    IsNewInspection: internal.isNewInspectionDesign(),
-                    IsNewTarget: internal.isNewTarget(),
-                    Category: Csw.string(internal.categoryName)
+                    InspectionDesignName: Csw.string(cswPrivate.selectedInspectionDesign.name),
+                    InspectionTargetName: Csw.string(cswPrivate.selectedInspectionTarget),
+                    IsNewInspection: cswPrivate.isNewInspectionDesign(),
+                    IsNewTarget: cswPrivate.isNewTarget(),
+                    Category: Csw.string(cswPrivate.categoryName)
                 };
 
                 Csw.ajax.post({
@@ -735,38 +726,38 @@
                             values: values,
                             onOkClick: function (selectedView) {
                                 var viewId = selectedView.val();
-                                Csw.tryExec(internal.onFinish, viewId);
+                                Csw.tryExec(cswPrivate.onFinish, viewId);
                             }
                         });
 
                     },
                     error: function () {
-                        internal.toggleButton(internal.buttons.cancel, true);
-                        internal.toggleButton(internal.buttons.prev, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     }
                 });
             };
 
             (function () {
 
-                internal.wizard = Csw.layouts.wizard(external, {
-                    ID: Csw.makeId({ ID: internal.ID, suffix: 'wizard' }),
+                cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
+                    ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
                     Title: 'Create New Inspection',
                     StepCount: Csw.enums.wizardSteps_InspectionDesign.stepcount,
-                    Steps: internal.wizardSteps,
-                    StartingStep: internal.startingStep,
+                    Steps: cswPrivate.wizardSteps,
+                    StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
-                    onNext: internal.handleNext,
-                    onPrevious: internal.handlePrevious,
-                    onCancel: internal.onCancel,
-                    onFinish: internal.onConfirmFinish,
+                    onNext: cswPrivate.handleNext,
+                    onPrevious: cswPrivate.handlePrevious,
+                    onCancel: cswPrivate.onCancel,
+                    onFinish: cswPrivate.onConfirmFinish,
                     doNextOnInit: false
                 });
 
-                internal.makeStepOne();
+                cswPrivate.makeStepOne();
             } ());
 
-            return external;
+            return cswPublic;
         });
 } ());
 

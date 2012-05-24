@@ -731,7 +731,12 @@
     <Content Include="crystal\urlreporting\appletviewer.js" />
     <Content Include="ExternalLogin.aspx" />
     <Content Include="ExternalLogin.html" />
+    <Content Include="Images\icons\docs.gif" />
+    <Content Include="Images\icons\edit.gif" />
     <Content Include="Images\icons\flag.gif" />
+    <Content Include="Images\icons\lock.gif" />
+    <Content Include="Images\icons\spacer.png" />
+    <Content Include="Images\icons\trash.gif" />
     <Content Include="Images\icons\truncated.gif" />
     <Content Include="Images\quota\bad.gif" />
     <Content Include="Images\quota\good.gif" />

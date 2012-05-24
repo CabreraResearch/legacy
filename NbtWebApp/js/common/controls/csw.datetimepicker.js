@@ -11,7 +11,7 @@
             ///<param name="options" type="Object">Object defining paramaters for dateTimePicker construction.</param>
             ///<returns type="Csw.controls.dateTimePicker">Object representing a dateTimePicker</returns>
             'use strict';
-            var internal = {
+            var cswPrivate = {
                 ID: '',
                 Date: '',
                 Time: '',
@@ -23,81 +23,81 @@
                 onChange: null,
                 showTodayButton: false
             };
-            var external = {};
+            var cswPublic = {};
 
             (function () {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
-                internal.dateTimeDiv = cswParent.div({
-                    isControl: internal.isControl,
-                    ID: internal.id
+                cswPrivate.dateTimeDiv = cswParent.div({
+                    isControl: cswPrivate.isControl,
+                    ID: cswPrivate.id
                 });
-                external = Csw.dom({ }, internal.dateTimeDiv);
-                //$.extend(external, Csw.literals.div(internal));
+                cswPublic = Csw.dom({ }, cswPrivate.dateTimeDiv);
+                //$.extend(cswPublic, Csw.literals.div(cswPrivate));
 
-                if (internal.ReadOnly) {
-                    switch (internal.DisplayMode) {
+                if (cswPrivate.ReadOnly) {
+                    switch (cswPrivate.DisplayMode) {
                         case 'Date':
-                            internal.dateTimeDiv.div({ ID: internal.ID + '_date', value: internal.Date });
+                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_date', value: cswPrivate.Date });
                             break;
                         case 'Time':
-                            internal.dateTimeDiv.div({ ID: internal.ID + '_time', value: internal.Time });
+                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Time });
                             break;
                         case 'DateTime':
-                            internal.dateTimeDiv.div({ ID: internal.ID + '_time', value: internal.Date + ' ' + internal.Time });
+                            cswPrivate.dateTimeDiv.div({ ID: cswPrivate.ID + '_time', value: cswPrivate.Date + ' ' + cswPrivate.Time });
                             break;
                     }
                 } else {
-                    if (internal.DisplayMode === 'Date' || internal.DisplayMode === 'DateTime') {
-                        internal.dateBox = internal.dateTimeDiv.input({
-                            ID: internal.ID + '_date',
+                    if (cswPrivate.DisplayMode === 'Date' || cswPrivate.DisplayMode === 'DateTime') {
+                        cswPrivate.dateBox = cswPrivate.dateTimeDiv.input({
+                            ID: cswPrivate.ID + '_date',
                             type: Csw.enums.inputTypes.text,
-                            value: internal.Date,
-                            onChange: internal.onChange,
+                            value: cswPrivate.Date,
+                            onChange: cswPrivate.onChange,
                             width: '80px',
                             cssclass: 'textinput'
                         });
-                        if(internal.Date.substr(0, 'today'.length) !== 'today')
+                        if(cswPrivate.Date.substr(0, 'today'.length) !== 'today')
                         {
-                            internal.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(internal.DateFormat) });
+                            cswPrivate.dateBox.$.datepicker({ 'dateFormat': Csw.serverDateFormatToJQuery(cswPrivate.DateFormat) });
                         }
-                        if (internal.Required) {
-                            internal.dateBox.addClass('required');
+                        if (cswPrivate.Required) {
+                            cswPrivate.dateBox.addClass('required');
                         }
                     }
 
-                    if (internal.DisplayMode === 'Time' || internal.DisplayMode === 'DateTime') {
-                        internal.timeBox = internal.dateTimeDiv.input({
-                            ID: internal.ID + '_time',
+                    if (cswPrivate.DisplayMode === 'Time' || cswPrivate.DisplayMode === 'DateTime') {
+                        cswPrivate.timeBox = cswPrivate.dateTimeDiv.input({
+                            ID: cswPrivate.ID + '_time',
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
-                            onChange: internal.onChange,
-                            value: internal.Time,
+                            onChange: cswPrivate.onChange,
+                            value: cswPrivate.Time,
                             width: '80px'
                         });
-                        internal.dateTimeDiv.button({
-                            ID: internal.ID + '_now',
+                        cswPrivate.dateTimeDiv.button({
+                            ID: cswPrivate.ID + '_now',
                             disableOnClick: false,
                             onClick: function () {
-                                internal.timeBox.val(Csw.getTimeString(new Date(), internal.TimeFormat));
+                                cswPrivate.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
                             },
                             enabledText: 'Now'
                         });
 
-                        if (internal.Required) {
-                            internal.timeBox.addClass('required');
+                        if (cswPrivate.Required) {
+                            cswPrivate.timeBox.addClass('required');
                         }
                     }
 
-                    if(Csw.bool(internal.showTodayButton)) {
-                        internal.dateTimeDiv.button({
-                            ID: internal.ID + '_today',
+                    if(Csw.bool(cswPrivate.showTodayButton)) {
+                        cswPrivate.dateTimeDiv.button({
+                            ID: cswPrivate.ID + '_today',
                             disableOnClick: false,
                             onClick: function () {
-                                internal.dateBox.$.datepicker('destroy');
-                                internal.dateBox.val('today');  // this doesn't trigger onchange
-                                Csw.tryExec(internal.onChange);
+                                cswPrivate.dateBox.$.datepicker('destroy');
+                                cswPrivate.dateBox.val('today');  // this doesn't trigger onchange
+                                Csw.tryExec(cswPrivate.onChange);
                             },
                             enabledText: 'Today'
                         });
@@ -105,18 +105,18 @@
                 } // if-else(o.ReadOnly)
             } ());
 
-            external.val = function (readOnly) {
+            cswPublic.val = function (readOnly) {
                 var ret = {};
-                if (internal.dateBox && internal.dateBox.length() > 0) {
-                    ret.date = (false === Csw.bool(readOnly)) ? internal.dateBox.val() : internal.dateBox.text();
+                if (cswPrivate.dateBox && cswPrivate.dateBox.length() > 0) {
+                    ret.date = (false === Csw.bool(readOnly)) ? cswPrivate.dateBox.val() : cswPrivate.dateBox.text();
                 }
-                if (internal.timeBox && internal.timeBox.length() > 0) {
-                    ret.time = (false === Csw.bool(readOnly)) ? internal.timeBox.val() : internal.timeBox.text();
+                if (cswPrivate.timeBox && cswPrivate.timeBox.length() > 0) {
+                    ret.time = (false === Csw.bool(readOnly)) ? cswPrivate.timeBox.val() : cswPrivate.timeBox.text();
                 }
                 return ret;
             };
 
-            return external;
+            return cswPublic;
         });
 
 } ());
