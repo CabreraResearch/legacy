@@ -31,6 +31,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassLocation
+        /// </summary>
+        public static explicit operator CswNbtObjClassLocation( CswNbtNode Node )
+        {
+            CswNbtObjClassLocation ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ) )
+            {
+                ret = (CswNbtObjClassLocation) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {

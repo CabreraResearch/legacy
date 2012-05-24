@@ -32,6 +32,19 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ExpirationIntervalPropName { get { return "Expiration Interval"; } }
 
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassMaterial
+        /// </summary>
+        public static explicit operator CswNbtObjClassMaterial( CswNbtNode Node )
+        {
+            CswNbtObjClassMaterial ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ) )
+            {
+                ret = (CswNbtObjClassMaterial) Node.ObjClass;
+            }
+            return ret;
+        }
+
 
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )

@@ -209,6 +209,18 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassInspectionDesign
+        /// </summary>
+        public static explicit operator CswNbtObjClassInspectionDesign( CswNbtNode Node )
+        {
+            CswNbtObjClassInspectionDesign ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ) )
+            {
+                ret = (CswNbtObjClassInspectionDesign) Node.ObjClass;
+            }
+            return ret;
+        }
 
 
         #region Inherited Events
