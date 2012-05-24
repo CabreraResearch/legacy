@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.MetaData
             public static readonly SubFieldName Sequence = new SubFieldName( "Sequence" );
             public static readonly SubFieldName StartDateTime = new SubFieldName( "StartDateTime" );
             public static readonly SubFieldName Text = new SubFieldName( "Text" );
-            public static readonly SubFieldName Units = new SubFieldName( "Units" );
+            public static readonly SubFieldName Units = new SubFieldName( "Units" );//case 7608 - now that units have been replaced with name and id, do we need this?
             public static readonly SubFieldName Value = new SubFieldName( "Value" );
             public static readonly SubFieldName ViewID = new SubFieldName( "ViewID" );
             public static readonly SubFieldName ChangedDate = new SubFieldName( "ChangedDate" );

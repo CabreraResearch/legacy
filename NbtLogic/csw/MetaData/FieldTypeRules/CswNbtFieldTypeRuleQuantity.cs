@@ -10,6 +10,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
+        public CswNbtSubField QuantitySubField;
+        public CswNbtSubField UnitNameSubField;
+        public CswNbtSubField UnitIdSubField;
 
         public CswNbtFieldTypeRuleQuantity( CswNbtFieldResources CswNbtFieldResources )
         {
@@ -27,24 +30,24 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             QuantitySubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
             SubFields.add( QuantitySubField, true );
 
-            UnitsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.Units, true );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
-            SubFields.add( UnitsSubField );
+            UnitIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID, true );
+            UnitIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            UnitIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            UnitIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            UnitIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            SubFields.add( UnitIdSubField );
+
+            UnitNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
+            UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
+            UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+            UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            SubFields.add( UnitNameSubField, true );
 
         }//ctor
-
-        public CswNbtSubField QuantitySubField;
-        public CswNbtSubField UnitsSubField;
 
         public CswNbtSubFieldColl SubFields
         {
@@ -59,9 +62,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
             // BZ 7941
-            bool UseNumericHack = true;
-            if( CswNbtViewPropertyFilterIn.SubfieldName == CswNbtSubField.SubFieldName.Units )
-                UseNumericHack = false;
+            bool UseNumericHack = CswNbtViewPropertyFilterIn.SubfieldName == CswNbtSubField.SubFieldName.Value ? true : false;
+
             return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, UseNumericHack ) );
         }//makeWhereClause()
 
