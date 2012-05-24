@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Actions
                             CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                             NewNode.copyPropertyValues( CswNbtNodeGenerator );
 
-                            ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
+                            ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( NewNode );
                             NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
                             NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true; //bz # 5349
                             NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
@@ -218,7 +218,7 @@ namespace ChemSW.Nbt.Actions
                     } //if ( null == ExistingNode )
                     else
                     {
-                        ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
+                        ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( ExistingNode );
                         if( !MarkFuture )
                         {
                             if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )

@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         TargetNodeTree.goToNthChild( idx );
                         CswNbtNode CurrentTargetNode = TargetNodeTree.getNodeForCurrentPosition();
-                        ICswNbtPropertySetGeneratorTarget CurrentTargetNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( CurrentTargetNode );
+                        ICswNbtPropertySetGeneratorTarget CurrentTargetNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( CurrentTargetNode );
 
                         DateTime CurrentDate = CurrentTargetNodeAsGeneratorTarget.GeneratedDate.DateTimeValue;
                         if( CurrentDate.Date > ReturnVal.Date )
