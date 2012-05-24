@@ -13,6 +13,11 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropComposite : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropComposite( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsComposite;
+        }
+
         public CswNbtNodePropComposite( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

@@ -13,6 +13,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropLocation : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropLocation( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsLocation;
+        }
+
         public CswNbtNodePropLocation( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

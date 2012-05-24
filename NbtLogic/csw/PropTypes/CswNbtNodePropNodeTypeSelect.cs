@@ -18,6 +18,11 @@ namespace ChemSW.Nbt.PropTypes
     {
         public static char delimiter = ',';
 
+        public static implicit operator CswNbtNodePropNodeTypeSelect( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsNodeTypeSelect;
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>
