@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterialSynonym
         /// </summary>
-        public static explicit operator CswNbtObjClassMaterialSynonym( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassMaterialSynonym( CswNbtNode Node )
         {
             CswNbtObjClassMaterialSynonym ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ) )

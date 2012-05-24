@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassDocument
         /// </summary>
-        public static explicit operator CswNbtObjClassDocument( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassDocument( CswNbtNode Node )
         {
             CswNbtObjClassDocument ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass ) )

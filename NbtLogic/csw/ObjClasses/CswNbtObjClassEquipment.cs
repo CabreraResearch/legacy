@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassEquipment
         /// </summary>
-        public static explicit operator CswNbtObjClassEquipment( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassEquipment( CswNbtNode Node )
         {
             CswNbtObjClassEquipment ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass ) )

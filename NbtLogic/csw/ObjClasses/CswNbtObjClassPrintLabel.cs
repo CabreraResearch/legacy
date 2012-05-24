@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassPrintLabel
         /// </summary>
-        public static explicit operator CswNbtObjClassPrintLabel( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassPrintLabel( CswNbtNode Node )
         {
             CswNbtObjClassPrintLabel ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass ) )

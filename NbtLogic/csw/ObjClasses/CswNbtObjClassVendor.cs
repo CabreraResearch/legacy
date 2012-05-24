@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassVendor
         /// </summary>
-        public static explicit operator CswNbtObjClassVendor( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassVendor( CswNbtNode Node )
         {
             CswNbtObjClassVendor ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.VendorClass ) )

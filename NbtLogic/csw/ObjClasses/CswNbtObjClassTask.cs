@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassTask
         /// </summary>
-        public static explicit operator CswNbtObjClassTask( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassTask( CswNbtNode Node )
         {
             CswNbtObjClassTask ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.TaskClass ) )

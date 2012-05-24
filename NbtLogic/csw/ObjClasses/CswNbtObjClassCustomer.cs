@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassCustomer
         /// </summary>
-        public static explicit operator CswNbtObjClassCustomer( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassCustomer( CswNbtNode Node )
         {
             CswNbtObjClassCustomer ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass ) )

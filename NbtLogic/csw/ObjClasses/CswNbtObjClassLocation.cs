@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassLocation
         /// </summary>
-        public static explicit operator CswNbtObjClassLocation( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassLocation( CswNbtNode Node )
         {
             CswNbtObjClassLocation ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass ) )

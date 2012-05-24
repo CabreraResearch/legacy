@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassInspectionTargetGroup
         /// </summary>
-        public static explicit operator CswNbtObjClassInspectionTargetGroup( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassInspectionTargetGroup( CswNbtNode Node )
         {
             CswNbtObjClassInspectionTargetGroup ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass ) )

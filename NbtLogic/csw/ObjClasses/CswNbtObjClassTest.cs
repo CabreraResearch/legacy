@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassTest
         /// </summary>
-        public static explicit operator CswNbtObjClassTest( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassTest( CswNbtNode Node )
         {
             CswNbtObjClassTest ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.TestClass ) )

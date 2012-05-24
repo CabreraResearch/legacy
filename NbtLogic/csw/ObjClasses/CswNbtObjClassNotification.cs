@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassNotification
         /// </summary>
-        public static explicit operator CswNbtObjClassNotification( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassNotification( CswNbtNode Node )
         {
             CswNbtObjClassNotification ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass ) )

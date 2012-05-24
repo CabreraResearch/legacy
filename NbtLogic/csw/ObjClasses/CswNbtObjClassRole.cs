@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassRole
         /// </summary>
-        public static explicit operator CswNbtObjClassRole( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassRole( CswNbtNode Node )
         {
             CswNbtObjClassRole ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ) )

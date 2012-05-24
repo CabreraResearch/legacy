@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassAliquot
         /// </summary>
-        public static explicit operator CswNbtObjClassAliquot( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassAliquot( CswNbtNode Node )
         {
             CswNbtObjClassAliquot ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.AliquotClass ) )

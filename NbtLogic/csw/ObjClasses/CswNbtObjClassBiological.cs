@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassBiological
         /// </summary>
-        public static explicit operator CswNbtObjClassBiological( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassBiological( CswNbtNode Node )
         {
             CswNbtObjClassBiological ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass ) )

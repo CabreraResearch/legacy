@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassInspectionRoute
         /// </summary>
-        public static explicit operator CswNbtObjClassInspectionRoute( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassInspectionRoute( CswNbtNode Node )
         {
             CswNbtObjClassInspectionRoute ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionRouteClass ) )

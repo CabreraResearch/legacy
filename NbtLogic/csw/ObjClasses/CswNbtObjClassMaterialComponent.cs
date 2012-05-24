@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterialComponent
         /// </summary>
-        public static explicit operator CswNbtObjClassMaterialComponent( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassMaterialComponent( CswNbtNode Node )
         {
             CswNbtObjClassMaterialComponent ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ) )

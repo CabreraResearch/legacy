@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassUnitOfMeasure
         /// </summary>
-        public static explicit operator CswNbtObjClassUnitOfMeasure( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassUnitOfMeasure( CswNbtNode Node )
         {
             CswNbtObjClassUnitOfMeasure ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass ) )

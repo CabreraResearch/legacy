@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassGeneric
         /// </summary>
-        public static explicit operator CswNbtObjClassGeneric( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassGeneric( CswNbtNode Node )
         {
             CswNbtObjClassGeneric ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ) )

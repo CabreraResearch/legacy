@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassParameter
         /// </summary>
-        public static explicit operator CswNbtObjClassParameter( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassParameter( CswNbtNode Node )
         {
             CswNbtObjClassParameter ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ParameterClass ) )

@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassProblem
         /// </summary>
-        public static explicit operator CswNbtObjClassProblem( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassProblem( CswNbtNode Node )
         {
             CswNbtObjClassProblem ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ProblemClass ) )

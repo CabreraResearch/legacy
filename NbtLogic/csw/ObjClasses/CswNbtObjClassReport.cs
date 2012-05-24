@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassReport
         /// </summary>
-        public static explicit operator CswNbtObjClassReport( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassReport( CswNbtNode Node )
         {
             CswNbtObjClassReport ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass ) )

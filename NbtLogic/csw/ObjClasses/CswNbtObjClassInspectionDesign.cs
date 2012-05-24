@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassInspectionDesign
         /// </summary>
-        public static explicit operator CswNbtObjClassInspectionDesign( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassInspectionDesign( CswNbtNode Node )
         {
             CswNbtObjClassInspectionDesign ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ) )

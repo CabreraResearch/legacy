@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassBatchOp
         /// </summary>
-        public static explicit operator CswNbtObjClassBatchOp( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassBatchOp( CswNbtNode Node )
         {
             CswNbtObjClassBatchOp ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass ) )

@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterialSubclass
         /// </summary>
-        public static explicit operator CswNbtObjClassMaterialSubclass( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassMaterialSubclass( CswNbtNode Node )
         {
             CswNbtObjClassMaterialSubclass ret = null;
             if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSubclassClass ) )
