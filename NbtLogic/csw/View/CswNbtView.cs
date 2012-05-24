@@ -361,6 +361,40 @@ namespace ChemSW.Nbt
             return NewFilter;
         }
 
+        private void _removeViewPropertyRecursive( ICswNbtMetaDataProp MetaDataProp, IEnumerable<CswNbtViewRelationship> Relationships )
+        {
+            Collection<CswNbtViewProperty> DoomedProps = new Collection<CswNbtViewProperty>();
+            foreach( CswNbtViewRelationship ChildRelationship in Relationships )
+            {
+                foreach( CswNbtViewProperty Property in ChildRelationship.Properties )
+                {
+                    if( null != Property.MetaDataProp && Property.MetaDataProp.FirstPropVersionId == MetaDataProp.FirstPropVersionId )
+                    {
+                        DoomedProps.Add( Property );
+                    }
+                }
+                if( ChildRelationship.ChildRelationships.Count > 0 )
+                {
+                    _removeViewPropertyRecursive( MetaDataProp, ChildRelationship.ChildRelationships );
+                }
+                foreach( CswNbtViewProperty DoomedProp in DoomedProps )
+                {
+                    ChildRelationship.removeProperty( DoomedProp );
+                }
+            }
+        }
+
+        /// <summary>
+        /// Removes a <see cref="CswNbtViewProperty"/> by matching MetaDataProp from every relationship of this view.
+        /// </summary>
+        public void removeViewProperty( ICswNbtMetaDataProp MetaDataProp )
+        {
+            if( null != MetaDataProp )
+            {
+                _removeViewPropertyRecursive( MetaDataProp, Root.ChildRelationships );
+            }
+        }
+
         #endregion Child constructors
 
 

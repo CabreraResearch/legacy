@@ -522,7 +522,7 @@ namespace ChemSW.Nbt.Logic
         public readonly ArrayList Filters = new ArrayList();
         public readonly bool SortBy = false;
         public readonly NbtViewPropertySortMethod SortMethod = NbtViewPropertySortMethod.Ascending;
-        public readonly Int32 Width = Int32.MinValue;
+        public readonly Int32 Width = 40;
         public readonly string PropName = string.Empty;
         public CswCommaDelimitedString AssociatedPropIds = new CswCommaDelimitedString();
         private string _PropNameUnique = string.Empty;

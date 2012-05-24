@@ -116,7 +116,7 @@
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
                     } //if-else(useSearch)
                     if (allowAdd) {//case 25721 
-                        var makeAddImage = function (nodeTypeCount) {
+                        var makeAddImage = function (nodeTypeCount, lastNodeTypeId) {
                             addImage = table.cell(1, cellCol)
                             .div()
                             .imageButton({
@@ -124,7 +124,8 @@
                                 AlternateText: "Add New " + o.propData.name,
                                 onClick: function () {
                                     if (nodeTypeCount === 1 && false === Csw.isNullOrEmpty(selectedNodeType)) {
-                                        nodeTypeId = selectedNodeType.val();
+                                        //case 26376 - get nodetypeoption
+                                        nodeTypeId = lastNodeTypeId;
                                     }
                                     if (false === Csw.isNullOrEmpty(nodeTypeId)) {
                                         $.CswDialog('AddNodeDialog', {
@@ -156,8 +157,8 @@
                                             });
                                         }
                                     },
-                                    onSuccess: function (data, nodeTypeCount) {
-                                        makeAddImage(Csw.number(nodeTypeCount));
+                                    onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
+                                        makeAddImage(Csw.number(nodeTypeCount), Csw.number(lastNodeTypeId));
                                         selectedNodeType.hide();
                                     },
                                     blankOptionText: blankText,

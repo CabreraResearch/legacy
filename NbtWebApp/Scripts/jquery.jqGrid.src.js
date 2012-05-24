@@ -3029,10 +3029,10 @@ $.jgrid.extend({
 						if (cw < 0) { return; }
 						this.width =cw;
 						initwidth += cw;
-						$t.grid.headers[i].width=cw;
-						$t.grid.headers[i].el.style.width=cw+"px";
+						$t.grid.headers[i].width=(cw-6);
+						$t.grid.headers[i].el.style.width=(cw-6)+"px";
 						if($t.p.footerrow) { $t.grid.footers[i].style.width = cw+"px"; }
-						if(cle) { $t.grid.cols[i].style.width = cw+"px"; }
+						if(cle) { $t.grid.cols[i].style.width = (cw-6)+"px"; }
 						lvc = i;
 					}
 				});
@@ -3056,9 +3056,9 @@ $.jgrid.extend({
 				} else {
 					cw= $t.p.colModel[lvc].width;
 				}
-				$t.grid.headers[lvc].width = cw;
-				$t.grid.headers[lvc].el.style.width=cw+"px";
-				if(cle) { $t.grid.cols[lvc].style.width = cw+"px"; }
+				$t.grid.headers[lvc].width = (cw-6);
+				$t.grid.headers[lvc].el.style.width=(cw-6)+"px";
+				if (cle) { $t.grid.cols[lvc].style.width = (cw - 6) + "px"; }
 				if($t.p.footerrow) {
 					$t.grid.footers[lvc].style.width = cw+"px";
 				}

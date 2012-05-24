@@ -99,17 +99,13 @@
                         });
                         break;
                 case 'DeleteDemoNodes':
-                    Csw.clientSession.isAdministrator({
-                        'Yes': function() {
-                            $a.click(function() {
-                                $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database. Are you sure?', 'Delete All Demo Data', function() {
-                                    Csw.ajax.post({
-                                        url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
-                                        success: Csw.goHome
-                                    });
-                                }, 'Cancel');
+                    $a.click(function() {
+                        $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database. Are you sure?', 'Delete All Demo Data', function() {
+                            Csw.ajax.post({
+                                url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
+                                success: Csw.goHome
                             });
-                        }
+                        }, 'Cancel');
                     });
                     break;
                     case 'editview':

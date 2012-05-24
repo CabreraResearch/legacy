@@ -1,6 +1,6 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
-
+'use strict';
 (function () {
 
     Csw.composites.factory = Csw.composites.factory ||
@@ -11,12 +11,12 @@
                 /// <returns type="Csw.composites">The options object with DOM methods attached.</returns> 
                 'use strict';
 
-                var internal = {};
+                var cswPrivate = {};
                 if (Csw.isNullOrEmpty(cswParent)) {
                     throw new Error('Cannot create a Csw component without a Csw control');
                 }
 
-                internal.controlPreProcessing = function (opts, controlName) {
+                cswPrivate.controlPreProcessing = function (opts, controlName) {
                     opts = opts || {};
                     return opts;
                 };
@@ -25,7 +25,7 @@
                     /// <summary> Creates a Csw.grid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the grid.</param>
                     /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
-                    opts = internal.controlPreProcessing(opts, 'grid');
+                    opts = cswPrivate.controlPreProcessing(opts, 'grid');
                     return Csw.composites.grid(cswParent, opts);
                 };
 
@@ -33,7 +33,7 @@
                     /// <summary> Creates a Csw.layoutTable on this element</summary>
                     /// <param name="opts" type="Object">Options to define the table.</param>
                     /// <returns type="Csw.composites.layoutTable">A Csw.composites.layoutTable</returns> 
-                    opts = internal.controlPreProcessing(opts, 'layoutTable');
+                    opts = cswPrivate.controlPreProcessing(opts, 'layoutTable');
                     return Csw.composites.layoutTable(cswParent, opts);
                 };
                 
@@ -41,7 +41,7 @@
 //                    /// <summary> Creates a Csw.table on this element</summary>
 //                    /// <param name="opts" type="Object">Options to define the table.</param>
 //                    /// <returns type="Csw.composites.table">A Csw.composites.table</returns> 
-//                    opts = internal.controlPreProcessing(opts, 'table');
+//                    opts = cswPrivate.controlPreProcessing(opts, 'table');
 //                    return Csw.composites.table(cswParent, opts);
 //                };
 
@@ -50,7 +50,7 @@
                     /// <summary> Creates a Csw.thinGrid on this element</summary>
                     /// <param name="opts" type="Object">Options to define the thinGrid.</param>
                     /// <returns type="Csw.composites.thinGrid">A Csw.composites.thinGrid</returns>
-                    opts = internal.controlPreProcessing(opts, 'thinGrid');
+                    opts = cswPrivate.controlPreProcessing(opts, 'thinGrid');
                     return Csw.composites.thinGrid(cswParent, opts);
                 };
                 

@@ -7,7 +7,7 @@
         Csw.nbt.register('viewPropFilter', function (options) {
             'use strict';
 
-            var internal = {
+            var cswPrivate = {
                 ID: '',
                 parent: '',      // this must be a table
 
@@ -51,137 +51,137 @@
                 selectedSubFieldJson: {}
             };
 
-            var external = {};
+            var cswPublic = {};
 
             
-            internal.makePropFilterId = function(id) {
+            cswPrivate.makePropFilterId = function(id) {
                 var delimiter = '_';
                 var idParams = {
                     ID: id,
-                    prefix: internal.ID,
+                    prefix: cswPrivate.ID,
                     suffix: ''
                 };
 
-                if (false == Csw.isNullOrEmpty(internal.filtarbitraryid)) {
+                if (false == Csw.isNullOrEmpty(cswPrivate.filtarbitraryid)) {
                     idParams.ID = id + delimiter + 'filtarbitraryid';
-                    idParams.suffix = internal.filtarbitraryid;
+                    idParams.suffix = cswPrivate.filtarbitraryid;
                 }
-                else if (false == Csw.isNullOrEmpty(internal.viewbuilderpropid)) {
+                else if (false == Csw.isNullOrEmpty(cswPrivate.viewbuilderpropid)) {
                     idParams.ID = id + delimiter + 'viewbuilderpropid';
-                    idParams.suffix = internal.viewbuilderpropid;
+                    idParams.suffix = cswPrivate.viewbuilderpropid;
                 }
-                else if (false == Csw.isNullOrEmpty(internal.proparbitraryid)) {
+                else if (false == Csw.isNullOrEmpty(cswPrivate.proparbitraryid)) {
                     idParams.ID = id + delimiter + 'proparbitraryid';
-                    idParams.suffix = internal.proparbitraryid;
+                    idParams.suffix = cswPrivate.proparbitraryid;
                 }
 
                 return Csw.makeId(idParams);
             }; // makePropFilterId()
 
 
-            internal.makePropNameControl = function() {
-                internal.propNameCell.empty();
-                internal.propNameControl = internal.propNameCell.span({ 
-                    ID: internal.makePropFilterId('propname'),
-                    text: internal.propname,
+            cswPrivate.makePropNameControl = function() {
+                cswPrivate.propNameCell.empty();
+                cswPrivate.propNameControl = cswPrivate.propNameCell.span({ 
+                    ID: cswPrivate.makePropFilterId('propname'),
+                    text: cswPrivate.propname,
                     nobr: true
                 });
             }; // makePropNameControl()
 
 
-            internal.makeSubfieldControl = function () {
-                var subfields = (Csw.contains(internal.propsData, 'subfields')) ? internal.propsData.subfields : [];
+            cswPrivate.makeSubfieldControl = function () {
+                var subfields = (Csw.contains(cswPrivate.propsData, 'subfields')) ? cswPrivate.propsData.subfields : [];
                 var subFieldOptions = [];
-                var subfieldid = internal.makePropFilterId('filter_subfield');
+                var subfieldid = cswPrivate.makePropFilterId('filter_subfield');
 
-                internal.subFieldCell.empty();
-                if(internal.readOnly)
+                cswPrivate.subFieldCell.empty();
+                if(cswPrivate.readOnly)
                 {
-                    internal.subfieldControl = internal.subFieldCell.span({ 
+                    cswPrivate.subfieldControl = cswPrivate.subFieldCell.span({ 
                         ID: subfieldid,
-                        text: internal.selectedSubFieldName
+                        text: cswPrivate.selectedSubFieldName
                     });
                 } else {
                     Csw.each(subfields, function(thisSubField, subfieldname) {
                         subFieldOptions.push({ value: thisSubField.column, display: subfieldname });
-                        if( subfieldname === internal.selectedSubFieldName || thisSubField.column === internal.selectedSubFieldName) {
-                            internal.selectedSubFieldJson = thisSubField;
+                        if( subfieldname === cswPrivate.selectedSubFieldName || thisSubField.column === cswPrivate.selectedSubFieldName) {
+                            cswPrivate.selectedSubFieldJson = thisSubField;
                         }
                     });
 
-                    internal.subfieldControl = internal.subFieldCell.select({ 
+                    cswPrivate.subfieldControl = cswPrivate.subFieldCell.select({ 
                         ID: subfieldid,
                         values: subFieldOptions,
-                        selected: internal.selectedSubFieldName,
+                        selected: cswPrivate.selectedSubFieldName,
                         onChange: function () {
-                            internal.selectedSubFieldName = internal.subfieldControl.val();
-                            internal.renderPropFiltRow();
+                            cswPrivate.selectedSubFieldName = cswPrivate.subfieldControl.val();
+                            cswPrivate.renderPropFiltRow();
                         }
                     });
-                } // if-else(internal.readOnly)
+                } // if-else(cswPrivate.readOnly)
             }; // makeSubfieldPicklist()
 
 
-            internal.makeFilterModeControl = function() {
+            cswPrivate.makeFilterModeControl = function() {
                 var filterModeOptions = [];
-                var filtermodeid = internal.makePropFilterId('filter_mode');
+                var filtermodeid = cswPrivate.makePropFilterId('filter_mode');
 
-                internal.filterModeCell.empty();
-                if(internal.readOnly)
+                cswPrivate.filterModeCell.empty();
+                if(cswPrivate.readOnly)
                 {
-                    internal.filterModeControl = internal.filterModeCell.span({ 
+                    cswPrivate.filterModeControl = cswPrivate.filterModeCell.span({ 
                         ID: filtermodeid,
-                        text: internal.selectedFilterMode
+                        text: cswPrivate.selectedFilterMode
                     });
                 } else {
-                    if (Csw.contains(internal.selectedSubFieldJson, 'filtermodes')) {
-                        Csw.each(internal.selectedSubFieldJson.filtermodes, function(thisMode, mode) {
+                    if (Csw.contains(cswPrivate.selectedSubFieldJson, 'filtermodes')) {
+                        Csw.each(cswPrivate.selectedSubFieldJson.filtermodes, function(thisMode, mode) {
                             filterModeOptions.push({ value: mode, display: thisMode });
                         });
                     }
 
-                    internal.filterModeControl = internal.filterModeCell.select({ 
+                    cswPrivate.filterModeControl = cswPrivate.filterModeCell.select({ 
                         ID: filtermodeid,
                         values: filterModeOptions,
-                        selected: internal.selectedFilterMode,
+                        selected: cswPrivate.selectedFilterMode,
                         onChange: function () {
-                            internal.selectedFilterMode = internal.filterModeControl.val();
-                            internal.renderPropFiltRow();
+                            cswPrivate.selectedFilterMode = cswPrivate.filterModeControl.val();
+                            cswPrivate.renderPropFiltRow();
                         }
                     });
-                } // if-else(internal.readOnly)
+                } // if-else(cswPrivate.readOnly)
             }; // makeFilterModePicklist()
 
 
-            internal.makeFilterValueControl = function() {
-                var fieldtype = internal.propsData.fieldtype;
-                var valueOptionDefs = (Csw.contains(internal.propsData, 'filtersoptions')) ? internal.propsData.filtersoptions.options : {};
+            cswPrivate.makeFilterValueControl = function() {
+                var fieldtype = cswPrivate.propsData.fieldtype;
+                var valueOptionDefs = (Csw.contains(cswPrivate.propsData, 'filtersoptions')) ? cswPrivate.propsData.filtersoptions.options : {};
                 var valueOptions = [];
-                var valueId = internal.makePropFilterId('propfilter_input');
-                var placeholder = internal.propname;
+                var valueId = cswPrivate.makePropFilterId('propfilter_input');
+                var placeholder = cswPrivate.propname;
 
-                internal.valueCell.empty();
-                if(internal.readOnly)
+                cswPrivate.valueCell.empty();
+                if(cswPrivate.readOnly)
                 {
-                    internal.valueControl = internal.valueCell.span({ 
+                    cswPrivate.valueControl = cswPrivate.valueCell.span({ 
                         ID: valueId,
-                        text: internal.selectedValue
+                        text: cswPrivate.selectedValue
                     });
                 } else {
                     // DATETIME
                     if (fieldtype === Csw.enums.subFieldsMap.DateTime.name) {
-                        internal.valueControl = internal.valueCell.dateTimePicker({
+                        cswPrivate.valueControl = cswPrivate.valueCell.dateTimePicker({
                             ID: valueId,
-                            Date: internal.selectedValue,
+                            Date: cswPrivate.selectedValue,
                             //Time: '',
-//                            DateFormat: Csw.serverDateFormatToJQuery(internal.propsData.dateformat),
-//                            TimeFormat: Csw.serverTimeFormatToJQuery(internal.propsData.timeformat),
+//                            DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propsData.dateformat),
+//                            TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propsData.timeformat),
                             DisplayMode: 'Date',
                             ReadOnly: false,
                             Required: false,
                             showTodayButton: true,
                             onChange: function() {
-                                internal.selectedValue = Csw.string(internal.valueControl.val().date);
+                                cswPrivate.selectedValue = Csw.string(cswPrivate.valueControl.val().date);
                             }
                         });
                     // LIST
@@ -193,94 +193,95 @@
                                 display: Csw.string(optionName).trim() 
                             });
                         });
-                        internal.valueControl = internal.valueCell.select({ 
+                        cswPrivate.valueControl = cswPrivate.valueCell.select({ 
                             ID: valueId,
                             values: valueOptions,
-                            selected: internal.selectedValue,
+                            selected: cswPrivate.selectedValue,
                             onChange: function() {
-                                internal.selectedValue = internal.valueControl.val();
+                                cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
                         });
                     // LOGICAL
                     } else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
-                        internal.valueControl = internal.valueCell.triStateCheckBox({ 
+                        cswPrivate.valueControl = cswPrivate.valueCell.triStateCheckBox({ 
                             ID: valueId,
-                            Checked: internal.selectedValue,   // tristate, not bool
+                            Checked: cswPrivate.selectedValue,   // tristate, not bool
                             onChange: function() {
-                                internal.selectedValue = internal.valueControl.val();
+                                cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
                         });
                     // DEFAULT (textbox)
                     } else {
-                        if (Csw.isNullOrEmpty(internal.selectedValue)) {
-                            if (placeholder !== internal.subfieldControl.val()) {
-                                placeholder += "'s " + internal.subfieldControl.val();
+                        if (Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
+                            if (placeholder !== cswPrivate.subfieldControl.selectedText()) {
+                                placeholder += "'s " + cswPrivate.subfieldControl.selectedText();
                             }
                         }
-                        internal.valueControl = internal.valueCell.input({
+                        cswPrivate.valueControl = cswPrivate.valueCell.input({
                             ID: valueId,
                             type: Csw.enums.inputTypes.text,
-                            value: internal.selectedValue,
+                            value: cswPrivate.selectedValue,
                             placeholder: placeholder,
-                            width: "100px",
-                            autofocus: internal.autoFocusInput,
+                            width: "150px",
+                            autofocus: cswPrivate.autoFocusInput,
                             autocomplete: 'on',
                             onChange: function() {
-                                internal.selectedValue = internal.valueControl.val();
+                                cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
                         });
-                        if(false === Csw.isNullOrEmpty(internal.$clickOnEnter))
+                        if(false === Csw.isNullOrEmpty(cswPrivate.$clickOnEnter))
                         {
-                            internal.valueControl.$.clickOnEnter(internal.$clickOnEnter);
+                            cswPrivate.valueControl.$.clickOnEnter(cswPrivate.$clickOnEnter);
                         }
                     }
 
-                    if (internal.filterModeControl.val() === 'Null' || internal.filterModeControl.val() === 'NotNull') {
-                        internal.valueControl.hide();
+                    if (cswPrivate.filterModeControl.val() === 'Null' || cswPrivate.filterModeControl.val() === 'NotNull') {
+                        cswPrivate.valueControl.hide();
+                        cswPrivate.selectedValue = '';
                     }
-                } // if(internal.readOnly)
+                } // if(cswPrivate.readOnly)
             }; // makeFilterValueControl()
 
 
-            internal.renderPropFiltRow = function() {
-                internal.makePropNameControl();
-                internal.makeSubfieldControl();
-                internal.makeFilterModeControl();
-                internal.makeFilterValueControl();
+            cswPrivate.renderPropFiltRow = function() {
+                cswPrivate.makePropNameControl();
+                cswPrivate.makeSubfieldControl();
+                cswPrivate.makeFilterModeControl();
+                cswPrivate.makeFilterValueControl();
             }; // renderPropFiltRow()
 
 
-            external.getFilterJson = function () {
+            cswPublic.getFilterJson = function () {
                 var retJson = {};
 
-//                    nodetypeorobjectclassid = (internal.propsData.nodetypepropid === Csw.Int32MinVal) ? internal.propsData.objectclasspropid : internal.propsData.nodetypepropid;
+//                    nodetypeorobjectclassid = (cswPrivate.propsData.nodetypepropid === Csw.Int32MinVal) ? cswPrivate.propsData.objectclasspropid : cswPrivate.propsData.nodetypepropid;
 //                    if (Csw.isNullOrEmpty(nodetypeorobjectclassid)) {
-//                        nodetypeorobjectclassid = Csw.string(internal.nodetypeorobjectclassid);
+//                        nodetypeorobjectclassid = Csw.string(cswPrivate.nodetypeorobjectclassid);
 //                    }
 
 //                // workaround for case 26287
-//                internal.selectedSubFieldName = internal.subfieldControl.val();
-//                internal.selectedFilterMode = internal.filterModeControl.val();
-//                internal.selectedValue = internal.valueControl.val();
+//                cswPrivate.selectedSubFieldName = cswPrivate.subfieldControl.val();
+//                cswPrivate.selectedFilterMode = cswPrivate.filterModeControl.val();
+//                cswPrivate.selectedValue = cswPrivate.valueControl.val();
 
                 retJson = {
                     //nodetypeorobjectclassid: nodetypeorobjectclassid,
-                    proptype: Csw.string(internal.proptype, internal.relatedidtype),
-                    viewbuilderpropid: internal.viewbuilderpropid,
-                    filtarbitraryid: internal.filtarbitraryid,
-                    proparbitraryid: internal.proparbitraryid,
-                    relatedidtype: internal.relatedidtype,
-                    subfield: internal.selectedFilterMode,
-                    filter: internal.selectedFilterMode,
-                    filtervalue: internal.selectedValue.trim()
+                    proptype: Csw.string(cswPrivate.proptype, cswPrivate.relatedidtype),
+                    viewbuilderpropid: cswPrivate.viewbuilderpropid,
+                    filtarbitraryid: cswPrivate.filtarbitraryid,
+                    proparbitraryid: cswPrivate.proparbitraryid,
+                    relatedidtype: cswPrivate.relatedidtype,
+                    subfield: cswPrivate.selectedFilterMode,
+                    filter: cswPrivate.selectedFilterMode,
+                    filtervalue: cswPrivate.selectedValue.trim()
                 };
                 return retJson;
             }; // getFilterJson()
 
 
-            external.makeFilter = function (options) {
+            cswPublic.makeFilter = function (options) {
                 var o = {
-                    viewJson: external.getFilterJson(),
+                    viewJson: cswPublic.getFilterJson(),
                     filtJson: '',
                     onSuccess: null //function ($filterXml) {}
                 };
@@ -303,67 +304,67 @@
             }; // makefilter()
             
 
-//            external.bindToButton = function (btn) {
+//            cswPublic.bindToButton = function (btn) {
 //                if (false == Csw.isNullOrEmpty(btn)) {
-//                    internal.subfieldControl.$.clickOnEnter(btn.$);
-//                    internal.filterModeControl.$.clickOnEnter(btn.$);
-//                    internal.valueControl.$.clickOnEnter(btn.$);
+//                    cswPrivate.subfieldControl.$.clickOnEnter(btn.$);
+//                    cswPrivate.filterModeControl.$.clickOnEnter(btn.$);
+//                    cswPrivate.valueControl.$.clickOnEnter(btn.$);
 //                }
 //                return btn;
 //            } // bindToButton()
 
-            internal.setInitialValues = function() {
+            cswPrivate.setInitialValues = function() {
 
-                if(Csw.isNullOrEmpty(internal.propname)) {
-                    internal.propname = internal.propsData.propname;
+                if(Csw.isNullOrEmpty(cswPrivate.propname)) {
+                    cswPrivate.propname = cswPrivate.propsData.propname;
                 }
                                                 
-                if(Csw.isNullOrEmpty(internal.selectedSubFieldName)) {
-                    internal.selectedSubFieldName = Csw.string(internal.propsData.defaultsubfield, 
-                                                               Csw.string(internal.propsData.subfieldname, 
-                                                                          internal.propsData.subfield));
+                if(Csw.isNullOrEmpty(cswPrivate.selectedSubFieldName)) {
+                    cswPrivate.selectedSubFieldName = Csw.string(cswPrivate.propsData.defaultsubfield, 
+                                                               Csw.string(cswPrivate.propsData.subfieldname, 
+                                                                          cswPrivate.propsData.subfield));
                 }
-                if(Csw.isNullOrEmpty(internal.selectedFilterMode)) {
-                    internal.selectedFilterMode = Csw.string(internal.propsData.defaultfilter, internal.propsData.filtermode);
+                if(Csw.isNullOrEmpty(cswPrivate.selectedFilterMode)) {
+                    cswPrivate.selectedFilterMode = Csw.string(cswPrivate.propsData.defaultfilter, cswPrivate.propsData.filtermode);
                 }
-                if(Csw.isNullOrEmpty(internal.selectedValue)) {
-                    internal.selectedValue = Csw.string(internal.propsData.value, 
-                                                        (Csw.contains(internal.propsData, 'filtersoptions')) ? internal.propsData.filtersoptions.selected : '');
+                if(Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
+                    cswPrivate.selectedValue = Csw.string(cswPrivate.propsData.value, 
+                                                        (Csw.contains(cswPrivate.propsData, 'filtersoptions')) ? cswPrivate.propsData.filtersoptions.selected : '');
 
                 }
             }; // setInitialValues()
 
             // constructor
             (function () {
-                if (options) $.extend(internal, options);
+                if (options) $.extend(cswPrivate, options);
 
-                internal.table = internal.parent;
-                if(Csw.isNullOrEmpty(internal.table.controlName) || internal.table.controlName !== 'table') {
+                cswPrivate.table = cswPrivate.parent;
+                if(Csw.isNullOrEmpty(cswPrivate.table.controlName) || cswPrivate.table.controlName !== 'table') {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.error.name, "Javascript Error", "csw.viewpropfilter was not called on a Table"));
                 } else {
 
-                    internal.propNameCell = internal.table.cell(internal.propRow, internal.firstColumn).empty();
-                    internal.subFieldCell = internal.table.cell(internal.propRow, internal.firstColumn + 1).empty();
-                    internal.filterModeCell = internal.table.cell(internal.propRow, internal.firstColumn + 2).empty();
-                    internal.valueCell = internal.table.cell(internal.propRow, internal.firstColumn + 3).empty();
+                    cswPrivate.propNameCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn).empty();
+                    cswPrivate.subFieldCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 1).empty();
+                    cswPrivate.filterModeCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 2).empty();
+                    cswPrivate.valueCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 3).empty();
 
-                    if (false === Csw.bool(internal.showPropertyName)) {
-                        internal.propNameCell.hide();
+                    if (false === Csw.bool(cswPrivate.showPropertyName)) {
+                        cswPrivate.propNameCell.hide();
                     }
-                    if (false === Csw.bool(internal.showSubfield)) {
-                        internal.subFieldCell.hide();
+                    if (false === Csw.bool(cswPrivate.showSubfield)) {
+                        cswPrivate.subFieldCell.hide();
                     }
-                    if (false === Csw.bool(internal.showFilterMode)) {
-                        internal.filterModeCell.hide();
+                    if (false === Csw.bool(cswPrivate.showFilterMode)) {
+                        cswPrivate.filterModeCell.hide();
                     }
-                    if (false === Csw.bool(internal.showValue)) {
-                        internal.valueCell.hide();
+                    if (false === Csw.bool(cswPrivate.showValue)) {
+                        cswPrivate.valueCell.hide();
                     }
 
-                    if (Csw.isNullOrEmpty(internal.propsData) && false === Csw.isNullOrEmpty(internal.proparbitraryid)) {
+                    if (Csw.isNullOrEmpty(cswPrivate.propsData) && false === Csw.isNullOrEmpty(cswPrivate.proparbitraryid)) {
                         var viewJson = '';
-                        if (false === Csw.isNullOrEmpty(internal.viewJson)) {
-                            viewJson = JSON.stringify(internal.viewJson);
+                        if (false === Csw.isNullOrEmpty(cswPrivate.viewJson)) {
+                            viewJson = JSON.stringify(cswPrivate.viewJson);
                         }
 
                         Csw.ajax.post({
@@ -371,24 +372,24 @@
                             //async: false,
                             data: {
                                 ViewJson: viewJson,
-                                ViewId: internal.viewid,
-                                PropArbitraryId: internal.proparbitraryid
+                                ViewId: cswPrivate.viewid,
+                                PropArbitraryId: cswPrivate.proparbitraryid
                             },
                             success: function (data) {
-                                internal.propsData = data;
-                                internal.setInitialValues();
-                                internal.renderPropFiltRow();
+                                cswPrivate.propsData = data;
+                                cswPrivate.setInitialValues();
+                                cswPrivate.renderPropFiltRow();
                             } // success
                         }); //ajax
-                    } // if (Csw.isNullOrEmpty(internal.propsData) && false === Csw.isNullOrEmpty(internal.proparbitraryid)) {
+                    } // if (Csw.isNullOrEmpty(cswPrivate.propsData) && false === Csw.isNullOrEmpty(cswPrivate.proparbitraryid)) {
                     else {
-                        internal.setInitialValues();
-                        internal.renderPropFiltRow();
+                        cswPrivate.setInitialValues();
+                        cswPrivate.renderPropFiltRow();
                     }
                 
-                } // if-else(Csw.isNullOrEmpty(internal.table.controlName) || internal.table.controlName !== 'table') {
+                } // if-else(Csw.isNullOrEmpty(cswPrivate.table.controlName) || cswPrivate.table.controlName !== 'table') {
             })(); // constructor
 
-            return external;
+            return cswPublic;
         }); // register
 })();

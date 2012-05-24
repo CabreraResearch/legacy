@@ -34,7 +34,7 @@
                     //newDiv.br();
                     var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype') });
 
-                    var viewfilters = Csw.nbt.viewFilters({
+                    Csw.nbt.viewFilters({
                         ID: o.ID + '_viewfilters',
                         parent: filterDiv,
                         viewid: viewid,
@@ -46,6 +46,7 @@
                     var gridOpts = {
                         ID: o.ID + '_fieldtypegrid',
                         resizeWithParent: false,
+                        resizeWithParentElement: $('#nodetabs_props'),
                         viewid: viewid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey,

@@ -1,6 +1,6 @@
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
-
+'use strict';
 window.internetExplorerVersionNo = window.internetExplorerVersionNo || - 1;
     
     window.ChemSW = window.Csw = (function () {

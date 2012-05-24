@@ -348,11 +348,11 @@ namespace ChemSW.Nbt.WebServices
             if( View.ViewId != null )
             {
                 CswNbtViewNode SelectedViewNode = View.FindViewNodeByArbitraryId( ArbitraryId );
-                if( View.ViewMode != NbtViewRenderingMode.List || View.Root.ChildRelationships.Count == 0 )
+                if( View.ViewMode != NbtViewRenderingMode.Unknown || View.Root.ChildRelationships.Count == 0 )
                 {
                     if( SelectedViewNode is CswNbtViewRelationship )
                     {
-                        if( StepNo == 3 )
+                        if( StepNo == 3 && View.ViewMode != NbtViewRenderingMode.List )
                         {
                             // Potential child relationships
 
@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.WebServices
                                 } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
                             } // foreach( CswNbtViewRelationship R in Relationships )
                         } // if( StepNo == 3)
-                        else
+                        else if (StepNo == 4 )
                         {
                             // Potential child properties
 
@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.WebServices
                                 throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "CswViewEditor.initPropDataTable() has a selected node which is neither a NodeTypeNode nor an ObjectClassNode" );
                             }
 
-                            foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in PropsCollection orderby _ThisProp.PropName select _ThisProp )
+                            foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in PropsCollection orderby _ThisProp.PropNameWithQuestionNo select _ThisProp )
                             {
                                 // BZs 7085, 6651, 6644, 7092
                                 if( ThisProp.getFieldTypeRule().SearchAllowed ||
@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         ViewProp.Parent = CurrentRelationship;
 
-                                        string PropName = ViewProp.Name;
+                                        string PropName = ViewProp.MetaDataProp.PropNameWithQuestionNo;
                                         if( false == ThisProp.getNodeType().IsLatestVersion() )
                                             PropName += "&nbsp;(v" + ThisProp.getNodeType().VersionNo + ")";
 
@@ -523,7 +523,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 // We need the property arbitrary id, so we're doing this by property, not by filter.  
                 // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
-                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) orderby _Property.Name select _Property )
+                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) orderby _Property.MetaDataProp.PropNameWithQuestionNo select _Property )
                 {
                     JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )

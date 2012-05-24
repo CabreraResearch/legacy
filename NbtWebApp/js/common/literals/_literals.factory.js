@@ -4,18 +4,18 @@
 (function () {
 
     Csw.literals.factory = Csw.literals.factory ||
-        Csw.literals.register('factory', function ($element, external) {
+        Csw.literals.register('factory', function ($element, cswPublic) {
             /// <summary>Extends a Csw Control class with basic DOM methods.</summary>
             /// <param name="$element" type="jQuery">An element to bind to.</param>
             /// <param name="options" type="Object">An options collection to extend.</param>
             /// <returns type="Object">The options object with DOM methods attached.</returns> 
             'use strict';
-            //#region internal
+            //#region cswPrivate
 
-            var internal = {};
-            external = external || {};
+            var cswPrivate = {};
+            cswPublic = cswPublic || {};
 
-            internal.controlPreProcessing = function (opts, controlName) {
+            cswPrivate.controlPreProcessing = function (opts, controlName) {
                 /* 
                 This is our last chance to capture context for chaining. 
                 Reference useful relationships. 
@@ -24,22 +24,22 @@
                 opts = opts || {};
                 opts.controlName = controlName;
                 opts.$parent = $element;
-                opts.root = external.root;
+                opts.root = cswPublic.root;
                 if (opts.suffix) {
-                    opts.ID = Csw.makeId(external.getId(), opts.suffix);
-                } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(external.getId())) {
-                    opts.ID = Csw.makeId(external.getId(), controlName);
+                    opts.ID = Csw.makeId(cswPublic.getId(), opts.suffix);
+                } else if (Csw.isNullOrEmpty(opts.ID) && false === Csw.isNullOrEmpty(cswPublic.getId())) {
+                    opts.ID = Csw.makeId(cswPublic.getId(), controlName);
                 }
                 if (false === Csw.isNullOrEmpty(opts.labelText)) {
-                    external.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
+                    cswPublic.label({ forAttr: opts.ID, text: opts.labelText, useWide: opts.useWide });
                 }
                 opts.parent = function () {
-                    return external;
+                    return cswPublic;
                 };
                 return opts;
             };
 
-            internal.controlPostProcessing = function (componentParent, controlName) {
+            cswPrivate.controlPostProcessing = function (componentParent, controlName) {
                 /* If it's possible/desirable to attach a complex component to a simple control, then extend */
                 if (Csw.isNullOrEmpty(controlName) ||
                     controlName === 'div' ||
@@ -59,162 +59,162 @@
                 return componentParent;
             };
 
-            internal.makeControlForChaining = function (opts, controlName, $jqElement) {
+            cswPrivate.makeControlForChaining = function (opts, controlName, $jqElement) {
                 /* To support faux children(), find(), first() conventions from the jQuery-verse. The return is not a true Csw control object. Beware! */
                 var ret = {};
-                opts = internal.controlPreProcessing(opts, controlName);
+                opts = cswPrivate.controlPreProcessing(opts, controlName);
                 if (controlName === 'jquery') {
                     ret = Csw.literals.factory($jqElement, opts);
                 } else {
                     ret = Csw.literals[controlName](opts);
                     ret.controlName = controlName;
                 }
-                internal.controlPostProcessing(ret, controlName);
+                cswPrivate.controlPostProcessing(ret, controlName);
                 return ret;
             };
 
             if (Csw.isJQuery($element)) {
-                external = Csw.dom(external, $element);
-                internal.controlPostProcessing(external);
+                cswPublic = Csw.dom(cswPublic, $element);
+                cswPrivate.controlPostProcessing(cswPublic);
             } else {
                 throw new Error('Cannot directly instance a literals factory without a jQuery element.');
             }
 
-            //#endregion internal
+            //#endregion cswPrivate
 
             //#region Csw DOM classes
 
-            external.a = function (opts) {
+            cswPublic.a = function (opts) {
                 /// <summary> Creates a Csw.a on this element</summary>
                 /// <param name="opts" type="Object">Options to define the a.</param>
                 /// <returns type="Csw.literals.a">A Csw.literals.a</returns> 
-                return internal.makeControlForChaining(opts, 'a');
+                return cswPrivate.makeControlForChaining(opts, 'a');
             };
 
-            external.b = function (opts) {
+            cswPublic.b = function (opts) {
                 /// <summary> Creates a Csw.b on this element</summary>
                 /// <param name="opts" type="Object">Options to define the b.</param>
                 /// <returns type="Csw.literals.b">A Csw.literals.b</returns> 
-                return internal.makeControlForChaining(opts, 'b');
+                return cswPrivate.makeControlForChaining(opts, 'b');
             };
 
-            external.br = function (opts) {
+            cswPublic.br = function (opts) {
                 /// <summary> Creates a Csw.br on this element</summary>
                 /// <param name="opts" type="Object">Options to define the br.</param>
                 /// <returns type="Csw.literals.br">A Csw.literals.br</returns> 
-                return internal.makeControlForChaining(opts, 'br');
+                return cswPrivate.makeControlForChaining(opts, 'br');
             };
 
-            external.button = function (opts) {
+            cswPublic.button = function (opts) {
                 /// <summary> Creates a Csw.button on this element</summary>
                 /// <param name="opts" type="Object">Options to define the button.</param>
                 /// <returns type="Csw.literals.button">A Csw.literals.button</returns> 
-                return internal.makeControlForChaining(opts, 'button');
+                return cswPrivate.makeControlForChaining(opts, 'button');
             };
 
-            external.div = function (opts) {
+            cswPublic.div = function (opts) {
                 /// <summary> Creates a Csw.div on this element</summary>
                 /// <param name="opts" type="Object">Options to define the div.</param>
                 /// <returns type="Csw.literals.div">A Csw.literals.div</returns> 
-                return internal.makeControlForChaining(opts, 'div');
+                return cswPrivate.makeControlForChaining(opts, 'div');
             };
 
-            external.form = function (opts) {
+            cswPublic.form = function (opts) {
                 /// <summary> Creates a Csw.form on this element</summary>
                 /// <param name="opts" type="Object">Options to define the form.</param>
                 /// <returns type="Csw.literals.form">A Csw.literals.form</returns> 
-                return internal.makeControlForChaining(opts, 'form');
+                return cswPrivate.makeControlForChaining(opts, 'form');
             };
 
-            external.img = function (opts) {
+            cswPublic.img = function (opts) {
                 /// <summary> Creates a Csw.img on this element</summary>
                 /// <param name="opts" type="Object">Options to define the img.</param>
                 /// <returns type="Csw.literals.img">A Csw.literals.img</returns>
-                return internal.makeControlForChaining(opts, 'img');
+                return cswPrivate.makeControlForChaining(opts, 'img');
             };
 
-            external.jquery = function ($jqElement, opts) {
+            cswPublic.jquery = function ($jqElement, opts) {
                 /// <summary> Extend a jQuery object with Csw methods.</summary>
                 /// <param name="$element" type="jQuery">Element to extend.</param>
                 /// <returns type="Csw.literals.jquery">A Csw.literals.jquery object</returns>
-                return internal.makeControlForChaining(opts, 'jquery', $jqElement);
+                return cswPrivate.makeControlForChaining(opts, 'jquery', $jqElement);
             };
 
-            external.input = function (opts) {
+            cswPublic.input = function (opts) {
                 /// <summary> Creates a Csw.input on this element</summary>
                 /// <param name="opts" type="Object">Options to define the input.</param>
                 /// <returns type="Csw.literals.input">A Csw.literals.input</returns> 
-                return internal.makeControlForChaining(opts, 'input');
+                return cswPrivate.makeControlForChaining(opts, 'input');
             };
 
-            external.label = function (opts) {
+            cswPublic.label = function (opts) {
                 /// <summary> Creates a Csw.label on this element</summary>
                 /// <param name="opts" type="Object">Options to define the label.</param>
                 /// <returns type="Csw.literals.label">A Csw.literals.label</returns> 
-                return internal.makeControlForChaining(opts, 'label');
+                return cswPrivate.makeControlForChaining(opts, 'label');
             };
 
             /* Case 25125: This literal is deprecated. Use composite instead. */
-            external.moreDiv = function (opts) {
+            cswPublic.moreDiv = function (opts) {
                 /// <summary> (Deprecated) Creates a Csw.moreDiv on this element</summary>
                 /// <param name="opts" type="Object">Options to define the moreDiv.</param>
                 /// <returns type="Csw.literals.moreDiv">A Csw.literals.moreDiv</returns> 
-                return internal.makeControlForChaining(opts, 'moreDiv');
+                return cswPrivate.makeControlForChaining(opts, 'moreDiv');
             };
 
-            external.ol = function (opts) {
+            cswPublic.ol = function (opts) {
                 /// <summary> Creates a Csw.ol on this element</summary>
                 /// <param name="opts" type="Object">Options to define the ol.</param>
                 /// <returns type="Csw.literals.ol">A Csw.literals.ol</returns> 
-                return internal.makeControlForChaining(opts, 'ol');
+                return cswPrivate.makeControlForChaining(opts, 'ol');
             };
 
-            external.p = function (opts) {
+            cswPublic.p = function (opts) {
                 /// <summary> Creates a Csw.p on this element</summary>
                 /// <param name="opts" type="Object">Options to define the p.</param>
                 /// <returns type="Csw.literals.p">A Csw.literals.p</returns>
-                return internal.makeControlForChaining(opts, 'p');
+                return cswPrivate.makeControlForChaining(opts, 'p');
             };
 
-            external.select = function (opts) {
+            cswPublic.select = function (opts) {
                 /// <summary> Creates a Csw.select on this element</summary>
                 /// <param name="opts" type="Object">Options to define the select.</param>
                 /// <returns type="Csw.literals.select">A Csw.literals.select</returns>
-                return internal.makeControlForChaining(opts, 'select');
+                return cswPrivate.makeControlForChaining(opts, 'select');
             };
 
-            external.span = function (opts) {
+            cswPublic.span = function (opts) {
                 /// <summary> Creates a Csw.span on this element</summary>
                 /// <param name="opts" type="Object">Options to define the span.</param>
                 /// <returns type="Csw.literals.span">A Csw.literals.span</returns> 
-                return internal.makeControlForChaining(opts, 'span');
+                return cswPrivate.makeControlForChaining(opts, 'span');
             };
 
             /* Case 25125: This literal is deprecated. Use composite instead. */
-            external.table = function (opts) {
+            cswPublic.table = function (opts) {
                 /// <summary> (Deprecated) Creates a Csw.table on this element</summary>
                 /// <param name="opts" type="Object">Options to define the table.</param>
                 /// <returns type="Csw.literals.table">A Csw.literals.table</returns>
-                return internal.makeControlForChaining(opts, 'table');
+                return cswPrivate.makeControlForChaining(opts, 'table');
             };
 
-            external.textArea = function (opts) {
+            cswPublic.textArea = function (opts) {
                 /// <summary> Creates a Csw.textArea on this element</summary>
                 /// <param name="opts" type="Object">Options to define the textArea.</param>
                 /// <returns type="Csw.literals.textArea">A Csw.literals.textArea</returns>
-                return internal.makeControlForChaining(opts, 'textArea');
+                return cswPrivate.makeControlForChaining(opts, 'textArea');
             };
 
-            external.ul = function (opts) {
+            cswPublic.ul = function (opts) {
                 /// <summary> Creates a Csw.ul on this element</summary>
                 /// <param name="opts" type="Object">Options to define the ul.</param>
                 /// <returns type="Csw.literals.ul">A Csw.literals.ul</returns> 
-                return internal.makeControlForChaining(opts, 'ul');
+                return cswPrivate.makeControlForChaining(opts, 'ul');
             };
 
             //#endregion Csw DOM classes
 
-            return external;
+            return cswPublic;
         });
 } ());
 

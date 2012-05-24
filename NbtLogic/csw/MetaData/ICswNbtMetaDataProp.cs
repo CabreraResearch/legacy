@@ -25,6 +25,7 @@ namespace ChemSW.Nbt.MetaData
     public interface ICswNbtMetaDataProp
     {
         Int32 PropId { get; }
+        Int32 FirstPropVersionId { get; }
         Int32 ObjectClassPropId { get; }
         string PropName { get; }
         string PropNameWithQuestionNo { get; }

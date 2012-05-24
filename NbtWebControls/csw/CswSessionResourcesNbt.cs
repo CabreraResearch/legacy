@@ -31,7 +31,7 @@ namespace ChemSW.Nbt
             CswSuperCycleCache.CacheDirtyThreshold = DateTime.Now.Subtract( new TimeSpan( 0, 10, 0 ) );
 
 
-            CswDbCfgInfo CswDbCfgInfo = new ChemSW.Config.CswDbCfgInfo( SetupMode.NbtWeb );
+            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( SetupMode.NbtWeb, IsMobile: false );
             CswResourcesMaster = new CswResources( AppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
             CswResourcesMaster.SetDbResources( ChemSW.RscAdo.PooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;

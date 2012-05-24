@@ -9,27 +9,27 @@
             /// <param name="options" type="Object">Options to define the br.</param>
             /// <returns type="br">A br object</returns>
             'use strict';
-            var internal = {
+            var cswPrivate = {
                 $parent: '',
                 number: 1
             };
-            var external = { };
+            var cswPublic = { };
 
             (function() {
                 var html = '<br />';
                 var $br, i;
 
-                $.extend(internal, options);
-                for (i = 1; i < Csw.number(internal.number); i += 1) {
+                $.extend(cswPrivate, options);
+                for (i = 1; i < Csw.number(cswPrivate.number); i += 1) {
                     html += '<br />';
                 }
                 $br = $(html);
-                Csw.literals.factory($br, external);
+                Csw.literals.factory($br, cswPublic);
 
-                internal.$parent.append(external.$);
+                cswPrivate.$parent.append(cswPublic.$);
             }());
 
-            return external;
+            return cswPublic;
         });
 
 } ());

@@ -23,21 +23,29 @@ namespace NbtWebAppServices.Session
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
         private CswNbtWcfStatistics _CswNbtWcfStatistics = null;
         private HttpContext _Context;
+        private static bool _IsMobile;
+        AppType _AppType = AppType.Nbt;
 
-        public CswNbtWcfSessionResources( HttpContext Context, string LoginAccessId, SetupMode SetupMode )
+        public CswNbtWcfSessionResources( HttpContext Context, string LoginAccessId, SetupMode SetupMode, bool IsMobile )
         {
 
             //SuperCycleCache configuraiton has to happen here because here is where we can stash the cache,
             //so to speak, in the wrapper class -- the resource factory is agnostic with respect to cache type
             _Context = Context;
+            _IsMobile = IsMobile;
+            if( _IsMobile )
+            {
+                _AppType = AppType.Mobile;
+            }
+
             CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode.NbtWeb );
 
-            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( SetupMode.NbtWeb );
-            CswResourcesMaster = new CswResources( AppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
+            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( SetupMode.NbtWeb, IsMobile );
+            CswResourcesMaster = new CswResources( _AppType, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
             CswResourcesMaster.SetDbResources( PooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
 
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false,
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( _AppType, SetupMode, true, false,
                                                                           CswResourcesMaster: CswResourcesMaster,
                                                                           CswLogger: CswResourcesMaster.CswLogger );
 
@@ -48,9 +56,8 @@ namespace NbtWebAppServices.Session
             {
                 RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
             }
-
-
-            CswSessionManager = new CswSessionManager( AppType.Nbt,
+            
+            CswSessionManager = new CswSessionManager( _AppType,
                                                        new CswNbtWcfCookies( _Context.Request, _Context.Response ),
                                                        LoginAccessId,
                                                        CswNbtResources.SetupVbls,
@@ -67,9 +74,9 @@ namespace NbtWebAppServices.Session
             CswNbtResources.AccessId = CswSessionManager.AccessId;
         }//ctor()
 
-        public static CswNbtWcfSessionResources initResources( HttpContext Context )
+        public static CswNbtWcfSessionResources initResources( HttpContext Context, bool IsMobile )
         {
-            CswNbtWcfSessionResources Ret = new CswNbtWcfSessionResources( Context, string.Empty, SetupMode.NbtWeb );
+            CswNbtWcfSessionResources Ret = new CswNbtWcfSessionResources( Context, string.Empty, SetupMode.NbtWeb, IsMobile );
             Ret.CswNbtResources.beginTransaction();
             Ret.CswNbtResources.logMessage( "WebServices: CswSession Started (_initResources called)" );
             return Ret;

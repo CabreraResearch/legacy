@@ -17,7 +17,7 @@
             /// <para>options.text: Text to display</para>
             /// </param>
             /// <returns type="p">A p object</returns>
-            var internal = {
+            var cswPrivate = {
                 $parent: '',
                 ID: '',
                 name: '',
@@ -25,11 +25,11 @@
                 text: '',
                 styles: { }
             };
-            var external = { };
+            var cswPublic = { };
 
             (function() {
                 if (options) {
-                    $.extend(internal, options);
+                    $.extend(cswPrivate, options);
                 }
                 var html = '',
                     attr = Csw.makeAttr(),
@@ -37,9 +37,9 @@
 
                 var $p;
 
-                attr.add('id', internal.ID);
-                attr.add('class', internal.cssclass);
-                style.set(internal.styles);
+                attr.add('id', cswPrivate.ID);
+                attr.add('class', cswPrivate.cssclass);
+                style.set(cswPrivate.styles);
 
                 html += '<p ';
 
@@ -47,20 +47,20 @@
                 html += style.get();
 
                 html += '>';
-                html += Csw.string(internal.text);
+                html += Csw.string(cswPrivate.text);
                 html += '</p>';
                 $p = $(html);
-                Csw.literals.factory($p, external);
+                Csw.literals.factory($p, cswPublic);
 
-                if (Csw.isFunction(internal.onClick)) {
-                    external.bind('click', internal.onClick);
+                if (Csw.isFunction(cswPrivate.onClick)) {
+                    cswPublic.bind('click', cswPrivate.onClick);
                 }
-                if (internal.$parent) {
-                    internal.$parent.append(external.$);
+                if (cswPrivate.$parent) {
+                    cswPrivate.$parent.append(cswPublic.$);
                 }
             }());
 
-            return external;
+            return cswPublic;
         });
 
 } ());

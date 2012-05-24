@@ -15,7 +15,6 @@ namespace NbtWebAppServices.Response
         public class CswNbtLocationNodeModel
         {
             public string Name { get; set; }
-            public string Path { get; set; }
             public string LocationId { get; set; }
         }
 

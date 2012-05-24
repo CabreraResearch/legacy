@@ -164,7 +164,7 @@ namespace ChemSW.Nbt.PropTypes
             this.PendingUpdate = false;
         }
 
-        private string _pathdelimiter = " > ";
+        public static readonly string PathDelimiter = " > ";
         private string _generateLocationPath( CswNbtNode Node )
         {
             string ret;
@@ -174,12 +174,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 string prev = _generateLocationPath( _CswNbtResources.Nodes[NodeAsLocation.Location.SelectedNodeId] );
                 if( prev != string.Empty )
-                    ret = prev + _pathdelimiter + ret;
+                    ret = prev + PathDelimiter + ret;
             }
             else
             {
                 // BZ 9133
-                //ret = CswNbtLocationTree.TopLevelName + _pathdelimiter + ret;
+                //ret = CswNbtLocationTree.TopLevelName + PathDelimiter + ret;
             }
             return ret;
         }
@@ -289,14 +289,14 @@ namespace ChemSW.Nbt.PropTypes
             View.SaveToCache( false );
             ParentObject["viewid"] = View.SessionViewId.ToString();
 
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass);
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
             JArray LocationNTArray = new JArray();
             foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
             {
                 LocationNTArray.Add( LocationNT.NodeTypeId );
             }
-            ParentObject["locationnodetypeids"] = LocationNTArray; 
+            ParentObject["locationnodetypeids"] = LocationNTArray;
 
             //if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
             //{
