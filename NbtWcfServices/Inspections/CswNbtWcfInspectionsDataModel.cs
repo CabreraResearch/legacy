@@ -79,6 +79,7 @@ namespace NbtWebAppServices.Response
             public string LocationPath { get; set; }
             public string RouteName { get; set; }
             public string Status { get; set; }
+            public string Action { get; set; }
             public Collection<QuestionAnswer> Questions { get; set; }
 
 
