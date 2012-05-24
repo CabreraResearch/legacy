@@ -21,6 +21,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassInspectionTargetGroup
+        /// </summary>
+        public static explicit operator CswNbtObjClassInspectionTargetGroup( CswNbtNode Node )
+        {
+            CswNbtObjClassInspectionTargetGroup ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetGroupClass ) )
+            {
+                ret = (CswNbtObjClassInspectionTargetGroup) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
 
         public override void beforeCreateNode( bool OverrideUniqueValidation )
@@ -49,7 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
                         GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                         if( null != GeneratorNode )
                         {
-                            NewGenerator = CswNbtNodeCaster.AsGenerator( GeneratorNode );
+                            NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;
                             NewGenerator.Owner.RelatedNodeId = this.NodeId;
                             NewGenerator.Owner.RefreshNodeName(); // 20959
                             GeneratorNode.postChanges( true );

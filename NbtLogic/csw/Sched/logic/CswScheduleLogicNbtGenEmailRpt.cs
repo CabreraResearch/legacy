@@ -53,7 +53,8 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
             _CswScheduleNodeUpdater = new CswScheduleNodeUpdater( _CswNbtResources );
-            _CswNbtResources.AuditContext = "Scheduler Task: Generate Email Reports";
+            //_CswNbtResources.AuditContext = "Scheduler Task: Generate Email Reports";
+            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }//init() 
 
 
@@ -136,7 +137,7 @@ namespace ChemSW.Nbt.Sched
                                                     if( Int32.MinValue != UserId )
                                                     {
                                                         CswNbtNode UserNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                                                        CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) CswNbtNodeCaster.AsUser( UserNode );
+                                                        CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
                                                         string EmailAddy = UserNodeAsUser.Email.Trim();
                                                         if( EmailAddy != string.Empty )
                                                         {
@@ -167,7 +168,7 @@ namespace ChemSW.Nbt.Sched
                                                                 if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
                                                                 {
                                                                     CswNbtNode ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
-                                                                    CswNbtObjClassReport ReportObjClass = CswNbtNodeCaster.AsReport( ReportNode );
+                                                                    CswNbtObjClassReport ReportObjClass = (CswNbtObjClassReport) ReportNode;
                                                                     //ViewId = ReportObjClass.View.ViewId;
 
                                                                     CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportObjClass.SQL.Text );

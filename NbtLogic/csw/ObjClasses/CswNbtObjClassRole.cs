@@ -38,6 +38,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassRole
+        /// </summary>
+        public static explicit operator CswNbtObjClassRole( CswNbtNode Node )
+        {
+            CswNbtObjClassRole ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ) )
+            {
+                ret = (CswNbtObjClassRole) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -183,7 +196,7 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
             //foreach( CswNbtNode UserNode in UserOC.getNodes( false, true ) )
             //{
-            //    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+            //    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
             //    if( UserNodeAsUser.Role.RelatedNodeId == _CswNbtNode.NodeId )
             //    {
             //        throw ( new CswDniException( ErrorType.Warning, "This role cannot be deleted because it is in use by user: " + UserNodeAsUser.Username,

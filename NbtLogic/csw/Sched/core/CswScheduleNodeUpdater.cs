@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Sched
 
         public void update( CswNbtNode CswNbtNodeSchedualable, string StatusMessage )
         {
-            ICswNbtPropertySetScheduler SchedulerNode = CswNbtNodeCaster.AsPropertySetScheduler( CswNbtNodeSchedualable );
+            ICswNbtPropertySetScheduler SchedulerNode = CswNbtPropSetCaster.AsPropertySetScheduler( CswNbtNodeSchedualable );
             //case 25702 - add comment:
             SchedulerNode.RunStatus.AddComment( StatusMessage );
             DateTime CandidateNextDueDate = SchedulerNode.DueDateInterval.getNextOccuranceAfter( SchedulerNode.NextDueDate.DateTimeValue );

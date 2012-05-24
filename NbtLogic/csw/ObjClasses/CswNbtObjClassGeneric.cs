@@ -19,6 +19,20 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassGeneric
+        /// </summary>
+        public static explicit operator CswNbtObjClassGeneric( CswNbtNode Node )
+        {
+            CswNbtObjClassGeneric ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass ) )
+            {
+                ret = (CswNbtObjClassGeneric) Node.ObjClass;
+            }
+            return ret;
+        }
+
+
         #region Inherited Events
 
         public override void beforeCreateNode( bool OverrideUniqueValidation )

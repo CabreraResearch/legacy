@@ -394,6 +394,12 @@ namespace ChemSW.Nbt
                             {
                                 OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
                             }
+
+                            if( Prop.SortMethod == NbtViewPropertySortMethod.Descending )
+                            {
+                                OrderByString += " desc";
+                            }
+
                             From += " left outer join jct_nodes_props j" + sortAlias + " ";
                             From += "   on (j" + sortAlias + ".nodeid = n.nodeid and ";
                             if( Prop.Type == NbtViewPropType.NodeTypePropId )

@@ -54,6 +54,19 @@ namespace ChemSW.Nbt.ObjClasses
             //    DoneOn.DateTimeValue = DateTime.MinValue;
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassTask
+        /// </summary>
+        public static explicit operator CswNbtObjClassTask( CswNbtNode Node )
+        {
+            CswNbtObjClassTask ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.TaskClass ) )
+            {
+                ret = (CswNbtObjClassTask) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -109,7 +122,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                     if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentClass )
                     {
-                        CswNbtObjClassEquipment EquipmentNodeAsEquipment = CswNbtNodeCaster.AsEquipment( EquipmentOrAssemblyNode );
+                        CswNbtObjClassEquipment EquipmentNodeAsEquipment = (CswNbtObjClassEquipment) EquipmentOrAssemblyNode;
                         foreach( string YValue in EquipmentNodeAsEquipment.Parts.YValues )
                         {
                             if( EquipmentNodeAsEquipment.Parts.CheckValue( CswNbtObjClassEquipment.PartsXValueName, YValue ) )
@@ -118,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass )
                     {
-                        CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = CswNbtNodeCaster.AsEquipmentAssembly( EquipmentOrAssemblyNode );
+                        CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = (CswNbtObjClassEquipmentAssembly) EquipmentOrAssemblyNode;
                         foreach( string YValue in AssemblyNodeAsAssembly.AssemblyParts.YValues )
                         {
                             if( AssemblyNodeAsAssembly.AssemblyParts.CheckValue( CswNbtObjClassEquipmentAssembly.PartsXValueName, YValue ) )

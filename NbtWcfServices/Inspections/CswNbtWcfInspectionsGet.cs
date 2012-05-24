@@ -154,7 +154,7 @@ namespace NbtWebAppServices.Response
             if( false == InspectionDesignNodeIds.Contains( InspectionNode.NodeId ) )
             {
                 InspectionDesignNodeIds.Add( InspectionNode.NodeId );
-                CswNbtObjClassInspectionDesign NodeAsInspectionDesign = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                CswNbtObjClassInspectionDesign NodeAsInspectionDesign = (CswNbtObjClassInspectionDesign) InspectionNode;
                 var ResponseInspection = new CswNbtWcfInspectionsDataModel.CswNbtInspection
                 {
                     DesignId = InspectionNode.NodeTypeId,

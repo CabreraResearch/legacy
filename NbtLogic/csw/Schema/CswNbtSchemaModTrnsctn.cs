@@ -588,7 +588,7 @@ namespace ChemSW.Nbt.Schema
         //    CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( RoleName );
         //    if( null == RoleNode )
         //        throw ( new CswDniException( "No such role: " + RoleName ) );
-        //    CswNbtObjClassRole Role = CswNbtNodeCaster.AsRole( RoleNode );
+        //    CswNbtObjClassRole Role = (CswNbtObjClassRole) RoleNode;
 
         //    CswNbtMetaDataNodeType CswNbtMetaDataNodeType = null;
         //    if( null == ( CswNbtMetaDataNodeType = MetaData.getNodeType( NodeTypeName ) ) )
@@ -624,12 +624,12 @@ namespace ChemSW.Nbt.Schema
             CswNbtNode RoleNode = Nodes.makeRoleNodeFromRoleName( "Administrator" );
             if( RoleNode != null )
             {
-                _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode ), true );
+                _CswNbtResources.Permit.set( Name, (CswNbtObjClassRole) RoleNode, true );
             }
             CswNbtNode RoleNode2 = Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
             if( RoleNode2 != null )
             {
-                _CswNbtResources.Permit.set( Name, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
+                _CswNbtResources.Permit.set( Name, (CswNbtObjClassRole) RoleNode2, true );
             }
             _CswNbtResources.ClearActionsCache();
             return NewActionId;
@@ -795,7 +795,7 @@ namespace ChemSW.Nbt.Schema
         //{
         //    if( RoleNode != null )
         //    {
-        //        CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) CswNbtNodeCaster.AsRole( RoleNode ) ).ActionPermissions;
+        //        CswNbtNodePropLogicalSet ActionPermissions = ( (CswNbtObjClassRole) RoleNode ).ActionPermissions;
         //        ActionPermissions.SetValue( CswNbtObjClassRole.ActionPermissionsXValueName,
         //                                    CswNbtAction.ActionNameEnumToString( ActionName ),
         //                                    HasAccess );
@@ -1520,7 +1520,7 @@ namespace ChemSW.Nbt.Schema
         {
             // This is kind of a kludgey way to determine whether we're on a fresh master, but see case 25806
             CswNbtNode AdminNode = Nodes.makeUserNodeFromUsername( "admin" );
-            return ( null != AdminNode && CswNbtNodeCaster.AsUser( AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
+            return ( null != AdminNode && ( (CswNbtObjClassUser) AdminNode ).LastLogin.DateTimeValue.Date == new DateTime( 2011, 12, 9 ) );
         }
 
     }//class CswNbtSchemaModTrnsctn

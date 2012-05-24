@@ -27,6 +27,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassEquipmentAssembly
+        /// </summary>
+        public static explicit operator CswNbtObjClassEquipmentAssembly( CswNbtNode Node )
+        {
+            CswNbtObjClassEquipmentAssembly ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.EquipmentAssemblyClass ) )
+            {
+                ret = (CswNbtObjClassEquipmentAssembly) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -165,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode TypeNode = _CswNbtResources.Nodes[Type.RelatedNodeId];
                 if( TypeNode != null )
                 {
-                    CswNbtObjClassEquipmentType TypeNodeAsType = CswNbtNodeCaster.AsEquipmentType( TypeNode );
+                    CswNbtObjClassEquipmentType TypeNodeAsType = (CswNbtObjClassEquipmentType) TypeNode;
                     CswDelimitedString PartsString = new CswDelimitedString( '\n' );
                     PartsString.FromString( TypeNodeAsType.Parts.Text.Replace( "\r", "" ) );
                     AssemblyParts.YValues = PartsString;

@@ -24,6 +24,18 @@ namespace ChemSW.Nbt.ObjClasses
         public static string MixturePropertyName { get { return "Mixture"; } }
         public static string ConstituentPropertyName { get { return "Constituent"; } }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassMaterialComponent
+        /// </summary>
+        public static explicit operator CswNbtObjClassMaterialComponent( CswNbtNode Node )
+        {
+            CswNbtObjClassMaterialComponent ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ) )
+            {
+                ret = (CswNbtObjClassMaterialComponent) Node.ObjClass;
+            }
+            return ret;
+        }
 
         #region Inherited Events
 
