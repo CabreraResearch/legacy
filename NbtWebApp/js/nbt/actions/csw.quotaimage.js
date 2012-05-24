@@ -22,11 +22,11 @@
                     var image = '';
                     cswParent.empty();
                     if (percentUsed > 0) {
-                        if (percentUsed <= 33) {
+                        if (percentUsed <= 50) {
                             image = "good.gif";
-                        } else if (percentUsed > 33 && percentUsed <= 66) {
+                        } else if (percentUsed > 50 && percentUsed <= 75) {
                             image = "half.gif";
-                        } else if (percentUsed > 66) {
+                        } else if (percentUsed > 75) {
                             image = "bad.gif";
                         }
                         cswParent.img({ src: 'Images/quota/' + image, title: 'Quota Usage: ' + percentUsed + '%' });

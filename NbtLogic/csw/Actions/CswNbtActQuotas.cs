@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Determines a percentage for total quota usage
         /// </summary>
-        public Double GetQuotaPercent()
+        public Double GetTotalQuotaPercent()
         {
             Double ret = 0;
             Double TotalUsed = 0;
@@ -367,7 +367,55 @@ namespace ChemSW.Nbt.Actions
                 ret = TotalUsed / TotalQuota * 100;
             }
             return ret;
-        } // GetQuotaPercent()
+        } // GetTotalQuotaPercent()
+
+        /// <summary>
+        /// Determines a percentage for highest quota usage
+        /// </summary>
+        public Double GetHighestQuotaPercent()
+        {
+            Double HighestPercent = 0;
+
+            Dictionary<Int32, Int32> NodeCountsForNodeType;
+            Dictionary<Int32, Int32> NodeCountsForObjectClass;
+            GetNodeCounts( out NodeCountsForNodeType, out NodeCountsForObjectClass );
+
+            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
+            {
+                if( ObjectClass.Quota > 0 )
+                {
+                    Double ThisPercent = 0;
+                    if( NodeCountsForObjectClass.ContainsKey( ObjectClass.ObjectClassId ) &&
+                        NodeCountsForObjectClass[ObjectClass.ObjectClassId] > 0 )
+                    {
+                        ThisPercent = (Double) NodeCountsForObjectClass[ObjectClass.ObjectClassId] / ObjectClass.Quota * 100;
+                    }
+                    if( ThisPercent > HighestPercent )
+                    {
+                        HighestPercent = ThisPercent;
+                    }
+                }
+            } // foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.ObjectClasses )
+
+            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
+            {
+                if( NodeType.Quota > 0 )
+                {
+                    Double ThisPercent = 0;
+                    if( NodeCountsForNodeType.ContainsKey( NodeType.NodeTypeId ) &&
+                        NodeCountsForNodeType[NodeType.NodeTypeId] > 0 )
+                    {
+                        ThisPercent = (Double) NodeCountsForNodeType[NodeType.NodeTypeId] / NodeType.Quota * 100;
+                    }
+                    if( ThisPercent > HighestPercent )
+                    {
+                        HighestPercent = ThisPercent;
+                    }
+                }
+            } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
+
+            return HighestPercent;
+        } // GetHighestQuotaPercent()
 
         /// <summary>
         /// Returns true if the quota has not been reached for the given nodetype, or its object class

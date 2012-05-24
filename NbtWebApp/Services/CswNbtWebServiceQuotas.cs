@@ -129,9 +129,14 @@ namespace ChemSW.Nbt.WebServices
             }
         } // SaveQuotas()
 
-        public Double GetQuotaPercent()
+        public Double GetTotalQuotaPercent()
         {
-            return _CswNbtActQuotas.GetQuotaPercent();
+            return _CswNbtActQuotas.GetTotalQuotaPercent();
+        }
+
+        public Double GetHighestQuotaPercent()
+        {
+            return _CswNbtActQuotas.GetHighestQuotaPercent();
         }
 
         public bool CheckQuota( Int32 NodeTypeId )

@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebPages
         }
         public AuthenticationStatus Authenticate( string username, string password )
         {
-            return ( CswSessionManager.beginSession( username, password, CswNbtWebTools.getIpAddress() ) );
+            return ( CswSessionManager.beginSession( username, password, CswNbtWebTools.getIpAddress(), false ) );
         }//Authenticate()
 
 

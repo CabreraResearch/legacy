@@ -85,8 +85,22 @@ namespace ChemSW.Nbt.ObjClasses
                     // You can never grant your own action permissions
                     if( _CswNbtResources.CurrentUser.RoleId == _CswNbtNode.NodeId && this.Name.Text != ChemSWAdminRoleName )
                     {
-                        throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
-                            "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
+                        // case 26346 - we might be trimming invalid actions out automatically, 
+                        // so just throw if an action permissions is being ADDED, not removed
+                        bool ActionAdded = false;
+                        foreach( string ActionStr in ActionPermissions.Value )
+                        {
+                            if( false == ActionPermissionsOriginalValue.Contains( ActionStr ) )
+                            {
+                                ActionAdded = true;
+                            }
+                        }
+
+                        if( ActionAdded )
+                        {
+                            throw new CswDniException( ErrorType.Warning, "You may not grant access to actions for which you have no permissions",
+                                "User (" + _CswNbtResources.CurrentUser.Username + ") attempted to edit their own action permissions on role: " + _CswNbtNode.NodeName );
+                        }
                     }
                     // You can only grant action permissions on other roles to which you have access
                     foreach( CswNbtAction Action in _CswNbtResources.Actions )
