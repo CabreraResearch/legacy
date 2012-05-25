@@ -334,12 +334,12 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision.ToString();
 
-            ParentObject[_UnitIdSubField.ToXmlNodeName( true ).ToLower()] = default( string );
+            ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = default( string );
             if( UnitId != null && Int32.MinValue != UnitId.PrimaryKey )
             {
-                ParentObject[_UnitIdSubField.ToXmlNodeName( true ).ToLower()] = UnitId.ToString();
+                ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = UnitId.ToString();
             }
-            ParentObject[_UnitNameSubField.ToXmlNodeName( true ).ToLower()] = CachedUnitName;
+            ParentObject[_UnitNameSubField.ToXmlNodeName( true )] = CachedUnitName;
 
             ParentObject["nodetypeid"] = default( string );
             if( TargetType == NbtViewRelatedIdType.NodeTypeId )

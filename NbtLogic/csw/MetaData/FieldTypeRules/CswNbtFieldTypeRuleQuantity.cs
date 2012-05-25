@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
             UnitNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
-            SubFields.add( UnitNameSubField, true );
+            SubFields.add( UnitNameSubField );
 
         }//ctor
 
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
             // BZ 7941
-            bool UseNumericHack = CswNbtViewPropertyFilterIn.SubfieldName == CswNbtSubField.SubFieldName.Value ? true : false;
+            bool UseNumericHack = CswNbtViewPropertyFilterIn.SubfieldName == CswNbtSubField.SubFieldName.Value;
 
             return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, UseNumericHack ) );
         }//makeWhereClause()
