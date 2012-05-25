@@ -969,15 +969,23 @@ namespace ChemSW.Nbt.ImportExport
                                 //First check for dundancy
                                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( CurrentNbtNode.NodeTypeId ) )
                                 {
-                                    //probably  just add MetaDataProp.IsRequired() to condition? 
-                                    if( MetaDataProp.IsUnique() )
+                                    if( MetaDataProp.IsUnique() &&
+                                            (
+                                                ( false == CurrentNbtNode.Properties[MetaDataProp].Empty && false == MetaDataProp.IsRequired ) ||
+                                                ( true == MetaDataProp.IsRequired )
+                                            )
+                                      )
                                     {
                                         CswNbtNode OtherNode = _CswNbtResources.Nodes.FindNodeByUniqueProperty( MetaDataProp, CurrentNbtNode.Properties[MetaDataProp] );
                                         if( OtherNode != null && OtherNode.NodeId != CurrentNbtNode.NodeId )
                                         {
+
+                                            string MessageStem = "The " + MetaDataProp.PropName + " property of the node corresponding to this record has the same value -- " + CurrentNbtNode.Properties[MetaDataProp].Gestalt + " --  as a previously existing node; ";
+
                                             if( IMode == ImportMode.Overwrite )
                                             {
                                                 OtherNode.delete();
+                                                CurrentRowError += MessageStem + " the node in the target schema is being deleted";
                                             }
                                             else if( IMode == ImportMode.Duplicate )
                                             {
@@ -985,6 +993,7 @@ namespace ChemSW.Nbt.ImportExport
                                                 // but we're waiting on BZ 9650 to be fixed.
                                                 CurrentNbtNode.delete();
                                                 DeletedImportNodesThisCycle.Add( CurrentNbtNode.NodeId );
+                                                CurrentRowError += MessageStem + " this record's node is being deleted";
                                                 break;
                                             }
 
