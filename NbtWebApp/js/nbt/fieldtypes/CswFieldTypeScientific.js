@@ -19,6 +19,7 @@
                 var valueNtb = propDiv.numberTextBox({
                     ID: o.ID + '_val',
                     value: (false === o.Multi) ? Csw.string(propVals.base).trim() : Csw.enums.multiEditDefaultValue,
+                    MinValue: 0,
                     MaxValue: 999999999,
                     Precision: 0,
                     ReadOnly: o.ReadOnly,
