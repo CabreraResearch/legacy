@@ -395,11 +395,11 @@
                 title: '',
                 onEditNode: null, // function (nodeid, nodekey) { },
                 onEditView: null, // function (viewid) {}
+                onRefresh: null,
                 onAfterButtonClick: null,
                 date: ''     // viewing audit records
             };
             if (options) $.extend(o, options);
-
             var div = Csw.literals.div();
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
@@ -436,6 +436,7 @@
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     date: date,
                     ReloadTabOnSave: true,
+                    Refresh: o.onRefresh,
                     onEditView: function (viewid) {
                         div.$.dialog('close');
                         Csw.tryExec(o.onEditView, viewid);

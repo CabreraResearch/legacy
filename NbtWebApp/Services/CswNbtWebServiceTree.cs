@@ -134,11 +134,8 @@ namespace ChemSW.Nbt.WebServices
         public JObject runTree( CswPrimaryKey IncludeNodeId, CswNbtNodeKey IncludeNodeKey, bool IncludeNodeRequired, bool IncludeInQuickLaunch, string DefaultSelect )
         {
             JObject ReturnObj = new JObject();
-            //_wsTreeOfView.deleteTreeFromCache();
 
-            if( null != _View && ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
-
-            //_CswNbtResources.CswSuperCycleCache.delete( CacheTreeName );
+            if( null != _View ) //&& ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
                 _View.SaveToCache( IncludeInQuickLaunch );

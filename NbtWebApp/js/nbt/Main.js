@@ -590,11 +590,11 @@ window.initMain = window.initMain || function (undefined) {
             doMenuRefresh: true,
             onAddNode: '',
             onEditNode: '',
-            onDeleteNode: ''
+            onDeleteNode: '',
+            onRefresh: ''
         };
-        if (options) {
-            $.extend(o, options);
-        }
+
+        if (options) $.extend(o, options);
 
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
@@ -607,10 +607,15 @@ window.initMain = window.initMain || function (undefined) {
         if (false === Csw.isNullOrEmpty(o.viewid)) {
             Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
-
+        
         o.onEditNode = function () { getViewGrid(o); };
         o.onDeleteNode = function () { getViewGrid(o); };
-
+        o.onRefresh = function (options) { 
+            clear({ centertop: true, centerbottom: true });
+            Csw.clientChanges.unsetChanged();
+            multi = false;    // semi-kludge for multi-edit batch op
+            refreshSelected(options);
+        };
         clear({ centertop: true, centerbottom: true });
         
         var viewfilters = Csw.nbt.viewFilters({
@@ -635,6 +640,7 @@ window.initMain = window.initMain || function (undefined) {
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
+            onRefresh: o.onRefresh,
             onSuccess: function (grid) {
                 if (o.doMenuRefresh) {
                     refreshMainMenu({

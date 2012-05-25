@@ -739,26 +739,28 @@
                 'use strict';
                 if (cswPrivate.form.$.valid()) {
                     var propIds = cswPrivate.updatePropJsonFromLayoutTable();
-                    var data = {
-                        EditMode: cswPrivate.EditMode,
-                        NodeIds: cswPrivate.nodeids.join(','),
-                        SafeNodeKeys: cswPrivate.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0) */
-                        TabId: tabid,
-                        NodeTypeId: cswPrivate.nodetypeid,
-                        NewPropsJson: JSON.stringify(cswPrivate.propertyData),
-                        ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
-                    };
+                    var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
+                    var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);
 
                     Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.SavePropUrlMethod,
                         async: (false === cswPrivate.Multi),
-                        data: data,
+                        data: {
+                            EditMode: cswPrivate.EditMode,
+                            NodeId: sourcenodeid,
+                            SafeNodeKey: sourcenodekey,
+                            TabId: tabid,
+                            NodeTypeId: cswPrivate.nodetypeid,
+                            NewPropsJson: JSON.stringify(cswPrivate.propertyData),
+                            ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
+                        },
                         success: function (successData) {
                             var doSave = true;
                             var dataJson = {
-                                SourceNodeKey: cswPrivate.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0) */
+                                SourceNodeKey: sourcenodekey,
                                 CopyNodeIds: [],
+                                CopyNodeKeys: [],
                                 PropIds: []
                             };
 
@@ -774,6 +776,8 @@
                                                 onViewBatchOperation: function() {
                                                     Csw.tryExec(cswPrivate.Refresh, { 
                                                         nodeid: data.batch, 
+                                                        viewid: '',
+                                                        viewmode: 'tree',
                                                         IncludeNodeRequired: true
                                                     });
                                                 }
@@ -810,9 +814,9 @@
                             } // if(o.ShowCheckboxes)
                             else if (cswPrivate.Multi) {
                                 dataJson.CopyNodeIds = cswPrivate.nodeids;
+                                dataJson.CopyNodeKeys = cswPrivate.nodekeys;
                                 dataJson.PropIds = propIds;
-                                copyNodeProps( /* Case 26134. We're already doing a clear:all, we don't need this. 
-                                                function () { Csw.window.location().reload();  } */);
+                                copyNodeProps();
                             }
 
                             cswPrivate.enableSaveBtn();
