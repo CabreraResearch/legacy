@@ -17,7 +17,7 @@ msbuild D:\kiln\DailyBuildTools\DailyBuildWeb\DailyBuildWeb.sln /p:Configuration
 net start "ChemSW Log Service" >> D:\log\dailylog.txt
 
 REM must reset nbt_master before schemaupdater runs
-echo sqlplus nbt_master/hj345defwu9@nbttest @nbt_nuke.sql
+exit | sqlplus nbt_master/hj345defwu9@nbttest @nbt_nuke.sql
 
 impdp.exe nbt_master/hj345defwu9@nbttest DUMPFILE=d:\kiln\nbt\nbt\schema\NBT_MASTER_11G.DMP DIRECTORY=EXPORTS REMAP_SCHEMA=nbt_master:nbt_master
 
