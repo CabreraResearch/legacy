@@ -800,9 +800,10 @@ window.initMain = window.initMain || function (undefined) {
             onBeforeTabSelect: function () {
                 return Csw.clientChanges.manuallyCheckChanges();
             },
-            Refresh: function (nodeid, nodekey) {
+            Refresh: function (options) {
                 Csw.clientChanges.unsetChanged();
-                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
+                multi = false;    // semi-kludge for multi-edit batch op
+                refreshSelected(options);
             },
             onTabSelect: function (tabid) {
                 Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
@@ -841,9 +842,7 @@ window.initMain = window.initMain || function (undefined) {
                 forsearch: false,
                 IncludeNodeRequired: false
             };
-            if (options) {
-                $.extend(o, options);
-            }
+            if (options) $.extend(o, options);
 
             if (Csw.isNullOrEmpty(o.viewid)) {
                 o.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);

@@ -968,6 +968,36 @@
 
         }, // GenericDialog
 
+        BatchOpDialog: function(options) {
+            var o = {
+                opname: 'operation',
+                onClose: null,
+                onViewBatchOperation: null
+            };
+            if(options) $.extend(o, options);
+
+            var div = Csw.literals.div({ ID: 'searchdialog_div' });
+            
+            div.append('This '+ o.opname +' will be performed as a batch operation');
+
+            div.button({
+                enabledText: 'Close',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            div.button({
+                enabledText: 'View Batch Operation',
+                onClick: function () {
+                    Csw.tryExec(o.onViewBatchOperation);
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 400, 300, o.onClose, 'Batch Operation');
+
+        }, // BatchOpDialog
 
         ErrorDialog: function (error) {
             var div = Csw.literals.div();

@@ -769,9 +769,14 @@
                                     data: dataJson,
                                     success: function (data) {
                                         if(false === Csw.isNullOrEmpty(data.batch)) {
-                                            $.CswDialog('AlertDialog', {
-                                                title: 'Batch Operation',
-                                                message: 'This multi-edit will be processed as a batch operation.'
+                                            $.CswDialog('BatchOpDialog', {
+                                                opname: 'multi-edit',
+                                                onViewBatchOperation: function() {
+                                                    Csw.tryExec(cswPrivate.Refresh, { 
+                                                        nodeid: data.batch, 
+                                                        IncludeNodeRequired: true
+                                                    });
+                                                }
                                             });
                                         }
                                     }
