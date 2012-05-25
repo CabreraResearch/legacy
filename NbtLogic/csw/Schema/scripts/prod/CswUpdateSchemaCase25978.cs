@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
@@ -18,17 +19,28 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass BatchOpOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, "clock.gif", false, false );
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
 
+            CswCommaDelimitedString StatusOptions = new CswCommaDelimitedString() { 
+                NbtBatchOpStatus.Pending.ToString(),  
+                NbtBatchOpStatus.Processing.ToString(),  
+                NbtBatchOpStatus.Completed.ToString(),  
+                NbtBatchOpStatus.Error.ToString()
+            };
+
             CswNbtMetaDataObjectClassProp BatchDataOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.BatchDataPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Memo, ServerManaged: true );
             CswNbtMetaDataObjectClassProp EndDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.EndDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp LogOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.LogPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Comments, ServerManaged: true );
             CswNbtMetaDataObjectClassProp OpNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.OpNamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, ServerManaged: true );
             CswNbtMetaDataObjectClassProp PriorityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.PriorityPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number );
             CswNbtMetaDataObjectClassProp StartDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StartDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
-            CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, ServerManaged: true );
+            CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, 
+                                                                                                     ServerManaged: true, 
+                                                                                                     ListOptions: StatusOptions.ToString() );
             CswNbtMetaDataObjectClassProp UserOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.UserPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                                                                    IsFk: true,
                                                                                                    FkType: NbtViewRelatedIdType.ObjectClassId.ToString(),
                                                                                                    FkValue: UserOC.ObjectClassId );
+
+            PriorityOCP.DefaultValue.Field1_Numeric = 0;
 
             CswNbtMetaDataNodeType BatchOpNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( BatchOpOC.ObjectClassId, "Batch Operation", "System" );
             BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( StartDateOCP.PropName ) );
