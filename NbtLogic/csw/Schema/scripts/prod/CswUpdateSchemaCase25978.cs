@@ -25,16 +25,16 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp PriorityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.PriorityPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number );
             CswNbtMetaDataObjectClassProp StartDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StartDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, ServerManaged: true );
-            CswNbtMetaDataObjectClassProp UserOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.UserPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship, 
-                                                                                                   IsFk:true, 
-                                                                                                   FkType: NbtViewRelatedIdType.ObjectClassId.ToString(), 
+            CswNbtMetaDataObjectClassProp UserOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.UserPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                                                                   IsFk: true,
+                                                                                                   FkType: NbtViewRelatedIdType.ObjectClassId.ToString(),
                                                                                                    FkValue: UserOC.ObjectClassId );
 
             CswNbtMetaDataNodeType BatchOpNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( BatchOpOC.ObjectClassId, "Batch Operation", "System" );
             BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( StartDateOCP.PropName ) );
 
             CswNbtMetaDataNodeTypeTab BatchOpTab = BatchOpNT.getFirstNodeTypeTab();
-            
+
             CswNbtMetaDataNodeTypeProp OpNameNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.OpNamePropertyName );
             CswNbtMetaDataNodeTypeProp UserNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.UserPropertyName );
             CswNbtMetaDataNodeTypeProp PriorityNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.PriorityPropertyName );
@@ -101,11 +101,18 @@ namespace ChemSW.Nbt.Schema
             BatchOpView3.save();
 
             // Batch operation scheduled rule
-            _CswNbtSchemaModTrnsctn.createScheduledRule(Sched.NbtScheduleRuleNames.BatchOp, MtSched.Core.Recurrence.NSeconds, 5);
+            _CswNbtSchemaModTrnsctn.createScheduledRule( Sched.NbtScheduleRuleNames.BatchOp, MtSched.Core.Recurrence.NSeconds, 5 );
 
 
             // Batch threshold config var
             _CswNbtSchemaModTrnsctn.createConfigurationVariable( "batchthreshold", "If an operation affects this number of nodes, run as a batch operation instead", "10", false );
+
+            // case 26446 - All users should have View permissions to batch ops
+            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass );
+            foreach( CswNbtObjClassRole RoleNode in RoleOC.getNodes( false, false ) )
+            {
+                _CswNbtSchemaModTrnsctn.Permit.set( Security.CswNbtPermit.NodeTypePermission.View, BatchOpNT, RoleNode, true );
+            }
 
         }//Update()
 
