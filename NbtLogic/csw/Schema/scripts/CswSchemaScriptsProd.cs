@@ -19,30 +19,15 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'N', 28 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'O', 20 );
 
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26029() ) );         //01O-01
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25987() ) );         //01O-02
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25702() ) );         //01O-03
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25702B() ) );        //01O-04
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25041() ) );         //01O-05
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25994() ) );         //01O-06
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25981() ) );         //01O-07
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26117() ) );         //01O-08
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26112() ) );         //01O-09
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26085() ) );         //01O-10
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26094() ) );         //01O-11
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26094B() ) );        //01O-12
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26127() ) );         //01O-13
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26292() ) );         //01O-14
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25704() ) );         //01O-15
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26323() ) );         //01O-16
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26217() ) );         //01O-17
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26280() ) );         //01O-18
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26428() ) );         //01O-19
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26117Part2() ) );    //01O-20
+
+            
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25978() ) );         //01P-01
+
+
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase7608() ) );         //01P-18 - will need to be resolved
 

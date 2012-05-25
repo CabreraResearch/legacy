@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.WebPages
                         foreach( CswNbtNode ThisCustomerNode in CustomerNodes )
                         {
                             //CswNbtNode ThisCustomerNode = CustomerTree.getNodeForCurrentPosition();
-                            if( CswNbtNodeCaster.AsCustomer( ThisCustomerNode ).CompanyID.Text == AccessId )
+                            if( ( (CswNbtObjClassCustomer) ThisCustomerNode ).CompanyID.Text == AccessId )
                             {
                                 CustomerNode = ThisCustomerNode;
                                 break;
@@ -363,7 +363,7 @@ namespace ChemSW.Nbt.WebPages
                 {
                     CustomerNodeId = CustomerNode.NodeId;
                     CustomerName = CustomerNode.NodeName;
-                    UserLimit = CswConvert.ToInt32( CswNbtNodeCaster.AsCustomer( CustomerNode ).UserCount.Value );
+                    UserLimit = CswConvert.ToInt32( ( (CswNbtObjClassCustomer) CustomerNode ).UserCount.Value );
                 }
                 CustomerNode = null;
             }

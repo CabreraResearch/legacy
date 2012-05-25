@@ -389,7 +389,7 @@ namespace ChemSW.Nbt.WebServices
                                 CswNbtObjClass.NbtButtonAction ButtonAction = CswNbtObjClass.NbtButtonAction.Unknown;
                                 string Message = string.Empty;
                                 string ActionData = string.Empty;
-                                ( CswNbtNodeCaster.AsInspectionDesign( Node ) ).onButtonClick( MetaDataProp, out ButtonAction, out ActionData, out Message );
+                                ( (CswNbtObjClassInspectionDesign) Node ).onButtonClick( MetaDataProp, out ButtonAction, out ActionData, out Message );
                             }
                         }
                     }

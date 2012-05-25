@@ -20,6 +20,11 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
         private CswNbtSubField _QuantitySubField;
         private CswNbtSubField _UnitNameSubField;
+        public static implicit operator CswNbtNodePropQuantity( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsQuantity;
+        }
+
         private CswNbtSubField _UnitIdSubField;
         private Collection<CswNbtNode> _UnitNodes;
 

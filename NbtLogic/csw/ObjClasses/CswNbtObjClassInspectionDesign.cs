@@ -209,6 +209,18 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassInspectionDesign
+        /// </summary>
+        public static implicit operator CswNbtObjClassInspectionDesign( CswNbtNode Node )
+        {
+            CswNbtObjClassInspectionDesign ret = null;
+            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass ) )
+            {
+                ret = (CswNbtObjClassInspectionDesign) Node.ObjClass;
+            }
+            return ret;
+        }
 
 
         #region Inherited Events
@@ -229,7 +241,7 @@ namespace ChemSW.Nbt.ObjClasses
                         .Where( InspectionNode => this.Generator.RelatedNodeId == InspectionNode.Properties[GeneratorPropertyName].AsRelationship.RelatedNodeId );
                     foreach( CswNbtNode InspectionNode in AllNodesOfThisNT )
                     {
-                        CswNbtObjClassInspectionDesign PriorInspection = CswNbtNodeCaster.AsInspectionDesign( InspectionNode );
+                        CswNbtObjClassInspectionDesign PriorInspection = (CswNbtObjClassInspectionDesign) InspectionNode;
                         NodeStatus = PriorInspection.Status.Value;
 
                         if( //Inspection status is Pending, Overdue or not set
@@ -292,8 +304,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-            ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
-            //CswNbtObjClassInspectionTarget pnodeAsTarget = CswNbtNodeCaster.AsInspectionTarget( ParentNode );
+            ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+            //CswNbtObjClassInspectionTarget pnodeAsTarget = (CswNbtObjClassInspectionTarget) ParentNode;
             bool _alreadyDeficient = ( Parent.Status.Value == TargetStatusAsString( TargetStatus.Deficient ) );
             bool _Deficient = areMoreActionsRequired();
             if( _Deficient != _alreadyDeficient )
@@ -386,7 +398,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
                         if( ParentNode != null )
                         {
-                            ICswNbtPropertySetInspectionParent Parent = CswNbtNodeCaster.AsPropertySetInspectionParent( ParentNode );
+                            ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
                             if( false == _Deficient )//case 25041
                             {
                                 _Deficient = areMoreActionsRequired();
