@@ -74,14 +74,18 @@ namespace ChemSW.Nbt.Schema
             CswNbtView BatchOpView = _CswNbtSchemaModTrnsctn.makeView();
             BatchOpView.makeNew( "Batch Operations (all)", NbtViewVisibility.Role, ChemSwAdminRole.NodeId );
             BatchOpView.Category = "System";
-            BatchOpView.SetViewMode( NbtViewRenderingMode.Tree );
+            BatchOpView.SetViewMode( NbtViewRenderingMode.Grid );
 
             CswNbtViewRelationship BatchOpViewRel = BatchOpView.AddViewRelationship( BatchOpOC, true );
-            BatchOpView.AddViewPropertyAndFilter( BatchOpViewRel,
-                                                  StatusOCP,
-                                                  Value: NbtBatchOpStatus.Completed.ToString(),
-                                                  FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                                                  ShowAtRuntime: true );
+            BatchOpView.AddViewProperty( BatchOpViewRel, OpNameOCP );
+            BatchOpView.AddViewProperty( BatchOpViewRel, UserOCP );
+            CswNbtViewProperty BatchStatusViewProp = BatchOpView.AddViewProperty( BatchOpViewRel, StatusOCP );
+            CswNbtViewProperty BatchPriorityViewProp = BatchOpView.AddViewProperty( BatchOpViewRel, PriorityOCP );
+            BatchOpView.AddViewPropertyFilter( BatchStatusViewProp,
+                                               Value: NbtBatchOpStatus.Completed.ToString(),
+                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                               ShowAtRuntime: true );
+            BatchOpView.setSortProperty( BatchPriorityViewProp, NbtViewPropertySortMethod.Descending );
             BatchOpView.save();
 
             // Batch Operations (all) view for Administrator
