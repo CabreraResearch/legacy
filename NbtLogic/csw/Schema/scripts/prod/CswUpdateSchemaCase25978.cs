@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.Schema
                                                                                                    FkValue: UserOC.ObjectClassId );
 
             PriorityOCP.DefaultValue.Field1_Numeric = 0;
+            PriorityOCP.DefaultValue.Gestalt = "0";
 
             CswNbtMetaDataNodeType BatchOpNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( BatchOpOC.ObjectClassId, "Batch Operation", "System" );
             BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( StartDateOCP.PropName ) );

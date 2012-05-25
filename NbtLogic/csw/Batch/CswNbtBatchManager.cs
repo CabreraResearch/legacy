@@ -65,7 +65,10 @@ namespace ChemSW.Nbt.Batch
 
                     BatchNode.BatchData.Text = BatchData;
                     BatchNode.OpName.Value = BatchOpName.ToString();
-                    BatchNode.Priority.Value = Priority;
+                    if( false == Double.IsNaN( Priority ) )
+                    {
+                        BatchNode.Priority.Value = Priority;
+                    }
                     BatchNode.Status.Value = NbtBatchOpStatus.Pending.ToString();
                     BatchNode.User.RelatedNodeId = UserId ?? CswNbtResources.CurrentNbtUser.UserId;
 
