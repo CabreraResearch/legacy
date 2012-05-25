@@ -30,6 +30,10 @@ namespace ChemSW.Nbt.PropTypes
             public static readonly GridPropMode Small = new GridPropMode( "Small" );
         }
 
+        public static implicit operator CswNbtNodePropGrid( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsGrid;
+        }
 
         public CswNbtNodePropGrid( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )

@@ -46,7 +46,8 @@ namespace ChemSW.Nbt.Sched
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
-            _CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
+            //_CswNbtResources.AuditContext = "Scheduler Task: Update Inspections";
+            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
 
         //private CswNbtNode _CswNbtNodeGenerator;

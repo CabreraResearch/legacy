@@ -15,6 +15,11 @@ namespace ChemSW.Nbt.PropTypes
     {
         private char _delimiter = '\n';
 
+        public static implicit operator CswNbtNodePropImageList( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsImageList;
+        }
+
         public CswNbtNodePropImageList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

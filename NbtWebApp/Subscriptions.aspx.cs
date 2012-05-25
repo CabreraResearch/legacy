@@ -24,8 +24,8 @@ namespace ChemSW.Nbt.WebPages
         private Button SaveButton;
         private CswPrimaryKey _ThisUser;
 
-		//private string NotifPrefix = "notif_";
-		//private string MailReportPrefix = "mr_";
+        //private string NotifPrefix = "notif_";
+        //private string MailReportPrefix = "mr_";
 
         protected override void OnInit( EventArgs e )
         {
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.WebPages
                 _ThisUser = Master.CswNbtResources.CurrentNbtUser.UserId;
 
                 if( Master.CswNbtResources.CurrentNbtUser.Email == string.Empty )
-					throw new CswDniException( ErrorType.Warning, "Email address required for subscriptions", "Current user has no email address defined" );
+                    throw new CswDniException( ErrorType.Warning, "Email address required for subscriptions", "Current user has no email address defined" );
 
                 CswCenteredDiv Div = new CswCenteredDiv();
                 ph.Controls.Add( Div );
@@ -59,15 +59,15 @@ namespace ChemSW.Nbt.WebPages
                 _NotifData.Columns.Add( "Notification", typeof( string ) );
                 _NotifData.Columns.Add( "notificationid", typeof( int ) );
                 _NotifData.Columns.Add( "Subscribe", typeof( bool ) );
-				//_NotifTree = Master.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-				//for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
-				//{
-				//    _NotifTree.goToNthChild( n );
-				//    CswNbtNode NotifNode = _NotifTree.getNodeForCurrentPosition();
-				CswNbtMetaDataObjectClass NotificationOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-				foreach(CswNbtNode NotifNode in NotificationOC.getNodes(false, false))
-				{
-                    bool Checked = CswNbtNodeCaster.AsNotification( NotifNode ).SubscribedUsers.IsSubscribed( _ThisUser );
+                //_NotifTree = Master.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+                //for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
+                //{
+                //    _NotifTree.goToNthChild( n );
+                //    CswNbtNode NotifNode = _NotifTree.getNodeForCurrentPosition();
+                CswNbtMetaDataObjectClass NotificationOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+                foreach( CswNbtNode NotifNode in NotificationOC.getNodes( false, false ) )
+                {
+                    bool Checked = ( (CswNbtObjClassNotification) NotifNode ).SubscribedUsers.IsSubscribed( _ThisUser );
 
                     DataRow NotifRow = _NotifData.NewRow();
                     NotifRow["Notification"] = NotifNode.NodeName;
@@ -90,23 +90,23 @@ namespace ChemSW.Nbt.WebPages
                 _Table.addControl( 0, 2, new CswLiteralNbsp() );
                 _Table.addControl( 1, 2, new CswLiteralNbsp() );
 
-                _MailReportCBArray = new CswCheckBoxArray( Master.CswNbtResources ) {ID = "MailReportCBArray", UseRadios = false, Rows = 10};
+                _MailReportCBArray = new CswCheckBoxArray( Master.CswNbtResources ) { ID = "MailReportCBArray", UseRadios = false, Rows = 10 };
                 _Table.addControl( 2, 2, _MailReportCBArray );
 
                 _MailReportData = new CswDataTable( "MailReportsDT", "" );
                 _MailReportData.Columns.Add( "Mail Report", typeof( string ) );
                 _MailReportData.Columns.Add( "mailreportid", typeof( int ) );
                 _MailReportData.Columns.Add( "Subscribe", typeof( bool ) );
-				//_MailReportTree = Master.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
-				//for( Int32 n = 0; n < _MailReportTree.getChildNodeCount(); n++ )
-				//{
-				//    _MailReportTree.goToNthChild( n );
+                //_MailReportTree = Master.CswNbtResources.Trees.getTreeFromObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+                //for( Int32 n = 0; n < _MailReportTree.getChildNodeCount(); n++ )
+                //{
+                //    _MailReportTree.goToNthChild( n );
 
-				//    CswNbtNode MailReportNode = _MailReportTree.getNodeForCurrentPosition();
-				CswNbtMetaDataObjectClass MailReportOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass);
-				foreach(CswNbtNode MailReportNode in MailReportOC.getNodes(false, false))
-				{
-                    bool Checked = CswNbtNodeCaster.AsMailReport( MailReportNode ).Recipients.IsSubscribed( _ThisUser );
+                //    CswNbtNode MailReportNode = _MailReportTree.getNodeForCurrentPosition();
+                CswNbtMetaDataObjectClass MailReportOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+                foreach( CswNbtNode MailReportNode in MailReportOC.getNodes( false, false ) )
+                {
+                    bool Checked = ( (CswNbtObjClassMailReport) MailReportNode ).Recipients.IsSubscribed( _ThisUser );
 
                     DataRow MailReportRow = _MailReportData.NewRow();
                     MailReportRow["Mail Report"] = MailReportNode.NodeName;
@@ -144,16 +144,16 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // Save Notifications
                     Collection<Int32> CheckedNotifIds = _NotifCBArray.GetCheckedValues( "Subscribe" ).ToIntCollection();
-                    
-					//for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
-					//{
-					//    _NotifTree.goToNthChild( n );
 
-					CswNbtMetaDataObjectClass NotificationOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-					foreach( CswNbtNode ThisNode in NotificationOC.getNodes( false, false ) )
-					{
+                    //for( Int32 n = 0; n < _NotifTree.getChildNodeCount(); n++ )
+                    //{
+                    //    _NotifTree.goToNthChild( n );
+
+                    CswNbtMetaDataObjectClass NotificationOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+                    foreach( CswNbtNode ThisNode in NotificationOC.getNodes( false, false ) )
+                    {
                         //CswNbtNode ThisNode = _NotifTree.getNodeForCurrentPosition();
-                        CswNbtObjClassNotification NotifNode = CswNbtNodeCaster.AsNotification( ThisNode );
+                        CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) ThisNode;
                         if( CheckedNotifIds.Contains( NotifNode.NodeId.PrimaryKey ) )
                         {
                             // subscribe!  (this will do nothing if we're already subscribed)
@@ -171,16 +171,16 @@ namespace ChemSW.Nbt.WebPages
                     // Save Mail Reports
                     Collection<Int32> CheckedMailReportIds = _MailReportCBArray.GetCheckedValues( "Subscribe" ).ToIntCollection();
 
-					//for( Int32 n = 0; n < _MailReportTree.getChildNodeCount(); n++ )
-					//{
-					//    _MailReportTree.goToNthChild( n );
+                    //for( Int32 n = 0; n < _MailReportTree.getChildNodeCount(); n++ )
+                    //{
+                    //    _MailReportTree.goToNthChild( n );
 
-					//    CswNbtNode ThisNode = _MailReportTree.getNodeForCurrentPosition();
+                    //    CswNbtNode ThisNode = _MailReportTree.getNodeForCurrentPosition();
 
-					CswNbtMetaDataObjectClass MailReportOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
-					foreach( CswNbtNode ThisNode in MailReportOC.getNodes( false, false ) )
-					{
-						CswNbtObjClassMailReport MailReportNode = CswNbtNodeCaster.AsMailReport( ThisNode );
+                    CswNbtMetaDataObjectClass MailReportOC = Master.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MailReportClass );
+                    foreach( CswNbtNode ThisNode in MailReportOC.getNodes( false, false ) )
+                    {
+                        CswNbtObjClassMailReport MailReportNode = (CswNbtObjClassMailReport) ThisNode;
                         if( CheckedMailReportIds.Contains( MailReportNode.NodeId.PrimaryKey ) )
                         {
                             // subscribe!  (this will do nothing if we're already subscribed)

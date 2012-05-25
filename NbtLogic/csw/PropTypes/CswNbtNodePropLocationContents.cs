@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Xml;
 using System.Xml.Linq;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
@@ -12,6 +11,10 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropLocationContents : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropLocationContents( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsLocationContents;
+        }
 
         public CswNbtNodePropLocationContents( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )

@@ -13,6 +13,10 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropComments : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropComments( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsComments;
+        }
 
         public CswNbtNodePropComments( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )

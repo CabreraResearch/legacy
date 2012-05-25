@@ -12,6 +12,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropQuestion : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropQuestion( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsQuestion;
+        }
+
         /// <summary>
         /// Constructor
         /// </summary>

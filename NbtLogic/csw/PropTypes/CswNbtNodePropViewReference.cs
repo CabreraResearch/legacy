@@ -4,7 +4,6 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -16,6 +15,11 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropViewReference : CswNbtNodeProp
     {
         //public static char delimiter = ',';
+
+        public static implicit operator CswNbtNodePropViewReference( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsViewReference;
+        }
 
         public CswNbtNodePropViewReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )

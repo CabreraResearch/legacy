@@ -38,7 +38,8 @@ namespace ChemSW.Nbt.Sched
         {
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswNbtResources.AuditContext = "Scheduler Task: Update Property Values";
+            //_CswNbtResources.AuditContext = "Scheduler Task: Update Property Values";
+            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
         }
 
 
