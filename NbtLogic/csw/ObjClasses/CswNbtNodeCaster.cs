@@ -21,6 +21,18 @@ namespace ChemSW.Nbt.ObjClasses
             return ( (CswNbtObjClassAliquot) Node.ObjClass );
         }//AsAliquot
 
+
+        // This is the beginning of the end of CswNbtNodeCaster.
+        // Use this instead:
+        //  CswNbtNode Node = _CswNbtResources.Nodes[BatchId];
+        //  CswNbtObjClassBatchOp BatchNode = (CswNbtObjClassBatchOp) Node;
+
+        //public static CswNbtObjClassBatchOp AsBatchOp( CswNbtNode Node )
+        //{
+        //    _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass );
+        //    return ( (CswNbtObjClassBatchOp) Node.ObjClass );
+        //}//AsBatchOp
+
         public static CswNbtObjClassBiological AsBiological( CswNbtNode Node )
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass );
@@ -151,6 +163,18 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ResultClass );
             return ( (CswNbtObjClassResult) Node.ObjClass );
+        }//AsResult
+
+        public static CswNbtObjClassRequest AsRequest( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
+            return ( (CswNbtObjClassRequest) Node.ObjClass );
+        }//AsResult
+
+        public static CswNbtObjClassRequestItem AsRequestItem( CswNbtNode Node )
+        {
+            _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            return ( (CswNbtObjClassRequestItem) Node.ObjClass );
         }//AsResult
 
         public static CswNbtObjClassRole AsRole( CswNbtNode Node )

@@ -34,6 +34,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass:
+                    ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
                     ReturnVal = new CswNbtObjClassContainer( CswNbtResources, Node );
                     break;

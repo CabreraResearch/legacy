@@ -8,7 +8,6 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
-using System.Collections.ObjectModel;
 
 
 namespace ChemSW.Nbt.PropTypes
@@ -19,6 +18,11 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropLogicalSet : CswNbtNodeProp
     {
         private XmlDocument LogicalSetXmlDoc;
+
+        public static implicit operator CswNbtNodePropLogicalSet( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsLogicalSet;
+        }
 
         /// <summary>
         /// Represents the data of a set of checkboxes
@@ -289,31 +293,31 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-/*
-        /// <summary>
-        /// Checks to be sure all values assigned are valid against possible options
-        /// </summary>
-        public void ValidateValues()
-        {
-            // Y values
-            XmlNodeList YValueNodes = LogicalSetXmlDoc.ChildNodes[0].SelectNodes( "YValue" );
-            Collection<XmlNode> DoomedNodes = new Collection<XmlNode>();
-            foreach( XmlNode YValueNode in YValueNodes )
-            {
-                string ThisYValue = YValueNode.Attributes["y"].Value;
-                if( false == YValues.Contains( ThisYValue ) )
+        /*
+                /// <summary>
+                /// Checks to be sure all values assigned are valid against possible options
+                /// </summary>
+                public void ValidateValues()
                 {
-                    DoomedNodes.Add( YValueNode );
-                }
-            }
+                    // Y values
+                    XmlNodeList YValueNodes = LogicalSetXmlDoc.ChildNodes[0].SelectNodes( "YValue" );
+                    Collection<XmlNode> DoomedNodes = new Collection<XmlNode>();
+                    foreach( XmlNode YValueNode in YValueNodes )
+                    {
+                        string ThisYValue = YValueNode.Attributes["y"].Value;
+                        if( false == YValues.Contains( ThisYValue ) )
+                        {
+                            DoomedNodes.Add( YValueNode );
+                        }
+                    }
 
-            foreach( XmlNode DoomedNode in DoomedNodes )
-            {
-                LogicalSetXmlDoc.ChildNodes[0].RemoveChild( DoomedNode );
-            }
+                    foreach( XmlNode DoomedNode in DoomedNodes )
+                    {
+                        LogicalSetXmlDoc.ChildNodes[0].RemoveChild( DoomedNode );
+                    }
 
-        } // ValidateValues() 
-*/
+                } // ValidateValues() 
+        */
 
         private string _ElemName_LogicalSetXml = "LogicalSetXml";
         private string _ElemName_LogicalSetJson = "logicalsetjson";
