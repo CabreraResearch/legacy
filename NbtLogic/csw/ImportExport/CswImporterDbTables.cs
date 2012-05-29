@@ -639,14 +639,14 @@ namespace ChemSW.Nbt.ImportExport
                         foreach( DataRow CurrentImportNodeRow in NodeRecordsToProcess.Rows )
                         {
 
-                            string CurrentRowError = string.Empty;
+                            string CurrentNodeRowError = string.Empty;
                             string CurrentNodeTypeName = CurrentImportNodeRow["nodetypename"].ToString();
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CurrentNodeTypeName );
 
                             string CurrentImportNodeName = string.Empty;
                             string CurrentImportNodeId = string.Empty;
 
-                            ImportProcessStati CurrentErrorStatus = ImportProcessStati.Imported;
+                            ImportProcessStati CurrentNodeRowErrorStatus = ImportProcessStati.Imported;
 
                             if( null != NodeType ) //if we can't get the node type, we are hosed
                             {
@@ -667,170 +667,207 @@ namespace ChemSW.Nbt.ImportExport
                                         //Select he corresponding property records
                                         CurrentImportNodeId = CurrentImportNodeRow[_ColName_ImportNodeId].ToString();
                                         CurrentImportNodeName = CurrentImportNodeRow[_ColName_Nodes_NodeName].ToString();
-                                        string TheQuery = "select n.importnodeid, n.nodename,p.* from " + _TblName_ImportNodes + " n join " + _TblName_ImportProps + " p on (n.importnodeid=p.importnodeid) where  n.importnodeid='" + CurrentImportNodeId + "'";
-                                        CswArbitrarySelect CswArbitrarySelectUnProcessedProps = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssedprops", TheQuery );
-                                        DataTable CurrentUnprocssedPropsTable = CswArbitrarySelectUnProcessedProps.getTable();
+
+                                        //string TheJoinQuery = "select n.importnodeid, n.nodename,p.* from " + _TblName_ImportNodes + " n join " + _TblName_ImportProps + " p on (n.importnodeid=p.importnodeid) where  n.importnodeid='" + CurrentImportNodeId + "'";
+                                        //CswArbitrarySelect CswArbitrarySelectUnProcessedProps = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "selectunprocssedprops", TheJoinQuery );
+                                        //DataTable CurrentUnprocssedPropsTable = CswArbitrarySelectUnProcessedProps.getTable();
+
+                                        string TheWhereClause = "where  importnodeid='" + CurrentImportNodeId + "'";
+                                        CswTableUpdate CswTableUpdateImportProps = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "import_props_update_" + CurrentImportNodeId, _TblName_ImportProps );
+                                        DataTable CurrentUnprocssedPropsTable = CswTableUpdateImportProps.getTable( TheWhereClause );
+
+
+
 
                                         //Apply the property records to the node
                                         RelationshipPropAddCounter = 0;
 
-                                        foreach( DataRow CurrentImportProprow in CurrentUnprocssedPropsTable.Rows )
+
+                                        foreach( DataRow CurrentImportPropRow in CurrentUnprocssedPropsTable.Rows )
                                         {
                                             // previous errors shouldn't prevent us from continuing to import
-                                            CurrentErrorStatus = ImportProcessStati.Imported;
+                                            //                                            CurrentNodeRowErrorStatus = ImportProcessStati.Imported;
 
-                                            string CurrentNodeTypePropname = CurrentImportProprow["nodetypepropname"].ToString();
+                                            string CurrentPropRowErrors = string.Empty;
+                                            ImportProcessStati CurrentPropRowErrorStatus = ImportProcessStati.Imported;
 
-                                            if( ( "user" != NodeType.NodeTypeName.ToLower() ) && ( "role" != CurrentNodeTypePropname.ToLower() ) )
+                                            try
                                             {
 
-                                                CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp = NodeType.getNodeTypeProp( CurrentNodeTypePropname );
 
-                                                //if( ( string.Empty == CurrentNbtNode.Properties[CurrentNodeTypeProp].Gestalt.ToString() ) || ( CurrentNbtNode.Properties[CurrentNodeTypeProp].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ) )
-                                                //{
 
-                                                if( null != CurrentNodeTypeProp )
+                                                string CurrentNodeTypePropname = CurrentImportPropRow["nodetypepropname"].ToString();
+
+                                                if( ( "user" != NodeType.NodeTypeName.ToLower() ) || ( "role" != CurrentNodeTypePropname.ToLower() ) )
                                                 {
 
-                                                    Dictionary<string, Int32> ImportNodeIdToNbtNodeId = new Dictionary<string, int>();
-                                                    if( false == CurrentImportProprow.IsNull( _ColName_Props_ImportTargetNodeIdUnique ) ) //populate ImportNodeIdToNbtNodeId for relationships and locations
+                                                    CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp = NodeType.getNodeTypeProp( CurrentNodeTypePropname );
+
+                                                    //if( ( string.Empty == CurrentNbtNode.Properties[CurrentNodeTypeProp].Gestalt.ToString() ) || ( CurrentNbtNode.Properties[CurrentNodeTypeProp].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ) )
+                                                    //{
+
+                                                    if( null != CurrentNodeTypeProp )
                                                     {
-                                                        string CurrentImportTargetNodeId = CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
 
-                                                        if( ( false == CurrentImportTargetNodeId.Contains( "--" ) ) ||
-                                                            3 == CurrentImportTargetNodeId.Split( new string[] { "--" }, StringSplitOptions.RemoveEmptyEntries ).Length ) //IMCS import references must have all three components in order to be not null
+                                                        Dictionary<string, Int32> ImportNodeIdToNbtNodeId = new Dictionary<string, int>();
+                                                        if( false == CurrentImportPropRow.IsNull( _ColName_Props_ImportTargetNodeIdUnique ) ) //populate ImportNodeIdToNbtNodeId for relationships and locations
                                                         {
+                                                            string CurrentImportTargetNodeId = CurrentImportPropRow[_ColName_Props_ImportTargetNodeIdUnique].ToString();
 
-                                                            string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where lower(" + _ColName_ImportNodeId + ")=lower('" + CurrentImportTargetNodeId + "')";
-                                                            CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "findtargetnodeid", Query );
-                                                            DataTable DataTable = CswArbitrarySelect.getTable();
-                                                            if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
+                                                            if( ( false == CurrentImportTargetNodeId.Contains( "--" ) ) ||
+                                                                3 == CurrentImportTargetNodeId.Split( new string[] { "--" }, StringSplitOptions.RemoveEmptyEntries ).Length ) //IMCS import references must have all three components in order to be not null
                                                             {
 
-                                                                Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] );
-                                                                if( Int32.MinValue != NodeIdOfDestinationNode )
+                                                                string Query = "select " + Colname_NbtNodeId + " from " + _TblName_ImportNodes + " where lower(" + _ColName_ImportNodeId + ")=lower('" + CurrentImportTargetNodeId + "')";
+                                                                CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "findtargetnodeid", Query );
+                                                                DataTable DataTable = CswArbitrarySelect.getTable();
+                                                                if( ( DataTable.Rows.Count > 0 ) && ( false == DataTable.Rows[0].IsNull( Colname_NbtNodeId ) ) )
                                                                 {
-                                                                    string CandidateValidationErrorMessage = string.Empty;
-                                                                    if( _validateTargetNodeType( CurrentNodeTypeProp, NodeIdOfDestinationNode, ref CandidateValidationErrorMessage ) )
+
+                                                                    Int32 NodeIdOfDestinationNode = CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] );
+                                                                    if( Int32.MinValue != NodeIdOfDestinationNode )
                                                                     {
-                                                                        ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
-                                                                        RelationshipPropAddCounter++;
-                                                                    }
-                                                                    else
-                                                                    {
-                                                                        CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
-                                                                        CurrentErrorStatus = ImportProcessStati.Error;
-
-                                                                    }//if-else
-                                                                }
-                                                                else
-                                                                {
-                                                                    CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
-                                                                    CurrentErrorStatus = ImportProcessStati.Error;
-
-                                                                }
-                                                            }
-                                                            else //_ColName_ImportNodeId did not specify a row in the target schema that provides the nodeid of an imported node; so perhaps it specifies the nbtnodeid of a node that already exists in the schema
-                                                            {
-                                                                if( Int32.MinValue != CswConvert.ToInt32( CurrentImportTargetNodeId ) )
-                                                                {
-                                                                    CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
-                                                                    DataTable ExistingNodeDataTable = CswTableSelectFromNodes.getTable( " where nodeid=" + CurrentImportTargetNodeId );
-
-
-                                                                    if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
-                                                                    {
-                                                                        Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); //review 24884
-                                                                        if( Int32.MinValue != ExistingNbtNodeId )
+                                                                        string CandidateValidationErrorMessage = string.Empty;
+                                                                        if( _validateTargetNodeType( CurrentNodeTypeProp, NodeIdOfDestinationNode, ref CandidateValidationErrorMessage ) )
                                                                         {
-
-                                                                            string CandidateValidationErrorMessage = string.Empty;
-                                                                            if( _validateTargetNodeType( CurrentNodeTypeProp, ExistingNbtNodeId, ref CandidateValidationErrorMessage ) )
-                                                                            {
-
-                                                                                ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportProprow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
-                                                                                RelationshipPropAddCounter++;
-                                                                            }
-                                                                            else
-                                                                            {
-                                                                                CurrentRowError += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
-                                                                                CurrentErrorStatus = ImportProcessStati.Error;
-                                                                            }
+                                                                            ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportPropRow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), CswConvert.ToInt32( DataTable.Rows[0][Colname_NbtNodeId] ) );
+                                                                            RelationshipPropAddCounter++;
                                                                         }
                                                                         else
                                                                         {
-                                                                            CurrentRowError += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
-                                                                            CurrentErrorStatus = ImportProcessStati.Error;
-                                                                        }
+                                                                            CurrentPropRowErrors += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                            CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
+
+                                                                        }//if-else
                                                                     }
-                                                                    else //it is neither in the import data nor in the target schema
+                                                                    else
                                                                     {
-                                                                        //having eliminated null node IDs, this condition would be a true error
-                                                                        //(as a opposed to a who-knew-from-null-nodeids error . . . 
-                                                                        CurrentRowError += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
-                                                                        CurrentErrorStatus = ImportProcessStati.Error;
-                                                                    }//if-else we were able to find the target node in the destination schema
+                                                                        CurrentPropRowErrors += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
+                                                                        CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
 
+                                                                    }
                                                                 }
-                                                                else
+                                                                else //_ColName_ImportNodeId did not specify a row in the target schema that provides the nodeid of an imported node; so perhaps it specifies the nbtnodeid of a node that already exists in the schema
                                                                 {
-                                                                    CurrentRowError += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
-                                                                    CurrentErrorStatus = ImportProcessStati.Error;
-
-                                                                }//if-else the node id is numeric (and a thus a candidate to be an NBT node ID)
-
-                                                            }//if-else we found the target node in the import data
+                                                                    if( Int32.MinValue != CswConvert.ToInt32( CurrentImportTargetNodeId ) )
+                                                                    {
+                                                                        CswTableSelect CswTableSelectFromNodes = _CswNbtResources.makeCswTableSelect( "rawselectfromnodes", "nodes" );
+                                                                        DataTable ExistingNodeDataTable = CswTableSelectFromNodes.getTable( " where nodeid=" + CurrentImportTargetNodeId );
 
 
-                                                        }//if the target node id is not null
+                                                                        if( ExistingNodeDataTable.Rows.Count > 0 ) //it _does_ exist in the target schema
+                                                                        {
+                                                                            Int32 ExistingNbtNodeId = CswConvert.ToInt32( CurrentImportTargetNodeId ); //review 24884
+                                                                            if( Int32.MinValue != ExistingNbtNodeId )
+                                                                            {
+
+                                                                                string CandidateValidationErrorMessage = string.Empty;
+                                                                                if( _validateTargetNodeType( CurrentNodeTypeProp, ExistingNbtNodeId, ref CandidateValidationErrorMessage ) )
+                                                                                {
+
+                                                                                    ImportNodeIdToNbtNodeId.Add( CswTools.XmlRealAttributeName( CurrentImportPropRow[_ColName_Props_ImportTargetNodeIdUnique].ToString() ).ToLower(), ExistingNbtNodeId );
+                                                                                    RelationshipPropAddCounter++;
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    CurrentPropRowErrors += "Unable to set the " + CurrentNodeTypePropname + " property of the node with import node id " + CurrentImportNodeId + "): " + CandidateValidationErrorMessage;
+                                                                                    CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
+                                                                                }
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                CurrentPropRowErrors += "The would-be destination node id (" + DataTable.Rows[0][Colname_NbtNodeId].ToString() + ") for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ") cannot be converted to an integer";
+                                                                                CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
+                                                                            }
+                                                                        }
+                                                                        else //it is neither in the import data nor in the target schema
+                                                                        {
+                                                                            //having eliminated null node IDs, this condition would be a true error
+                                                                            //(as a opposed to a who-knew-from-null-nodeids error . . . 
+                                                                            CurrentPropRowErrors += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
+                                                                            CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
+                                                                        }//if-else we were able to find the target node in the destination schema
+
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        CurrentPropRowErrors += "Unable to find target node with node id " + CurrentImportTargetNodeId + " for reference from import prop of type " + CurrentNodeTypePropname + " (which is a property of node with import node id " + CurrentImportNodeId + ")";
+                                                                        CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
+
+                                                                    }//if-else the node id is numeric (and a thus a candidate to be an NBT node ID)
+
+                                                                }//if-else we found the target node in the import data
 
 
-                                                    }//if our property references a node (i.e., its a relation nodetype) 
+                                                            }//if the target node id is not null
 
 
-                                                    //It appears to me that the third parameter of ReadDataRow() -- a map of source to destination nodetypeids -- 
-                                                    //is only necessary when you are importing meta data as well as node data; we're not doing that yet here
+                                                        }//if our property references a node (i.e., its a relation nodetype) 
 
-                                                    //need to do this so that ReadDataRow will get the columnname he expects :-( 
-                                                    //and then we need to change it back; 
-                                                    //this is major kludgedelia
-                                                    //Need a mechanism for dynamically changing the column names that ReadDataRow expects
-                                                    if( ImportProcessStati.Error != CurrentErrorStatus )
+
+                                                        //It appears to me that the third parameter of ReadDataRow() -- a map of source to destination nodetypeids -- 
+                                                        //is only necessary when you are importing meta data as well as node data; we're not doing that yet here
+
+                                                        //need to do this so that ReadDataRow will get the columnname he expects :-( 
+                                                        //and then we need to change it back; 
+                                                        //this is major kludgedelia
+                                                        //Need a mechanism for dynamically changing the column names that ReadDataRow expects
+                                                        if( ImportProcessStati.PropsError != CurrentNodeRowErrorStatus )
+                                                        {
+                                                            CurrentImportPropRow.Table.Columns[_ColName_Props_ImportTargetNodeIdUnique].ColumnName = _ColName_Props_ImportTargetNodeIdOriginal;
+                                                            try
+                                                            {
+
+                                                                CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportPropRow, ImportNodeIdToNbtNodeId, null );
+                                                                PropAddCounter++;
+                                                            }
+
+                                                            finally
+                                                            {
+                                                                CurrentImportPropRow.Table.Columns[_ColName_Props_ImportTargetNodeIdOriginal].ColumnName = _ColName_Props_ImportTargetNodeIdUnique;
+                                                            }
+                                                        }//if we have not encountered any errors so far
+
+                                                    }
+                                                    else
                                                     {
-                                                        CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdUnique].ColumnName = _ColName_Props_ImportTargetNodeIdOriginal;
-                                                        try
-                                                        {
+                                                        CurrentPropRowErrors += "Unable to import the " + CurrentNodeTypePropname + " property for the node named " + CurrentImportNodeName + " (importnodeid " + CurrentImportNodeId + "): it's Node type " + CurrentNodeTypeName + " does not have this property";
+                                                        CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
 
-                                                            CurrentNbtNode.Properties[CurrentNodeTypeProp].ReadDataRow( CurrentImportProprow, ImportNodeIdToNbtNodeId, null );
-                                                            PropAddCounter++;
-                                                        }
+                                                    }//if-else we were able to retrieve the nodetype prop
 
-                                                        finally
-                                                        {
-                                                            CurrentImportProprow.Table.Columns[_ColName_Props_ImportTargetNodeIdOriginal].ColumnName = _ColName_Props_ImportTargetNodeIdUnique;
-                                                        }
-                                                    }//if we have not encountered any errors so far
+                                                    //}
+                                                    //else
+                                                    //{
+                                                    //    CurrentRowError += "Did not import property " + CurrentNodeTypePropname + " for node type " + CurrentNodeTypeName + " named " + CurrentImportNodeName + " because a property with that name is already defined for this node";
+                                                    //    CurrentErrorStatus = ImportProcessStati.PropsError;
 
-                                                }
-                                                else
+
+                                                    //}//if the property already exists for the node (the node itself probably already was in the system)
+
+
+
+                                                }//if it is not the user node's role property, which we would have already set
+
+                                            }
+
+                                            catch( Exception PropsException )
+                                            {
+                                                CurrentPropRowErrors += "Exception importing props row: " + PropsException.Message; ;
+                                                CurrentPropRowErrorStatus = ImportProcessStati.PropsError;
+                                            }
+
+                                            finally
+                                            {
+                                                CurrentImportPropRow[_ColName_ProcessStatus] = CurrentPropRowErrorStatus.ToString();
+                                                if( ImportProcessStati.PropsError == CurrentPropRowErrorStatus )
                                                 {
-                                                    CurrentRowError += "Unable to import the " + CurrentNodeTypePropname + " property for the node named " + CurrentImportNodeName + " (importnodeid " + CurrentImportNodeId + "): it's Node type " + CurrentNodeTypeName + " does not have this property";
-                                                    CurrentErrorStatus = ImportProcessStati.Error;
+                                                    CurrentImportPropRow[_ColName_StatusMessage] = CurrentPropRowErrors;
+                                                }
 
-                                                }//if-else we were able to retrieve the nodetype prop
+                                                CswTableUpdateImportProps.update( CurrentUnprocssedPropsTable );
 
-                                                //}
-                                                //else
-                                                //{
-                                                //    CurrentRowError += "Did not import property " + CurrentNodeTypePropname + " for node type " + CurrentNodeTypeName + " named " + CurrentImportNodeName + " because a property with that name is already defined for this node";
-                                                //    CurrentErrorStatus = ImportProcessStati.PropsError;
-
-
-                                                //}//if the property already exists for the node (the node itself probably already was in the system)
-
-
-
-                                            }//if it is not the user node's role property, which we would have already set
+                                            }
 
                                         }//iterate prop rows
 
@@ -858,37 +895,43 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                                 else
                                 {
-                                    CurrentRowError += "Unable to retrieve node with " + _ColName_ImportNodeId + " of " + CurrentImportNodeId;
-                                    CurrentErrorStatus = ImportProcessStati.Error;
+                                    CurrentNodeRowError += "Unable to retrieve node with " + _ColName_ImportNodeId + " of " + CurrentImportNodeId;
+                                    CurrentNodeRowErrorStatus = ImportProcessStati.Error;
 
                                 }//if-else we were able to build a node from the current node row
 
                             }
                             else
                             {
-                                CurrentRowError += "Unable to import nodetype with " + _ColName_ImportNodeId + " of " + CurrentImportNodeId + ",  its node type  (" + CurrentNodeTypeName + ") could not be retrieved; ";
-                                CurrentErrorStatus = ImportProcessStati.Error;
+                                CurrentNodeRowError += "Unable to import nodetype with " + _ColName_ImportNodeId + " of " + CurrentImportNodeId + ",  its node type  (" + CurrentNodeTypeName + ") could not be retrieved; ";
+                                CurrentNodeRowErrorStatus = ImportProcessStati.Error;
 
                             }//if-else we were able to retrieve the node type
 
                             DataTable DataTableCurrentNodeTable = CswTableUpdateNodes.getTable( " where " + _ColName_ImportNodeId + "='" + CurrentImportNodeId + "'" );
                             if( DataTableCurrentNodeTable.Rows.Count > 0 )
                             {
-                                if( ( ImportProcessStati.Error != CurrentErrorStatus ) && ( ImportProcessStati.PropsError != CurrentErrorStatus ) )
+
+
+
+                                if( ImportProcessStati.Error != CurrentNodeRowErrorStatus )
                                 {
                                     DataTableCurrentNodeTable.Rows[0][_ColName_ProcessStatus] = ImportProcessStati.PropsAdded.ToString();
                                 }
                                 else
                                 {
-                                    //we're not putting the errors into the prop records because that would add to the expense of the process. 
-                                    DataTableCurrentNodeTable.Rows[0][_ColName_ProcessStatus] = CurrentErrorStatus.ToString();
-                                    DataTableCurrentNodeTable.Rows[0][_ColName_StatusMessage] = CurrentRowError;
+                                    DataTableCurrentNodeTable.Rows[0][_ColName_ProcessStatus] = CurrentNodeRowErrorStatus.ToString();
+                                    DataTableCurrentNodeTable.Rows[0][_ColName_StatusMessage] = CurrentNodeRowError;
 
-                                    if( ImportProcessStati.Error == CurrentErrorStatus )
+                                    if( ImportProcessStati.Error == CurrentNodeRowErrorStatus )
                                     {
-                                        _CswImportExportStatusReporter.reportError( CurrentRowError );
+                                        _CswImportExportStatusReporter.reportError( CurrentNodeRowError );
                                     }
                                 }//if else there was an error on the current row
+
+
+
+
                                 TotalNodesProcesssedSoFar++;
                                 CswTableUpdateNodes.update( DataTableCurrentNodeTable );
                             }//for some reason, it _can_ happen that this row is empty
@@ -965,7 +1008,6 @@ namespace ChemSW.Nbt.ImportExport
 
                             if( null != CurrentNbtNode )
                             {
-
                                 //First check for dundancy
                                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( CurrentNbtNode.NodeTypeId ) )
                                 {
