@@ -83,28 +83,44 @@ namespace ChemSW.Nbt
             if( Node.NodeId.TableName != "nodes" )
                 throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
 
-            CswStaticSelect RelatedsQuerySelect = _CswNbtResources.makeCswStaticSelect( "updateRelationsToThisNode_select", "getRelationshipsToNode" );
-            CswStaticParam StaticParam = new CswStaticParam( "getnodeid", Node.NodeId.PrimaryKey.ToString() );
-            RelatedsQuerySelect.S4Parameters.Add( "getnodeid", StaticParam );
-            DataTable RelatedsTable = RelatedsQuerySelect.getTable();
+            // case 26484
+            // You can't use a PK-based in clause for this, because it may exceed 1000 values.
 
-            // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a relationship to this node
-            string PkString = string.Empty;
-            foreach( DataRow RelatedsRow in RelatedsTable.Rows )
-            {
-                if( PkString != string.Empty ) PkString += ",";
-                PkString += RelatedsRow["jctnodepropid"].ToString();
-            }
-            if( PkString != string.Empty )
-            {
-                CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "updateRelationsToThisNode_jctnodeprops_update", "jct_nodes_props" );
-                DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
-                foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
-                {
-                    JctNodesPropsRow["pendingupdate"] = "1";
-                }
-                JctNodesPropsUpdate.update( JctNodesPropsTable );
-            }
+            //CswStaticSelect RelatedsQuerySelect = _CswNbtResources.makeCswStaticSelect( "updateRelationsToThisNode_select", "getRelationshipsToNode" );
+            //CswStaticParam StaticParam = new CswStaticParam( "getnodeid", Node.NodeId.PrimaryKey.ToString() );
+            //RelatedsQuerySelect.S4Parameters.Add( "getnodeid", StaticParam );
+            //DataTable RelatedsTable = RelatedsQuerySelect.getTable();
+
+            //// Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a relationship to this node
+            //string PkString = string.Empty;
+            //foreach( DataRow RelatedsRow in RelatedsTable.Rows )
+            //{
+            //    if( PkString != string.Empty ) PkString += ",";
+            //    PkString += RelatedsRow["jctnodepropid"].ToString();
+            //}
+            //if( PkString != string.Empty )
+            //{
+            //    CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "updateRelationsToThisNode_jctnodeprops_update", "jct_nodes_props" );
+            //    DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
+            //    foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
+            //    {
+            //        JctNodesPropsRow["pendingupdate"] = "1";
+            //    }
+            //    JctNodesPropsUpdate.update( JctNodesPropsTable );
+            //}
+
+            string SQL = @"update jct_nodes_props 
+                              set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"' 
+                            where jctnodepropid in (select j.jctnodepropid
+                                                      from jct_nodes_props j
+                                                      join nodetype_props p on j.nodetypepropid = p.nodetypepropid
+                                                      join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                     where (f.fieldtype = 'Relationship' or f.fieldtype = 'Location' or f.fieldtype = 'Quantity')
+                                                       and j.field1_fk = " + Node.NodeId.PrimaryKey.ToString() + ")";
+
+            // We're not doing this in a CswTableUpdate because it might be a large operation, 
+            // and we don't care about auditing for this change.
+            _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
         }
 
 

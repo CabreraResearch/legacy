@@ -492,13 +492,12 @@ namespace ChemSW.Nbt.WebServices
             return RetSucceeded;
         }
 
-        public JObject saveProps( Collection<CswPrimaryKey> NodePks, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
         {
             JObject ret = new JObject();
             JObject PropsObj = JObject.Parse( NewPropsJson );
             CswNbtNodeKey RetNbtNodeKey = null;
             bool AllSucceeded = false;
-            Int32 Succeeded = 0;
             CswNbtNode Node = null;
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             CswNbtMetaDataNodeTypeTab NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( TabId );
@@ -514,25 +513,21 @@ namespace ChemSW.Nbt.WebServices
                         AllSucceeded = addNode( NodeType, out Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
                         break;
                     default:
-                        foreach( CswPrimaryKey NodePk in NodePks )
+                        Node = _CswNbtResources.Nodes.GetNode( NodePk );
+                        bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
+                        if( CanEdit )
                         {
-                            Node = _CswNbtResources.Nodes.GetNode( NodePk );
-                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
-                            if( CanEdit )
+                            if( Node.PendingUpdate )
                             {
-                                if( Node.PendingUpdate )
-                                {
-                                    CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-                                    Act.UpdateNode( Node, false );
-                                }
-                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab );
-                                if( null != RetNbtNodeKey )
-                                {
-                                    Succeeded += 1;
-                                }
+                                CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                                Act.UpdateNode( Node, false );
+                            }
+                            RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab );
+                            if( null != RetNbtNodeKey )
+                            {
+                                AllSucceeded = true;
                             }
                         }
-                        AllSucceeded = ( NodePks.Count == Succeeded );
                         break;
                 } //switch( _CswNbtResources.EditMode )
                 if( AllSucceeded && null != RetNbtNodeKey )
@@ -556,7 +551,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        ErrString = Succeeded + " out of " + NodePks.Count + " prop updates succeeded. Remaining prop updates failed";
+                        ErrString = "Prop updates failed";
                     }
                     ret = new JObject();
                     ret["result"] = ErrString;
@@ -605,44 +600,64 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        public JObject copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
+        public JObject copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] CopyNodeKeys, string[] PropIds )
         {
             JObject ret = new JObject();
             CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
+
+            Collection<CswPrimaryKey> RealCopyNodeIds = new Collection<CswPrimaryKey>();
+            if( CopyNodeIds.Length > 0 )
+            {
+                foreach( string NodeIdStr in CopyNodeIds )
+                {
+                    CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
+                    CopyToNodePk.FromString( NodeIdStr );
+                    if( Int32.MinValue != CopyToNodePk.PrimaryKey )
+                    {
+                        RealCopyNodeIds.Add( CopyToNodePk );
+                    }
+                }
+            }
+            else if( 0 == CopyNodeIds.Length && CopyNodeKeys.Length > 0 )
+            {
+                foreach( string NodeKeyStr in CopyNodeKeys )
+                {
+                    CswNbtNodeKey NodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKeyStr );
+                    if( null != NodeKey )
+                    {
+                        RealCopyNodeIds.Add( NodeKey.NodeId );
+                    }
+                }
+            }
+
             if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
             {
                 CswNbtNode SourceNode = _CswNbtResources.Nodes[SourceNodeKey];
                 if( SourceNode != null )
                 {
-                    if( CopyNodeIds.Length < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
+                    if( RealCopyNodeIds.Count == 0 )
                     {
-                        bool Succeeded = true;
-                        foreach( string NodeIdStr in CopyNodeIds )
+                        ret["result"] = "false";
+                    }
+                    else if( RealCopyNodeIds.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
+                    {
+                        foreach( CswPrimaryKey CopyToNodePk in RealCopyNodeIds )
                         {
-                            CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
-                            CopyToNodePk.FromString( NodeIdStr );
-                            if( Int32.MinValue != CopyToNodePk.PrimaryKey )
+                            CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
+                            if( CopyToNode != null &&
+                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
                             {
-                                CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
-                                if( CopyToNode != null &&
-                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
+                                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
+                                    .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
                                 {
-                                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in PropIds.Select( PropIdAttr => new CswPropIdAttr( PropIdAttr ) )
-                                        .Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId ) ) )
-                                    {
-                                        CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-                                    }
+                                    CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+                                }
 
-                                    CopyToNode.postChanges( false );
-                                } // if( CopyToNode != null )
-                            }
-                            else
-                            {
-                                Succeeded = false;
-                            }
+                                CopyToNode.postChanges( false );
+                            } // if( CopyToNode != null )
                         } // foreach( string NodeIdStr in CopyNodeIds )
-                        ret["result"] = Succeeded.ToString().ToLower();
-                    } // if( CopyNodeIds.Length < _CswNbtResources.ConfigVbls.getConfigVariableValue( "batchthreshold" ) )
+                        ret["result"] = "true";
+                    } // else if( RealCopyNodeIds.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
                     else
                     {
                         // Shelve this to a batch operation
@@ -653,7 +668,7 @@ namespace ChemSW.Nbt.WebServices
                             NodeTypePropIds.Add( PropIdAttr.NodeTypePropId );
                         }
                         CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( _CswNbtResources );
-                        CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( SourceNode, CopyNodeIds, NodeTypePropIds );
+                        CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( SourceNode, RealCopyNodeIds, NodeTypePropIds );
                         ret["batch"] = BatchNode.NodeId.ToString();
                     }
                 } // if(SourceNode != null)

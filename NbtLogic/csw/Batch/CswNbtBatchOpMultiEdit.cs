@@ -30,14 +30,14 @@ namespace ChemSW.Nbt.Batch
         /// Create a new batch operation to handle a copyNodeProps/multi edit operation
         /// </summary>
         /// <param name="GeneratorNodeId">Primary key of Generator</param>
-        public CswNbtObjClassBatchOp makeBatchOp( CswNbtNode SourceNode, string[] CopyNodeIds, Collection<Int32> NodeTypePropIds )
+        public CswNbtObjClassBatchOp makeBatchOp( CswNbtNode SourceNode, Collection<CswPrimaryKey> CopyNodeIds, Collection<Int32> NodeTypePropIds )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             if( null != SourceNode )
             {
                 MultiEditBatchData BatchData = new MultiEditBatchData( string.Empty );
                 BatchData.SourceNodeId = SourceNode.NodeId;
-                BatchData.CopyNodeIds = stringArrayToJArray( CopyNodeIds );
+                BatchData.CopyNodeIds = pkArrayToJArray( CopyNodeIds );
                 BatchData.NodeTypePropIds = Int32CollectionToJArray( NodeTypePropIds );
 
                 BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
@@ -54,6 +54,16 @@ namespace ChemSW.Nbt.Batch
             }
             return ret;
         } // stringArrayToJArray
+
+        private JArray pkArrayToJArray( Collection<CswPrimaryKey> strArray )
+        {
+            JArray ret = new JArray();
+            foreach( CswPrimaryKey k in strArray )
+            {
+                ret.Add( k.ToString() );
+            }
+            return ret;
+        } // pkArrayToJArray
 
         private JArray Int32CollectionToJArray( Collection<Int32> intColl )
         {

@@ -875,13 +875,19 @@ namespace ChemSW.Nbt
 
 
         /// <summary>
-        /// Directly executes a select command against the datbase connection
+        /// Directly executes a select command against the database connection
         /// </summary>
         /// <param name="UniqueName"></param>
         /// <param name="SqlText"></param>
         /// <returns></returns>
         public DataTable execArbitraryPlatformNeutralSqlSelect( string UniqueName, string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSqlSelect( UniqueName, SqlText ) ); }
 
+        /// <summary>
+        /// Executes arbitrary sql.  It's your job to make sure it's platform neutral.
+        /// You should *strongly* consider using CswArbitrarySelect, CswTableSelect, or CswTableUpdate instead of this. 
+        /// </summary>
+        /// <returns>Number of rows affected</returns>
+        public Int32 execArbitraryPlatformNeutralSql( string SqlText ) { return ( _CswResources.execArbitraryPlatformNeutralSql( SqlText ) ); }
 
 
         public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswResources.execStoredProc( StoredProcName, Params ); }

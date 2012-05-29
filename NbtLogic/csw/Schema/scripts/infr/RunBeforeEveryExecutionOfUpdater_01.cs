@@ -19,12 +19,6 @@ namespace ChemSW.Nbt.Schema
 
 
 
-            // case 26029
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetypes", "enabled" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", "enabled", "Whether the nodetype is enabled according to module settings", false, false );
-            }
-
 
         }//Update()
 
