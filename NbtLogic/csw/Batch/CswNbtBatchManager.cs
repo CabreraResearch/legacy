@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.Batch
                 CswNbtNode Node = BatchOpTree.getNodeForCurrentPosition();
                 CswNbtObjClassBatchOp BatchNode = (CswNbtObjClassBatchOp) Node;
 
-                NbtBatchOpName OpName = (NbtBatchOpName) BatchNode.OpName.Value;
+                NbtBatchOpName OpName = BatchNode.OpNameValue;
                 if( OpName == NbtBatchOpName.FutureNodes )
                 {
                     CswNbtBatchOpFutureNodes op = new CswNbtBatchOpFutureNodes( CswNbtResources );

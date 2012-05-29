@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp EndDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.EndDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp LogOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.LogPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Comments, ServerManaged: true );
             CswNbtMetaDataObjectClassProp OpNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.OpNamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, ServerManaged: true );
+            CswNbtMetaDataObjectClassProp PercentDoneOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.PercentDonePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number, ServerManaged: true );
             CswNbtMetaDataObjectClassProp PriorityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.PriorityPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number );
             CswNbtMetaDataObjectClassProp StartDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StartDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, 
@@ -42,6 +43,8 @@ namespace ChemSW.Nbt.Schema
 
             PriorityOCP.DefaultValue.Field1_Numeric = 0;
             PriorityOCP.DefaultValue.Gestalt = "0";
+            PercentDoneOCP.DefaultValue.Field1_Numeric = 0;
+            PercentDoneOCP.DefaultValue.Gestalt = "0";
 
             CswNbtMetaDataNodeType BatchOpNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( BatchOpOC.ObjectClassId, "Batch Operation", "System" );
             BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( StartDateOCP.PropName ) );

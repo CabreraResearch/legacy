@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string EndDatePropertyName { get { return "End Date"; } }
         public static string LogPropertyName { get { return "Log"; } }
         public static string OpNamePropertyName { get { return "Operation Name"; } }
+        public static string PercentDonePropertyName { get { return "Percent Done"; } }
         public static string PriorityPropertyName { get { return "Priority"; } }
         public static string StartDatePropertyName { get { return "Start Date"; } }
         public static string StatusPropertyName { get { return "Status"; } }
@@ -182,6 +183,20 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[OpNamePropertyName].AsList );
+            }
+        }
+        public NbtBatchOpName OpNameValue
+        {
+            get
+            {
+                return (NbtBatchOpName) OpName.Value;
+            }
+        }
+        public CswNbtNodePropNumber PercentDone
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[PercentDonePropertyName].AsNumber );
             }
         }
         public CswNbtNodePropNumber Priority

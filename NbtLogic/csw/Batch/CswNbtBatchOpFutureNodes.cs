@@ -40,6 +40,20 @@ namespace ChemSW.Nbt.Batch
             return BatchNode;
         } // makeBatchOp()
 
+        public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
+        {
+            Double ret = 0;
+            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
+            {
+                FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );
+                if( BatchData.StartingCount > 0 )
+                {
+                    ret = Math.Round( (Double) BatchData.IterationCount / BatchData.StartingCount * 100, 0 );
+                }
+            }
+            return ret;
+        } // getPercentDone()
+
         /// <summary>
         /// Create a new batch operation to handle future node generation
         /// </summary>
@@ -67,18 +81,31 @@ namespace ChemSW.Nbt.Batch
                 DateTime DateOfNextOccurance = DateTime.MinValue;
                 if( GeneratorNode.DueDateInterval.getStartDate().Date >= StartDate ) //bz # 6937 (change gt to gteq)
                 {
-                    StartDate = GeneratorNode.DueDateInterval.getStartDate().Date;
-                    DateOfNextOccurance = StartDate;
+                    DateOfNextOccurance = GeneratorNode.DueDateInterval.getStartDate().Date;
                 }
                 else
                 {
                     DateOfNextOccurance = NextDueDateTimeInterval.getNextOccuranceAfter( StartDate );
                 }
 
+                // Determine number of iterations
+                Int32 StartingCount = 0;
+                DateTime ThisDate = DateOfNextOccurance;
+
+                while( ThisDate != DateTime.MinValue &&
+                       ThisDate.Date <= FinalDate &&
+                       ( GeneratorNode.FinalDueDate.Empty || ThisDate.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
+                {
+                    StartingCount++;
+                    ThisDate = GeneratorNode.DueDateInterval.getNextOccuranceAfter( ThisDate );
+                }
+
                 FutureNodesBatchData BatchData = new FutureNodesBatchData( string.Empty );
                 BatchData.GeneratorNodeId = GenNode.NodeId;
                 BatchData.NextStartDate = DateOfNextOccurance;
                 BatchData.FinalDate = FinalDate;
+                BatchData.StartingCount = StartingCount;
+                BatchData.IterationCount = 0;
 
                 BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
 
@@ -93,46 +120,51 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                BatchNode.start();
-
-                FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );
-                if( BatchData.GeneratorNodeId != null && BatchData.NextStartDate != DateTime.MinValue )
+                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
                 {
-                    CswNbtNode GenNode = _CswNbtResources.Nodes[BatchData.GeneratorNodeId];
-                    if( null != GenNode )
+                    BatchNode.start();
+
+                    FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );
+                    if( BatchData.GeneratorNodeId != null && BatchData.NextStartDate != DateTime.MinValue )
                     {
-                        CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) GenNode;
-                        DateTime ThisDate = BatchData.NextStartDate;
-
-                        CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-                        CswNbtActGenerateNodes.MarkFuture = true;
-
-                        // Run this iteration
-                        if( ThisDate != DateTime.MinValue &&
-                            ThisDate.Date <= BatchData.FinalDate.Date &&
-                            ( GeneratorNode.FinalDueDate.Empty || ThisDate.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
+                        CswNbtNode GenNode = _CswNbtResources.Nodes[BatchData.GeneratorNodeId];
+                        if( null != GenNode )
                         {
-                            CswNbtActGenerateNodes.makeNode( GenNode, ThisDate );
-                            BatchNode.appendToLog( "Created future task for " + ThisDate.ToShortDateString() + "." );
-                        }
-                        else
-                        {
-                            BatchNode.finish();
-                        }
+                            CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) GenNode;
+                            DateTime ThisDate = BatchData.NextStartDate;
 
-                        // Setup for next iteration
-                        BatchData.NextStartDate = GeneratorNode.DueDateInterval.getNextOccuranceAfter( ThisDate );
-                        if( BatchData.NextStartDate.Date == ThisDate.Date ) // infinite loop guard
-                        {
-                            BatchNode.finish();
-                        }
+                            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+                            CswNbtActGenerateNodes.MarkFuture = true;
 
-                        BatchNode.BatchData.Text = BatchData.ToString();
+                            // Run this iteration
+                            if( ThisDate != DateTime.MinValue &&
+                                ThisDate.Date <= BatchData.FinalDate.Date &&
+                                ( GeneratorNode.FinalDueDate.Empty || ThisDate.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
+                            {
+                                CswNbtActGenerateNodes.makeNode( GenNode, ThisDate );
+                                //BatchNode.appendToLog( "Created future task for " + ThisDate.ToShortDateString() + "." );
+                            }
+                            else
+                            {
+                                BatchNode.finish();
+                            }
 
-                    } // if( null != GenNode )
-                } // if( _BatchData.GeneratorNodeId != null && _BatchData.NextStartDate != DateTime.MinValue )
+                            // Setup for next iteration
+                            BatchData.NextStartDate = GeneratorNode.DueDateInterval.getNextOccuranceAfter( ThisDate );
+                            if( BatchData.NextStartDate.Date == ThisDate.Date ) // infinite loop guard
+                            {
+                                BatchNode.finish();
+                            }
 
-                BatchNode.postChanges(false);
+                            BatchData.IterationCount += 1;
+                            BatchNode.BatchData.Text = BatchData.ToString();
+                            BatchNode.PercentDone.Value = getPercentDone( BatchNode );
+
+                        } // if( null != GenNode )
+                    } // if( _BatchData.GeneratorNodeId != null && _BatchData.NextStartDate != DateTime.MinValue )
+
+                    BatchNode.postChanges( false );
+                } // if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
             }
             catch( Exception ex )
             {
@@ -221,6 +253,48 @@ namespace ChemSW.Nbt.Batch
                 {
                     _FinalDate = value;
                     _BatchData["finaldate"] = CswConvert.ToString( _FinalDate );
+                }
+            }
+
+            private Int32 _StartingCount = Int32.MinValue;
+            public Int32 StartingCount
+            {
+                get
+                {
+                    if( Int32.MinValue == _StartingCount )
+                    {
+                        if( null != _BatchData["startingcount"] )
+                        {
+                            _StartingCount = CswConvert.ToInt32( _BatchData["startingcount"].ToString() );
+                        }
+                    }
+                    return _StartingCount;
+                }
+                set
+                {
+                    _StartingCount = value;
+                    _BatchData["startingcount"] = _StartingCount;
+                }
+            }
+
+            private Int32 _IterationCount = Int32.MinValue;
+            public Int32 IterationCount
+            {
+                get
+                {
+                    if( Int32.MinValue == _IterationCount )
+                    {
+                        if( null != _BatchData["iterationcount"] )
+                        {
+                            _IterationCount = CswConvert.ToInt32( _BatchData["iterationcount"].ToString() );
+                        }
+                    }
+                    return _IterationCount;
+                }
+                set
+                {
+                    _IterationCount = value;
+                    _BatchData["iterationcount"] = _IterationCount;
                 }
             }
 
