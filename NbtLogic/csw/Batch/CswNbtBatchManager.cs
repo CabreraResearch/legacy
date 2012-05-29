@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.Batch
                     BatchNode = (CswNbtObjClassBatchOp) Node;
 
                     BatchNode.BatchData.Text = BatchData;
+                    BatchNode.CreatedDate.DateTimeValue = DateTime.Now;
                     BatchNode.OpName.Value = BatchOpName.ToString();
                     if( false == Double.IsNaN( Priority ) )
                     {

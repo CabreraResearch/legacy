@@ -11,6 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
         public static string BatchDataPropertyName { get { return "Batch Data"; } }
+        public static string CreatedDatePropertyName { get { return "Created Date"; } }
         public static string EndDatePropertyName { get { return "End Date"; } }
         public static string LogPropertyName { get { return "Log"; } }
         public static string OpNamePropertyName { get { return "Operation Name"; } }
@@ -154,35 +155,42 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[BatchDataPropertyName].AsMemo );
+                return ( _CswNbtNode.Properties[BatchDataPropertyName] );
+            }
+        }
+        public CswNbtNodePropDateTime CreatedDate
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[CreatedDatePropertyName] );
             }
         }
         public CswNbtNodePropDateTime EndDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[EndDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[EndDatePropertyName] );
             }
         }
         public CswNbtNodePropDateTime StartDate
         {
             get
             {
-                return ( _CswNbtNode.Properties[StartDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[StartDatePropertyName] );
             }
         }
         public CswNbtNodePropComments Log
         {
             get
             {
-                return ( _CswNbtNode.Properties[LogPropertyName].AsComments );
+                return ( _CswNbtNode.Properties[LogPropertyName] );
             }
         }
         public CswNbtNodePropList OpName
         {
             get
             {
-                return ( _CswNbtNode.Properties[OpNamePropertyName].AsList );
+                return ( _CswNbtNode.Properties[OpNamePropertyName] );
             }
         }
         public NbtBatchOpName OpNameValue
@@ -196,28 +204,28 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[PercentDonePropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[PercentDonePropertyName] );
             }
         }
         public CswNbtNodePropNumber Priority
         {
             get
             {
-                return ( _CswNbtNode.Properties[PriorityPropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[PriorityPropertyName] );
             }
         }
         public CswNbtNodePropList Status
         {
             get
             {
-                return ( _CswNbtNode.Properties[StatusPropertyName].AsList );
+                return ( _CswNbtNode.Properties[StatusPropertyName] );
             }
         }
         public CswNbtNodePropRelationship User
         {
             get
             {
-                return ( _CswNbtNode.Properties[UserPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[UserPropertyName] );
             }
         }
 
