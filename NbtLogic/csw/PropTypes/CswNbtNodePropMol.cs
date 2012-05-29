@@ -12,6 +12,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropMol : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropMol( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsMol;
+        }
+
         public CswNbtNodePropMol( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

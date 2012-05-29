@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
@@ -65,6 +66,22 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly NbtButtonAction refresh = new NbtButtonAction( "refresh" );
             public static readonly NbtButtonAction popup = new NbtButtonAction( "popup" );
         }
+
+        // For validating object class casting
+        protected static bool _Validate( CswNbtNode Node, CswNbtMetaDataObjectClass.NbtObjectClass TargetObjectClass )
+        {
+            if( Node == null )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid node", "CswNbtObjClass._Validate was given a null node as a parameter" );
+            }
+
+            if( !( Node.getObjectClass().ObjectClass == TargetObjectClass ) )
+            {
+                throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
+            }
+            return true;
+        }
+
 
     }//CswNbtObjClass
 

@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.WebServices
             if( User != null )
             {
                 CswNbtNode UserNode = _CswNbtResources.Nodes[User.UserId];
-                CswNbtObjClassUser UserOc = CswNbtNodeCaster.AsUser( UserNode );
+                CswNbtObjClassUser UserOc = (CswNbtObjClassUser) UserNode; 
 
                 // Recent
                 if( IncludeRecent )
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ReportTree.goToNthChild( i );
 
-                    CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
+                    CswNbtObjClassReport ReportNode = (CswNbtObjClassReport) ReportTree.getNodeForCurrentPosition();
                     JObject ReportObj = _addViewSelectObj( ref ret, ReportNode.Category.Text, ReportNode.ReportName.Text, ItemType.Report, "Images/view/report.gif", ReportNode.NodeId.ToString() );
                     ReportObj["reportid"] = ReportNode.NodeId.ToString();
 

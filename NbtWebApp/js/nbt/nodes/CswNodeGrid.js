@@ -35,7 +35,7 @@
         }
     }
 
-    function editRows(rowid, grid, func, editViewFunc) {
+    function editRows(rowid, grid, func, editViewFunc, onRefreshFunc) {
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = cswPrivate.selectedRowId;
         }
@@ -50,6 +50,7 @@
             var editFunc = function (opts) {
                 opts.onEditNode = func;
                 opts.onEditView = editViewFunc;
+                opts.onRefresh = onRefreshFunc;
                 Csw.renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
                 Csw.renameProperty(opts, 'nodename', 'nodenames');
                 $.CswDialog('EditNodeDialog', opts);
@@ -80,6 +81,7 @@
                 onDeleteNode: null,
                 onSuccess: null,
                 onEditView: null,
+                onRefresh: null,
                 gridOpts: {
                     multiselect: false
                 },
@@ -162,7 +164,7 @@
                             cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
                                 function validateNode(className) {
                                     if (-1 !== className.indexOf('csw-grid-edit')) {
-                                        editRows(rowid, ret, o.onEditNode, o.onEditView);
+                                        editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh );
                                     } else if (-1 !== className.indexOf('csw-grid-delete')) {
                                         deleteRows(rowid, ret, o.onDeleteNode);
                                     }
@@ -182,7 +184,7 @@
                         /* We need this to be defined upfront for multi-edit */
                         cswGridOpts.optNavEdit = {
                             editfunc: function (rowid) {
-                                return editRows(rowid, ret, o.onEditNode, o.onEditView);
+                                return editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh);
                             }
                         };
 
