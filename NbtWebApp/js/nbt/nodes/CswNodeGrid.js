@@ -239,7 +239,6 @@
                                 for (var i = 0; i < ids.length; i += 1) {
                                     var rowId = ids[i];
                                     var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
-                                    Csw.log(cellData.length);
                                     var buttonStr = '';
                                     if (Csw.contains(cellData, 'islocked')) {
                                         buttonStr += '<img id="' + rowId + '_locked" src="Images/icons/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
@@ -257,7 +256,7 @@
                                     if (Csw.contains(cellData, 'candelete')) {
                                         buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/trash.gif" class="csw-grid-delete" alt="Delete" title="Delete"/>';
                                     }
-                                    /* Case 26506: grid.getDataIds() only fetches the rowids for the current page. gridComplete fires after load, sort and page--so it'll do. */
+                                    /* Case 26506: We only want to change the cell content once. cellData.length isn't good enough, but buttonStr.length should be */
                                     if (buttonStr.length > 0) {
                                         grid.setRowData(rowId, 'Action', buttonStr);
                                     }
