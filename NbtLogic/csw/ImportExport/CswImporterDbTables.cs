@@ -664,7 +664,7 @@ namespace ChemSW.Nbt.ImportExport
                                     {
 
 
-                                        //Select he corresponding property records
+                                        //Select the corresponding property records
                                         CurrentImportNodeId = CurrentImportNodeRow[_ColName_ImportNodeId].ToString();
                                         CurrentImportNodeName = CurrentImportNodeRow[_ColName_Nodes_NodeName].ToString();
 
