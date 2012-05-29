@@ -49,7 +49,7 @@
                 //Case 24645 - scientific-specific number validation (i.e. - ensuring that the evaluated number is positive)
                 if (Csw.isNumber(minValue) && Csw.isNumeric(minValue)) {
                     $.validator.addMethod('validateMinValue', function () {
-                        var realValue = Csw.number($('#' + o.ID + '_val').val()) * Math.pow(10, Csw.number($('#' + o.ID + '_exp').val()));
+                        var realValue = Csw.number(valueNtb.val()) * Math.pow(10, Csw.number(exponentNtb.val()));
                         return (realValue > minValue || Csw.string(realValue).length === 0);
                     }, 'Value must be greater than ' + minValue);
                     valueNtb.addClass('validateMinValue');
