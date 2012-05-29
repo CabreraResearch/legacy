@@ -41,7 +41,7 @@
                     minValue = Csw.number(cswPrivate.MinValue),
                     maxValue = Csw.number(cswPrivate.MaxValue, ceilingVal),
                     maxLength = Math.abs(maxValue).toString().length,
-                    precision = Csw.number(cswPrivate.Precision);
+                    precision = Csw.number(cswPrivate.Precision, 6);
 
                 if (cswPrivate.ReadOnly) {
                     cswPrivate.div = cswParent.div(cswPrivate);
@@ -101,8 +101,8 @@
                         //Independant of any other validation, no number can be greater than this.
                         cswPublic.propDom('max', ceilingVal);
                         $.validator.addMethod(cswPrivate.ID + '_validateDb_15_6_FieldLength', function (value, element) {
-                            return Csw.validateFloatMaxValue($(element).val(), ceilingVal);
-                        }, 'Value cannot be greater than ' + ceilingVal + '.');
+                            return Csw.validateFloatMaxValue(Math.abs($(element).val()), ceilingVal);
+                        }, 'Value precision cannot exceed ' + ceilingVal + '.');
                         cswPublic.addClass(cswPrivate.ID + '_validateDb_15_6_FieldLength');
                     }
                     if (cswPrivate.Required) {
