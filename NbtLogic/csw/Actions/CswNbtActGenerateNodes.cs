@@ -124,11 +124,11 @@ namespace ChemSW.Nbt.Actions
             string DateFilter = string.Empty;
             if( DueDate == DateTime.MinValue )
             {
-                DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
+                DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue.Date;
             }
             if( DueDate == DateTime.MinValue )
             {
-                DueDate = GeneratorNodeAsGenerator.DueDateInterval.getStartDate();
+                DueDate = GeneratorNodeAsGenerator.DueDateInterval.getStartDate().Date;
             }
             DateFilter = DueDate.ToShortDateString();
 
