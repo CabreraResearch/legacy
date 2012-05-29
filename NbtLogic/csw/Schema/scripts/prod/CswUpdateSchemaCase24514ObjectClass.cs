@@ -126,6 +126,11 @@ namespace ChemSW.Nbt.Schema
                             IsRequired = true
                         } );
 
+            /* Conditional properties don't support multiple filters, so this won't work.
+            char FilterDelimiter = '|';
+            string FileFilterString = CswNbtSubField.PropColumn.Field1.ToString() + FilterDelimiter + CswNbtPropFilterSql.PropertyFilterMode.Equals + FilterDelimiter + CswNbtObjClassRequestItem.Types.Dispense;
+            */
+
             CswNbtMetaDataObjectClassProp MaterialOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
                            new CswNbtWcfObjectClassDataModel.ObjectClassProp
@@ -151,7 +156,8 @@ namespace ChemSW.Nbt.Schema
                         }
                 );
 
-
+            char FilterDelimiter = '|';
+            string LocationFilterString = CswNbtSubField.PropColumn.Field1.ToString() + FilterDelimiter + CswNbtPropFilterSql.PropertyFilterMode.NotEquals + FilterDelimiter + CswNbtObjClassRequestItem.Types.Dispose;
             CswNbtMetaDataObjectClassProp LocationOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
@@ -160,7 +166,9 @@ namespace ChemSW.Nbt.Schema
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                            FkValue = LocationOc.ObjectClassId
+                            FkValue = LocationOc.ObjectClassId,
+                            FilterPropId = TypeOcp.PropId,
+                            Filter = LocationFilterString
                         }
                  );
 

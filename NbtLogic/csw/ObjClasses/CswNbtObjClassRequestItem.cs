@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -103,18 +105,142 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
-
-
         } // beforeCreateNode()
+
+        private string _makeNotificationMessage( bool DoMaterial, bool DoContainer, bool DoQuantity, bool DoLocation, bool DoSize, bool DoCount )
+        {
+            string MessageText = "The Status for this Request Item has changed to: [Status]. /n";
+
+            if( DoMaterial )
+            {
+                CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                if( null != NodeAsMaterial )
+                {
+                    MessageText += "Material: " + NodeAsMaterial.TradeName + "/n";
+                }
+            }
+            if( DoContainer )
+            {
+                CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                if( null != NodeAsContainer )
+                {
+                    MessageText += "Container: " + NodeAsContainer.Node.NodeName + "/n";
+                }
+            }
+            if( DoQuantity )
+            {
+                MessageText += "Quantity: " + Quantity.Quantity;
+            }
+            if( DoSize )
+            {
+                MessageText += "Size: " + Size.CachedNodeName;
+            }
+            if( DoCount )
+            {
+                MessageText += "Count: " + Count.Quantity;
+            }
+            if( DoLocation )
+            {
+                CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.RelatedNodeId );
+                if( null != NodeAsLocation )
+                {
+                    MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
+                                   NodeAsLocation.Name + "/n";
+                }
+            }
+
+            return MessageText;
+        }
 
         public override void afterCreateNode()
         {
             _CswNbtObjClassDefault.afterCreateNode();
+            CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
+            if( null != NodeAsRequest && null != NodeAsRequest.Requestor.RelatedNodeId )
+            {
+                CswNbtMetaDataObjectClass NotificationOc =
+                    _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
+                if( null != NotificationOc )
+                {
+                    CswNbtMetaDataNodeType NotificationNt = NotificationOc.getNodeTypes().FirstOrDefault();
+                    if( null != NotificationNt )
+                    {
+                        CswNbtNode NotificationNode =
+                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NotificationNt.NodeTypeId,
+                                                                          CswNbtNodeCollection.MakeNodeOperation.
+                                                                              WriteNode );
+                        CswNbtObjClassNotification NodeAsNotification = NotificationNode;
+                        NodeAsNotification.Event.Value = CswNbtObjClassNotification.EventOption.Edit.ToString();
+
+                        NodeAsNotification.SubscribedUsers.AddUser( NodeAsRequest.Requestor.RelatedNodeId );
+                        string MessageText = "";
+                        if( Type.Value == Types.Dispense.ToString() )
+                        {
+                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: true, DoLocation: true,
+                                                                   DoQuantity: true, DoSize: false, DoCount: false );
+                        }
+                        else if( Type.Value == Types.RequestBySize.ToString() )
+                        {
+                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: false,
+                                                                   DoLocation: true, DoQuantity: false, DoSize: true,
+                                                                   DoCount: true );
+                        }
+                        else if( Type.Value == Types.RequestByBulk.ToString() )
+                        {
+                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: false,
+                                                                   DoLocation: true, DoQuantity: true, DoSize: false,
+                                                                   DoCount: false );
+                        }
+                        else if( Type.Value == Types.Move.ToString() )
+                        {
+                            MessageText = _makeNotificationMessage( DoMaterial: false, DoContainer: true,
+                                                                   DoLocation: true, DoQuantity: false, DoSize: false,
+                                                                   DoCount: false );
+                        }
+                        else if( Type.Value == Types.Dispose.ToString() )
+                        {
+                            MessageText = _makeNotificationMessage( DoMaterial: false, DoContainer: true,
+                                                                   DoLocation: false, DoQuantity: false, DoSize: false,
+                                                                   DoCount: false );
+                        }
+                        NodeAsNotification.Message.Text = MessageText;
+                        NodeAsNotification.TargetType.SelectedNodeTypeIds.Add( NodeTypeId.ToString() );
+                        NodeAsNotification.Property.Value = PropertyName.Status.ToString();
+                        NodeAsNotification.Subject.Text = Node.NodeName + "'s Request Item Status has Changed to [Status]";
+                        NodeAsNotification.postChanges( true );
+                    }
+                }
+            }
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+
+            CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
+            if( null == NodeAsRequest )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot modify a Request Item without a valid Request.", "Attempted to edit node without a valid Request relationship." );
+            }
+            if( ( Type.Value == Types.Dispense.ToString() ||
+                Type.Value == Types.Move.ToString() ||
+                Type.Value == Types.Dispose.ToString() ) &&
+                null != Container.RelatedNodeId &&
+                null != NodeAsRequest.InventoryGroup.RelatedNodeId )
+            {
+                CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                if( null == NodeAsContainer )
+                {
+                    throw new CswDniException( ErrorType.Error, "A " + Type.Value + " type of Request Item requires a valid Container.", "Attempted to edit node without a valid Container relationship." );
+                }
+                CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( NodeAsContainer.Location.NodeId );
+                if( null != NodeAsLocation && NodeAsRequest.InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
+                {
+                    throw new CswDniException( ErrorType.Error, "For a " + Type.Value + " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.", "Attempted to edit node without matching Container and Request Inventory Group relationships." );
+                }
+            }
+
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -165,6 +291,11 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Type.ToString()]; }
         }
 
+        public CswNbtNodePropQuantity Quantity
+        {
+            get { return _CswNbtNode.Properties[PropertyName.Quantity.ToString()]; }
+        }
+
         public CswNbtNodePropRelationship Size
         {
             get { return _CswNbtNode.Properties[PropertyName.Size.ToString()]; }
@@ -183,6 +314,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Container
         {
             get { return _CswNbtNode.Properties[PropertyName.Container.ToString()]; }
+        }
+
+        public CswNbtNodePropRelationship Location
+        {
+            get { return _CswNbtNode.Properties[PropertyName.Location.ToString()]; }
         }
 
         public CswNbtNodePropComments Comments

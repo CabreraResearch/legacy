@@ -63,6 +63,37 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+
+            if( DateTime.MinValue != SubmittedDate.DateTimeValue )
+            {
+                CswNbtView RequestItemsView = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClass RequestItemsOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+                CswNbtMetaDataObjectClassProp RiRequestOcp = RequestItemsOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
+
+                CswNbtViewRelationship RequestVr = RequestItemsView.AddViewRelationship( RequestItemsOc, false );
+                RequestVr.NodeIdsToFilterIn.Add( NodeId );
+                CswNbtViewRelationship RequestItemVr = RequestItemsView.AddViewRelationship( RequestVr, NbtViewPropOwnerType.Second, RiRequestOcp, false );
+                RequestItemsView.AddViewPropertyAndFilter( RequestItemVr,
+                                                          RequestItemsOc.getObjectClassProp(
+                                                              CswNbtObjClassRequestItem.PropertyName.Status.ToString() ),
+                                                          CswNbtObjClassRequestItem.Statuses.Pending.ToString(),
+                                                          FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemsView, false, false );
+                Int32 RequestNodeCount = Tree.getChildNodeCount();
+                if( RequestNodeCount > 0 )
+                {
+                    Tree.goToNthChild( 0 );
+                    Int32 RequestItemNodeCount = Tree.getChildNodeCount();
+                    for( Int32 N = 0; N < RequestItemNodeCount; N += 1 )
+                    {
+                        Tree.goToNthChild( N );
+                        CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes.GetNode( Tree.getNodeIdForCurrentPosition() );
+                        NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Submitted.ToString();
+                        NodeAsRequestItem.postChanges( true );
+                        Tree.goToParentNode();
+                    }
+                }
+            }
         }//beforeWriteNode()
 
         public override void afterWriteNode()
