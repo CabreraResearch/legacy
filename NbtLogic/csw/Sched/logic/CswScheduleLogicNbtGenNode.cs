@@ -109,8 +109,13 @@ namespace ChemSW.Nbt.Sched
                                         ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
                                         ( DateTime.Now >= ThisDueDateValue ) )
                                     {
-                                        string Message = _runGenerator( CurrentGenerator );
-                                        _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+                                        CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+                                        bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
+                                        if( Finished )  // case 26111
+                                        {
+                                            string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
+                                            _CswScheduleNodeUpdater.update( CurrentGenerator.Node, Message );
+                                        }
 
                                         GeneratorDescriptions += CurrentGenerator.Description + "; ";
                                         TotalGeneratorsProcessed++;
@@ -153,22 +158,6 @@ namespace ChemSW.Nbt.Sched
 
 
         }//threadCallBack()
-
-        private string _runGenerator( CswNbtObjClassGenerator CurrentGenerator )
-        {
-            string RetMessage;
-            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-            Int32 NodesCreated = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
-            if( NodesCreated > 0 )
-            {
-                RetMessage = "Created " + NodesCreated.ToString() + " " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.getNodeType().NodeTypeName;
-            }
-            else
-            {
-                RetMessage = "No " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " targets created from: " + CurrentGenerator.Node.NodeName + ", " + CurrentGenerator.Node.getNodeType().NodeTypeName;
-            }
-            return RetMessage;
-        }
 
         public void stop()
         {

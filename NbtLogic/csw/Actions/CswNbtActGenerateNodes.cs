@@ -10,6 +10,8 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActGenerateNodes
     {
+        private Int32 _GenLimit = 5;
+
         CswNbtResources _CswNbtResources = null;
         public CswNbtActGenerateNodes( CswNbtResources CswNbtResources )
         {
@@ -88,7 +90,7 @@ namespace ChemSW.Nbt.Actions
 
         }//_getTargetNodeForGenerator
 
-        public Int32 makeNode( CswNbtNode CswNbtNodeGenerator )
+        public bool makeNode( CswNbtNode CswNbtNodeGenerator )
         {
             return makeNode( CswNbtNodeGenerator, DateTime.MinValue );
         }
@@ -97,9 +99,9 @@ namespace ChemSW.Nbt.Actions
         /// Generates a future IGeneratorTarget node.  If an existing node has the same due date, no node is generated.
         /// </summary>
         /// <returns>True if a future node was generated</returns>
-        public Int32 makeNode( CswNbtNode CswNbtNodeGenerator, DateTime DueDate )
+        public bool makeNode( CswNbtNode CswNbtNodeGenerator, DateTime DueDate )
         {
-            Int32 ret = 0;
+            Int32 NodesCreated = 0;
 
             CswNbtObjClassGenerator GeneratorNodeAsGenerator = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
 
@@ -171,14 +173,13 @@ namespace ChemSW.Nbt.Actions
                 Parents.Add( GeneratorNodeAsGenerator.Owner.RelatedNodeId );
             }
 
+            // case 26111 - only generate a few at a time, and only increment NextDueDate when we're completely done
             foreach( CswPrimaryKey NewParentPk in Parents )
             {
-                if( null != NewParentPk )
+                if( null != NewParentPk && NodesCreated < _GenLimit )
                 {
                     CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
-
-                    bool MakeGeneratorTarget = ( null == ExistingNode );
-                    if( MakeGeneratorTarget )
+                    if( null == ExistingNode )
                     {
                         Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
                         SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
@@ -210,7 +211,7 @@ namespace ChemSW.Nbt.Actions
                             {
                                 onBeforeInsertNode( NewNode );
                             }
-                            ret += 1;
+                            NodesCreated += 1;
                             NewNode.PendingUpdate = true;
                             NewNode.postChanges( true );
                         }
@@ -219,7 +220,7 @@ namespace ChemSW.Nbt.Actions
                     else
                     {
                         ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( ExistingNode );
-                        if( !MarkFuture )
+                        if( false == MarkFuture )
                         {
                             if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
                             {
@@ -233,14 +234,15 @@ namespace ChemSW.Nbt.Actions
                                 ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
                             }
                         }
-                        ExistingNode.PendingUpdate = true;
+                        //ExistingNode.PendingUpdate = true;
                         ExistingNode.postChanges( false ); //BZ # 6961
 
                     } //if-else ( null == ExistingNode )
                 } // if( null != NewParentPk )
             } // foreach( CswPrimaryKey NewParentPk in Parents )
 
-            return ret;
+            // case 26111 - we're finished if we ran out of nodes to generate
+            return ( NodesCreated < _GenLimit );
 
         }//makeNode()
 
