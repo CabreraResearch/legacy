@@ -49,6 +49,10 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly Types Dispose = new Types( "Dispose" );
             public static readonly Types Unknown = new Types( "Unknown" );
         }
+        public static readonly CswCommaDelimitedString TypeOptions = new CswCommaDelimitedString
+                                                                         {
+                                                                             Types.Dispense.ToString(), Types.RequestByBulk.ToString(), Types.RequestBySize.ToString(), Types.Move.ToString(), Types.Dispose.ToString()
+                                                                         };
 
         public sealed class Statuses : CswEnum<Statuses>
         {
@@ -59,13 +63,18 @@ namespace ChemSW.Nbt.ObjClasses
                 Statuses Ret = Parse( Str );
                 return Ret ?? Unknown;
             }
-            public static readonly Statuses Dispense = new Statuses( "Dispense" );
-            public static readonly Statuses RequestBySize = new Statuses( "Request by Size" );
-            public static readonly Statuses RequestByBulk = new Statuses( "Request by Bulk" );
-            public static readonly Statuses Move = new Statuses( "Move" );
-            public static readonly Statuses Dispose = new Statuses( "Dispose" );
+            public static readonly Statuses Pending = new Statuses( "Pending" );
+            public static readonly Statuses Submitted = new Statuses( "Submitted" );
+            public static readonly Statuses Ordered = new Statuses( "Ordered" );
+            public static readonly Statuses Received = new Statuses( "Received" );
+            public static readonly Statuses Dispensed = new Statuses( "Dispensed" );
+            public static readonly Statuses Completed = new Statuses( "Completed" );
             public static readonly Statuses Unknown = new Statuses( "Unknown" );
         }
+        public static readonly CswCommaDelimitedString StatusOptions = new CswCommaDelimitedString
+                                                                           {
+                                                                               Statuses.Pending.ToString(),Statuses.Submitted.ToString(),Statuses.Ordered.ToString(),Statuses.Received.ToString(),Statuses.Dispensed.ToString(),Statuses.Completed.ToString()
+                                                                           };
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 

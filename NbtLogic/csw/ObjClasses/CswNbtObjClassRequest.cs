@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             private PropertyName( String Name ) : base( Name ) { }
             public static IEnumerable<PropertyName> all { get { return All; } }
-            public static explicit operator PropertyName( string Str )
+            public static implicit operator PropertyName( string Str )
             {
                 PropertyName Ret = Parse( Str );
                 return Ret ?? Unknown;
