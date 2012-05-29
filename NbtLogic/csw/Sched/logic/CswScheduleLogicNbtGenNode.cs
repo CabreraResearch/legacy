@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.Sched
                     Int32 TotalGeneratorsProcessed = 0;
                     string GeneratorDescriptions = string.Empty;
 
-                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && idx < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && TotalGeneratorsProcessed < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
 
