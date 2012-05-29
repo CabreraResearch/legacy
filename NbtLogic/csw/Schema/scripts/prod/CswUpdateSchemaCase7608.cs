@@ -53,13 +53,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Delete UnitType ObjectClass, NodeTypes and Nodes
 
-            CswNbtMetaDataNodeType UnitTypeNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit Type" );
-            if( null != UnitTypeNodeType )
-            {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeType( UnitTypeNodeType );
-            }
-
-            CswNbtMetaDataObjectClass UnitTypeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "Unit Type" );
+            CswNbtMetaDataObjectClass UnitTypeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "UnitTypeClass" );
             if( null != UnitTypeOC )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( UnitTypeOC );
