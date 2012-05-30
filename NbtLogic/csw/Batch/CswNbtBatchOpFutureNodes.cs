@@ -26,6 +26,23 @@ namespace ChemSW.Nbt.Batch
         }
 
         /// <summary>
+        /// Returns the percentage of the task that is complete
+        /// </summary>
+        public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
+        {
+            Double ret = 0;
+            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
+            {
+                FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );
+                if( BatchData.StartingCount > 0 )
+                {
+                    ret = Math.Round( (Double) BatchData.IterationCount / BatchData.StartingCount * 100, 0 );
+                }
+            }
+            return ret;
+        } // getPercentDone()
+
+        /// <summary>
         /// Create a new batch operation to handle future node generation
         /// </summary>
         /// <param name="GeneratorNodeId">Primary key of Generator</param>
@@ -40,19 +57,6 @@ namespace ChemSW.Nbt.Batch
             return BatchNode;
         } // makeBatchOp()
 
-        public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
-        {
-            Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
-            {
-                FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );
-                if( BatchData.StartingCount > 0 )
-                {
-                    ret = Math.Round( (Double) BatchData.IterationCount / BatchData.StartingCount * 100, 0 );
-                }
-            }
-            return ret;
-        } // getPercentDone()
 
         /// <summary>
         /// Create a new batch operation to handle future node generation
@@ -137,11 +141,12 @@ namespace ChemSW.Nbt.Batch
                             CswNbtActGenerateNodes.MarkFuture = true;
 
                             // Run this iteration
+                            bool Finished = false;
                             if( ThisDate != DateTime.MinValue &&
-                                ThisDate.Date <= BatchData.FinalDate.Date &&
-                                ( GeneratorNode.FinalDueDate.Empty || ThisDate.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
+                                 ThisDate.Date <= BatchData.FinalDate.Date &&
+                                 ( GeneratorNode.FinalDueDate.Empty || ThisDate.Date <= GeneratorNode.FinalDueDate.DateTimeValue.Date ) )
                             {
-                                CswNbtActGenerateNodes.makeNode( GenNode, ThisDate );
+                                Finished = CswNbtActGenerateNodes.makeNode( GenNode, ThisDate );
                                 //BatchNode.appendToLog( "Created future task for " + ThisDate.ToShortDateString() + "." );
                             }
                             else
@@ -150,13 +155,15 @@ namespace ChemSW.Nbt.Batch
                             }
 
                             // Setup for next iteration
-                            BatchData.NextStartDate = GeneratorNode.DueDateInterval.getNextOccuranceAfter( ThisDate );
-                            if( BatchData.NextStartDate.Date == ThisDate.Date ) // infinite loop guard
+                            if( Finished )
                             {
-                                BatchNode.finish();
+                                BatchData.NextStartDate = GeneratorNode.DueDateInterval.getNextOccuranceAfter( ThisDate );
+                                if( BatchData.NextStartDate.Date == ThisDate.Date ) // infinite loop guard
+                                {
+                                    BatchNode.finish();
+                                }
+                                BatchData.IterationCount += 1;
                             }
-
-                            BatchData.IterationCount += 1;
                             BatchNode.BatchData.Text = BatchData.ToString();
                             BatchNode.PercentDone.Value = getPercentDone( BatchNode );
 

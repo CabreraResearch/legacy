@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.WebServices
                 //SelectedGeneratorNodes.Add( CurrentGeneratorNode );
 
                 //TotalNodes += CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate );
-                BatchNodes.Add( CswNbtActGenerateFutureNodes.makeNodes( CurrentGeneratorNode, EndDate ) );
+                BatchNodes.Add( CswNbtActGenerateFutureNodes.makeNodesBatch( CurrentGeneratorNode, EndDate ) );
                 
             }//iterate selected Generator notes
 

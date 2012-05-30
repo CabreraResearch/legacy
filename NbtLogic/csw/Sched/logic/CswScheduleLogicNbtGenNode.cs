@@ -13,8 +13,6 @@ namespace ChemSW.Nbt.Sched
 
     public class CswScheduleLogicNbtGenNode : ICswScheduleLogic
     {
-        private Int32 _GeneratorLimit = 1;
-
         public string RuleName
         {
             get { return ( NbtScheduleRuleNames.GenNode.ToString() ); }
@@ -62,13 +60,18 @@ namespace ChemSW.Nbt.Sched
 
                 try
                 {
+                    Int32 GeneratorLimit = CswConvert.ToInt32(_CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ));
+                    if( Int32.MinValue == GeneratorLimit )
+                    {
+                        GeneratorLimit = 1;
+                    }
 
                     List<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
 
                     Int32 TotalGeneratorsProcessed = 0;
                     string GeneratorDescriptions = string.Empty;
 
-                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && TotalGeneratorsProcessed < _GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && TotalGeneratorsProcessed < GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
 

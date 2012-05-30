@@ -10,8 +10,6 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActGenerateNodes
     {
-        private Int32 _GenLimit = 5;
-
         CswNbtResources _CswNbtResources = null;
         public CswNbtActGenerateNodes( CswNbtResources CswNbtResources )
         {
@@ -174,9 +172,15 @@ namespace ChemSW.Nbt.Actions
             }
 
             // case 26111 - only generate a few at a time, and only increment NextDueDate when we're completely done
+            Int32 GeneratorTargetLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatortargetlimit.ToString() ) );
+            if( Int32.MinValue == GeneratorTargetLimit )
+            {
+                GeneratorTargetLimit = 5;
+            }
+
             foreach( CswPrimaryKey NewParentPk in Parents )
             {
-                if( null != NewParentPk && NodesCreated < _GenLimit )
+                if( null != NewParentPk && NodesCreated < GeneratorTargetLimit )
                 {
                     CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
                     if( null == ExistingNode )
@@ -242,7 +246,7 @@ namespace ChemSW.Nbt.Actions
             } // foreach( CswPrimaryKey NewParentPk in Parents )
 
             // case 26111 - we're finished if we ran out of nodes to generate
-            return ( NodesCreated < _GenLimit );
+            return ( NodesCreated < GeneratorTargetLimit );
 
         }//makeNode()
 
