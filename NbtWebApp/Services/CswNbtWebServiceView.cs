@@ -348,11 +348,11 @@ namespace ChemSW.Nbt.WebServices
             if( View.ViewId != null )
             {
                 CswNbtViewNode SelectedViewNode = View.FindViewNodeByArbitraryId( ArbitraryId );
-                if( View.ViewMode != NbtViewRenderingMode.List || View.Root.ChildRelationships.Count == 0 )
+                if( View.ViewMode != NbtViewRenderingMode.Unknown || View.Root.ChildRelationships.Count == 0 )
                 {
                     if( SelectedViewNode is CswNbtViewRelationship )
                     {
-                        if( StepNo == 3 )
+                        if( StepNo == 3 && View.ViewMode != NbtViewRenderingMode.List )
                         {
                             // Potential child relationships
 
@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.WebServices
                                 } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
                             } // foreach( CswNbtViewRelationship R in Relationships )
                         } // if( StepNo == 3)
-                        else
+                        else if (StepNo == 4 )
                         {
                             // Potential child properties
 

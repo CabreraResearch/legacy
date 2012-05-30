@@ -16,7 +16,7 @@ namespace NbtWebAppServices.Response
         private double _ServerInitTime;
         private HttpContext _Context;
 
-        public CswNbtWcfResponseBase( HttpContext Context, bool AttemptRefresh = true )
+        public CswNbtWcfResponseBase( HttpContext Context, bool IsMobile, bool AttemptRefresh = false )
         {
             _ServerInitTime = 0;
             _Timer = new CswTimer();
@@ -27,7 +27,7 @@ namespace NbtWebAppServices.Response
 
             try
             {
-                CswNbtWcfSessionResources = CswNbtWcfSessionResources.initResources( _Context );
+                CswNbtWcfSessionResources = CswNbtWcfSessionResources.initResources( _Context, IsMobile );
                 if( AttemptRefresh )
                 {
                     AuthenticationStatus Auth = CswNbtWcfSessionResources.attemptRefresh( true );

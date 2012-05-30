@@ -213,8 +213,8 @@
                     // DEFAULT (textbox)
                     } else {
                         if (Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
-                            if (placeholder !== cswPrivate.subfieldControl.val()) {
-                                placeholder += "'s " + cswPrivate.subfieldControl.val();
+                            if (placeholder !== cswPrivate.subfieldControl.selectedText()) {
+                                placeholder += "'s " + cswPrivate.subfieldControl.selectedText();
                             }
                         }
                         cswPrivate.valueControl = cswPrivate.valueCell.input({
@@ -222,7 +222,7 @@
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.selectedValue,
                             placeholder: placeholder,
-                            width: "100px",
+                            width: "150px",
                             autofocus: cswPrivate.autoFocusInput,
                             autocomplete: 'on',
                             onChange: function() {

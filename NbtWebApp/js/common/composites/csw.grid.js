@@ -464,13 +464,8 @@
                                 addRowsToGrid(rows.rows);
                             }
                         });
-                    } else {
-                        /* Get the data (rows) from the current grid */
-                        addRowsToGrid(data);
-                    }
-
-
-
+                    } 
+                    
                     Csw.newWindow(outerDiv.$.html());
                     outerDiv.remove();
 
@@ -516,9 +511,8 @@
                 }
                 var element = cswPrivate.resizeWithParentElement || cswParent.$;
                 handleRestoreDownRecursive(element);
-                var width = element.width() - 100;
-
-                cswPublic.gridTable.$.jqGrid('setGridWidth', width);
+                var width = element.width() - 50;
+                cswPublic.setWidth(width);
             };
 
             /* "Constuctor" */

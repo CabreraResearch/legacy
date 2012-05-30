@@ -74,48 +74,86 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 3. mark any property references to this property on other nodes as pending update
-                    CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "MetaDataOC_beforeWriteNode_proprefs_select", "getPropertyReferences" );
-                    //BZ 8744 
-                    if( CurrentProp.NodeId.TableName == "nodes" )
-                    {
-                        CswStaticParam StaticParam = new CswStaticParam( "getnodeid", CurrentProp.NodeId.PrimaryKey );
-                        PropRefsSelect.S4Parameters.Add( "getnodeid", StaticParam );
-                    }
-                    else
-                    { throw new CswDniException( ErrorType.Error, "Record could not be updated.", "Error updating property reference on node in " + CurrentProp.NodeId.TableName + " table." ); }
-                    PropRefsSelect.S4Parameters.Add( "getnodetypepropid", new CswStaticParam( "getnodetypepropid", CurrentProp.NodeTypePropId ) );
-                    PropRefsSelect.S4Parameters.Add( "getobjectclasspropid", new CswStaticParam( "getobjectclasspropid", CurrentProp.ObjectClassPropId ) );
-                    DataTable PropRefsTable = PropRefsSelect.getTable();
 
-                    if( PropRefsTable.Rows.Count > 0 )
-                    {
-                        //BZ 10239
-                        //Fetch the cached value field name. This works as long as jct_nodes_props is the only table we pull prop values from
-                        //CISPro NG will break this
-                        Int32 FirstNodeTypePropId = CswConvert.ToInt32( PropRefsTable.Rows[0]["nodetypepropid"] );
-                        CswNbtMetaDataNodeTypeProp FirstNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( FirstNodeTypePropId );
-                        CswNbtFieldTypeRulePropertyReference PropRefFieldTypeRule = (CswNbtFieldTypeRulePropertyReference) FirstNodeTypeProp.getFieldTypeRule();
-                        CswNbtSubField.PropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
+                    // case 26484
+                    // You can't use a PK-based in clause for this, because it may exceed 1000 values.
 
-                        // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a prop ref to this prop
-                        string PkString = string.Empty;
-                        foreach( DataRow PropRefsRow in PropRefsTable.Rows )
-                        {
-                            if( PkString != string.Empty ) PkString += ",";
-                            PkString += PropRefsRow["jctnodepropid"].ToString();
-                        }
-                        if( PkString != string.Empty )
-                        {
-                            CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "MetaDataOC_beforeWriteNode_pendingupdate_update", "jct_nodes_props" );
-                            DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
-                            foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
-                            {
-                                JctNodesPropsRow["pendingupdate"] = "1";
-                                JctNodesPropsRow[PropRefColumn.ToString()] = string.Empty;
-                            }
-                            JctNodesPropsUpdate.update( JctNodesPropsTable );
-                        }
-                    }
+                    //CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "MetaDataOC_beforeWriteNode_proprefs_select", "getPropertyReferences" );
+                    ////BZ 8744 
+                    //if( CurrentProp.NodeId.TableName == "nodes" )
+                    //{
+                    //    CswStaticParam StaticParam = new CswStaticParam( "getnodeid", CurrentProp.NodeId.PrimaryKey );
+                    //    PropRefsSelect.S4Parameters.Add( "getnodeid", StaticParam );
+                    //}
+                    //else
+                    //{ throw new CswDniException( ErrorType.Error, "Record could not be updated.", "Error updating property reference on node in " + CurrentProp.NodeId.TableName + " table." ); }
+                    //PropRefsSelect.S4Parameters.Add( "getnodetypepropid", new CswStaticParam( "getnodetypepropid", CurrentProp.NodeTypePropId ) );
+                    //PropRefsSelect.S4Parameters.Add( "getobjectclasspropid", new CswStaticParam( "getobjectclasspropid", CurrentProp.ObjectClassPropId ) );
+                    //DataTable PropRefsTable = PropRefsSelect.getTable();
+
+                    //if( PropRefsTable.Rows.Count > 0 )
+                    //{
+                    //    //BZ 10239
+                    //    //Fetch the cached value field name. This works as long as jct_nodes_props is the only table we pull prop values from
+                    //    //CISPro NG will break this
+                    //    Int32 FirstNodeTypePropId = CswConvert.ToInt32( PropRefsTable.Rows[0]["nodetypepropid"] );
+                    //    CswNbtMetaDataNodeTypeProp FirstNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( FirstNodeTypePropId );
+                    //    CswNbtFieldTypeRulePropertyReference PropRefFieldTypeRule = (CswNbtFieldTypeRulePropertyReference) FirstNodeTypeProp.getFieldTypeRule();
+                    //    CswNbtSubField.PropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
+
+                    //    // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a prop ref to this prop
+                    //    string PkString = string.Empty;
+                    //    foreach( DataRow PropRefsRow in PropRefsTable.Rows )
+                    //    {
+                    //        if( PkString != string.Empty ) PkString += ",";
+                    //        PkString += PropRefsRow["jctnodepropid"].ToString();
+                    //    }
+                    //    if( PkString != string.Empty )
+                    //    {
+                    //        CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "MetaDataOC_beforeWriteNode_pendingupdate_update", "jct_nodes_props" );
+                    //        DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
+                    //        foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
+                    //        {
+                    //            JctNodesPropsRow["pendingupdate"] = "1";
+                    //            JctNodesPropsRow[PropRefColumn.ToString()] = string.Empty;
+                    //        }
+                    //        JctNodesPropsUpdate.update( JctNodesPropsTable );
+                    //    }
+                    //}
+
+                    //BZ 10239 - Fetch the cached value field name.
+                    CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType.PropertyReference );
+                    CswNbtSubField.PropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
+
+                    string SQL = @"update jct_nodes_props 
+                                      set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"',
+                                          " + PropRefColumn.ToString() + @" = ''
+                                    where jctnodepropid in (select j.jctnodepropid
+                                                              from jct_nodes_props j
+                                                              join nodes n on n.nodeid = j.nodeid
+                                                              join nodetype_props p on p.nodetypepropid = j.nodetypepropid
+                                                              join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                              left outer join jct_nodes_props jntp on (jntp.nodetypepropid = p.fkvalue
+                                                                                                  and jntp.nodeid = n.nodeid
+                                                                                                  and jntp.field1_fk = " + CurrentProp.NodeId.PrimaryKey.ToString() + @")
+                                                              left outer join (select jx.jctnodepropid, ox.objectclasspropid, jx.nodeid
+                                                                                  from jct_nodes_props jx
+                                                                                  join nodetype_props px on jx.nodetypepropid = px.nodetypepropid
+                                                                                  join object_class_props ox on px.objectclasspropid = ox.objectclasspropid
+                                                                              where jx.field1_fk = " + CurrentProp.NodeId.PrimaryKey.ToString() + @") jocp 
+                                                                                                  on (jocp.objectclasspropid = p.fkvalue 
+                                                                                                  and jocp.nodeid = n.nodeid)
+                                                              where f.fieldtype = 'PropertyReference'
+                                                              and ((lower(p.fktype) = 'nodetypepropid' and jntp.jctnodepropid is not null)
+                                                                  or (lower(p.fktype) = 'objectclasspropid' and jocp.jctnodepropid is not null))
+                                                              and ((lower(p.valueproptype) = 'nodetypepropid' and p.valuepropid = " + CurrentProp.NodeTypePropId.ToString() + @") 
+                                                                  or (lower(p.valueproptype) = 'objectclasspropid' and p.valuepropid = " + CurrentProp.ObjectClassPropId + @")))";
+
+                    // We're not doing this in a CswTableUpdate because it might be a large operation, 
+                    // and we don't care about auditing for this change.
+                    _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
+
+
                     // 4. For locations, if this node's location changed, we need to update the pathname on the children
                     if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
                     {
@@ -225,8 +263,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//afterWriteNode()
 
-        public override void beforeDeleteNode() 
-        { 
+        public override void beforeDeleteNode()
+        {
             // case 22486 - Don't allow deleting targets of required relationships
             CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
             string WhereClause = " where nodetypepropid in (select nodetypepropid from nodetype_props where isrequired = '1') and field1_fk = " + _CswNbtNode.NodeId.PrimaryKey.ToString();
@@ -236,9 +274,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( MatchTable.Rows.Count > 0 )
             {
                 CswCommaDelimitedString InUseStr = new CswCommaDelimitedString();
-                foreach(DataRow MatchRow in MatchTable.Rows)
+                foreach( DataRow MatchRow in MatchTable.Rows )
                 {
-                    CswPrimaryKey MatchNodePk = new CswPrimaryKey("nodes", CswConvert.ToInt32(MatchRow["nodeid"]));
+                    CswPrimaryKey MatchNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MatchRow["nodeid"] ) );
                     InUseStr.Add( _CswNbtResources.makeClientNodeReference( _CswNbtResources.Nodes[MatchNodePk] ) );
                 }
                 throw new CswDniException( ErrorType.Warning,

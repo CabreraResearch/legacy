@@ -16,11 +16,13 @@ namespace NbtWebAppServices.Response
         private CswNbtWcfSessionResources _CswNbtWcfSessionResources = null;
         private Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> _Inspections;
         private CswNbtWcfInspectionsResponse _InspectionsResponse;
+        private CswNbtMetaDataObjectClass _InspectionDesignOc = null;
 
-        public CswNbtWcfInspectionsPost( HttpContext Context, Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> Inspections )
+        public CswNbtWcfInspectionsPost( HttpContext Context, Collection<CswNbtWcfInspectionsDataModel.CswNbtInspection> Inspections, bool IsMobile = true )
         {
             _Context = Context;
-            _InspectionsResponse = new CswNbtWcfInspectionsResponse( _Context );
+
+            _InspectionsResponse = new CswNbtWcfInspectionsResponse( _Context, IsMobile );
             if( _InspectionsResponse.Status.Success )
             {
                 try
@@ -92,6 +94,28 @@ namespace NbtWebAppServices.Response
                                 }
                             }
                             InspectionNode.postChanges( true );
+                            if( false == string.IsNullOrEmpty( Inspection.Action ) && ( Inspection.Action.ToLower() == "finish" || Inspection.Action.ToLower() == "cancel" ) )
+                            {
+                                CswNbtMetaDataNodeTypeProp ButtonNtp = null;
+                                if( Inspection.Action.ToLower() == "finish" )
+                                {
+                                    ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.FinishPropertyName );
+                                }
+                                else if( Inspection.Action.ToLower() == "cancel" )
+                                {
+                                    ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.CancelPropertyName );
+                                }
+
+                                if( null != ButtonNtp )
+                                {
+                                    CswNbtObjClass.NbtButtonAction ButtonAction;
+                                    string ActionData;
+                                    string Message;
+                                    _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtWcfSessionResources.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionDesignClass );
+                                    CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtWcfSessionResources.CswNbtResources, _InspectionDesignOc, InspectionNode );
+                                    NbtObjClass.onButtonClick( ButtonNtp, out ButtonAction, out ActionData, out Message );
+                                }
+                            }
                             Processed = true;
 
                             /* Reinit since state has changed. */
@@ -132,6 +156,7 @@ namespace NbtWebAppServices.Response
 
         private void _updateInspections()
         {
+
             foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection Inspection in _Inspections )
             {
                 bool Processed = _updateInspectionNode( Inspection );

@@ -6,8 +6,8 @@ namespace NbtWebAppServices.Response
     [DataContract]
     public class CswNbtWcfInspectionsResponseWithDesigns : CswNbtWcfResponseBase
     {
-        public CswNbtWcfInspectionsResponseWithDesigns( HttpContext Context )
-            : base( Context )
+        public CswNbtWcfInspectionsResponseWithDesigns( HttpContext Context, bool IsMobile, bool AttemptRefresh = true )
+            : base( Context, IsMobile, AttemptRefresh )
         {
             Data = new CswNbtWcfInspectionsDataModel();
         }

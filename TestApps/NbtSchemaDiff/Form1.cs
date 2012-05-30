@@ -138,9 +138,8 @@ namespace ChemSW.NbtSchemaDiff
         private void _InitSessionResources()
         {
 
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
             _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
-
 
             // Left resources
             //CswNbtObjClassFactory _CswNbtObjClassFactoryLeft = new CswNbtObjClassFactory();

@@ -23,7 +23,7 @@ namespace NbtWebAppServices.WebServices
         [WebInvoke( Method = "POST" )]
         public CswNbtWcfResponseBase init( CswNbtWcfRequest.CswNbtSessionRequest request )
         {
-            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context, false );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context, request.IsMobile );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
             try
             {
@@ -137,7 +137,7 @@ namespace NbtWebAppServices.WebServices
         [WebInvoke( Method = "POST" )]
         public CswNbtWcfResponseBase end( string CswSessionId )
         {
-            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context );
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context, false );
             try
             {
                 _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;

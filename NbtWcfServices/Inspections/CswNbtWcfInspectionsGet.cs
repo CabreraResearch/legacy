@@ -10,6 +10,7 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using NbtWebAppServices.Session;
 
 namespace NbtWebAppServices.Response
@@ -58,7 +59,8 @@ namespace NbtWebAppServices.Response
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
-                        SectionId = NodeTypeTab.TabId
+                        SectionId = NodeTypeTab.TabId,
+                        ReadOnly = ( false == _CswNbtWcfSessionResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, CheckAllTabPermissions: false, NodeTypeTab: NodeTypeTab ) )
                     };
 
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
@@ -80,7 +82,6 @@ namespace NbtWebAppServices.Response
                                                        Choices = null
                                                    };
                         ResponseSection.Properties.Add( ResponseProperty );
-
                     }
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
@@ -223,10 +224,10 @@ namespace NbtWebAppServices.Response
             }
         }
 
-        public CswNbtWcfInspectionsGet( HttpContext Context, CswNbtActSystemViews.SystemViewName ViewName )
+        public CswNbtWcfInspectionsGet( HttpContext Context, CswNbtActSystemViews.SystemViewName ViewName, bool IsMobile = true )
         {
             _Context = Context;
-            _InspectionsResponse = new CswNbtWcfInspectionsResponseWithDesigns( _Context );
+            _InspectionsResponse = new CswNbtWcfInspectionsResponseWithDesigns( _Context, IsMobile );
             if( _InspectionsResponse.Status.Success )
             {
                 try

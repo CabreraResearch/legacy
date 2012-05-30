@@ -102,14 +102,15 @@
     };
 
     function checkCompliance(compliantAnswers, answerSel, correctiveActionLabel, correctiveActionTextBox, isActionRequired) {
-        if (false === multi) {
+        var defaultText = (false === multi) ? '' : Csw.enums.multiEditDefaultValue;
+        //if (false === multi) {//cases 26445 and 26442
             var splitCompliantAnswers = compliantAnswers.split(',');
             var isCompliant = true;
             var selectedAnswer = answerSel.val();
             var correctiveAction = correctiveActionTextBox.val();
 
-            if(correctiveAction === '') {
-                if (selectedAnswer !== '') {
+            if (correctiveAction === defaultText) {
+                if (selectedAnswer !== defaultText) {
                     isCompliant = false;
                     for (var i = 0; i < splitCompliantAnswers.length; i += 1) {
                         isCompliant = isCompliant || (Csw.string(splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(selectedAnswer).trim().toLowerCase());
@@ -127,7 +128,7 @@
                     correctiveActionTextBox.show();
                 }
             }
-        }
+        //}
     } // checkCompliance()
 
     // Method calling logic
