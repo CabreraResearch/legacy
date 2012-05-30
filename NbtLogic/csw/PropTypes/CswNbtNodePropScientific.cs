@@ -117,6 +117,21 @@ namespace ChemSW.Nbt.PropTypes
             }
         } // Exponent
 
+        public Int32 Precision
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+            }
+        }
+        public double MinValue
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.MinValue;
+            }
+        }
+
 
         public override void ToXml( XmlNode ParentNode )
         {
@@ -125,11 +140,16 @@ namespace ChemSW.Nbt.PropTypes
             {
                 BaseNode.InnerText = Base.ToString();
             }
+            CswXmlDocument.AppendXmlAttribute( BaseNode, "minvalue", MinValue.ToString() );
+            CswXmlDocument.AppendXmlAttribute( BaseNode, "precision", Precision.ToString() );
+
             XmlNode ExponentNode = CswXmlDocument.AppendXmlNode( ParentNode, _ExponentSubField.ToXmlNodeName( true ) );
             if( Int32.MinValue != Exponent )
             {
                 ExponentNode.InnerText = Exponent.ToString();
             }
+            CswXmlDocument.AppendXmlAttribute( ExponentNode, "minvalue", MinValue.ToString() );
+
         } // ToXml()
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -166,6 +186,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject[_ExponentSubField.ToXmlNodeName( true )] = string.Empty;
             }
+            ParentObject["minvalue"] = MinValue.ToString();
+            ParentObject["precision"] = Precision.ToString();
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

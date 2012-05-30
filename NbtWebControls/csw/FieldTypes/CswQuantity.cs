@@ -6,15 +6,39 @@ using ChemSW.CswWebControls;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswQuantity : CswFieldTypeWebControl, INamingContainer
     {
+        private Int32 _Precision;
+        private double _MinValue;
+        private double _MaxValue;
+
+        private TextBox _QuantityTextBox;
+        private Label _UnitLabel;
+        private DropDownList _UnitList;
+        private CswInvalidImage _InvalidImg;
+        private CswImageButton _AddNewButton;
+
         public CswQuantity( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
-            DataBinding += new EventHandler(CswQuantity_DataBinding);
+            DataBinding += new EventHandler( CswQuantity_DataBinding );
+        }
+
+        protected override void OnInit( EventArgs e )
+        {
+            try
+            {
+                EnsureChildControls();
+            }
+            catch( Exception ex )
+            {
+                HandleError( ex );
+            }
+            base.OnInit( e );
         }
 
         private void CswQuantity_DataBinding( object sender, EventArgs e )
@@ -22,21 +46,36 @@ namespace ChemSW.NbtWebControls.FieldTypes
             EnsureChildControls();
             if( Prop != null )
             {
-                _UnitList.Items.Clear();
-                ListItem ListItemNone = new ListItem( "", "" );
-                _UnitList.Items.Add( ListItemNone );
-                foreach( CswNbtNode UnitNode in Prop.AsQuantity.UnitNodes )
-                {
-                    string Unit = UnitNode.Properties[CswNbtObjClassUnitOfMeasure.NamePropertyName].AsText.Text;
-                    ListItem UnitItem = new ListItem( Unit, Unit );
-                    _UnitList.Items.Add( UnitItem );
-                }
-
                 Quantity = Prop.AsQuantity.Quantity;
-                Units = Prop.AsQuantity.Units;
+
                 _Precision = Prop.AsQuantity.Precision;
                 _MinValue = Prop.AsQuantity.MinValue;
                 _MaxValue = Prop.AsQuantity.MaxValue;
+
+                _UnitLabel.Text = Prop.AsQuantity.CachedUnitName + "&nbsp;";
+
+                if( Prop.AsQuantity.TargetType == NbtViewRelatedIdType.NodeTypeId && !ReadOnly )
+                    ReadOnly = !( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
+
+                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+                CswNbtView View = new CswNbtView( _CswNbtResources );
+                View.ViewName = "CswNbtNodePropQuantity()";
+                View.AddViewRelationship( Unit_ObjectClass, true );
+
+                if( View != null )
+                {
+                    _UnitList.Items.Clear();
+                    _UnitList.Items.Add( new ListItem( "" ) );
+                    ICswNbtTree CswNbtTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                    for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
+                    {
+                        CswNbtTree.goToNthChild( c );
+                        _UnitList.Items.Add( new ListItem( CswNbtTree.getNodeNameForCurrentPosition(), CswNbtTree.getNodeIdForCurrentPosition().ToString() ) );
+                        if( Prop.AsQuantity.UnitId == CswNbtTree.getNodeIdForCurrentPosition() )
+                            _UnitList.SelectedValue = Prop.AsQuantity.UnitId.ToString();
+                        CswNbtTree.goToParentNode();
+                    }
+                }
             }
         }
 
@@ -45,25 +84,47 @@ namespace ChemSW.NbtWebControls.FieldTypes
             if( !ReadOnly )
             {
                 Prop.AsQuantity.Quantity = Quantity;
-                Prop.AsQuantity.Units = Units;
-
-                //if (_Validator.IsValid)
-                //{
-                // This only *looks* redundant.  We might change the values on the way in.
-                // Changed for BZ 6122
-                //Quantity = Prop.AsQuantity.Quantity;
-                //Units = Prop.AsQuantity.Units;
-                //}
+                try
+                {
+                    if( !ReadOnly )
+                    {
+                        if( _UnitList.SelectedValue != string.Empty )
+                        {
+                            Prop.AsQuantity.UnitId = SelectedUnitId;
+                            Prop.AsQuantity.CachedUnitName = SelectedUnitName;
+                        }
+                        else
+                        {
+                            Prop.AsQuantity.UnitId = null;
+                            Prop.AsQuantity.CachedUnitName = String.Empty;
+                        }
+                    }
+                }
+                catch( Exception ex )
+                {
+                    HandleError( ex );
+                }
             }
         }
+
         public override void AfterSave()
         {
             DataBind();
         }
+
         public override void Clear()
         {
-            Quantity = Int32.MinValue;
-            _UnitList.SelectedValue = string.Empty;
+            try
+            {
+                Quantity = Int32.MinValue;
+                _UnitLabel.Text = string.Empty;
+                _UnitList.SelectedValue = null;
+                _UnitList.Text = string.Empty;
+            }
+            catch( Exception ex )
+            {
+                HandleError( ex );
+            }
         }
 
         public double Quantity
@@ -71,61 +132,66 @@ namespace ChemSW.NbtWebControls.FieldTypes
             get
             {
                 double q = Double.NaN;
-                if (CswTools.IsFloat(_QuantityTextBox.Text))
-                    q = Convert.ToDouble(_QuantityTextBox.Text);
+                if( CswTools.IsFloat( _QuantityTextBox.Text ) )
+                    q = Convert.ToDouble( _QuantityTextBox.Text );
                 return q;
             }
-
             set
             {
-                if (Double.IsNaN(value))
+                if( Double.IsNaN( value ) )
                     _QuantityTextBox.Text = string.Empty;
                 else
                     _QuantityTextBox.Text = value.ToString();
             }
         }
-        
-        public string Units
+
+        public CswPrimaryKey SelectedUnitId
         {
-            get { return _UnitList.SelectedValue; }
-            set
+            get
             {
-                if (null == _UnitList.Items.FindByValue(value))
-                {
-                    // Add it!  This guarantees we see the data that was saved, even if the options change
-                    ListItem SelectedItem = new ListItem(value, value);
-                    _UnitList.Items.Add(SelectedItem);
-                }
-                _UnitList.SelectedValue = value;
+                CswPrimaryKey ret = new CswPrimaryKey();
+                ret.FromString( _UnitList.SelectedValue );
+                return ret;
+            }
+        }
+        public string SelectedUnitName
+        {
+            get
+            {
+                return _UnitList.SelectedItem.Text;
             }
         }
 
-        private Int32 _Precision;
-        private double _MinValue;
-        private double _MaxValue;
-
-        private TextBox _QuantityTextBox = new TextBox();
-        private DropDownList _UnitList = new DropDownList();
-        private CswInvalidImage _InvalidImg;
-
         protected override void CreateChildControls()
         {
+            CswAutoTable Table = new CswAutoTable();
+            this.Controls.Add( Table );
+
+            _QuantityTextBox = new TextBox();
             _QuantityTextBox.ID = "qty";
-            _QuantityTextBox.CssClass = CswFieldTypeWebControl.TextBoxCssClass;
+            _QuantityTextBox.CssClass = TextBoxCssClass;
             _QuantityTextBox.Width = 60;
-            //if (!Double.IsNaN(Quantity))
-            //    _QuantityTextBox.Text = Quantity.ToString();
-            //else
-            //    _QuantityTextBox.Text = "";
-            this.Controls.Add(_QuantityTextBox);
-            
-            _UnitList.ID = "u";
-            _UnitList.CssClass = CswFieldTypeWebControl.DropDownCssClass;
-            this.Controls.Add( _UnitList );
+            Table.addControl( 0, 0, _QuantityTextBox );
+
+            _UnitList = new DropDownList();
+            _UnitList.ID = "relval";
+            _UnitList.CssClass = DropDownCssClass;
+            Table.addControl( 0, 1, _UnitList );
+
+            _UnitLabel = new Label();
+            _UnitLabel.ID = "rellabel";
+            _UnitLabel.CssClass = StaticTextCssClass;
+            Table.addControl( 0, 1, _UnitLabel );
+
+            Table.addControl( 0, 2, new CswLiteralNbsp() );
+
+            _AddNewButton = new CswImageButton( CswImageButton.ButtonType.Add );
+            _AddNewButton.ID = "newrel";
+            Table.addControl( 0, 3, _AddNewButton );
 
             _InvalidImg = new CswInvalidImage();
             _InvalidImg.ID = "InvalidImg";
-            this.Controls.Add( _InvalidImg );
+            Table.addControl( 0, 4, _InvalidImg );
 
             base.CreateChildControls();
 
@@ -148,24 +214,60 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             _QuantityTextBox.Attributes.Add( "onkeypress", "CswQuantity_onchange('" + _QuantityTextBox.ClientID + "', '" + _UnitList.ClientID + "', '" + _InvalidImg.ClientID + "', '" + _Precision.ToString() + "', '" + MinValString + "', '" + MaxValString + "');" );
             _QuantityTextBox.Attributes.Add( "onchange", "CswQuantity_onchange('" + _QuantityTextBox.ClientID + "', '" + _UnitList.ClientID + "', '" + _InvalidImg.ClientID + "', '" + _Precision.ToString() + "', '" + MinValString + "', '" + MaxValString + "');" );
-            _UnitList.Attributes.Add( "onchange", "CswQuantity_onchange('" + _QuantityTextBox.ClientID + "', '" + _UnitList.ClientID + "', '" + _InvalidImg.ClientID + "', '" + _Precision.ToString() + "', '" + MinValString + "', '" + MaxValString + "');" );
+
+            try
+            {
+                _UnitList.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange()" );
+
+                if( _EditMode != NodeEditMode.Add &&
+                    _EditMode != NodeEditMode.EditInPopup &&
+                    _EditMode != NodeEditMode.Demo &&
+                    !ReadOnly &&
+                    Prop.AsQuantity.TargetType == NbtViewRelatedIdType.NodeTypeId &&
+                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) )
+                {
+                    _AddNewButton.OnClientClick = "return RelationshipAddNodeDialog_openPopup('" + Prop.AsQuantity.TargetId.ToString() + "');";
+                    _AddNewButton.Visible = true;
+                }
+                else
+                {
+                    _AddNewButton.Visible = false;
+                }
+
+                if( ReadOnly )
+                {
+                    _UnitLabel.Visible = true;
+                    _UnitList.Visible = false;
+                    _UnitList.Enabled = false;
+                }
+                else
+                {
+                    _UnitLabel.Visible = false;
+                    _UnitList.Visible = true;
+                }
+
+            }
+            catch( Exception ex )
+            {
+                HandleError( ex );
+            }
 
             base.OnPreRender( e );
         }
 
-        protected override void RenderContents(HtmlTextWriter output)
+        protected override void RenderContents( HtmlTextWriter output )
         {
             EnsureChildControls();
-            
-            if (ReadOnly)
+
+            if( ReadOnly )
             {
-                output.Write(Quantity);
-                output.Write("&nbsp;");
-                output.Write(Units);
+                output.Write( Quantity );
+                output.Write( "&nbsp;" );
+                output.Write( SelectedUnitName );
             }
             else
             {
-                base.RenderContents(output);
+                base.RenderContents( output );
             }
         }
     }

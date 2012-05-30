@@ -178,9 +178,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassUnitOfMeasure( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
-                    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources, Node );
-                    break;
+                //case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
+                //    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources, Node );
+                //    break;//case 7608 - deprecated
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UserClass:
                     ReturnVal = new CswNbtObjClassUser( CswNbtResources, Node );
