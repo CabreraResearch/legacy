@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( NbtBatchOpStatus.Pending.ToString() == Status.Value )
             {
-                appendToLog( "Operation started." );
+                //appendToLog( "Operation started." );
                 StartDate.DateTimeValue = DateTime.Now;
                 Status.Value = NbtBatchOpStatus.Processing.ToString();
                 postChanges( false );
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void finish()
         {
-            appendToLog( "Operation Complete." );
+            //appendToLog( "Operation Complete." );
             EndDate.DateTimeValue = DateTime.Now;
             Status.Value = NbtBatchOpStatus.Completed.ToString();
             postChanges( false );
