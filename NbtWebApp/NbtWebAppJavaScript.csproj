@@ -61,6 +61,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="js\common\composites\csw.linkgrid.js" />
     <Content Include="MainCswIncludes.html" />
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />

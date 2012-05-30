@@ -1237,6 +1237,40 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getGrid()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getGridRowCount( string ViewId, string IncludeNodeKey )
+        {
+            UseCompression();
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtNodeKey RealNodeKey = null;
+                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey );
+
+                if( null != View )
+                {
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( false ) );
+                    ReturnVal = g.getGridRowCount();
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getGrid()
+
+
         #endregion Grid Views
 
         //[WebMethod( EnableSession = false )]

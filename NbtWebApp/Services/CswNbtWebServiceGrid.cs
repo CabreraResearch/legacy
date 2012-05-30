@@ -363,6 +363,22 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getGridOuterJson()
 
+
+        public JObject getGridRowCount()
+        {
+            JObject Ret = new JObject();
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            Int32 rowCount = Tree.getChildNodeCount();
+            if( _View.Visibility == NbtViewVisibility.Property &&
+                rowCount > 0 )
+            {
+                Tree.goToNthChild( 0 );
+                rowCount = Tree.getChildNodeCount();
+            }
+            Ret["rowCount"] = rowCount;
+            return Ret;
+        } // getGridOuterJson()
+
         /// <summary>
         /// Returns a JSON Object of Grid Rows for a specific page
         /// </summary>
