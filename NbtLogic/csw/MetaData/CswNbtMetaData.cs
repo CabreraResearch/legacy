@@ -179,6 +179,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Returns a CswNbtMetaDataObjectClass based on the object class name parameter
+        /// </summary>
+        public CswNbtMetaDataObjectClass getObjectClass( string ObjectClassName )
+        {
+            return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClass( ObjectClassName );
+        }
+
+        /// <summary>
         /// Finds the object class of a nodetype, from the nodetype's primary key
         /// </summary>
         public CswNbtMetaDataObjectClass getObjectClassByNodeTypeId( Int32 NodeTypeId )

@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( ExpirationDate.DateTimeValue == DateTime.MinValue )
                     {
                         DateTime DefaultExpDate = DateTime.Now;
-                        switch( MaterialNodeAsMaterial.ExpirationInterval.Units.ToLower() )
+                        switch( MaterialNodeAsMaterial.ExpirationInterval.CachedUnitName.ToLower() )
                         {
                             case "hours":
                                 DefaultExpDate = DefaultExpDate.AddHours( MaterialNodeAsMaterial.ExpirationInterval.Quantity );
