@@ -15,68 +15,70 @@ namespace NbtWebAppServices.Response
         [DataContract]
         public class ObjectClassProp
         {
-            public ObjectClassProp()
-            {
+            /*The problem with default getters and setters (why we're not using them here) is two-fold: 
+             * 1. they're immutable 
+             * 2. they default to null for nullable types and 0 for numbers.
+             * Creating our own default values using pairs of private/public properties is overkill for this purpose.
+             */
+            [DataMember( IsRequired = true )]
+            public string PropName = string.Empty;
+            [DataMember( IsRequired = true )]
+            public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
 
-            }
             [DataMember]
-            public bool AuditLevel { get; set; }
+            public bool AuditLevel;
             [DataMember]
-            public CswNbtMetaDataFieldType.NbtFieldType FieldType { get; set; }
+            public bool IsBatchEntry;
             [DataMember]
-            public bool IsBatchEntry { get; set; }
+            public bool IsRequired;
             [DataMember]
-            public bool IsRequired { get; set; }
+            public bool IsUnique;
             [DataMember]
-            public bool IsUnique { get; set; }
+            public bool IsCompoundUnique;
             [DataMember]
-            public bool IsCompoundUnique { get; set; }
+            public bool ServerManaged;
             [DataMember]
-            public bool ServerManaged { get; set; }
+            public Int32 ValueFieldId = Int32.MinValue;
             [DataMember]
-            public Int32 ValueFieldId { get; set; }
+            public Int32 NumberPrecision = Int32.MinValue;
             [DataMember]
-            public Int32 NumberPrecision { get; set; }
+            public string ListOptions = string.Empty;
             [DataMember]
-            public string ListOptions { get; set; }
+            public string ViewXml = string.Empty;
             [DataMember]
-            public string ViewXml { get; set; }
+            public bool IsFk;
             [DataMember]
-            public bool IsFk { get; set; }
+            public string FkType = string.Empty;
             [DataMember]
-            public string FkType { get; set; }
+            public Int32 FkValue = Int32.MinValue;
             [DataMember]
-            public Int32 FkValue { get; set; }
+            public bool Multi;
             [DataMember]
-            public bool Multi { get; set; }
+            public bool ReadOnly;
             [DataMember]
-            public bool ReadOnly { get; set; }
+            public Int32 DisplayColAdd = Int32.MinValue;
             [DataMember]
-            public Int32 DisplayColAdd { get; set; }
+            public Int32 DisplayRowAdd = Int32.MinValue;
             [DataMember]
-            public Int32 DisplayRowAdd { get; set; }
+            public bool SetValOnAdd;
             [DataMember]
-            public bool SetValOnAdd { get; set; }
+            public Int32 NumberMinValue = Int32.MinValue;
             [DataMember]
-            public Int32 NumberMinValue { get; set; }
+            public Int32 NumberMaxValue = Int32.MinValue;
             [DataMember]
-            public Int32 NumberMaxValue { get; set; }
+            public string StaticText = string.Empty;
             [DataMember]
-            public string StaticText { get; set; }
+            public string Filter = string.Empty;
             [DataMember]
-            public string Filter { get; set; }
+            public Int32 FilterPropId = Int32.MinValue;
             [DataMember]
-            public Int32 FilterPropId { get; set; }
+            public bool UseNumbering;
             [DataMember]
-            public bool UseNumbering { get; set; }
+            public string ValueOptions = string.Empty;
             [DataMember]
-            public string ValueOptions { get; set; }
+            public bool IsGlobalUnique;
             [DataMember]
-            public string PropName { get; set; }
-            [DataMember]
-            public bool IsGlobalUnique { get; set; }
-            [DataMember]
-            public string Extended { get; set; }
+            public string Extended = string.Empty;
         }
 
     }

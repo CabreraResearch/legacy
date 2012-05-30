@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.Schema
                                                           AuditLevel: true,
                                                           UseBatchEntry: false );
             CswNbtMetaDataObjectClassProp RequestorOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
                                                      new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.Requestor.ToString(),
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                         } );
 
             CswNbtMetaDataObjectClassProp NameOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
                                                              new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.Name.ToString(),
@@ -42,15 +42,16 @@ namespace ChemSW.Nbt.Schema
                         } );
 
             CswNbtMetaDataObjectClassProp SubmittedDateOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
                                                              new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime
+
                         } );
 
             CswNbtMetaDataObjectClassProp CompletedDateOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
                                                               new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.CompletedDate.ToString(),
@@ -58,7 +59,7 @@ namespace ChemSW.Nbt.Schema
                         } );
 
             CswNbtMetaDataObjectClassProp InventoryGroupOcp =
-               _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass,
+               _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
                                                   new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.InventoryGroup.ToString(),
@@ -69,7 +70,10 @@ namespace ChemSW.Nbt.Schema
                             SetValOnAdd = true
                         } );
 
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, RequestOc.ObjectClassId );
+
             #endregion Request
+
             #region Request Item
             CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
@@ -81,7 +85,7 @@ namespace ChemSW.Nbt.Schema
                                                           UseBatchEntry: false );
 
             CswNbtMetaDataObjectClassProp RequestOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                                                   new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Request.ToString(),
@@ -93,7 +97,7 @@ namespace ChemSW.Nbt.Schema
                         } );
 
             CswNbtMetaDataObjectClassProp TypeOcp =
-                 _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                                                  new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Type.ToString(),
@@ -104,7 +108,7 @@ namespace ChemSW.Nbt.Schema
                         } );
 
             CswNbtMetaDataObjectClassProp QuantityOcp =
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Quantity.ToString(),
@@ -114,7 +118,7 @@ namespace ChemSW.Nbt.Schema
                         } );
 
             CswNbtMetaDataObjectClassProp SizeOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                                new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Size.ToString(),
@@ -132,7 +136,7 @@ namespace ChemSW.Nbt.Schema
             */
 
             CswNbtMetaDataObjectClassProp MaterialOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                            new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Material.ToString(),
@@ -145,7 +149,7 @@ namespace ChemSW.Nbt.Schema
 
 
             CswNbtMetaDataObjectClassProp ContainerOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Container.ToString(),
@@ -159,7 +163,7 @@ namespace ChemSW.Nbt.Schema
             char FilterDelimiter = '|';
             string LocationFilterString = CswNbtSubField.PropColumn.Field1.ToString() + FilterDelimiter + CswNbtPropFilterSql.PropertyFilterMode.NotEquals + FilterDelimiter + CswNbtObjClassRequestItem.Types.Dispose;
             CswNbtMetaDataObjectClassProp LocationOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Location.ToString(),
@@ -173,7 +177,7 @@ namespace ChemSW.Nbt.Schema
                  );
 
             CswNbtMetaDataObjectClassProp CountOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
                     {
                         PropName = CswNbtObjClassRequestItem.PropertyName.Quantity.ToString(),
@@ -184,7 +188,7 @@ namespace ChemSW.Nbt.Schema
                 );
 
             CswNbtMetaDataObjectClassProp CommentsOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
                     {
                         PropName = CswNbtObjClassRequestItem.PropertyName.Comments.ToString(),
@@ -193,7 +197,7 @@ namespace ChemSW.Nbt.Schema
                  );
 
             CswNbtMetaDataObjectClassProp StatusOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
                     {
                         PropName = CswNbtObjClassRequestItem.PropertyName.Status.ToString(),
@@ -204,7 +208,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOcp, CswNbtSubField.SubFieldName.Value, CswNbtObjClassRequestItem.Statuses.Pending.ToString() );
 
             CswNbtMetaDataObjectClassProp NumberOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
                     {
                         PropName = CswNbtObjClassRequestItem.PropertyName.Number.ToString(),
@@ -215,13 +219,15 @@ namespace ChemSW.Nbt.Schema
                  );
 
             CswNbtMetaDataObjectClassProp ExternalOrderNumberOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass,
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
                     {
                         PropName = CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber.ToString(),
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
                     }
                  );
+
+            _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, RequestItemOc.ObjectClassId );
 
             #endregion Request Item
         }//Update()

@@ -962,13 +962,15 @@ namespace ChemSW.Nbt.Schema
             return Ret;
         }
 
-        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+        /// <summary>
+        /// Convenience wrapper for creating an Object Class Prop
+        /// </summary>
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass ObjectClassOc,
                                                                     CswNbtWcfObjectClassDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
-            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            if( null != ObjectClassOc )
             {
-                CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
                 RetProp = ObjectClassOc.getObjectClassProp( OcpModel.PropName );
                 if( null == RetProp )
                 {
@@ -986,6 +988,24 @@ namespace ChemSW.Nbt.Schema
             return RetProp;
         }
 
+        /// <summary>
+        /// Convenience wrapper for creating an Object Class Prop
+        /// </summary>
+        public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
+                                                                    CswNbtWcfObjectClassDataModel.ObjectClassProp OcpModel )
+        {
+            CswNbtMetaDataObjectClassProp RetProp = null;
+            if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
+            {
+                CswNbtMetaDataObjectClass ObjectClassOc = MetaData.getObjectClass( NbtObjectClass );
+                RetProp = createObjectClassProp( ObjectClassOc, OcpModel );
+            }
+            return RetProp;
+        }
+
+        /// <summary>
+        /// (Deprecated) Convenience wrapper for creating an Object Class Prop
+        /// </summary>
         public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
                                                                     string PropName,
                                                                     CswNbtMetaDataFieldType.NbtFieldType FieldType,
@@ -1059,7 +1079,7 @@ namespace ChemSW.Nbt.Schema
 
 
         /// <summary>
-        /// Convenience function for making new Object Class Props
+        /// (Deprecated) Convenience function for making new Object Class Props
         /// </summary>
         public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, Int32 ObjectClassId, string PropName,
                                               CswNbtMetaDataFieldType.NbtFieldType FieldType, Int32 DisplayColAdd, Int32 DisplayRowAdd )
@@ -1110,7 +1130,7 @@ namespace ChemSW.Nbt.Schema
         {
             bool RetIsValid = false;
 
-            NbtViewPropIdType PropIdType = (NbtViewPropIdType) FkType;
+            NbtViewPropIdType PropIdType = FkType;
             //Enum.TryParse( FkType, true, out PropIdType );
             if( PropIdType != NbtViewPropIdType.Unknown )
             {
@@ -1118,7 +1138,7 @@ namespace ChemSW.Nbt.Schema
             }
             else
             {
-                NbtViewRelatedIdType RelatedIdType = (NbtViewRelatedIdType) FkType;
+                NbtViewRelatedIdType RelatedIdType = FkType;
                 //Enum.TryParse( FkType, true, out RelatedIdType );
                 if( RelatedIdType != NbtViewRelatedIdType.Unknown )
                 {
@@ -1129,7 +1149,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         /// <summary>
-        /// Convenience function for making new Object Class Props with more granular control
+        /// (Deprecated) Convenience function for making new Object Class Props with more granular control
         /// </summary>
         public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
                                              CswNbtMetaDataFieldType.NbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
