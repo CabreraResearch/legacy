@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMaterialSynonym( CswNbtNode Node )
         {
             CswNbtObjClassMaterialSynonym ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ) )
             {
                 ret = (CswNbtObjClassMaterialSynonym) Node.ObjClass;
             }

@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRole( CswNbtNode Node )
         {
             CswNbtObjClassRole ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass ) )
             {
                 ret = (CswNbtObjClassRole) Node.ObjClass;
             }

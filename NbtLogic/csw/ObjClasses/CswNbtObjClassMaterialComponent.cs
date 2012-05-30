@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMaterialComponent( CswNbtNode Node )
         {
             CswNbtObjClassMaterialComponent ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialComponentClass ) )
             {
                 ret = (CswNbtObjClassMaterialComponent) Node.ObjClass;
             }

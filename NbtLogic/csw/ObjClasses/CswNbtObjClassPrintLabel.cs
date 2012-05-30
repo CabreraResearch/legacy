@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassPrintLabel( CswNbtNode Node )
         {
             CswNbtObjClassPrintLabel ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.PrintLabelClass ) )
             {
                 ret = (CswNbtObjClassPrintLabel) Node.ObjClass;
             }

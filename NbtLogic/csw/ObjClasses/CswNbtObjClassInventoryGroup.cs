@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryGroup( CswNbtNode Node )
         {
             CswNbtObjClassInventoryGroup ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupClass ) )
             {
                 ret = (CswNbtObjClassInventoryGroup) Node.ObjClass;
             }

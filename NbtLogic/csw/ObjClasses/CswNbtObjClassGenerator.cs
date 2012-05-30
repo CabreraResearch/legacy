@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassGenerator( CswNbtNode Node )
         {
             CswNbtObjClassGenerator ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.GeneratorClass ) )
             {
                 ret = (CswNbtObjClassGenerator) Node.ObjClass;
             }

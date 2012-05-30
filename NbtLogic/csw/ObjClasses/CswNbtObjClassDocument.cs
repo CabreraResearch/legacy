@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassDocument( CswNbtNode Node )
         {
             CswNbtObjClassDocument ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass ) )
             {
                 ret = (CswNbtObjClassDocument) Node.ObjClass;
             }

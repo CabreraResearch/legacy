@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassUnitOfMeasure( CswNbtNode Node )
         {
             CswNbtObjClassUnitOfMeasure ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass ) )
             {
                 ret = (CswNbtObjClassUnitOfMeasure) Node.ObjClass;
             }
