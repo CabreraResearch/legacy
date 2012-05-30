@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EndDateOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() );
 
             CswNbtMetaDataNodeType BatchOpNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( BatchOpOC.ObjectClassId, "Batch Operation", "System" );
-            BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( StartDateOCP.PropName ) );
+            BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( CreatedDateOCP.PropName ) );
 
             CswNbtMetaDataNodeTypeTab BatchOpTab = BatchOpNT.getFirstNodeTypeTab();
 
