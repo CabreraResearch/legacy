@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
         {
             CswNbtObjClassRequest ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass ) )
             {
                 ret = (CswNbtObjClassRequest) Node.ObjClass;
             }
@@ -119,6 +119,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor.ToString() );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, "me" );
+
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 

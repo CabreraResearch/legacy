@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassCustomer( CswNbtNode Node )
         {
             CswNbtObjClassCustomer ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass ) )
             {
                 ret = (CswNbtObjClassCustomer) Node.ObjClass;
             }

@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInspectionTarget( CswNbtNode Node )
         {
             CswNbtObjClassInspectionTarget ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass ) )
             {
                 ret = (CswNbtObjClassInspectionTarget) Node.ObjClass;
             }

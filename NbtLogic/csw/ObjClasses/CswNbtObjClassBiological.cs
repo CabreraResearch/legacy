@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassBiological( CswNbtNode Node )
         {
             CswNbtObjClassBiological ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.BiologicalClass ) )
             {
                 ret = (CswNbtObjClassBiological) Node.ObjClass;
             }

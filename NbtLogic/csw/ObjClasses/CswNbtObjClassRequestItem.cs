@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequestItem( CswNbtNode Node )
         {
             CswNbtObjClassRequestItem ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ) )
             {
                 ret = (CswNbtObjClassRequestItem) Node.ObjClass;
             }
@@ -216,16 +216,14 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-
+            
             CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
-            if( null == NodeAsRequest )
-            {
-                throw new CswDniException( ErrorType.Error, "Cannot modify a Request Item without a valid Request.", "Attempted to edit node without a valid Request relationship." );
-            }
+            
             if( ( Type.Value == Types.Dispense.ToString() ||
                 Type.Value == Types.Move.ToString() ||
                 Type.Value == Types.Dispose.ToString() ) &&
                 null != Container.RelatedNodeId &&
+                null != NodeAsRequest &&
                 null != NodeAsRequest.InventoryGroup.RelatedNodeId )
             {
                 CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );

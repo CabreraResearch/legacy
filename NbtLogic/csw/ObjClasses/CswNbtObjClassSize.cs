@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassSize( CswNbtNode Node )
         {
             CswNbtObjClassSize ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass ) )
             {
                 ret = (CswNbtObjClassSize) Node.ObjClass;
             }

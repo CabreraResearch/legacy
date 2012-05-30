@@ -19,7 +19,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
-using NbtWebAppServices.Response;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -966,7 +965,7 @@ namespace ChemSW.Nbt.Schema
         /// Convenience wrapper for creating an Object Class Prop
         /// </summary>
         public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass ObjectClassOc,
-                                                                    CswNbtWcfObjectClassDataModel.ObjectClassProp OcpModel )
+                                                                    CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
             if( null != ObjectClassOc )
@@ -992,7 +991,7 @@ namespace ChemSW.Nbt.Schema
         /// Convenience wrapper for creating an Object Class Prop
         /// </summary>
         public CswNbtMetaDataObjectClassProp createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass NbtObjectClass,
-                                                                    CswNbtWcfObjectClassDataModel.ObjectClassProp OcpModel )
+                                                                    CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             CswNbtMetaDataObjectClassProp RetProp = null;
             if( NbtObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown )
@@ -1208,7 +1207,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Class Props with more granular control
         /// </summary>
-        public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, CswNbtWcfObjectClassDataModel.ObjectClassProp OcpModel )
+        public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname.ToString()] = OcpModel.PropName;

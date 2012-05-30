@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassParameter( CswNbtNode Node )
         {
             CswNbtObjClassParameter ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ParameterClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ParameterClass ) )
             {
                 ret = (CswNbtObjClassParameter) Node.ObjClass;
             }

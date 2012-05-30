@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryGroupPermission( CswNbtNode Node )
         {
             CswNbtObjClassInventoryGroupPermission ret = null;
-            if( _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass ) )
             {
                 ret = (CswNbtObjClassInventoryGroupPermission) Node.ObjClass;
             }
