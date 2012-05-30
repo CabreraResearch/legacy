@@ -1,6 +1,5 @@
 ﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using NbtWebAppServices.Response;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -19,9 +18,19 @@ namespace ChemSW.Nbt.Schema
                                                           IconFileName: "docs.gif",
                                                           AuditLevel: true,
                                                           UseBatchEntry: false );
+
+            CswNbtMetaDataObjectClassProp NameOcp =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
+                                                 new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                 {
+                                                     PropName = CswNbtObjClassRequest.PropertyName.Name.ToString(),
+                                                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                                                     SetValOnAdd = true
+                                                 } );
+
             CswNbtMetaDataObjectClassProp RequestorOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
-                                                     new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                                                     new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.Requestor.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -32,42 +41,34 @@ namespace ChemSW.Nbt.Schema
                             IsRequired = true
                         } );
 
-            CswNbtMetaDataObjectClassProp NameOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
-                                                             new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                        {
-                            PropName = CswNbtObjClassRequest.PropertyName.Name.ToString(),
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                            SetValOnAdd = true
-                        } );
+            CswNbtMetaDataObjectClassProp InventoryGroupOcp =
+               _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
+                                                  new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                  {
+                                                      PropName = CswNbtObjClassRequest.PropertyName.InventoryGroup.ToString(),
+                                                      FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
+                                                      IsFk = true,
+                                                      FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
+                                                      FkValue = InventoryGroupOc.ObjectClassId,
+                                                      SetValOnAdd = true
+                                                  } );
 
             CswNbtMetaDataObjectClassProp SubmittedDateOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
-                                                             new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                                                             new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString(),
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime
-
+                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                            ServerManaged = true
                         } );
 
             CswNbtMetaDataObjectClassProp CompletedDateOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
-                                                              new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                                                              new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequest.PropertyName.CompletedDate.ToString(),
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime
-                        } );
-
-            CswNbtMetaDataObjectClassProp InventoryGroupOcp =
-               _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestOc,
-                                                  new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                        {
-                            PropName = CswNbtObjClassRequest.PropertyName.InventoryGroup.ToString(),
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
-                            IsFk = true,
-                            FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                            FkValue = InventoryGroupOc.ObjectClassId,
-                            SetValOnAdd = true
+                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                            ServerManaged = true
                         } );
 
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, RequestOc.ObjectClassId );
@@ -86,40 +87,97 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClassProp RequestOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                                                  new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                                                  new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Request.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = RequestOc.ObjectClassId,
-                            SetValOnAdd = true
+                            SetValOnAdd = true,
+                            IsRequired = true,
+                            ReadOnly = true
                         } );
 
             CswNbtMetaDataObjectClassProp TypeOcp =
                  _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                                                 new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                                                 new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Type.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                             ListOptions = CswNbtObjClassRequestItem.TypeOptions.ToString(),
                             SetValOnAdd = true,
-                            IsRequired = true
+                            IsRequired = true,
+                            ReadOnly = true
                         } );
+
+            CswNbtMetaDataObjectClassProp StatusOcp =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
+                    new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassRequestItem.PropertyName.Status.ToString(),
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                        ListOptions = CswNbtObjClassRequestItem.StatusOptions.ToString(),
+                        ServerManaged = true
+                    }
+                 );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOcp, CswNbtSubField.SubFieldName.Value, CswNbtObjClassRequestItem.Statuses.Pending.ToString() );
+
+            CswNbtMetaDataObjectClassProp CountOcp =
+               _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
+                   new CswNbtWcfMetaDataModel.ObjectClassProp
+                   {
+                       PropName = CswNbtObjClassRequestItem.PropertyName.Quantity.ToString(),
+                       FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
+                       NumberPrecision = 0,
+                       NumberMinValue = 1,
+                       SetValOnAdd = true
+                   }
+               );
+
+            CswNbtMetaDataObjectClassProp NumberOcp =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
+                    new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassRequestItem.PropertyName.Number.ToString(),
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Sequence,
+                        IsUnique = true,
+                        IsGlobalUnique = true,
+                        SetValOnAdd = true
+                    }
+                 );
 
             CswNbtMetaDataObjectClassProp QuantityOcp =
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                                   new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                        {
-                            PropName = CswNbtObjClassRequestItem.PropertyName.Quantity.ToString(),
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
-                            SetValOnAdd = true,
-                            IsRequired = true
-                        } );
+                                   new CswNbtWcfMetaDataModel.ObjectClassProp
+                                   {
+                                       PropName = CswNbtObjClassRequestItem.PropertyName.Quantity.ToString(),
+                                       FieldType = CswNbtMetaDataFieldType.NbtFieldType.Quantity,
+                                       SetValOnAdd = true
+                                   } );
+
+            CswNbtMetaDataObjectClassProp ExternalOrderNumberOcp =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
+                    new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber.ToString(),
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        SetValOnAdd = true
+                    }
+                 );
+
+            CswNbtMetaDataObjectClassProp CommentsOcp =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
+                    new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassRequestItem.PropertyName.Comments.ToString(),
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments
+                    }
+                 );
 
             CswNbtMetaDataObjectClassProp SizeOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                               new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                               new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Size.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -127,7 +185,7 @@ namespace ChemSW.Nbt.Schema
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = SizeOc.ObjectClassId,
                             SetValOnAdd = true,
-                            IsRequired = true
+                            ReadOnly = true
                         } );
 
             /* Conditional properties don't support multiple filters, so this won't work.
@@ -137,26 +195,30 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClassProp MaterialOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                           new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                           new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Material.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                            FkValue = MaterialOc.ObjectClassId
+                            FkValue = MaterialOc.ObjectClassId,
+                            SetValOnAdd = true,
+                            ReadOnly = true
                         }
                  );
 
 
             CswNbtMetaDataObjectClassProp ContainerOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                                    new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Container.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                            FkValue = ContainerOc.ObjectClassId
+                            FkValue = ContainerOc.ObjectClassId,
+                            SetValOnAdd = true,
+                            ReadOnly = true
                         }
                 );
 
@@ -164,7 +226,7 @@ namespace ChemSW.Nbt.Schema
             string LocationFilterString = CswNbtSubField.PropColumn.Field1.ToString() + FilterDelimiter + CswNbtPropFilterSql.PropertyFilterMode.NotEquals + FilterDelimiter + CswNbtObjClassRequestItem.Types.Dispose;
             CswNbtMetaDataObjectClassProp LocationOcp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
+                    new CswNbtWcfMetaDataModel.ObjectClassProp
                         {
                             PropName = CswNbtObjClassRequestItem.PropertyName.Location.ToString(),
                             FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
@@ -172,59 +234,9 @@ namespace ChemSW.Nbt.Schema
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = LocationOc.ObjectClassId,
                             FilterPropId = TypeOcp.PropId,
-                            Filter = LocationFilterString
+                            Filter = LocationFilterString,
+                            SetValOnAdd = true
                         }
-                 );
-
-            CswNbtMetaDataObjectClassProp CountOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                    {
-                        PropName = CswNbtObjClassRequestItem.PropertyName.Quantity.ToString(),
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
-                        NumberPrecision = 0,
-                        NumberMinValue = 1
-                    }
-                );
-
-            CswNbtMetaDataObjectClassProp CommentsOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                    {
-                        PropName = CswNbtObjClassRequestItem.PropertyName.Comments.ToString(),
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments
-                    }
-                 );
-
-            CswNbtMetaDataObjectClassProp StatusOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                    {
-                        PropName = CswNbtObjClassRequestItem.PropertyName.Status.ToString(),
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                        ListOptions = CswNbtObjClassRequestItem.StatusOptions.ToString()
-                    }
-                 );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( StatusOcp, CswNbtSubField.SubFieldName.Value, CswNbtObjClassRequestItem.Statuses.Pending.ToString() );
-
-            CswNbtMetaDataObjectClassProp NumberOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                    {
-                        PropName = CswNbtObjClassRequestItem.PropertyName.Number.ToString(),
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Sequence,
-                        IsUnique = true,
-                        IsGlobalUnique = true
-                    }
-                 );
-
-            CswNbtMetaDataObjectClassProp ExternalOrderNumberOcp =
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
-                    new CswNbtWcfObjectClassDataModel.ObjectClassProp
-                    {
-                        PropName = CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber.ToString(),
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
-                    }
                  );
 
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, RequestItemOc.ObjectClassId );
