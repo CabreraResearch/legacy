@@ -59,6 +59,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -76,12 +77,14 @@
     <Compile Include="csw\Batch\CswNbtBatchManager.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassBatchOp.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26111.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24645.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase7608.cs" />
-    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtBatchOps.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25978.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtWcfObjectClassDataModel.cs" />
+    <Compile Include="csw\Sched\logic\CswScheduleLogicNbtBatchOps.cs" />
     <Compile Include="csw\Schema\scripts\infr\RunBeforeEveryExecutionOfUpdater_03.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514ObjectClass.cs" />
     <Compile Include="csw\Security\CswNbtUser.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInventoryGroupPermission.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassWorkUnit.cs" />

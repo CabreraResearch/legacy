@@ -38,6 +38,7 @@ namespace ChemSW.Nbt.Batch
                 MultiEditBatchData BatchData = new MultiEditBatchData( string.Empty );
                 BatchData.SourceNodeId = SourceNode.NodeId;
                 BatchData.CopyNodeIds = pkArrayToJArray( CopyNodeIds );
+                BatchData.StartingCount = CopyNodeIds.Count();
                 BatchData.NodeTypePropIds = Int32CollectionToJArray( NodeTypePropIds );
 
                 BatchNode = CswNbtBatchManager.makeNew( _CswNbtResources, _BatchOpName, BatchData.ToString() );
@@ -75,6 +76,19 @@ namespace ChemSW.Nbt.Batch
             return ret;
         } // Int32CollectionToJArray
 
+        public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
+        {
+            Double ret = 0;
+            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
+            {
+                MultiEditBatchData BatchData = new MultiEditBatchData( BatchNode.BatchData.Text );
+                if( BatchData.StartingCount > 0 )
+                {
+                    ret = Math.Round( (Double) ( BatchData.StartingCount - BatchData.CopyNodeIds.Count() ) / BatchData.StartingCount * 100, 0 );
+                }
+            }
+            return ret;
+        } // getPercentDone()
 
         /// <summary>
         /// Run the next iteration of this batch operation
@@ -83,53 +97,57 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                BatchNode.start();
-
-                MultiEditBatchData BatchData = new MultiEditBatchData( BatchNode.BatchData.Text );
-                if( BatchData.SourceNodeId != null && BatchData.CopyNodeIds.Count > 0 && BatchData.NodeTypePropIds.Count > 0 )
+                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
                 {
-                    CswNbtNode SourceNode = _CswNbtResources.Nodes[BatchData.SourceNodeId];
-                    if( SourceNode != null )
+                    BatchNode.start();
+
+                    MultiEditBatchData BatchData = new MultiEditBatchData( BatchNode.BatchData.Text );
+                    if( BatchData.SourceNodeId != null && BatchData.CopyNodeIds.Count > 0 && BatchData.NodeTypePropIds.Count > 0 )
                     {
-                        string NodeIdStr = BatchData.CopyNodeIds.First.ToString();
-
-                        CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
-                        CopyToNodePk.FromString( NodeIdStr );
-
-                        if( Int32.MinValue != CopyToNodePk.PrimaryKey )
+                        CswNbtNode SourceNode = _CswNbtResources.Nodes[BatchData.SourceNodeId];
+                        if( SourceNode != null )
                         {
-                            CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
-                            if( CopyToNode != null &&
-                                _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
+                            string NodeIdStr = BatchData.CopyNodeIds.First.ToString();
+
+                            CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
+                            CopyToNodePk.FromString( NodeIdStr );
+
+                            if( Int32.MinValue != CopyToNodePk.PrimaryKey )
                             {
-                                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in BatchData.NodeTypePropIds.Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) ) ) )
+                                CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
+                                if( CopyToNode != null &&
+                                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, CopyToNode.getNodeType(), false, null, null, CopyToNode.NodeId, null ) )
                                 {
-                                    CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
-                                }
+                                    foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in BatchData.NodeTypePropIds.Select( PropId => _CswNbtResources.MetaData.getNodeTypeProp( CswConvert.ToInt32( PropId ) ) ) )
+                                    {
+                                        CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
+                                    }
 
-                                CopyToNode.postChanges( false );
+                                    CopyToNode.postChanges( false );
 
-                                BatchNode.appendToLog( "Copied values for: " + CopyToNode.NodeName + " (" + CopyToNode.NodeId.PrimaryKey.ToString() + ")" );
+                                    //BatchNode.appendToLog( "Copied values for: " + CopyToNode.NodeName + " (" + CopyToNode.NodeId.PrimaryKey.ToString() + ")" );
 
-                            } // if( CopyToNode != null )
-                        } // if( Int32.MinValue != CopyToNodePk.PrimaryKey )
+                                } // if( CopyToNode != null )
+                            } // if( Int32.MinValue != CopyToNodePk.PrimaryKey )
 
-                        // Setup for next iteration
-                        BatchData.CopyNodeIds.RemoveAt( 0 );
-                        BatchNode.BatchData.Text = BatchData.ToString();
+                            // Setup for next iteration
+                            BatchData.CopyNodeIds.RemoveAt( 0 );
+                            BatchNode.BatchData.Text = BatchData.ToString();
+                            BatchNode.PercentDone.Value = getPercentDone( BatchNode );
 
-                    } // if( SourceNode != null )
+                        } // if( SourceNode != null )
+                        else
+                        {
+                            BatchNode.finish();
+                        }
+                    }
                     else
                     {
                         BatchNode.finish();
                     }
-                }
-                else
-                {
-                    BatchNode.finish();
-                }
 
-                BatchNode.postChanges( false );
+                    BatchNode.postChanges( false );
+                } // if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiEdit )
             }
             catch( Exception ex )
             {
@@ -199,6 +217,29 @@ namespace ChemSW.Nbt.Batch
                     _BatchData["copynodeids"] = _CopyNodeIds;
                 }
             }
+
+            private Int32 _StartingCount = Int32.MinValue;
+            public Int32 StartingCount
+            {
+                get
+                {
+                    if( Int32.MinValue == _StartingCount )
+                    {
+                        if( null != _BatchData["startingcount"] )
+                        {
+                            _StartingCount = CswConvert.ToInt32( _BatchData["startingcount"].ToString() );
+                        }
+                    }
+                    return _StartingCount;
+                }
+                set
+                {
+                    _StartingCount = value;
+                    _BatchData["startingcount"] = _StartingCount;
+                }
+            }
+
+
             private JArray _NodeTypePropIds = null;
             public JArray NodeTypePropIds
             {

@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.Batch
                     BatchNode = (CswNbtObjClassBatchOp) Node;
 
                     BatchNode.BatchData.Text = BatchData;
+                    BatchNode.CreatedDate.DateTimeValue = DateTime.Now;
                     BatchNode.OpName.Value = BatchOpName.ToString();
                     if( false == Double.IsNaN( Priority ) )
                     {
@@ -100,7 +101,7 @@ namespace ChemSW.Nbt.Batch
                 CswNbtNode Node = BatchOpTree.getNodeForCurrentPosition();
                 CswNbtObjClassBatchOp BatchNode = (CswNbtObjClassBatchOp) Node;
 
-                NbtBatchOpName OpName = (NbtBatchOpName) BatchNode.OpName.Value;
+                NbtBatchOpName OpName = BatchNode.OpNameValue;
                 if( OpName == NbtBatchOpName.FutureNodes )
                 {
                     CswNbtBatchOpFutureNodes op = new CswNbtBatchOpFutureNodes( CswNbtResources );

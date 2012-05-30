@@ -5,6 +5,7 @@ using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -30,7 +31,9 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp EndDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.EndDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp LogOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.LogPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Comments, ServerManaged: true );
             CswNbtMetaDataObjectClassProp OpNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.OpNamePropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, ServerManaged: true );
+            CswNbtMetaDataObjectClassProp PercentDoneOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.PercentDonePropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number, ServerManaged: true );
             CswNbtMetaDataObjectClassProp PriorityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.PriorityPropertyName, CswNbtMetaDataFieldType.NbtFieldType.Number );
+            CswNbtMetaDataObjectClassProp CreatedDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.CreatedDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp StartDateOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StartDatePropertyName, CswNbtMetaDataFieldType.NbtFieldType.DateTime, ServerManaged: true );
             CswNbtMetaDataObjectClassProp StatusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass, CswNbtObjClassBatchOp.StatusPropertyName, CswNbtMetaDataFieldType.NbtFieldType.List, 
                                                                                                      ServerManaged: true, 
@@ -42,16 +45,24 @@ namespace ChemSW.Nbt.Schema
 
             PriorityOCP.DefaultValue.Field1_Numeric = 0;
             PriorityOCP.DefaultValue.Gestalt = "0";
+            PercentDoneOCP.DefaultValue.Field1_Numeric = 0;
+            PercentDoneOCP.DefaultValue.Gestalt = "0";
+
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CreatedDateOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( StartDateOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( EndDateOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended, CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() );
 
             CswNbtMetaDataNodeType BatchOpNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( BatchOpOC.ObjectClassId, "Batch Operation", "System" );
-            BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( StartDateOCP.PropName ) );
+            BatchOpNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( OpNameOCP.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( CreatedDateOCP.PropName ) );
 
             CswNbtMetaDataNodeTypeTab BatchOpTab = BatchOpNT.getFirstNodeTypeTab();
 
             CswNbtMetaDataNodeTypeProp OpNameNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.OpNamePropertyName );
             CswNbtMetaDataNodeTypeProp UserNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.UserPropertyName );
+            CswNbtMetaDataNodeTypeProp PercentDoneNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.PercentDonePropertyName );
             CswNbtMetaDataNodeTypeProp PriorityNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.PriorityPropertyName );
             CswNbtMetaDataNodeTypeProp StatusNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.StatusPropertyName );
+            CswNbtMetaDataNodeTypeProp CreatedDateNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.CreatedDatePropertyName );
             CswNbtMetaDataNodeTypeProp StartDateNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.StartDatePropertyName );
             CswNbtMetaDataNodeTypeProp EndDateNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.EndDatePropertyName );
             CswNbtMetaDataNodeTypeProp BatchDataNTP = BatchOpNT.getNodeTypePropByObjectClassProp( CswNbtObjClassBatchOp.BatchDataPropertyName );
@@ -61,11 +72,13 @@ namespace ChemSW.Nbt.Schema
             OpNameNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 1, 1 );
             UserNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 2, 1 );
             PriorityNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 3, 1 );
-            StatusNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 4, 1 );
-            StartDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 5, 1 );
-            EndDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 6, 1 );
-            BatchDataNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 7, 1 );
-            LogNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 8, 1 );
+            PercentDoneNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 4, 1 );
+            StatusNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 5, 1 );
+            CreatedDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 6, 1 );
+            StartDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 7, 1 );
+            EndDateNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 8, 1 );
+            BatchDataNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 9, 1 );
+            LogNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, BatchOpTab.TabId, 10, 1 );
 
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
 

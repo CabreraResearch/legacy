@@ -61,6 +61,14 @@ namespace ChemSW.Nbt
             /// </summary>
             failedloginlimit,
             /// <summary>
+            /// Number of Generators to process in each scheduler cycle
+            /// </summary>
+            generatorlimit,
+            /// <summary>
+            /// Number of Targets to generate from a Generator in each scheduler cycle
+            /// </summary>
+            generatortargetlimit,
+            /// <summary>
             /// If 1, Schema is in Demo mode
             /// </summary>
             is_demo,

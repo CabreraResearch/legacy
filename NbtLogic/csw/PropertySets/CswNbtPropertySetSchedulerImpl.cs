@@ -2,6 +2,7 @@
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.PropertySets
 {
@@ -57,7 +58,7 @@ namespace ChemSW.Nbt.PropertySets
                 if( LatestFutureDate > DateTime.MinValue.Date )
                 {
                     CswNbtActGenerateFutureNodes.deleteExistingFutureNodes( _CswNbtNode );
-                    CswNbtActGenerateFutureNodes.makeNodes( _CswNbtNode, LatestFutureDate );
+                    CswNbtActGenerateFutureNodes.makeNodesBatch( _CswNbtNode, LatestFutureDate );
                 }//if there are future nodes
             }
         } // _setLastFutureDate()

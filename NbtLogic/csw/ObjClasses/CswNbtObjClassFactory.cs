@@ -134,6 +134,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassReport( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass:
+                    ReturnVal = new CswNbtObjClassRequest( CswNbtResources, Node );
+                    break;
+
+                case CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass:
+                    ReturnVal = new CswNbtObjClassRequestItem( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.ResultClass:
                     ReturnVal = new CswNbtObjClassResult( CswNbtResources, Node );
                     break;

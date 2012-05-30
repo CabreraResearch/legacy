@@ -14,6 +14,8 @@ namespace ChemSW.Nbt.Batch
         // This needs to be present, but the syntax will be different for each operation
         //CswNbtObjClassBatchOp makeBatchOp();
 
+        Double getPercentDone( CswNbtObjClassBatchOp BatchNode );
+
         void runBatchOp( CswNbtObjClassBatchOp BatchNode );
 
     } // interface ICswNbtBatchOp
