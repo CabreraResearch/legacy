@@ -1011,12 +1011,9 @@ namespace ChemSW.Nbt.ImportExport
                                 //First check for dundancy
                                 foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in _CswNbtResources.MetaData.getNodeTypeProps( CurrentNbtNode.NodeTypeId ) )
                                 {
-                                    if( MetaDataProp.IsUnique() &&
-                                            (
-                                                ( false == CurrentNbtNode.Properties[MetaDataProp].Empty && false == MetaDataProp.IsRequired ) ||
-                                                ( true == MetaDataProp.IsRequired )
-                                            )
-                                      )
+                                    //Theoretically, we should be chcking uniqueness for props that are required and empty, but this 
+                                    //kind of thing is so easy to change in the master, making the risk of deleting nodes wantonly too high
+                                    if( MetaDataProp.IsUnique() && ( false == CurrentNbtNode.Properties[MetaDataProp].Empty ) )
                                     {
                                         CswNbtNode OtherNode = _CswNbtResources.Nodes.FindNodeByUniqueProperty( MetaDataProp, CurrentNbtNode.Properties[MetaDataProp] );
                                         if( OtherNode != null && OtherNode.NodeId != CurrentNbtNode.NodeId )
