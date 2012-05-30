@@ -14,12 +14,12 @@ namespace ChemSW.Nbt.Actions
     public class CswNbtActGenerateFutureNodes
     {
         CswNbtResources _CswNbtResources = null;
-        CswNbtActGenerateNodes _CswNbtActGenerateNodes = null;
+        //CswNbtActGenerateNodes _CswNbtActGenerateNodes = null;
         public CswNbtActGenerateFutureNodes( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
-            _CswNbtActGenerateNodes.MarkFuture = true;
+            //_CswNbtActGenerateNodes = new CswNbtActGenerateNodes( _CswNbtResources );
+            //_CswNbtActGenerateNodes.MarkFuture = true;
         }//ctor
 
         public DateTime getDateOfLastExistingFutureNode( CswNbtNode CswNbtNodeGenerator )
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Actions
 
         }//getDateOfLastExistingFutureNode()
 
-        public CswNbtObjClassBatchOp makeNodes( CswNbtNode CswNbtNodeGenerator, DateTime FutureDate )
+        public CswNbtObjClassBatchOp makeNodesBatch( CswNbtNode CswNbtNodeGenerator, DateTime FutureDate )
         {
             CswNbtObjClassBatchOp BatchNode = null;
             CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
