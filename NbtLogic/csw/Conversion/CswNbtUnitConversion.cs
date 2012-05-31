@@ -42,11 +42,11 @@ namespace ChemSW.Nbt.csw.Conversion
                         //NodeType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor * SpecificGravity, NewConversionFactor );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor / SpecificGravity, NewConversionFactor );
                         }
                         else if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor / SpecificGravity, NewConversionFactor );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor * SpecificGravity, NewConversionFactor );
                         }
                     }
                     else
