@@ -24,6 +24,18 @@ namespace ChemSW.Nbt.ObjClasses
         public static string MaterialPropertyName { get { return "Material"; } }
         public static string NamePropertyName { get { return "Name"; } }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassMaterialSynonym
+        /// </summary>
+        public static implicit operator CswNbtObjClassMaterialSynonym( CswNbtNode Node )
+        {
+            CswNbtObjClassMaterialSynonym ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass ) )
+            {
+                ret = (CswNbtObjClassMaterialSynonym) Node.ObjClass;
+            }
+            return ret;
+        }
 
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )

@@ -15,6 +15,11 @@ namespace ChemSW.Nbt.PropTypes
     {
         public const string AutoSignal = "[auto]";
 
+        public static implicit operator CswNbtNodePropBarcode( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsBarcode;
+        }
+
         public CswNbtNodePropBarcode( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

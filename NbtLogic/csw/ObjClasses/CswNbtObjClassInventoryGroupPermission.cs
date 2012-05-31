@@ -27,6 +27,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassInventoryGroupPermission
+        /// </summary>
+        public static implicit operator CswNbtObjClassInventoryGroupPermission( CswNbtNode Node )
+        {
+            CswNbtObjClassInventoryGroupPermission ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryGroupPermissionClass ) )
+            {
+                ret = (CswNbtObjClassInventoryGroupPermission) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {

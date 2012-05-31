@@ -536,7 +536,7 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtNode UserNode = _CswNbtResources.Nodes[UserPk];
                         if( UserNode != null )
                         {
-                            CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+                            CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
                             if( _validateImpersonation( UserNodeAsUser ) )
                             {
                                 // clear Recent 
@@ -624,7 +624,7 @@ namespace ChemSW.Nbt.WebServices
                         JArray UsersArray = new JArray();
                         CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UserClass );
                         foreach( CswNbtObjClassUser ThisUser in ( from _UserNode in UserOC.getNodes( false, false )
-                                                                  select _UserNode ).Select( CswNbtNodeCaster.AsUser ) )
+                                                                  select (CswNbtObjClassUser) _UserNode ) )
                         {
                             if( _validateImpersonation( ThisUser ) )
                             {
@@ -2206,7 +2206,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveProps( string EditMode, string NodeIds, string SafeNodeKeys, string TabId, string NewPropsJson, string NodeTypeId, string ViewId )
+        public string saveProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NewPropsJson, string NodeTypeId, string ViewId )
         {
             JObject ReturnVal = new JObject();
 
@@ -2218,16 +2218,20 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswCommaDelimitedString ParsedNodeKeys = new CswCommaDelimitedString();
-                    ParsedNodeKeys.FromString( SafeNodeKeys );
-                    CswCommaDelimitedString ParsedNodeIds = new CswCommaDelimitedString();
-                    ParsedNodeIds.FromString( NodeIds );
-                    Collection<CswPrimaryKey> NodePks = _getNodePks( ParsedNodeIds, ParsedNodeKeys );
+                    CswPrimaryKey NodePk = _getNodeId( NodeId );
+                    if( null == NodePk )
+                    {
+                        CswNbtNodeKey NbtNodeKey = _getNodeKey( SafeNodeKey );
+                        if( null != NbtNodeKey )
+                        {
+                            NodePk = NbtNodeKey.NodeId;
+                        }
+                    }
 
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
                     CswNbtView View = _getView( ViewId );
-                    ReturnVal = ws.saveProps( NodePks, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
+                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsJson, CswConvert.ToInt32( NodeTypeId ), View );
                 }
                 _deInitResources();
             }
@@ -2245,7 +2249,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] PropIds )
+        public string copyPropValues( string SourceNodeKey, string[] CopyNodeIds, string[] CopyNodeKeys, string[] PropIds )
         {
             JObject ReturnVal = new JObject();
 
@@ -2258,8 +2262,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    bool ret = ws.copyPropValues( SourceNodeKey, CopyNodeIds, PropIds );
-                    ReturnVal.Add( new JProperty( "succeeded", ret ) );
+                    ReturnVal = ws.copyPropValues( SourceNodeKey, CopyNodeIds, CopyNodeKeys, PropIds );
                 }
 
                 _deInitResources();
@@ -2472,7 +2475,7 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtNode rpt = _CswNbtResources.Nodes[_getNodeId( reportid )];
-                    CswNbtObjClassReport rptAsReport = CswNbtNodeCaster.AsReport( rpt );
+                    CswNbtObjClassReport rptAsReport = (CswNbtObjClassReport) rpt;
                     ReturnVal["result"] = ( false == rptAsReport.RPTFile.Empty ).ToString().ToLower();
 
                 } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
@@ -4659,33 +4662,6 @@ namespace ChemSW.Nbt.WebServices
                 RetKey = TryKey;
             }
             return RetKey;
-        }
-
-        private Collection<CswPrimaryKey> _getNodePks( CswCommaDelimitedString NodeIds, CswCommaDelimitedString NodeKeys )
-        {
-            Collection<CswPrimaryKey> RetCol = new Collection<CswPrimaryKey>();
-            foreach( string NodeId in NodeIds )
-            {
-                CswPrimaryKey NodePk = _getNodeId( NodeId );
-                if( null != NodePk )
-                {
-                    RetCol.Add( NodePk );
-                }
-            }
-
-            if( 0 == RetCol.Count )
-            {
-                foreach( string NodeKey in NodeKeys )
-                {
-                    CswNbtNodeKey NbtNodeKey = _getNodeKey( NodeKey );
-                    if( null != NbtNodeKey )
-                    {
-                        RetCol.Add( NbtNodeKey.NodeId );
-                    }
-                }
-            }
-
-            return RetCol;
         }
 
         #endregion Private

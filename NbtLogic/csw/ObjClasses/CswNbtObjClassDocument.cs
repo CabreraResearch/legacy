@@ -33,6 +33,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassDocument
+        /// </summary>
+        public static implicit operator CswNbtObjClassDocument( CswNbtNode Node )
+        {
+            CswNbtObjClassDocument ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.DocumentClass ) )
+            {
+                ret = (CswNbtObjClassDocument) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -77,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtNode DocNode = Tree.getNodeForCurrentPosition();
                             if( DocNode.NodeId != NodeId )
                             {
-                                CswNbtObjClassDocument DocNodeAsDocument = CswNbtNodeCaster.AsDocument( DocNode );
+                                CswNbtObjClassDocument DocNodeAsDocument = (CswNbtObjClassDocument) DocNode;
                                 DocNodeAsDocument.Archived.Checked = Tristate.True;
                                 DocNode.postChanges( true );
                             }

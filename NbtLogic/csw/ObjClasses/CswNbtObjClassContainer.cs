@@ -34,6 +34,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassContainer
+        /// </summary>
+        public static implicit operator CswNbtObjClassContainer( CswNbtNode Node )
+        {
+            CswNbtObjClassContainer ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass ) )
+            {
+                ret = (CswNbtObjClassContainer) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -52,14 +65,14 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                 if( MaterialNode != null )
                 {
-                    CswNbtObjClassMaterial MaterialNodeAsMaterial = CswNbtNodeCaster.AsMaterial( MaterialNode );
+                    CswNbtObjClassMaterial MaterialNodeAsMaterial = (CswNbtObjClassMaterial) MaterialNode;
 
                     // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
                     // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
                     if( ExpirationDate.DateTimeValue == DateTime.MinValue )
                     {
                         DateTime DefaultExpDate = DateTime.Now;
-                        switch( MaterialNodeAsMaterial.ExpirationInterval.Units.ToLower() )
+                        switch( MaterialNodeAsMaterial.ExpirationInterval.CachedUnitName.ToLower() )
                         {
                             case "hours":
                                 DefaultExpDate = DefaultExpDate.AddHours( MaterialNodeAsMaterial.ExpirationInterval.Quantity );

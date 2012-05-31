@@ -61,6 +61,14 @@ namespace ChemSW.Nbt
             /// </summary>
             failedloginlimit,
             /// <summary>
+            /// Number of Generators to process in each scheduler cycle
+            /// </summary>
+            generatorlimit,
+            /// <summary>
+            /// Number of Targets to generate from a Generator in each scheduler cycle
+            /// </summary>
+            generatortargetlimit,
+            /// <summary>
             /// If 1, Schema is in Demo mode
             /// </summary>
             is_demo,
@@ -781,7 +789,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataObjectClass NotificationOC = MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
                 foreach( CswNbtNode ThisNode in NotificationOC.getNodes( true, false ) )
                 {
-                    CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) CswNbtNodeCaster.AsNotification( ThisNode );
+                    CswNbtObjClassNotification NotifNode = (CswNbtObjClassNotification) ThisNode;
                     if( NotifNode.TargetNodeType != null )
                     {
                         CswNbtNotificationKey NKey = new CswNbtNotificationKey( NotifNode.TargetNodeType.NodeTypeId, NotifNode.SelectedEvent, NotifNode.Property.Value, NotifNode.Value.Text );
@@ -822,7 +830,7 @@ namespace ChemSW.Nbt
                 foreach( Int32 UserId in SubscribedUserIds )
                 {
                     CswNbtNode UserNode = this.Nodes[new CswPrimaryKey( "nodes", UserId )];
-                    CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+                    CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
                     string EmailAddy = UserNodeAsUser.Email.Trim();
                     CswMailMessage MailMessage = CswMail.makeMailMessage( Subject, Message, EmailAddy, UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName );
                     if( null != MailMessage )

@@ -31,6 +31,19 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass ); }
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassInspectionTarget
+        /// </summary>
+        public static implicit operator CswNbtObjClassInspectionTarget( CswNbtNode Node )
+        {
+            CswNbtObjClassInspectionTarget ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InspectionTargetClass ) )
+            {
+                ret = (CswNbtObjClassInspectionTarget) Node.ObjClass;
+            }
+            return ret;
+        }
+
         #region Inherited Events
 
         public override void beforeCreateNode( bool OverrideUniqueValidation )
@@ -66,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
             //    {
             //        SchedulesTree.goToNthChild( i );
             //        CswNbtNode ScheduleNode = SchedulesTree.getNodeForCurrentPosition();
-            //        CswNbtObjClassGenerator ScheduleOC = CswNbtNodeCaster.AsGenerator( ScheduleNode );
+            //        CswNbtObjClassGenerator ScheduleOC = (CswNbtObjClassGenerator) ScheduleNode;
 
             //        CswCommaDelimitedString NodeTypeIds = ScheduleOC.TargetType.SelectedNodeTypeIds;
             //        //For each target node type on the generator
@@ -80,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
             //                                                                                              CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             //                if( null != PastInspectionNode )
             //                {
-            //                    CswNbtObjClassInspectionDesign InspectionOC = CswNbtNodeCaster.AsInspectionDesign( PastInspectionNode );
+            //                    CswNbtObjClassInspectionDesign InspectionOC = (CswNbtObjClassInspectionDesign) PastInspectionNode;
             //                    InspectionOC.Owner.RelatedNodeId = this.NodeId;
             //                    InspectionOC.Generator.RelatedNodeId = ScheduleNode.NodeId;
             //                    CswRateInterval ScheduleInterval = ScheduleOC.DueDateInterval.RateInterval;

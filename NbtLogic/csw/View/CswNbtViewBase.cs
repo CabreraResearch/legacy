@@ -183,13 +183,13 @@ namespace ChemSW.Nbt
     {
         private NbtViewRelatedIdType( string Name ) : base( Name ) { }
         public static IEnumerable<NbtViewRelatedIdType> _All { get { return CswEnum<NbtViewRelatedIdType>.All; } }
-        public static explicit operator NbtViewRelatedIdType( string str )
+        public static implicit operator NbtViewRelatedIdType( string str )
         {
             NbtViewRelatedIdType ret = Parse( str );
             return ( ret != null ) ? ret : NbtViewRelatedIdType.Unknown;
         }
         public static readonly NbtViewRelatedIdType Unknown = new NbtViewRelatedIdType( "Unknown" );
-        
+
         public static readonly NbtViewRelatedIdType NodeTypeId = new NbtViewRelatedIdType( "NodeTypeId" );
         public static readonly NbtViewRelatedIdType ObjectClassId = new NbtViewRelatedIdType( "ObjectClassId" );
     }
@@ -198,13 +198,13 @@ namespace ChemSW.Nbt
     {
         private NbtViewPropIdType( string Name ) : base( Name ) { }
         public static IEnumerable<NbtViewPropIdType> _All { get { return CswEnum<NbtViewPropIdType>.All; } }
-        public static explicit operator NbtViewPropIdType( string str )
+        public static implicit operator NbtViewPropIdType( string str )
         {
             NbtViewPropIdType ret = Parse( str );
             return ( ret != null ) ? ret : NbtViewPropIdType.Unknown;
         }
         public static readonly NbtViewPropIdType Unknown = new NbtViewPropIdType( "Unknown" );
-        
+
         public static readonly NbtViewPropIdType NodeTypePropId = new NbtViewPropIdType( "NodeTypePropId" );
         public static readonly NbtViewPropIdType ObjectClassPropId = new NbtViewPropIdType( "ObjectClassPropId" );
     }
@@ -253,7 +253,7 @@ namespace ChemSW.Nbt
         public static readonly NbtViewPropertySortMethod Ascending = new NbtViewPropertySortMethod( "Ascending" );
         public static readonly NbtViewPropertySortMethod Descending = new NbtViewPropertySortMethod( "Descending" );
     }
-    
+
     #endregion Enums
 
 } // namespace ChemSW.Nbt

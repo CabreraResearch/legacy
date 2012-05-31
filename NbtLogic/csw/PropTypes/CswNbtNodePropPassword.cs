@@ -18,6 +18,11 @@ namespace ChemSW.Nbt.PropTypes
     {
         private CswEncryption _CswEncryption;
 
+        public static implicit operator CswNbtNodePropPassword( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsPassword;
+        }
+
         public CswNbtNodePropPassword( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

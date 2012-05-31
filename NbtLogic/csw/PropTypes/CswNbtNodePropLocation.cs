@@ -13,6 +13,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropLocation : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropLocation( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsLocation;
+        }
+
         public CswNbtNodePropLocation( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
@@ -150,7 +155,7 @@ namespace ChemSW.Nbt.PropTypes
             if( SelectedNodeId != null )
             {
                 CswNbtNode Node = _CswNbtResources.Nodes.GetNode( SelectedNodeId );
-                CswNbtObjClassLocation NodeAsLocation = (CswNbtObjClassLocation) CswNbtNodeCaster.AsLocation( Node );
+                CswNbtObjClassLocation NodeAsLocation = (CswNbtObjClassLocation) Node;
                 CachedNodeName = Node.NodeName;
                 CachedPath = _generateLocationPath( Node );
                 CachedBarcode = NodeAsLocation.Barcode.Barcode;
@@ -169,7 +174,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             string ret;
             ret = Node.NodeName;
-            CswNbtObjClassLocation NodeAsLocation = (CswNbtObjClassLocation) CswNbtNodeCaster.AsLocation( Node );
+            CswNbtObjClassLocation NodeAsLocation = (CswNbtObjClassLocation) Node;
             if( NodeAsLocation.Location.SelectedNodeId != null )
             {
                 string prev = _generateLocationPath( _CswNbtResources.Nodes[NodeAsLocation.Location.SelectedNodeId] );

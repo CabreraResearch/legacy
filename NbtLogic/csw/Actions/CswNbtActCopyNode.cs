@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode OriginalGeneratorNode = GeneratorTree.getNodeForCurrentPosition();
                 CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                 CopiedGeneratorNode.copyPropertyValues( OriginalGeneratorNode );
-                CswNbtNodeCaster.AsGenerator( CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
+                ( (CswNbtObjClassGenerator) CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
                 CopiedGeneratorNode.postChanges( true, true );
                 GeneratorTree.goToParentNode();
                 c++;
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode OriginalEquipmentNode = EquipmentTree.getNodeForCurrentPosition();
                 CswNbtNode CopiedEquipmentNode = CopyEquipmentNode( OriginalEquipmentNode );
                 CopiedEquipmentNode.copyPropertyValues( OriginalEquipmentNode );
-                CswNbtNodeCaster.AsEquipment( CopiedEquipmentNode ).Assembly.RelatedNodeId = CopiedAssemblyNode.NodeId;
+                ( (CswNbtObjClassEquipment) CopiedEquipmentNode ).Assembly.RelatedNodeId = CopiedAssemblyNode.NodeId;
                 CopiedEquipmentNode.postChanges( true, true );
                 EquipmentTree.goToParentNode();
                 c++;
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalIDNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CopiedIDNode.copyPropertyValues( OriginalIDNode );
 
-            CswNbtObjClassGenerator CopiedIDNodeAsID = CswNbtNodeCaster.AsGenerator( CopiedIDNode );
+            CswNbtObjClassGenerator CopiedIDNodeAsID = (CswNbtObjClassGenerator) CopiedIDNode;
             CopiedIDNodeAsID.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
 
             CopiedIDNode.postChanges( true, true );
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalInspectionTargetNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
             CopiedInspectionTargetNode.copyPropertyValues( OriginalInspectionTargetNode );
 
-            CswNbtObjClassInspectionTarget NodeAsInspectionTarget = CswNbtNodeCaster.AsInspectionTarget( CopiedInspectionTargetNode );
+            CswNbtObjClassInspectionTarget NodeAsInspectionTarget = (CswNbtObjClassInspectionTarget) CopiedInspectionTargetNode;
             NodeAsInspectionTarget.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
 
             CopiedInspectionTargetNode.postChanges( true, true );  // sets the PK
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.Actions
             CopiedIDNode.copyPropertyValues( OriginalIDNode );
 
             // case 24454
-            CswNbtObjClassInspectionDesign CopiedIDNodeAsID = CswNbtNodeCaster.AsInspectionDesign( CopiedIDNode );
+            CswNbtObjClassInspectionDesign CopiedIDNodeAsID = (CswNbtObjClassInspectionDesign) CopiedIDNode;
             CopiedIDNodeAsID.Generator.RelatedNodeId = null;
             CopiedIDNodeAsID.Generator.RefreshNodeName();
 
