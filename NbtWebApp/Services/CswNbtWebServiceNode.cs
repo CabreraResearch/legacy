@@ -62,18 +62,18 @@ namespace ChemSW.Nbt.WebServices
             return RetKey;
         }
 
-        public bool DeleteNode( CswPrimaryKey NodePk )
+        public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRelatedNodes = false )
         {
             return _DeleteNode( NodePk, _CswNbtResources );
         }
 
-        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources )
+        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, bool DeleteAllRelatedNodes = false )
         {
             bool ret = false;
             CswNbtNode NodeToDelete = NbtResources.Nodes.GetNode( NodePk );
             if( null != NodeToDelete )
             {
-                NodeToDelete.delete();
+                NodeToDelete.delete( DeleteAllRelatedNodes: DeleteAllRelatedNodes );
                 ret = true;
             }
             return ret;
@@ -117,10 +117,12 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        public bool deleteDemoDataNodes()
+        public JObject deleteDemoDataNodes()
         {
-            bool RetSuccess = true;
-
+            JObject Ret = new JObject();
+            Int32 Succeeded = 0;
+            Int32 Total = 0;
+            Int32 Failed = 0;
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
                 /* Get a new CswNbtResources as the System User */
@@ -132,20 +134,30 @@ namespace ChemSW.Nbt.WebServices
 
                 DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
                                                             " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+                Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
-                    CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
-                    bool ThisNodeDeleted = _DeleteNode( NodePk, NbtSystemResources );
-                    RetSuccess = RetSuccess && ThisNodeDeleted;
+                    try
+                    {
+                        CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
+                        if( _DeleteNode( NodePk, NbtSystemResources, DeleteAllRelatedNodes: true ) )
+                        {
+                            Succeeded += 1;
+                        }
+                    }
+                    catch( Exception Exception )
+                    {
+                        Failed += 1;
+                    }
                 }
 
                 wsMd.finalizeOtherResources( NbtSystemResources );
             }
-            else
-            {
-                RetSuccess = false;
-            }
-            return RetSuccess;
+            Ret["succeeded"] = Succeeded;
+            Ret["total"] = Total;
+            Ret["failed"] = Failed;
+
+            return Ret;
         }
 
         /// <summary>
