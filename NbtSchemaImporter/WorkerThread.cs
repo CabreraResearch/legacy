@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.Schema
         //    //CswNbtMetaDataNodeType RoleNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( RoleObjectClass.ObjectClassId, "Role", "" );
 
         //    //CswNbtNode RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( RoleNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
-        //    //CswNbtObjClassRole RoleNodeAsRole = CswNbtNodeCaster.AsRole( RoleNode );
+        //    //CswNbtObjClassRole RoleNodeAsRole = (CswNbtObjClassRole) RoleNode;
         //    //RoleNodeAsRole.Administrator.Checked = Tristate.True;
         //    //RoleNodeAsRole.Name.Text = "Administrator";
         //    //RoleNodeAsRole.Timeout.Value = 30;
@@ -397,7 +397,7 @@ namespace ChemSW.Nbt.Schema
         //    //CswNbtMetaDataNodeType UserNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( UserObjectClass.ObjectClassId, "User", "" );
 
         //    //CswNbtNode UserNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( UserNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.JustSetPk );
-        //    //CswNbtObjClassUser UserNodeAsUser = CswNbtNodeCaster.AsUser( UserNode );
+        //    //CswNbtObjClassUser UserNodeAsUser = (CswNbtObjClassUser) UserNode;
         //    //UserNodeAsUser.AccountLocked.Checked = Tristate.False;
         //    //UserNodeAsUser.FirstNameProperty.Text = "Admin";
         //    //UserNodeAsUser.LastNameProperty.Text = "User";

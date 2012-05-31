@@ -14,6 +14,7 @@ namespace ChemSW.Nbt.MetaData
         {
             Unknown,
             AliquotClass,
+            BatchOpClass,
             BiologicalClass,
             MaterialComponentClass,
             ContainerClass,
@@ -41,6 +42,8 @@ namespace ChemSW.Nbt.MetaData
             ProblemClass,
             ReportClass,
             ResultClass,
+            RequestClass,
+            RequestItemClass,
             RoleClass,
             SampleClass,
             SizeClass,
@@ -50,8 +53,8 @@ namespace ChemSW.Nbt.MetaData
             UnitOfMeasureClass,
             UserClass,
             VendorClass,
-            WorkUnitClass,
-            UnitTypeClass
+            WorkUnitClass
+            //UnitTypeClass//case 7608 - deprecated
         };
 
         public static NbtObjectClass getObjectClassFromString( string ObjectClassName )

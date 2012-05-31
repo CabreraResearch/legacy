@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtNode ReturnVal = null;
 
-            CswNbtObjClassGenerator GeneratorNode = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
+            CswNbtObjClassGenerator GeneratorNode = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
 
             if( GeneratorNode.TargetType.SelectMode == PropertySelectMode.Single )
             {
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.Actions
 
         }//_getTargetNodeForGenerator
 
-        public Int32 makeNode( CswNbtNode CswNbtNodeGenerator )
+        public bool makeNode( CswNbtNode CswNbtNodeGenerator )
         {
             return makeNode( CswNbtNodeGenerator, DateTime.MinValue );
         }
@@ -97,11 +97,11 @@ namespace ChemSW.Nbt.Actions
         /// Generates a future IGeneratorTarget node.  If an existing node has the same due date, no node is generated.
         /// </summary>
         /// <returns>True if a future node was generated</returns>
-        public Int32 makeNode( CswNbtNode CswNbtNodeGenerator, DateTime DueDate )
+        public bool makeNode( CswNbtNode CswNbtNodeGenerator, DateTime DueDate )
         {
-            Int32 ret = 0;
+            Int32 NodesCreated = 0;
 
-            CswNbtObjClassGenerator GeneratorNodeAsGenerator = CswNbtNodeCaster.AsGenerator( CswNbtNodeGenerator );
+            CswNbtObjClassGenerator GeneratorNodeAsGenerator = (CswNbtObjClassGenerator) CswNbtNodeGenerator;
 
             string SelectedNodeTypeIdStr = string.Empty;
             Int32 SelectedNodeTypeId = Int32.MinValue;
@@ -122,11 +122,11 @@ namespace ChemSW.Nbt.Actions
             string DateFilter = string.Empty;
             if( DueDate == DateTime.MinValue )
             {
-                DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue;
+                DueDate = GeneratorNodeAsGenerator.NextDueDate.DateTimeValue.Date;
             }
             if( DueDate == DateTime.MinValue )
             {
-                DueDate = GeneratorNodeAsGenerator.DueDateInterval.getStartDate();
+                DueDate = GeneratorNodeAsGenerator.DueDateInterval.getStartDate().Date;
             }
             DateFilter = DueDate.ToShortDateString();
 
@@ -171,14 +171,19 @@ namespace ChemSW.Nbt.Actions
                 Parents.Add( GeneratorNodeAsGenerator.Owner.RelatedNodeId );
             }
 
+            // case 26111 - only generate a few at a time, and only increment NextDueDate when we're completely done
+            Int32 GeneratorTargetLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatortargetlimit.ToString() ) );
+            if( Int32.MinValue == GeneratorTargetLimit )
+            {
+                GeneratorTargetLimit = 5;
+            }
+
             foreach( CswPrimaryKey NewParentPk in Parents )
             {
-                if( null != NewParentPk )
+                if( null != NewParentPk && NodesCreated < GeneratorTargetLimit )
                 {
                     CswNbtNode ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
-
-                    bool MakeGeneratorTarget = ( null == ExistingNode );
-                    if( MakeGeneratorTarget )
+                    if( null == ExistingNode )
                     {
                         Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
                         SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
@@ -189,7 +194,7 @@ namespace ChemSW.Nbt.Actions
                             CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                             NewNode.copyPropertyValues( CswNbtNodeGenerator );
 
-                            ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( NewNode );
+                            ICswNbtPropertySetGeneratorTarget NewNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( NewNode );
                             NewNodeAsGeneratorTarget.GeneratedDate.DateTimeValue = DueDate;
                             NewNodeAsGeneratorTarget.GeneratedDate.ReadOnly = true; //bz # 5349
                             NewNodeAsGeneratorTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
@@ -210,7 +215,7 @@ namespace ChemSW.Nbt.Actions
                             {
                                 onBeforeInsertNode( NewNode );
                             }
-                            ret += 1;
+                            NodesCreated += 1;
                             NewNode.PendingUpdate = true;
                             NewNode.postChanges( true );
                         }
@@ -218,8 +223,8 @@ namespace ChemSW.Nbt.Actions
                     } //if ( null == ExistingNode )
                     else
                     {
-                        ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtNodeCaster.AsPropertySetGeneratorTarget( ExistingNode );
-                        if( !MarkFuture )
+                        ICswNbtPropertySetGeneratorTarget ExistingNodeAsGeneratorTarget = CswNbtPropSetCaster.AsPropertySetGeneratorTarget( ExistingNode );
+                        if( false == MarkFuture )
                         {
                             if( ExistingNodeAsGeneratorTarget.IsFuture.Checked == Tristate.True )
                             {
@@ -233,14 +238,15 @@ namespace ChemSW.Nbt.Actions
                                 ExistingNodeAsGeneratorTarget.IsFuture.Checked = Tristate.False;
                             }
                         }
-                        ExistingNode.PendingUpdate = true;
+                        //ExistingNode.PendingUpdate = true;
                         ExistingNode.postChanges( false ); //BZ # 6961
 
                     } //if-else ( null == ExistingNode )
                 } // if( null != NewParentPk )
             } // foreach( CswPrimaryKey NewParentPk in Parents )
 
-            return ret;
+            // case 26111 - we're finished if we ran out of nodes to generate
+            return ( NodesCreated < GeneratorTargetLimit );
 
         }//makeNode()
 

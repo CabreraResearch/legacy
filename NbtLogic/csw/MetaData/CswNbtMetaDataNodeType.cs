@@ -156,13 +156,22 @@ namespace ChemSW.Nbt.MetaData
         {
             return CswNbtMetaData.TemplateValueToTemplateText( getNodeTypeProps(), NameTemplateValue );
         }
+
+        /// <summary>
+        /// Set (overwrite) the Name template using an already well-formed template value.
+        /// </summary>
+        /// <param name="value"></param>
         public void setNameTemplateText( string value )
         {
             NameTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
         }
+
+        /// <summary>
+        /// Transform a property name into a template value and add it to the Name template.
+        /// </summary>
         public void addNameTemplateText( string value )
         {
-            NameTemplateValue += CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), value );
+            NameTemplateValue += CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), CswNbtMetaData.MakeTemplateEntry( value ) );
         }
 
         public Int32 PriorVersionNodeTypeId

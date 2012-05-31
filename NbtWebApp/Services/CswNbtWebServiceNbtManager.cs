@@ -271,12 +271,12 @@ namespace ChemSW.Nbt.WebServices
                 throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
             }
 
-            RetNodeAsCustomer = CswNbtNodeCaster.AsCustomer( CustomerNode );
+            RetNodeAsCustomer = (CswNbtObjClassCustomer) CustomerNode;
             string AccessId = RetNodeAsCustomer.CompanyID.Text;
 
             CswNbtResources OtherResources = makeOtherResources( AccessId );
             CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-            CswNbtObjClassUser AdminNodeAsUser = CswNbtNodeCaster.AsUser( ChemSWAdminUserNode );
+            CswNbtObjClassUser AdminNodeAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
             TempPassword = CswNbtObjClassUser.makeRandomPassword( 20 );
 
             AdminNodeAsUser.AccountLocked.Checked = Tristate.False;
