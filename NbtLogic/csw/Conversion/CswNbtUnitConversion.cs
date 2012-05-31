@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.csw.Conversion
         /// </summary>
         public static Double convertUnit( Double ValueToConvert, CswNbtNode OldUnitOfMeasureNode, CswNbtNode NewUnitOfMeasureNode, CswNbtNode MaterialNodeIn = null )
         {
-            Double ConvertedUnit = ValueToConvert;
+            Double ConvertedValue = ValueToConvert;
 
             if( OldUnitOfMeasureNode != null && NewUnitOfMeasureNode != null )
             {
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.csw.Conversion
 
                 if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.Same )
                 {
-                    ConvertedUnit = applyUnitConversion( ValueToConvert, OldConversionFactor, NewConversionFactor );
+                    ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor, NewConversionFactor );
                 }
                 else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported && MaterialNodeIn != null )
                 {
@@ -42,11 +42,11 @@ namespace ChemSW.Nbt.csw.Conversion
                         //NodeType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
                         {
-                            ConvertedUnit = applyUnitConversion( ValueToConvert, OldConversionFactor * SpecificGravity, NewConversionFactor );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor * SpecificGravity, NewConversionFactor );
                         }
                         else if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight )
                         {
-                            ConvertedUnit = applyUnitConversion( ValueToConvert, OldConversionFactor / SpecificGravity, NewConversionFactor );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor / SpecificGravity, NewConversionFactor );
                         }
                     }
                     else
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.csw.Conversion
                     throw ( new Exception( "Conversion failed: Unsupported unit types." ) );
                 }
             }
-            return ConvertedUnit;
+            return ConvertedValue;
         }
 
         /// <summary>
@@ -68,21 +68,21 @@ namespace ChemSW.Nbt.csw.Conversion
         /// </summary>
         public static double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor )
         {
-            Double NewUnitValue;
+            Double ConvertedValue;
             if( ( OldConversionFactor != 0 && OldConversionFactor != Double.NaN ) && ( NewConversionFactor != 0 && NewConversionFactor != Double.NaN ) )
             {
                 //Operator logic defined in W1005
-                NewUnitValue = ValueToConvert / OldConversionFactor * NewConversionFactor;
+                ConvertedValue = ValueToConvert / OldConversionFactor * NewConversionFactor;
             }
             else
             {
                 throw ( new DivideByZeroException( "Conversion Factor must be defined as a positive number." ) );
             }
-            if( NewUnitValue == Double.NaN || NewUnitValue < 0 )
+            if( ConvertedValue == Double.NaN || ConvertedValue < 0 )
             {
                 throw ( new Exception( "Conversion failed: Insufficient data provided." ) );
             }
-            return NewUnitValue;
+            return ConvertedValue;
         }
 
         /// <summary>
