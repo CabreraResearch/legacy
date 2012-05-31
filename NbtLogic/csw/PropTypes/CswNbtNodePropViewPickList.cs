@@ -7,7 +7,6 @@ using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.Security;
@@ -19,6 +18,11 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropViewPickList : CswNbtNodeProp
     {
         public static char delimiter = ',';
+
+        public static implicit operator CswNbtNodePropViewPickList( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsViewPickList;
+        }
 
         public CswNbtNodePropViewPickList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )

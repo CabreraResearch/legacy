@@ -8,8 +8,9 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassUnitOfMeasure : CswNbtObjClass
     {
         public static string NamePropertyName { get { return "Name"; } }
-        public static string UnitTypePropertyName { get { return "Unit Type"; } }
+        public static string BaseUnitPropertyName { get { return "Base Unit"; } }
         public static string ConversionFactorPropertyName { get { return "Conversion Factor"; } }
+        public static string FractionalPropertyName { get { return "Fractional"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -22,6 +23,19 @@ namespace ChemSW.Nbt.ObjClasses
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass ); }
+        }
+
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassUnitOfMeasure
+        /// </summary>
+        public static implicit operator CswNbtObjClassUnitOfMeasure( CswNbtNode Node )
+        {
+            CswNbtObjClassUnitOfMeasure ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass ) )
+            {
+                ret = (CswNbtObjClassUnitOfMeasure) Node.ObjClass;
+            }
+            return ret;
         }
 
         #region Inherited Events
@@ -87,6 +101,14 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public CswNbtNodePropText BaseUnit
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
+            }
+        }
+
         public CswNbtNodePropScientific ConversionFactor
         {
             get
@@ -95,11 +117,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropRelationship UnitType
+        public CswNbtNodePropLogical Fractional
         {
             get
             {
-                return ( _CswNbtNode.Properties[UnitTypePropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[FractionalPropertyName].AsLogical );
             }
         }
         #endregion

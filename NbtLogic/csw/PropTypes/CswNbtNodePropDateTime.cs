@@ -13,6 +13,10 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropDateTime : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropDateTime( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsDateTime;
+        }
 
         public CswNbtNodePropDateTime( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
