@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -36,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterCreateNode();
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterWriteNode();
-        public abstract void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false);
+        public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
         public abstract bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message );
@@ -54,8 +53,8 @@ namespace ChemSW.Nbt.ObjClasses
         public sealed class NbtButtonAction : CswEnum<NbtButtonAction>
         {
             private NbtButtonAction( string Name ) : base( Name ) { }
-            public static IEnumerable<NbtButtonAction> _All { get { return CswEnum<NbtButtonAction>.All; } }
-            public static explicit operator NbtButtonAction( string str )
+            public static IEnumerable<NbtButtonAction> _All { get { return All; } }
+            public static implicit operator NbtButtonAction( string str )
             {
                 NbtButtonAction ret = Parse( str );
                 return ret ?? Unknown;
@@ -64,6 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             public static readonly NbtButtonAction reauthenticate = new NbtButtonAction( "reauthenticate" );
             public static readonly NbtButtonAction refresh = new NbtButtonAction( "refresh" );
+            public static readonly NbtButtonAction request = new NbtButtonAction( "request" );
             public static readonly NbtButtonAction popup = new NbtButtonAction( "popup" );
         }
 
