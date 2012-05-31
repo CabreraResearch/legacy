@@ -216,9 +216,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-            
+
             CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
-            
+
             if( ( Type.Value == Types.Dispense.ToString() ||
                 Type.Value == Types.Move.ToString() ||
                 Type.Value == Types.Dispose.ToString() ) &&
@@ -246,9 +246,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode();
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
