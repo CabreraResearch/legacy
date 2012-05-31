@@ -444,7 +444,10 @@ namespace ChemSW.Nbt.WebServices
             Ret.Add( "jqgridid" ); //better to use int for jqGrid key
             Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
             Ret.Add( "nodename" );
-            Ret.Add( "Action" );
+            if( _ActionEnabled )
+            {
+                Ret.Add( "Action" );
+            }
             return Ret;
         } // _makeDefaultColumnNames()
 

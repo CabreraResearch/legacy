@@ -464,8 +464,8 @@
                                 addRowsToGrid(rows.rows);
                             }
                         });
-                    } 
-                    
+                    }
+
                     Csw.newWindow(outerDiv.$.html());
                     outerDiv.remove();
 
