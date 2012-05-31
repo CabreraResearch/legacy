@@ -36,7 +36,7 @@ namespace NbtUnitConversion.Test
         [TestInitialize()]
         public void MyTestInitialize()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, true, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
             _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
             _CswNbtResources.InitCurrentUser = InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
@@ -67,10 +67,10 @@ namespace NbtUnitConversion.Test
             return NodeType.NodeTypeId;
         }
 
-        private CswNbtNode _createUnitOfMeasureNode( int NodeTypeId, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
+        private CswNbtNode _createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
         {
-            CswNbtNode UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-            CswNbtObjClassUnitOfMeasure NodeAsUnitOfMeasure = _CswNbtResources.Nodes[UnitOfMeasureNode.NodeId];
+            CswNbtNode UnitOfMeasureNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassUnitOfMeasure NodeAsUnitOfMeasure = UnitOfMeasureNode;
             NodeAsUnitOfMeasure.Name.Text = Name + "Test";
             if( ConversionFactorBase != Int32.MinValue )
                 NodeAsUnitOfMeasure.ConversionFactor.Base = ConversionFactorBase;
@@ -84,17 +84,10 @@ namespace NbtUnitConversion.Test
             return UnitOfMeasureNode;
         }
 
-        private CswNbtObjClassUnitOfMeasure _createUnitOfMeasureNode( string NodeTypeName, string Name, double ConversionFactorBase, int ConversionFactorExponent, Tristate Fractional )
+        private CswNbtNode _createMaterialNode( string NodeTypeName, string State, double SpecificGravityBase, int SpecificGravityExponent )
         {
-            CswNbtNode GenericNode = _createUnitOfMeasureNode( _getNodeTypeId( NodeTypeName ), Name, ConversionFactorBase, ConversionFactorExponent, Fractional );
-            CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = _CswNbtResources.Nodes[GenericNode.NodeId];
-            return UnitOfMeasureNode;
-        }
-
-        private CswNbtNode _createMaterialNode( int NodeTypeId, string State, double SpecificGravityBase, int SpecificGravityExponent )
-        {
-            CswNbtNode MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-            CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes[MaterialNode.NodeId];
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassMaterial NodeAsMaterial = MaterialNode;
             if( SpecificGravityBase != Int32.MinValue )
                 NodeAsMaterial.SpecificGravity.Base = SpecificGravityBase;
             if( SpecificGravityExponent != Int32.MinValue )
@@ -107,13 +100,6 @@ namespace NbtUnitConversion.Test
             return MaterialNode;
         }
 
-        private CswNbtObjClassMaterial _createMaterialNode( string NodeTypeName, string State, double SpecificGravityBase, int SpecificGravityExponent )
-        {
-            CswNbtNode GenericNode = _createMaterialNode( _getNodeTypeId( NodeTypeName ), State, SpecificGravityBase, SpecificGravityExponent );
-            CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes[GenericNode.NodeId];
-            return MaterialNode;
-        }
-
         #endregion
 
         /// <summary>
@@ -123,55 +109,24 @@ namespace NbtUnitConversion.Test
         public void convertUnitTestWikiExample()
         {
             Double ValueToConvert = 3;
-            CswNbtNode OuncesNode = _createUnitOfMeasureNode( _getNodeTypeId( "Weight" ), "ounces", 2.83495231, -2, Tristate.True );
-            CswNbtNode MilligramNode = _createUnitOfMeasureNode( _getNodeTypeId( "Weight" ), "mg", 1.0, -6, Tristate.True );
-            Double Expected = 85048.5693;
-            Double Actual = CswNbtUnitConversion.convertUnit( _CswNbtResources, ValueToConvert, OuncesNode, MilligramNode );
+            CswNbtNode OuncesNode = _createUnitOfMeasureNode( "Weight", "ounces", 3.527396, 1, Tristate.True );
+            CswNbtNode MilligramNode = _createUnitOfMeasureNode( "Weight", "mg", 1.0, 6, Tristate.True );
+            Double Expected = 85048.574076;
+            //Rounding to sixth significant digit since the numbers are stored in the DB as number (15,6)
+            Double Actual = Math.Round( CswNbtUnitConversion.convertUnit( ValueToConvert, OuncesNode, MilligramNode ), 6 );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
         }
 
         /// <summary>
-        /// Given a numeric value and two CswNbtNodes (assumed to be of type UnitOfMeasure), when unit conversion is applied, 
+        /// Given a numeric value and two UnitOfMeasure Nodes of the Same Unit Type, when unit conversion is applied, 
         /// the returning number should be the product of the given value and the quotient of the old and new conversion factors.
         /// </summary>
         [TestMethod]
-        public void convertUnitTestGenericNodes()
+        public void convertUnitTestSameUnitType()
         {
             Double ValueToConvert = 4;
-            CswNbtNode LiterNode = _createUnitOfMeasureNode( _getNodeTypeId( "Volume" ), "Liters", 1.0, 0, Tristate.True );
-            CswNbtNode MilliliterNode = _createUnitOfMeasureNode( _getNodeTypeId( "Volume" ), "mL", 1.0, -3, Tristate.True );
-            Double Expected = 4000;
-            Double Actual = CswNbtUnitConversion.convertUnit( _CswNbtResources, ValueToConvert, LiterNode, MilliliterNode );
-            Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
-        }
-
-        /// <summary>
-        /// Given a numeric value and three CswNbtNodes (two assumed to be of type UnitOfMeasure, the other Material), when unit conversion is applied, 
-        /// the returning number should be the product of the given value and the interconversion of the old and new conversion factors 
-        /// with respect to the material's specific gravity.
-        /// </summary>
-        [TestMethod]
-        public void convertUnitTestGenericNodesDifferentUnitTypes()
-        {
-            Double ValueToConvert = 4;
-            CswNbtNode LiterNode = _createUnitOfMeasureNode( _getNodeTypeId( "Volume" ), "Liters", 1.0, 0, Tristate.True );
-            CswNbtNode KilogramNode = _createUnitOfMeasureNode( _getNodeTypeId( "Weight" ), "kg", 1.0, 0, Tristate.True );
-            CswNbtNode ChemicalNode = _createMaterialNode( _getNodeTypeId( "Chemical" ), "Liquid", 1, -1 );
-            Double Expected = 0.4;
-            Double Actual = CswNbtUnitConversion.convertUnit( _CswNbtResources, ValueToConvert, LiterNode, KilogramNode, ChemicalNode );
-            Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
-        }
-
-        /// <summary>
-        /// Given a numeric value and two UnitOfMeasure Nodes, when unit conversion is applied, 
-        /// the returning number should be the product of the given value and the quotient of the old and new conversion factors.
-        /// </summary>
-        [TestMethod]
-        public void convertUnitTestEqualUnitTypes()
-        {
-            Double ValueToConvert = 4;
-            CswNbtObjClassUnitOfMeasure LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtObjClassUnitOfMeasure MilliliterNode = _createUnitOfMeasureNode( "Volume", "mL", 1.0, -3, Tristate.True );
+            CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode MilliliterNode = _createUnitOfMeasureNode( "Volume", "mL", 1.0, 3, Tristate.True );
             Double Expected = 4000;
             Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, LiterNode, MilliliterNode );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
@@ -186,9 +141,9 @@ namespace NbtUnitConversion.Test
         public void convertUnitTestVolumeToWeightUnitTypes()
         {
             Double ValueToConvert = 4;
-            CswNbtObjClassUnitOfMeasure LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtObjClassUnitOfMeasure KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
-            CswNbtObjClassMaterial ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
+            CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
+            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
             Double Expected = 0.4;
             Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, LiterNode, KilogramNode, ChemicalNode );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
@@ -203,46 +158,59 @@ namespace NbtUnitConversion.Test
         public void convertUnitTestWeightToVolumeUnitTypes()
         {
             Double ValueToConvert = 4;
-            CswNbtObjClassUnitOfMeasure KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
-            CswNbtObjClassUnitOfMeasure LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtObjClassMaterial ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
+            CswNbtNode KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
+            CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
             Double Expected = 40;
             Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, KilogramNode, LiterNode, ChemicalNode );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
         }
 
         /// <summary>
-        /// Given a numeric value, two UnitOfMeasure Nodes of types Weight and Volume, and a MaterialNode, when unit conversion is applied, 
-        /// the returning number should be the product of the given value and the interconversion of the old and new conversion factors 
-        /// with respect to the material's specific gravity.
+        /// Given a numeric value, two UnitOfMeasure Nodes of types Weight and Volume, with no MaterialNode, when unit conversion is attempted, 
+        /// an exception is thrown.
         /// </summary>
         [TestMethod]
         public void convertUnitTestNullMaterialUnitTypes()
         {
             Double ValueToConvert = 4;
-            CswNbtObjClassUnitOfMeasure KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
-            CswNbtObjClassUnitOfMeasure LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtObjClassMaterial ChemicalNode = null;
+            CswNbtNode KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
+            CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode ChemicalNode = null;
             Double Expected = 40;
-            Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, KilogramNode, LiterNode, ChemicalNode );
-            Assert.AreNotEqual( Expected, Actual, "Conversion should not have been applied here!" );
-            Assert.AreEqual( ValueToConvert, Actual, "ValueToConvert has unexpectantly changed." );
+            Double Actual = -1;
+            try
+            {
+                Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, KilogramNode, LiterNode, ChemicalNode );
+                Assert.Fail( "Exception should have been thrown." );
+            }
+            catch( Exception e )
+            {
+                Assert.AreNotEqual( Expected, Actual, "Conversion should not have been applied here! " + e.Message );
+            }
         }
 
         /// <summary>
-        /// Given a numeric value and two UnitOfMeasure Nodes, when unit conversion is applied, 
-        /// the returning number should be the product of the given value and the quotient of the old and new conversion factors.
+        /// Given a numeric value and two UnitOfMeasure Nodes with incompatible conversion types, when unit conversion is attempted, 
+        /// an exception is thrown.
         /// </summary>
         [TestMethod]
         public void convertUnitTestNotSupportedUnitTypes()
         {
             Double ValueToConvert = 4;
-            CswNbtObjClassUnitOfMeasure LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtObjClassUnitOfMeasure DaysNode = _createUnitOfMeasureNode( "Time", "Days", 1.0, 0, Tristate.True );
+            CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode DaysNode = _createUnitOfMeasureNode( "Time", "Days", 1.0, 0, Tristate.True );
             Double Expected = 4000;
-            Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, LiterNode, DaysNode );
-            Assert.AreNotEqual( Expected, Actual, "Conversion should not have been applied here!" );
-            Assert.AreEqual( ValueToConvert, Actual, "ValueToConvert has unexpectantly changed." );
+            Double Actual = -1;
+            try
+            {
+                Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, LiterNode, DaysNode );
+                Assert.Fail( "Exception should have been thrown." );
+            }
+            catch( Exception e )
+            {
+                Assert.AreNotEqual( Expected, Actual, "Conversion should not have been applied here! " + e.Message );
+            }
         }
 
         /// <summary>
@@ -254,7 +222,7 @@ namespace NbtUnitConversion.Test
         {
             Double ValueToConvert = 4;
             Double LiterConversionFactor = 1;
-            Double MilliliterConversionFactor = .001;
+            Double MilliliterConversionFactor = 1000;
             Double Expected = 4000;
             Double Actual = CswNbtUnitConversion.applyUnitConversion( ValueToConvert, LiterConversionFactor, MilliliterConversionFactor );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
