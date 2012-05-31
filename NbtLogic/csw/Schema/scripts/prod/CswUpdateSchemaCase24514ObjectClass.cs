@@ -24,8 +24,7 @@ namespace ChemSW.Nbt.Schema
                                                  new CswNbtWcfMetaDataModel.ObjectClassProp
                                                  {
                                                      PropName = CswNbtObjClassRequest.PropertyName.Name.ToString(),
-                                                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                                                     SetValOnAdd = true
+                                                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
                                                  } );
 
             CswNbtMetaDataObjectClassProp RequestorOcp =
@@ -184,8 +183,7 @@ namespace ChemSW.Nbt.Schema
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = SizeOc.ObjectClassId,
-                            SetValOnAdd = true,
-                            ReadOnly = true
+                            SetValOnAdd = true
                         } );
 
             /* Conditional properties don't support multiple filters, so this won't work.
@@ -202,8 +200,7 @@ namespace ChemSW.Nbt.Schema
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = MaterialOc.ObjectClassId,
-                            SetValOnAdd = true,
-                            ReadOnly = true
+                            SetValOnAdd = true
                         }
                  );
 
@@ -217,8 +214,7 @@ namespace ChemSW.Nbt.Schema
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = ContainerOc.ObjectClassId,
-                            SetValOnAdd = true,
-                            ReadOnly = true
+                            SetValOnAdd = true
                         }
                 );
 
