@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.csw.Conversion
             }
 
             public static readonly UnitTypeRelationship Unknown = new UnitTypeRelationship( "Unknown" );
-            public static readonly UnitTypeRelationship Equal = new UnitTypeRelationship( "Equal" );
+            public static readonly UnitTypeRelationship Same = new UnitTypeRelationship( "Same" );
             public static readonly UnitTypeRelationship NotSupported = new UnitTypeRelationship( "NotSupported" );
             public static readonly UnitTypeRelationship WeightToVolume = new UnitTypeRelationship( "WeightToVolume" );
             public static readonly UnitTypeRelationship VolumeToWeight = new UnitTypeRelationship( "VolumeToWeight" );

@@ -69,10 +69,10 @@ namespace ChemSW.Nbt.Schema
             WeightBaseUnitProp.DefaultValue.AsText.Text = "kg";
 
             createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "kg", 1.0, 0, Tristate.True );
-            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "g", 1.0, -3, Tristate.True );
-            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "mg", 1.0, -6, Tristate.True );
-            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "lb", 4.5359237, -1, Tristate.True );
-            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "ounces", 2.83495231, -2, Tristate.True );
+            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "g", 1.0, 3, Tristate.True );
+            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "mg", 1.0, 6, Tristate.True );
+            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "lb", 2.20462262, 0, Tristate.True );
+            createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "ounces", 3.52739619, 1, Tristate.True );
 
             CswNbtMetaDataNodeType VolumeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Volume", "Units" );
             VolumeUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
@@ -80,10 +80,10 @@ namespace ChemSW.Nbt.Schema
             VolumeBaseUnitProp.DefaultValue.AsText.Text = "Liters";
 
             createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "Liters", 1.0, 0, Tristate.True );
-            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "mL", 1.0, -3, Tristate.True );
-            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "µL", 1.0, -6, Tristate.True );
-            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "gal", 3.78541178, 0, Tristate.True );
-            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "fluid ounces", 2.95735296, -2, Tristate.True );
+            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "mL", 1.0, 3, Tristate.True );
+            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "µL", 1.0, 6, Tristate.True );
+            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "gal", 2.64172052, -1, Tristate.True );
+            createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "fluid ounces", 3.38140227, 1, Tristate.True );
 
             CswNbtMetaDataNodeType EachUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Each", "Units" );
             EachUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
@@ -101,11 +101,11 @@ namespace ChemSW.Nbt.Schema
             TimeBaseUnitProp.DefaultValue.AsText.Text = "Days";
 
             createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Days", 1.0, 0, Tristate.True );
-            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Weeks", 7.0, 0, Tristate.True );
-            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Years", 3.65, 2, Tristate.True );
-            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Hours", 4.1666667, -2, Tristate.True );
-            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Minutes", 6.94444444, -4, Tristate.True );
-            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Seconds", 1.15740741, -5, Tristate.True );
+            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Weeks", 1.42857143, -1, Tristate.True );
+            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Years", 2.73790926, -3, Tristate.True );
+            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Hours", 2.4, 1, Tristate.True );
+            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Minutes", 1.44, 3, Tristate.True );
+            createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Seconds", 8.64, 4, Tristate.True );
 
             #endregion
 
