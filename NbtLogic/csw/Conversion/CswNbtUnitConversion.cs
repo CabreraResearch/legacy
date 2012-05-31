@@ -43,11 +43,11 @@ namespace ChemSW.Nbt.csw.Conversion
                         //NodeType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor / SpecificGravity, NewConversionFactor );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor, NewConversionFactor, 1.0 / SpecificGravity );
                         }
                         else if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor * SpecificGravity, NewConversionFactor );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor, NewConversionFactor, SpecificGravity );
                         }
                     }
                     else
@@ -67,13 +67,13 @@ namespace ChemSW.Nbt.csw.Conversion
         /// Takes a numeric value and converts it from one Unit of Measurement into another using the given Conversion Factor values
         /// If unit conversion cannot be applied, an error is thrown.
         /// </summary>
-        public static double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor )
+        public static double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
         {
             Double ConvertedValue;
             if( ( OldConversionFactor != 0 && OldConversionFactor != Double.NaN ) && ( NewConversionFactor != 0 && NewConversionFactor != Double.NaN ) )
             {
-                //Operator logic defined in W1005
-                ConvertedValue = ValueToConvert / OldConversionFactor * NewConversionFactor;
+                //Operator logic defined in W1005 - Math is hard.
+                ConvertedValue = ValueToConvert / OldConversionFactor * SpecificGravity * NewConversionFactor;
             }
             else
             {
