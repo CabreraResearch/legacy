@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -135,6 +136,7 @@ namespace ChemSW.Nbt.WebServices
                 DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
                                                             " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
                 Total = NodesTable.Rows.Count;
+                Collection<Exception> Exceptions = new Collection<Exception>();
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
                     try
@@ -148,10 +150,19 @@ namespace ChemSW.Nbt.WebServices
                     catch( Exception Exception )
                     {
                         Failed += 1;
+                        Exceptions.Add( Exception );
                     }
                 }
-
                 wsMd.finalizeOtherResources( NbtSystemResources );
+                if( Exceptions.Count > 0 )
+                {
+                    string ExceptionText = "";
+                    foreach( Exception ex in Exceptions )
+                    {
+                        ExceptionText += ex.Message + " " + ex.InnerException + " /n";
+                    }
+                    throw new CswDniException( ErrorType.Warning, "Not all demo data nodes were deleted. " + Failed + " failed out of " + Total + " total.", "The following exception(s) occurred: " + ExceptionText );
+                }
             }
             Ret["succeeded"] = Succeeded;
             Ret["total"] = Total;
