@@ -147,9 +147,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         }// _updateEquipment()
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode(bool DeleteAllRelatedNodes = false)
         {
-            _CswNbtObjClassDefault.beforeDeleteNode();
+            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRelatedNodes);
 
         }//beforeDeleteNode()
 

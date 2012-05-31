@@ -142,9 +142,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode(bool DeleteAllRelatedNodes = false)
         {
-            _CswNbtObjClassDefault.beforeDeleteNode();
+            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRelatedNodes);
         }
 
         public override void afterDeleteNode()

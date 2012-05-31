@@ -113,9 +113,9 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode(bool DeleteAllRelatedNodes = false)
         {
-            _CswNbtObjClassDefault.beforeDeleteNode();
+            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRelatedNodes);
 
         }//beforeDeleteNode()
 

@@ -160,9 +160,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode(bool DeleteAllRelatedNodes = false)
         {
-            _CswNbtObjClassDefault.beforeDeleteNode();
+            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRelatedNodes);
 
             // Prevent deleting your own role
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.RoleId )
