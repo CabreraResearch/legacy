@@ -1,13 +1,13 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer : CswNbtObjClass
+    public class CswNbtObjClassContainer : CswNbtObjClass, ICswNbtPropertySetRequest
     {
         public static string BarcodePropertyName { get { return "Barcode"; } }
         public static string MaterialPropertyName { get { return "Material"; } }
@@ -19,7 +19,9 @@ namespace ChemSW.Nbt.ObjClasses
         public static string SourceContainerPropertyName { get { return "Source Container"; } }
         public static string QuantityPropertyName { get { return "Quantity"; } }
         public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
+        public static string RequestPropertyName { get { return "Request"; } }
 
+        public string RequestButtonPropertyName { get { return RequestPropertyName; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -110,9 +112,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode();
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -140,23 +142,31 @@ namespace ChemSW.Nbt.ObjClasses
             Message = string.Empty;
             ActionData = string.Empty;
             ButtonAction = NbtButtonAction.Unknown;
-            if( null != NodeTypeProp ) { /*Do Something*/ }
+            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            if( null != NodeTypeProp && null != OCP )
+            {
+                if( RequestPropertyName == OCP.PropName )
+                {
+                    ButtonAction = NbtButtonAction.request;
+                }
+            }
             return true;
         }
         #endregion
 
         #region Object class specific properties
 
-        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[LocationPropertyName].AsBarcode ); } }
-        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation ); } }
-        public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[LocationVerifiedPropertyName].AsDateTime ); } }
-        public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[MaterialPropertyName].AsRelationship ); } }
-        public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[StatusPropertyName].AsList ); } }
-        public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[MissingPropertyName].AsLogical ); } }
-        public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName].AsLogical ); } }
-        public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName].AsRelationship ); } }
-        public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName].AsQuantity ); } }
-        public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[ExpirationDatePropertyName].AsDateTime ); } }
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[LocationPropertyName] ); } }
+        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[LocationPropertyName] ); } }
+        public CswNbtNodePropDateTime LocationVerified { get { return ( _CswNbtNode.Properties[LocationVerifiedPropertyName] ); } }
+        public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[MaterialPropertyName] ); } }
+        public CswNbtNodePropList Status { get { return ( _CswNbtNode.Properties[StatusPropertyName] ); } }
+        public CswNbtNodePropLogical Missing { get { return ( _CswNbtNode.Properties[MissingPropertyName] ); } }
+        public CswNbtNodePropLogical Disposed { get { return ( _CswNbtNode.Properties[DisposedPropertyName] ); } }
+        public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName] ); } }
+        public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName] ); } }
+        public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[ExpirationDatePropertyName] ); } }
+        public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
 
         #endregion
 

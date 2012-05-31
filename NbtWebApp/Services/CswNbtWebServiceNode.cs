@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -62,18 +63,18 @@ namespace ChemSW.Nbt.WebServices
             return RetKey;
         }
 
-        public bool DeleteNode( CswPrimaryKey NodePk )
+        public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )
         {
             return _DeleteNode( NodePk, _CswNbtResources );
         }
 
-        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources )
+        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, bool DeleteAllRequiredRelatedNodes = false )
         {
             bool ret = false;
             CswNbtNode NodeToDelete = NbtResources.Nodes.GetNode( NodePk );
             if( null != NodeToDelete )
             {
-                NodeToDelete.delete();
+                NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
                 ret = true;
             }
             return ret;
@@ -117,10 +118,12 @@ namespace ChemSW.Nbt.WebServices
             return RetObj;
         }
 
-        public bool deleteDemoDataNodes()
+        public JObject deleteDemoDataNodes()
         {
-            bool RetSuccess = true;
-
+            JObject Ret = new JObject();
+            Int32 Succeeded = 0;
+            Int32 Total = 0;
+            Int32 Failed = 0;
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
                 /* Get a new CswNbtResources as the System User */
@@ -132,20 +135,40 @@ namespace ChemSW.Nbt.WebServices
 
                 DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString { "nodeid" },
                                                             " where isdemo='" + CswConvert.ToDbVal( true ) + "' " );
+                Total = NodesTable.Rows.Count;
+                Collection<Exception> Exceptions = new Collection<Exception>();
                 foreach( DataRow NodeRow in NodesTable.Rows )
                 {
-                    CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
-                    bool ThisNodeDeleted = _DeleteNode( NodePk, NbtSystemResources );
-                    RetSuccess = RetSuccess && ThisNodeDeleted;
+                    try
+                    {
+                        CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
+                        if( _DeleteNode( NodePk, NbtSystemResources, DeleteAllRequiredRelatedNodes: true ) )
+                        {
+                            Succeeded += 1;
+                        }
+                    }
+                    catch( Exception Exception )
+                    {
+                        Failed += 1;
+                        Exceptions.Add( Exception );
+                    }
                 }
-
                 wsMd.finalizeOtherResources( NbtSystemResources );
+                if( Exceptions.Count > 0 )
+                {
+                    string ExceptionText = "";
+                    foreach( Exception ex in Exceptions )
+                    {
+                        ExceptionText += ex.Message + " " + ex.InnerException + " /n";
+                    }
+                    throw new CswDniException( ErrorType.Warning, "Not all demo data nodes were deleted. " + Failed + " failed out of " + Total + " total.", "The following exception(s) occurred: " + ExceptionText );
+                }
             }
-            else
-            {
-                RetSuccess = false;
-            }
-            return RetSuccess;
+            Ret["succeeded"] = Succeeded;
+            Ret["total"] = Total;
+            Ret["failed"] = Failed;
+
+            return Ret;
         }
 
         /// <summary>

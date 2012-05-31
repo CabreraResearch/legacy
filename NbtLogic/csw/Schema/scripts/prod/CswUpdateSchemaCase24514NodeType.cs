@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             {
                 RequestNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RequestOc )
                                                                      {
-                                                                         Category = "Ordering",
+                                                                         Category = "Requests",
                                                                          NodeTypeName = "Request"
                                                                      } );
 
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Schema
             {
                 RequestItemNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RequestItemOc )
                                                                      {
-                                                                         Category = "Ordering",
+                                                                         Category = "Requests",
                                                                          NodeTypeName = "Request Item"
                                                                      } );
             }
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Schema
             GridView.ViewName = "Request Items Grid Property View";
             GridView.Visibility = NbtViewVisibility.Property;
             GridView.ViewMode = NbtViewRenderingMode.Grid;
-            GridView.Category = "Ordering";
+            GridView.Category = "Requests";
             GridView.Root.ChildRelationships.Clear();
             CswNbtViewRelationship RequestRel = GridView.AddViewRelationship( RequestNt, false );
             CswNbtViewRelationship RequestItemRel = GridView.AddViewRelationship( RequestRel,
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtView MyRequestsView = _CswNbtSchemaModTrnsctn.makeView();
                 MyRequestsView.makeNew( MyRequestViewName, NbtViewVisibility.Global );
-                MyRequestsView.Category = "Ordering";
+                MyRequestsView.Category = "Requests";
                 MyRequestsView.ViewMode = NbtViewRenderingMode.Tree;
                 MyRequestsView.AddViewRelationship( RequestNt, true );
                 MyRequestsView.save();

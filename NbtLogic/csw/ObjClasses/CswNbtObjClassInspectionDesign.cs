@@ -300,7 +300,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
         {
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
@@ -314,7 +314,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ParentNode.postChanges( false );
             }
 
-            _CswNbtObjClassDefault.beforeDeleteNode();
+            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
 
         }//beforeDeleteNode()
 
