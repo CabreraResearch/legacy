@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.csw.Conversion
 {
@@ -51,12 +52,12 @@ namespace ChemSW.Nbt.csw.Conversion
                     }
                     else
                     {
-                        throw ( new DivideByZeroException( "Specific Gravity must be defined as a positive number." ) );
+                        throw new CswDniException( ErrorType.Error, "Specific Gravity must be defined as a positive number.", "Specific Gravity must be defined as a positive number." );
                     }
                 }
                 else
                 {
-                    throw ( new Exception( "Conversion failed: Unsupported unit types." ) );
+                    throw new CswDniException( ErrorType.Error, "Conversion failed: Unable to apply unit conversion between the selected unit types.", "Conversion failed: Unsupported unit types." );
                 }
             }
             return ConvertedValue;
@@ -76,11 +77,11 @@ namespace ChemSW.Nbt.csw.Conversion
             }
             else
             {
-                throw ( new DivideByZeroException( "Conversion Factor must be defined as a positive number." ) );
+                throw new CswDniException( ErrorType.Error, "Conversion Factor must be defined as a positive number.", "Conversion Factor must be defined as a positive number." );
             }
             if( ConvertedValue == Double.NaN || ConvertedValue < 0 )
             {
-                throw ( new Exception( "Conversion failed: Insufficient data provided." ) );
+                throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data provided.", "Conversion failed: One or more parameters are negative or undefined." );
             }
             return ConvertedValue;
         }
