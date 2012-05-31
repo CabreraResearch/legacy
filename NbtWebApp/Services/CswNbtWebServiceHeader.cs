@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
@@ -155,6 +156,16 @@ namespace ChemSW.Nbt.WebServices
                                         new JProperty( "href", "Subscriptions.aspx" )
                                     ) )
                         );
+
+            if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
+            {
+                CswNbtActSubmitRequest RequestAction = new CswNbtActSubmitRequest( _CswNbtResources );
+                if( RequestAction.CartCount > 0 )
+                {
+                    Ret["Cart (" + RequestAction.CartCount + ")"] = "Submit Request";
+                }
+            }
+
             Ret["Help"] = new JObject();
             Ret["Help"]["haschildren"] = true;
             Ret["Help"]["Help"] = new JObject();
