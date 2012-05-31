@@ -1,14 +1,11 @@
-using System;
-using System.Data;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -263,7 +260,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//afterWriteNode()
 
-        public override void beforeDeleteNode()
+        public override void beforeDeleteNode( bool DeleteAllRelatedNodes = false )
         {
             // case 22486 - Don't allow deleting targets of required relationships
             CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
@@ -277,11 +274,28 @@ namespace ChemSW.Nbt.ObjClasses
                 foreach( DataRow MatchRow in MatchTable.Rows )
                 {
                     CswPrimaryKey MatchNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MatchRow["nodeid"] ) );
-                    InUseStr.Add( _CswNbtResources.makeClientNodeReference( _CswNbtResources.Nodes[MatchNodePk] ) );
+                    if( DeleteAllRelatedNodes )
+                    {
+                        CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( MatchNodePk );
+                        if( null != NodeToDelete )
+                        {
+                            NodeToDelete.delete(DeleteAllRelatedNodes: DeleteAllRelatedNodes);
+                        }
+                    }
+                    else
+                    {
+                        InUseStr.Add(_CswNbtResources.makeClientNodeReference(_CswNbtResources.Nodes[MatchNodePk]));
+                    }
                 }
-                throw new CswDniException( ErrorType.Warning,
-                                           "This " + _CswNbtNode.getNodeType().NodeTypeName + " cannot be deleted because it is in use by: " + InUseStr,
-                                           "Current user (" + _CswNbtResources.CurrentUser.Username + ") tried to delete a " + _CswNbtNode.getNodeType().NodeTypeName + " that is in use by: " + InUseStr );
+                if( false == DeleteAllRelatedNodes )
+                {
+                    throw new CswDniException( ErrorType.Warning,
+                                              "This " + _CswNbtNode.getNodeType().NodeTypeName +
+                                              " cannot be deleted because it is in use by: " + InUseStr,
+                                              "Current user (" + _CswNbtResources.CurrentUser.Username +
+                                              ") tried to delete a " + _CswNbtNode.getNodeType().NodeTypeName +
+                                              " that is in use by: " + InUseStr );
+                }
             }
         } // beforeDeleteNode()
 
