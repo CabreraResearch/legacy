@@ -260,7 +260,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         }//afterWriteNode()
 
-        public override void beforeDeleteNode( bool DeleteAllRelatedNodes = false )
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             // case 22486 - Don't allow deleting targets of required relationships
             CswTableSelect JctSelect = _CswNbtResources.makeCswTableSelect( "defaultBeforeDeleteNode_jnp_select", "jct_nodes_props" );
@@ -274,12 +274,12 @@ namespace ChemSW.Nbt.ObjClasses
                 foreach( DataRow MatchRow in MatchTable.Rows )
                 {
                     CswPrimaryKey MatchNodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( MatchRow["nodeid"] ) );
-                    if( DeleteAllRelatedNodes )
+                    if( DeleteAllRequiredRelatedNodes )
                     {
                         CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( MatchNodePk );
                         if( null != NodeToDelete )
                         {
-                            NodeToDelete.delete(DeleteAllRelatedNodes: DeleteAllRelatedNodes);
+                            NodeToDelete.delete(DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes);
                         }
                     }
                     else
@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
                         InUseStr.Add(_CswNbtResources.makeClientNodeReference(_CswNbtResources.Nodes[MatchNodePk]));
                     }
                 }
-                if( false == DeleteAllRelatedNodes )
+                if( false == DeleteAllRequiredRelatedNodes )
                 {
                     throw new CswDniException( ErrorType.Warning,
                                               "This " + _CswNbtNode.getNodeType().NodeTypeName +

@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterCreateNode();
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterWriteNode();
-        public abstract void beforeDeleteNode(bool DeleteAllRelatedNodes = false);
+        public abstract void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false);
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
         public abstract bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message );

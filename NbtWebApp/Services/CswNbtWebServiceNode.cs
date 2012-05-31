@@ -63,18 +63,18 @@ namespace ChemSW.Nbt.WebServices
             return RetKey;
         }
 
-        public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRelatedNodes = false )
+        public bool DeleteNode( CswPrimaryKey NodePk, bool DeleteAllRequiredRelatedNodes = false )
         {
             return _DeleteNode( NodePk, _CswNbtResources );
         }
 
-        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, bool DeleteAllRelatedNodes = false )
+        private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, bool DeleteAllRequiredRelatedNodes = false )
         {
             bool ret = false;
             CswNbtNode NodeToDelete = NbtResources.Nodes.GetNode( NodePk );
             if( null != NodeToDelete )
             {
-                NodeToDelete.delete( DeleteAllRelatedNodes: DeleteAllRelatedNodes );
+                NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
                 ret = true;
             }
             return ret;
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.WebServices
                     try
                     {
                         CswPrimaryKey NodePk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeRow["nodeid"] ) );
-                        if( _DeleteNode( NodePk, NbtSystemResources, DeleteAllRelatedNodes: true ) )
+                        if( _DeleteNode( NodePk, NbtSystemResources, DeleteAllRequiredRelatedNodes: true ) )
                         {
                             Succeeded += 1;
                         }

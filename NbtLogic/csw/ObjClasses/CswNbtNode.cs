@@ -548,7 +548,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         //bz # 5943
-        public void delete( bool DeleteAllRelatedNodes = false )
+        public void delete( bool DeleteAllRequiredRelatedNodes = false )
         {
             if( null == OnRequestDeleteNode )
             {
@@ -562,7 +562,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( null != _CswNbtObjClass )
             {
-                _CswNbtObjClass.beforeDeleteNode(DeleteAllRelatedNodes: DeleteAllRelatedNodes);
+                _CswNbtObjClass.beforeDeleteNode(DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes);
             }
 
             OnRequestDeleteNode( this );
@@ -591,7 +591,7 @@ namespace ChemSW.Nbt.ObjClasses
         //}//reset()
 
         //bz # 5943
-        //public void beforeDeleteNode(bool DeleteAllRelatedNodes = false)
+        //public void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
         //{
         //    if( null != _CswNbtObjClass )
         //    {
