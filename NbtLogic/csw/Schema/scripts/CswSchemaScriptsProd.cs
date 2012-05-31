@@ -19,18 +19,19 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release
-            _MinimumVersion = new CswSchemaVersion( 1, 'O', 20 );
+            _MinimumVersion = new CswSchemaVersion( 1, 'O', 21 );
 
             // This is where you add new versions.
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );
 
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25978() ) );            //01P-01
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase7608() ) );          //01P-02
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24645() ) );         //01P-03
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase7608() ) );             //01P-02
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24645() ) );            //01P-03
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514ObjectClass() ) ); //01P-04
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26111() ) );            //01P-05
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514NodeType() ) ); //01P-06
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514NodeType() ) );    //01P-06
+
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
