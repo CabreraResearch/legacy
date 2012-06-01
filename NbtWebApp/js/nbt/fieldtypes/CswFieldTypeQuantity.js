@@ -43,7 +43,7 @@
                 MinValue: Csw.number(propVals.minvalue),
                 MaxValue: Csw.number(propVals.maxvalue),
                 ceilingVal: Csw.number(ceilingVal),
-                Precision: precision,
+                Precision: 6,//case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                 ReadOnly: Csw.bool(o.ReadOnly),
                 Required: Csw.bool(o.Required),
                 onChange: o.onChange
@@ -78,7 +78,6 @@
                         }
                     }, false);
                     precision = false === fractional ? 0 : Csw.number(propVals.precision, 6);
-                    //todo - how do I update the numbertextbox?
                     o.onChange();
                 },
                 values: relationships,
@@ -89,6 +88,11 @@
             if (o.Required) {
                 selectBox.addClass("required");
             }
+
+            $.validator.addMethod('validateInteger', function (value, element) {
+                return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
+            }, 'Value must be an integer');
+            numberTextBox.addClass('validateInteger');
 
             propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
         },

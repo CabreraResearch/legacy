@@ -210,12 +210,17 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public CswNbtNodePropLogical TargetFractional
+        public Tristate TargetFractional
         {
             get
             {
+                Tristate Fractional = Tristate.True;//We want to be able to enter a decimal value if Unit hasn't been selected yet.
                 CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes[UnitId];
-                return UnitNode.Fractional;
+                if( UnitNode != null )
+                {
+                    Fractional = UnitNode.Fractional.Checked;
+                }
+                return Fractional;
             }
         }
 
@@ -351,7 +356,7 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodeid"] = UnitId.ToString();
             }
 
-            ParentObject["fractional"] = TargetFractional.Checked.ToString().ToLower();
+            ParentObject["fractional"] = TargetFractional.ToString().ToLower();
 
             JArray JOptions = new JArray();
             ParentObject["options"] = JOptions;
