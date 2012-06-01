@@ -18,7 +18,12 @@
                 nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
                 options = propVals.options,
                 relationships = [],
+                fractional = Csw.bool(propVals.fractional),
                 cellCol = 1;
+
+            if (false === fractional) {
+                precision = 0;
+            }
 
             if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
                     Csw.isNullOrEmpty(selectedNodeId) &&
@@ -56,16 +61,26 @@
             Csw.crawlObject(options, function (relatedObj) {
                 if (relatedObj.id === selectedNodeId) {
                     foundSelected = true;
+                    fractional = Csw.bool(relatedObj.fractional);
                 }
-                relationships.push({ value: relatedObj.id, display: relatedObj.value });
+                relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
             }, false);
             if (false === o.Multi && false === foundSelected) {
-                relationships.push({ value: selectedNodeId, display: selectedName });
+                relationships.push({ value: selectedNodeId, display: selectedName, frac: Csw.bool(propVals.fractional) });
             }
             var selectBox = table.cell(1, cellCol).select({
                 ID: o.ID,
                 cssclass: 'selectinput',
-                onChange: o.onChange,
+                onChange: function () {
+                    Csw.crawlObject(options, function (relatedObj) {
+                        if (relatedObj.id === selectBox.val()) {
+                            fractional = Csw.bool(relatedObj.fractional);
+                        }
+                    }, false);
+                    precision = false === fractional ? 0 : Csw.number(propVals.precision, 6);
+                    //todo - how do I update the numbertextbox?
+                    o.onChange();
+                },
                 values: relationships,
                 selected: selectedNodeId
             });
@@ -88,7 +103,7 @@
             if (false === Csw.isNullOrEmpty(selectBox)) {
                 attributes.nodeid = selectBox.val();
             }
-            
+
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
