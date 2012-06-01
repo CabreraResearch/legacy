@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.Schema
                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
                    new CswNbtWcfMetaDataModel.ObjectClassProp
                    {
-                       PropName = CswNbtObjClassRequestItem.PropertyName.Quantity.ToString(),
+                       PropName = CswNbtObjClassRequestItem.PropertyName.Count.ToString(),
                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Number,
                        NumberPrecision = 0,
                        NumberMinValue = 1,
