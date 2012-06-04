@@ -1,0 +1,259 @@
+<!--#include file="MainHeader.html" -->
+<tr>
+    <td id="Td5" class="PageTable_LeftColumn" rowspan="5">
+        <img src="Images/pagelayout/blank.gif" alt="X" width="1" height="450" />
+    </td>
+    <td id="HeaderTable_BottomMenu" class="HeaderTable_BottomMenu" colspan="2">
+        <table cellpadding="0" cellspacing="0" width="100%">
+            <tr>
+                <td>
+                    <img id="headerblank4" src="Images/pagelayout/blank.gif" alt="X" width="1" height="30" />
+                </td>
+                <td width="100%">
+                    <div id="MainMenuDiv">
+                    </div>
+                </td>
+                <td>
+                    <div id="SearchDiv">
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td>
+                    <div id="ViewSelectDiv">
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </td>
+    <td id="Td6" class="PageTable_RightColumn" rowspan="5">
+    </td>
+</tr>
+<tr>
+    <td colspan="2">
+        <div id="ErrorDiv" style="display: none;">
+        </div>
+    </td>
+</tr>
+<tr>
+    <td id="Td7" class="PageTable_CenterCell" colspan="2" valign="top">
+        <div id="CenterTopDiv">
+        </div>
+    </td>
+</tr>
+<tr>
+    <td id="Td8" class="PageTable_LeftCell" valign="top">
+        <div id="LeftDiv">
+        </div>
+    </td>
+    <td id="Td9" class="PageTable_RightCell" valign="top" style="padding-left: 5px;">
+        <div id="RightDiv">
+        </div>
+    </td>
+</tr>
+<tr>
+    <td id="Td10" class="PageTable_CenterCell" colspan="2" valign="top">
+        <div id="CenterBottomDiv">
+        </div>
+    </td>
+</tr>
+<script type="text/javascript">
+    'use strict';
+
+
+//    function CswJqGrid(options, cswParent) {
+//        return (function (options, cswParent) {
+//            'use strict';
+//            var cswPrivate = {
+//                urlMethod: 'getGridTestData',
+//                caption: '',
+//                autowidth: true,   // width is 100% of parent
+//                width: 500,        // use this width if autowidth is false
+//                colNames: [],
+//                colModel: [],
+//                griddata: {}
+//            };
+//            var cswPublic = {};
+//            if (options) $.extend(cswPrivate, options);
+
+//            (function () {
+//                'use strict';
+
+//                if (Csw.isNullOrEmpty(cswPrivate.griddata)) {
+//                    Csw.ajax.post({
+//                        urlMethod: cswPrivate.urlMethod,
+//                        success: function (data) {
+//                            if (false === Csw.isNullOrEmpty(data.griddata)) {
+
+//                                cswPrivate.colNames = data.colNames;
+//                                cswPrivate.colModel = data.colModel;
+//                                cswPrivate.griddata = data.griddata;
+//                                cswPrivate.initGrid();
+
+//                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+//                        } // success
+//                    }); // ajax.post()
+//                } else {
+//                    cswPrivate.initGrid();
+//                }
+//            } ());
+
+//            cswPrivate.initGrid = function () {
+//                cswPrivate.gridtable = cswParent.table({ ID: 'gridtable' });
+//                cswPrivate.gridpager = cswParent.div({ ID: 'gridpager' });
+
+//                cswPrivate.grid = cswPrivate.gridtable.$.jqGrid({
+//                    datatype: 'local',
+//                    colNames: cswPrivate.colNames,
+//                    colModel: cswPrivate.colModel,
+//                    autowidth: cswPrivate.autowidth,
+//                    width: cswPrivate.width,
+//                    pager: '#' + gridpager.id,
+//                    rowNum: 10,
+//                    rowList: [10, 50, 100],
+//                    sortname: 'invid',
+//                    sortorder: 'desc',
+//                    viewrecords: true,
+//                    gridview: true,
+//                    caption: cswPrivate.caption
+//                });
+
+//                Csw.each(cswPrivate.griddata.rows, function (thisRow) {
+//                    cswPrivate.grid.addRowData(thisRow.id, thisRow.cell);
+//                }); //each
+//            } // initGrid
+
+//            return cswPublic;
+//        } (options, cswParent));
+//    }
+
+//    $(document).ready(function () {
+//        var div = Csw.literals.factory($('#CenterTopDiv'));
+//        CswJqGrid({}, div);
+//    }); // document.ready()
+
+
+    function cswExtJsGrid(options, cswParent)
+    {
+        return (function(options, cswParent) {
+            var cswPrivate = {
+                ID: 'extjsGrid',
+                title: 'Untitled Grid',
+                viewid: '',
+                nodekey: '',
+                IncludeInQuickLaunch: true, 
+                readonly: false,
+                urlMethod: 'runGrid',
+                storeId: '',
+                height: 300,
+                width: 600,
+                fields: [],   // [ col1, col2, ... ]
+                columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
+                data: {}      // { items: [ { col1: val, col2: val ... }, ... ]
+            };
+            var cswPublic = {};
+            
+            cswPrivate.initGrid = function() {
+                cswPrivate.storeId = cswPrivate.ID + 'store';
+                var gridStore = Ext.create('Ext.data.Store', {
+                    storeId: cswPrivate.storeId,
+                    fields: cswPrivate.fields,
+                    data: cswPrivate.data,
+                    proxy: {
+                        type: 'memory',
+                        reader: {
+                            type: 'json',
+                            root: 'items'
+                        }
+                    }
+                });
+
+                // Apparently there's a race condition between creating the store and using it?
+                setTimeout(function() {
+                
+                    Ext.create('Ext.grid.Panel', {
+                        title: cswPrivate.title,
+                        store: gridStore,
+                        columns: cswPrivate.columns,
+                        height: cswPrivate.height,
+                        width: cswPrivate.width,
+                        renderTo: cswParent.getId()
+                    });
+                
+                }, 50);
+
+            }; // initGrid()
+
+            //constructor
+            (function () {
+                if(options) $.extend(cswPrivate, options);
+                
+                if(Csw.isNullOrEmpty(cswPrivate.data)) {
+                    Csw.ajax.post({
+                        urlMethod: cswPrivate.urlMethod,
+                        data: {
+                            ViewId: cswPrivate.viewid, 
+                            IncludeNodeKey: cswPrivate.nodekey, 
+                            IncludeInQuickLaunch: cswPrivate.IncludeInQuickLaunch, 
+                            ForReport: cswPrivate.readonly
+                        },
+                        success: function (result) {
+                            if (false === Csw.isNullOrEmpty(result.grid)) {
+                                cswPrivate.fields = result.grid.fields;
+                                cswPrivate.columns = result.grid.columns;
+                                cswPrivate.data = result.grid.data;
+                                cswPrivate.initGrid();
+
+                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+                        } // success
+                    }); // ajax.post()
+                } else {
+                    cswPrivate.initGrid();
+                }
+            }());
+        
+            return cswPublic;
+        }(options, cswParent));
+    }
+
+    $(document).ready(function () {
+
+        var testdata = { 
+                 fields:['name', 'email', 'phone'],
+                 columns:  [
+                     { header: 'Name',  dataIndex: 'name' },
+                     { header: 'Email', dataIndex: 'email', flex: 1 },
+                     { header: 'Phone', dataIndex: 'phone' }
+                 ],
+                 data:{'items':[
+                     { 'name': 'Lisa',  'email':'lisa@simpsons.com',  'phone':'555-111-1224'  },
+                     { 'name': 'Bart',  'email':'bart@simpsons.com',  'phone':'555-222-1234' },
+                     { 'name': 'Homer', 'email':'home@simpsons.com',  'phone':'555-222-1244'  },
+                     { 'name': 'Marge', 'email':'marge@simpsons.com', 'phone':'555-222-1254'  }
+                 ]}
+             };
+
+        var div = Csw.literals.factory($('#CenterTopDiv'));
+
+        cswExtJsGrid({ 
+
+//            title: 'Simpsons Test Data',
+//            fields: testdata.fields,
+//            columns: testdata.columns,
+//            data: testdata.data,
+
+//            title: 'Equipment List',
+//            viewid: 'viewid_195',
+
+            title: 'Tasks: Open',
+            viewid: 'viewid_194',
+
+            urlMethod: 'runGridTest',
+            width: 700
+        }, div);
+    });
+
+</script>
+<!--#include file="MainFooter.html" -->
