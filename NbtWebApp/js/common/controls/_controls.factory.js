@@ -52,6 +52,14 @@
                     return Csw.controls.dateTimePicker(cswParent, opts);
                 };
 
+                cswParent.icon = function (opts) {
+                    /// <summary> Creates a Csw.icon on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the icon.</param>
+                    /// <returns type="Csw.controls.icon">A Csw.controls.icon</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'icon');
+                    return Csw.controls.icon(cswParent, opts);
+                };
+
                 cswParent.imageButton = function (opts) {
                     /// <summary> Creates a Csw.imageButton on this element</summary>
                     /// <param name="opts" type="Object">Options to define the imageButton.</param>
