@@ -36,7 +36,6 @@ namespace ChemSW.Nbt.Schema
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = UserOc.ObjectClassId,
-                            SetValOnAdd = true,
                             IsRequired = true
                         } );
 

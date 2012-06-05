@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -33,7 +34,7 @@ namespace ChemSW.Nbt.Actions
             CartView = _SystemViews.SystemView;
             _RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
             _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-            refreshCartCount();
+            refreshCartCounts();
         }
 
         #endregion Constructor
@@ -41,24 +42,42 @@ namespace ChemSW.Nbt.Actions
         #region Public methods
 
         public CswNbtView CartView;
+        public Int32 CartContentCount = 0;
         public Int32 CartCount = 0;
-
         #endregion Public methods
 
-        public Int32 refreshCartCount()
+        public Int32 refreshCartCounts()
         {
-            CartCount = 0;
+            CartContentCount = 0;
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CartView, true, false );
-            if( Tree.getChildNodeCount() > 0 )
+            CartCount = Tree.getChildNodeCount();
+            if( CartCount == 1 )
             {
                 Tree.goToNthChild( 0 );
                 CswNbtNode RequestNode = Tree.getNodeForCurrentPosition();
                 if( RequestNode.ObjClass.ObjectClass == _RequestOc )
                 {
-                    CartCount = Tree.getChildNodeCount();
+                    CartContentCount = Tree.getChildNodeCount();
                 }
             }
-            return CartCount;
+            else if( CartCount > 1 )
+            {
+                throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
+            }
+            else if( CartCount == 0 )
+            {
+                CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
+                if( null == RequestNt )
+                {
+                    throw new CswDniException( ErrorType.Warning,
+                                                "Cannot Submit Request without a valid Request object.",
+                                                "No Request NodeType could be found." );
+                }
+                CswNbtNode RequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                RequestNode.postChanges( true );
+                refreshCartCounts();
+            }
+            return CartContentCount;
         }
     }
 
