@@ -101,7 +101,6 @@
                             IncludeNodeKey: o.cswnbtnodekey
                         },
                         success: function (data) {
-                            Csw.log(data);
                             propDiv.linkGrid({
                                 rowCount: data.rowCount,
                                 linkText: '',
@@ -119,7 +118,6 @@
                     });
                 };
 
-                Csw.log(gridMode);
                 switch (gridMode.toLowerCase()) {
                     case 'small':
                         makeSmallGrid();
