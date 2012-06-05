@@ -18,6 +18,7 @@ namespace ChemSW.Nbt.MetaData
             BiologicalClass,
             MaterialComponentClass,
             ContainerClass,
+            ContainerDispenseTransactionClass,
             CustomerClass,
             DocumentClass,
             EquipmentAssemblyClass,
