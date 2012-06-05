@@ -1094,7 +1094,7 @@ namespace ChemSW.Nbt
         public string AuditLastName { set { _CswResources.AuditLastName = value; } }
 
 
-        //public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
+        public void sendSystemAlertEmail( string Subject, string Message ) { _CswResources.sendSystemAlertEmail( Subject, Message ); }
         public Collection<CswMailMessage> makeMailMessages( string Subject, string Message, string Recipient ) { return _CswResources.makeMailMessages( Subject, Message, Recipient ); }
         public void sendEmailNotification( Collection<CswMailMessage> MailMessages ) { _CswResources.sendEmailNotification( MailMessages ); }
 
