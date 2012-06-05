@@ -118,7 +118,7 @@ window.initMain = window.initMain || function (undefined) {
                         handleAction({ 'actionname': 'Modules' });
                     },
                     onSubmitRequest: function () {
-                        handleAction({ 'actionname': 'Submit Request' });
+                        handleAction({ 'actionname': 'Submit_Request' });
                     },
                     onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
@@ -1160,7 +1160,7 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.actions.sessions(centerTopDiv);
                 break;
 
-            case 'Submit Request':
+            case 'Submit_Request':
                 Csw.actions.submitRequest(centerTopDiv);
                 break;
                 

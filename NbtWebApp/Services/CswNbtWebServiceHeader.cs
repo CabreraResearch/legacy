@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
                 if( RequestAction.CartCount > 0 )
                 {
                     Ret["Cart (" + RequestAction.CartCount + ")"] = new JObject();
-                    Ret["Cart (" + RequestAction.CartCount + ")"]["action"] = "Submit Request";
+                    Ret["Cart (" + RequestAction.CartCount + ")"]["action"] = "Submit_Request";
                 }
             }
 
