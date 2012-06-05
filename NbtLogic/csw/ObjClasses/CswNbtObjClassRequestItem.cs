@@ -107,47 +107,41 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
-        private string _makeNotificationMessage( bool DoMaterial, bool DoContainer, bool DoQuantity, bool DoLocation, bool DoSize, bool DoCount )
+        private string _makeNotificationMessage()
         {
-            string MessageText = "The Status for this Request Item has changed to: [Status]. /n";
+            string MessageText = "The Status for this Request Item has changed to: " + Status.Value + ". /n";
 
-            if( DoMaterial )
+            CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( null != NodeAsMaterial )
             {
-                CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-                if( null != NodeAsMaterial )
-                {
-                    MessageText += "Material: " + NodeAsMaterial.TradeName + "/n";
-                }
+                MessageText += "Material: " + NodeAsMaterial.TradeName + "/n";
             }
-            if( DoContainer )
+
+            CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+            if( null != NodeAsContainer )
             {
-                CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                if( null != NodeAsContainer )
-                {
-                    MessageText += "Container: " + NodeAsContainer.Node.NodeName + "/n";
-                }
+                MessageText += "Container: " + NodeAsContainer.Node.NodeName + "/n";
             }
-            if( DoQuantity )
+
+            if( Quantity.Quantity > 0 )
             {
-                MessageText += "Quantity: " + Quantity.Quantity;
+                MessageText += "Quantity: " + Quantity.Quantity + ", Unit: " + Quantity.CachedUnitName + "/n";
             }
-            if( DoSize )
+            if( false == string.IsNullOrEmpty( Size.CachedNodeName ) )
             {
-                MessageText += "Size: " + Size.CachedNodeName;
+                MessageText += "Size: " + Size.CachedNodeName + "/n";
             }
-            if( DoCount )
+            if( Count.Quantity > 0 )
             {
-                MessageText += "Count: " + Count.Quantity;
+                MessageText += "Count: " + Count.Quantity + "/n";
             }
-            if( DoLocation )
+            CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.RelatedNodeId );
+            if( null != NodeAsLocation )
             {
-                CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.RelatedNodeId );
-                if( null != NodeAsLocation )
-                {
-                    MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
-                                   NodeAsLocation.Name + "/n";
-                }
+                MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
+                                NodeAsLocation.Name + "/n";
             }
+
 
             return MessageText;
         }
@@ -173,36 +167,8 @@ namespace ChemSW.Nbt.ObjClasses
                         NodeAsNotification.Event.Value = CswNbtObjClassNotification.EventOption.Edit.ToString();
 
                         NodeAsNotification.SubscribedUsers.AddUser( NodeAsRequest.Requestor.RelatedNodeId );
-                        string MessageText = "";
-                        if( Type.Value == Types.Dispense.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: true, DoLocation: true,
-                                                                   DoQuantity: true, DoSize: false, DoCount: false );
-                        }
-                        else if( Type.Value == Types.RequestBySize.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: false,
-                                                                   DoLocation: true, DoQuantity: false, DoSize: true,
-                                                                   DoCount: true );
-                        }
-                        else if( Type.Value == Types.RequestByBulk.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: false,
-                                                                   DoLocation: true, DoQuantity: true, DoSize: false,
-                                                                   DoCount: false );
-                        }
-                        else if( Type.Value == Types.Move.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: false, DoContainer: true,
-                                                                   DoLocation: true, DoQuantity: false, DoSize: false,
-                                                                   DoCount: false );
-                        }
-                        else if( Type.Value == Types.Dispose.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: false, DoContainer: true,
-                                                                   DoLocation: false, DoQuantity: false, DoSize: false,
-                                                                   DoCount: false );
-                        }
+                        string MessageText = _makeNotificationMessage();
+
                         NodeAsNotification.Message.Text = MessageText;
                         NodeAsNotification.TargetType.SelectedNodeTypeIds.Add( NodeTypeId.ToString() );
                         NodeAsNotification.Property.Value = PropertyName.Status.ToString();
