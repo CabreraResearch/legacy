@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( DataColumn dc in DT.Columns )
             {
                 if( idx > 0 ) Context.Response.Write( "," );
-                Context.Response.Write( "\"" + dc.ColumnName.ToString() + "\"" );
+                Context.Response.Write( "\"" + _csvSafe( dc.ColumnName.ToString() ) + "\"" );
                 idx++;
             }
             Context.Response.Write( "\r\n" );
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
                 foreach( DataColumn dc in DT.Columns )
                 {
                     if( idx > 0 ) Context.Response.Write( "," );
-                    Context.Response.Write( "\"" + dr[dc].ToString() + "\"" );
+                    Context.Response.Write( "\"" + _csvSafe( dr[dc].ToString() ) + "\"" );
                     idx++;
                 }
                 Context.Response.Write( "\r\n" );
@@ -119,6 +119,11 @@ namespace ChemSW.Nbt.WebServices
 
             Context.Response.AddHeader( "Content-Disposition", "attachment; filename=export.csv;" );
             Context.Response.End();
+        }
+        // Need to double " in string values
+        private static string _csvSafe( string str )
+        {
+            return str.Replace( "\"", "\"\"" );
         }
 
         #region Conversion
