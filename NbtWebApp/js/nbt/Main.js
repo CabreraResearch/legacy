@@ -117,6 +117,9 @@ window.initMain = window.initMain || function (undefined) {
                     onModules: function () {
                         handleAction({ 'actionname': 'Modules' });
                     },
+                    onSubmitRequest: function () {
+                        handleAction({ 'actionname': 'Submit_Request' });
+                    },
                     onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
                     },
@@ -1157,6 +1160,10 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.actions.sessions(centerTopDiv);
                 break;
 
+            case 'Submit_Request':
+                Csw.actions.submitRequest(centerTopDiv);
+                break;
+                
             case 'View_Scheduled_Rules':
                 var rulesOpt = {
                     exitFunc: function () {

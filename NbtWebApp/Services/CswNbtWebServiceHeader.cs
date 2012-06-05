@@ -162,7 +162,8 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtActSubmitRequest RequestAction = new CswNbtActSubmitRequest( _CswNbtResources );
                 if( RequestAction.CartCount > 0 )
                 {
-                    Ret["Cart (" + RequestAction.CartCount + ")"] = "Submit Request";
+                    Ret["Cart (" + RequestAction.CartCount + ")"] = new JObject();
+                    Ret["Cart (" + RequestAction.CartCount + ")"]["action"] = "Submit_Request";
                 }
             }
 

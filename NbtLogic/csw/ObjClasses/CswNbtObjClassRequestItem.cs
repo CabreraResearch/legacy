@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Mail;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -98,7 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ); }
         }
 
         #region Inherited Events
@@ -107,47 +108,41 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
-        private string _makeNotificationMessage( bool DoMaterial, bool DoContainer, bool DoQuantity, bool DoLocation, bool DoSize, bool DoCount )
+        private string _makeNotificationMessage()
         {
-            string MessageText = "The Status for this Request Item has changed to: [Status]. /n";
+            string MessageText = "The Status for this Request Item has changed to: " + Status.Value + ". /n";
 
-            if( DoMaterial )
+            CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+            if( null != NodeAsMaterial )
             {
-                CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-                if( null != NodeAsMaterial )
-                {
-                    MessageText += "Material: " + NodeAsMaterial.TradeName + "/n";
-                }
+                MessageText += "Material: " + NodeAsMaterial.TradeName + "/n";
             }
-            if( DoContainer )
+
+            CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+            if( null != NodeAsContainer )
             {
-                CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                if( null != NodeAsContainer )
-                {
-                    MessageText += "Container: " + NodeAsContainer.Node.NodeName + "/n";
-                }
+                MessageText += "Container: " + NodeAsContainer.Node.NodeName + "/n";
             }
-            if( DoQuantity )
+
+            if( Quantity.Quantity > 0 )
             {
-                MessageText += "Quantity: " + Quantity.Quantity;
+                MessageText += "Quantity: " + Quantity.Quantity + ", Unit: " + Quantity.CachedUnitName + "/n";
             }
-            if( DoSize )
+            if( false == string.IsNullOrEmpty( Size.CachedNodeName ) )
             {
-                MessageText += "Size: " + Size.CachedNodeName;
+                MessageText += "Size: " + Size.CachedNodeName + "/n";
             }
-            if( DoCount )
+            if( Count.Quantity > 0 )
             {
-                MessageText += "Count: " + Count.Quantity;
+                MessageText += "Count: " + Count.Quantity + "/n";
             }
-            if( DoLocation )
+            CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.RelatedNodeId );
+            if( null != NodeAsLocation )
             {
-                CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.RelatedNodeId );
-                if( null != NodeAsLocation )
-                {
-                    MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
-                                   NodeAsLocation.Name + "/n";
-                }
+                MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
+                                NodeAsLocation.Name + "/n";
             }
+
 
             return MessageText;
         }
@@ -155,62 +150,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             _CswNbtObjClassDefault.afterCreateNode();
-            CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
-            if( null != NodeAsRequest && null != NodeAsRequest.Requestor.RelatedNodeId )
-            {
-                CswNbtMetaDataObjectClass NotificationOc =
-                    _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-                if( null != NotificationOc )
-                {
-                    CswNbtMetaDataNodeType NotificationNt = NotificationOc.getNodeTypes().FirstOrDefault();
-                    if( null != NotificationNt )
-                    {
-                        CswNbtNode NotificationNode =
-                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NotificationNt.NodeTypeId,
-                                                                          CswNbtNodeCollection.MakeNodeOperation.
-                                                                              WriteNode );
-                        CswNbtObjClassNotification NodeAsNotification = NotificationNode;
-                        NodeAsNotification.Event.Value = CswNbtObjClassNotification.EventOption.Edit.ToString();
-
-                        NodeAsNotification.SubscribedUsers.AddUser( NodeAsRequest.Requestor.RelatedNodeId );
-                        string MessageText = "";
-                        if( Type.Value == Types.Dispense.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: true, DoLocation: true,
-                                                                   DoQuantity: true, DoSize: false, DoCount: false );
-                        }
-                        else if( Type.Value == Types.RequestBySize.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: false,
-                                                                   DoLocation: true, DoQuantity: false, DoSize: true,
-                                                                   DoCount: true );
-                        }
-                        else if( Type.Value == Types.RequestByBulk.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: true, DoContainer: false,
-                                                                   DoLocation: true, DoQuantity: true, DoSize: false,
-                                                                   DoCount: false );
-                        }
-                        else if( Type.Value == Types.Move.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: false, DoContainer: true,
-                                                                   DoLocation: true, DoQuantity: false, DoSize: false,
-                                                                   DoCount: false );
-                        }
-                        else if( Type.Value == Types.Dispose.ToString() )
-                        {
-                            MessageText = _makeNotificationMessage( DoMaterial: false, DoContainer: true,
-                                                                   DoLocation: false, DoQuantity: false, DoSize: false,
-                                                                   DoCount: false );
-                        }
-                        NodeAsNotification.Message.Text = MessageText;
-                        NodeAsNotification.TargetType.SelectedNodeTypeIds.Add( NodeTypeId.ToString() );
-                        NodeAsNotification.Property.Value = PropertyName.Status.ToString();
-                        NodeAsNotification.Subject.Text = Node.NodeName + "'s Request Item Status has Changed to [Status]";
-                        NodeAsNotification.postChanges( true );
-                    }
-                }
-            }
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -229,15 +168,31 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                 if( null == NodeAsContainer )
                 {
-                    throw new CswDniException( ErrorType.Error, "A " + Type.Value + " type of Request Item requires a valid Container.", "Attempted to edit node without a valid Container relationship." );
+                    throw new CswDniException( ErrorType.Warning, "A " + Type.Value + " type of Request Item requires a valid Container.", "Attempted to edit node without a valid Container relationship." );
                 }
                 CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( NodeAsContainer.Location.NodeId );
                 if( null != NodeAsLocation && NodeAsRequest.InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
                 {
-                    throw new CswDniException( ErrorType.Error, "For a " + Type.Value + " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.", "Attempted to edit node without matching Container and Request Inventory Group relationships." );
+                    throw new CswDniException( ErrorType.Warning, "For a " + Type.Value + " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.", "Attempted to edit node without matching Container and Request Inventory Group relationships." );
                 }
             }
 
+            if( Status.WasModified &&
+                Status.Value != Statuses.Pending.ToString() &&
+                null != NodeAsRequest &&
+                null != NodeAsRequest.Requestor.RelatedNodeId )
+            {
+                CswNbtObjClassUser RequestorAsUser = _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
+                if( null != RequestorAsUser )
+                {
+                    string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
+                    string Message = _makeNotificationMessage();
+                    string Recipient = RequestorAsUser.Email;
+                    Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
+                                                                                                Recipient );
+                    _CswNbtResources.sendEmailNotification( EmailMessage );
+                }
+            }
 
         }//beforeWriteNode()
 

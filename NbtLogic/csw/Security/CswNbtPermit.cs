@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.Security
                                 // You can't edit readonly properties
                                 if( ret &&
                                     Permission != NodeTypePermission.View &&
-                                    MetaDataProp.ReadOnly )
+                                    MetaDataProp.ReadOnly && false == MetaDataProp.AllowReadOnlyAdd ) /* Case 24514. Conditionally Permit edit on create. */
                                 {
                                     ret = false;
                                 }

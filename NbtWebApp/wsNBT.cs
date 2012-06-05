@@ -314,6 +314,9 @@ namespace ChemSW.Nbt.WebServices
             string TempPassword = string.Empty;
             CswNbtObjClassCustomer NodeAsCustomer = ws.openCswAdminOnTargetSchema( PropId, ref TempPassword );
 
+            // case 26549 - we need to remove the old session
+            _CswSessionResources.CswSessionManager.clearSession( ExpireCookie: false );
+
             AuthenticationStatus = _authenticate( NodeAsCustomer.CompanyID.Text, CswNbtObjClassUser.ChemSWAdminUsername, TempPassword, false );
 
             if( AuthenticationStatus != AuthenticationStatus.Authenticated )
@@ -322,7 +325,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             return AuthenticationStatus;
-        }
+        } // _doCswAdminAuthenticate()
 
         // Authenticates and sets up resources for an accessid and user
         private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )

@@ -16,11 +16,13 @@ namespace ChemSW.Nbt.Schema
             #region NodeTypes
 
             CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-            CswNbtMetaDataNodeType RequestNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request" );
+            string RequestNodeTypeName = "Request";
+            CswNbtMetaDataNodeType RequestNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( RequestNodeTypeName );
 
             if( null != RequestNt && RequestNt.ObjectClassId != RequestOc.ObjectClassId )
             {
-                RequestNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "CISPro Request" );
+                RequestNodeTypeName = "CISPro Request";
+                RequestNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( RequestNodeTypeName );
             }
             if( null != RequestNt && RequestNt.ObjectClassId != RequestOc.ObjectClassId )
             {
@@ -31,7 +33,7 @@ namespace ChemSW.Nbt.Schema
                 RequestNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RequestOc )
                                                                      {
                                                                          Category = "Requests",
-                                                                         NodeTypeName = "Request"
+                                                                         NodeTypeName = RequestNodeTypeName
                                                                      } );
 
             }
@@ -39,11 +41,13 @@ namespace ChemSW.Nbt.Schema
             RequestNt.addNameTemplateText( NameNtp.PropName );
 
             CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-            CswNbtMetaDataNodeType RequestItemNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Request Item" );
+            string RequestItemNodeTypeName = "Request Item";
+            CswNbtMetaDataNodeType RequestItemNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( RequestItemNodeTypeName );
 
             if( null != RequestItemNt && RequestItemNt.ObjectClassId != RequestItemOc.ObjectClassId )
             {
-                RequestNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "CISPro Request Item" );
+                RequestItemNodeTypeName = "CISPro Request Item";
+                RequestNt = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( RequestItemNodeTypeName );
             }
             if( null != RequestItemNt && RequestItemNt.ObjectClassId != RequestItemOc.ObjectClassId )
             {
@@ -54,7 +58,7 @@ namespace ChemSW.Nbt.Schema
                 RequestItemNt = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RequestItemOc )
                                                                      {
                                                                          Category = "Requests",
-                                                                         NodeTypeName = "Request Item"
+                                                                         NodeTypeName = RequestItemNodeTypeName
                                                                      } );
             }
             CswNbtMetaDataNodeTypeProp RequestItemRequestNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
