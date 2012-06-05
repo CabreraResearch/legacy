@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.Actions
             CartView = _SystemViews.SystemView;
             _RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
             _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+            refreshCartCount();
         }
 
         #endregion Constructor
