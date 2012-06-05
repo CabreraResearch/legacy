@@ -4,7 +4,7 @@
 namespace ChemSW.Nbt.PropertySets
 {
     /// <summary>
-    /// Defines nodetypes that can be the target of a Generator.
+    /// Defines nodetypes that participate in Ordering.
     /// </summary>
     public interface ICswNbtPropertySetRequest
     {
