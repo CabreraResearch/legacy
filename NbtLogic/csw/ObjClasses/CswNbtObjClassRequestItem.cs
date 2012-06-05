@@ -168,12 +168,12 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
                 if( null == NodeAsContainer )
                 {
-                    throw new CswDniException( ErrorType.Error, "A " + Type.Value + " type of Request Item requires a valid Container.", "Attempted to edit node without a valid Container relationship." );
+                    throw new CswDniException( ErrorType.Warning, "A " + Type.Value + " type of Request Item requires a valid Container.", "Attempted to edit node without a valid Container relationship." );
                 }
                 CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( NodeAsContainer.Location.NodeId );
                 if( null != NodeAsLocation && NodeAsRequest.InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
                 {
-                    throw new CswDniException( ErrorType.Error, "For a " + Type.Value + " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.", "Attempted to edit node without matching Container and Request Inventory Group relationships." );
+                    throw new CswDniException( ErrorType.Warning, "For a " + Type.Value + " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.", "Attempted to edit node without matching Container and Request Inventory Group relationships." );
                 }
             }
 
