@@ -63,106 +63,235 @@
     'use strict';
 
 
-//    function CswJqGrid(options, cswParent) {
-//        return (function (options, cswParent) {
-//            'use strict';
-//            var cswPrivate = {
-//                urlMethod: 'getGridTestData',
-//                caption: '',
-//                autowidth: true,   // width is 100% of parent
-//                width: 500,        // use this width if autowidth is false
-//                colNames: [],
-//                colModel: [],
-//                griddata: {}
-//            };
-//            var cswPublic = {};
-//            if (options) $.extend(cswPrivate, options);
+    //    function CswJqGrid(options, cswParent) {
+    //        return (function (options, cswParent) {
+    //            'use strict';
+    //            var cswPrivate = {
+    //                urlMethod: 'getGridTestData',
+    //                caption: '',
+    //                autowidth: true,   // width is 100% of parent
+    //                width: 500,        // use this width if autowidth is false
+    //                colNames: [],
+    //                colModel: [],
+    //                griddata: {}
+    //            };
+    //            var cswPublic = {};
+    //            if (options) $.extend(cswPrivate, options);
 
-//            (function () {
-//                'use strict';
+    //            (function () {
+    //                'use strict';
 
-//                if (Csw.isNullOrEmpty(cswPrivate.griddata)) {
-//                    Csw.ajax.post({
-//                        urlMethod: cswPrivate.urlMethod,
-//                        success: function (data) {
-//                            if (false === Csw.isNullOrEmpty(data.griddata)) {
+    //                if (Csw.isNullOrEmpty(cswPrivate.griddata)) {
+    //                    Csw.ajax.post({
+    //                        urlMethod: cswPrivate.urlMethod,
+    //                        success: function (data) {
+    //                            if (false === Csw.isNullOrEmpty(data.griddata)) {
 
-//                                cswPrivate.colNames = data.colNames;
-//                                cswPrivate.colModel = data.colModel;
-//                                cswPrivate.griddata = data.griddata;
-//                                cswPrivate.initGrid();
+    //                                cswPrivate.colNames = data.colNames;
+    //                                cswPrivate.colModel = data.colModel;
+    //                                cswPrivate.griddata = data.griddata;
+    //                                cswPrivate.initGrid();
 
-//                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
-//                        } // success
-//                    }); // ajax.post()
-//                } else {
-//                    cswPrivate.initGrid();
-//                }
-//            } ());
+    //                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+    //                        } // success
+    //                    }); // ajax.post()
+    //                } else {
+    //                    cswPrivate.initGrid();
+    //                }
+    //            } ());
 
-//            cswPrivate.initGrid = function () {
-//                cswPrivate.gridtable = cswParent.table({ ID: 'gridtable' });
-//                cswPrivate.gridpager = cswParent.div({ ID: 'gridpager' });
+    //            cswPrivate.initGrid = function () {
+    //                cswPrivate.gridtable = cswParent.table({ ID: 'gridtable' });
+    //                cswPrivate.gridpager = cswParent.div({ ID: 'gridpager' });
 
-//                cswPrivate.grid = cswPrivate.gridtable.$.jqGrid({
-//                    datatype: 'local',
-//                    colNames: cswPrivate.colNames,
-//                    colModel: cswPrivate.colModel,
-//                    autowidth: cswPrivate.autowidth,
-//                    width: cswPrivate.width,
-//                    pager: '#' + gridpager.id,
-//                    rowNum: 10,
-//                    rowList: [10, 50, 100],
-//                    sortname: 'invid',
-//                    sortorder: 'desc',
-//                    viewrecords: true,
-//                    gridview: true,
-//                    caption: cswPrivate.caption
-//                });
+    //                cswPrivate.grid = cswPrivate.gridtable.$.jqGrid({
+    //                    datatype: 'local',
+    //                    colNames: cswPrivate.colNames,
+    //                    colModel: cswPrivate.colModel,
+    //                    autowidth: cswPrivate.autowidth,
+    //                    width: cswPrivate.width,
+    //                    pager: '#' + gridpager.id,
+    //                    rowNum: 10,
+    //                    rowList: [10, 50, 100],
+    //                    sortname: 'invid',
+    //                    sortorder: 'desc',
+    //                    viewrecords: true,
+    //                    gridview: true,
+    //                    caption: cswPrivate.caption
+    //                });
 
-//                Csw.each(cswPrivate.griddata.rows, function (thisRow) {
-//                    cswPrivate.grid.addRowData(thisRow.id, thisRow.cell);
-//                }); //each
-//            } // initGrid
+    //                Csw.each(cswPrivate.griddata.rows, function (thisRow) {
+    //                    cswPrivate.grid.addRowData(thisRow.id, thisRow.cell);
+    //                }); //each
+    //            } // initGrid
 
-//            return cswPublic;
-//        } (options, cswParent));
-//    }
+    //            return cswPublic;
+    //        } (options, cswParent));
+    //    }
 
-//    $(document).ready(function () {
-//        var div = Csw.literals.factory($('#CenterTopDiv'));
-//        CswJqGrid({}, div);
-//    }); // document.ready()
+    //    $(document).ready(function () {
+    //        var div = Csw.literals.factory($('#CenterTopDiv'));
+    //        CswJqGrid({}, div);
+    //    }); // document.ready()
 
+    //from: http://docs.sencha.com/ext-js/4-1/source/PagingMemoryProxy.html#Ext-ux-data-PagingMemoryProxy
+    /**
+    * @class Ext.ux.data.PagingMemoryProxy
+    * @extends Ext.data.proxy.Memory
+    * <p>Paging Memory Proxy, allows to use paging grid with in memory dataset</p>
+    */
+    Ext.define('Ext.ux.data.PagingMemoryProxy', {
+        extend: 'Ext.data.proxy.Memory',
+        alias: 'proxy.pagingmemory',
+        alternateClassName: 'Ext.data.PagingMemoryProxy',
 
-    function cswExtJsGrid(options, cswParent)
-    {
-        return (function(options, cswParent) {
+        read: function (operation, callback, scope) {
+            var reader = this.getReader(),
+            result = reader.read(this.data),
+            sorters, filters, sorterFn, records;
+
+            scope = scope || this;
+            // filtering
+            filters = operation.filters;
+            if (filters.length > 0) {
+                //at this point we have an array of  Ext.util.Filter objects to filter with,
+                //so here we construct a function that combines these filters by ANDing them together
+                records = [];
+
+                Ext.each(result.records, function (record) {
+                    var isMatch = true,
+                    length = filters.length,
+                    i;
+
+                    for (i = 0; i < length; i++) {
+                        var filter = filters[i],
+                        fn = filter.filterFn,
+                        scope = filter.scope;
+
+                        isMatch = isMatch && fn.call(scope, record);
+                    }
+                    if (isMatch) {
+                        records.push(record);
+                    }
+                }, this);
+
+                result.records = records;
+                result.totalRecords = result.total = records.length;
+            }
+
+            // sorting
+            sorters = operation.sorters;
+            if (sorters.length > 0) {
+                //construct an amalgamated sorter function which combines all of the Sorters passed
+                sorterFn = function (r1, r2) {
+                    var result = sorters[0].sort(r1, r2),
+                    length = sorters.length,
+                    i;
+
+                    //if we have more than one sorter, OR any additional sorter functions together
+                    for (i = 1; i < length; i++) {
+                        result = result || sorters[i].sort.call(this, r1, r2);
+                    }
+
+                    return result;
+                };
+
+                result.records.sort(sorterFn);
+            }
+
+            // paging (use undefined cause start can also be 0 (thus false))
+            if (operation.start !== undefined && operation.limit !== undefined) {
+                result.records = result.records.slice(operation.start, operation.start + operation.limit);
+                result.count = result.records.length;
+            }
+
+            Ext.apply(operation, {
+                resultSet: result
+            });
+
+            operation.setCompleted();
+            operation.setSuccessful();
+
+            Ext.Function.defer(function () {
+                Ext.callback(callback, scope, [operation]);
+            }, 10);
+        }
+    });
+
+    Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
+    function cswExtJsGrid(options, cswParent) {
+        return (function (options, cswParent) {
             var cswPrivate = {
                 ID: 'extjsGrid',
                 title: 'Untitled Grid',
                 viewid: '',
                 nodekey: '',
-                IncludeInQuickLaunch: true, 
+                IncludeInQuickLaunch: true,
                 readonly: false,
+                stateId: '',
+
+                showActionColumn: true,
+                onEdit: null,   // function(nodeid, nodekey)
+                onDelete: null, // function(nodeid, nodekey)
+
+                maxHeight: '',
+                height: 300,  // overridden by webservice
+                width: 600,
+
                 urlMethod: 'runGrid',
                 storeId: '',
-                height: 300,
-                width: 600,
-                fields: [],   // [ col1, col2, ... ]
+                dataPrefix: 'val_',
+
+                fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
                 columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
-                data: {}      // { items: [ { col1: val, col2: val ... }, ... ]
+                data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
+                pageSize: ''  // overridden by webservice
             };
             var cswPublic = {};
-            
-            cswPrivate.initGrid = function() {
+
+            cswPrivate.initGrid = function () {
+
+                if (cswPrivate.showActionColumn) {
+                    cswPrivate.fields[cswPrivate.fields.length] = { name: 'edit' };
+                    cswPrivate.columns[cswPrivate.columns.length] = {
+                        header: 'Edit',
+                        dataIndex: 'edit',
+                        xtype: 'actioncolumn',
+                        items: [{
+                            icon: 'js/thirdparty/extjs-4.1.0/examples/shared/icons/fam/cog_edit.png',  // Use a URL in the icon config
+                            tooltip: 'Edit',
+                            handler: function (grid, rowIndex, colIndex) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                Csw.tryExec(cswPrivate.onEdit,
+                                            rec.data[cswPrivate.dataPrefix + 'nodeid'],
+                                            rec.data[cswPrivate.dataPrefix + 'nodekey']);
+                            }
+                        },
+                        {
+                            icon: 'js/thirdparty/extjs-4.1.0/examples/restful/images/delete.png',
+                            tooltip: 'Delete',
+                            handler: function (grid, rowIndex, colIndex) {
+                                var rec = grid.getStore().getAt(rowIndex);
+                                Csw.tryExec(cswPrivate.onDelete,
+                                            rec.data[cswPrivate.dataPrefix + 'nodeid'],
+                                            rec.data[cswPrivate.dataPrefix + 'nodekey']);
+                            }
+                        }]
+                    };
+                } // if (cswPrivate.showActionColumn)
+
                 cswPrivate.storeId = cswPrivate.ID + 'store';
+                if (false === Csw.isNullOrEmpty(cswPrivate.maxHeight) && cswPrivate.height > cswPrivate.maxHeight) {
+                    cswPrivate.height = cswPrivate.maxHeight;
+                }
                 var gridStore = Ext.create('Ext.data.Store', {
                     storeId: cswPrivate.storeId,
                     fields: cswPrivate.fields,
                     data: cswPrivate.data,
+                    pageSize: cswPrivate.pageSize,
                     proxy: {
-                        type: 'memory',
+                        type: 'pagingmemory',
                         reader: {
                             type: 'json',
                             root: 'items'
@@ -170,37 +299,57 @@
                     }
                 });
 
+                gridStore.loadPage(1);
+
                 // Apparently there's a race condition between creating the store and using it?
-                setTimeout(function() {
-                
+                setTimeout(function () {
+
                     Ext.create('Ext.grid.Panel', {
                         title: cswPrivate.title,
                         store: gridStore,
                         columns: cswPrivate.columns,
                         height: cswPrivate.height,
                         width: cswPrivate.width,
+                        stateful: true,
+                        stateId: cswPrivate.stateId,
+                        dockedItems: [{
+                            xtype: 'pagingtoolbar',
+                            store: gridStore,
+                            dock: 'bottom',
+                            displayInfo: true
+                        }],
                         renderTo: cswParent.getId()
                     });
-                
+
                 }, 50);
 
             }; // initGrid()
 
             //constructor
             (function () {
-                if(options) $.extend(cswPrivate, options);
-                
-                if(Csw.isNullOrEmpty(cswPrivate.data)) {
+                if (options) $.extend(cswPrivate, options);
+
+                if(Csw.isNullOrEmpty(cswPrivate.stateId)) {
+                    cswPrivate.stateId = cswPrivate.viewid;
+                }
+
+                if (Csw.isNullOrEmpty(cswPrivate.data)) {
                     Csw.ajax.post({
                         urlMethod: cswPrivate.urlMethod,
                         data: {
-                            ViewId: cswPrivate.viewid, 
-                            IncludeNodeKey: cswPrivate.nodekey, 
-                            IncludeInQuickLaunch: cswPrivate.IncludeInQuickLaunch, 
+                            ViewId: cswPrivate.viewid,
+                            IncludeNodeKey: cswPrivate.nodekey,
+                            IncludeInQuickLaunch: cswPrivate.IncludeInQuickLaunch,
                             ForReport: cswPrivate.readonly
                         },
                         success: function (result) {
                             if (false === Csw.isNullOrEmpty(result.grid)) {
+                                cswPrivate.pageSize = Csw.number(result.grid.pageSize);
+                                cswPrivate.height = 25 + // title bar
+                                                    23 + // grid header
+                                                    (cswPrivate.pageSize * 22) + // rows
+                                                    14 + // horizontal scrollbar
+                                                    27;  // grid footer
                                 cswPrivate.fields = result.grid.fields;
                                 cswPrivate.columns = result.grid.columns;
                                 cswPrivate.data = result.grid.data;
@@ -212,46 +361,49 @@
                 } else {
                     cswPrivate.initGrid();
                 }
-            }());
-        
+            } ());
+
             return cswPublic;
-        }(options, cswParent));
+        } (options, cswParent));
     }
 
     $(document).ready(function () {
 
-        var testdata = { 
-                 fields:['name', 'email', 'phone'],
-                 columns:  [
-                     { header: 'Name',  dataIndex: 'name' },
+        var testdata = {
+            fields: ['name', 'email', 'phone'],
+            columns: [
+                     { header: 'Name', dataIndex: 'name' },
                      { header: 'Email', dataIndex: 'email', flex: 1 },
                      { header: 'Phone', dataIndex: 'phone' }
                  ],
-                 data:{'items':[
-                     { 'name': 'Lisa',  'email':'lisa@simpsons.com',  'phone':'555-111-1224'  },
-                     { 'name': 'Bart',  'email':'bart@simpsons.com',  'phone':'555-222-1234' },
-                     { 'name': 'Homer', 'email':'home@simpsons.com',  'phone':'555-222-1244'  },
-                     { 'name': 'Marge', 'email':'marge@simpsons.com', 'phone':'555-222-1254'  }
-                 ]}
-             };
+            data: { 'items': [
+                     { 'name': 'Lisa', 'email': 'lisa@simpsons.com', 'phone': '555-111-1224' },
+                     { 'name': 'Bart', 'email': 'bart@simpsons.com', 'phone': '555-222-1234' },
+                     { 'name': 'Homer', 'email': 'home@simpsons.com', 'phone': '555-222-1244' },
+                     { 'name': 'Marge', 'email': 'marge@simpsons.com', 'phone': '555-222-1254' }
+                 ]
+            }
+        };
 
         var div = Csw.literals.factory($('#CenterTopDiv'));
 
-        cswExtJsGrid({ 
+        cswExtJsGrid({
 
-//            title: 'Simpsons Test Data',
-//            fields: testdata.fields,
-//            columns: testdata.columns,
-//            data: testdata.data,
+            //            title: 'Simpsons Test Data',
+            //            fields: testdata.fields,
+            //            columns: testdata.columns,
+            //            data: testdata.data,
 
-//            title: 'Equipment List',
-//            viewid: 'viewid_195',
+            //            title: 'Equipment List',
+            //            viewid: 'viewid_195',
 
             title: 'Tasks: Open',
             viewid: 'viewid_194',
 
             urlMethod: 'runGridTest',
-            width: 700
+            width: 800,
+            onEdit: function (nodeid, nodekey) { Csw.log('editing: ' + nodeid); },
+            onDelete: function (nodeid, nodekey) { Csw.log('deleting: ' + nodeid); }
         }, div);
     });
 
