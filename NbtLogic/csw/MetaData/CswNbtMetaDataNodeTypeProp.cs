@@ -571,6 +571,7 @@ namespace ChemSW.Nbt.MetaData
                 _setAttribute( "valuepropid", value, false );
             }
         }
+
         public string ValuePropType
         {
             get { return _NodeTypePropRow["valueproptype"].ToString(); }
@@ -953,6 +954,14 @@ namespace ChemSW.Nbt.MetaData
         //        _setAttribute( "setvalonadd", value, true );
         //    }
         //}
+        public bool AllowReadOnlyAdd
+        {
+            get
+            {
+                return _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.Add &&
+                       null != AddLayout;
+            }
+        }
 
         public bool SetValueOnAddEnabled
         {
