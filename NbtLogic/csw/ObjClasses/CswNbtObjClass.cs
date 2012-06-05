@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterCreateNode();
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterWriteNode();
-        public abstract void beforeDeleteNode();
+        public abstract void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false);
         public abstract void afterDeleteNode();
         public abstract void afterPopulateProps();
         public abstract bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message );
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
             public static explicit operator NbtButtonAction( string str )
             {
                 NbtButtonAction ret = Parse( str );
-                return ( ret != null ) ? ret : NbtButtonAction.Unknown;
+                return ret ?? Unknown;
             }
             public static readonly NbtButtonAction Unknown = new NbtButtonAction( "Unknown" );
 
