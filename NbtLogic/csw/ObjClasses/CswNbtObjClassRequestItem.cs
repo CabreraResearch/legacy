@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Mail;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -149,34 +150,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterCreateNode()
         {
             _CswNbtObjClassDefault.afterCreateNode();
-            CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
-            if( null != NodeAsRequest && null != NodeAsRequest.Requestor.RelatedNodeId )
-            {
-                CswNbtMetaDataObjectClass NotificationOc =
-                    _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.NotificationClass );
-                if( null != NotificationOc )
-                {
-                    CswNbtMetaDataNodeType NotificationNt = NotificationOc.getNodeTypes().FirstOrDefault();
-                    if( null != NotificationNt )
-                    {
-                        CswNbtNode NotificationNode =
-                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NotificationNt.NodeTypeId,
-                                                                          CswNbtNodeCollection.MakeNodeOperation.
-                                                                              WriteNode );
-                        CswNbtObjClassNotification NodeAsNotification = NotificationNode;
-                        NodeAsNotification.Event.Value = CswNbtObjClassNotification.EventOption.Edit.ToString();
-
-                        NodeAsNotification.SubscribedUsers.AddUser( NodeAsRequest.Requestor.RelatedNodeId );
-                        string MessageText = _makeNotificationMessage();
-
-                        NodeAsNotification.Message.Text = MessageText;
-                        NodeAsNotification.TargetType.SelectedNodeTypeIds.Add( NodeTypeId.ToString() );
-                        NodeAsNotification.Property.Value = PropertyName.Status.ToString();
-                        NodeAsNotification.Subject.Text = Node.NodeName + "'s Request Item Status has Changed to [Status]";
-                        NodeAsNotification.postChanges( true );
-                    }
-                }
-            }
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -204,6 +177,22 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            if( Status.WasModified &&
+                Status.Value != Statuses.Pending.ToString() &&
+                null != NodeAsRequest &&
+                null != NodeAsRequest.Requestor.RelatedNodeId )
+            {
+                CswNbtObjClassUser RequestorAsUser = _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
+                if( null != RequestorAsUser )
+                {
+                    string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
+                    string Message = _makeNotificationMessage();
+                    string Recipient = RequestorAsUser.Email;
+                    Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
+                                                                                                Recipient );
+                    _CswNbtResources.sendEmailNotification( EmailMessage );
+                }
+            }
 
         }//beforeWriteNode()
 
