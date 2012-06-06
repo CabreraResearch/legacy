@@ -230,9 +230,9 @@
                             cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
                                 function validateNode(className) {
                                     if (-1 !== className.indexOf('csw-grid-edit')) {
-                                        Csw.nbt.gridViewMethod.editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh );
+                                        Csw.nbt.gridViewMethods.editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh );
                                     } else if (-1 !== className.indexOf('csw-grid-delete')) {
-                                        Csw.nbt.gridViewMethod.deleteRows(rowid, ret, o.onDeleteNode);
+                                        Csw.nbt.gridViewMethods.deleteRows(rowid, ret, o.onDeleteNode);
                                     }
                                 }
                                 cswPrivate.selectedRowId = rowid;
@@ -250,13 +250,13 @@
                         /* We need this to be defined upfront for multi-edit */
                         cswGridOpts.optNavEdit = {
                             editfunc: function (rowid) {
-                                return Csw.nbt.gridViewMethod.editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh);
+                                return Csw.nbt.gridViewMethods.editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh);
                             }
                         };
 
                         cswGridOpts.optNavDelete = {
                             delfunc: function (rowid) {
-                                return Csw.nbt.gridViewMethod.deleteRows(rowid, ret, o.onDeleteNode);
+                                return Csw.nbt.gridViewMethods.deleteRows(rowid, ret, o.onDeleteNode);
                             }
                         };
 
