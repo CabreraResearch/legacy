@@ -7,79 +7,65 @@
         Csw.actions.register('submitRequest', function (cswParent, options) {
             'use strict';
             var cswPublic = {};
-            var cswPrivate = {};
-            try {
-                if (Csw.isNullOrEmpty(cswParent)) {
-                    Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
-                }
-                cswPrivate.urlMethod = 'getCurrentRequest';
-                cswPrivate.ID = 'CswSubmitRequest';
+            var cswPrivate = {
+                urlMethod: 'getCurrentRequest',
+                ID: 'CswSubmitRequest',
+                onSubmit: null,
+                onCancel: null,
+                gridOpts: {}
+            };
 
+            if (Csw.isNullOrEmpty(cswParent)) {
+                Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
+            }
+            Csw.tryExec(function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    $.extend(true, cswPrivate, options);
                 }
 
                 cswParent.empty();
+                cswPrivate.action = Csw.layouts.action(cswParent, {
+                    Title: 'Submit Request',
+                    FinishText: 'Submit',
+                    onFinish: cswPrivate.onSubmit,
+                    onCancel: cswPrivate.onCancel
+                });
+                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' });
 
-                cswPrivate = {
-                    urlMethod: 'getCurrentRequest',
-                    ID: 'CswSubmitRequest',
-                    /* Csw.grid specific options */
-                    gridOpts: {
-                        autowidth: false,
-                        rowNum: 10,
-                        width: 600,
-                        height: 'auto'
-                    },
-                    pagermode: 'default',
-                    optNav: {
-                        add: false,
-                        view: false,
-                        del: false,
-                        refresh: false,
-                        edit: false
-                    },
-                    optNavEdit: {
-                        editfunc: function (rowid) {
-
-                        }
-                    }
-                    /* End Csw.grid specific options */
-                };
+                cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
+                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 1).div({ ID: cswPrivate.gridId });
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.urlMethod,
                     data: {},
                     success: function (gridJson) {
-                        try {
-                            if (Csw.isNullOrEmpty(gridJson.jqGridOpt)) {
-                                Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
-                            }
-                            cswParent.empty();
-                            var inspGridId = cswPrivate.ID + '_csw_requestGrid_outer';
-
-                            cswPrivate.actionTbl = cswParent.table({ ID: cswPrivate.ID + '_tbl' }).css({'text-align': 'center'});
-                            cswPrivate.actionTbl.cell(3, 3);
-
+                        if (Csw.isNullOrEmpty(gridJson.jqGridOpt)) {
+                            Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
+                        }
+                        Csw.tryExec(function () {
                             $.extend(true, cswPrivate.gridOpts, gridJson.jqGridOpt);
+                            cswPrivate.resizeWithParent = true;
+                            cswPrivate.resizeWithParentElement = cswPrivate.action.actionDiv.$;
+                            cswPrivate.gridOpts.rowNum = 10;
+                            cswPrivate.gridOpts.height = 180;
+                            cswPrivate.gridOpts.caption = 'Your Cart';
+                            cswPrivate.gridOpts.pagermode = 'default';
+                            cswPrivate.gridOpts.optNav = {
+                                add: false,
+                                view: false,
+                                del: false,
+                                refresh: false,
+                                edit: false
+                            };
                             cswPrivate.gridOpts.data = gridJson.data.rows;
-
-                            cswPublic.gridParent = cswPrivate.actionTbl.cell(2, 2).div({ ID: inspGridId });
 
                             cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
                             Csw.nbt.gridViewMethods.makeActionColumnButtons(cswPublic.grid);
-                        }
-                        catch (exception) {
-                            Csw.error.catchException(exception);
-                        }
+                        });
                     } // success
                 });
 
-
-            }
-            catch (exception) {
-                Csw.error.catchException(exception);
-            }
+            });
             return cswPublic;
         });
 } ());
