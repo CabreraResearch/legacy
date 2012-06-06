@@ -56,7 +56,7 @@
                     relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
                 var foundSelected = false;
-                Csw.crawlObject(options, function(relatedObj) {
+                Csw.crawlObject(options, function (relatedObj) {
                     if (relatedObj.id === selectedNodeId) {
                         foundSelected = true;
                     }
@@ -78,22 +78,23 @@
                     selectBox.addClass("required");
                 }
 
-                propDiv.$.hover(function(event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
+                propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
             }
         },
         save: function (o) {
+            if (false === Csw.bool(o.propData.readonly)) {
+                var attributes = {
+                    value: o.propDiv.find('#' + o.ID + '_qty').val(),
+                    nodeid: null
+                };
 
-            var attributes = {
-                value: o.propDiv.find('#' + o.ID + '_qty').val(),
-                nodeid: null
-            };
+                var selectBox = o.propDiv.find('select');
+                if (false === Csw.isNullOrEmpty(selectBox)) {
+                    attributes.nodeid = selectBox.val();
+                }
 
-            var selectBox = o.propDiv.find('select');
-            if (false === Csw.isNullOrEmpty(selectBox)) {
-                attributes.nodeid = selectBox.val();
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
-
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
 
