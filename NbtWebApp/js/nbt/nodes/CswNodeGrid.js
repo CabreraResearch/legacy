@@ -100,17 +100,17 @@
 
                     function validateNode(className) {
                         if (-1 !== className.indexOf('csw-grid-edit')) {
-                            Csw.nbt.gridViewMethod.editRows(e.rowid, e.grid, e.onEditNode, e.onEditView, e.onRefresh);
+                            Csw.nbt.gridViewMethods.editRows(e.rowid, e.grid, e.onEditNode, e.onEditView, e.onRefresh);
                         } else if (-1 !== className.indexOf('csw-grid-delete')) {
-                            Csw.nbt.gridViewMethod.deleteRows(e.rowid, e.grid, e.onDeleteNode);
+                            Csw.nbt.gridViewMethods.deleteRows(e.rowid, e.grid, e.onDeleteNode);
                         }
                     }
                     //cswPrivate.selectedRowId = rowid;
-                    if (false === isMulti) {
+                    if (false === e.isMulti) {
                         if (Csw.contains(e.eventObj, 'toElement') && Csw.contains(e.eventObj.toElement, 'className')) {
-                            validateNode(e.eventObj.toElement.className);
+                            Csw.tryExec(validateNode, e.eventObj.toElement.className);
                         } else if (Csw.contains(e.eventObj, 'target') && Csw.isString(e.eventObj.target.className)) {
-                            validateNode(e.eventObj.target.className);
+                            Csw.tryExec(validateNode, e.eventObj.target.className);
                         }
                     }
                     return true;
@@ -228,22 +228,17 @@
                             cswGridOpts.gridOpts.canEdit = false;
                             cswGridOpts.gridOpts.canDelete = false;
                             cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
-                                function validateNode(className) {
-                                    if (-1 !== className.indexOf('csw-grid-edit')) {
-                                        Csw.nbt.gridViewMethods.editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh );
-                                    } else if (-1 !== className.indexOf('csw-grid-delete')) {
-                                        Csw.nbt.gridViewMethods.deleteRows(rowid, ret, o.onDeleteNode);
-                                    }
-                                }
                                 cswPrivate.selectedRowId = rowid;
-                                if (false === isMulti) {
-                                    if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
-                                        validateNode(eventObj.toElement.className);
-                                    } else if (Csw.contains(eventObj, 'target') && Csw.isString(eventObj.target.className)) {
-                                        validateNode(eventObj.target.className);
-                                    }
-                                }
-                                return true;
+                                return Csw.nbt.gridViewMethods.bindActionEvents({                                    
+                                    rowid: rowid,
+                                    eventObj: eventObj,
+                                    grid: ret,
+                                    isMulti: isMulti,
+                                    onEditNode: o.onEditNode,
+                                    onEditView: o.onEditView,
+                                    onRefresh: o.onRefresh,
+                                    onDeleteNode: o.onDeleteNode                                                       
+                                });    
                             };
 
                         }

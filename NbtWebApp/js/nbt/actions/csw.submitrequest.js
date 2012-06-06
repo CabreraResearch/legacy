@@ -85,6 +85,14 @@
                                 refresh: false,
                                 edit: false
                             };
+                            cswPrivate.gridOpts.beforeSelectRow = function (rowid, eventObj) {
+                                cswPrivate.selectedRowId = rowid;
+                                return Csw.nbt.gridViewMethods.bindActionEvents({
+                                    rowid: rowid,
+                                    eventObj: eventObj,
+                                    grid: cswPublic.grid
+                                });
+                            };
                             cswPrivate.gridOpts.data = json.data.rows;
 
                             cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
