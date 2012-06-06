@@ -220,12 +220,14 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.makeNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "Request Configuration";
-                Ret.ViewMode = NbtViewRenderingMode.Grid;
                 ReInit = true;
             }
             if( ReInit )
             {
+                Ret.Category = "Request Configuration";
+                Ret.Visibility = NbtViewVisibility.Property;
+                Ret.ViewMode = NbtViewRenderingMode.Grid;
+
                 Ret.Root.ChildRelationships.Clear();
                 CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
                 CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
