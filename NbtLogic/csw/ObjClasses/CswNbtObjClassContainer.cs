@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string SourceContainerPropertyName { get { return "Source Container"; } }
         public static string QuantityPropertyName { get { return "Quantity"; } }
         public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
+        public static string SizePropertyName { get { return "Size"; } }
 
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -97,9 +98,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
