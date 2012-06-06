@@ -20,8 +20,6 @@ namespace ChemSW.Nbt.Schema
                 "Size", CswNbtMetaDataFieldType.NbtFieldType.Relationship, IsRequired: true, IsFk: true,
                 FkType: NbtViewRelatedIdType.ObjectClassId.ToString(), FkValue: ocSize.ObjectClassId );
 
-            //materials must have a tradename and supplier
-
         }//Update()
 
     }//class CswUpdateSchemaCase26572
