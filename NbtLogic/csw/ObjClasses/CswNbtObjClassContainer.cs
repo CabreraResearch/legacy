@@ -133,7 +133,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // Disposed == false
             CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( DisposedPropertyName );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, DisposedOCP, false.ToString() );
+
+            //ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, DisposedOCP, Tristate.False.ToString() );
+
+            CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
+            viewProp.ShowInGrid = false;
+            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, Value: Tristate.False.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }

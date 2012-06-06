@@ -4285,8 +4285,8 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceOrdering ws = new CswNbtWebServiceOrdering( _CswNbtResources );
-                ReturnVal = ws.getCurrentRequest();
+                //    CswNbtWebServiceOrdering ws = new CswNbtWebServiceOrdering( _CswNbtResources );
+                //    ReturnVal = ws.getCurrentRequest();
 
                 _deInitResources();
             }

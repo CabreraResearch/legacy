@@ -86,8 +86,8 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514NodeType.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514RequestButton.cs">
       <SubType>Code</SubType>
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25449.cs" />
     </Compile>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25449.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24645.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26111.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase7608.cs" />
