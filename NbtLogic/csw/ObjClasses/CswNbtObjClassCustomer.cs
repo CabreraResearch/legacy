@@ -61,6 +61,18 @@ namespace ChemSW.Nbt.ObjClasses
             OtherResources.release();
         }
 
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassCustomer
+        /// </summary>
+        public static implicit operator CswNbtObjClassCustomer( CswNbtNode Node )
+        {
+            CswNbtObjClassCustomer ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass ) )
+            {
+                ret = (CswNbtObjClassCustomer) Node.ObjClass;
+            }
+            return ret;
+        }
 
         #region Inherited Events
 

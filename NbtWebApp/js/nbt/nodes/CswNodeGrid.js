@@ -1,6 +1,45 @@
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
+(function() {
+    Csw.nbt.gridViewMethods = Csw.nbt.gridViewMethods ||
+        Csw.nbt.register('gridViewMethods', (function() {
+                return {
+                    makeActionColumnButtons: function(grid) {
+                        if (grid) {
+                            var ids = grid.getDataIds();
+                            for (var i = 0; i < ids.length; i += 1) {
+                                var rowId = ids[i];
+                                var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
+                                var buttonStr = '';
+                                if (Csw.contains(cellData, 'islocked')) {
+                                    buttonStr += '<img id="' + rowId + '_locked" src="Images/icons/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
+                                    if (Csw.contains(cellData, 'canview')) {
+                                        buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                    }
+                                } else if (Csw.contains(cellData, 'canedit')) {
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
+                                } else if (Csw.contains(cellData, 'canview')) {
+                                    buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                }
+                                if (buttonStr.length > 0) {
+                                    buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
+                                }
+                                if (Csw.contains(cellData, 'candelete')) {
+                                    buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/trash.gif" class="csw-grid-delete" alt="Delete" title="Delete"/>';
+                                }
+                                /* Case 26506: We only want to change the cell content once. cellData.length isn't good enough, but buttonStr.length should be */
+                                if (buttonStr.length > 0) {
+                                    grid.setRowData(rowId, 'Action', buttonStr);
+                                }
+                            }
+                        }
+                    }
+                };
+            } ())
+        );
+}());
+
 (function ($) {
     "use strict";
     var pluginName = 'CswNodeGrid';
@@ -35,7 +74,7 @@
         }
     }
 
-    function editRows(rowid, grid, func, editViewFunc) {
+    function editRows(rowid, grid, func, editViewFunc, onRefreshFunc) {
         if (Csw.isNullOrEmpty(rowid)) {
             rowid = cswPrivate.selectedRowId;
         }
@@ -50,6 +89,7 @@
             var editFunc = function (opts) {
                 opts.onEditNode = func;
                 opts.onEditView = editViewFunc;
+                opts.onRefresh = onRefreshFunc;
                 Csw.renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
                 Csw.renameProperty(opts, 'nodename', 'nodenames');
                 $.CswDialog('EditNodeDialog', opts);
@@ -80,6 +120,7 @@
                 onDeleteNode: null,
                 onSuccess: null,
                 onEditView: null,
+                onRefresh: null,
                 gridOpts: {
                     multiselect: false
                 },
@@ -162,7 +203,7 @@
                             cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
                                 function validateNode(className) {
                                     if (-1 !== className.indexOf('csw-grid-edit')) {
-                                        editRows(rowid, ret, o.onEditNode, o.onEditView);
+                                        editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh );
                                     } else if (-1 !== className.indexOf('csw-grid-delete')) {
                                         deleteRows(rowid, ret, o.onDeleteNode);
                                     }
@@ -182,7 +223,7 @@
                         /* We need this to be defined upfront for multi-edit */
                         cswGridOpts.optNavEdit = {
                             editfunc: function (rowid) {
-                                return editRows(rowid, ret, o.onEditNode, o.onEditView);
+                                return editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh);
                             }
                         };
 
@@ -233,36 +274,9 @@
 
                         var makeRowButtons = function (grid) {
                             grid = grid || ret;
-                            /* Case 26506: gridComplete won't give us the Csw grid, and ret won't be defined on the first grid load (because it hasn't returned yet). */
-                            if (grid) {
-                                var ids = grid.getDataIds();
-                                for (var i = 0; i < ids.length; i += 1) {
-                                    var rowId = ids[i];
-                                    var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
-                                    var buttonStr = '';
-                                    if (Csw.contains(cellData, 'islocked')) {
-                                        buttonStr += '<img id="' + rowId + '_locked" src="Images/icons/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
-                                        if (Csw.contains(cellData, 'canview')) {
-                                            buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
-                                        }
-                                    } else if (Csw.contains(cellData, 'canedit')) {
-                                        buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
-                                    } else if (Csw.contains(cellData, 'canview')) {
-                                        buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
-                                    }
-                                    if (buttonStr.length > 0) {
-                                        buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
-                                    }
-                                    if (Csw.contains(cellData, 'candelete')) {
-                                        buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/trash.gif" class="csw-grid-delete" alt="Delete" title="Delete"/>';
-                                    }
-                                    /* Case 26506: We only want to change the cell content once. cellData.length isn't good enough, but buttonStr.length should be */
-                                    if (buttonStr.length > 0) {
-                                        grid.setRowData(rowId, 'Action', buttonStr);
-                                    }
-                                }
-                            }
+                            Csw.nbt.gridViewMethods.makeActionColumnButtons(grid);
                         };
+                        /* */
                         cswGridOpts.onSuccess = makeRowButtons;
                         /* Case 26506: grid.getDataIds() only fetches the rowids for the current page. gridComplete fires after load, sort and page--so it'll do. */
                         cswGridOpts.gridOpts.gridComplete = makeRowButtons;

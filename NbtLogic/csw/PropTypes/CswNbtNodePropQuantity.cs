@@ -9,22 +9,32 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropQuantity : CswNbtNodeProp
     {
+        #region Private Variables
+
+        private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
+        private CswNbtSubField _QuantitySubField;
+        private CswNbtSubField _UnitNameSubField;
+        public static implicit operator CswNbtNodePropQuantity( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsQuantity;
+        }
+
+        private CswNbtSubField _UnitIdSubField;
+        private Collection<CswNbtNode> _UnitNodes;
+
+        #endregion
+
+        #region Constructor
+
         public CswNbtNodePropQuantity( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Quantity )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropQuantity() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-
-            // Get the units
-
             // get the Unit of Measure objectclassid
             CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
 
@@ -47,14 +57,14 @@ namespace ChemSW.Nbt.PropTypes
             }
             _FieldTypeRule = (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _QuantitySubField = _FieldTypeRule.QuantitySubField;
-            _UnitsSubField = _FieldTypeRule.UnitsSubField;
+            _UnitNameSubField = _FieldTypeRule.UnitNameSubField;
+            _UnitIdSubField = _FieldTypeRule.UnitIdSubField;
 
         }//CswNbtNodePropQuantity()
 
-        private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
-        private CswNbtSubField _QuantitySubField;
-        private CswNbtSubField _UnitsSubField;
+        #endregion
 
+        #region Public Properties
 
         override public bool Empty
         {
@@ -72,6 +82,39 @@ namespace ChemSW.Nbt.PropTypes
                 return _CswNbtNodePropData.Gestalt;
             }
         }//Gestalt
+
+        public Int32 Precision
+        {
+            get
+            {
+                if( _CswNbtMetaDataNodeTypeProp.NumberPrecision != Int32.MinValue )
+                    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                else
+                    return 0;
+            }
+        }
+        public double MinValue
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.MinValue;
+            }
+        }
+        public double MaxValue
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.MaxValue;
+            }
+        }
+
+        public Collection<CswNbtNode> UnitNodes
+        {
+            get
+            {
+                return _UnitNodes;
+            }
+        }
 
         public double Quantity
         {
@@ -99,59 +142,131 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public string Units
+        public string CachedUnitName
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _UnitsSubField.Column );
+                return _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _UnitsSubField.Column, value );
-                _SynchGestalt();
+                if( value != _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column ) )
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _UnitNameSubField.Column, value );
+                    _SynchGestalt();
+                }
+            }
+        }
+
+        public CswPrimaryKey UnitId
+        {
+            get
+            {
+                CswPrimaryKey ret = null;
+                string StringVal = _CswNbtNodePropData.GetPropRowValue( _UnitIdSubField.Column );
+                if( CswTools.IsInteger( StringVal ) )
+                    ret = new CswPrimaryKey( TargetTableName, CswConvert.ToInt32( StringVal ) );
+                return ret;
+            }
+            set
+            {
+                if( value != null )
+                {
+                    if( value.TableName != TargetTableName )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
+                    }
+                    if( UnitId != value )
+                    {
+                        _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, value.PrimaryKey );
+                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[value];
+                        if( null != RelatedNode )
+                        {
+                            CachedUnitName = RelatedNode.NodeName;
+                        }
+                    }
+                }
+                else
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, Int32.MinValue );
+                }
+
+                if( WasModified )
+                {
+                    PendingUpdate = true;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Relationship-esque Helper Functions
+
+        public CswNbtView View
+        {
+            get
+            {
+                CswNbtView Ret = null;
+                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
+                    Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                return Ret;
+            }
+        }
+
+        public Int32 TargetId
+        {
+            get
+            {
+                return _CswNbtMetaDataNodeTypeProp.FKValue;
+            }
+        }
+
+        public NbtViewRelatedIdType TargetType
+        {
+            get
+            {
+                NbtViewRelatedIdType ret = NbtViewRelatedIdType.Unknown;
+                try
+                {
+                    ret = (NbtViewRelatedIdType) _CswNbtMetaDataNodeTypeProp.FKType;
+                }
+                catch( Exception ex )
+                {
+                    if( !( ex is System.ArgumentException ) )
+                        throw ( ex );
+                }
+                return ret;
+            }
+
+        }
+
+        private string TargetTableName
+        {
+            get
+            {
+                string ret = "nodes";
+                if( TargetId != Int32.MinValue )
+                {
+                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+                    {
+                        CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
+                        if( TargetNodeType != null )
+                            ret = TargetNodeType.TableName;
+                    }
+                }
+                return ret;
             }
         }
 
         private void _SynchGestalt()
         {
-            string GestaltValue = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column ) + " " + _CswNbtNodePropData.GetPropRowValue( _UnitsSubField.Column );
+            string GestaltValue = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column ) + " " + _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
             _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, GestaltValue );
         }
 
+        #endregion
 
-        public Int32 Precision
-        {
-            get
-            {
-                if( _CswNbtMetaDataNodeTypeProp.NumberPrecision != Int32.MinValue )
-                    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
-                else
-                    return 0;
-            }
-        }
-        public double MinValue
-        {
-            get
-            {
-                return _CswNbtMetaDataNodeTypeProp.MinValue;
-            }
-        }
-        public double MaxValue
-        {
-            get
-            {
-                return _CswNbtMetaDataNodeTypeProp.MaxValue;
-            }
-        }
-
-        private Collection<CswNbtNode> _UnitNodes;
-        public Collection<CswNbtNode> UnitNodes
-        {
-            get
-            {
-                return _UnitNodes;
-            }
-        }
+        #region Serialization Methods
 
         public override void ToXml( XmlNode ParentNode )
         {
@@ -164,11 +279,26 @@ namespace ChemSW.Nbt.PropTypes
                 QtyNode.InnerText = Quantity.ToString();
             }
 
-            XmlNode UnitsNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitsSubField.ToXmlNodeName(), Units );
-            foreach( CswNbtNode UnitNode in _UnitNodes )
+            XmlNode UnitNodeIdNode = CswXmlDocument.AppendXmlNode( ParentNode, _UnitIdSubField.ToXmlNodeName() );
+            if( UnitId != null )
+                UnitNodeIdNode.InnerText = UnitId.PrimaryKey.ToString();
+
+            CswXmlDocument.AppendXmlNode( ParentNode, _UnitNameSubField.ToXmlNodeName(), CachedUnitName );
+
+            XmlNode OptionsNode = CswXmlDocument.AppendXmlNode( ParentNode, "options" );
+            foreach( CswNbtNode Node in UnitNodes )
             {
-                XmlNode UnitOptionNode = CswXmlDocument.AppendXmlNode( UnitsNode, "option" );
-                CswXmlDocument.AppendXmlAttribute( UnitOptionNode, "value", UnitNode.NodeName );
+                XmlNode OptionNode = CswXmlDocument.AppendXmlNode( OptionsNode, "option" );
+                if( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue )
+                {
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", Node.NodeId.ToString() );
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", Node.NodeName );
+                }
+                else
+                {
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "id", "" );
+                    CswXmlDocument.AppendXmlAttribute( OptionNode, "value", "" );
+                }
             }
         } // ToXml()
 
@@ -179,13 +309,20 @@ namespace ChemSW.Nbt.PropTypes
                 new XAttribute( "maxvalue", MaxValue.ToString() ),
                 new XAttribute( "precision", Precision.ToString() ) ) );
 
-            XElement UnitsNode = new XElement( _UnitsSubField.ToXmlNodeName( true ), Units );
-            ParentNode.Add( UnitsNode );
+            ParentNode.Add( new XElement( _UnitIdSubField.ToXmlNodeName( true ), ( UnitId != null ) ?
+                UnitId.PrimaryKey.ToString() : string.Empty ),
+                            new XElement( _UnitNameSubField.ToXmlNodeName( true ), CachedUnitName ) );
 
-            foreach( CswNbtNode UnitNode in _UnitNodes )
+            XElement OptionsNode = new XElement( "options" );
+            ParentNode.Add( OptionsNode );
+
+            foreach( CswNbtNode Node in UnitNodes )
             {
-                UnitsNode.Add( new XElement( "option",
-                    new XAttribute( "value", UnitNode.NodeName ) ) );
+                OptionsNode.Add( new XElement( "option",
+                                               new XAttribute( "id", ( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue ) ?
+                                                   Node.NodeId.PrimaryKey.ToString() : "" ),
+                                               new XAttribute( "value", ( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue ) ?
+                                                   Node.NodeName : "" ) ) );
             }
         }
 
@@ -197,19 +334,60 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["maxvalue"] = MaxValue.ToString();
             ParentObject["precision"] = Precision.ToString();
 
-            JArray UnitsNodeObj = new JArray();
-            ParentObject[_UnitsSubField.ToXmlNodeName( true )] = UnitsNodeObj;
-
-            foreach( CswNbtNode UnitNode in _UnitNodes )
+            ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = default( string );
+            if( UnitId != null && Int32.MinValue != UnitId.PrimaryKey )
             {
-                UnitsNodeObj.Add( UnitNode.NodeName );
+                ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = UnitId.ToString();
+            }
+            ParentObject[_UnitNameSubField.ToXmlNodeName( true )] = CachedUnitName;
+
+            ParentObject["nodetypeid"] = default( string );
+            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+            {
+                ParentObject["nodetypeid"] = TargetId.ToString();
+            }
+
+            ParentObject["relatednodeid"] = default( string );
+            if( null != UnitId && Int32.MinValue != UnitId.PrimaryKey )
+            {
+                ParentObject["relatednodeid"] = UnitId.ToString();
+            }
+
+            JArray JOptions = new JArray();
+            ParentObject["options"] = JOptions;
+
+            foreach( CswNbtNode Node in UnitNodes )
+            {
+                JObject JOption = new JObject();
+                if( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue )
+                {
+                    JOption["id"] = Node.NodeId.ToString();
+                    JOption["value"] = Node.NodeName;
+                }
+                else
+                {
+                    JOption["id"] = "";
+                    JOption["value"] = "";
+                }
+                JOptions.Add( JOption );
             }
         }
 
         public override void ReadXml( XmlNode XmlNode, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
             Quantity = CswXmlDocument.ChildXmlNodeValueAsDouble( XmlNode, _QuantitySubField.ToXmlNodeName() );
-            Units = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitsSubField.ToXmlNodeName() );
+            CachedUnitName = CswXmlDocument.ChildXmlNodeValueAsString( XmlNode, _UnitNameSubField.ToXmlNodeName() );
+            Int32 NodeId = CswXmlDocument.ChildXmlNodeValueAsInteger( XmlNode, _UnitIdSubField.ToXmlNodeName() );
+            if( NodeMap != null && NodeMap.ContainsKey( NodeId ) )
+            {
+                NodeId = NodeMap[NodeId];
+            }
+            UnitId = new CswPrimaryKey( "nodes", NodeId );
+            if( null != UnitId )
+            {
+                CswXmlDocument.AppendXmlAttribute( XmlNode, "destnodeid", UnitId.PrimaryKey.ToString() );
+                PendingUpdate = true;
+            }
         }
 
         public override void ReadXElement( XElement XmlNode, Dictionary<int, int> NodeMap, Dictionary<int, int> NodeTypeMap )
@@ -218,9 +396,30 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Quantity = CswConvert.ToDouble( XmlNode.Element( _QuantitySubField.ToXmlNodeName( true ) ).Value );
             }
-            if( null != XmlNode.Element( _UnitsSubField.ToXmlNodeName( true ) ) )
+            if( null != XmlNode.Element( _UnitNameSubField.ToXmlNodeName( true ) ) )
             {
-                Units = XmlNode.Element( _UnitsSubField.ToXmlNodeName( true ) ).Value;
+                CachedUnitName = XmlNode.Element( _UnitNameSubField.ToXmlNodeName( true ) ).Value;
+            }
+            if( null != XmlNode.Element( _UnitIdSubField.ToXmlNodeName( true ) ) )
+            {
+                string NodePkString = XmlNode.Element( _UnitIdSubField.ToXmlNodeName( true ) ).Value;
+                CswPrimaryKey thisUnitId = new CswPrimaryKey();
+                bool validPk = thisUnitId.FromString( NodePkString );
+                if( false == validPk )
+                {
+                    thisUnitId.TableName = "nodes";
+                    thisUnitId.PrimaryKey = CswConvert.ToInt32( NodePkString );
+                }
+                if( thisUnitId.PrimaryKey != Int32.MinValue )
+                {
+                    if( NodeMap != null && NodeMap.ContainsKey( thisUnitId.PrimaryKey ) )
+                    {
+                        thisUnitId.PrimaryKey = NodeMap[thisUnitId.PrimaryKey];
+                    }
+                    UnitId = thisUnitId;
+                    XmlNode.Add( new XElement( "destnodeid", UnitId.PrimaryKey.ToString() ) );
+                    PendingUpdate = true;
+                }
             }
         }
 
@@ -229,7 +428,20 @@ namespace ChemSW.Nbt.PropTypes
             string StringVal = CswTools.XmlRealAttributeName( PropRow[_QuantitySubField.ToXmlNodeName()].ToString() );
             if( CswTools.IsFloat( StringVal ) )
                 Quantity = Convert.ToDouble( StringVal );
-            Units = CswTools.XmlRealAttributeName( PropRow[_UnitsSubField.ToXmlNodeName()].ToString() );
+            CachedUnitName = CswTools.XmlRealAttributeName( PropRow[_UnitNameSubField.ToXmlNodeName()].ToString() );
+
+            string NodeId = CswTools.XmlRealAttributeName( PropRow[_UnitIdSubField.ToXmlNodeName()].ToString() );
+            if( NodeMap != null && NodeMap.ContainsKey( NodeId.ToLower() ) )
+                UnitId = new CswPrimaryKey( "nodes", NodeMap[NodeId.ToLower()] );
+            else if( CswTools.IsInteger( NodeId ) )
+                UnitId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
+            else
+                UnitId = null;
+
+            if( null != UnitId )
+            {
+                PendingUpdate = true;
+            }
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -238,11 +450,40 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Quantity = CswConvert.ToDouble( JObject[_QuantitySubField.ToXmlNodeName( true )].ToString() );
             }
-            if( null != JObject[_UnitsSubField.ToXmlNodeName( true )] )
+            if( null != JObject[_UnitNameSubField.ToXmlNodeName( true )] )
             {
-                Units = JObject[_UnitsSubField.ToXmlNodeName( true )].ToString();
+                CachedUnitName = JObject[_UnitNameSubField.ToXmlNodeName( true )].ToString();
+            }
+
+            if( null != JObject[_UnitIdSubField.ToXmlNodeName( true )] )
+            {
+                string NodePkString = JObject[_UnitIdSubField.ToXmlNodeName( true )].ToString();
+                CswPrimaryKey thisUnitId = new CswPrimaryKey();
+                bool validPk = thisUnitId.FromString( NodePkString );
+                if( false == validPk )
+                {
+                    thisUnitId.TableName = "nodes";
+                    thisUnitId.PrimaryKey = CswConvert.ToInt32( NodePkString );
+                }
+                if( thisUnitId.PrimaryKey != Int32.MinValue )
+                {
+                    if( NodeMap != null && NodeMap.ContainsKey( thisUnitId.PrimaryKey ) )
+                    {
+                        thisUnitId.PrimaryKey = NodeMap[thisUnitId.PrimaryKey];
+                    }
+                    UnitId = thisUnitId;
+                    JObject["destnodeid"] = UnitId.PrimaryKey.ToString();
+                    //PendingUpdate = true;
+                }
+                else
+                {
+                    UnitId = null;
+                }
             }
         }
+
+        #endregion
+
     }//CswNbtNodePropQuantity
 
 }//namespace 

@@ -68,6 +68,33 @@
             }
         });
 
-    
+    Csw.error.exception = Csw.error.exception ||
+        Csw.error.register('exception', function (message, name, fileName, lineNumber) {
+            var ret = {
+                message: message,
+                name: name,
+                fileName: fileName,
+                lineNumber: lineNumber
+            };
+            return ret;
+        });
+
+    Csw.error.throwException = Csw.error.throwException ||
+        Csw.error.register('throwException', function (exception) {
+            Csw.log(exception);
+            throw exception;
+        });
+
+    Csw.error.catchException = Csw.error.catchException ||
+        Csw.error.register('catchException', function (exception) {
+            var e = {
+                type: exception.type,
+                message: exception.message,
+                detail: exception.stack,
+                display: true
+            };
+            Csw.error.showError(e);
+        });
+
 
 } ());

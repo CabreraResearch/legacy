@@ -365,7 +365,6 @@ namespace ChemSW.Nbt.ObjClasses
             return _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
         }
 
-        // For CswNbtNodeCaster
         public CswNbtObjClass ObjClass
         {
             get { return _CswNbtObjClass; }

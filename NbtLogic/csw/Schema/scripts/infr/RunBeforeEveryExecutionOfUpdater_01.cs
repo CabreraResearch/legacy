@@ -17,11 +17,7 @@ namespace ChemSW.Nbt.Schema
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
 
-            // case 26029
-            if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "nodetypes", "enabled" ) )
-            {
-                _CswNbtSchemaModTrnsctn.addBooleanColumn( "nodetypes", "enabled", "Whether the nodetype is enabled according to module settings", false, false );
-            }
+
             // case 24441
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefinedInDataBase( "object_class_props", "textarearows" ) )
             {

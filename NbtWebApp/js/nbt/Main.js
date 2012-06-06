@@ -117,6 +117,9 @@ window.initMain = window.initMain || function (undefined) {
                     onModules: function () {
                         handleAction({ 'actionname': 'Modules' });
                     },
+                    onSubmitRequest: function () {
+                        handleAction({ 'actionname': 'Submit_Request' });
+                    },
                     onSessions: function () {
                         handleAction({ 'actionname': 'Sessions' });
                     },
@@ -590,11 +593,11 @@ window.initMain = window.initMain || function (undefined) {
             doMenuRefresh: true,
             onAddNode: '',
             onEditNode: '',
-            onDeleteNode: ''
+            onDeleteNode: '',
+            onRefresh: ''
         };
-        if (options) {
-            $.extend(o, options);
-        }
+
+        if (options) $.extend(o, options);
 
         // Defaults
         var getEmptyGrid = (Csw.bool(o.showempty));
@@ -607,10 +610,15 @@ window.initMain = window.initMain || function (undefined) {
         if (false === Csw.isNullOrEmpty(o.viewid)) {
             Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
-
+        
         o.onEditNode = function () { getViewGrid(o); };
         o.onDeleteNode = function () { getViewGrid(o); };
-
+        o.onRefresh = function (options) { 
+            clear({ centertop: true, centerbottom: true });
+            Csw.clientChanges.unsetChanged();
+            multi = false;    // semi-kludge for multi-edit batch op
+            refreshSelected(options);
+        };
         clear({ centertop: true, centerbottom: true });
         
         var viewfilters = Csw.nbt.viewFilters({
@@ -635,6 +643,7 @@ window.initMain = window.initMain || function (undefined) {
             //'onAddNode': o.onAddNode,
             onEditNode: o.onEditNode,
             onDeleteNode: o.onDeleteNode,
+            onRefresh: o.onRefresh,
             onSuccess: function (grid) {
                 if (o.doMenuRefresh) {
                     refreshMainMenu({
@@ -800,9 +809,10 @@ window.initMain = window.initMain || function (undefined) {
             onBeforeTabSelect: function () {
                 return Csw.clientChanges.manuallyCheckChanges();
             },
-            Refresh: function (nodeid, nodekey) {
+            Refresh: function (options) {
                 Csw.clientChanges.unsetChanged();
-                refreshSelected({ 'nodeid': nodeid, 'cswnbtnodekey': nodekey });
+                multi = false;    // semi-kludge for multi-edit batch op
+                refreshSelected(options);
             },
             onTabSelect: function (tabid) {
                 Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, tabid);
@@ -841,9 +851,7 @@ window.initMain = window.initMain || function (undefined) {
                 forsearch: false,
                 IncludeNodeRequired: false
             };
-            if (options) {
-                $.extend(o, options);
-            }
+            if (options) $.extend(o, options);
 
             if (Csw.isNullOrEmpty(o.viewid)) {
                 o.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
@@ -1152,6 +1160,10 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.actions.sessions(centerTopDiv);
                 break;
 
+            case 'Submit_Request':
+                Csw.actions.submitRequest(centerTopDiv);
+                break;
+                
             case 'View_Scheduled_Rules':
                 var rulesOpt = {
                     exitFunc: function () {

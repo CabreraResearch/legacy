@@ -1,10 +1,11 @@
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMaterial : CswNbtObjClass
+    public class CswNbtObjClassMaterial : CswNbtObjClass, ICswNbtPropertySetRequest
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -30,7 +31,22 @@ namespace ChemSW.Nbt.ObjClasses
         public static string TradenamePropName { get { return "Tradename"; } }
         public static string StorageCompatibilityPropName { get { return "Storage Compatibility"; } }
         public static string ExpirationIntervalPropName { get { return "Expiration Interval"; } }
+        public static string RequestPropertyName { get { return "Request"; } }
 
+        public string RequestButtonPropertyName { get { return RequestPropertyName; } }
+
+        /// <summary>
+        /// Convert a CswNbtNode to a CswNbtObjClassMaterial
+        /// </summary>
+        public static implicit operator CswNbtObjClassMaterial( CswNbtNode Node )
+        {
+            CswNbtObjClassMaterial ret = null;
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ) )
+            {
+                ret = (CswNbtObjClassMaterial) Node.ObjClass;
+            }
+            return ret;
+        }
 
 
         #region Inherited Events
@@ -54,9 +70,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -80,7 +96,14 @@ namespace ChemSW.Nbt.ObjClasses
             Message = string.Empty;
             ActionData = string.Empty;
             ButtonAction = NbtButtonAction.Unknown;
-            if( null != NodeTypeProp ) { /*Do Something*/ }
+            CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+            if( null != NodeTypeProp && null != OCP )
+            {
+                if( RequestPropertyName == OCP.PropName )
+                {
+                    ButtonAction = NbtButtonAction.request;
+                }
+            }
             return true;
         }
         #endregion
@@ -88,84 +111,17 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
 
-        public CswNbtNodePropRelationship Supplier
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[SupplierPropertyName].AsRelationship );
-            }
-        }
-
-        public CswNbtNodePropLogical ApprovalStatus
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ApprovalStatusPropertyName].AsLogical );
-            }
-        }
-
-        public CswNbtNodePropText PartNumber
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PartNumberPropertyName].AsText );
-            }
-        }
-
-        public CswNbtNodePropScientific SpecificGravity
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[SpecificGravityPropertyName].AsScientific );
-            }
-        }
-
-        public CswNbtNodePropList PhysicalState
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PhysicalStatePropertyName].AsList );
-            }
-        }
-
-        public CswNbtNodePropText CasNo
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[CasNoPropertyName].AsText );
-            }
-        }
-
-        public CswNbtNodePropStatic RegulatoryLists
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[RegulatoryListsPropName].AsStatic );
-            }
-        }
-
-        public CswNbtNodePropText TradeName
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[TradenamePropName].AsText );
-            }
-        }
-
-        public CswNbtNodePropImageList StorageCompatibility
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[StorageCompatibilityPropName].AsImageList );
-            }
-        }
-        public CswNbtNodePropQuantity ExpirationInterval
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ExpirationIntervalPropName].AsQuantity );
-            }
-        }
+        public CswNbtNodePropRelationship Supplier { get { return ( _CswNbtNode.Properties[SupplierPropertyName] ); } }
+        public CswNbtNodePropLogical ApprovalStatus { get { return ( _CswNbtNode.Properties[ApprovalStatusPropertyName] ); } }
+        public CswNbtNodePropText PartNumber { get { return ( _CswNbtNode.Properties[PartNumberPropertyName] ); } }
+        public CswNbtNodePropScientific SpecificGravity { get { return ( _CswNbtNode.Properties[SpecificGravityPropertyName] ); } }
+        public CswNbtNodePropList PhysicalState { get { return ( _CswNbtNode.Properties[PhysicalStatePropertyName] ); } }
+        public CswNbtNodePropText CasNo { get { return ( _CswNbtNode.Properties[CasNoPropertyName] ); } }
+        public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[RegulatoryListsPropName] ); } }
+        public CswNbtNodePropText TradeName { get { return ( _CswNbtNode.Properties[TradenamePropName] ); } }
+        public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[StorageCompatibilityPropName] ); } }
+        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[ExpirationIntervalPropName] ); } }
+        public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
 
         #endregion
 

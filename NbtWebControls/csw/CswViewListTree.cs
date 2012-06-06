@@ -254,7 +254,7 @@ namespace ChemSW.NbtWebControls
                         {
                             ReportTree.goToNthChild( i );
 
-                            CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( ReportTree.getNodeForCurrentPosition() );
+                            CswNbtObjClassReport ReportNode = (CswNbtObjClassReport) ReportTree.getNodeForCurrentPosition();
                             XmlNode CategoryNode = _getCategoryNode( DocRoot, ReportNode.Category.Text );
                             CategoryNode.AppendChild( _makeTreeViewXmlNode( XmlDoc, ReportNode.NodeId.PrimaryKey.ToString(), ViewType.Report, ReportNode.ReportName.Text, "Images/view/report.gif", true, false ) );
 

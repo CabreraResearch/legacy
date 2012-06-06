@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.WebPages
                 CswPrimaryKey ReportId = new CswPrimaryKey();
                 ReportId.FromString( Request.QueryString["reportid"] );
                 CswNbtNode Node = Master.CswNbtResources.Nodes.GetNode( ReportId );
-                CswNbtObjClassReport ReportNode = CswNbtNodeCaster.AsReport( Node );
+                CswNbtObjClassReport ReportNode = (CswNbtObjClassReport) Node;
 
                 // Get the Report Data
                 //CswNbtView View = Master.CswNbtResources.ViewSelect.restoreView( ReportNode.View.ViewId );

@@ -14,6 +14,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropPropertyReference : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropPropertyReference( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsPropertyReference;
+        }
+
         public CswNbtNodePropPropertyReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {

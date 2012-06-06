@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject runReport( string rformat, HttpContext Context )
         {
-            CswNbtObjClassReport report = CswNbtNodeCaster.AsReport(_reportNode);
+            CswNbtObjClassReport report = (CswNbtObjClassReport) _reportNode;
             JObject ret = new JObject();
 
             if( string.Empty != report.SQL.Text )

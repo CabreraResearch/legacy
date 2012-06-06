@@ -20,10 +20,10 @@
                 itemJson: '',
                 onLogout: null, // function () { },
                 onAlterNode: null, // function (nodeid, nodekey) { },
-//                onSearch: {
-//                    onViewSearch: null, // function () { },
-//                    onGenericSearch: null // function () { }
-//                },
+                //                onSearch: {
+                //                    onViewSearch: null, // function () { },
+                //                    onGenericSearch: null // function () { }
+                //                },
                 onMultiEdit: null, //function () { },
                 onEditView: null, //function (viewid) { },
                 onSaveView: null, //function (newviewid) { },
@@ -62,20 +62,20 @@
 
                 switch (action) {
                     case 'About':
-                    $a.click(function() {
+                        $a.click(function () {
                             $.CswDialog('AboutDialog');
                             return false;
                         });
                         break;
                     case 'AddNode':
-                    $a.click(function() {
+                        $a.click(function () {
                             $.CswDialog('AddNodeDialog', {
                                 text: text,
                                 nodetypeid: Csw.string(json.nodetypeid),
                                 relatednodeid: Csw.string(json.relatednodeid), //for Grid Props
-                            relatednodename: Csw.string(json.relatednodename), //for Grid Props
+                                relatednodename: Csw.string(json.relatednodename), //for Grid Props
                                 relatednodetypeid: Csw.string(json.relatednodetypeid), //for NodeTypeSelect
-                            relatedobjectclassid: Csw.string(json.relatedobjectclassid),
+                                relatedobjectclassid: Csw.string(json.relatedobjectclassid),
                                 onAddNode: o.onAlterNode
                             });
                             return false;
@@ -87,7 +87,7 @@
                         });
                         break;
                     case 'DeleteNode':
-                    $a.click(function() {
+                        $a.click(function () {
                             $.CswDialog('DeleteNodeDialog', {
                                 nodenames: [nodename],
                                 nodeids: [nodeid],
@@ -98,24 +98,24 @@
                             return false;
                         });
                         break;
-                case 'DeleteDemoNodes':
-                    $a.click(function() {
-                        $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database. Are you sure?', 'Delete All Demo Data', function() {
-                            Csw.ajax.post({
-                                url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
-                                success: Csw.goHome
-                            });
-                        }, 'Cancel');
-                    });
-                    break;
+                    case 'DeleteDemoNodes':
+                        $a.click(function () {
+                            $.CswDialog('ConfirmDialog', 'You are about to delete all demo data nodes from the database. Are you sure?', 'Delete All Demo Data', function () {
+                                Csw.ajax.post({
+                                    url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
+                                    success: Csw.goHome
+                                });
+                            }, 'Cancel');
+                        });
+                        break;
                     case 'editview':
-                    $a.click(function() {
+                        $a.click(function () {
                             o.onEditView(viewid);
                             return false;
                         });
                         break;
                     case 'CopyNode':
-                    $a.click(function() {
+                        $a.click(function () {
                             $.CswDialog('CopyNodeDialog', {
                                 nodename: nodename,
                                 nodeid: nodeid,
@@ -129,7 +129,7 @@
                         $a.click(o.onPrintView);
                         break;
                     case 'PrintLabel':
-                    $a.click(function() {
+                        $a.click(function () {
                             $.CswDialog('PrintLabelDialog', {
                                 'nodeid': nodeid,
                                 'propid': Csw.string(json.propid)
@@ -138,19 +138,19 @@
                         });
                         break;
                     case 'Logout':
-                    $a.click(function() {
+                        $a.click(function () {
                             o.onLogout();
                             return false;
                         });
                         break;
                     case 'Home':
-                    $a.click(function() {
+                        $a.click(function () {
                             Csw.goHome();
                             return false;
                         });
                         break;
                     case 'Profile':
-                    $a.click(function() {
+                        $a.click(function () {
                             $.CswDialog('EditNodeDialog', {
                                 nodeids: [json.userid],
                                 filterToPropId: '',
@@ -161,12 +161,12 @@
                         });
                         break;
                     case 'ViewSearch':
-                    $a.click(function() {
+                        $a.click(function () {
                             Csw.tryExec(o.onSearch.onViewSearch);
                         });
                         break;
                     case 'GenericSearch':
-                    $a.click(function() {
+                        $a.click(function () {
                             Csw.tryExec(o.onSearch.onGenericSearch);
                         });
                         break;
@@ -174,7 +174,7 @@
                         $a.click(o.onMultiEdit);
                         break;
                     case 'SaveViewAs':
-                    $a.click(function() {
+                        $a.click(function () {
                             $.CswDialog('AddViewDialog', {
                                 viewid: viewid,
                                 viewmode: Csw.string(json.viewmode),
@@ -191,18 +191,24 @@
                         break;
                     case 'Sessions':
                         $a.click(o.onSessions);
-                    break;
-                case 'Impersonate':
-                    $a.click(function () {
-                        $.CswDialog('ImpersonateDialog', { onImpersonate: o.onImpersonate });
-                        return false;
-                    });
-                    break;
-                case 'EndImpersonation':
-                    $a.click(function () {
-                        Csw.tryExec(o.onEndImpersonation);
-                        return false;
-                    });
+                        break;
+                    case 'Impersonate':
+                        $a.click(function () {
+                            $.CswDialog('ImpersonateDialog', { onImpersonate: o.onImpersonate });
+                            return false;
+                        });
+                        break;
+                    case 'EndImpersonation':
+                        $a.click(function () {
+                            Csw.tryExec(o.onEndImpersonation);
+                            return false;
+                        });
+                        break;
+                    case 'Submit Request':
+                        $a.click(function () {
+                            Csw.tryExec(o.onSubmitRequest);
+                            return false;
+                        });
                         break;
                 }
             } else {
