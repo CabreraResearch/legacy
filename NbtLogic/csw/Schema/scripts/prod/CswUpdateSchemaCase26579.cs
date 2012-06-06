@@ -16,9 +16,9 @@ namespace ChemSW.Nbt.Schema
         {
             // materialobjclassprops
             CswNbtMetaDataObjectClass matOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp tradeNameOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, "Tradename" );
-            CswNbtMetaDataObjectClassProp supplierOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, "Supplier" );
-            CswNbtMetaDataObjectClassProp partOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, "Part Number" );
+            CswNbtMetaDataObjectClassProp tradeNameOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, CswNbtObjClassMaterial.TradenamePropName );
+            CswNbtMetaDataObjectClassProp supplierOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, CswNbtObjClassMaterial.SupplierPropertyName );
+            CswNbtMetaDataObjectClassProp partOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, CswNbtObjClassMaterial.PartNumberPropertyName );
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( tradeNameOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( supplierOcp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
