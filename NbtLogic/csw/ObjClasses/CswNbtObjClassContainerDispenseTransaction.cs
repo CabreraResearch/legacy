@@ -13,6 +13,8 @@ namespace ChemSW.Nbt.ObjClasses
     /// </summary>
     public class CswNbtObjClassContainerDispenseTransaction : CswNbtObjClass
     {
+        #region Static Properties
+
         public static string SourceContainerPropertyName { get { return "Source Container"; } }
         public static string DestinationContainerPropertyName { get { return "Destination Container"; } }
         public static string QuantityDispensedPropertyName { get { return "Quantity Dispensed"; } }
@@ -21,32 +23,41 @@ namespace ChemSW.Nbt.ObjClasses
         public static string RemainingSourceContainerQuantityPropertyName { get { return "Remaining Source Container Quantity"; } }
         public static string RequestItemPropertyName { get { return "Request Item"; } }
 
-        /// <summary>
-        /// Possible dispense type values for ContianerDispenseTransaction. Used as part of DispenseContainer Action workflow.
-        /// </summary>
-        public enum DispenseType
+        public sealed class DispenseType : CswEnum<DispenseType>
         {
+            private DispenseType( string Name ) : base( Name ) { }
+            public static IEnumerable<DispenseType> _All { get { return CswEnum<DispenseType>.All; } }
+            public static implicit operator DispenseType( string str )
+            {
+                DispenseType ret = Parse( str );
+                return ( ret != null ) ? ret : DispenseType.Unknown;
+            }
+            public static readonly DispenseType Unknown = new DispenseType( "Unknown" );
             /// <summary>
             /// Add new (child) containers with material specified in existing source container (no parent container)
             /// </summary>
-            Receive,
+            public static readonly DispenseType Receive = new DispenseType( "Receive" );
             /// <summary>
             /// Transfer material from a source (parent) container to zero or more destination (child) containers
             /// </summary>
-            Dispense,
+            public static readonly DispenseType Dispense = new DispenseType( "Dispense" );
             /// <summary>
             /// Transfer material from a source (parent) container to an undocumented location (no child containers)
             /// </summary>
-            Waste,
+            public static readonly DispenseType Waste = new DispenseType( "Waste" );
             /// <summary>
             /// Empty material from a source (parent) container and mark as disposed (no child containers)
             /// </summary>
-            Dispose,
+            public static readonly DispenseType Dispose = new DispenseType( "Dispose" );
             /// <summary>
             /// Add material to an existing source container (no parent container, no child containers)
             /// </summary>
-            Add
-        };
+            public static readonly DispenseType Add = new DispenseType( "Add" );
+        }
+
+        #endregion
+
+        #region ctor
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -73,6 +84,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return ret;
         }
+
+        #endregion
 
         #region Inherited Events
 
@@ -132,31 +145,31 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropRelationship SourceContainer
         {
-            get { return _CswNbtNode.Properties[SourceContainerPropertyName].AsRelationship; }
+            get { return _CswNbtNode.Properties[SourceContainerPropertyName]; }
         }
         public CswNbtNodePropRelationship DestinationContainer
         {
-            get { return _CswNbtNode.Properties[DestinationContainerPropertyName].AsRelationship; }
+            get { return _CswNbtNode.Properties[DestinationContainerPropertyName]; }
         }
         public CswNbtNodePropQuantity QuantityDispensed
         {
-            get { return _CswNbtNode.Properties[QuantityDispensedPropertyName].AsQuantity; }
+            get { return _CswNbtNode.Properties[QuantityDispensedPropertyName]; }
         }
         public CswNbtNodePropList Type
         {
-            get { return _CswNbtNode.Properties[TypePropertyName].AsList; }
+            get { return _CswNbtNode.Properties[TypePropertyName]; }
         }
         public CswNbtNodePropDateTime DispensedDate
         {
-            get { return _CswNbtNode.Properties[DispensedDatePropertyName].AsDateTime; }
+            get { return _CswNbtNode.Properties[DispensedDatePropertyName]; }
         }
         public CswNbtNodePropQuantity RemainingSourceContainerQuantity
         {
-            get { return _CswNbtNode.Properties[RemainingSourceContainerQuantityPropertyName].AsQuantity; }
+            get { return _CswNbtNode.Properties[RemainingSourceContainerQuantityPropertyName]; }
         }
         public CswNbtNodePropRelationship Request
         {
-            get { return _CswNbtNode.Properties[RequestItemPropertyName].AsRelationship; }
+            get { return _CswNbtNode.Properties[RequestItemPropertyName]; }
         }
 
         #endregion
