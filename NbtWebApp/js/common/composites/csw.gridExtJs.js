@@ -132,7 +132,7 @@
                                 cswPrivate.pageSize = Csw.number(result.grid.pageSize);
                                 cswPrivate.height = 25 + // title bar
                                                     23 + // grid header
-                                                    (cswPrivate.pageSize * 22) + // rows
+                                                    (cswPrivate.pageSize * 24.5) + // rows
                                                     14 + // horizontal scrollbar
                                                     27;  // grid footer
                                 cswPrivate.title = result.grid.title;

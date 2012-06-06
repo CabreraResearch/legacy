@@ -302,6 +302,7 @@ namespace ChemSW.Nbt.Logic
         public JObject TreeToJson( CswNbtView View, ICswNbtTree Tree, bool IsPropertyGrid = false )
         {
             extJsGrid grid = new extJsGrid();
+            grid.title = View.ViewName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
             {
                 grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;

@@ -343,7 +343,8 @@
                                             Multi: isMulti,
                                             publishDeleteEvent: false
                                         });
-                                    }
+                                    },
+                                    width: '100%'
                                 });
             })();
             return ret;
