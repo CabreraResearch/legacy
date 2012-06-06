@@ -346,6 +346,9 @@
                                     },
                                     width: '100%'
                                 });
+
+                Csw.tryExec(o.onSuccess);
+
             })();
             return ret;
         } // 'init'
