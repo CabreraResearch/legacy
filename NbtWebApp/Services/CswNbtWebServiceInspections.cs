@@ -108,8 +108,8 @@ namespace ChemSW.Nbt.WebServices
                 DeficientTree.goToParentNode();
             } // for( Int32 i = 0; i < DeficientTree.getChildNodeCount(); i++ )
 
-            CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
-            gd.PkColumn = "rownum";
+            CswNbtActGridExtJs gd = new CswNbtActGridExtJs( _CswNbtResources );
+            //gd.PkColumn = "rownum";
             return gd.DataTableToJSON( InspectionData );
 
         } // getInspectionStatusGrid
