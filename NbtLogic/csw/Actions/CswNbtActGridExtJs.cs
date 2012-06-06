@@ -22,7 +22,6 @@ namespace ChemSW.Nbt.Logic
         public CswNbtActGridExtJs( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
-            //PageSize = ( _CswNbtResources.CurrentNbtUser.PageSize > 0 ) ? _CswNbtResources.CurrentNbtUser.PageSize : 50;
         }
 
         #region extJsGrid Definitions
@@ -236,6 +235,10 @@ namespace ChemSW.Nbt.Logic
         private class extJsGrid
         {
             /// <summary>
+            /// Header Title for Grid
+            /// </summary>
+            public string title = string.Empty;
+            /// <summary>
             /// Field definitions
             /// </summary>
             public Collection<extJsGridFieldDef> fields = new Collection<extJsGridFieldDef>();
@@ -283,6 +286,7 @@ namespace ChemSW.Nbt.Logic
 
                 JObject Jret = new JObject();
                 Jret["grid"] = new JObject();
+                Jret["grid"]["title"] = title;
                 Jret["grid"]["fields"] = Jfields;
                 Jret["grid"]["columns"] = Jcolumns;
                 Jret["grid"]["pageSize"] = PageSize;
@@ -326,6 +330,15 @@ namespace ChemSW.Nbt.Logic
             nodekeyColDef.hidden = true;
             grid.columns.Add( nodekeyColDef );
 
+            extJsGridFieldDef nodenameFldDef = new extJsGridFieldDef();
+            nodenameFldDef.name = "nodename";
+            grid.fields.Add( nodenameFldDef );
+            extJsGridColumnDef nodenameColDef = new extJsGridColumnDef();
+            nodenameColDef.header = "Internal Name";
+            nodenameColDef.dataIndex = "nodename";
+            nodenameColDef.hidden = true;
+            grid.columns.Add( nodenameColDef );
+
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c++ )
             {
                 extJsGridRow gridrow = new extJsGridRow();
@@ -333,6 +346,7 @@ namespace ChemSW.Nbt.Logic
 
                 gridrow.data.Add( "nodeid", Tree.getNodeIdForCurrentPosition().ToString() );
                 gridrow.data.Add( "nodekey", Tree.getNodeKeyForCurrentPosition().ToString() );
+                gridrow.data.Add( "nodename", Tree.getNodeNameForCurrentPosition().ToString() );
 
                 _TreeNodeToGrid( View, Tree, grid, gridrow );
 
@@ -407,7 +421,7 @@ namespace ChemSW.Nbt.Logic
             }
         } // _TreeNodeToGrid
 
-        public JObject DataTableToJSON( DataTable DT )
+        public JObject DataTableToJSON( DataTable DT, bool Editable = false )
         {
             extJsGrid grid = new extJsGrid();
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
