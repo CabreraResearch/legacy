@@ -4293,7 +4293,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string submitRequest( string RequestId )
+        public string submitRequest( string RequestId, string RequestName )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -4306,7 +4306,7 @@ namespace ChemSW.Nbt.WebServices
                 if( null != NodeId )
                 {
                     CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
-                    ReturnVal = ws.submitRequest( NodeId );
+                    ReturnVal = ws.submitRequest( NodeId, RequestName );
                 }
                 _deInitResources();
             }

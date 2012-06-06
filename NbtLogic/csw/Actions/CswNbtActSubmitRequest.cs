@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        public JObject submitRequest( CswPrimaryKey NodeId )
+        public JObject submitRequest( CswPrimaryKey NodeId, string NodeName )
         {
             JObject Ret = new JObject();
             if( null != NodeId )
@@ -174,6 +174,7 @@ namespace ChemSW.Nbt.Actions
                 if( null != NodeAsRequest )
                 {
                     NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
+                    NodeAsRequest.Name.Text = NodeName;
                     NodeAsRequest.postChanges( true );
                     Ret["succeeded"] = true;
                 }

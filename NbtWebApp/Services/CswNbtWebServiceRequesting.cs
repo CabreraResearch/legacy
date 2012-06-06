@@ -46,9 +46,9 @@ namespace ChemSW.Nbt.WebServices
             return _RequestAct.getRequestHistory();
         }
 
-        public JObject submitRequest( CswPrimaryKey NodeId )
+        public JObject submitRequest( CswPrimaryKey NodeId, string NodeName )
         {
-            return _RequestAct.submitRequest( NodeId );
+            return _RequestAct.submitRequest( NodeId, NodeName );
         }
 
     } // class CswNbtWebServiceRequesting

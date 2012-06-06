@@ -28,7 +28,10 @@
                 var submitRequest = function () {
                     Csw.ajax.post({
                         urlMethod: 'submitRequest',
-                        data: { RequestId: cswPrivate.cartnodeid },
+                        data: {
+                            RequestId: cswPrivate.cartnodeid,
+                            RequestName: Csw.string(cswPrivate.saveRequestTxt.val())
+                        },
                         success: function (json) {
                             if (json.succeeded) {
                                 Csw.tryExec(cswPrivate.onSubmit);
@@ -36,7 +39,7 @@
                         }
                     });
                 };
-                
+
                 cswParent.empty();
                 cswPrivate.action = Csw.layouts.action(cswParent, {
                     Title: 'Submit Request',
@@ -47,7 +50,7 @@
                 cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' }).css('width', '100%');
 
                 cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
-                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 2).div({ ID: cswPrivate.gridId, align: 'center' });
+                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 1).div({ ID: cswPrivate.gridId, align: 'center' });
 
                 Csw.ajax.post({
                     urlMethod: 'getCurrentRequest',
@@ -62,7 +65,7 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.materialnodeid) ||
                                 false === Csw.isNullOrEmpty(cswPrivate.containernodeid)) {
 
-                                cswPrivate.actionTbl.cell(1, 2).$.CswMenuMain({
+                                cswPrivate.actionTbl.cell(2, 1).$.CswMenuMain({
                                     nodeid: cswPrivate.cartnodeid,
                                     viewid: cswPrivate.cartviewid,
                                     limitMenuTo: 'Add'
@@ -92,30 +95,51 @@
                     } // success
                 });
 
-                cswPrivate.historyTbl = cswPrivate.actionTbl.cell(1, 3).table({ align: 'right' });
 
+                cswPrivate.historyTbl = cswPrivate.actionTbl.cell(3, 1).table({ align: 'left', cellvalign: 'middle' });
                 Csw.ajax.post({
                     urlMethod: 'getRequestHistory',
                     data: {},
                     success: function (json) {
                         if (json.count > 0) {
-                            cswPrivate.historySelect = cswPrivate.historyTbl.cell(1, 1).select();
+                            delete json.count;
+                            cswPrivate.historyTbl.cell(1, 1).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Past Requests: ' });
+                            cswPrivate.historySelect = cswPrivate.historyTbl.cell(1, 2).select();
                             json = json || {};
 
                             Csw.each(json, function (prop, name) {
-                                var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitteddate']) + ')';
+                                var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
                                 cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
                             });
-                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 1).button({
+                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 3).button({
                                 enabledText: 'Copy to Cart',
                                 disabledText: 'Copying...',
                                 onclick: function () {
-
+                                    /*Copy Cart Contents*/
                                 }
                             });
                         }
                     }
                 });
+
+                cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(4, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
+                cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
+                cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(1, 3).input().hide();
+                cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });
+                cswPrivate.saveRequestChk = cswPrivate.saveRequestTbl.cell(1, 2).checkBox({
+                    onChange: function () {
+                        var val;
+                        if (cswPrivate.saveRequestChk.checked()) {
+                            val = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.nowAsString();
+                            cswPrivate.saveRequestTxt.show();
+                        } else {
+                            val = '';
+                            cswPrivate.saveRequestTxt.hide();
+                        }
+                        cswPrivate.saveRequestTxt.val(val);
+                    }
+                });
+
             });
             return cswPublic;
         });
