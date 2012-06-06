@@ -4237,7 +4237,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion CISPro
 
-        #region Ordering
+        #region Requesting
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -4250,7 +4250,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceOrdering ws = new CswNbtWebServiceOrdering( _CswNbtResources );
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
                 ReturnVal = ws.getCurrentRequest();
 
                 _deInitResources();
@@ -4276,7 +4276,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceOrdering ws = new CswNbtWebServiceOrdering( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
                 ReturnVal = ws.getRequestHistory();
 
                 _deInitResources();
@@ -4291,7 +4291,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getMaterial()
 
-        #endregion Ordering
+        #endregion Requesting
 
         #region Auditing
 

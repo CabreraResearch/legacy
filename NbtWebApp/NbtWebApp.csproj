@@ -79,7 +79,7 @@
     <Compile Include="ServiceDrivers\CswNbtServiceLogicGetProps.cs" />
     <Compile Include="ServiceDrivers\CswNbtServiceLogic.cs" />
     <Compile Include="ServiceDrivers\CswNbtServiceDriver.cs" />
-    <Compile Include="Services\CswNbtWebServiceOrdering.cs" />
+    <Compile Include="Services\CswNbtWebServiceRequesting.cs" />
     <Compile Include="Services\CswNbtWebServiceModules.cs" />
     <Compile Include="Services\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="Services\CswNbtWebServiceGenerators.cs" />
