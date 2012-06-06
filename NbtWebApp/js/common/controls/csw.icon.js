@@ -21,68 +21,73 @@
                 onClick: null,
                 size: 18, // 16, 18, or 100
 
-                // these are set automatically:
-                prefix: '',
-                iconFile: 'Images/icons18.png',
-                multiplier: -18
+                iconFilePrefix: 'Images/newicons/icons',
+                iconFileSuffix: '.png'
             };
             var cswPublic = {};
 
-            cswPublic.setType = function(newType) {
-                if( false === Csw.isNullOrEmpty(newType) && newType != Csw.enums.iconType.none ) {
+            cswPrivate.url = function () {
+                // Case 24112: IE7 processes url() using https but handles the response as http--prompting the security dialog.
+                var port = document.location.port;
+                var prefix = document.location.protocol + "//" + document.location.hostname;
+                if (false === Csw.isNullOrEmpty(port) && port !== 80) {
+                    prefix += ':' + port;
+                }
+                prefix += '/NbtWebApp';
+
+                return prefix + '/' + cswPrivate.iconFilePrefix + cswPrivate.size + cswPrivate.iconFileSuffix;
+            }; // url()
+
+            cswPrivate.offsetCss = function (state) {
+                var multiplier = -1 * cswPrivate.size;
+
+                return {
+                    'background-position': (state * multiplier) + 'px ' +
+                                            (cswPrivate.iconType * multiplier) + 'px no-repeat'
+                };
+            }; // offsetCss()
+
+            cswPublic.setType = function (newType) {
+                if (false === Csw.isNullOrEmpty(newType) && newType != Csw.enums.iconType.none) {
                     cswPrivate.iconType = newType;
 
                     cswPrivate.div.css({
-                        background: 'url(\'' + cswPrivate.prefix + '/' + cswPrivate.iconFile + '\') ' + 
-                                     (cswPrivate.state * cswPrivate.multiplier) + 'px ' + 
-                                     (cswPrivate.iconType * cswPrivate.multiplier) + 'px no-repeat'
+                        background: 'url(\'' + cswPrivate.url() + '\') '
                     });
+                    cswPrivate.div.css(cswPrivate.offsetCss(cswPrivate.state));
 
                     cswPrivate.div.unbind('mouseover');
                     cswPrivate.div.unbind('mouseout');
                     cswPrivate.div.unbind('mousedown');
                     cswPrivate.div.unbind('mouseup');
-                    
-                    if(cswPrivate.isButton && cswPrivate.state != Csw.enums.iconState.disabled)
-                    {
-                        cswPrivate.div.bind('mouseover', function() {
-                            cswPrivate.div.css({
-                                'background-position': (Csw.enums.iconState.hover * cswPrivate.multiplier) + 'px ' + 
-                                                       (cswPrivate.iconType * cswPrivate.multiplier) + 'px'
-                            });
+
+                    if (cswPrivate.isButton && cswPrivate.state != Csw.enums.iconState.disabled) {
+                        cswPrivate.div.bind('mouseover', function () {
+                            cswPrivate.div.css(cswPrivate.offsetCss(Csw.enums.iconState.hover));
                         });
-                        cswPrivate.div.bind('mouseout', function() {
-                            cswPrivate.div.css({
-                                'background-position': (cswPrivate.state * cswPrivate.multiplier) + 'px ' + 
-                                                       (cswPrivate.iconType * cswPrivate.multiplier) + 'px'
-                            });
+                        cswPrivate.div.bind('mouseout', function () {
+                            cswPrivate.div.css(cswPrivate.offsetCss(cswPrivate.state));
                         });
-                        cswPrivate.div.bind('mousedown', function() {
-                            cswPrivate.div.css({
-                                'background-position': (Csw.enums.iconState.selected * cswPrivate.multiplier) + 'px ' + 
-                                                       (cswPrivate.iconType * cswPrivate.multiplier) + 'px'
-                            });
+                        cswPrivate.div.bind('mousedown', function () {
+                            cswPrivate.div.css(cswPrivate.offsetCss(Csw.enums.iconState.selected));
                         });
-                        cswPrivate.div.bind('mouseup', function() {
-                            cswPrivate.div.css({
-                                'background-position': (Csw.enums.iconState.hover * cswPrivate.multiplier) + 'px ' + 
-                                                       (cswPrivate.iconType * cswPrivate.multiplier) + 'px'
-                            });
+                        cswPrivate.div.bind('mouseup', function () {
+                            cswPrivate.div.css(cswPrivate.offsetCss(Csw.enums.iconState.hover));
                         });
                     }
 
                 } // if( false === Csw.isNullOrEmpty(newType) && newType != Csw.enums.iconType.none )
             }; // setType()
 
-            cswPublic.getType = function() {
+            cswPublic.getType = function () {
                 return cswPrivate.iconType;
             }; // getType()
-            
+
             // Constructor
             (function () {
                 if (options) $.extend(cswPrivate, options);
-                
-                cswPrivate.div = cswParent.div({text: '&nbsp;'});
+
+                cswPrivate.div = cswParent.div({ text: '&nbsp;' });
                 cswPrivate.div.css({
                     display: 'inline-block',
                     width: cswPrivate.size,
@@ -90,18 +95,9 @@
                 });
                 cswPrivate.div.propNonDom('title', cswPrivate.hovertext);
 
-                cswPrivate.multiplier = -1 * cswPrivate.size;
-                cswPrivate.iconFile = 'Images/icons' + cswPrivate.size + '.png';
-
                 // Case 24112: IE7 processes url() using https but handles the response as http--prompting the security dialog.
-                var port = document.location.port;
-                cswPrivate.prefix = document.location.protocol + "//" + document.location.hostname;
-                if (false === Csw.isNullOrEmpty(port) && port !== 80) {
-                    cswPrivate.prefix += ':' + port;
-                }
-                cswPrivate.prefix += '/NbtWebApp';
 
-                cswPrivate.div.bind('click', function() {
+                cswPrivate.div.bind('click', function () {
                     Csw.tryExec(cswPrivate.onClick);
                 });
                 cswPublic.setType(cswPrivate.iconType);
