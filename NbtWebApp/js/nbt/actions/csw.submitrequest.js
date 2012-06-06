@@ -8,7 +8,6 @@
             'use strict';
             var cswPublic = {};
             var cswPrivate = {
-                urlMethod: 'getCurrentRequest',
                 ID: 'CswSubmitRequest',
                 onSubmit: null,
                 onCancel: null,
@@ -40,7 +39,7 @@
                 cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 2).div({ ID: cswPrivate.gridId, align: 'center' });
 
                 Csw.ajax.post({
-                    urlMethod: cswPrivate.urlMethod,
+                    urlMethod: 'getCurrentRequest',
                     data: {},
                     success: function (json) {
                         if (Csw.isNullOrEmpty(json.jqGridOpt)) {
@@ -51,7 +50,7 @@
                             cswPrivate.cartviewid = json.cartviewid;
                             if (false === Csw.isNullOrEmpty(cswPrivate.materialnodeid) ||
                                 false === Csw.isNullOrEmpty(cswPrivate.containernodeid)) {
-                                
+
                                 cswPrivate.actionTbl.cell(1, 2).$.CswMenuMain({
                                     nodeid: cswPrivate.cartnodeid,
                                     viewid: cswPrivate.cartviewid,
@@ -76,12 +75,36 @@
 
                             cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
                             cswPublic.grid.gridPager.css({ width: '100%', height: '20px' });
-                            
+
                             Csw.nbt.gridViewMethods.makeActionColumnButtons(cswPublic.grid);
                         });
                     } // success
                 });
 
+                cswPrivate.historyTbl = cswPrivate.actionTbl.cell(1, 3).table({ align: 'right' });
+
+                Csw.ajax.post({
+                    urlMethod: 'getRequestHistory',
+                    data: {},
+                    success: function (json) {
+                        if (json.count > 0) {
+                            cswPrivate.historySelect = cswPrivate.historyTbl.cell(1, 1).select();
+                            json = json || {};
+
+                            Csw.each(json, function (prop, name) {
+                                var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitteddate']) + ')';
+                                cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
+                            });
+                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 1).button({
+                                enabledText: 'Copy to Cart',
+                                disabledText: 'Copying...',
+                                onclick: function() {
+
+                                }
+                            });
+                        }
+                    }
+                });
             });
             return cswPublic;
         });

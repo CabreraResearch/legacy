@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Actions
             public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
             public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
             public static readonly SystemViewName CISProRequestCart = new SystemViewName( "CISPro Request Cart" );
+            public static readonly SystemViewName CISProRequestHistory = new SystemViewName( "CISPro Request History" );
             public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
         }
         #endregion Public, Definitional props
@@ -261,6 +262,33 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
+        private CswNbtView _cisproRequestHistoryView( bool ReInit )
+        {
+            CswNbtView Ret = _getSystemView( SystemViewName.CISProRequestHistory );
+            if( null == Ret )
+            {
+                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                Ret = new CswNbtView( _CswNbtResources );
+                Ret.makeNew( SystemViewName.CISProRequestHistory.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.Category = "Requests";
+                Ret.ViewMode = NbtViewRenderingMode.Tree;
+                ReInit = true;
+            }
+            if( ReInit )
+            {
+                Ret.Root.ChildRelationships.Clear();
+                CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
+                CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
+                CswNbtMetaDataObjectClassProp NameOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Name.ToString() );
+                CswNbtViewRelationship RequestVr = Ret.AddViewRelationship( RequestOc, true ); //default filter says Requestor == me
+                Ret.AddViewProperty( RequestVr, SubmittedDateOcp );
+                Ret.AddViewPropertyAndFilter( RequestVr, NameOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+
+                Ret.save();
+            }
+            return Ret;
+        }
+
         private CswNbtMetaDataObjectClass _EnforceObjectClassRelationship = null;
 
         #endregion Private, core methods
@@ -274,6 +302,10 @@ namespace ChemSW.Nbt.Actions
             if( ViewName == SystemViewName.CISProRequestCart )
             {
                 RetView = _cisproRequestCartView( ReInit );
+            }
+            else if( ViewName == SystemViewName.CISProRequestHistory )
+            {
+                RetView = _cisproRequestHistoryView( ReInit );
             }
             else if( ViewName == SystemViewName.SILocationsList )
             {

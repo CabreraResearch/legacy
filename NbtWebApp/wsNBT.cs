@@ -22,7 +22,6 @@ using ChemSW.Nbt.Statistics;
 using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -4253,6 +4252,32 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtWebServiceOrdering ws = new CswNbtWebServiceOrdering( _CswNbtResources );
                 ReturnVal = ws.getCurrentRequest();
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getRequestHistory()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceOrdering ws = new CswNbtWebServiceOrdering( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
+                ReturnVal = ws.getRequestHistory();
 
                 _deInitResources();
             }
