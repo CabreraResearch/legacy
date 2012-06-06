@@ -1205,77 +1205,77 @@ namespace ChemSW.Nbt.WebServices
 
         } // runGridTest()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public void getGridRowsByPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey )
-        {
-            UseCompression();
-            JObject ReturnVal = new JObject();
-            try
-            {
-                _initResources();
-                _attemptRefresh( true );
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public void getGridRowsByPage( string ViewId, string Page, string Rows, string IsReport, string IncludeNodeKey )
+        //{
+        //    UseCompression();
+        //    JObject ReturnVal = new JObject();
+        //    try
+        //    {
+        //        _initResources();
+        //        _attemptRefresh( true );
 
-                CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey );
+        //        CswNbtNodeKey RealNodeKey = null;
+        //        CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey );
 
-                if( null != View )
-                {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( IsReport ) );
-                    ReturnVal = g.getGridRowsByPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ) );
-                }
+        //        if( null != View )
+        //        {
+        //            var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( IsReport ) );
+        //            ReturnVal = g.getGridRowsByPage( CswConvert.ToInt32( Page ) - 1, CswConvert.ToInt32( Rows ) );
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception Ex )
+        //    {
+        //        ReturnVal = jError( Ex );
+        //    }
 
-            /*
-             * See the comment in CswNodeGrid.js for the rationale behind this.
-             * _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-             */
-            Context.Response.Clear();
-            Context.Response.ContentType = "application/json";
-            Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
-            Context.Response.Flush();
-            Context.Response.Write( ReturnVal.ToString() );
-            //return ReturnVal.ToString();
-        } // getGrid()
+        //    /*
+        //     * See the comment in CswNodeGrid.js for the rationale behind this.
+        //     * _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //     */
+        //    Context.Response.Clear();
+        //    Context.Response.ContentType = "application/json";
+        //    Context.Response.AddHeader( "content-disposition", "attachment; filename=export.json" );
+        //    Context.Response.Flush();
+        //    Context.Response.Write( ReturnVal.ToString() );
+        //    //return ReturnVal.ToString();
+        //} // getGrid()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getAllGridRows( string ViewId, string IsReport, string IncludeNodeKey )
-        {
-            UseCompression();
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string getAllGridRows( string ViewId, string IsReport, string IncludeNodeKey )
+        //{
+        //    UseCompression();
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey );
+        //        CswNbtNodeKey RealNodeKey = null;
+        //        CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey );
 
-                if( null != View )
-                {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( IsReport ) );
-                    ReturnVal = g.getAllGridRows();
-                }
+        //        if( null != View )
+        //        {
+        //            var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( IsReport ) );
+        //            ReturnVal = g.getAllGridRows();
+        //        }
 
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
+        //        _deInitResources();
+        //    }
+        //    catch( Exception Ex )
+        //    {
+        //        ReturnVal = jError( Ex );
+        //    }
 
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
 
-            return ReturnVal.ToString();
-        } // getGrid()
+        //    return ReturnVal.ToString();
+        //} // getGrid()
 
 
 
@@ -4660,8 +4660,8 @@ namespace ChemSW.Nbt.WebServices
 
                     ReturnVal["success"] = "true";
 
-                    CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
-                    gd.PkColumn = "RowNumber";
+                    CswNbtActGridExtJs gd = new CswNbtActGridExtJs( _CswNbtResources );
+                    //gd.PkColumn = "RowNumber";
 
                     ReturnVal["jqGridOpt"] = gd.DataTableToJSON( ExcelDataTable, true );
 
