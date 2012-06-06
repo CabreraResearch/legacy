@@ -20,7 +20,7 @@
                 relationships = [],
                 cellCol = 1;
 
-            if (o.propData.readonly) {
+            if (Csw.bool(o.propData.readonly)) {
                 propDiv.span({ text: o.propData.gestalt });
             } else {
                 if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
