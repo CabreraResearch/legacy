@@ -20,62 +20,66 @@
                 relationships = [],
                 cellCol = 1;
 
-            if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
+            if (o.propData.readonly) {
+                propDiv.span({ text: o.propData.gestalt });
+            } else {
+                if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
                     Csw.isNullOrEmpty(selectedNodeId) &&
-                    false === o.Multi &&
-                    o.relatednodetypeid === nodeTypeId) {
-                selectedNodeId = o.relatednodeid;
-                selectedName = o.relatednodename;
-            }
-
-            var table = propDiv.table({
-                ID: Csw.makeId(o.ID, 'tbl')
-            });
-
-            var numberTextBox = table.cell(1, cellCol).numberTextBox({
-                ID: o.ID + '_qty',
-                value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
-                MinValue: Csw.number(propVals.minvalue),
-                MaxValue: Csw.number(propVals.maxvalue),
-                ceilingVal: Csw.number(ceilingVal),
-                Precision: precision,
-                ReadOnly: Csw.bool(o.ReadOnly),
-                Required: Csw.bool(o.Required),
-                onChange: o.onChange
-            });
-            cellCol++;
-
-            if (false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {
-                numberTextBox.clickOnEnter(o.saveBtn);
-            }
-
-            if (o.Multi) {
-                relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-            }
-            var foundSelected = false;
-            Csw.crawlObject(options, function (relatedObj) {
-                if (relatedObj.id === selectedNodeId) {
-                    foundSelected = true;
+                        false === o.Multi &&
+                            o.relatednodetypeid === nodeTypeId) {
+                    selectedNodeId = o.relatednodeid;
+                    selectedName = o.relatednodename;
                 }
-                relationships.push({ value: relatedObj.id, display: relatedObj.value });
-            }, false);
-            if (false === o.Multi && false === foundSelected) {
-                relationships.push({ value: selectedNodeId, display: selectedName });
-            }
-            var selectBox = table.cell(1, cellCol).select({
-                ID: o.ID,
-                cssclass: 'selectinput',
-                onChange: o.onChange,
-                values: relationships,
-                selected: selectedNodeId
-            });
-            cellCol++;
 
-            if (o.Required) {
-                selectBox.addClass("required");
-            }
+                var table = propDiv.table({
+                    ID: Csw.makeId(o.ID, 'tbl')
+                });
 
-            propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
+                var numberTextBox = table.cell(1, cellCol).numberTextBox({
+                    ID: o.ID + '_qty',
+                    value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                    MinValue: Csw.number(propVals.minvalue),
+                    MaxValue: Csw.number(propVals.maxvalue),
+                    ceilingVal: Csw.number(ceilingVal),
+                    Precision: precision,
+                    ReadOnly: Csw.bool(o.ReadOnly),
+                    Required: Csw.bool(o.Required),
+                    onChange: o.onChange
+                });
+                cellCol++;
+
+                if (false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {
+                    numberTextBox.clickOnEnter(o.saveBtn);
+                }
+
+                if (o.Multi) {
+                    relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                }
+                var foundSelected = false;
+                Csw.crawlObject(options, function(relatedObj) {
+                    if (relatedObj.id === selectedNodeId) {
+                        foundSelected = true;
+                    }
+                    relationships.push({ value: relatedObj.id, display: relatedObj.value });
+                }, false);
+                if (false === o.Multi && false === foundSelected) {
+                    relationships.push({ value: selectedNodeId, display: selectedName });
+                }
+                var selectBox = table.cell(1, cellCol).select({
+                    ID: o.ID,
+                    cssclass: 'selectinput',
+                    onChange: o.onChange,
+                    values: relationships,
+                    selected: selectedNodeId
+                });
+                cellCol++;
+
+                if (o.Required) {
+                    selectBox.addClass("required");
+                }
+
+                propDiv.$.hover(function(event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
+            }
         },
         save: function (o) {
 
@@ -88,7 +92,7 @@
             if (false === Csw.isNullOrEmpty(selectBox)) {
                 attributes.nodeid = selectBox.val();
             }
-            
+
             Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
