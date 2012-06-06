@@ -28,6 +28,14 @@
                     return opts;
                 };
 
+                cswParent.buttonGroup = function (opts) {
+                    /// <summary> Creates a Csw.buttonGroup on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the buttonGroup.</param>
+                    /// <returns type="Csw.controls.buttonGroup">A Csw.controls.buttonGroup</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'buttonGroup');
+                    return Csw.controls.buttonGroup(cswParent, opts);
+                };
+
                 cswParent.checkBoxArray = function (opts) {
                     /// <summary> Creates a Csw.checkBoxArray on this element</summary>
                     /// <param name="opts" type="Object">Options to define the checkBoxArray.</param>

@@ -107,69 +107,43 @@
 
                     cswPrivate.stepDivs[s].propNonDom({ stepno: s })
                         .span({ cssclass: 'CswWizard_StepTitle', text: steptitle })
-                        .br({number: 2})
+                        .br({ number: 2 })
                         .div({ suffix: s + '_content' });
                 }
 
-                var buttonTable = cswPublic.table.cell(3, 1).table({
-                    suffix: 'btntbl',
-                    width: '100%'
-                });
-                buttonTable.addClass('CswWizard_ButtonsCell');
-
-                var bCell11 = buttonTable.cell(1, 1);
-                bCell11.propDom({
-                    'align': 'right',
-                    'width': '65%'
-                });
-                var bCell12 = buttonTable.cell(1, 2);
-                bCell12.propDom({
-                    'align': 'right',
-                    'width': '35%'
-                });
-
-                /* Previous Button */
-                cswPublic.previous = bCell11.button({
-                    suffix: 'prev',
-                    enabledText: '< Previous',
-                    disableOnClick: false,
-                    onClick: function () {
-                        var currentStepNo = cswPrivate.getCurrentStepNo();
-                        if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
-                            cswPrivate.selectStep(currentStepNo - 1);
-                            Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
+                cswPrivate.btnGroup = cswPublic.table.cell(3, 1).buttonGroup({
+                    buttons: {
+                        previous: {
+                            onclick: function () {
+                                var currentStepNo = cswPrivate.getCurrentStepNo();
+                                if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
+                                    cswPrivate.selectStep(currentStepNo - 1);
+                                    Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
+                                }
+                            }
+                        },
+                        next: {
+                            onclick: function () {
+                                var currentStepNo = cswPrivate.getCurrentStepNo();
+                                if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
+                                    cswPrivate.selectStep(currentStepNo + 1);
+                                    Csw.tryExec(cswPrivate.onNext, currentStepNo + 1);
+                                }
+                            }
+                        },
+                        finish: {
+                            onclick: function () { Csw.tryExec(cswPrivate.onFinish); }
                         }
+                    },
+                    cancel: {
+                        onclick: function () { Csw.tryExec(cswPrivate.onCancel); }
                     }
                 });
-
-                /* Next Button */
-                cswPublic.next = bCell11.button({
-                    suffix: 'next',
-                    enabledText: 'Next >',
-                    disableOnClick: false,
-                    onClick: function () {
-                        var currentStepNo = cswPrivate.getCurrentStepNo();
-                        if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
-                            cswPrivate.selectStep(currentStepNo + 1);
-                            Csw.tryExec(cswPrivate.onNext, currentStepNo + 1);
-                        }
-                    }
-                });
-
-                /* Finish Button */
-                cswPublic.finish = bCell11.button({
-                    suffix: 'finish',
-                    enabledText: cswPrivate.FinishText,
-                    onClick: function () { Csw.tryExec(cswPrivate.onFinish); }
-                });
-
-                /* Cancel Button */
-                cswPublic.cancel = bCell12.button({
-                    suffix: 'cancel',
-                    enabledText: 'Cancel',
-                    onClick: function () { Csw.tryExec(cswPrivate.onCancel); }
-                });
-
+                cswPublic.previous = cswPrivate.btnGroup.previous;
+                cswPublic.next = cswPrivate.btnGroup.next;
+                cswPublic.finish = cswPrivate.btnGroup.finish;
+                cswPublic.cancel = cswPrivate.btnGroup.cancel;
+               
                 cswPrivate.selectStep(cswPrivate.SelectedStep);
                 if (cswPrivate.doNextOnInit) {
                     Csw.tryExec(cswPrivate.onNext, cswPrivate.SelectedStep);
