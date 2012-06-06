@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -66,6 +67,13 @@ namespace ChemSW.Nbt.Schema
                     }
                 );
 
+            Collection<String> DispenseTypes = new Collection<string>();
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive._Name );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense._Name );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste._Name );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose._Name );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add._Name );
+
             CswNbtMetaDataObjectClassProp TypeProp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp(
                     ContDispTransObjClass,
@@ -73,7 +81,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         PropName = CswNbtObjClassContainerDispenseTransaction.TypePropertyName,
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                        ListOptions = "Receive,Dispense,Waste,Dispose,Add"
+                        ListOptions = String.Join(",", DispenseTypes)
                     }
                 );
 
