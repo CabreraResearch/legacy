@@ -1,4 +1,4 @@
-<!--[if lte IE 8]>
+    <!--[if lte IE 8]>
  <script type="text/javascript" 
      src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
 
@@ -80,8 +80,20 @@ window.internetExplorerVersionNo = 9;
 <script defer type="text/javascript" src="Scripts/jquery.jqGrid.min.js"></script>
 
 <!-- ExtJS -->
-<link rel="stylesheet" type="text/css" href="js/thirdparty/extjs-4.1.0/resources/css/ext-all.css">
+<script>
+
+    // from: http://stackoverflow.com/questions/6435833/how-to-scope-the-reset-css-so-that-is-applied-to-ext-components-using-scopereset
+    // Here we define Ext for the first time
+    Ext = {
+        buildSettings:{
+            "scopeResetCSS": true  // Thanks, but I'll do my own scoping please
+        }
+    };
+
+</script>
 <script type="text/javascript" src="js/thirdparty/extjs-4.1.0/ext-all.js"></script>
+<link rel="stylesheet" type="text/css" href="js/thirdparty/extjs-4.1.0/resources/css/ext-all-scoped.css">
+<!-- end ExtJS -->
 
 <script type="text/javascript">
     
