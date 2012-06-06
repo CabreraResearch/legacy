@@ -12,7 +12,11 @@
                 ID: 'CswSubmitRequest',
                 onSubmit: null,
                 onCancel: null,
-                gridOpts: {}
+                gridOpts: {},
+                cartnodeid: '',
+                cartviewid: '',
+                materialnodeid: '',
+                containernodeid: ''
             };
 
             if (Csw.isNullOrEmpty(cswParent)) {
@@ -30,20 +34,31 @@
                     onFinish: cswPrivate.onSubmit,
                     onCancel: cswPrivate.onCancel
                 });
-                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' });
+                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' }).css('width', '100%');
 
                 cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
-                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 1).div({ ID: cswPrivate.gridId });
+                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 2).div({ ID: cswPrivate.gridId, align: 'center' });
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.urlMethod,
                     data: {},
-                    success: function (gridJson) {
-                        if (Csw.isNullOrEmpty(gridJson.jqGridOpt)) {
+                    success: function (json) {
+                        if (Csw.isNullOrEmpty(json.jqGridOpt)) {
                             Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
                         }
                         Csw.tryExec(function () {
-                            $.extend(true, cswPrivate.gridOpts, gridJson.jqGridOpt);
+                            cswPrivate.cartnodeid = json.cartnodeid;
+                            cswPrivate.cartviewid = json.cartviewid;
+                            if (false === Csw.isNullOrEmpty(cswPrivate.materialnodeid) ||
+                                false === Csw.isNullOrEmpty(cswPrivate.containernodeid)) {
+                                
+                                cswPrivate.actionTbl.cell(1, 2).$.CswMenuMain({
+                                    nodeid: cswPrivate.cartnodeid,
+                                    viewid: cswPrivate.cartviewid,
+                                    limitMenuTo: 'Add'
+                                });
+                            }
+                            $.extend(true, cswPrivate.gridOpts, json.jqGridOpt);
                             cswPrivate.resizeWithParent = true;
                             cswPrivate.resizeWithParentElement = cswPrivate.action.actionDiv.$;
                             cswPrivate.gridOpts.rowNum = 10;
@@ -57,9 +72,11 @@
                                 refresh: false,
                                 edit: false
                             };
-                            cswPrivate.gridOpts.data = gridJson.data.rows;
+                            cswPrivate.gridOpts.data = json.data.rows;
 
                             cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
+                            cswPublic.grid.gridPager.css({ width: '100%', height: '20px' });
+                            
                             Csw.nbt.gridViewMethods.makeActionColumnButtons(cswPublic.grid);
                         });
                     } // success
