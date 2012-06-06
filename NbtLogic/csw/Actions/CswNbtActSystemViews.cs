@@ -331,16 +331,16 @@ namespace ChemSW.Nbt.Actions
         {
             bool Ret = false;
             CswNbtMetaDataObjectClass ExpectedObjectClass = MatchObjectClass ?? _EnforceObjectClassRelationship;
-            foreach( CswNbtViewRelationship PotentialInspectionDesignRelationship in Relationships )
+            foreach( CswNbtViewRelationship PotentialSystemViewRelationship in Relationships )
             {
-                if( PotentialInspectionDesignRelationship.isExpectedMetaDataType( ExpectedObjectClass ) )
+                if( null == ExpectedObjectClass || PotentialSystemViewRelationship.isExpectedMetaDataType( ExpectedObjectClass ) )
                 {
                     Ret = true;
-                    SystemView.AddViewPropertyAndFilter( PotentialInspectionDesignRelationship, FilterDefinition.ObjectClassProp, FilterDefinition.FilterValue, FilterMode: FilterDefinition.FilterMode );
+                    SystemView.AddViewPropertyAndFilter( PotentialSystemViewRelationship, FilterDefinition.ObjectClassProp, FilterDefinition.FilterValue, FilterMode: FilterDefinition.FilterMode );
                 }
-                if( PotentialInspectionDesignRelationship.ChildRelationships.Count > 0 )
+                if( PotentialSystemViewRelationship.ChildRelationships.Count > 0 )
                 {
-                    Ret = Ret || _addSystemViewFilterRecursive( PotentialInspectionDesignRelationship.ChildRelationships, FilterDefinition, MatchObjectClass );
+                    Ret = Ret || _addSystemViewFilterRecursive( PotentialSystemViewRelationship.ChildRelationships, FilterDefinition, MatchObjectClass );
                 }
             }
             return Ret;

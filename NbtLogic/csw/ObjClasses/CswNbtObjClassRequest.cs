@@ -53,6 +53,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
+            Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
         } // beforeCreateNode()
 
         public override void afterCreateNode()

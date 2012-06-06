@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
             Xml,
             Json
         };
-
+        private CswCommaDelimitedString _PropNamesOnDisplay = new CswCommaDelimitedString();
         private class _NodeTypePermission
         {
             public _NodeTypePermission( CswNbtMetaDataNodeType NodeType, CswNbtResources Resources )
@@ -137,6 +137,7 @@ namespace ChemSW.Nbt.WebServices
                                                         select _Property )
                 {
                     PropsAtThisLevel.Add( Property );
+                    _PropNamesOnDisplay.Add( Property.Name );
                 }
                 //This will make recursion smoother: we're always iterating the collection of relationships at the same distance from root.
                 foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
@@ -153,6 +154,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ColumnNames.Add( PropName );
                     Ret.Add( VbProp );
+
                 }
                 else
                 {
@@ -543,7 +545,11 @@ namespace ChemSW.Nbt.WebServices
         {
             foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
             {
-                _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid, NodeKey );
+                string PropName = Prop["propname"].ToString();
+                if( _PropNamesOnDisplay.Contains( PropName ) )
+                {
+                    _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid, NodeKey );
+                }
             }
             // Recurse
             for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
