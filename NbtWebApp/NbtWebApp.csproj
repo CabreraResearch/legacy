@@ -79,6 +79,7 @@
     <Compile Include="ServiceDrivers\CswNbtServiceLogicGetProps.cs" />
     <Compile Include="ServiceDrivers\CswNbtServiceLogic.cs" />
     <Compile Include="ServiceDrivers\CswNbtServiceDriver.cs" />
+    <Compile Include="Services\CswNbtWebServiceOrdering.cs" />
     <Compile Include="Services\CswNbtWebServiceModules.cs" />
     <Compile Include="Services\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="Services\CswNbtWebServiceGenerators.cs" />
@@ -1478,12 +1479,6 @@
     <Content Include="TermsOfUse.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
-    </Content>
-    <Content Include="Web.Debug.config">
-      <DependentUpon>Web.config</DependentUpon>
-    </Content>
-    <Content Include="Web.Release.config">
-      <DependentUpon>Web.config</DependentUpon>
     </Content>
     <Content Include="wsNBT.asmx" />
     <Content Include="_Assembly.txt" />
