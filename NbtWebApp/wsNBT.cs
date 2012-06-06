@@ -4291,6 +4291,35 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getMaterial()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string submitRequest( string RequestId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey NodeId = _getNodeId( RequestId );
+                if( null != NodeId )
+                {
+                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
+                    ReturnVal = ws.submitRequest( NodeId );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
         #endregion Requesting
 
         #region Auditing

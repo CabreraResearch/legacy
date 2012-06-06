@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -161,6 +162,23 @@ namespace ChemSW.Nbt.Actions
                     Tree.goToParentNode();
                 }
             }
+            return Ret;
+        }
+
+        public JObject submitRequest( CswPrimaryKey NodeId )
+        {
+            JObject Ret = new JObject();
+            if( null != NodeId )
+            {
+                CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( NodeId );
+                if( null != NodeAsRequest )
+                {
+                    NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
+                    NodeAsRequest.postChanges( true );
+                    Ret["succeeded"] = true;
+                }
+            }
+
             return Ret;
         }
 

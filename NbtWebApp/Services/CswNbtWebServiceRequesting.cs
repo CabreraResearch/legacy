@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using Newtonsoft.Json.Linq;
@@ -43,6 +44,11 @@ namespace ChemSW.Nbt.WebServices
         public JObject getRequestHistory()
         {
             return _RequestAct.getRequestHistory();
+        }
+
+        public JObject submitRequest( CswPrimaryKey NodeId )
+        {
+            return _RequestAct.submitRequest( NodeId );
         }
 
     } // class CswNbtWebServiceRequesting

@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.makeNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "Requests";
+                Ret.Category = "Request Configuration";
                 Ret.ViewMode = NbtViewRenderingMode.Grid;
                 ReInit = true;
             }
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.makeNew( SystemViewName.CISProRequestHistory.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
-                Ret.Category = "Requests";
+                Ret.Category = "Request Configuration";
                 Ret.ViewMode = NbtViewRenderingMode.Tree;
                 ReInit = true;
             }

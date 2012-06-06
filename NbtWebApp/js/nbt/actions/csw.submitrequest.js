@@ -25,12 +25,23 @@
                 if (options) {
                     $.extend(true, cswPrivate, options);
                 }
-
+                var submitRequest = function () {
+                    Csw.ajax.post({
+                        urlMethod: 'submitRequest',
+                        data: { RequestId: cswPrivate.cartnodeid },
+                        success: function (json) {
+                            if (json.succeeded) {
+                                Csw.tryExec(cswPrivate.onSubmit);
+                            }
+                        }
+                    });
+                };
+                
                 cswParent.empty();
                 cswPrivate.action = Csw.layouts.action(cswParent, {
                     Title: 'Submit Request',
                     FinishText: 'Submit',
-                    onFinish: cswPrivate.onSubmit,
+                    onFinish: submitRequest,
                     onCancel: cswPrivate.onCancel
                 });
                 cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' }).css('width', '100%');
@@ -98,7 +109,7 @@
                             cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 1).button({
                                 enabledText: 'Copy to Cart',
                                 disabledText: 'Copying...',
-                                onclick: function() {
+                                onclick: function () {
 
                                 }
                             });
