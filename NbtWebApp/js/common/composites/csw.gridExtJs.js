@@ -10,7 +10,7 @@
                 ID: 'extjsGrid',
                 storeId: '',
                 title: 'Untitled Grid',
-                readonly: false,
+                //readonly: false,
                 stateId: '',
                 usePaging: true,
 
@@ -20,13 +20,18 @@
                 },
 
                 showActionColumn: true,
+                showView: true,
+                showLock: true,
+                showEdit: true,
+                showDelete: true,
+
                 onEdit: null,   // function(row)
                 onDelete: null, // function(row)
 
                 maxHeight: '',
                 maxWidth: '',
-                height: 300,  // overridden by webservice
-                width: 600,
+                height: '',  // overridden by webservice if paging is on
+                width: '100%',
 
                 fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
                 columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
@@ -35,32 +40,26 @@
             };
             var cswPublic = {};
 
-            cswPrivate.makeActionButton = function (showButton, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
-                var buttonId = buttonName + '_' + rowIndex + '_' + colIndex;
-                var ret = '<td id="' + buttonId + '" style="width: 26px;"/>';
-
-                // Possible race condition - have to make the button after the div is added
-                if (showButton) {
-                    setTimeout(function () {
-                        var div = Csw.literals.factory($('#' + buttonId));
-                        var iconopts = {
-                            ID: cswPrivate.ID + '_' + buttonId,
-                            hovertext: buttonName,
-                            iconType: iconType,
-                            state: Csw.enums.iconState.normal,
-                            isButton: false,
-                            size: 18
+            cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
+                // Possible race condition - have to make the button after the cell is added, but it isn't added yet
+                setTimeout(function () {
+                    var cell = Csw.literals.factory($('#' + cellId));
+                    var iconopts = {
+                        ID: cswPrivate.ID + '_' + cellId + '_' + buttonName,
+                        hovertext: buttonName,
+                        iconType: iconType,
+                        state: Csw.enums.iconState.normal,
+                        isButton: false,
+                        size: 18
+                    };
+                    if (false === Csw.isNullOrEmpty(clickFunc)) {
+                        iconopts.isButton = true;
+                        iconopts.onClick = function () {
+                            Csw.tryExec(clickFunc, record.data);
                         };
-                        if (false === Csw.isNullOrEmpty(clickFunc)) {
-                            iconopts.isButton = true;
-                            iconopts.onClick = function () {
-                                Csw.tryExec(clickFunc, record.data);
-                            };
-                        }
-                        div.icon(iconopts);
-                    }, 50);
-                }
-                return ret;
+                    }
+                    cell.icon(iconopts);
+                }, 50);
             } // makeActionButton()
 
             cswPrivate.addActionColumn = function () {
@@ -74,25 +73,33 @@
                         resizable: false,
                         xtype: 'actioncolumn',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            var cell1Id = 'action_' + rowIndex + '_' + colIndex + '_1';
+                            var cell2Id = 'action_' + rowIndex + '_' + colIndex + '_2';
+
                             var ret = '<table cellpadding="0"><tr>';
+                            ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
+                            ret += '<td id="' + cell2Id + '" style="width: 26px;"/>';
+                            ret += '</tr></table>';
 
-                            var canedit = Csw.bool(record.data.canedit, true);
-                            var canview = Csw.bool(record.data.canview, true);
-                            var candelete = Csw.bool(record.data.candelete, true);
-                            var islocked = Csw.bool(record.data.islocked, false);
+                            var canedit = Csw.bool(cswPrivate.showEdit) && Csw.bool(record.data.canedit, true);
+                            var canview = Csw.bool(cswPrivate.showView) && Csw.bool(record.data.canview, true);
+                            var candelete = Csw.bool(cswPrivate.showDelete) && Csw.bool(record.data.candelete, true);
+                            var islocked = Csw.bool(cswPrivate.showLock) && Csw.bool(record.data.islocked, false);
 
-                            // only one cell for edit/view/lock
+                            // only show one of edit/view/lock
                             if (islocked) {
-                                ret += cswPrivate.makeActionButton(islocked, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
+                                cswPrivate.makeActionButton(cell1Id, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
                             }
                             else if (canedit) {
-                                ret += cswPrivate.makeActionButton(canedit, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
+                                cswPrivate.makeActionButton(cell1Id, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
-                            else {
-                                ret += cswPrivate.makeActionButton(canview, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
+                            else if (canview) {
+                                cswPrivate.makeActionButton(cell1Id, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
-                            ret += cswPrivate.makeActionButton(candelete, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
-                            ret += '</tr></table>';
+
+                            if (candelete) {
+                                cswPrivate.makeActionButton(cell2Id, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
+                            }
                             return ret;
                         } // renderer()
                     };
@@ -136,9 +143,9 @@
                     stateId: cswPrivate.stateId,
                     forceFit: true,               // expand columns to fill width
                     viewConfig: {
-//                        shrinkWrap: true,
-//                        maxWidth: cswPrivate.maxWidth,
-//                        maxHeight: cswPrivate.maxHeight,
+                        //                        shrinkWrap: true,
+                        //                        maxWidth: cswPrivate.maxWidth,
+                        //                        maxHeight: cswPrivate.maxHeight,
                         deferEmptyText: false,
                         emptyText: 'No Results'
                     },
@@ -172,8 +179,7 @@
                         success: function (result) {
                             if (false === Csw.isNullOrEmpty(result.grid)) {
                                 cswPrivate.pageSize = Csw.number(result.grid.pageSize);
-                                if(Csw.bool(cswPrivate.usePaging))
-                                {
+                                if (Csw.bool(cswPrivate.usePaging)) {
                                     cswPrivate.height = 25 + // title bar
                                                         23 + // grid header
                                                         (cswPrivate.pageSize * 24.5) + // rows

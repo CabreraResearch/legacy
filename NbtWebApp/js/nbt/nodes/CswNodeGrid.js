@@ -105,7 +105,7 @@
 
             var forReporting = (o.EditMode === Csw.enums.editMode.PrintReport),
                 isMulti = o.gridOpts.multiselect,
-                ret, doPaging = false;
+                ret; //, doPaging = false;
 
             /* fetchGridSkeleton */
             (function () {
@@ -314,6 +314,7 @@
                                         }
                                     },
                                     readonly: forReporting,
+                                    usePaging: false === forReporting,
                                     showActionColumn: true,
                                     onEdit: function(row) {
                                         var nodeid = row['nodeid'];
@@ -343,8 +344,7 @@
                                             Multi: isMulti,
                                             publishDeleteEvent: false
                                         });
-                                    },
-                                    width: '100%'
+                                    }
                                 });
 
                 Csw.tryExec(o.onSuccess);
