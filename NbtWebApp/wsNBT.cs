@@ -23,6 +23,7 @@ using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -1188,7 +1189,7 @@ namespace ChemSW.Nbt.WebServices
                     //var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( ForReport ) );
                     //ReturnVal = ws.runGrid( IsQuickLaunch );
                     ICswNbtTree GridTree = _CswNbtResources.Trees.getTreeFromView( View, false );
-                    CswNbtActGridExtJs GridExtJs = new CswNbtActGridExtJs( _CswNbtResources );
+                    CswNbtGrid GridExtJs = new CswNbtGrid( _CswNbtResources );
                     ReturnVal = GridExtJs.TreeToJson( View, GridTree );
                 }
 
@@ -4660,7 +4661,7 @@ namespace ChemSW.Nbt.WebServices
 
                     ReturnVal["success"] = "true";
 
-                    CswNbtActGridExtJs gd = new CswNbtActGridExtJs( _CswNbtResources );
+                    CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
                     //gd.PkColumn = "RowNumber";
 
                     ReturnVal["jqGridOpt"] = gd.DataTableToJSON( ExcelDataTable, true );

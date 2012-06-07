@@ -13,7 +13,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.WebServices
         public JObject getViewGrid( bool All )
         {
             JObject ReturnVal = new JObject();
-            CswNbtActGridExtJs gd = new CswNbtActGridExtJs( _CswNbtResources );
+            CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
             //gd.PkColumn = "nodeviewid";
 
             JArray JColumnNames = new JArray();

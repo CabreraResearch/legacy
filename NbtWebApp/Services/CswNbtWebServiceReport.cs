@@ -12,6 +12,7 @@ using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.Logic;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -43,7 +44,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    CswNbtActGridExtJs cg = new CswNbtActGridExtJs( _CswNbtResources );
+                    CswNbtGrid cg = new CswNbtGrid( _CswNbtResources );
                     ret["griddata"] = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
                 }
             }

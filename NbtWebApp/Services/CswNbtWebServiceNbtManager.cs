@@ -12,7 +12,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.WebServices
             CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
             DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            CswNbtActGridExtJs NbtActGrid = new CswNbtActGridExtJs( _OtherResources );
+            CswNbtGrid NbtActGrid = new CswNbtGrid( _OtherResources );
             string TablePkColumn = "scheduledruleid";
             //NbtActGrid.PkColumn = TablePkColumn;
             //NbtActGrid.HidePkColumn = true;

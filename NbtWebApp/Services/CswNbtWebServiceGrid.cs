@@ -12,6 +12,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -21,7 +22,7 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtView _View;
         private CswNbtNodeKey _ParentNodeKey;
         //private CswNbtActGrid _CswNbtActGrid;
-        private CswNbtActGridExtJs _CswNbtActGrid;
+        private CswNbtGrid _CswNbtGrid;
         private bool _ForReport = false;
         private bool _ActionEnabled = false;
         private Collection<CswViewBuilderProp> _PropsInGrid = null;
@@ -106,7 +107,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            _CswNbtActGrid = new CswNbtActGridExtJs( _CswNbtResources );
+            _CswNbtGrid = new CswNbtGrid( _CswNbtResources );
             _PropsInGrid = new Collection<CswViewBuilderProp>();
             _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
@@ -121,7 +122,7 @@ namespace ChemSW.Nbt.WebServices
             //}
             //return RetObj;
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
-            return _CswNbtActGrid.TreeToJson( _View, Tree );
+            return _CswNbtGrid.TreeToJson( _View, Tree );
         } // runGrid()
 
         private void _getGridProperties( IEnumerable<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
