@@ -132,7 +132,7 @@
                         columns: cswPrivate.columns,
                         height: cswPrivate.height,
                         width: cswPrivate.width,
-                        //stateful: true,
+                        stateful: true,
                         stateId: cswPrivate.stateId,
                         forceFit: true,               // expand columns to fill width
                         viewConfig: {
