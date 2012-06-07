@@ -204,7 +204,7 @@
                             return false;
                         });
                         break;
-                    case 'Submit Request':
+                    case 'Submit_Request':
                         $a.click(function () {
                             Csw.tryExec(o.onSubmitRequest);
                             return false;

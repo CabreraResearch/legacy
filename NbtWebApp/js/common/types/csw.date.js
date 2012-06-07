@@ -244,6 +244,12 @@
             return isValid;
         });
 
+        Csw.todayAsString = Csw.todayAsString ||
+        Csw.register('todayAsString', function () {
+            var today = new Date();
+            return (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
+        });
+
     Csw.getDateFromDnJson = Csw.getDateFromDnJson ||
         Csw.register('getDateFromDnJson', function (dnDate) {
             /// <summary> Transforms a .NET JSON date into a JavaScript date.</summary>
@@ -270,7 +276,7 @@
                     offset = Csw.number(arr[1]);
                     localOffset = new Date().getTimezoneOffset();
                     ret = new Date((ticks - ((localOffset + (offset / 100 * 60)) * 1000)));
-                } else if(arr.length === 1) {
+                } else if (arr.length === 1) {
                     ticks = Csw.number(arr[0]);
                     ret = new Date(ticks);
                 }

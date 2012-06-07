@@ -11,7 +11,7 @@
                 /// <returns type="Csw.controls">The options object with DOM methods attached.</returns> 
                 var cswPrivate = {};
                 if (Csw.isNullOrEmpty(cswParent)) {
-                    throw new Error('Cannot create a Csw component without a Csw control');
+                    Csw.error.throwException('Cannot create a Csw component without a Csw control', '_controls.factory', '_controls.factory.js', 14);
                 }
 
                 cswPrivate.controlPreProcessing = function (opts, controlName) {
@@ -26,6 +26,22 @@
                         opts.ID = Csw.makeId(id, controlName);
                     }
                     return opts;
+                };
+
+                cswParent.buttonGroup = function (opts) {
+                    /// <summary> Creates a Csw.buttonGroup on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the buttonGroup.</param>
+                    /// <returns type="Csw.controls.buttonGroup">A Csw.controls.buttonGroup</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'buttonGroup');
+                    return Csw.controls.buttonGroup(cswParent, opts);
+                };
+
+                cswParent.checkBox = function (opts) {
+                    /// <summary> Creates a Csw.checkBox on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the checkBox.</param>
+                    /// <returns type="Csw.controls.checkBox">A Csw.controls.checkBox</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'checkBox');
+                    return Csw.controls.checkBox(cswParent, opts);
                 };
 
                 cswParent.checkBoxArray = function (opts) {

@@ -105,11 +105,11 @@ namespace ChemSW.Nbt.csw.Conversion
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Same;
             }
-            else if( OldNodeType.NodeTypeName == "Weight" && NewNodeType.NodeTypeName == "Volume" )
+            else if( OldNodeType.NodeTypeName.Contains( "Weight" ) && NewNodeType.NodeTypeName.Contains( "Volume" ) )
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume;
             }
-            else if( OldNodeType.NodeTypeName == "Volume" && NewNodeType.NodeTypeName == "Weight" )
+            else if( OldNodeType.NodeTypeName.Contains( "Volume" ) && NewNodeType.NodeTypeName.Contains( "Weight" ) )
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight;
             }

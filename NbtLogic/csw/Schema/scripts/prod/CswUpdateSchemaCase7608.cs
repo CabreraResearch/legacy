@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Schema
 
             #region Add the new NodeTypes and Nodes
 
-            CswNbtMetaDataNodeType WeightUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Weight", "Units" );
+            CswNbtMetaDataNodeType WeightUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Weight Unit", "Units" );
             WeightUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp WeightBaseUnitProp = WeightUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             WeightBaseUnitProp.DefaultValue.AsText.Text = "kg";
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Schema
             createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "lb", 2.20462262, 0, Tristate.True );
             createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "ounces", 3.52739619, 1, Tristate.True );
 
-            CswNbtMetaDataNodeType VolumeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Volume", "Units" );
+            CswNbtMetaDataNodeType VolumeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Volume Unit", "Units" );
             VolumeUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp VolumeBaseUnitProp = VolumeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             VolumeBaseUnitProp.DefaultValue.AsText.Text = "Liters";
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.Schema
             createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "gal", 2.64172052, -1, Tristate.True );
             createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "fluid ounces", 3.38140227, 1, Tristate.True );
 
-            CswNbtMetaDataNodeType EachUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Each", "Units" );
+            CswNbtMetaDataNodeType EachUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Each Unit", "Units" );
             EachUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp EachBaseUnitProp = EachUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             EachBaseUnitProp.DefaultValue.AsText.Text = "Each";
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.Schema
             createUnitOfMeasureNode( EachUnitNodeType.NodeTypeId, "Cases", Int32.MinValue, Int32.MinValue, Tristate.False );
             createUnitOfMeasureNode( EachUnitNodeType.NodeTypeId, "Cylinders", Int32.MinValue, Int32.MinValue, Tristate.False );
 
-            CswNbtMetaDataNodeType TimeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Time", "Units" );
+            CswNbtMetaDataNodeType TimeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( "UnitOfMeasureClass", "Time Unit", "Units" );
             TimeUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp TimeBaseUnitProp = TimeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             TimeBaseUnitProp.DefaultValue.AsText.Text = "Days";

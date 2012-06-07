@@ -22,7 +22,6 @@ using ChemSW.Nbt.Statistics;
 using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -4272,7 +4271,7 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion CISPro
 
-        #region Ordering
+        #region Requesting
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -4285,7 +4284,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceOrdering ws = new CswNbtWebServiceOrdering( _CswNbtResources );
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
                 ReturnVal = ws.getCurrentRequest();
 
                 _deInitResources();
@@ -4300,7 +4299,62 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getMaterial()
 
-        #endregion Ordering
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getRequestHistory()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestHistory );
+                ReturnVal = ws.getRequestHistory();
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string submitRequest( string RequestId, string RequestName )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey NodeId = _getNodeId( RequestId );
+                if( null != NodeId )
+                {
+                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
+                    ReturnVal = ws.submitRequest( NodeId, RequestName );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        #endregion Requesting
 
         #region Auditing
 
