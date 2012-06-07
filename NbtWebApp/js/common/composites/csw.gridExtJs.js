@@ -15,7 +15,7 @@
                 ajax: {
                     urlMethod: '',
                     data: {}
-                    },
+                },
 
                 showActionColumn: true,
                 onEdit: null,   // function(row)
@@ -36,6 +36,30 @@
             };
             var cswPublic = {};
 
+            cswPrivate.makeActionButton = function (showButton, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
+                var buttonId = buttonName + '_' + rowIndex + '_' + colIndex;
+                var ret = '<td id="' + buttonId + '" style="width: 26px;"/>';
+
+                // Possible race condition - have to make the button after the div is added
+                if (showButton) {
+                    setTimeout(function () {
+                        var div = Csw.literals.factory($('#' + buttonId));
+                        div.icon({
+                            ID: cswPrivate.ID + '_' + buttonId,
+                            hovertext: buttonName,
+                            iconType: iconType,
+                            state: Csw.enums.iconState.normal,
+                            isButton: true,
+                            onClick: function () {
+                                Csw.tryExec(clickFunc, record.data);
+                            },
+                            size: 18
+                        });
+                    }, 50);
+                }
+                return ret;
+            } // makeActionButton()
+
             cswPrivate.addActionColumn = function () {
                 if (cswPrivate.showActionColumn) {
                     var newfld = { name: 'action' };
@@ -44,35 +68,37 @@
                         dataIndex: 'action',
                         flex: false,
                         width: 60,
+                        resizable: false,
                         xtype: 'actioncolumn',
-                        items: [{
-                            icon: 'Images/newicons/18/pencil.png',
-                            tooltip: 'Edit',
-                            handler: function (grid, rowIndex, colIndex) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                Csw.tryExec(cswPrivate.onEdit, rec.data);
+                        renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            var ret = '<table cellpadding="0"><tr>';
+
+                            var canedit = Csw.bool(record.data.canedit);
+                            var canview = Csw.bool(record.data.canview);
+                            var candelete = Csw.bool(record.data.candelete);
+
+                            // only one cell for edit or view
+                            if(canedit)
+                            {
+                                ret += cswPrivate.makeActionButton(canedit, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
-                        },
-                        {
-                            icon: 'Images/blank.png'
-                        },
-                        {
-                            icon: 'Images/newicons/18/trash.png',
-                            tooltip: 'Delete',
-                            handler: function (grid, rowIndex, colIndex) {
-                                var rec = grid.getStore().getAt(rowIndex);
-                                Csw.tryExec(cswPrivate.onDelete, rec.data);
+                            else
+                            {
+                                ret += cswPrivate.makeActionButton(canview, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
-                        }]
+                            ret += cswPrivate.makeActionButton(candelete, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
+                            ret += '</tr></table>';
+                            return ret;
+                        } // renderer()
                     };
-                    cswPrivate.fields.splice(0,0,newfld);
-                    cswPrivate.columns.splice(0,0,newcol);
+                    cswPrivate.fields.splice(0, 0, newfld);
+                    cswPrivate.columns.splice(0, 0, newcol);
                 } // if (cswPrivate.showActionColumn)
             } //addActionColumn()
 
             cswPrivate.initGrid = function () {
 
-                cswPrivate. addActionColumn();
+                cswPrivate.addActionColumn();
 
                 cswPrivate.storeId = cswPrivate.ID + 'store';
                 var gridStore = Ext.create('Ext.data.Store', {

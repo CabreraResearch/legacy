@@ -28,6 +28,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public Int32 width;
         /// <summary>
+        /// Whether the column can be resized
+        /// </summary>
+        public bool resizable = true;
+        /// <summary>
         /// Whether this column will widen to encompass all extra space in the grid
         /// </summary>
         public bool flex = false;
@@ -35,6 +39,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// Hide this column (can be manually displayed on client)
         /// </summary>
         public bool hidden = false;
+        /// <summary>
+        /// Determine whether the column can be manually hidden/displayed on client
+        /// </summary>
+        public bool hideable = true;
         /// <summary>
         /// Data type for grid column
         /// </summary>
@@ -58,9 +66,17 @@ namespace ChemSW.Nbt.Grid.ExtJs
             {
                 Jcol["flex"] = flex;
             }
+            if( false == resizable )
+            {
+                Jcol["resizable"] = resizable;
+            }
             if( hidden )
             {
                 Jcol["hidden"] = hidden;
+            }
+            if( false == hideable )
+            {
+                Jcol["hideable"] = hideable;
             }
             if( xtype != extJsXType.Unknown )
             {

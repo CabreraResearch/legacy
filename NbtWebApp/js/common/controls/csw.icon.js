@@ -42,8 +42,9 @@
                 var multiplier = -1 * cswPrivate.size;
 
                 return {
-                    'background-position': (state * multiplier) + 'px ' +
-                                            (cswPrivate.iconType * multiplier) + 'px no-repeat'
+                    'background-position-x': (state * multiplier) + 'px',
+                    'background-position-y': (cswPrivate.iconType * multiplier) + 'px',
+                    'background-repeat': 'no-repeat'
                 };
             }; // offsetCss()
 
@@ -52,7 +53,7 @@
                     cswPrivate.iconType = newType;
 
                     cswPrivate.div.css({
-                        background: 'url(\'' + cswPrivate.url() + '\') '
+                        background: 'url(\'' + cswPrivate.url() + '\')'
                     });
                     cswPrivate.div.css(cswPrivate.offsetCss(cswPrivate.state));
 

@@ -36,6 +36,29 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public Int32 PageSize = 50;
 
+        public CswNbtGridExtJsGrid()
+        {
+            // add hidden canview/canedit/candelete columns
+            string[] columnNames = new string[] { "canView", "canEdit", "canDelete", "isLocked" };
+            foreach( string columnName in columnNames )
+            {
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( columnName );
+                CswNbtGridExtJsField fld = new CswNbtGridExtJsField()
+                {
+                    dataIndex = dataIndex,
+                };
+                CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn()
+                {
+                    dataIndex = dataIndex,
+                    header = columnName,
+                    hidden = true,
+                    hideable = false 
+                };
+                fields.Add( fld );
+                //columns.Add( col );
+            } // foreach( string columnName in columnNames )
+        } // constructor
+
         public bool columnsContains( string header )
         {
             bool ret = false;

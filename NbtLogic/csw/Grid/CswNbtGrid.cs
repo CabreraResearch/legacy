@@ -86,8 +86,8 @@ namespace ChemSW.Nbt.Grid
 
                     // Because properties in the view might be by object class, but properties on the tree will always be by nodetype,
                     // we have to use name, not id, as the dataIndex
-                    string header = MetaDataProp.PropName;
-                    CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( MetaDataProp.PropName );
+                    string header = MetaDataProp.PropNameWithQuestionNo;
+                    CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( MetaDataProp.PropName );  // don't use PropNameWithQuestionNo here, because it won't match the propname from the tree
 
                     // Potential bug here!
                     // If the same property is added to the view more than once, we'll only use the grid definition for the first instance
@@ -131,6 +131,19 @@ namespace ChemSW.Nbt.Grid
                 gridrow.data.Add( nodekeyDataIndex, Tree.getNodeKeyForCurrentPosition().ToString() );
                 gridrow.data.Add( nodenameDataIndex, Tree.getNodeNameForCurrentPosition().ToString() );
 
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
+                gridrow.canView = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.View,
+                                                               NodeType,
+                                                               NodeId: Tree.getNodeIdForCurrentPosition() );
+                gridrow.canEdit = ( _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Edit,
+                                                               NodeType,
+                                                               NodeId: Tree.getNodeIdForCurrentPosition() ) &&
+                                    false == Tree.getNodeLockedForCurrentPosition() );
+                gridrow.canDelete = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete,
+                                                                 NodeType,
+                                                                 NodeId: Tree.getNodeIdForCurrentPosition() );
+                gridrow.isLocked = false == Tree.getNodeLockedForCurrentPosition();
+
                 _TreeNodeToGrid( View, Tree, grid, gridrow );
 
                 Tree.goToParentNode();
@@ -149,6 +162,7 @@ namespace ChemSW.Nbt.Grid
                 // Potential bug here!
                 // If the view defines the property by objectclass propname, but the nodetype propname differs, this might break
                 CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
+
                 string value = Prop[CswNbtTreeNodes._AttrName_NodePropGestalt].ToString();
                 gridrow.data[dataIndex] = value;
             } // foreach( JObject Prop in ChildProps )
@@ -183,7 +197,7 @@ namespace ChemSW.Nbt.Grid
                 CswNbtGridExtJsRow gridrow = new CswNbtGridExtJsRow();
                 foreach( DataColumn Column in DT.Columns )
                 {
-                    gridrow.data[new CswNbtGridExtJsDataIndex(Column.ColumnName)] = Row[Column].ToString();
+                    gridrow.data[new CswNbtGridExtJsDataIndex( Column.ColumnName )] = Row[Column].ToString();
                 }
                 grid.rows.Add( gridrow );
             } // foreach( DataRow Row in DT.Rows )
