@@ -65,26 +65,24 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
-            if( DateTime.MinValue != SubmittedDate.DateTimeValue )
+            if( SubmittedDate.WasModified && DateTime.MinValue != SubmittedDate.DateTimeValue )
             {
                 CswNbtView RequestItemsView = new CswNbtView( _CswNbtResources );
                 CswNbtMetaDataObjectClass RequestItemsOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
                 CswNbtMetaDataObjectClassProp RiRequestOcp = RequestItemsOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
 
-                CswNbtViewRelationship RequestVr = RequestItemsView.AddViewRelationship( RequestItemsOc, false );
-                RequestVr.NodeIdsToFilterIn.Add( NodeId );
-                CswNbtViewRelationship RequestItemVr = RequestItemsView.AddViewRelationship( RequestVr, NbtViewPropOwnerType.Second, RiRequestOcp, false );
+                CswNbtViewRelationship RequestItemVr = RequestItemsView.AddViewRelationship( RequestItemsOc, false );
                 RequestItemsView.AddViewPropertyAndFilter( RequestItemVr,
                                                           RequestItemsOc.getObjectClassProp(
                                                               CswNbtObjClassRequestItem.PropertyName.Status.ToString() ),
                                                           CswNbtObjClassRequestItem.Statuses.Pending.ToString(),
                                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                RequestItemsView.AddViewPropertyAndFilter( RequestItemVr, RiRequestOcp, NodeId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
+
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestItemsView, false, false );
-                Int32 RequestNodeCount = Tree.getChildNodeCount();
-                if( RequestNodeCount > 0 )
+                Int32 RequestItemNodeCount = Tree.getChildNodeCount();
+                if( RequestItemNodeCount > 0 )
                 {
-                    Tree.goToNthChild( 0 );
-                    Int32 RequestItemNodeCount = Tree.getChildNodeCount();
                     for( Int32 N = 0; N < RequestItemNodeCount; N += 1 )
                     {
                         Tree.goToNthChild( N );

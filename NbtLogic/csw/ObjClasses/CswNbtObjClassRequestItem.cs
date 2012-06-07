@@ -132,9 +132,9 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 MessageText += "Size: " + Size.CachedNodeName + "/n";
             }
-            if( Count.Quantity > 0 )
+            if( Count.Value > 0 )
             {
-                MessageText += "Count: " + Count.Quantity + "/n";
+                MessageText += "Count: " + Count.Value + "/n";
             }
             CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.RelatedNodeId );
             if( null != NodeAsLocation )
@@ -178,22 +178,38 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             if( Status.WasModified &&
-                Status.Value != Statuses.Pending.ToString() &&
-                null != NodeAsRequest &&
-                null != NodeAsRequest.Requestor.RelatedNodeId )
+                Status.Value != Statuses.Pending.ToString() )
             {
-                CswNbtObjClassUser RequestorAsUser = _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
-                if( null != RequestorAsUser )
+                if( Status.Value == Statuses.Submitted.ToString() )
                 {
-                    string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
-                    string Message = _makeNotificationMessage();
-                    string Recipient = RequestorAsUser.Email;
-                    Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
-                                                                                                Recipient );
-                    _CswNbtResources.sendEmailNotification( EmailMessage );
+                    Request.ReadOnly = true;
+                    Type.ReadOnly = true;
+                    Quantity.ReadOnly = true;
+                    Size.ReadOnly = true;
+                    Container.ReadOnly = true;
+                    Count.ReadOnly = true;
+                    Material.ReadOnly = true;
+                    Location.ReadOnly = true;
+                    Number.ReadOnly = true;
+                    ExternalOrderNumber.ReadOnly = true;
+                }
+
+                if( null != NodeAsRequest &&
+                    null != NodeAsRequest.Requestor.RelatedNodeId )
+                {
+                    CswNbtObjClassUser RequestorAsUser =
+                        _CswNbtResources.Nodes.GetNode( NodeAsRequest.Requestor.RelatedNodeId );
+                    if( null != RequestorAsUser )
+                    {
+                        string Subject = Node.NodeName + "'s Request Item Status has Changed to " + Status.Value;
+                        string Message = _makeNotificationMessage();
+                        string Recipient = RequestorAsUser.Email;
+                        Collection<CswMailMessage> EmailMessage = _CswNbtResources.makeMailMessages( Subject, Message,
+                                                                                                    Recipient );
+                        _CswNbtResources.sendEmailNotification( EmailMessage );
+                    }
                 }
             }
-
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -257,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtNode.Properties[PropertyName.Size.ToString()]; }
         }
 
-        public CswNbtNodePropQuantity Count
+        public CswNbtNodePropNumber Count
         {
             get { return _CswNbtNode.Properties[PropertyName.Count.ToString()]; }
         }

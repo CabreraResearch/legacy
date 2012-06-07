@@ -24,53 +24,56 @@
             if (false === fractional) {
                 precision = 0;
             }
+            if (Csw.bool(o.propData.readonly)) {
+                propDiv.span({ text: o.propData.gestalt });
+            } else {
 
-            if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
+                if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
                     Csw.isNullOrEmpty(selectedNodeId) &&
-                    false === o.Multi &&
-                    o.relatednodetypeid === nodeTypeId) {
-                selectedNodeId = o.relatednodeid;
-                selectedName = o.relatednodename;
-            }
-
-            var table = propDiv.table({
-                ID: Csw.makeId(o.ID, 'tbl')
-            });
-
-            var numberTextBox = table.cell(1, cellCol).numberTextBox({
-                ID: o.ID + '_qty',
-                value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
-                MinValue: Csw.number(propVals.minvalue),
-                MaxValue: Csw.number(propVals.maxvalue),
-                ceilingVal: Csw.number(ceilingVal),
-                Precision: 6,//case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
-                ReadOnly: Csw.bool(o.ReadOnly),
-                Required: Csw.bool(o.Required),
-                onChange: o.onChange
-            });
-            cellCol++;
-
-            if (false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {
-                numberTextBox.clickOnEnter(o.saveBtn);
-            }
-
-            if (o.Multi) {
-                relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
-            }
-            var foundSelected = false;
-            Csw.crawlObject(options, function (relatedObj) {
-                if (relatedObj.id === selectedNodeId) {
-                    foundSelected = true;
-                    fractional = Csw.bool(relatedObj.fractional);
+                        false === o.Multi &&
+                            o.relatednodetypeid === nodeTypeId) {
+                    selectedNodeId = o.relatednodeid;
+                    selectedName = o.relatednodename;
                 }
+
+                var table = propDiv.table({
+                    ID: Csw.makeId(o.ID, 'tbl')
+                });
+
+                var numberTextBox = table.cell(1, cellCol).numberTextBox({
+                    ID: o.ID + '_qty',
+                    value: (false === o.Multi) ? Csw.string(propVals.value).trim() : Csw.enums.multiEditDefaultValue,
+                    MinValue: Csw.number(propVals.minvalue),
+                    MaxValue: Csw.number(propVals.maxvalue),
+                    ceilingVal: Csw.number(ceilingVal),
+                Precision: 6,//case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
+                    ReadOnly: Csw.bool(o.ReadOnly),
+                    Required: Csw.bool(o.Required),
+                    onChange: o.onChange
+                });
+                cellCol++;
+
+                if (false === Csw.isNullOrEmpty(numberTextBox) && numberTextBox.length > 0) {
+                    numberTextBox.clickOnEnter(o.saveBtn);
+                }
+
+                if (o.Multi) {
+                    relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
+                }
+                var foundSelected = false;
+                Csw.crawlObject(options, function (relatedObj) {
+                    if (relatedObj.id === selectedNodeId) {
+                        foundSelected = true;
+                    fractional = Csw.bool(relatedObj.fractional);
+                    }
                 relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
-            }, false);
-            if (false === o.Multi && false === foundSelected) {
+                }, false);
+                if (false === o.Multi && false === foundSelected) {
                 relationships.push({ value: selectedNodeId, display: selectedName, frac: Csw.bool(propVals.fractional) });
-            }
-            var selectBox = table.cell(1, cellCol).select({
-                ID: o.ID,
-                cssclass: 'selectinput',
+                }
+                var selectBox = table.cell(1, cellCol).select({
+                    ID: o.ID,
+                    cssclass: 'selectinput',
                 onChange: function () {
                     Csw.crawlObject(options, function (relatedObj) {
                         if (relatedObj.id === selectBox.val()) {
@@ -80,35 +83,37 @@
                     precision = false === fractional ? 0 : Csw.number(propVals.precision, 6);
                     o.onChange();
                 },
-                values: relationships,
-                selected: selectedNodeId
-            });
-            cellCol++;
+                    values: relationships,
+                    selected: selectedNodeId
+                });
+                cellCol++;
 
-            if (o.Required) {
-                selectBox.addClass("required");
-            }
+                if (o.Required) {
+                    selectBox.addClass("required");
+                }
 
             $.validator.addMethod('validateInteger', function (value, element) {
                 return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
             }, 'Value must be an integer');
             numberTextBox.addClass('validateInteger');
 
-            propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
+                propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
+            }
         },
         save: function (o) {
+            if (false === Csw.bool(o.propData.readonly)) {
+                var attributes = {
+                    value: o.propDiv.find('#' + o.ID + '_qty').val(),
+                    nodeid: null
+                };
 
-            var attributes = {
-                value: o.propDiv.find('#' + o.ID + '_qty').val(),
-                nodeid: null
-            };
+                var selectBox = o.propDiv.find('select');
+                if (false === Csw.isNullOrEmpty(selectBox)) {
+                    attributes.nodeid = selectBox.val();
+                }
 
-            var selectBox = o.propDiv.find('select');
-            if (false === Csw.isNullOrEmpty(selectBox)) {
-                attributes.nodeid = selectBox.val();
+                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
-
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
         }
     };
 
