@@ -179,6 +179,7 @@ namespace ChemSW.Nbt.Grid
         public JObject DataTableToJSON( DataTable DT, bool Editable = false )
         {
             CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid();
+            grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
             {
                 grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
@@ -186,9 +187,13 @@ namespace ChemSW.Nbt.Grid
 
             foreach( DataColumn Column in DT.Columns )
             {
+                CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( Column.ColumnName );
+                CswNbtGridExtJsField fld = new CswNbtGridExtJsField();
+                fld.dataIndex = dataIndex;
+                grid.fields.Add( fld );
                 CswNbtGridExtJsColumn gridcol = new CswNbtGridExtJsColumn();
                 gridcol.header = Column.ColumnName;
-                gridcol.dataIndex = new CswNbtGridExtJsDataIndex( Column.ColumnName );
+                gridcol.dataIndex = dataIndex;
                 grid.columns.Add( gridcol );
             }
 

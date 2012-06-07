@@ -47,13 +47,14 @@ namespace ChemSW.Nbt.Grid.ExtJs
                 {
                     dataIndex = dataIndex,
                 };
-                CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn()
-                {
-                    dataIndex = dataIndex,
-                    header = columnName,
-                    hidden = true,
-                    hideable = false 
-                };
+                // we don't need a column definition for these -- we'll never display them
+                //CswNbtGridExtJsColumn col = new CswNbtGridExtJsColumn()
+                //{
+                //    dataIndex = dataIndex,
+                //    header = columnName,
+                //    hidden = true,
+                //    hideable = false 
+                //};
                 fields.Add( fld );
                 //columns.Add( col );
             } // foreach( string columnName in columnNames )

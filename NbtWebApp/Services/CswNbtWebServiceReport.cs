@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     CswNbtGrid cg = new CswNbtGrid( _CswNbtResources );
-                    ret["griddata"] = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
+                    ret = cg.DataTableToJSON( rptDataTbl );  //rformat!=csv
                 }
             }
             else

@@ -44,10 +44,24 @@ namespace ChemSW.Nbt.Grid.ExtJs
             {
                 Jrow[Key.ToString()] = data[Key];
             }
-            Jrow["canview"] = canView;
-            Jrow["canedit"] = canEdit;
-            Jrow["candelete"] = canDelete;
-            Jrow["islocked"] = isLocked;
+
+            // save on packet size by only including these when they aren't the default:
+            if( false == canView )
+            {
+                Jrow["canview"] = canView;
+            }
+            if( false == canEdit )
+            {
+                Jrow["canedit"] = canEdit;
+            }
+            if( false == canDelete )
+            {
+                Jrow["candelete"] = canDelete;
+            }
+            if( isLocked )
+            {
+                Jrow["islocked"] = isLocked;
+            }
             return Jrow;
         } // ToJson()
 

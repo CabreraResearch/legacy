@@ -8,9 +8,11 @@
 
             var cswPrivate = {
                 ID: 'extjsGrid',
+                storeId: '',
                 title: 'Untitled Grid',
                 readonly: false,
                 stateId: '',
+                usePaging: true,
 
                 ajax: {
                     urlMethod: '',
@@ -25,9 +27,6 @@
                 maxWidth: '',
                 height: 300,  // overridden by webservice
                 width: 600,
-
-                urlMethod: 'runGrid',
-                storeId: '',
 
                 fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
                 columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
@@ -77,10 +76,10 @@
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
                             var ret = '<table cellpadding="0"><tr>';
 
-                            var canedit = Csw.bool(record.data.canedit);
-                            var canview = Csw.bool(record.data.canview);
-                            var candelete = Csw.bool(record.data.candelete);
-                            var islocked = Csw.bool(record.data.islocked);
+                            var canedit = Csw.bool(record.data.canedit, true);
+                            var canview = Csw.bool(record.data.canview, true);
+                            var candelete = Csw.bool(record.data.candelete, true);
+                            var islocked = Csw.bool(record.data.islocked, false);
 
                             // only one cell for edit/view/lock
                             if (islocked) {
@@ -105,52 +104,58 @@
             cswPrivate.initGrid = function () {
 
                 cswPrivate.addActionColumn();
-
                 cswPrivate.storeId = cswPrivate.ID + 'store';
-                var gridStore = Ext.create('Ext.data.Store', {
+
+                var storeopts = {
                     storeId: cswPrivate.storeId,
                     fields: cswPrivate.fields,
                     data: cswPrivate.data,
-                    pageSize: cswPrivate.pageSize,
                     proxy: {
-                        type: 'pagingmemory',
+                        type: 'memory',
                         reader: {
                             type: 'json',
                             root: 'items'
                         }
                     }
-                });
+                };
+                if (Csw.bool(cswPrivate.usePaging)) {
+                    storeopts.pageSize = cswPrivate.pageSize;
+                    storeopts.proxy.type = 'pagingmemory';
+                }
 
+                var gridStore = Ext.create('Ext.data.Store', storeopts);
                 gridStore.loadPage(1);
+
+                var gridopts = {
+                    title: cswPrivate.title,
+                    store: gridStore,
+                    columns: cswPrivate.columns,
+                    height: cswPrivate.height,
+                    width: cswPrivate.width,
+                    stateful: true,
+                    stateId: cswPrivate.stateId,
+                    forceFit: true,               // expand columns to fill width
+                    viewConfig: {
+//                        shrinkWrap: true,
+//                        maxWidth: cswPrivate.maxWidth,
+//                        maxHeight: cswPrivate.maxHeight,
+                        deferEmptyText: false,
+                        emptyText: 'No Results'
+                    },
+                    renderTo: cswParent.getId()
+                };
+                if (Csw.bool(cswPrivate.usePaging)) {
+                    gridopts.dockedItems = [{
+                        xtype: 'pagingtoolbar',
+                        store: gridStore,
+                        dock: 'bottom',
+                        displayInfo: true
+                    }];
+                }
 
                 // Apparently there's a race condition between creating the store and using it?
                 setTimeout(function () {
-
-                    Ext.create('Ext.grid.Panel', {
-                        title: cswPrivate.title,
-                        store: gridStore,
-                        columns: cswPrivate.columns,
-                        height: cswPrivate.height,
-                        width: cswPrivate.width,
-                        stateful: true,
-                        stateId: cswPrivate.stateId,
-                        forceFit: true,               // expand columns to fill width
-                        viewConfig: {
-                            shrinkWrap: true,
-                            maxWidth: cswPrivate.maxWidth,
-                            maxHeight: cswPrivate.maxHeight,
-                            deferEmptyText: false,
-                            emptyText: 'No Results'
-                        },
-                        dockedItems: [{
-                            xtype: 'pagingtoolbar',
-                            store: gridStore,
-                            dock: 'bottom',
-                            displayInfo: true
-                        }],
-                        renderTo: cswParent.getId()
-                    });
-
+                    Ext.create('Ext.grid.Panel', gridopts);
                 }, 50);
 
             }; // initGrid()
@@ -167,11 +172,14 @@
                         success: function (result) {
                             if (false === Csw.isNullOrEmpty(result.grid)) {
                                 cswPrivate.pageSize = Csw.number(result.grid.pageSize);
-                                cswPrivate.height = 25 + // title bar
-                                                    23 + // grid header
-                                                    (cswPrivate.pageSize * 24.5) + // rows
-                                                    14 + // horizontal scrollbar
-                                                    27;  // grid footer
+                                if(Csw.bool(cswPrivate.usePaging))
+                                {
+                                    cswPrivate.height = 25 + // title bar
+                                                        23 + // grid header
+                                                        (cswPrivate.pageSize * 24.5) + // rows
+                                                        14 + // horizontal scrollbar
+                                                        27;  // grid footer
+                                }
                                 cswPrivate.title = result.grid.title;
                                 cswPrivate.fields = result.grid.fields;
                                 cswPrivate.columns = result.grid.columns;
