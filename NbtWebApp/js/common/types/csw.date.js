@@ -244,10 +244,10 @@
             return isValid;
         });
 
-    Csw.nowAsString = Csw.nowAsString ||
-        Csw.register('nowAsString', function () {
-            var now = new Date();
-            return (now.getMonth() + 1) + '/' + now.getDate() + '/' + now.getFullYear();
+        Csw.todayAsString = Csw.todayAsString ||
+        Csw.register('todayAsString', function () {
+            var today = new Date();
+            return (today.getMonth() + 1) + '/' + today.getDate() + '/' + today.getFullYear();
         });
 
     Csw.getDateFromDnJson = Csw.getDateFromDnJson ||
