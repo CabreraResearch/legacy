@@ -26,7 +26,6 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         private CswNbtSubField _UnitIdSubField;
-        private Collection<CswNbtNode> _UnitNodes;
 
         #endregion
 
@@ -35,32 +34,11 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropQuantity( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp )
         {
-            // get the Unit of Measure objectclassid
-            CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
-
-            // generate the view
-            CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.ViewName = "CswNbtNodePropQuantity()";
-            View.AddViewRelationship( Unit_ObjectClass, true );
-
-            // generate the tree
-            ICswNbtTree UnitsTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
-
-            // get the list of units
-            _UnitNodes = new Collection<CswNbtNode>();
-            UnitsTree.goToRoot();
-            for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
-            {
-                UnitsTree.goToNthChild( i );
-                _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
-                UnitsTree.goToParentNode();
-            }
             _FieldTypeRule = (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _QuantitySubField = _FieldTypeRule.QuantitySubField;
             _UnitNameSubField = _FieldTypeRule.UnitNameSubField;
             _UnitIdSubField = _FieldTypeRule.UnitIdSubField;
-
-        }//CswNbtNodePropQuantity()
+        }
 
         #endregion
 
@@ -90,7 +68,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( _CswNbtMetaDataNodeTypeProp.NumberPrecision != Int32.MinValue )
                     return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
                 else
-                    return 0;
+                    return 6;
             }
         }
         public double MinValue
@@ -112,6 +90,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
+                Collection<CswNbtNode> _UnitNodes = new Collection<CswNbtNode>();
+
+                ICswNbtTree UnitsTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false, false );
+                UnitsTree.goToRoot();
+                for( int i = 0; i < UnitsTree.getChildNodeCount(); i++ )
+                {
+                    UnitsTree.goToNthChild( i );
+                    _UnitNodes.Add( UnitsTree.getNodeForCurrentPosition() );
+                    UnitsTree.goToParentNode();
+                }
                 return _UnitNodes;
             }
         }
@@ -206,10 +194,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                CswNbtView Ret = null;
-                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
-                    Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
-                return Ret;
+                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+                CswNbtView View = new CswNbtView( _CswNbtResources );
+                View.ViewName = "CswNbtNodePropQuantity()";
+                View.AddViewRelationship( Unit_ObjectClass, true );
+                return View;
             }
         }
 
@@ -218,6 +207,20 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 return _CswNbtMetaDataNodeTypeProp.FKValue;
+            }
+        }
+
+        public Tristate TargetFractional
+        {
+            get
+            {
+                Tristate Fractional = Tristate.True;//We want to be able to enter a decimal value if Unit hasn't been selected yet.
+                CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes[UnitId];
+                if( UnitNode != null )
+                {
+                    Fractional = UnitNode.Fractional.Checked;
+                }
+                return Fractional;
             }
         }
 
@@ -353,6 +356,8 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodeid"] = UnitId.ToString();
             }
 
+            ParentObject["fractional"] = TargetFractional.ToString().ToLower();
+
             if( false == ReadOnly )
             {
                 JArray JOptions = new JArray();
@@ -365,11 +370,13 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         JOption["id"] = Node.NodeId.ToString();
                         JOption["value"] = Node.NodeName;
+                    JOption["fractional"] = Node.Properties[CswNbtObjClassUnitOfMeasure.FractionalPropertyName].AsLogical.Checked.ToString().ToLower();
                     }
                     else
                     {
                         JOption["id"] = "";
                         JOption["value"] = "";
+                    JOption["fractional"] = "";
                     }
                     JOptions.Add( JOption );
                 }

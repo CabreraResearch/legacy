@@ -18,11 +18,16 @@
                 nodeTypeId = Csw.string(propVals.nodetypeid).trim(),
                 options = propVals.options,
                 relationships = [],
+                fractional = Csw.bool(propVals.fractional),
                 cellCol = 1;
 
+            if (false === fractional) {
+                precision = 0;
+            }
             if (Csw.bool(o.propData.readonly)) {
                 propDiv.span({ text: o.propData.gestalt });
             } else {
+
                 if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
                     Csw.isNullOrEmpty(selectedNodeId) &&
                         false === o.Multi &&
@@ -41,7 +46,7 @@
                     MinValue: Csw.number(propVals.minvalue),
                     MaxValue: Csw.number(propVals.maxvalue),
                     ceilingVal: Csw.number(ceilingVal),
-                    Precision: precision,
+                    Precision: 6,//case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                     ReadOnly: Csw.bool(o.ReadOnly),
                     Required: Csw.bool(o.Required),
                     onChange: o.onChange
@@ -59,16 +64,25 @@
                 Csw.crawlObject(options, function (relatedObj) {
                     if (relatedObj.id === selectedNodeId) {
                         foundSelected = true;
+                    fractional = Csw.bool(relatedObj.fractional);
                     }
-                    relationships.push({ value: relatedObj.id, display: relatedObj.value });
+                    relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
                 }, false);
                 if (false === o.Multi && false === foundSelected) {
-                    relationships.push({ value: selectedNodeId, display: selectedName });
+                    relationships.push({ value: selectedNodeId, display: selectedName, frac: Csw.bool(propVals.fractional) });
                 }
                 var selectBox = table.cell(1, cellCol).select({
                     ID: o.ID,
                     cssclass: 'selectinput',
-                    onChange: o.onChange,
+                    onChange: function () {
+                    Csw.crawlObject(options, function (relatedObj) {
+                        if (relatedObj.id === selectBox.val()) {
+                            fractional = Csw.bool(relatedObj.fractional);
+                        }
+                    }, false);
+                    precision = false === fractional ? 0 : Csw.number(propVals.precision, 6);
+                    o.onChange();
+                },
                     values: relationships,
                     selected: selectedNodeId
                 });
@@ -77,6 +91,11 @@
                 if (o.Required) {
                     selectBox.addClass("required");
                 }
+
+            $.validator.addMethod('validateInteger', function (value, element) {
+                return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
+            }, 'Value must be an integer');
+            numberTextBox.addClass('validateInteger');
 
                 propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
             }
