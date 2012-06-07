@@ -390,6 +390,7 @@ namespace ChemSW.Nbt
                 //}
 
                 // BZ 7074 - Make sure the user has permissions to at least one root node
+                Collection<DataRow> RowsToRemove = new Collection<DataRow>();
                 foreach( DataRow Row in ViewsTable.Rows )
                 {
                     CswNbtView ThisView = new CswNbtView( _CswNbtResources );
@@ -403,10 +404,14 @@ namespace ChemSW.Nbt
                         ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
                         ( !SearchableOnly || ThisView.IsSearchable() ) )
                     {
-                        Row.Delete();
+                        RowsToRemove.Add( Row );
                         Ret.Add( ThisView.ViewId, ThisView );
                     }
                 } // foreach( DataRow Row in ViewsTable.Rows )
+                foreach( DataRow Row in RowsToRemove )
+                {
+                    ViewsTable.Rows.Remove( Row );
+                }
             } // if( null == LimitToViews || LimitToViews.Count > 0 )
             //_LastIncludeEmptyViews = IncludeEmptyViews;
             //_LastOrderBy = OrderBy;
