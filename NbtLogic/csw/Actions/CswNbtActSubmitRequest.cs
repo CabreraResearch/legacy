@@ -104,15 +104,15 @@ namespace ChemSW.Nbt.Actions
 
                 ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false );
                 CartCount = RequestTree.getChildNodeCount();
-                if( CartCount == 1 )
+                if( CartCount >= 1 )
                 {
                     RequestTree.goToNthChild( 0 );
                     _CurrentRequestNode = RequestTree.getNodeForCurrentPosition();
                 }
-                else if( CartCount > 1 )
-                {
-                    throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
-                }
+                //else if( CartCount > 1 )
+                //{
+                //    throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
+                //}
                 else if( CartCount == 0 )
                 {
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
@@ -129,21 +129,27 @@ namespace ChemSW.Nbt.Actions
             return _CurrentRequestNode;
         }
 
+        private void _applyCartFilter( CswPrimaryKey NodeId )
+        {
+            CswNbtMetaDataObjectClassProp RequestOcp = _RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
+            _SystemViews.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
+            {
+                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                FilterValue = NodeId.PrimaryKey.ToString(),
+                ObjectClassProp = RequestOcp,
+                SubFieldName = CswNbtSubField.SubFieldName.NodeID
+            }, _RequestItemOc );
+        }
+
         /// <summary>
         /// Fetch the current Request node for the current user and establish base counts.
         /// </summary>
         public void applyCurrentCartFilter()
         {
-            if( null != CurrentRequestNode() )
+            CswNbtNode CartNode = CurrentRequestNode();
+            if( null != CartNode )
             {
-                CswNbtMetaDataObjectClassProp RequestOcp = _RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
-                _SystemViews.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
-                                                     {
-                                                         FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                         FilterValue = CurrentRequestNode().NodeId.PrimaryKey.ToString(),
-                                                         ObjectClassProp = RequestOcp,
-                                                         SubFieldName = CswNbtSubField.SubFieldName.NodeID
-                                                     }, _RequestItemOc );
+                _applyCartFilter( CartNode.NodeId );
                 ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false );
                 CartContentCount = CartTree.getChildNodeCount();
             }
@@ -193,6 +199,8 @@ namespace ChemSW.Nbt.Actions
 
             return Ret;
         }
+
+
 
         #endregion Public methods and props
     }
