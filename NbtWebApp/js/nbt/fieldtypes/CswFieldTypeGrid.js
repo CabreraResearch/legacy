@@ -92,9 +92,38 @@
                     });
                 };
 
+                var makeLinkGrid = function () {
+                    'use strict';
+                    Csw.ajax.post({
+                        url: Csw.enums.ajaxUrlPrefix + 'getGridRowCount',
+                        data: {
+                            ViewId: viewid,
+                            IncludeNodeKey: o.cswnbtnodekey
+                        },
+                        success: function (data) {
+                            propDiv.linkGrid({
+                                rowCount: data.rowCount,
+                                linkText: '',
+                                onLinkClick: function () {
+                                    $.CswDialog('OpenEmptyDialog', {
+                                        title: o.propData.name,
+                                        onOpen: function (dialogDiv) {
+                                            makeFullGrid(viewid, dialogDiv);
+                                        }
+                                    }
+                                    );
+                                }
+                            });
+                        }
+                    });
+                };
+
                 switch (gridMode.toLowerCase()) {
                     case 'small':
                         makeSmallGrid();
+                        break;
+                    case 'link':
+                        makeLinkGrid();
                         break;
                     default:
                         makeFullGrid(viewid, propDiv);

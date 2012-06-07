@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string SourceContainerPropertyName { get { return "Source Container"; } }
         public static string QuantityPropertyName { get { return "Quantity"; } }
         public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
+        public static string SizePropertyName { get { return "Size"; } }
         public static string RequestPropertyName { get { return "Request"; } }
 
         public string RequestButtonPropertyName { get { return RequestPropertyName; } }
@@ -132,7 +133,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // Disposed == false
             CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( DisposedPropertyName );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, DisposedOCP, false.ToString() );
+
+            //ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, DisposedOCP, Tristate.False.ToString() );
+
+            CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
+            viewProp.ShowInGrid = false;
+            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, Value: Tristate.False.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }

@@ -53,6 +53,15 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'thinGrid');
                     return Csw.composites.thinGrid(cswParent, opts);
                 };
+
+                cswParent.linkGrid = function (opts) {
+                    /// <summary> Creates a Csw.linkGrid on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the linkGrid.</param>
+                    /// <returns type="Csw.composites.thinGrid">A Csw.composites.linkGrid</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'linkGrid');
+                    return Csw.composites.linkGrid(cswParent, opts);
+                };
+
                 
                 return cswParent;
             });
