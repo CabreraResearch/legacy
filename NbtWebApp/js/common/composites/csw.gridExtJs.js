@@ -27,7 +27,6 @@
 
                 urlMethod: 'runGrid',
                 storeId: '',
-                dataPrefix: 'val_',
 
                 fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
                 columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
@@ -50,7 +49,7 @@
                             tooltip: 'Edit',
                             handler: function (grid, rowIndex, colIndex) {
                                 var rec = grid.getStore().getAt(rowIndex);
-                                Csw.tryExec(cswPrivate.onEdit, rec.data, cswPrivate.dataPrefix);
+                                Csw.tryExec(cswPrivate.onEdit, rec.data);
                             }
                         },
                         {
@@ -61,7 +60,7 @@
                             tooltip: 'Delete',
                             handler: function (grid, rowIndex, colIndex) {
                                 var rec = grid.getStore().getAt(rowIndex);
-                                Csw.tryExec(cswPrivate.onDelete, rec.data, cswPrivate.dataPrefix);
+                                Csw.tryExec(cswPrivate.onDelete, rec.data);
                             }
                         }]
                     };
@@ -105,6 +104,10 @@
                         width: cswPrivate.width,
                         stateful: true,
                         stateId: cswPrivate.stateId,
+                        viewConfig: {
+                            forceFit: true,
+                            emptyText: 'No Results'
+                        },
                         dockedItems: [{
                             xtype: 'pagingtoolbar',
                             store: gridStore,

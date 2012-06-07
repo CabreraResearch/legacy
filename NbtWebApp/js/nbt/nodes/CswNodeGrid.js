@@ -315,10 +315,10 @@
                                     },
                                     readonly: forReporting,
                                     showActionColumn: true,
-                                    onEdit: function(row, dataprefix) {
-                                        var nodeid = row[dataprefix + 'nodeid'];
-                                        var nodekey = row[dataprefix + 'nodekey'];
-                                        var nodename = row[dataprefix + 'nodename'];
+                                    onEdit: function(row) {
+                                        var nodeid = row['nodeid'];
+                                        var nodekey = row['nodekey'];
+                                        var nodename = row['nodename'];
                 
                                         $.CswDialog('EditNodeDialog', {
                                             nodeids: [ nodeid ],
@@ -330,10 +330,10 @@
                                             onRefresh: o.onRefresh
                                         });
                                     },
-                                    onDelete: function(row, dataprefix) {
-                                        var nodeid = row[dataprefix + 'nodeid'];
-                                        var nodekey = row[dataprefix + 'nodekey'];
-                                        var nodename = row[dataprefix + 'nodename'];
+                                    onDelete: function(row) {
+                                        var nodeid = row['nodeid'];
+                                        var nodekey = row['nodekey'];
+                                        var nodename = row['nodename'];
 
                                         $.CswDialog('DeleteNodeDialog', {
                                             nodeids: [ nodeid ],

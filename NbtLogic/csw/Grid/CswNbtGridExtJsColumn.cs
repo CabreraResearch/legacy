@@ -20,9 +20,9 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// </summary>
         public string header;
         /// <summary>
-        /// Internal column name
+        /// Internal column name (matches field definition's dataIndex)
         /// </summary>
-        public string dataIndex;
+        public CswNbtGridExtJsDataIndex dataIndex;
         /// <summary>
         /// Width in pixels (default is 100)
         /// </summary>
@@ -47,9 +47,9 @@ namespace ChemSW.Nbt.Grid.ExtJs
         public JObject ToJson()
         {
             JObject Jcol = new JObject();
-            Jcol["id"] = dataIndex;
+            Jcol["id"] = dataIndex.ToString();
             Jcol["header"] = header;
-            Jcol["dataIndex"] = CswNbtGridExtJsGrid.DataIndexPrefix + dataIndex;
+            Jcol["dataIndex"] = dataIndex.ToString();
             if( width > 0 )
             {
                 Jcol["width"] = width;

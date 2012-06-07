@@ -18,14 +18,14 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// Name - value pairs that encompass the row data
         /// </summary>
-        public Dictionary<string, string> data = new Dictionary<string, string>();
+        public Dictionary<CswNbtGridExtJsDataIndex, string> data = new Dictionary<CswNbtGridExtJsDataIndex, string>();
 
         public JObject ToJson()
         {
             JObject Jrow = new JObject();
-            foreach( string Key in data.Keys )
+            foreach( CswNbtGridExtJsDataIndex Key in data.Keys )
             {
-                Jrow[CswNbtGridExtJsGrid.DataIndexPrefix + Key] = data[Key];
+                Jrow[Key.ToString()] = data[Key];
             }
             return Jrow;
         } // ToJson()

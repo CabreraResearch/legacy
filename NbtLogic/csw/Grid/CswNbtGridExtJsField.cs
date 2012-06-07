@@ -18,7 +18,8 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// Name for the field (matches column definition's dataIndex)
         /// </summary>
-        public string name;
+        public CswNbtGridExtJsDataIndex dataIndex;
+
         /// <summary>
         /// Data type
         /// string, date, number
@@ -28,7 +29,7 @@ namespace ChemSW.Nbt.Grid.ExtJs
         public JObject ToJson()
         {
             JObject Jfield = new JObject();
-            Jfield["name"] = CswNbtGridExtJsGrid.DataIndexPrefix + name;
+            Jfield["name"] = dataIndex.ToString();
             if( type != string.Empty )
             {
                 Jfield["type"] = type;

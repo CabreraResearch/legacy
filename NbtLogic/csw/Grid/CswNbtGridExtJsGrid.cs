@@ -15,8 +15,6 @@ namespace ChemSW.Nbt.Grid.ExtJs
 {
     public class CswNbtGridExtJsGrid
     {
-        public static string DataIndexPrefix = "val_";
-
         /// <summary>
         /// Header Title for Grid
         /// </summary>
