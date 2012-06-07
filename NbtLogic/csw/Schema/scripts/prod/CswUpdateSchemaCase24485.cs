@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Schema
             expView.save();
 
 
-            CswNbtViewProperty missingViewProp = expView.AddViewProperty( contRelationship, contLocationProp );
+            CswNbtViewProperty missingViewProp = expView.AddViewProperty( contRelationship, contMissingProp );
             missingViewProp.Order = 8;
             missingViewProp.ShowInGrid = false;
             missingView.AddViewPropertyFilter(
