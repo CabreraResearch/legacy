@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Actions
             {
                 _CurrentCartView = _SystemViews.SystemView;
                 _CurrentCartView.SaveToCache( false );
-                reInitCart();
+                applyCurrentCartFilter();
             }
             else if( RequestViewName == CswNbtActSystemViews.SystemViewName.CISProRequestHistory )
             {
@@ -67,8 +67,8 @@ namespace ChemSW.Nbt.Actions
                     CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, null );
                     _CurrentCartView = SystemViews.SystemView;
                     _CurrentCartView.SaveToCache( false );
-                    reInitCart();
                 }
+                applyCurrentCartFilter();
                 return _CurrentCartView;
             }
         }
@@ -89,52 +89,63 @@ namespace ChemSW.Nbt.Actions
 
         public Int32 CartContentCount = 0;
         public Int32 CartCount = 0;
+
         private CswNbtNode _CurrentRequestNode;
-        public CswNbtNode CurrentRequestNode
+        public CswNbtNode CurrentRequestNode()
         {
-            get
+            if( null == _CurrentRequestNode )
             {
-                if( null == _CurrentRequestNode )
+                CswNbtView RequestView = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
+                CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate.ToString() );
+                CswNbtViewRelationship RequestVr = RequestView.AddViewRelationship( _RequestOc, true ); //default filter says Requestor == me
+                RequestView.AddViewPropertyAndFilter( RequestVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                RequestView.AddViewPropertyAndFilter( RequestVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+
+                ICswNbtTree RequestTree = _CswNbtResources.Trees.getTreeFromView( RequestView, false, false );
+                CartCount = RequestTree.getChildNodeCount();
+                if( CartCount == 1 )
                 {
-                    reInitCart();
+                    RequestTree.goToNthChild( 0 );
+                    _CurrentRequestNode = RequestTree.getNodeForCurrentPosition();
                 }
-                return _CurrentRequestNode;
+                else if( CartCount > 1 )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
+                }
+                else if( CartCount == 0 )
+                {
+                    CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
+                    if( null == RequestNt )
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                    "Cannot Submit Request without a valid Request object.",
+                                                    "No Request NodeType could be found." );
+                    }
+                    _CurrentRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    _CurrentRequestNode.postChanges( true );
+                }
             }
+            return _CurrentRequestNode;
         }
 
         /// <summary>
         /// Fetch the current Request node for the current user and establish base counts.
         /// </summary>
-        public void reInitCart()
+        public void applyCurrentCartFilter()
         {
-            CartContentCount = 0;
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, true, false );
-            CartCount = Tree.getChildNodeCount();
-            if( CartCount == 1 )
+            if( null != CurrentRequestNode() )
             {
-                Tree.goToNthChild( 0 );
-                _CurrentRequestNode = Tree.getNodeForCurrentPosition();
-                if( CurrentRequestNode.ObjClass.ObjectClass == _RequestOc )
-                {
-                    CartContentCount = Tree.getChildNodeCount();
-                }
-            }
-            else if( CartCount > 1 )
-            {
-                throw new CswDniException( ErrorType.Warning, "Only one pending request may be open at a time.", "There is more than one Pending request assigned to the current user." );
-            }
-            else if( CartCount == 0 )
-            {
-                CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
-                if( null == RequestNt )
-                {
-                    throw new CswDniException( ErrorType.Warning,
-                                                "Cannot Submit Request without a valid Request object.",
-                                                "No Request NodeType could be found." );
-                }
-                _CurrentRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                _CurrentRequestNode.postChanges( true );
-                reInitCart();
+                CswNbtMetaDataObjectClassProp RequestOcp = _RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
+                _SystemViews.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
+                                                     {
+                                                         FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                         FilterValue = CurrentRequestNode().NodeId.PrimaryKey.ToString(),
+                                                         ObjectClassProp = RequestOcp,
+                                                         SubFieldName = CswNbtSubField.SubFieldName.NodeID
+                                                     }, _RequestItemOc );
+                ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false );
+                CartContentCount = CartTree.getChildNodeCount();
             }
         }
 

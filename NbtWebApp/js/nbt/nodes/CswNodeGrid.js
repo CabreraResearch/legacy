@@ -106,7 +106,7 @@
                         }
                     }
                     //cswPrivate.selectedRowId = rowid;
-                    if (false === e.isMulti) {
+                    if (false === Csw.bool(e.isMulti)) {
                         if (Csw.contains(e.eventObj, 'toElement') && Csw.contains(e.eventObj.toElement, 'className')) {
                             Csw.tryExec(validateNode, e.eventObj.toElement.className);
                         } else if (Csw.contains(e.eventObj, 'target') && Csw.isString(e.eventObj.target.className)) {

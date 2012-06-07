@@ -85,6 +85,9 @@
                                 refresh: false,
                                 edit: false
                             };
+                            cswPrivate.gridOpts.onSelectRow = function() {
+                                cswPublic.grid.resetSelection();
+                            };
                             cswPrivate.gridOpts.beforeSelectRow = function (rowid, eventObj) {
                                 cswPrivate.selectedRowId = rowid;
                                 return Csw.nbt.gridViewMethods.bindActionEvents({

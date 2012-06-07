@@ -217,33 +217,19 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = _getSystemView( SystemViewName.CISProRequestCart );
             if( null == Ret )
             {
-                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-                Ret = new CswNbtView( _CswNbtResources );
+                CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName ); Ret = new CswNbtView( _CswNbtResources );
                 Ret.makeNew( SystemViewName.CISProRequestCart.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 ReInit = true;
             }
             if( ReInit )
             {
                 Ret.Category = "Request Configuration";
-                Ret.Visibility = NbtViewVisibility.Property;
                 Ret.ViewMode = NbtViewRenderingMode.Grid;
 
                 Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
-                CswNbtMetaDataObjectClassProp SubmittedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
-                CswNbtMetaDataObjectClassProp CompletedDateOcp = RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate.ToString() );
-                CswNbtViewRelationship RequestVr = Ret.AddViewRelationship( RequestOc, true ); //default filter says Requestor == me
-                CswNbtViewProperty SubmitDateVp = Ret.AddViewProperty( RequestVr, SubmittedDateOcp );
-                Ret.AddViewPropertyFilter( SubmitDateVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-                SubmitDateVp.ShowInGrid = false;
-
-                CswNbtViewProperty CompleteDateVp = Ret.AddViewProperty( RequestVr, CompletedDateOcp );
-                Ret.AddViewPropertyFilter( CompleteDateVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
-                CompleteDateVp.ShowInGrid = false;
 
                 CswNbtMetaDataObjectClass RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-                CswNbtMetaDataObjectClassProp RequestOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
-                CswNbtViewRelationship RequestItemVr = Ret.AddViewRelationship( RequestVr, NbtViewPropOwnerType.Second, RequestOcp, true );
+                CswNbtViewRelationship RequestItemVr = Ret.AddViewRelationship( RequestItemOc, true );
 
                 CswNbtMetaDataObjectClassProp NumberOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number.ToString() );
                 CswNbtMetaDataObjectClassProp TypeOcp = RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type.ToString() );
@@ -349,15 +335,18 @@ namespace ChemSW.Nbt.Actions
             public CswNbtMetaDataObjectClassProp ObjectClassProp { get; set; }
             public string FilterValue { get; set; }
             public CswNbtPropFilterSql.PropertyFilterMode FilterMode { get; set; }
+            public CswNbtSubField.SubFieldName SubFieldName { get; set; }
         }
 
-        public SystemViewPropFilterDefinition makeSystemViewFilter( CswNbtMetaDataObjectClassProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public SystemViewPropFilterDefinition makeSystemViewFilter( CswNbtMetaDataObjectClassProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null )
         {
+            SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
             return new SystemViewPropFilterDefinition
                        {
                            ObjectClassProp = ObjectClassProp,
                            FilterValue = FilterValue,
-                           FilterMode = FilterMode
+                           FilterMode = FilterMode,
+                           SubFieldName = SubFieldName
                        };
         }
 
@@ -370,7 +359,7 @@ namespace ChemSW.Nbt.Actions
                 if( null == ExpectedObjectClass || PotentialSystemViewRelationship.isExpectedMetaDataType( ExpectedObjectClass ) )
                 {
                     Ret = true;
-                    SystemView.AddViewPropertyAndFilter( PotentialSystemViewRelationship, FilterDefinition.ObjectClassProp, FilterDefinition.FilterValue, FilterMode: FilterDefinition.FilterMode );
+                    SystemView.AddViewPropertyAndFilter( PotentialSystemViewRelationship, FilterDefinition.ObjectClassProp, FilterDefinition.FilterValue, FilterMode: FilterDefinition.FilterMode, SubFieldName: FilterDefinition.SubFieldName );
                 }
                 if( PotentialSystemViewRelationship.ChildRelationships.Count > 0 )
                 {
