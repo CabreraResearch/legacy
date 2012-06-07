@@ -1165,46 +1165,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // runGrid()
-
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string runGridTest( string ViewId, string IncludeNodeKey, string IncludeInQuickLaunch, string ForReport )
-        {
-            UseCompression();
-            JObject ReturnVal = new JObject();
-            bool IsQuickLaunch = CswConvert.ToBoolean( IncludeInQuickLaunch );
-
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey, ref IsQuickLaunch );
-
-                if( null != View )
-                {
-                    //var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( ForReport ) );
-                    //ReturnVal = ws.runGrid( IsQuickLaunch );
-                    ICswNbtTree GridTree = _CswNbtResources.Trees.getTreeFromView( View, false );
-                    CswNbtGrid GridExtJs = new CswNbtGrid( _CswNbtResources );
-                    ReturnVal = GridExtJs.TreeToJson( View, GridTree );
-                }
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // runGridTest()
+        
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -1277,54 +1238,6 @@ namespace ChemSW.Nbt.WebServices
 
         //    return ReturnVal.ToString();
         //} // getGrid()
-
-
-
-        #region Grid TESTING
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getGridTestData()
-        {
-            UseCompression();
-            JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-                
-                ReturnVal = JObject.Parse( @"
-{ 
-    grid: {
-        fields:['name', 'email', 'phone'],
-        columns:  [
-                    { header: 'Name',  dataIndex: 'name' },
-                    { header: 'Email', dataIndex: 'email', flex: 1 },
-                    { header: 'Phone', dataIndex: 'phone' }
-                  ],
-        data:{'items':[
-            { 'name': 'Lisa',  'email':'lisa@simpsons.com',  'phone':'555-111-1224'  },
-            { 'name': 'Bart',  'email':'bart@simpsons.com',  'phone':'555-222-1234' },
-            { 'name': 'Homer', 'email':'home@simpsons.com',  'phone':'555-222-1244'  },
-            { 'name': 'Marge', 'email':'marge@simpsons.com', 'phone':'555-222-1254'  }
-        ]}
-    }
-}");
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = jError( Ex );
-            }
-
-            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // getGrid()
-
-        #endregion Grid TESTING
 
 
         #endregion Grid Views
