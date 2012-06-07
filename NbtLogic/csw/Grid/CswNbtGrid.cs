@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.Grid
                 gridrow.canDelete = _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Delete,
                                                                  NodeType,
                                                                  NodeId: Tree.getNodeIdForCurrentPosition() );
-                gridrow.isLocked = false == Tree.getNodeLockedForCurrentPosition();
+                gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
 
                 _TreeNodeToGrid( View, Tree, grid, gridrow );
 

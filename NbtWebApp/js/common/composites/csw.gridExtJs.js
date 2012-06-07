@@ -44,17 +44,21 @@
                 if (showButton) {
                     setTimeout(function () {
                         var div = Csw.literals.factory($('#' + buttonId));
-                        div.icon({
+                        var iconopts = {
                             ID: cswPrivate.ID + '_' + buttonId,
                             hovertext: buttonName,
                             iconType: iconType,
                             state: Csw.enums.iconState.normal,
-                            isButton: true,
-                            onClick: function () {
-                                Csw.tryExec(clickFunc, record.data);
-                            },
+                            isButton: false,
                             size: 18
-                        });
+                        };
+                        if (false === Csw.isNullOrEmpty(clickFunc)) {
+                            iconopts.isButton = true;
+                            iconopts.onClick = function () {
+                                Csw.tryExec(clickFunc, record.data);
+                            };
+                        }
+                        div.icon(iconopts);
                     }, 50);
                 }
                 return ret;
@@ -76,14 +80,16 @@
                             var canedit = Csw.bool(record.data.canedit);
                             var canview = Csw.bool(record.data.canview);
                             var candelete = Csw.bool(record.data.candelete);
+                            var islocked = Csw.bool(record.data.islocked);
 
-                            // only one cell for edit or view
-                            if(canedit)
-                            {
+                            // only one cell for edit/view/lock
+                            if (islocked) {
+                                ret += cswPrivate.makeActionButton(islocked, 'Locked', Csw.enums.iconType.lock, null, record, rowIndex, colIndex);
+                            }
+                            else if (canedit) {
                                 ret += cswPrivate.makeActionButton(canedit, 'Edit', Csw.enums.iconType.pencil, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
-                            else
-                            {
+                            else {
                                 ret += cswPrivate.makeActionButton(canview, 'View', Csw.enums.iconType.magglass, cswPrivate.onEdit, record, rowIndex, colIndex);
                             }
                             ret += cswPrivate.makeActionButton(candelete, 'Delete', Csw.enums.iconType.trash, cswPrivate.onDelete, record, rowIndex, colIndex);
