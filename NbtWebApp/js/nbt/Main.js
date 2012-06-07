@@ -30,7 +30,7 @@ window.initMain = window.initMain || function (undefined) {
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
 
     // watermark
-    if(-1 === window.internetExplorerVersionNo) {
+    if (-1 === window.internetExplorerVersionNo) {
         Csw.ajax.post({
             urlMethod: 'getWatermark',
             success: function (result) {
@@ -71,6 +71,54 @@ window.initMain = window.initMain || function (undefined) {
         initAll();
     }
 
+    function refreshHeaderMenu() {
+        var $header = $('#header_menu');
+        var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
+        $header.empty();
+        $header.CswMenuHeader({
+            onLogout: function () {
+                Csw.clientSession.logout();
+            },
+            onQuotas: function () {
+                handleAction({ 'actionname': 'Quotas' });
+            },
+            onModules: function () {
+                handleAction({ 'actionname': 'Modules' });
+            },
+            onSubmitRequest: function () {
+                handleAction({ 'actionname': 'Submit_Request' });
+            },
+            onSessions: function () {
+                handleAction({ 'actionname': 'Sessions' });
+            },
+            onImpersonate: function (userid, username) {
+                Csw.ajax.post({
+                    url: '/NbtWebApp/wsNBT.asmx/impersonate',
+                    data: { UserId: userid },
+                    success: function (data) {
+                        if (Csw.bool(data.result)) {
+                            Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
+                            Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
+                            Csw.goHome();
+                        }
+                    } // success
+                }); // ajax
+            }, // onImpersonate
+            onEndImpersonation: function () {
+                Csw.ajax.post({
+                    url: '/NbtWebApp/wsNBT.asmx/endImpersonation',
+                    success: function (data) {
+                        if (Csw.bool(data.result)) {
+                            Csw.cookie.set(Csw.cookie.cookieNames.Username, Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername));
+                            Csw.cookie.clear(Csw.cookie.cookieNames.OriginalUsername);
+                            Csw.goHome();
+                        }
+                    } // success
+                }); // ajax
+            } // onEndImpersonation
+        }); // CswMenuHeader
+    }
+
     function initAll() {
         //if (debugOn()) Csw.log('Main.initAll()');
         $('#CenterBottomDiv').CswLogin('init', {
@@ -78,7 +126,7 @@ window.initMain = window.initMain || function (undefined) {
                 $('#header_username').text(u)
                      .hover(function () { $(this).CswAttrDom('title', Csw.clientSession.getExpireTime()); });
                 refreshDashboard();
-
+                refreshHeaderMenu();
                 universalsearch = Csw.composites.universalSearch({}, {
                     $searchbox_parent: $('#SearchDiv'),
                     $searchresults_parent: $('#RightDiv'),
@@ -107,48 +155,7 @@ window.initMain = window.initMain || function (undefined) {
                 var headerQuota = Csw.literals.factory($('#header_quota'));
                 Csw.actions.quotaImage(headerQuota);
 
-                $('#header_menu').CswMenuHeader({
-                    onLogout: function () {
-                        Csw.clientSession.logout();
-                    },
-                    onQuotas: function () {
-                        handleAction({ 'actionname': 'Quotas' });
-                    },
-                    onModules: function () {
-                        handleAction({ 'actionname': 'Modules' });
-                    },
-                    onSubmitRequest: function () {
-                        handleAction({ 'actionname': 'Submit_Request' });
-                    },
-                    onSessions: function () {
-                        handleAction({ 'actionname': 'Sessions' });
-                    },
-                    onImpersonate: function (userid, username) {
-                        Csw.ajax.post({
-                            url: '/NbtWebApp/wsNBT.asmx/impersonate',
-                            data: { UserId: userid },
-                            success: function (data) {
-                                if (Csw.bool(data.result)) {
-                                    Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
-                                    Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
-                                    Csw.goHome();
-                                }
-                            } // success
-                        }); // ajax
-                    }, // onImpersonate
-                    onEndImpersonation: function () {
-                        Csw.ajax.post({
-                            url: '/NbtWebApp/wsNBT.asmx/endImpersonation',
-                            success: function (data) {
-                                if (Csw.bool(data.result)) {
-                                    Csw.cookie.set(Csw.cookie.cookieNames.Username, Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername));
-                                    Csw.cookie.clear(Csw.cookie.cookieNames.OriginalUsername);
-                                    Csw.goHome();
-                                }
-                            } // success
-                        }); // ajax
-                    } // onEndImpersonation
-                }); // CswMenuHeader
+
 
                 refreshViewSelect(function () {
                     var current = Csw.clientState.getCurrent();
@@ -610,17 +617,17 @@ window.initMain = window.initMain || function (undefined) {
         if (false === Csw.isNullOrEmpty(o.viewid)) {
             Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
         }
-        
+
         o.onEditNode = function () { getViewGrid(o); };
         o.onDeleteNode = function () { getViewGrid(o); };
-        o.onRefresh = function (options) { 
+        o.onRefresh = function (options) {
             clear({ centertop: true, centerbottom: true });
             Csw.clientChanges.unsetChanged();
             multi = false;    // semi-kludge for multi-edit batch op
             refreshSelected(options);
         };
         clear({ centertop: true, centerbottom: true });
-        
+
         var viewfilters = Csw.nbt.viewFilters({
             ID: 'main_viewfilters',
             parent: Csw.literals.factory($('#CenterTopDiv')),
@@ -1022,11 +1029,11 @@ window.initMain = window.initMain || function (undefined) {
         clear({ 'all': true });
         refreshMainMenu();
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                                                
-            //				break;                                                                
-            //			case 'Assign_Tests':                                                                
-            //				break;                                                                
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                                
+            //			case 'Assign_Inspection':                                                                      
+            //				break;                                                                      
+            //			case 'Assign_Tests':                                                                      
+            //				break;                                                                      
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                                      
             case 'Create_Inspection':
                 var designOpt = {
                     ID: 'cswInspectionDesignWizard',
@@ -1077,8 +1084,8 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.nbt.createMaterialWizard(centerTopDiv, createOpt);
                 break;
 
-            //			case 'Design':                                                                
-            //				break;                                                                
+            //			case 'Design':                                                                      
+            //				break;                                                                      
             case 'Edit_View':
                 var editViewOptions = {
                     'viewid': o.ActionOptions.viewid,
@@ -1118,8 +1125,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                                                
-            //				break;                                                                
+            //			case 'Enter_Results':                                                                      
+            //				break;                                                                      
 
             case 'Future_Scheduling':
                 Csw.nbt.futureSchedulingWizard(centerTopDiv, {
@@ -1130,10 +1137,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                                
-            //				break;                                                                
-            //			case 'Inspection_Design':                                                                
-            //				break;                                                                
+            //			case 'Import_Fire_Extinguisher_Data':                                                                      
+            //				break;                                                                      
+            //			case 'Inspection_Design':                                                                      
+            //				break;                                                                      
 
             case 'Deficient_Inspections':
                 setupDeficientInspections();
@@ -1161,9 +1168,20 @@ window.initMain = window.initMain || function (undefined) {
                 break;
 
             case 'Submit_Request':
-                Csw.actions.submitRequest(centerTopDiv);
+                Csw.actions.submitRequest(centerTopDiv, {
+                    onSubmit: function () {
+                        clear({ 'all': true });
+                        refreshSelected();
+                        refreshHeaderMenu();
+                    },
+                    onCancel: function () {
+                        clear({ 'all': true });
+                        refreshSelected();
+                        refreshHeaderMenu();
+                    }
+                });
                 break;
-                
+
             case 'View_Scheduled_Rules':
                 var rulesOpt = {
                     exitFunc: function () {
@@ -1176,14 +1194,14 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.nbt.scheduledRulesWizard(centerTopDiv, rulesOpt);
                 break;
-            //			case 'Load_Mobile_Data':                                                                
-            //				break;                                                                
-            //			case 'Receiving':                                                                
-            //				break;                                                                
-            //			case 'Split_Samples':                                                                
-            //				break;                                                                
-            //			case 'View_By_Location':                                                                
-            //				break;                                                                
+            //			case 'Load_Mobile_Data':                                                                      
+            //				break;                                                                      
+            //			case 'Receiving':                                                                      
+            //				break;                                                                      
+            //			case 'Split_Samples':                                                                      
+            //				break;                                                                      
+            //			case 'View_By_Location':                                                                      
+            //				break;                                                                      
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     Csw.window.location(o.actionurl);
