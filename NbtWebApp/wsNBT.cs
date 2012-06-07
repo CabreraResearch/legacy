@@ -4354,6 +4354,36 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getMaterial()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string copyRequest( string CopyFromRequestId, string CopyToRequestId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey CopyFromNodeId = _getNodeId( CopyFromRequestId );
+                CswPrimaryKey CopyToNodeId = _getNodeId( CopyToRequestId );
+                if( null != CopyFromNodeId && null != CopyToNodeId )
+                {
+                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, CopyFromNodeId );
+                    ReturnVal = ws.copyRequest( CopyFromNodeId, CopyToNodeId );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
         #endregion Requesting
 
         #region Auditing

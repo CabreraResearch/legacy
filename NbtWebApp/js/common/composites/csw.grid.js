@@ -378,6 +378,21 @@
                 return cswPublic.gridTable.$.jqGrid('getRowData');
             };
 
+            cswPublic.addRowsToGrid = function (rowData, grid) {
+                var i;
+                grid = grid || cswPublic;
+                if (rowData) {
+                    /* Add the rows to the new newGrid */
+                    for (i = 0; i <= rowData.length; i += 1) {
+                        grid.gridTable.$.jqGrid('addRowData', i + 1, rowData[i]);
+                    }
+                }
+            };
+
+            cswPublic.deleteRow = function(rowid) {
+                cswPublic.gridTable.$.jqGrid('delRowData', rowid);
+            };
+
             cswPublic.print = function (onSuccess) {
 
                 try {
@@ -387,16 +402,9 @@
 
                     var printOpts = {},
                         printTableId = Csw.makeId(cswPrivate.gridTableId, 'printTable'),
-                        newGrid, data, i;
+                        newGrid, data;
 
-                    var addRowsToGrid = function (rowData) {
-                        if (rowData) {
-                            /* Add the rows to the new newGrid */
-                            for (i = 0; i <= rowData.length; i += 1) {
-                                newGrid.gridTable.$.jqGrid('addRowData', i + 1, rowData[i]);
-                            }
-                        }
-                    };
+
 
                     /* Case 26020 */
                     $.extend(true, printOpts, cswPrivate);
@@ -461,7 +469,7 @@
                         Csw.ajax.get({
                             url: printOpts.printUrl,
                             success: function (rows) {
-                                addRowsToGrid(rows.rows);
+                                cswPublic.addRowsToGrid(rows.rows, newGrid);
                             }
                         });
                     }
@@ -513,6 +521,10 @@
                 handleRestoreDownRecursive(element);
                 var width = element.width() - 50;
                 cswPublic.setWidth(width);
+            };
+
+            cswPublic.clearGridRows = function () {
+                cswPublic.gridTable.$.jqGrid('clearGridData');
             };
 
             /* "Constuctor" */

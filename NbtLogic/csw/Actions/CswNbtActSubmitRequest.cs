@@ -25,20 +25,29 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtActSystemViews _SystemViews;
 
-        public CswNbtActSubmitRequest( CswNbtResources CswNbtResources, CswNbtActSystemViews.SystemViewName RequestViewName = null )
+        public CswNbtActSubmitRequest( CswNbtResources CswNbtResources, CswNbtActSystemViews.SystemViewName RequestViewName = null, CswPrimaryKey RequestNodeId = null )
         {
             _CswNbtResources = CswNbtResources;
             if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
-            if( null == RequestViewName || ( RequestViewName != CswNbtActSystemViews.SystemViewName.CISProRequestCart && RequestViewName != CswNbtActSystemViews.SystemViewName.CISProRequestHistory ) )
+            if( RequestViewName != CswNbtActSystemViews.SystemViewName.CISProRequestCart && RequestViewName != CswNbtActSystemViews.SystemViewName.CISProRequestHistory )
             {
                 RequestViewName = CswNbtActSystemViews.SystemViewName.CISProRequestCart;
             }
             _SystemViews = new CswNbtActSystemViews( _CswNbtResources, RequestViewName, null );
             _RequestOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
             _RequestItemOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
+
+            if( null != RequestNodeId )
+            {
+                CswNbtNode RequestNode = _CswNbtResources.Nodes.GetNode( RequestNodeId );
+                if( null != RequestNode )
+                {
+                    _CurrentRequestNode = RequestNode;
+                }
+            }
 
             if( RequestViewName == CswNbtActSystemViews.SystemViewName.CISProRequestCart )
             {
@@ -67,8 +76,8 @@ namespace ChemSW.Nbt.Actions
                     CswNbtActSystemViews SystemViews = new CswNbtActSystemViews( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, null );
                     _CurrentCartView = SystemViews.SystemView;
                     _CurrentCartView.SaveToCache( false );
+                    applyCurrentCartFilter();
                 }
-                applyCurrentCartFilter();
                 return _CurrentCartView;
             }
         }
@@ -129,7 +138,7 @@ namespace ChemSW.Nbt.Actions
             return _CurrentRequestNode;
         }
 
-        private void _applyCartFilter( CswPrimaryKey NodeId )
+        public void applyCartFilter( CswPrimaryKey NodeId )
         {
             CswNbtMetaDataObjectClassProp RequestOcp = _RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
             _SystemViews.addSystemViewFilter( new CswNbtActSystemViews.SystemViewPropFilterDefinition
@@ -149,7 +158,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtNode CartNode = CurrentRequestNode();
             if( null != CartNode )
             {
-                _applyCartFilter( CartNode.NodeId );
+                applyCartFilter( CartNode.NodeId );
                 ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false );
                 CartContentCount = CartTree.getChildNodeCount();
             }
@@ -200,7 +209,35 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
+        /// <summary>
+        /// Takes the request item nodes from one request and appends them to the current request. 
+        /// Returns a new instance of CswNbtActSubmitRequest with the current request context.
+        /// </summary>
+        public CswNbtActSubmitRequest copyRequest( CswPrimaryKey CopyFromNodeId, CswPrimaryKey CopyToNodeId )
+        {
+            if( null != CopyFromNodeId && null != CopyToNodeId )
+            {
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CurrentCartView, false, false );
+                Int32 ItemCount = Tree.getChildNodeCount();
+                for( Int32 I = 0; I < ItemCount; I += 1 )
+                {
+                    Tree.goToNthChild( I );
 
+                    CswNbtObjClassRequestItem CopyFromNodeAsRequestItem = Tree.getNodeForCurrentPosition();
+                    if( null != CopyFromNodeAsRequestItem )
+                    {
+                        CswNbtObjClassRequestItem CopyToNodeAsRequestItem = CopyFromNodeAsRequestItem.copyNode();
+                        if( null != CopyToNodeAsRequestItem )
+                        {
+                            CopyToNodeAsRequestItem.Request.RelatedNodeId = CopyToNodeId;
+                            CopyToNodeAsRequestItem.postChanges( true );
+                        }
+                    }
+                    Tree.goToParentNode();
+                }
+            }
+            return new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, CopyToNodeId );
+        }
 
         #endregion Public methods and props
     }

@@ -91,6 +91,18 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        public CswNbtObjClassRequestItem copyNode()
+        {
+            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CopyNode.copyPropertyValues( Node );
+            CswNbtObjClassRequestItem RetCopy = CopyNode;
+            RetCopy.Status.Value = Statuses.Pending.ToString();
+            RetCopy.Request.RelatedNodeId = null;
+            _toggleReadOnlyProps( false, RetCopy );
+            RetCopy.postChanges( true );
+            return RetCopy;
+        }
+
         public CswNbtObjClassRequestItem( CswNbtResources CswNbtResources, CswNbtNode Node )
             : base( CswNbtResources, Node )
         {
@@ -152,6 +164,20 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
+        private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtObjClassRequestItem ItemInstance )
+        {
+            ItemInstance.Request.ReadOnly = IsReadOnly;
+            ItemInstance.Type.ReadOnly = IsReadOnly;
+            ItemInstance.Quantity.ReadOnly = IsReadOnly;
+            ItemInstance.Size.ReadOnly = IsReadOnly;
+            ItemInstance.Container.ReadOnly = IsReadOnly;
+            ItemInstance.Count.ReadOnly = IsReadOnly;
+            ItemInstance.Material.ReadOnly = IsReadOnly;
+            ItemInstance.Location.ReadOnly = IsReadOnly;
+            ItemInstance.Number.ReadOnly = IsReadOnly;
+            ItemInstance.ExternalOrderNumber.ReadOnly = IsReadOnly;
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -182,16 +208,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( Status.Value == Statuses.Submitted.ToString() )
                 {
-                    Request.ReadOnly = true;
-                    Type.ReadOnly = true;
-                    Quantity.ReadOnly = true;
-                    Size.ReadOnly = true;
-                    Container.ReadOnly = true;
-                    Count.ReadOnly = true;
-                    Material.ReadOnly = true;
-                    Location.ReadOnly = true;
-                    Number.ReadOnly = true;
-                    ExternalOrderNumber.ReadOnly = true;
+                    _toggleReadOnlyProps( true, this );
                 }
 
                 if( null != NodeAsRequest &&
@@ -235,8 +252,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
-            CswNbtMetaDataObjectClassProp StatusOcp = ObjectClass.getObjectClassProp( PropertyName.Status.ToString() );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, StatusOcp, Statuses.Pending.ToString() );
+            //CswNbtMetaDataObjectClassProp StatusOcp = ObjectClass.getObjectClassProp( PropertyName.Status.ToString() );
+            //ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, StatusOcp, Statuses.Pending.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
