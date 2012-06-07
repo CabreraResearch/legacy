@@ -22,6 +22,7 @@
                 onDelete: null, // function(row)
 
                 maxHeight: '',
+                maxWidth: '',
                 height: 300,  // overridden by webservice
                 width: 600,
 
@@ -74,9 +75,6 @@
                 cswPrivate. addActionColumn();
 
                 cswPrivate.storeId = cswPrivate.ID + 'store';
-                if (false === Csw.isNullOrEmpty(cswPrivate.maxHeight) && cswPrivate.height > cswPrivate.maxHeight) {
-                    cswPrivate.height = cswPrivate.maxHeight;
-                }
                 var gridStore = Ext.create('Ext.data.Store', {
                     storeId: cswPrivate.storeId,
                     fields: cswPrivate.fields,
@@ -102,10 +100,14 @@
                         columns: cswPrivate.columns,
                         height: cswPrivate.height,
                         width: cswPrivate.width,
-                        stateful: true,
+                        //stateful: true,
                         stateId: cswPrivate.stateId,
+                        forceFit: true,               // expand columns to fill width
                         viewConfig: {
-                            forceFit: true,
+                            shrinkWrap: true,
+                            maxWidth: cswPrivate.maxWidth,
+                            maxHeight: cswPrivate.maxHeight,
+                            deferEmptyText: false,
                             emptyText: 'No Results'
                         },
                         dockedItems: [{
