@@ -65,36 +65,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             // BZ 7941
             bool UseNumericHack = CswNbtViewPropertyFilterIn.SubfieldName == CswNbtSubField.SubFieldName.Value;
 
-            CswNbtSubField.SubFieldName OldSubfieldName = CswNbtViewPropertyFilterIn.SubfieldName;
-            CswNbtPropFilterSql.PropertyFilterMode OldFilterMode = CswNbtViewPropertyFilterIn.FilterMode;
-            string OldValue = CswNbtViewPropertyFilterIn.Value;
-
-            if( OldSubfieldName == UnitNameSubField.Name && OldValue.ToLower() == "me" )
-            {
-                CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
-                ICswNbtMetaDataProp MetaDataProp = null;
-                if( Prop.Type == NbtViewPropType.NodeTypePropId )
-                    MetaDataProp = Prop.NodeTypeProp;
-                else if( Prop.Type == NbtViewPropType.ObjectClassPropId )
-                    MetaDataProp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( Prop.ObjectClassPropId );
-
-                if( MetaDataProp != null && MetaDataProp.IsUserRelationship() )
-                {
-                    if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
-                    {
-                        CswNbtViewPropertyFilterIn.SubfieldName = UnitIdSubField.Name;
-                        CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
-                        CswNbtViewPropertyFilterIn.Value = RunAsUser.UserId.PrimaryKey.ToString();
-                    }
-                }
-            }
-            string ret = _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, UseNumericHack );
-
-            CswNbtViewPropertyFilterIn.SubfieldName = OldSubfieldName;
-            CswNbtViewPropertyFilterIn.FilterMode = OldFilterMode;
-            CswNbtViewPropertyFilterIn.Value = OldValue;
-
-            return ret;
+            return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, UseNumericHack ) );
         }
 
 
