@@ -61,6 +61,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="css\csw.action.css" />
+    <Content Include="js\common\controls\csw.checkbox.js" />
+    <Content Include="js\common\controls\csw.buttongroup.js" />
+    <Content Include="js\common\layouts\csw.action.js" />
     <Content Include="js\nbt\actions\csw.submitrequest.js" />
     <Content Include="MainCswIncludes.html" />
     <Content Include="JavaScriptTest.html" />

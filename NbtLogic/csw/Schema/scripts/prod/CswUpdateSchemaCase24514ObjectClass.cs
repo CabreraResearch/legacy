@@ -47,8 +47,7 @@ namespace ChemSW.Nbt.Schema
                                                       FieldType = CswNbtMetaDataFieldType.NbtFieldType.Relationship,
                                                       IsFk = true,
                                                       FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                                                      FkValue = InventoryGroupOc.ObjectClassId,
-                                                      SetValOnAdd = true
+                                                      FkValue = InventoryGroupOc.ObjectClassId
                                                   } );
 
             CswNbtMetaDataObjectClassProp SubmittedDateOcp =

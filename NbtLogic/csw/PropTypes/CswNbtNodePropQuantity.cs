@@ -5,11 +5,11 @@ using System.Data;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -358,25 +358,28 @@ namespace ChemSW.Nbt.PropTypes
 
             ParentObject["fractional"] = TargetFractional.ToString().ToLower();
 
-            JArray JOptions = new JArray();
-            ParentObject["options"] = JOptions;
-
-            foreach( CswNbtNode Node in UnitNodes )
+            if( false == ReadOnly )
             {
-                JObject JOption = new JObject();
-                if( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue )
+                JArray JOptions = new JArray();
+                ParentObject["options"] = JOptions;
+
+                foreach( CswNbtNode Node in UnitNodes )
                 {
-                    JOption["id"] = Node.NodeId.ToString();
-                    JOption["value"] = Node.NodeName;
+                    JObject JOption = new JObject();
+                    if( Node.NodeId != null && Node.NodeId.PrimaryKey != Int32.MinValue )
+                    {
+                        JOption["id"] = Node.NodeId.ToString();
+                        JOption["value"] = Node.NodeName;
                     JOption["fractional"] = Node.Properties[CswNbtObjClassUnitOfMeasure.FractionalPropertyName].AsLogical.Checked.ToString().ToLower();
-                }
-                else
-                {
-                    JOption["id"] = "";
-                    JOption["value"] = "";
+                    }
+                    else
+                    {
+                        JOption["id"] = "";
+                        JOption["value"] = "";
                     JOption["fractional"] = "";
+                    }
+                    JOptions.Add( JOption );
                 }
-                JOptions.Add( JOption );
             }
         }
 

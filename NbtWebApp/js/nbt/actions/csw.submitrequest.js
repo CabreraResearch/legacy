@@ -7,89 +7,151 @@
         Csw.actions.register('submitRequest', function (cswParent, options) {
             'use strict';
             var cswPublic = {};
-            var cswPrivate = {};
-            try {
-                if (Csw.isNullOrEmpty(cswParent)) {
-                    Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
-                }
-                cswPrivate.urlMethod = 'getCurrentRequest';
-                cswPrivate.ID = 'CswSubmitRequest';
+            var cswPrivate = {
+                ID: 'CswSubmitRequest',
+                onSubmit: null,
+                onCancel: null,
+                gridOpts: {},
+                cartnodeid: '',
+                cartviewid: '',
+                materialnodeid: '',
+                containernodeid: ''
+            };
 
+            if (Csw.isNullOrEmpty(cswParent)) {
+                Csw.error.throwException('Cannot create a Submit Request action without a valid Csw Parent object.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 14);
+            }
+            Csw.tryExec(function () {
                 if (options) {
-                    $.extend(cswPrivate, options);
+                    $.extend(true, cswPrivate, options);
                 }
-
-                cswParent.empty();
-
-                cswPrivate = {
-                    urlMethod: 'getCurrentRequest',
-                    ID: 'CswSubmitRequest',
-                    /* Csw.grid specific options */
-                    gridOpts: {
-                        autowidth: true,
-                        rowNum: 10
-                    },
-                    canEdit: true,
-                    pagermode: 'default',
-                    optNav: {
-                        add: false,
-                        view: false,
-                        del: false,
-                        refresh: false,
-                        edit: true,
-                        edittext: "",
-                        edittitle: "Edit row"
-                    },
-                    optNavEdit: {
-                        editfunc: function (rowid) {
-                            var editOpt = {
-                                nodeids: [],
-                                nodenames: [],
-                                onEditNode: cswPrivate.onEditNode,
-                                onAfterButtonClick: cswPrivate.onAfterButtonClick
-                            };
-                            if (false === Csw.isNullOrEmpty(rowid)) {
-                                editOpt.nodeids.push(cswPublic.grid.getValueForColumn('NODEPK', rowid));
-                                editOpt.nodenames.push(cswPublic.grid.getValueForColumn('INSPECTION', rowid));
-                                $.CswDialog('EditNodeDialog', editOpt);
-                            } else {
-                                $.CswDialog('AlertDialog', 'Please select a row to edit');
+                var submitRequest = function () {
+                    Csw.ajax.post({
+                        urlMethod: 'submitRequest',
+                        data: {
+                            RequestId: cswPrivate.cartnodeid,
+                            RequestName: Csw.string(cswPrivate.saveRequestTxt.val())
+                        },
+                        success: function (json) {
+                            if (json.succeeded) {
+                                Csw.tryExec(cswPrivate.onSubmit);
                             }
                         }
-                    }
-                    /* End Csw.grid specific options */
+                    });
                 };
 
+                cswParent.empty();
+                cswPrivate.action = Csw.layouts.action(cswParent, {
+                    Title: 'Submit Request',
+                    FinishText: 'Submit',
+                    onFinish: submitRequest,
+                    onCancel: cswPrivate.onCancel
+                });
+                cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' }).css('width', '100%');
+
+                cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
+                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 1).div({ ID: cswPrivate.gridId, align: 'center' });
+
                 Csw.ajax.post({
-                    urlMethod: cswPrivate.urlMethod,
+                    urlMethod: 'getCurrentRequest',
                     data: {},
-                    success: function (gridJson) {
-                        try {
-                            if (Csw.isNullOrEmpty(gridJson.jqGridOpt)) {
-                                Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
+                    success: function (json) {
+                        if (Csw.isNullOrEmpty(json.jqGridOpt)) {
+                            Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
+                        }
+                        Csw.tryExec(function () {
+                            cswPrivate.cartnodeid = json.cartnodeid;
+                            cswPrivate.cartviewid = json.cartviewid;
+                            if (false === Csw.isNullOrEmpty(cswPrivate.materialnodeid) ||
+                                false === Csw.isNullOrEmpty(cswPrivate.containernodeid)) {
+
+                                cswPrivate.actionTbl.cell(2, 1).$.CswMenuMain({
+                                    nodeid: cswPrivate.cartnodeid,
+                                    viewid: cswPrivate.cartviewid,
+                                    limitMenuTo: 'Add'
+                                });
                             }
-                            cswParent.empty();
-                            var inspGridId = cswPrivate.ID + '_csw_inspGrid_outer';
-
-                            cswPublic.gridParent = cswParent.div({ ID: inspGridId });
-
-                            $.extend(true, cswPrivate.gridOpts, gridJson.jqGridOpt);
-                            cswPrivate.gridOpts.data = gridJson.data.rows;
+                            $.extend(true, cswPrivate.gridOpts, json.jqGridOpt);
+                            cswPrivate.resizeWithParent = true;
+                            cswPrivate.resizeWithParentElement = cswPrivate.action.actionDiv.$;
+                            cswPrivate.gridOpts.rowNum = 10;
+                            cswPrivate.gridOpts.height = 180;
+                            cswPrivate.gridOpts.caption = 'Your Cart';
+                            cswPrivate.gridOpts.pagermode = 'default';
+                            cswPrivate.gridOpts.optNav = {
+                                add: false,
+                                view: false,
+                                del: false,
+                                refresh: false,
+                                edit: false
+                            };
+                            cswPrivate.gridOpts.onSelectRow = function() {
+                                cswPublic.grid.resetSelection();
+                            };
+                            cswPrivate.gridOpts.beforeSelectRow = function (rowid, eventObj) {
+                                cswPrivate.selectedRowId = rowid;
+                                return Csw.nbt.gridViewMethods.bindActionEvents({
+                                    rowid: rowid,
+                                    eventObj: eventObj,
+                                    grid: cswPublic.grid
+                                });
+                            };
+                            cswPrivate.gridOpts.data = json.data.rows;
 
                             cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
+                            cswPublic.grid.gridPager.css({ width: '100%', height: '20px' });
+
                             Csw.nbt.gridViewMethods.makeActionColumnButtons(cswPublic.grid);
-                        }
-                        catch (exception) {
-                            Csw.error.catchException(exception);
-                        }
+                        });
                     } // success
                 });
 
 
-            }
-            catch (exception) {
-                Csw.catchException(exception);
-            }
+                cswPrivate.historyTbl = cswPrivate.actionTbl.cell(3, 1).table({ align: 'left', cellvalign: 'middle' });
+                Csw.ajax.post({
+                    urlMethod: 'getRequestHistory',
+                    data: {},
+                    success: function (json) {
+                        if (json.count > 0) {
+                            delete json.count;
+                            cswPrivate.historyTbl.cell(1, 1).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Past Requests: ' });
+                            cswPrivate.historySelect = cswPrivate.historyTbl.cell(1, 2).select();
+                            json = json || {};
+
+                            Csw.each(json, function (prop, name) {
+                                var display = Csw.string(prop['name']) + ' (' + Csw.string(prop['submitted date']) + ')';
+                                cswPrivate.historySelect.option({ value: prop['requestnodeid'], display: display });
+                            });
+                            cswPrivate.copyHistoryBtn = cswPrivate.historyTbl.cell(1, 3).button({
+                                enabledText: 'Copy to Cart',
+                                disabledText: 'Copying...',
+                                onclick: function () {
+                                    /*Copy Cart Contents*/
+                                }
+                            });
+                        }
+                    }
+                });
+
+                cswPrivate.saveRequestTbl = cswPrivate.actionTbl.cell(4, 1).table({ align: 'right', cellvalign: 'middle', cellpadding: '2px' });
+                cswPrivate.saveRequestTbl.cell(1, 4).span({ text: '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' });
+                cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(1, 3).input().hide();
+                cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });
+                cswPrivate.saveRequestChk = cswPrivate.saveRequestTbl.cell(1, 2).checkBox({
+                    onChange: function () {
+                        var val;
+                        if (cswPrivate.saveRequestChk.checked()) {
+                            val = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.nowAsString();
+                            cswPrivate.saveRequestTxt.show();
+                        } else {
+                            val = '';
+                            cswPrivate.saveRequestTxt.hide();
+                        }
+                        cswPrivate.saveRequestTxt.val(val);
+                    }
+                });
+
+            });
             return cswPublic;
         });
 } ());
