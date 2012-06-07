@@ -192,12 +192,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public CswNbtView View
         {
+            set
+            {
+                //TODO - cases 24650, 25759 - set sets _view (so that container can override view)
+            }
             get
             {
-                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
-                CswNbtView View = new CswNbtView( _CswNbtResources );
-                View.ViewName = "CswNbtNodePropQuantity()";
-                View.AddViewRelationship( Unit_ObjectClass, true );
+                CswNbtView View = null;
+                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
+                    View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
                 return View;
             }
         }

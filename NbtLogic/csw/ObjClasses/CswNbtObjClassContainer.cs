@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string QuantityPropertyName { get { return "Quantity"; } }
         public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
         public static string RequestPropertyName { get { return "Request"; } }
+        public static string DispensePropertyName { get { return "Dispense"; } }
 
         public string RequestButtonPropertyName { get { return RequestPropertyName; } }
 
@@ -57,6 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            //TODO - case 24508 - create a new ContainerDispenseTransaction node of type Receiving, with this node as the SourceContainer
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -125,6 +127,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            //todo - case 25759 - check physical state - set quantity unit view appropriately
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -149,6 +152,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ButtonAction = NbtButtonAction.request;
                 }
+                else if( DispensePropertyName == OCP.PropName )
+                {
+                    //TODO - case 24508 - when Dispense button is clicked, trigger DispenseContainer action
+                }
             }
             return true;
         }
@@ -167,6 +174,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName] ); } }
         public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[ExpirationDatePropertyName] ); } }
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
+        public CswNbtNodePropButton Dispense { get { return ( _CswNbtNode.Properties[DispensePropertyName] ); } }
 
         #endregion
 

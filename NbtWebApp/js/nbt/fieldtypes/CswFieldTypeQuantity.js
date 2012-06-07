@@ -64,7 +64,7 @@
                 Csw.crawlObject(options, function (relatedObj) {
                     if (relatedObj.id === selectedNodeId) {
                         foundSelected = true;
-                    fractional = Csw.bool(relatedObj.fractional);
+                        fractional = Csw.bool(relatedObj.fractional);
                     }
                     relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
                 }, false);
