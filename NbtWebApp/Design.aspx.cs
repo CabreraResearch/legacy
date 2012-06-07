@@ -2212,7 +2212,7 @@ namespace ChemSW.Nbt.WebPages
                             //case 26410 - add relationship stuff
 
                             TableRow UnitRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) UnitRow.Cells[0].Controls[0] ).Text = "Target:";
+                            ( (Literal) UnitRow.Cells[0].Controls[0] ).Text = "UnitTarget:";
                             CswNodeTypeDropDown UnitValue = new CswNodeTypeDropDown( Master.CswNbtResources );
                             if( SelectedNodeTypeProp.InUse )
                             {
@@ -2232,7 +2232,7 @@ namespace ChemSW.Nbt.WebPages
                             UnitRow.Cells[1].Controls.Add( UnitValue );
 
                             _ViewXmlRow = makeEditPropTableRow( EditPropPlaceHolder );
-                            ( (Literal) _ViewXmlRow.Cells[0].Controls[0] ).Text = "View:";
+                            ( (Literal) _ViewXmlRow.Cells[0].Controls[0] ).Text = "UnitView:";
                             CswNbtView UnitView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
 
                             _RelationshipViewTree = new CswViewStructureTree( Master.CswNbtResources );
