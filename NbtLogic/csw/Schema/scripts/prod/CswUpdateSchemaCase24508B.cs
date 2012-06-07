@@ -26,12 +26,8 @@ namespace ChemSW.Nbt.Schema
             );
             foreach( CswNbtMetaDataNodeType ContainerNodeType in ContainerObjClass.getNodeTypes() )
             {
-                Int32 FirstTabId = Int32.MinValue;
-                foreach( CswNbtMetaDataNodeTypeTab Tab in from _Tab in ContainerNodeType.getNodeTypeTabs() orderby _Tab.TabOrder, _Tab.TabId select _Tab )
-                {
-                    FirstTabId = Tab.TabId;
-                    break;
-                }
+                CswNbtMetaDataNodeTypeTab NodeTypeTab = ContainerNodeType.getFirstNodeTypeTab();
+                Int32 FirstTabId = NodeTypeTab.TabId;
                 CswNbtMetaDataNodeTypeProp RequestNtp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.DispensePropertyName );
                 RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirstTabId );
                 RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirstTabId );
