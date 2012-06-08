@@ -18,11 +18,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass UnitOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
             IEnumerable<CswNbtMetaDataObjectClassProp> OCPropsToUpdate = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProps( CswNbtMetaDataFieldType.NbtFieldType.Quantity );
 
-            CswNbtView UnitView = _CswNbtSchemaModTrnsctn.makeView();
-            UnitView.makeNew( "CswNbtNodePropQuantity()", NbtViewVisibility.Property );
-            UnitView.AddViewRelationship( UnitOC, true );
-            UnitView.save();
-
             foreach( CswNbtMetaDataObjectClassProp QuantityProp in OCPropsToUpdate )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuantityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, true );
@@ -34,6 +29,10 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NTPropsToUpdate )
             {
+                CswNbtView UnitView = _CswNbtSchemaModTrnsctn.makeView();
+                UnitView.makeNew( "CswNbtNodeTypePropQuantity_" + NodeTypeProp.NodeTypeId.ToString(), NbtViewVisibility.Property );
+                UnitView.AddViewRelationship( UnitOC, true );
+                UnitView.save();
                 NodeTypeProp.ViewId = UnitView.ViewId;
                 NodeTypeProp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), UnitOC.ObjectClassId );
             }
