@@ -373,13 +373,13 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         JOption["id"] = Node.NodeId.ToString();
                         JOption["value"] = Node.NodeName;
-                    JOption["fractional"] = Node.Properties[CswNbtObjClassUnitOfMeasure.FractionalPropertyName].AsLogical.Checked.ToString().ToLower();
+                        JOption["fractional"] = Node.Properties[CswNbtObjClassUnitOfMeasure.FractionalPropertyName].AsLogical.Checked.ToString().ToLower();
                     }
                     else
                     {
                         JOption["id"] = "";
                         JOption["value"] = "";
-                    JOption["fractional"] = "";
+                        JOption["fractional"] = "";
                     }
                     JOptions.Add( JOption );
                 }
