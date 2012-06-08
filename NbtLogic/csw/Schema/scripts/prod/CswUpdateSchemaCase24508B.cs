@@ -24,14 +24,28 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClassContainer.DispensePropertyName
                 }
             );
+
+            //Set Container Quantity on Add
+            CswNbtMetaDataObjectClassProp QuantityNodeTypeProp = ContainerObjClass.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuantityNodeTypeProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuantityNodeTypeProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+
             foreach( CswNbtMetaDataNodeType ContainerNodeType in ContainerObjClass.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab NodeTypeTab = ContainerNodeType.getFirstNodeTypeTab();
                 Int32 FirstTabId = NodeTypeTab.TabId;
-                CswNbtMetaDataNodeTypeProp RequestNtp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.DispensePropertyName );
-                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirstTabId );
-                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirstTabId );
+                CswNbtMetaDataNodeTypeProp DispenseNodeTypeProp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.DispensePropertyName );
+                DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirstTabId );
+                DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirstTabId );
             }
+
+            //Add ContainerDispenseTransaction NodeType
+
+            CswNbtMetaDataNodeType ContDispTransNodeType = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType(
+                CswNbtMetaDataObjectClass.NbtObjectClass.ContainerDispenseTransactionClass.ToString(),
+                "Container Dispense Transaction",
+                "Materials"
+                );
 
         }//Update()
 
