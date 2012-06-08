@@ -20,11 +20,6 @@ namespace ChemSW.Nbt.Schema
             //Create the new view
             CswNbtMetaDataNodeType TimeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType("Time Unit");
 
-            CswNbtView TimeView = _CswNbtSchemaModTrnsctn.makeView();
-            TimeView.makeNew( "CswNbtNodePropExpirationInterval()", NbtViewVisibility.Property );
-            TimeView.AddViewRelationship( TimeNT, true );
-            TimeView.save();
-
             //Set ExpirationInterval ObjectClassProp default FKValue to Time Unit NodeType (so that new material NodeTypes will start with this Unit NodeType restriction)
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp ExpirationInterval = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.ExpirationIntervalPropName );
@@ -37,7 +32,12 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeType NodeType in MaterialOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp ExpInt = NodeType.getNodeTypeProp("Expiration Interval");
-                ExpInt.ViewId = TimeView.ViewId;
+                CswNbtView TimeView = _CswNbtSchemaModTrnsctn.restoreView( ExpInt.ViewId );
+                TimeView.Clear();
+                TimeView.makeNew( "CswNbtNodeTypePropQuantity_" + ExpInt.NodeTypeId.ToString(), NbtViewVisibility.Property );
+                TimeView.AddViewRelationship( TimeNT, true );
+                TimeView.save();
+                ExpInt.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), TimeNT.NodeTypeId );
             }
 
         }//Update()
