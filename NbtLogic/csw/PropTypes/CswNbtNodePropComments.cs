@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.PropTypes
                 JArray obj = new JArray();
                 try
                 {
-                    obj = JArray.Parse( _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column ) );
+                    obj = CswConvert.ToJArray( _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column ) );
                 }
                 catch( Exception e )
                 {
@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            AddComment( JObject["newmessage"].ToString(), JObject["commenter"].ToString() );
+            AddComment( CswConvert.ToString( JObject["newmessage"] ), CswConvert.ToString( JObject["commenter"] ) );
         }
 
         public void AddComment( string message, string commenter = "" )

@@ -61,6 +61,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="js\common\composites\csw.linkgrid.js" />
     <Content Include="css\csw.action.css" />
     <Content Include="js\common\controls\csw.checkbox.js" />
     <Content Include="js\common\controls\csw.buttongroup.js" />

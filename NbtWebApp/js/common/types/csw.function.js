@@ -25,7 +25,9 @@
                     return func.apply(this, Array.prototype.slice.call(arguments, 1));
                 }
             } catch (exception) {
-                Csw.error.catchException(exception);
+                if (exception.name !== 'TypeError' && exception.type !== 'called_non_callable') { /* ignore errors failing to exec self-executing functions */
+                    Csw.error.catchException(exception);
+                }
             }
         });
 

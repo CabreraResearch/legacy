@@ -1737,6 +1737,7 @@ namespace ChemSW.Nbt.WebPages
                             GridModeValue.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
                             GridModeValue.Items.Add( new ListItem( CswNbtNodePropGrid.GridPropMode.Full.ToString(), CswNbtNodePropGrid.GridPropMode.Full.ToString() ) );
                             GridModeValue.Items.Add( new ListItem( CswNbtNodePropGrid.GridPropMode.Small.ToString(), CswNbtNodePropGrid.GridPropMode.Small.ToString() ) );
+                            GridModeValue.Items.Add( new ListItem( CswNbtNodePropGrid.GridPropMode.Link.ToString(), CswNbtNodePropGrid.GridPropMode.Link.ToString() ) );
                             GridModeValue.SelectedValue = GridMode.ToString();
                             GridModeRow.Cells[1].Controls.Add( GridModeValue );
 

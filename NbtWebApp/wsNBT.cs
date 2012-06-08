@@ -1240,6 +1240,40 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // getGrid()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getGridRowCount( string ViewId, string IncludeNodeKey )
+        {
+            UseCompression();
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtNodeKey RealNodeKey = null;
+                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey );
+
+                if( null != View )
+                {
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( false ) );
+                    ReturnVal = g.getGridRowCount();
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getGrid()
+
+
         #endregion Grid Views
 
         //[WebMethod( EnableSession = false )]
@@ -4307,6 +4341,36 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
                     ReturnVal = ws.submitRequest( NodeId, RequestName );
+                }
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string copyRequest( string CopyFromRequestId, string CopyToRequestId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey CopyFromNodeId = _getNodeId( CopyFromRequestId );
+                CswPrimaryKey CopyToNodeId = _getNodeId( CopyToRequestId );
+                if( null != CopyFromNodeId && null != CopyToNodeId )
+                {
+                    CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart, CopyFromNodeId );
+                    ReturnVal = ws.copyRequest( CopyFromNodeId, CopyToNodeId );
                 }
                 _deInitResources();
             }

@@ -55,6 +55,7 @@
                             var emptyFunc = function () {
                                 $.CswDialog('AlertDialog', 'Please select a row to delete');
                             };
+                            
                             return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
                         }
                     }
