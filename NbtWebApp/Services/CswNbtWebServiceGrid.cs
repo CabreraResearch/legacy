@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.WebServices
             //}
             //return RetObj;
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
-            return _CswNbtGrid.TreeToJson( _View, Tree );
+            return _CswNbtGrid.TreeToJson( _View, Tree, ( _View.Visibility == NbtViewVisibility.Property ) );
         } // runGrid()
 
         private void _getGridProperties( IEnumerable<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
