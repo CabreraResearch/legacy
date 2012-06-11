@@ -6,11 +6,11 @@
 
     var copyNode = function(options) {
         var o = {
-            'nodeid': '',
-            'nodekey': '',
-            'onSuccess': function() {
+            nodeid: '',
+            nodekey: '',
+            onSuccess: function() {
             },
-            'onError': function() {
+            onError: function() {
             }
         };
         if (options) {
@@ -23,7 +23,10 @@
 
         Csw.ajax.post({
             url: '/NbtWebApp/wsNBT.asmx/CopyNode',
-            data: dataJson,
+            data: {
+                NodeId: Csw.string(o.nodeid),
+                NodeKey: Csw.string(o.nodekey)
+            },
             success: function(result) {
                 o.onSuccess(result.NewNodeId, '');
             },

@@ -3369,7 +3369,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string CopyNode( string NodePk )
+        public string CopyNode( string NodeId, string NodeKey )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -3380,7 +3380,15 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswPrimaryKey RealNodePk = _getNodeId( NodePk );
+                    CswPrimaryKey RealNodePk = _getNodeId( NodeId );
+                    if( null == RealNodePk )
+                    {
+                        CswNbtNodeKey RealNodeKey = _getNodeKey( NodeKey );
+                        if( null != RealNodeKey )
+                        {
+                            RealNodePk = RealNodeKey.NodeId;
+                        }
+                    }
                     if( null != RealNodePk )
                     {
                         CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
@@ -4275,6 +4283,32 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getCurrentRequestId()
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswNbtWebServiceRequesting ws = new CswNbtWebServiceRequesting( _CswNbtResources );
+                ReturnVal = ws.getCurrentRequestId();
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = jError( Ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+        } // getMaterial()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getCurrentRequest()
         {
             JObject ReturnVal = new JObject();
@@ -4531,7 +4565,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string checkQuota( string NodeTypeId )
+        public string checkQuota( string NodeTypeId, string NodeKey )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -4542,8 +4576,24 @@ namespace ChemSW.Nbt.WebServices
 
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-                    ReturnVal["result"] = ws.CheckQuota( CswConvert.ToInt32( NodeTypeId ) ).ToString().ToLower();
+                    Int32 NbtNodeTypeId = CswConvert.ToInt32( NodeTypeId );
+                    if( Int32.MinValue == NbtNodeTypeId )
+                    {
+                        CswNbtNodeKey NbtNodekey = _getNodeKey( NodeKey );
+                        if( null != NbtNodekey )
+                        {
+                            NbtNodeTypeId = NbtNodekey.NodeTypeId;
+                        }
+                    }
+                    if( Int32.MinValue != NbtNodeTypeId )
+                    {
+                        var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
+                        ReturnVal["result"] = ws.CheckQuota( NbtNodeTypeId ).ToString().ToLower();
+                    }
+                    else
+                    {
+                        ReturnVal["result"] = false;
+                    }
                 }
 
                 _deInitResources();

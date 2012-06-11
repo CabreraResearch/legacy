@@ -17,10 +17,15 @@
                                 if (Csw.contains(cellData, 'canview')) {
                                     buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
                                 }
-                            } else if (Csw.contains(cellData, 'canedit')) {
-                                buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
-                            } else if (Csw.contains(cellData, 'canview')) {
-                                buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                            } else {
+                                if (Csw.contains(cellData, 'canedit')) {
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
+                                } else if (Csw.contains(cellData, 'canview')) {
+                                    buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                }
+                                if (Csw.contains(cellData, 'canedit')) {
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/tree.gif" class="csw-grid-copy" alt="Copy" title="Copy" />';
+                                }
                             }
                             if (buttonStr.length > 0) {
                                 buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
@@ -35,6 +40,33 @@
                         }
                     }
                 }, /*End: makeActionColumnButtons*/
+                copyRows: function (rowid, grid, func) {
+                    if (grid) {
+                        if (Csw.isNullOrEmpty(rowid)) {
+                            rowid = grid.getSelectedRowId();
+                        }
+                        if (Csw.number(rowid) !== -1) {
+                            var copyOpt = {
+                                cswnbtnodekey: [],
+                                nodename: []
+                            };
+                            var copyFunc = function (opts) {
+                                opts.onCopyNode = function (nodeid) {
+                                    Csw.tryExec(func);
+                                    opts.nodeids = [nodeid];
+                                    opts.onEditNode = func;
+                                    $.CswDialog('EditNodeDialog', opts);
+                                };
+                                $.CswDialog('CopyNodeDialog', opts);
+                            };
+                            var emptyFunc = function () {
+                                $.CswDialog('AlertDialog', 'Please select a row to copy');
+                            };
+
+                            return grid.opGridRows(copyOpt, rowid, copyFunc, emptyFunc);
+                        }
+                    }
+                }, /*End: copyRows*/
                 deleteRows: function (rowid, grid, func) {
                     if (grid) {
                         if (Csw.isNullOrEmpty(rowid)) {
@@ -55,7 +87,7 @@
                             var emptyFunc = function () {
                                 $.CswDialog('AlertDialog', 'Please select a row to delete');
                             };
-                            
+
                             return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
                         }
                     }
@@ -93,7 +125,8 @@
                         onEditNode: null,
                         onEditView: null,
                         onRefresh: null,
-                        onDeleteNode: null
+                        onDeleteNode: null,
+                        onCopyNode: null
                     };
                     if (options) {
                         $.extend(true, e, options);
@@ -104,6 +137,8 @@
                             Csw.nbt.gridViewMethods.editRows(e.rowid, e.grid, e.onEditNode, e.onEditView, e.onRefresh);
                         } else if (-1 !== className.indexOf('csw-grid-delete')) {
                             Csw.nbt.gridViewMethods.deleteRows(e.rowid, e.grid, e.onDeleteNode);
+                        } else if (-1 !== className.indexOf('csw-grid-copy')) {
+                            Csw.nbt.gridViewMethods.copyRows(e.rowid, e.grid, e.onCopyNode);
                         }
                     }
                     //cswPrivate.selectedRowId = rowid;

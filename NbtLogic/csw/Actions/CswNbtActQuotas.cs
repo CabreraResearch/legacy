@@ -432,13 +432,16 @@ namespace ChemSW.Nbt.Actions
         public bool CheckQuotaNT( CswNbtMetaDataNodeType NodeType )
         {
             bool ret = false;
-            if( NodeType != null )
+            if( null == NodeType )
             {
-                Int32 NodeCount = GetNodeCountForNodeType( NodeType.NodeTypeId );
-                Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
-                ret = ( ( Quota <= 0 || NodeCount < Quota ) &&
-                        CheckQuotaOC( NodeType.ObjectClassId ) );
+                throw new CswDniException( ErrorType.Warning, "Could not check the quota of the provided object.", "The supplied NodeType was null." );
             }
+
+            Int32 NodeCount = GetNodeCountForNodeType( NodeType.NodeTypeId );
+            Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
+            ret = ( ( Quota <= 0 || NodeCount < Quota ) &&
+                    CheckQuotaOC( NodeType.ObjectClassId ) );
+
             return ret;
         } // CheckQuota()
 
