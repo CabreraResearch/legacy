@@ -73,8 +73,8 @@
                         resizable: false,
                         xtype: 'actioncolumn',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
-                            var cell1Id = 'action_' + rowIndex + '_' + colIndex + '_1';
-                            var cell2Id = 'action_' + rowIndex + '_' + colIndex + '_2';
+                            var cell1Id = cswPrivate.ID + '_action_' + rowIndex + '_' + colIndex + '_1';
+                            var cell2Id = cswPrivate.ID + '_action_' + rowIndex + '_' + colIndex + '_2';
 
                             var ret = '<table cellpadding="0"><tr>';
                             ret += '<td id="' + cell1Id + '" style="width: 26px;"/>';
