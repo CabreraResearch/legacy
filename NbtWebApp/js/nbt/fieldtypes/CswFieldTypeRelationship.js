@@ -29,8 +29,8 @@
                 if (false === Csw.isNullOrEmpty(o.relatednodeid) &&
                     Csw.isNullOrEmpty(selectedNodeId) &&
                     false === o.Multi &&
-                    (o.relatednodetypeid === nodeTypeId ||
-                      o.relatedobjectclassid === objectClassId)) {
+                    (Csw.number(o.relatednodetypeid) === Csw.number(nodeTypeId) ||
+                      Csw.number(o.relatedobjectclassid) === Csw.number(objectClassId))) {
 
                     selectedNodeId = o.relatednodeid;
                     selectedName = o.relatednodename;
