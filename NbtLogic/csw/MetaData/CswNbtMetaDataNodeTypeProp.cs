@@ -1002,24 +1002,48 @@ namespace ChemSW.Nbt.MetaData
         private char FilterDelimiter = '|';
         public void setFilter( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
         {
-            string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode.ToString() + FilterDelimiter + FilterValue.ToString();
-            setFilter( FilterNodeTypePropId, FilterString );
+            string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
+            CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
+            _setFilter( FilterProp, FilterString );
+        }
+
+        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        {
+            string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
+            _setFilter( FilterProp, FilterString );
         }
 
         public void setFilter( Int32 FilterNodeTypePropId, string FilterString )
         {
+            CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
+            _setFilter( FilterProp, FilterString );
+        }
+
+        private void _setFilter( CswNbtMetaDataNodeTypeProp FilterProp, string FilterString )
+        {
             if( IsRequired )
+            {
                 throw new CswDniException( ErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+            }
 
             bool changed = false;
-            CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
+
             if( FilterProp != null )
+            {
                 changed = _setAttribute( "filterpropid", FilterProp.FirstPropVersionId, true );
+            }
+            else
+            {
+                FilterString = "";
+                _CswNbtMetaDataResources.CswNbtResources.logMessage( "Attempted to create a conditional property filter with based upon a null NodeTypeProperty." );
+            }
 
             changed = _setAttribute( "filter", FilterString, true ) || changed;
 
             if( changed )
+            {
                 _CswNbtMetaDataResources.RecalculateQuestionNumbers( getNodeType() );
+            }
 
             // BZ 7363
             //SetValueOnAdd = false;
@@ -1103,6 +1127,9 @@ namespace ChemSW.Nbt.MetaData
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.List:
                         ValueToCompare = FilterProp.AsList.Value;
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Static:
+                        ValueToCompare = FilterProp.AsStatic.StaticText;
                         break;
                     case CswNbtMetaDataFieldType.NbtFieldType.Text:
                         ValueToCompare = FilterProp.AsText.Text;
@@ -1492,7 +1519,7 @@ namespace ChemSW.Nbt.MetaData
             this.SubQuestionNo = CswConvert.ToInt32( PropXmlRow[_Attribute_subquestionNo] );
             this.ReadOnly = CswConvert.ToBoolean( PropXmlRow[_Attribute_readonly] );
             this.StaticText = PropXmlRow[_Attribute_statictext].ToString();
-            //NewProp.setFilter(NodeTypePropRowFromXml[_Attribute_filterpropid],
+            //NewProp._setFilter(NodeTypePropRowFromXml[_Attribute_filterpropid],
             //                  NodeTypePropRowFromXml[_Attribute_filter]
         }
 

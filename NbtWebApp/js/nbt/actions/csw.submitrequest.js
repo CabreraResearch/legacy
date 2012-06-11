@@ -70,17 +70,10 @@
                                 Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
                             }
                             Csw.tryExec(function () {
+                                var menuCell = cswPrivate.actionTbl.cell(2, 1);
                                 cswPrivate.cartnodeid = json.cartnodeid;
                                 cswPrivate.cartviewid = json.cartviewid;
-                                if (false === Csw.isNullOrEmpty(cswPrivate.materialnodeid) ||
-                                    false === Csw.isNullOrEmpty(cswPrivate.containernodeid)) {
 
-                                    cswPrivate.actionTbl.cell(2, 1).$.CswMenuMain({
-                                        nodeid: cswPrivate.cartnodeid,
-                                        viewid: cswPrivate.cartviewid,
-                                        limitMenuTo: 'Add'
-                                    });
-                                }
                                 $.extend(true, cswPrivate.gridOpts, json.jqGridOpt);
                                 cswPrivate.resizeWithParent = true;
                                 cswPrivate.resizeWithParentElement = cswPrivate.action.actionDiv.$;
@@ -95,6 +88,7 @@
                                     refresh: false,
                                     edit: false
                                 };
+
                                 cswPrivate.gridOpts.onSelectRow = function () {
                                     cswPublic.grid.resetSelection();
                                 };
@@ -107,7 +101,9 @@
                                         onDeleteNode: function () {
                                             cswPublic.grid.deleteRow(rowid);
                                         },
-                                        onEditNode: cswPrivate.initGrid
+                                        onEditNode: cswPrivate.initGrid,
+                                        onCopyNode: cswPrivate.initGrid
+
                                     });
                                 };
 

@@ -1,6 +1,7 @@
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -38,7 +39,16 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceGrid GridWs = new CswNbtWebServiceGrid( _CswNbtResources, RequestAct.CurrentCartView, ForReport: false );
             ret = GridWs.runGrid( IncludeInQuickLaunch: false, GetAllRowsNow: true );
             ret["cartnodeid"] = RequestAct.CurrentRequestNode().NodeId.ToString();
-            ret["cartviewid"] = RequestAct.CurrentCartView.SessionViewId.get();
+            ret["cartviewid"] = RequestAct.CurrentCartView.SessionViewId.ToString();
+            return ret;
+        }
+
+        public JObject getCurrentRequestId()
+        {
+            JObject ret = new JObject();
+            CswNbtNode CurrentRequest = _RequestAct.CurrentRequestNode();
+            ret["cartnodeid"] = CurrentRequest.NodeId.ToString();
+            ret["cartitemnodetypeid"] = _RequestAct.RequestItemNt.NodeTypeId;
             return ret;
         }
 

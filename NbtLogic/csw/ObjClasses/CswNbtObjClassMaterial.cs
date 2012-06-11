@@ -1,11 +1,13 @@
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMaterial : CswNbtObjClass, ICswNbtPropertySetRequest
+    public class CswNbtObjClassMaterial : CswNbtObjClass
     {
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -32,8 +34,6 @@ namespace ChemSW.Nbt.ObjClasses
         public static string StorageCompatibilityPropName { get { return "Storage Compatibility"; } }
         public static string ExpirationIntervalPropName { get { return "Expiration Interval"; } }
         public static string RequestPropertyName { get { return "Request"; } }
-
-        public string RequestButtonPropertyName { get { return RequestPropertyName; } }
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterial
@@ -101,6 +101,31 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( RequestPropertyName == OCP.PropName )
                 {
+                    CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+                    CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestAct.RequestItemNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                    if( null == NodeAsRequestItem )
+                    {
+                        throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+                    }
+                    NodeAsRequestItem.Material.RelatedNodeId = NodeId;
+                    NodeAsRequestItem.Container.Hidden = true;
+
+                    if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
+                    {
+                        NodeAsRequestItem.Location.NodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                    }
+
+                    NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Request.ToString();
+
+                    NodeAsRequestItem.postChanges( true );
+
+                    JObject ActionDataObj = new JObject();
+                    ActionDataObj["requestaction"] = OCP.PropName;
+                    ActionDataObj["requestItemNodeId"] = NodeAsRequestItem.NodeId.ToString();
+                    ActionDataObj["requestItemNodePk"] = NodeAsRequestItem.NodeId.PrimaryKey.ToString();
+                    ActionDataObj["titleText"] = TradeName.Text + " Request";
+                    ActionData = ActionDataObj.ToString();
+
                     ButtonAction = NbtButtonAction.request;
                 }
             }

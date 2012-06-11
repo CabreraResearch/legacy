@@ -1,28 +1,30 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer : CswNbtObjClass, ICswNbtPropertySetRequest
+    public class CswNbtObjClassContainer : CswNbtObjClass
     {
-        public static string BarcodePropertyName { get { return "Barcode"; } }
-        public static string MaterialPropertyName { get { return "Material"; } }
-        public static string LocationPropertyName { get { return "Location"; } }
-        public static string LocationVerifiedPropertyName { get { return "Location Verified"; } }
-        public static string StatusPropertyName { get { return "Status"; } }
-        public static string MissingPropertyName { get { return "Missing"; } }
-        public static string DisposedPropertyName { get { return "Disposed"; } }
-        public static string SourceContainerPropertyName { get { return "Source Container"; } }
-        public static string QuantityPropertyName { get { return "Quantity"; } }
-        public static string ExpirationDatePropertyName { get { return "Expiration Date"; } }
-        public static string SizePropertyName { get { return "Size"; } }
-        public static string RequestPropertyName { get { return "Request"; } }
-
-        public string RequestButtonPropertyName { get { return RequestPropertyName; } }
+        public const string BarcodePropertyName = "Barcode";
+        public const string MaterialPropertyName = "Material";
+        public const string LocationPropertyName = "Location";
+        public const string LocationVerifiedPropertyName = "Location Verified";
+        public const string StatusPropertyName = "Status";
+        public const string MissingPropertyName = "Missing";
+        public const string DisposedPropertyName = "Disposed";
+        public const string SourceContainerPropertyName = "Source Container";
+        public const string QuantityPropertyName = "Quantity";
+        public const string ExpirationDatePropertyName = "Expiration Date";
+        public const string SizePropertyName = "Size";
+        public const string DispensePropertyName = "Dispense";
+        public const string DisposePropertyName = "Dispose";
+        public const string MovePropertyName = "Move";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -63,6 +65,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            Dispose.Hidden = ( Disposed.Checked == Tristate.True );
+            Dispense.Hidden = ( Disposed.Checked == Tristate.True || Missing.Checked == Tristate.True || Quantity.Quantity <= 0 );
+            Move.Hidden = ( Disposed.Checked == Tristate.True );
+
             if( Material.RelatedNodeId != null )
             {
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
@@ -151,10 +157,60 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
             if( null != NodeTypeProp && null != OCP )
             {
-                if( RequestPropertyName == OCP.PropName )
+                CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+                CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestAct.RequestItemNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                if( null == NodeAsRequestItem )
                 {
-                    ButtonAction = NbtButtonAction.request;
+                    throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
                 }
+                NodeAsRequestItem.Container.RelatedNodeId = NodeId;
+                NodeAsRequestItem.Size.Hidden = true;
+                NodeAsRequestItem.Count.Hidden = true;
+
+                if( null != Location.NodeId )
+                {
+                    NodeAsRequestItem.Location.NodeId = Location.NodeId;
+                }
+
+                NodeAsRequestItem.Material.Hidden = false == ( OCP.PropName == DispensePropertyName );
+                NodeAsRequestItem.Quantity.Hidden = false == ( OCP.PropName == DispensePropertyName );
+                NodeAsRequestItem.RequestBy.Hidden = false == ( OCP.PropName == DispensePropertyName );
+                NodeAsRequestItem.Location.Hidden = OCP.PropName == DisposePropertyName;
+                NodeAsRequestItem.RequestBy.ReadOnly = true;
+
+                switch( OCP.PropName )
+                {
+                    case DispensePropertyName:
+                        {
+                            NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispense.ToString();
+                            NodeAsRequestItem.Material.RelatedNodeId = Material.NodeId;
+                            NodeAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity.ToString();
+                            break;
+                        }
+                    case DisposePropertyName:
+                        {
+                            NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispose.ToString();
+                            break;
+                        }
+                    case MovePropertyName:
+                        {
+                            NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Move.ToString();
+                            break;
+                        }
+                    default:
+                        throw new CswDniException( ErrorType.Error, "No action has been defined for this button.", "Property named " + OCP.PropName + " has not implemented a button click event." );
+
+                }
+                NodeAsRequestItem.postChanges( true );
+
+                JObject ActionDataObj = new JObject();
+                ActionDataObj["requestaction"] = OCP.PropName;
+                ActionDataObj["requestItemNodeId"] = NodeAsRequestItem.NodeId.ToString();
+                ActionDataObj["requestItemNodePk"] = NodeAsRequestItem.NodeId.PrimaryKey.ToString();
+                ActionDataObj["titleText"] = Material.CachedNodeName + " " + OCP.PropName + " Request";
+                ActionData = ActionDataObj.ToString();
+
+                ButtonAction = NbtButtonAction.request;
             }
             return true;
         }
@@ -172,8 +228,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[SourceContainerPropertyName] ); } }
         public CswNbtNodePropQuantity Quantity { get { return ( _CswNbtNode.Properties[QuantityPropertyName] ); } }
         public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[ExpirationDatePropertyName] ); } }
-        public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
-
+        public CswNbtNodePropButton Dispense { get { return ( _CswNbtNode.Properties[DispensePropertyName] ); } }
+        public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[DisposePropertyName] ); } }
+        public CswNbtNodePropButton Move { get { return ( _CswNbtNode.Properties[MovePropertyName] ); } }
         #endregion
 
 

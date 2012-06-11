@@ -64,7 +64,8 @@
                 ajaxStop: 'ajaxStop',
                 globalAjaxStart: 'globalAjaxStart',
                 globalAjaxStop: 'globalAjaxStop'
-            }
+            },
+            Submit_Request: 'Submit_Request'
         });
 
     Csw.enums.wizardSteps_InspectionDesign = Csw.enums.wizardSteps_InspectionDesign ||
@@ -103,7 +104,8 @@
             reauthenticate: 'reauthenticate',
             //home: 'home',
             refresh: 'refresh',
-            popup: 'popup'
+            popup: 'popup',
+            request: 'request'
         });
 
     Csw.enums.inputTypes = Csw.enums.inputTypes ||

@@ -65,6 +65,18 @@ namespace ChemSW.Nbt.Actions
         #endregion Constructor
 
         #region Public methods and props
+        private CswNbtMetaDataNodeType _RequestItemNt = null;
+        public CswNbtMetaDataNodeType RequestItemNt
+        {
+            get
+            {
+                if( null == _RequestItemNt )
+                {
+                    _RequestItemNt = _RequestItemOc.getNodeTypes().FirstOrDefault();
+                }
+                return _RequestItemNt;
+            }
+        }
 
         private CswNbtView _CurrentCartView;
         public CswNbtView CurrentCartView
@@ -161,6 +173,18 @@ namespace ChemSW.Nbt.Actions
                 applyCartFilter( CartNode.NodeId );
                 ICswNbtTree CartTree = _CswNbtResources.Trees.getTreeFromView( _CurrentCartView, false, false );
                 CartContentCount = CartTree.getChildNodeCount();
+                if( null == _RequestItemNt )
+                {
+                    if( CartContentCount > 0 )
+                    {
+                        CartTree.goToNthChild( 0 );
+                        _RequestItemNt = CartTree.getNodeForCurrentPosition().getNodeType();
+                    }
+                    else
+                    {
+                        _RequestItemNt = _RequestItemOc.getNodeTypes().FirstOrDefault();
+                    }
+                }
             }
         }
 

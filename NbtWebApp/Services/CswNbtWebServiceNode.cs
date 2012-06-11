@@ -197,6 +197,7 @@ namespace ChemSW.Nbt.WebServices
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
+            
             Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null, Tab );
 
             // Recurse on sub-props

@@ -118,11 +118,11 @@ namespace ChemSW.Nbt.Schema
 
             #region Views
 
-            string MyRequestViewName = "My Requests";
+            string MyRequestViewName = "My Request History";
             bool UniqueView = _CswNbtSchemaModTrnsctn.restoreViews( MyRequestViewName ).Count == 0;
             if( false == UniqueView )
             {
-                MyRequestViewName = "My CISPro Requests";
+                MyRequestViewName = "My CISPro Request History";
                 UniqueView = _CswNbtSchemaModTrnsctn.restoreViews( MyRequestViewName ).Count == 0;
             }
             if( UniqueView )
@@ -131,7 +131,8 @@ namespace ChemSW.Nbt.Schema
                 MyRequestsView.makeNew( MyRequestViewName, NbtViewVisibility.Global );
                 MyRequestsView.Category = "Requests";
                 MyRequestsView.ViewMode = NbtViewRenderingMode.Tree;
-                MyRequestsView.AddViewRelationship( RequestNt, true );
+                CswNbtViewRelationship RequestVr = MyRequestsView.AddViewRelationship( RequestNt, true );
+                MyRequestsView.AddViewPropertyAndFilter( RequestVr, RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() ), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
                 MyRequestsView.save();
             }
             #endregion Views

@@ -61,12 +61,28 @@
                                             })(messagediv.getId())
                                         ));
                                         break;
+                                    case Csw.enums.nbtButtonAction.request:
+                                        $btn.button({ disabled: false });
+                                        var actionJson = JSON.parse(data.actiondata);
+                                        switch(actionJson.requestaction) {
+                                            case 'Dispose':
+                                                break;
+                                            default:
+                                                $.CswDialog('EditNodeDialog', {
+                                                    nodeids: [actionJson.requestItemNodeId],
+                                                    nodepks: [actionJson.requestItemNodePk],
+                                                    title: actionJson.titleText
+                                                });
+                                                break;
+                                        }
+                                        Csw.publish(Csw.enums.events.Submit_Request);
+                                        break;
                                     case Csw.enums.nbtButtonAction.popup:
-                                        $btn.button({disabled: false});
+                                        $btn.button({ disabled: false });
                                         Csw.openPopup(data.actiondata, 600, 800);
                                         break;
                                     default:
-                                        $btn.button({disabled: false});
+                                        $btn.button({ disabled: false });
                                         break;
                                 }
                             }

@@ -14,11 +14,23 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             CswNbtMetaDataObjectClass ContainerOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp ContainerRequestOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            _CswNbtSchemaModTrnsctn.createObjectClassProp(
                 ContainerOc, new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    PropName = CswNbtObjClassContainer.RequestPropertyName
+                    PropName = CswNbtObjClassContainer.DispensePropertyName
+                } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                ContainerOc, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    PropName = CswNbtObjClassContainer.DisposePropertyName
+                } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                ContainerOc, new CswNbtWcfMetaDataModel.ObjectClassProp
+                {
+                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    PropName = CswNbtObjClassContainer.MovePropertyName
                 } );
             foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOc.getNodeTypes() )
             {
@@ -28,9 +40,17 @@ namespace ChemSW.Nbt.Schema
                     FirsTabId = Tab.TabId;
                     break;
                 }
-                CswNbtMetaDataNodeTypeProp RequestNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestPropertyName );
-                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirsTabId );
-                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirsTabId );
+                CswNbtMetaDataNodeTypeProp DispenseNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.DispensePropertyName );
+                DispenseNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirsTabId, 99, 1 );
+                DispenseNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirsTabId, 99, 1 );
+
+                CswNbtMetaDataNodeTypeProp MoveNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.MovePropertyName );
+                MoveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirsTabId, 99, 2 );
+                MoveNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirsTabId, 99, 2 );
+
+                CswNbtMetaDataNodeTypeProp DisposeNtp = ContainerNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.DisposePropertyName );
+                DisposeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirsTabId, 99, 3 );
+                DisposeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirsTabId, 99, 3 );
             }
 
             CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
@@ -49,8 +69,8 @@ namespace ChemSW.Nbt.Schema
                     break;
                 }
                 CswNbtMetaDataNodeTypeProp RequestNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.RequestPropertyName );
-                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirsTabId );
-                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirsTabId );
+                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirsTabId, 99, 1 );
+                RequestNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirsTabId, 99, 1 );
             }
 
         }//Update()

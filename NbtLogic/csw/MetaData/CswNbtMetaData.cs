@@ -683,7 +683,7 @@ namespace ChemSW.Nbt.MetaData
                             string FilterValue = string.Empty;
                             OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
                             // We don't have to worry about versioning in this function
-                            NTProp.setFilter( TargetOfFilter.FirstPropVersionId, SubField, FilterMode, FilterValue );
+                            NTProp.setFilter( TargetOfFilter, SubField, FilterMode, FilterValue );
                         }
                     }
                 }
