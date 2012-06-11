@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using System.Collections.Generic;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -139,18 +140,28 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtMetaDataNodeType ContainerNodeType = this.Node.getNodeType();
                     CswNbtMetaDataNodeTypeProp Quantity = ContainerNodeType.getNodeTypeProp( "Quantity" );
+                    string UniqueNodeViewName = "CswNbtNodeTypePropQuantity_" + Quantity.NodeTypeId.ToString() + "_" + this.NodeId.ToString();
 
-                    CswNbtView StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
-                    StateSpecificUnitTypeView.makeNew( "CswNbtNodeTypePropQuantity_" + Quantity.NodeTypeId.ToString(), NbtViewVisibility.Property );
+                    List<CswNbtView> NodeSpecificViewList = _CswNbtResources.ViewSelect.restoreViews( UniqueNodeViewName );
+                    CswNbtView StateSpecificUnitTypeView;
+                    if( 0 == NodeSpecificViewList.Count )
+                    {
+                        StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
+                    }
+                    else
+                    {
+                        StateSpecificUnitTypeView = NodeSpecificViewList[0];
+                        StateSpecificUnitTypeView.Delete();
+                    }
+                    StateSpecificUnitTypeView.makeNew( UniqueNodeViewName, NbtViewVisibility.Property );
 
                     CswNbtMetaDataNodeType WeightNT = _CswNbtResources.MetaData.getNodeType( "Weight Unit" );
                     StateSpecificUnitTypeView.AddViewRelationship( WeightNT, true );
-                    if( MaterialNodeAsMaterial.PhysicalState.Value != "Solid" )
+                    if( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() != "solid" )
                     {
                         CswNbtMetaDataNodeType VolumeNT = _CswNbtResources.MetaData.getNodeType( "Volume Unit" );
                         StateSpecificUnitTypeView.AddViewRelationship( VolumeNT, true );
                     }
-
                     StateSpecificUnitTypeView.save();
                     this.Quantity.View = StateSpecificUnitTypeView;
                 }
