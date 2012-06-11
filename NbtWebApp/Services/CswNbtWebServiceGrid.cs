@@ -39,12 +39,14 @@ namespace ChemSW.Nbt.WebServices
                 CanEdit = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType );
                 CanView = Resources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType );
                 CanDelete = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeType );
+                CanCreate = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
             }
 
             public Int32 NodeTypeId { get; private set; }
             public bool CanView { get; private set; }
             public bool CanEdit { get; private set; }
             public bool CanDelete { get; private set; }
+            public bool CanCreate { get; private set; }
         }
 
         private Dictionary<Int32, _NodeTypePermission> _Permissions = new Dictionary<int, _NodeTypePermission>();
@@ -231,6 +233,7 @@ namespace ChemSW.Nbt.WebServices
                     Array.Add( "" );
                 }
             }
+
         }
 
         public void ExportCsv( HttpContext Context )
@@ -465,7 +468,7 @@ namespace ChemSW.Nbt.WebServices
                                             new JProperty( "index", "Action" ),
                                             new JProperty( "formatter", "image" ),
                                             new JProperty( "fixed", true ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 50 )
+                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 66 )
                                             ) );
             }
 
@@ -521,7 +524,8 @@ namespace ChemSW.Nbt.WebServices
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanEdit;
                 bool CanDelete = ActionEnabled &&
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanDelete;
-
+                bool CanCopy = ActionEnabled &&
+                               _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanCreate;
                 string ThisNodeKeyString = ThisNodeKey.ToString();
                 string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
                 JArray Actions = new JArray();
@@ -534,13 +538,20 @@ namespace ChemSW.Nbt.WebServices
                         Actions.Add( "canview" );
                     }
                 }
-                else if( CanEdit )
+                else
                 {
-                    Actions.Add( "canedit" );
-                }
-                else if( CanView )
-                {
-                    Actions.Add( "canview" );
+                    if( CanEdit )
+                    {
+                        Actions.Add( "canedit" );
+                    }
+                    else if( CanView )
+                    {
+                        Actions.Add( "canview" );
+                    }
+                    if( CanCopy )
+                    {
+                        Actions.Add( "cancopy" );
+                    }
                 }
                 if( CanDelete )
                 {
