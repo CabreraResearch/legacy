@@ -65,6 +65,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            //TODO - case 24508, part 4 - 'disposed' modification logic (how do we know it changed? is this where we do this?)
+
             if( Material.RelatedNodeId != null )
             {
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
@@ -128,7 +130,31 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            //todo - case 25759 - check physical state - set quantity unit view appropriately
+            //case 25759 - set quantity unittype view based on related material physical state
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( this.Material.RelatedNodeId );
+            if( MaterialNode != null )
+            {
+                CswNbtObjClassMaterial MaterialNodeAsMaterial = (CswNbtObjClassMaterial) MaterialNode;
+                if( false == String.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
+                {
+                    CswNbtMetaDataNodeType ContainerNodeType = this.Node.getNodeType();
+                    CswNbtMetaDataNodeTypeProp Quantity = ContainerNodeType.getNodeTypeProp( "Quantity" );
+
+                    CswNbtView StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
+                    StateSpecificUnitTypeView.makeNew( "CswNbtNodeTypePropQuantity_" + Quantity.NodeTypeId.ToString(), NbtViewVisibility.Property );
+
+                    CswNbtMetaDataNodeType WeightNT = _CswNbtResources.MetaData.getNodeType( "Weight Unit" );
+                    StateSpecificUnitTypeView.AddViewRelationship( WeightNT, true );
+                    if( MaterialNodeAsMaterial.PhysicalState.Value != "Solid" )
+                    {
+                        CswNbtMetaDataNodeType VolumeNT = _CswNbtResources.MetaData.getNodeType( "Volume Unit" );
+                        StateSpecificUnitTypeView.AddViewRelationship( VolumeNT, true );
+                    }
+
+                    StateSpecificUnitTypeView.save();
+                    this.Quantity.View = StateSpecificUnitTypeView;
+                }
+            }
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -160,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( DispensePropertyName == OCP.PropName )
                 {
-                    //TODO - case 24508 - when Dispense button is clicked, trigger DispenseContainer action
+                    //TODO - case 24508, part 6 - when Dispense button is clicked, trigger DispenseContainer action
                 }
             }
             return true;

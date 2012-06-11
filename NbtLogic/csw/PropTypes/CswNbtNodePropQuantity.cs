@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
         private CswNbtSubField _QuantitySubField;
         private CswNbtSubField _UnitNameSubField;
+        private CswNbtView _View;
         public static implicit operator CswNbtNodePropQuantity( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsQuantity;
@@ -194,14 +195,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             set
             {
-                //TODO - cases 24650, 25759 - set sets _view (so that container can override view)
+                _View = value;
             }
             get
             {
-                CswNbtView View = null;
-                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
-                    View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
-                return View;
+                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() && _View == null )
+                    _View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                return _View;
             }
         }
 
