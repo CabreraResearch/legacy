@@ -42,7 +42,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 //ViewsCaddy.S4Parameters.Add( "orderbyclause", "lower(v.viewname)" );
                 ////if( MetaDataProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.UserClass )
                 ////{
-                ////    CswNbtObjClassUser UserNode = CswNbtNodeCaster.AsUser( _CswNbtResources.Nodes[this.NodeKey] );
+                ////    CswNbtObjClassUser UserNode = (CswNbtObjClassUser) _CswNbtResources.Nodes[this.NodeKey];
                 ////    if( UserNode != null && UserNode.RoleId > 0 )
                 ////    {
                 ////        // use this user's visible views, not the current logged in user

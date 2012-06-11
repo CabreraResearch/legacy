@@ -34,8 +34,16 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.BatchOpClass:
+                    ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
                     ReturnVal = new CswNbtObjClassContainer( CswNbtResources, Node );
+                    break;
+
+                case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerDispenseTransactionClass:
+                    ReturnVal = new CswNbtObjClassContainerDispenseTransaction( CswNbtResources, Node );
                     break;
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.CustomerClass:
@@ -130,6 +138,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassReport( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass:
+                    ReturnVal = new CswNbtObjClassRequest( CswNbtResources, Node );
+                    break;
+
+                case CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass:
+                    ReturnVal = new CswNbtObjClassRequestItem( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.ResultClass:
                     ReturnVal = new CswNbtObjClassResult( CswNbtResources, Node );
                     break;
@@ -166,9 +182,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassUnitOfMeasure( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
-                    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources, Node );
-                    break;
+                //case CswNbtMetaDataObjectClass.NbtObjectClass.UnitTypeClass:
+                //    ReturnVal = new CswNbtObjClassUnitType( CswNbtResources, Node );
+                //    break;//case 7608 - deprecated
 
                 case CswNbtMetaDataObjectClass.NbtObjectClass.UserClass:
                     ReturnVal = new CswNbtObjClassUser( CswNbtResources, Node );

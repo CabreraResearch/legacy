@@ -189,7 +189,10 @@
                     Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
                         urlMethod: cswPrivate.QuotaUrlMethod,
-                        data: { NodeTypeId: cswPrivate.nodetypeid },
+                        data: {
+                            NodeTypeId: cswPrivate.nodetypeid,
+                            NodeId: ''
+                        },
                         success: function (data) {
                             if (Csw.bool(data.result)) {
                                 cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
@@ -684,44 +687,47 @@
                 /// <param name="propData" type="Object">(Optional) an object representing CswNbt node properties.</param>
                 /// <returns type="Array">An array of propIds</returns>
                 'use strict';
-                layoutTable = layoutTable || cswPrivate.layoutTable;
-                propData = propData || cswPrivate.propertyData;
+                Csw.tryExec(function() {
 
-                var propIds = [];
-                var updSuccess = function (thisProp) {
-                    var propOpt = {
-                        propData: thisProp,
-                        propDiv: '',
-                        fieldtype: thisProp.fieldtype,
-                        nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
-                        Multi: cswPrivate.Multi,
-                        cswnbtnodekey: cswPrivate.cswnbtnodekey
-                    };
+                    layoutTable = layoutTable || cswPrivate.layoutTable;
+                    propData = propData || cswPrivate.propertyData;
 
-                    var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
-                    layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
-                    propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
-                    propOpt.propDiv = propOpt.propCell.children('div').first();
+                    var propIds = [];
+                    var updSuccess = function(thisProp) {
+                        var propOpt = {
+                            propData: thisProp,
+                            propDiv: '',
+                            fieldtype: thisProp.fieldtype,
+                            nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                            Multi: cswPrivate.Multi,
+                            cswnbtnodekey: cswPrivate.cswnbtnodekey
+                        };
 
-                    $.CswFieldTypeFactory('save', propOpt);
-                    if (propOpt.propData.wasmodified) {
-                        propIds.push(propOpt.propData.id);
-                    }
+                        var cellSet = layoutTable.cellSet(thisProp.displayrow, thisProp.displaycol);
+                        layoutTable.addCellSetAttributes(cellSet, { propId: thisProp.id });
+                        propOpt.propCell = cswPrivate.getPropertyCell(cellSet);
+                        propOpt.propDiv = propOpt.propCell.children('div').first();
 
-                    // recurse on subprops
-                    if (Csw.bool(thisProp.hassubprops) && Csw.contains(thisProp, 'subprops')) {
-                        var subProps = thisProp.subprops;
-                        if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
-                            var subTable = layoutTable[thisProp.id + '_subproptable'];
-                            if (false === Csw.isNullOrEmpty(subTable)) {
-                                cswPrivate.updatePropJsonFromLayoutTable(subTable, subProps);
+                        $.CswFieldTypeFactory('save', propOpt);
+                        if (propOpt.propData.wasmodified) {
+                            propIds.push(propOpt.propData.id);
+                        }
+
+                        // recurse on subprops
+                        if (Csw.bool(thisProp.hassubprops) && Csw.contains(thisProp, 'subprops')) {
+                            var subProps = thisProp.subprops;
+                            if (false === Csw.isNullOrEmpty(subProps)) { //&& $subprops.children('[display != "false"]').length > 0)
+                                var subTable = layoutTable[thisProp.id + '_subproptable'];
+                                if (false === Csw.isNullOrEmpty(subTable)) {
+                                    cswPrivate.updatePropJsonFromLayoutTable(subTable, subProps);
+                                }
                             }
                         }
-                    }
-                    return false;
-                };
-                Csw.crawlObject(propData, updSuccess, false);
-                return propIds;
+                        return false;
+                    };
+                    Csw.crawlObject(propData, updSuccess, false);
+                    return propIds;
+                });
             }; // updatePropJsonFromLayoutTable()
 
             cswPrivate.enableSaveBtn = function () {
@@ -737,97 +743,114 @@
 
             cswPublic.save = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
-                if (cswPrivate.form.$.valid()) {
-                    var propIds = cswPrivate.updatePropJsonFromLayoutTable();
-                    var data = {
-                        EditMode: cswPrivate.EditMode,
-                        NodeIds: cswPrivate.nodeids.join(','),
-                        SafeNodeKeys: cswPrivate.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0) */
-                        TabId: tabid,
-                        NodeTypeId: cswPrivate.nodetypeid,
-                        NewPropsJson: JSON.stringify(cswPrivate.propertyData),
-                        ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
-                    };
+                Csw.tryExec(function () {
 
-                    Csw.ajax.post({
-                        watchGlobal: cswPrivate.AjaxWatchGlobal,
-                        urlMethod: cswPrivate.SavePropUrlMethod,
-                        async: (false === cswPrivate.Multi),
-                        data: data,
-                        success: function (successData) {
-                            var doSave = true;
-                            var dataJson = {
-                                SourceNodeKey: cswPrivate.nodekeys.join(','), /* Case 26134. Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0) */
-                                CopyNodeIds: [],
-                                PropIds: []
-                            };
+                    if (cswPrivate.form.$.valid()) {
+                        var propIds = cswPrivate.updatePropJsonFromLayoutTable();
+                        var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
+                        var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);
 
-                            function copyNodeProps(onSuccess) {
-                                Csw.ajax.post({
-                                    watchGlobal: cswPrivate.AjaxWatchGlobal,
-                                    urlMethod: cswPrivate.CopyPropValuesUrlMethod,
-                                    data: dataJson,
-                                    success: function (copy) {
-                                        Csw.tryExec(onSuccess, copy);
-                                    }
-                                }); // ajax						        
-                            }
+                        Csw.ajax.post({
+                            watchGlobal: cswPrivate.AjaxWatchGlobal,
+                            urlMethod: cswPrivate.SavePropUrlMethod,
+                            async: (false === cswPrivate.Multi),
+                            data: {
+                                EditMode: cswPrivate.EditMode,
+                                NodeId: sourcenodeid,
+                                SafeNodeKey: sourcenodekey,
+                                TabId: tabid,
+                                NodeTypeId: cswPrivate.nodetypeid,
+                                NewPropsJson: JSON.stringify(cswPrivate.propertyData),
+                                ViewId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId)
+                            },
+                            success: function (successData) {
+                                var doSave = true;
+                                var dataJson = {
+                                    SourceNodeKey: sourcenodekey,
+                                    CopyNodeIds: [],
+                                    CopyNodeKeys: [],
+                                    PropIds: []
+                                };
 
-                            if (cswPrivate.ShowCheckboxes) {
-                                // apply the newly saved checked property values on this node to the checked nodes
-                                //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
-                                //var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
-                                var nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
-                                var $propchecks = $('.' + cswPrivate.ID + '_check:checked');
-
-                                if (nodechecks.length > 0 && $propchecks.length > 0) {
-                                    //$nodechecks.each(function () {
-                                    Csw.each(nodechecks, function (thisObj) {
-                                        //var nodeid = $(this).attr('nodeid');
-                                        dataJson.CopyNodeIds.push(thisObj.nodeid);
-                                    });
-
-                                    $propchecks.each(function () {
-                                        var propid = $(this).attr('propid');
-                                        dataJson.PropIds.push(propid);
-                                    });
-                                    copyNodeProps();
-                                } // if($nodechecks.length > 0 && $propchecks.length > 0)
-                                else {
-                                    doSave = false;
-                                    $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
+                                function copyNodeProps() {
+                                    Csw.ajax.post({
+                                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                                        urlMethod: cswPrivate.CopyPropValuesUrlMethod,
+                                        data: dataJson,
+                                        success: function (data) {
+                                            if (false === Csw.isNullOrEmpty(data.batch)) {
+                                                $.CswDialog('BatchOpDialog', {
+                                                    opname: 'multi-edit',
+                                                    onViewBatchOperation: function () {
+                                                        Csw.tryExec(cswPrivate.Refresh, {
+                                                            nodeid: data.batch,
+                                                            viewid: '',
+                                                            viewmode: 'tree',
+                                                            IncludeNodeRequired: true
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    }); // ajax						        
                                 }
-                            } // if(o.ShowCheckboxes)
-                            else if (cswPrivate.Multi) {
-                                dataJson.CopyNodeIds = cswPrivate.nodeids;
-                                dataJson.PropIds = propIds;
-                                copyNodeProps( /* Case 26134. We're already doing a clear:all, we don't need this. 
-                                                function () { Csw.window.location().reload();  } */);
-                            }
 
-                            cswPrivate.enableSaveBtn();
+                                if (cswPrivate.ShowCheckboxes) {
+                                    // apply the newly saved checked property values on this node to the checked nodes
+                                    //var $nodechecks = $('.' + o.NodeCheckTreeId + '_check:checked');
+                                    //var nodechecks = $('#' + o.NodeCheckTreeId).CswNodeTree('checkedNodes');
+                                    var nodechecks = cswPrivate.nodeTreeCheck.checkedNodes();
+                                    var $propchecks = $('.' + cswPrivate.ID + '_check:checked');
 
-                            if (doSave) {
-                                // reload tab
-                                if (cswPrivate.ReloadTabOnSave) {
-                                    cswPrivate.getProps(tabContentDiv, tabid, function () {
+                                    if (nodechecks.length > 0 && $propchecks.length > 0) {
+                                        //$nodechecks.each(function () {
+                                        Csw.each(nodechecks, function (thisObj) {
+                                            //var nodeid = $(this).attr('nodeid');
+                                            dataJson.CopyNodeIds.push(thisObj.nodeid);
+                                        });
+
+                                        $propchecks.each(function () {
+                                            var propid = $(this).attr('propid');
+                                            dataJson.PropIds.push(propid);
+                                        });
+                                        copyNodeProps();
+                                    } // if($nodechecks.length > 0 && $propchecks.length > 0)
+                                    else {
+                                        doSave = false;
+                                        $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
+                                    }
+                                } // if(o.ShowCheckboxes)
+                                else if (cswPrivate.Multi) {
+                                    dataJson.CopyNodeIds = cswPrivate.nodeids;
+                                    dataJson.CopyNodeKeys = cswPrivate.nodekeys;
+                                    dataJson.PropIds = propIds;
+                                    copyNodeProps();
+                                }
+
+                                cswPrivate.enableSaveBtn();
+
+                                if (doSave) {
+                                    // reload tab
+                                    if (cswPrivate.ReloadTabOnSave) {
+                                        cswPrivate.getProps(tabContentDiv, tabid, function () {
+                                            Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
+                                            Csw.tryExec(onSuccess);
+                                        });
+                                    } else {
+                                        // cswPublic events
                                         Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
                                         Csw.tryExec(onSuccess);
-                                    });
-                                } else {
-                                    // cswPublic events
-                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
-                                    Csw.tryExec(onSuccess);
+                                    }
                                 }
-                            }
 
-                        }, // success
-                        error: cswPrivate.enableSaveBtn
-                    }); // ajax
-                } // if(cswPrivate.form.$.valid())
-                else {
-                    cswPrivate.enableSaveBtn();
-                }
+                            }, // success
+                            error: cswPrivate.enableSaveBtn
+                        }); // ajax
+                    } // if(cswPrivate.form.$.valid())
+                    else {
+                        cswPrivate.enableSaveBtn();
+                    }
+                });
             }; // Save()
 
             (function () {

@@ -13,7 +13,8 @@
             onSessions: function () { },
             onImpersonate: null,
             onEndImpersonation: null,
-            onSuccess: function () { }
+            onSuccess: function () { },
+            onSubmitRequest: function() { }
         };
 
         if (options) {
@@ -43,7 +44,8 @@
                                                         onModules: o.onModules,
                                                         onSessions: o.onSessions,
                                                         onImpersonate: o.onImpersonate,
-                                                        onEndImpersonation: o.onEndImpersonation });
+                                                        onEndImpersonation: o.onEndImpersonation,
+                                                        onSubmitRequest: o.onSubmitRequest });
 
                             if (Csw.bool(thisItem.haschildren)) {
                                 delete thisItem.haschildren;
@@ -60,7 +62,9 @@
                                                          onModules: o.onModules,
                                                          onSessions: o.onSessions,
                                                          onImpersonate: o.onImpersonate,
-                                                         onEndImpersonation: o.onEndImpersonation });
+                                                         onEndImpersonation: o.onEndImpersonation,
+                                                         onSubmitRequest: o.onSubmitRequest
+                                                     });
                                     }
                                 }
                             }

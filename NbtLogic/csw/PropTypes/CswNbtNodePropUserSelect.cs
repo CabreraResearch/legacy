@@ -17,6 +17,10 @@ namespace ChemSW.Nbt.PropTypes
     /// </summary>
     public class CswNbtNodePropUserSelect : CswNbtNodeProp
     {
+        public static implicit operator CswNbtNodePropUserSelect( CswNbtNodePropWrapper PropWrapper )
+        {
+            return PropWrapper.AsUserSelect;
+        }
         /// <summary>
         /// Constructor
         /// </summary>

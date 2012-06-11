@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.MetaData
             if( null != _CswNbtResources.CurrentNbtUser.RoleId )
             {
                 CswNbtNode RoleNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.RoleId];
-                CswNbtObjClassRole RoleNodeAsRole = CswNbtNodeCaster.AsRole( RoleNode );
+                CswNbtObjClassRole RoleNodeAsRole = (CswNbtObjClassRole) RoleNode;
                 //CswNbtNodePropLogicalSet PropPermissions = ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).NodeTypePermissions;
                 //PropPermissions.SetValue( NodeTypePermission.Delete.ToString(), NewNodeType.NodeTypeId.ToString(), true );
                 //PropPermissions.SetValue( NodeTypePermission.Create.ToString(), NewNodeType.NodeTypeId.ToString(), true );
@@ -52,12 +52,12 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtNode RoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Administrator" );
                 if( RoleNode != null )
                 {
-                    _CswNbtResources.Permit.set( AllPerms, NewNodeType, CswNbtNodeCaster.AsRole( RoleNode ), true );
+                    _CswNbtResources.Permit.set( AllPerms, NewNodeType, (CswNbtObjClassRole) RoleNode, true );
                 }
                 CswNbtNode RoleNode2 = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 if( RoleNode2 != null )
                 {
-                    _CswNbtResources.Permit.set( AllPerms, NewNodeType, CswNbtNodeCaster.AsRole( RoleNode2 ), true );
+                    _CswNbtResources.Permit.set( AllPerms, NewNodeType, (CswNbtObjClassRole) RoleNode2, true );
                 }
             }
 

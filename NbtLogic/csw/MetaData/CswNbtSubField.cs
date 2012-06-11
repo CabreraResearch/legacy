@@ -1,6 +1,6 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 
@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.MetaData
             public static explicit operator PropColumn( string str )
             {
                 PropColumn ret = Parse( str );
-                return ( ret != null ) ? ret : PropColumn.Unknown;
+                return ret ?? Unknown;
             }
             public static readonly PropColumn Unknown = new PropColumn( "Unknown" );
 
@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.MetaData
             public static readonly PropColumn GestaltSearch = new PropColumn( "GestaltSearch" ); // case 25780
             public static readonly PropColumn ClobData = new PropColumn( "ClobData" );
             public static readonly PropColumn ReadOnly = new PropColumn( "ReadOnly" );
+            public static readonly PropColumn Hidden = new PropColumn( "Hidden" );
             public static readonly PropColumn PendingUpdate = new PropColumn( "PendingUpdate" );
         }
 

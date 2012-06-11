@@ -1,6 +1,161 @@
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
+(function () {
+    Csw.nbt.gridViewMethods = Csw.nbt.gridViewMethods ||
+        Csw.nbt.register('gridViewMethods', (function () {
+            return {
+                makeActionColumnButtons: function (grid) {
+                    if (grid) {
+                        var ids = grid.getDataIds();
+                        for (var i = 0; i < ids.length; i += 1) {
+                            var rowId = ids[i];
+                            var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
+                            var buttonStr = '';
+                            if (Csw.contains(cellData, 'islocked')) {
+                                buttonStr += '<img id="' + rowId + '_locked" src="Images/icons/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
+                                if (Csw.contains(cellData, 'canview')) {
+                                    buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                }
+                            } else {
+                                if (Csw.contains(cellData, 'canedit')) {
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
+                                } else if (Csw.contains(cellData, 'canview')) {
+                                    buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
+                                }
+                                if (Csw.contains(cellData, 'canedit')) {
+                                    buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/tree.gif" class="csw-grid-copy" alt="Copy" title="Copy" />';
+                                }
+                            }
+                            if (buttonStr.length > 0) {
+                                buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
+                            }
+                            if (Csw.contains(cellData, 'candelete')) {
+                                buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/trash.gif" class="csw-grid-delete" alt="Delete" title="Delete"/>';
+                            }
+                            /* Case 26506: We only want to change the cell content once. cellData.length isn't good enough, but buttonStr.length should be */
+                            if (buttonStr.length > 0) {
+                                grid.setRowData(rowId, 'Action', buttonStr);
+                            }
+                        }
+                    }
+                }, /*End: makeActionColumnButtons*/
+                copyRows: function (rowid, grid, func) {
+                    if (grid) {
+                        if (Csw.isNullOrEmpty(rowid)) {
+                            rowid = grid.getSelectedRowId();
+                        }
+                        if (Csw.number(rowid) !== -1) {
+                            var copyOpt = {
+                                cswnbtnodekey: [],
+                                nodename: []
+                            };
+                            var copyFunc = function (opts) {
+                                opts.onCopyNode = function (nodeid) {
+                                    Csw.tryExec(func);
+                                    opts.nodeids = [nodeid];
+                                    opts.onEditNode = func;
+                                    $.CswDialog('EditNodeDialog', opts);
+                                };
+                                $.CswDialog('CopyNodeDialog', opts);
+                            };
+                            var emptyFunc = function () {
+                                $.CswDialog('AlertDialog', 'Please select a row to copy');
+                            };
+
+                            return grid.opGridRows(copyOpt, rowid, copyFunc, emptyFunc);
+                        }
+                    }
+                }, /*End: copyRows*/
+                deleteRows: function (rowid, grid, func) {
+                    if (grid) {
+                        if (Csw.isNullOrEmpty(rowid)) {
+                            rowid = grid.getSelectedRowId();
+                        }
+                        if (Csw.number(rowid) !== -1) { /* Case 24678 */
+                            var delOpt = {
+                                cswnbtnodekey: [],
+                                nodename: []
+                            };
+                            var delFunc = function (opts) {
+                                opts.onDeleteNode = func;
+                                opts.publishDeleteEvent = false;
+                                Csw.renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
+                                Csw.renameProperty(opts, 'nodename', 'nodenames');
+                                $.CswDialog('DeleteNodeDialog', opts);
+                            };
+                            var emptyFunc = function () {
+                                $.CswDialog('AlertDialog', 'Please select a row to delete');
+                            };
+
+                            return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
+                        }
+                    }
+                }, /*End: deleteRows*/
+                editRows: function (rowid, grid, func, editViewFunc, onRefreshFunc) {
+                    if (grid) {
+                        if (Csw.isNullOrEmpty(rowid)) {
+                            rowid = grid.getSelectedRowId();
+                        }
+                        if (Csw.number(rowid) !== -1) { /* Case 24678 */
+                            var editOpt = {
+                                cswnbtnodekey: [],
+                                nodename: []
+                            };
+                            var editFunc = function (opts) {
+                                opts.onEditNode = func;
+                                opts.onEditView = editViewFunc;
+                                opts.onRefresh = onRefreshFunc;
+                                Csw.renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
+                                Csw.renameProperty(opts, 'nodename', 'nodenames');
+                                $.CswDialog('EditNodeDialog', opts);
+                            };
+                            var emptyFunc = function () {
+                                $.CswDialog('AlertDialog', 'Please select a row to edit');
+                            };
+                            return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
+                        }
+                    }
+                }, /*End: editRows*/
+                bindActionEvents: function (options) {
+                    var e = {
+                        rowid: '',
+                        eventObj: {},
+                        grid: {},
+                        onEditNode: null,
+                        onEditView: null,
+                        onRefresh: null,
+                        onDeleteNode: null,
+                        onCopyNode: null
+                    };
+                    if (options) {
+                        $.extend(true, e, options);
+                    }
+
+                    function validateNode(className) {
+                        if (-1 !== className.indexOf('csw-grid-edit')) {
+                            Csw.nbt.gridViewMethods.editRows(e.rowid, e.grid, e.onEditNode, e.onEditView, e.onRefresh);
+                        } else if (-1 !== className.indexOf('csw-grid-delete')) {
+                            Csw.nbt.gridViewMethods.deleteRows(e.rowid, e.grid, e.onDeleteNode);
+                        } else if (-1 !== className.indexOf('csw-grid-copy')) {
+                            Csw.nbt.gridViewMethods.copyRows(e.rowid, e.grid, e.onCopyNode);
+                        }
+                    }
+                    //cswPrivate.selectedRowId = rowid;
+                    if (false === Csw.bool(e.isMulti)) {
+                        if (Csw.contains(e.eventObj, 'toElement') && Csw.contains(e.eventObj.toElement, 'className')) {
+                            Csw.tryExec(validateNode, e.eventObj.toElement.className);
+                        } else if (Csw.contains(e.eventObj, 'target') && Csw.isString(e.eventObj.target.className)) {
+                            Csw.tryExec(validateNode, e.eventObj.target.className);
+                        }
+                    }
+                    return true;
+                }
+            };
+        } ())
+        );
+} ());
+
 (function ($) {
     "use strict";
     var pluginName = 'CswNodeGrid';
@@ -8,59 +163,7 @@
     var cswPrivate = {
         selectedRowId: ''
     };
-
-    function deleteRows(rowid, grid, func) {
-        if (Csw.isNullOrEmpty(rowid)) {
-            rowid = cswPrivate.selectedRowId;
-        }
-        if (Csw.isNullOrEmpty(rowid)) {
-            rowid = grid.getSelectedRowId();
-        }
-        if (Csw.number(rowid) !== -1) { /* Case 24678 */
-            var delOpt = {
-                cswnbtnodekey: [],
-                nodename: []
-            };
-            var delFunc = function (opts) {
-                opts.onDeleteNode = func;
-                opts.publishDeleteEvent = false;
-                Csw.renameProperty(opts, 'cswnbtnodekey', 'cswnbtnodekeys');
-                Csw.renameProperty(opts, 'nodename', 'nodenames');
-                $.CswDialog('DeleteNodeDialog', opts);
-            };
-            var emptyFunc = function () {
-                $.CswDialog('AlertDialog', 'Please select a row to delete');
-            };
-            return grid.opGridRows(delOpt, rowid, delFunc, emptyFunc);
-        }
-    }
-
-    function editRows(rowid, grid, func, editViewFunc) {
-        if (Csw.isNullOrEmpty(rowid)) {
-            rowid = cswPrivate.selectedRowId;
-        }
-        if (Csw.isNullOrEmpty(rowid)) {
-            rowid = grid.getSelectedRowId();
-        }
-        if (Csw.number(rowid) !== -1) { /* Case 24678 */
-            var editOpt = {
-                cswnbtnodekey: [],
-                nodename: []
-            };
-            var editFunc = function (opts) {
-                opts.onEditNode = func;
-                opts.onEditView = editViewFunc;
-                Csw.renameProperty(opts, 'cswnbtnodekey', 'nodekeys');
-                Csw.renameProperty(opts, 'nodename', 'nodenames');
-                $.CswDialog('EditNodeDialog', opts);
-            };
-            var emptyFunc = function () {
-                $.CswDialog('AlertDialog', 'Please select a row to edit');
-            };
-            return grid.opGridRows(editOpt, rowid, editFunc, emptyFunc);
-        }
-    }
-
+   
     var methods = {
 
         'init': function (optJqGrid) {
@@ -80,6 +183,7 @@
                 onDeleteNode: null,
                 onSuccess: null,
                 onEditView: null,
+                onRefresh: null,
                 gridOpts: {
                     multiselect: false
                 },
@@ -160,35 +264,30 @@
                             cswGridOpts.gridOpts.canEdit = false;
                             cswGridOpts.gridOpts.canDelete = false;
                             cswGridOpts.gridOpts.beforeSelectRow = function (rowid, eventObj) {
-                                function validateNode(className) {
-                                    if (-1 !== className.indexOf('csw-grid-edit')) {
-                                        editRows(rowid, ret, o.onEditNode, o.onEditView);
-                                    } else if (-1 !== className.indexOf('csw-grid-delete')) {
-                                        deleteRows(rowid, ret, o.onDeleteNode);
-                                    }
-                                }
                                 cswPrivate.selectedRowId = rowid;
-                                if (false === isMulti) {
-                                    if (Csw.contains(eventObj, 'toElement') && Csw.contains(eventObj.toElement, 'className')) {
-                                        validateNode(eventObj.toElement.className);
-                                    } else if (Csw.contains(eventObj, 'target') && Csw.isString(eventObj.target.className)) {
-                                        validateNode(eventObj.target.className);
-                                    }
-                                }
-                                return true;
+                                return Csw.nbt.gridViewMethods.bindActionEvents({                                    
+                                    rowid: rowid,
+                                    eventObj: eventObj,
+                                    grid: ret,
+                                    isMulti: isMulti,
+                                    onEditNode: o.onEditNode,
+                                    onEditView: o.onEditView,
+                                    onRefresh: o.onRefresh,
+                                    onDeleteNode: o.onDeleteNode                                                       
+                                });    
                             };
 
                         }
                         /* We need this to be defined upfront for multi-edit */
                         cswGridOpts.optNavEdit = {
                             editfunc: function (rowid) {
-                                return editRows(rowid, ret, o.onEditNode, o.onEditView);
+                                return Csw.nbt.gridViewMethods.editRows(rowid, ret, o.onEditNode, o.onEditView, o.onRefresh);
                             }
                         };
 
                         cswGridOpts.optNavDelete = {
                             delfunc: function (rowid) {
-                                return deleteRows(rowid, ret, o.onDeleteNode);
+                                return Csw.nbt.gridViewMethods.deleteRows(rowid, ret, o.onDeleteNode);
                             }
                         };
 
@@ -233,36 +332,9 @@
 
                         var makeRowButtons = function (grid) {
                             grid = grid || ret;
-                            /* Case 26506: gridComplete won't give us the Csw grid, and ret won't be defined on the first grid load (because it hasn't returned yet). */
-                            if (grid) {
-                                var ids = grid.getDataIds();
-                                for (var i = 0; i < ids.length; i += 1) {
-                                    var rowId = ids[i];
-                                    var cellData = Csw.string(grid.getCell(rowId, 'Action')).split(',');
-                                    var buttonStr = '';
-                                    if (Csw.contains(cellData, 'islocked')) {
-                                        buttonStr += '<img id="' + rowId + '_locked" src="Images/icons/lock.gif" alt="Quota exceeded" title="Quota exceeded" />';
-                                        if (Csw.contains(cellData, 'canview')) {
-                                            buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
-                                        }
-                                    } else if (Csw.contains(cellData, 'canedit')) {
-                                        buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/edit.gif" class="csw-grid-edit" alt="Edit" title="Edit" />';
-                                    } else if (Csw.contains(cellData, 'canview')) {
-                                        buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
-                                    }
-                                    if (buttonStr.length > 0) {
-                                        buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
-                                    }
-                                    if (Csw.contains(cellData, 'candelete')) {
-                                        buttonStr += '<img id="' + rowId + '_delete" src="Images/icons/trash.gif" class="csw-grid-delete" alt="Delete" title="Delete"/>';
-                                    }
-                                    /* Case 26506: We only want to change the cell content once. cellData.length isn't good enough, but buttonStr.length should be */
-                                    if (buttonStr.length > 0) {
-                                        grid.setRowData(rowId, 'Action', buttonStr);
-                                    }
-                                }
-                            }
+                            Csw.nbt.gridViewMethods.makeActionColumnButtons(grid);
                         };
+                        /* */
                         cswGridOpts.onSuccess = makeRowButtons;
                         /* Case 26506: grid.getDataIds() only fetches the rowids for the current page. gridComplete fires after load, sort and page--so it'll do. */
                         cswGridOpts.gridOpts.gridComplete = makeRowButtons;

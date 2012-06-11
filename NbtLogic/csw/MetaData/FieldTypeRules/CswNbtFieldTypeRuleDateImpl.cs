@@ -35,7 +35,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 FilterValue = CswConvert.ToDateTime( CswNbtViewPropertyFilterIn.Value ).Date;
             }
 
-            if( FilterValue != DateTime.MinValue )
+            if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+            {
+                ReturnVal = ValueColumn + " is not null";
+            }
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+            {
+                ReturnVal = ValueColumn + " is null";
+            }
+            else if( FilterValue != DateTime.MinValue )
             {
                 string FilterValueString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue ); //FilterValue.ToShortDateString();
                 if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
@@ -61,14 +69,6 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
                 {
                     ReturnVal = ValueColumn + " <> " + FilterValueString;
-                }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
-                {
-                    ReturnVal = ValueColumn + " is not null";
-                }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
-                {
-                    ReturnVal = ValueColumn + " is null";
                 }
                 else
                 {

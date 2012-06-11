@@ -36,7 +36,7 @@
                     Csw.tryExec(o.onYes);
                 }
             });
-            
+
             openDialog(div, 300, 150, null, 'Expire Warning');
 
         }, // ExpireDialog
@@ -362,7 +362,7 @@
                         var propOpts = [{ value: '', display: 'Select...'}];
                         Csw.each(data.add, function (p) {
                             var display = p.propname;
-                            if(Csw.bool(p.hidden)) {
+                            if (Csw.bool(p.hidden)) {
                                 display += ' (hidden)';
                             }
                             propOpts.push({
@@ -395,11 +395,12 @@
                 title: '',
                 onEditNode: null, // function (nodeid, nodekey) { },
                 onEditView: null, // function (viewid) {}
-                onAfterButtonClick: null,
+                onRefresh: null,
+                onClose: null,
+                onAfterButtonClick: null,   
                 date: ''     // viewing audit records
             };
             if (options) $.extend(o, options);
-
             var div = Csw.literals.div();
 
             var myEditMode = Csw.enums.editMode.EditInPopup;
@@ -436,13 +437,14 @@
                     tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
                     date: date,
                     ReloadTabOnSave: true,
+                    Refresh: o.onRefresh,
                     onEditView: function (viewid) {
                         div.$.dialog('close');
                         Csw.tryExec(o.onEditView, viewid);
                     },
                     onSave: function (nodeids, nodekeys, tabcount) {
                         Csw.clientChanges.unsetChanged();
-                        if (tabcount === 1 || o.Multi) {
+                        if (tabcount === 2 || o.Multi) { /* Ignore history tab */
                             div.$.dialog('close');
                         }
                         //setupTabs(date);//case 26107
@@ -464,7 +466,7 @@
             if (Csw.isNullOrEmpty(title)) {
                 title = (false === o.Multi) ? o.nodenames[0] : o.nodenames.join(', ');
             }
-            openDialog(div, 900, 600, null, title);
+            openDialog(div, 900, 600, o.onClose, title);
         }, // EditNodeDialog
         CopyNodeDialog: function (options) {
             var o = {
@@ -488,12 +490,15 @@
 
             Csw.ajax.post({
                 urlMethod: 'checkQuota',
-                data: { NodeTypeId: o.nodetypeid },
+                data: {
+                    NodeTypeId: Csw.string(o.nodetypeid),
+                    NodeKey: Csw.string(o.cswnbtnodekey)
+                },
                 success: function (data) {
                     if (Csw.bool(data.result)) {
 
                         cell11.append('Copying: ' + o.nodename);
-                        cell11.br({number: 2});
+                        cell11.br({ number: 2 });
 
                         var copyBtn = cell21.button({ ID: 'copynode_submit',
                             enabledText: 'Copy',
@@ -501,7 +506,7 @@
                             onClick: function () {
                                 Csw.copyNode({
                                     'nodeid': o.nodeid,
-                                    'nodekey': o.nodekey,
+                                    'nodekey': Csw.string(o.nodekey, o.cswnbtnodekey[0]),
                                     'onSuccess': function (nodeid, nodekey) {
                                         div.$.dialog('close');
                                         o.onCopyNode(nodeid, nodekey);
@@ -574,7 +579,7 @@
             } else {
                 div.span({ text: ':&nbsp;' + o.nodenames + '?' });
             }
-            div.br({number: 2});
+            div.br({ number: 2 });
 
             var deleteBtn = div.button({ ID: 'deletenode_submit',
                 enabledText: 'Delete',
@@ -936,17 +941,17 @@
             openDialog(div, 800, 600, null, 'Search ' + o.propname);
         }, // SearchDialog
 
-        GenericDialog: function(options) {
+        GenericDialog: function (options) {
             var o = {
-                div: null, 
-                title: '', 
-                onOk: null, 
+                div: null,
+                title: '',
+                onOk: null,
                 onCancel: null,
                 onClose: null,
                 height: 400,
                 width: 600
             };
-            if(options) $.extend(o, options);
+            if (options) $.extend(o, options);
 
             o.div.button({
                 enabledText: 'OK',
@@ -968,6 +973,36 @@
 
         }, // GenericDialog
 
+        BatchOpDialog: function (options) {
+            var o = {
+                opname: 'operation',
+                onClose: null,
+                onViewBatchOperation: null
+            };
+            if (options) $.extend(o, options);
+
+            var div = Csw.literals.div({ ID: 'searchdialog_div' });
+
+            div.append('This ' + o.opname + ' will be performed as a batch operation');
+
+            div.button({
+                enabledText: 'Close',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            div.button({
+                enabledText: 'View Batch Operation',
+                onClick: function () {
+                    Csw.tryExec(o.onViewBatchOperation);
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 400, 300, o.onClose, 'Batch Operation');
+
+        }, // BatchOpDialog
 
         ErrorDialog: function (error) {
             var div = Csw.literals.div();

@@ -21,7 +21,7 @@ namespace NbtWebAppServices.WebServices
 
         [OperationContract]
         [WebGet( UriTemplate = "byDateRange?StartingDate={StartingDate}&EndingDate={EndingDate}" )]
-        [Description( "Get all Inspections whose Due Date is greater than or equals the StartingDate and less than or equals the EndingDate (optional, de" )]
+        [Description( "Get all Inspections whose Due Date is greater than or equals the StartingDate and less than or equals the EndingDate (optional, defaults to today+2 days)" )]
         public CswNbtWcfInspectionsResponseWithDesigns byDateRange( string StartingDate, string EndingDate )
         {
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyDate );

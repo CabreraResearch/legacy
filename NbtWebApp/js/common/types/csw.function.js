@@ -4,35 +4,45 @@
 (function _cswFunction() {
     'use strict';
 
-    function isFunction(obj) {
-        /// <summary> Returns true if the object is a function</summary>
-        /// <param name="obj" type="Object"> Object to test</param>
-        /// <returns type="Boolean" />
-        var ret = ($.isFunction(obj));
-        return ret;
-    }
-    Csw.register('isFunction', isFunction);
-    Csw.isFunction = Csw.isFunction || isFunction;
+    Csw.isFunction = Csw.isFunction ||
+        Csw.register('isFunction', function (obj) {
+            'use strict';
+            /// <summary> Returns true if the object is a function</summary>
+            /// <param name="obj" type="Object"> Object to test</param>
+            /// <returns type="Boolean" />
+            var ret = ($.isFunction(obj));
+            return ret;
+        });
 
-    function tryExec(func) {
-        /// <summary> If the supplied argument is a function, execute it. </summary>
-        /// <param name="func" type="Function"> Function to evaluate </param>
-        /// <returns type="undefined" />
-        if (isFunction(func)) {
-            return func.apply(this, Array.prototype.slice.call(arguments, 1));
-        }
-    }
-    Csw.register('tryExec', tryExec);
-    Csw.tryExec = Csw.tryExec || tryExec;
+    Csw.tryExec = Csw.tryExec ||
+        Csw.register('tryExec', function (func) {
+            'use strict';
+            /// <summary> If the supplied argument is a function, execute it. </summary>
+            /// <param name="func" type="Function"> Function to evaluate </param>
+            /// <returns type="undefined" />
+            try {
+                if (Csw.isFunction(func)) {
+                    return func.apply(this, Array.prototype.slice.call(arguments, 1));
+                }
+            } catch (exception) {
+                if (exception.name !== 'TypeError' && exception.type !== 'called_non_callable') { /* ignore errors failing to exec self-executing functions */
+                    Csw.error.catchException(exception);
+                }
+            }
+        });
 
-    function tryJqExec(cswObj, method) {
-        /// <summary> If the supplied argument is a function, execute it. </summary>
-        /// <param name="func" type="Function"> Function to evaluate </param>
-        /// <returns type="undefined" />
-        var args = arguments[2];
-        return cswObj.$[method].apply(cswObj.$, args);
-    }
-    Csw.register('tryJqExec', tryJqExec);
-    Csw.tryJqExec = Csw.tryJqExec || tryJqExec;
+    Csw.tryJqExec = Csw.tryJqExec ||
+        Csw.register('tryJqExec', function (cswObj, method) {
+            'use strict';
+            /// <summary> If the supplied argument is a function, execute it. </summary>
+            /// <param name="func" type="Function"> Function to evaluate </param>
+            /// <returns type="undefined" />
+            try {
+                var args = arguments[2];
+                return cswObj.$[method].apply(cswObj.$, args);
+            } catch (exception) {
+                Csw.error.catchException(exception);
+            }
+        });
 
 } ());

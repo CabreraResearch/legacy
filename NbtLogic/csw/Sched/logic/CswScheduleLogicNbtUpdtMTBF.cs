@@ -44,7 +44,9 @@ namespace ChemSW.Nbt.Sched
         {
             _CswNbtResources = (CswNbtResources) RuleResources;
             _CswScheduleLogicDetail = CswScheduleLogicDetail;
-            _CswNbtResources.AuditContext = "Scheduler Task: Update MTBF";
+            //_CswNbtResources.AuditContext = "Scheduler Task: Update MTBF";
+            _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+
         }
 
         public void threadCallBack()

@@ -15,7 +15,8 @@ namespace ChemSW.Nbt.Actions
         Quotas,
         Sessions,
         View_Scheduled_Rules,
-        Modules
+        Modules,
+        Submit_Request
     }
 
     public class CswNbtAction

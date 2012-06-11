@@ -183,6 +183,7 @@
             async: o.async,
             url: url,
             dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
             data: $.param(o.data),
             success: function (result) {
                 Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);

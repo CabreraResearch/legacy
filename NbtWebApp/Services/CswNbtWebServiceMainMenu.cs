@@ -80,6 +80,15 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
+        private bool _checkPermitAdd( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        {
+            return ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown &&
+                   ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
+                   ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass;
+        }
+
+        private bool _permitAdd;
+
         public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr )
         {
 
@@ -102,6 +111,7 @@ namespace ChemSW.Nbt.WebServices
                     RelatedNodeId = Node.NodeId;
                     RelatedNodeName = Node.NodeName;
                     RelatedNodeTypeId = Node.NodeTypeId.ToString();
+                    _permitAdd = _checkPermitAdd( Node.ObjClass.ObjectClass.ObjectClass );
                     RelatedObjectClassId = Node.getObjectClassId().ToString();
                 }
             }
@@ -152,18 +162,18 @@ namespace ChemSW.Nbt.WebServices
             if( View != null )
             {
                 // ADD
-                if( _MenuItems.Contains( "Add" ) )
+                if( _MenuItems.Contains( "Add" ) && _permitAdd )
                 {
                     JObject AddObj = new JObject();
 
                     // case 21672
                     CswNbtViewNode ParentNode = View.Root;
-                    bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
-                    if( LimitToFirstGeneration && View.Visibility == NbtViewVisibility.Property )
+                    bool LimitToFirstLevelRelationships = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                    if( LimitToFirstLevelRelationships && View.Visibility == NbtViewVisibility.Property )
                     {
                         ParentNode = View.Root.ChildRelationships[0];
                     }
-                    foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstGeneration )
+                    foreach( JProperty AddNodeType in ParentNode.AllowedChildNodeTypes( LimitToFirstLevelRelationships )
                         .Select( Entry => new JProperty( Entry.NodeType.NodeTypeName,
                                                          makeAddMenuItem( Entry, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId ) ) ) )
                     {

@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
             Xml,
             Json
         };
-
+        private CswCommaDelimitedString _PropNamesOnDisplay = new CswCommaDelimitedString();
         private class _NodeTypePermission
         {
             public _NodeTypePermission( CswNbtMetaDataNodeType NodeType, CswNbtResources Resources )
@@ -39,12 +39,14 @@ namespace ChemSW.Nbt.WebServices
                 CanEdit = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType );
                 CanView = Resources.Permit.can( CswNbtPermit.NodeTypePermission.View, NodeType );
                 CanDelete = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Delete, NodeType );
+                CanCreate = Resources.Permit.can( CswNbtPermit.NodeTypePermission.Create, NodeType );
             }
 
             public Int32 NodeTypeId { get; private set; }
             public bool CanView { get; private set; }
             public bool CanEdit { get; private set; }
             public bool CanDelete { get; private set; }
+            public bool CanCreate { get; private set; }
         }
 
         private Dictionary<Int32, _NodeTypePermission> _Permissions = new Dictionary<int, _NodeTypePermission>();
@@ -137,6 +139,7 @@ namespace ChemSW.Nbt.WebServices
                                                         select _Property )
                 {
                     PropsAtThisLevel.Add( Property );
+                    _PropNamesOnDisplay.Add( Property.Name );
                 }
                 //This will make recursion smoother: we're always iterating the collection of relationships at the same distance from root.
                 foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
@@ -153,6 +156,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ColumnNames.Add( PropName );
                     Ret.Add( VbProp );
+
                 }
                 else
                 {
@@ -229,6 +233,7 @@ namespace ChemSW.Nbt.WebServices
                     Array.Add( "" );
                 }
             }
+
         }
 
         public void ExportCsv( HttpContext Context )
@@ -363,6 +368,22 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         } // getGridOuterJson()
 
+
+        public JObject getGridRowCount()
+        {
+            JObject Ret = new JObject();
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false );
+            Int32 rowCount = Tree.getChildNodeCount();
+            if( _View.Visibility == NbtViewVisibility.Property &&
+                rowCount > 0 )
+            {
+                Tree.goToNthChild( 0 );
+                rowCount = Tree.getChildNodeCount();
+            }
+            Ret["rowCount"] = rowCount;
+            return Ret;
+        } // getGridOuterJson()
+
         /// <summary>
         /// Returns a JSON Object of Grid Rows for a specific page
         /// </summary>
@@ -428,7 +449,10 @@ namespace ChemSW.Nbt.WebServices
             Ret.Add( "jqgridid" ); //better to use int for jqGrid key
             Ret.Add( "cswnbtnodekey" ); //we'll want CswNbtNodeKey for add/edit/delete
             Ret.Add( "nodename" );
-            Ret.Add( "Action" );
+            if( _ActionEnabled )
+            {
+                Ret.Add( "Action" );
+            }
             return Ret;
         } // _makeDefaultColumnNames()
 
@@ -444,7 +468,7 @@ namespace ChemSW.Nbt.WebServices
                                             new JProperty( "index", "Action" ),
                                             new JProperty( "formatter", "image" ),
                                             new JProperty( "fixed", true ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 50 )
+                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 66 )
                                             ) );
             }
 
@@ -500,7 +524,8 @@ namespace ChemSW.Nbt.WebServices
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanEdit;
                 bool CanDelete = ActionEnabled &&
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanDelete;
-
+                bool CanCopy = ActionEnabled &&
+                               _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanCreate;
                 string ThisNodeKeyString = ThisNodeKey.ToString();
                 string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
                 JArray Actions = new JArray();
@@ -513,13 +538,20 @@ namespace ChemSW.Nbt.WebServices
                         Actions.Add( "canview" );
                     }
                 }
-                else if( CanEdit )
+                else
                 {
-                    Actions.Add( "canedit" );
-                }
-                else if( CanView )
-                {
-                    Actions.Add( "canview" );
+                    if( CanEdit )
+                    {
+                        Actions.Add( "canedit" );
+                    }
+                    else if( CanView )
+                    {
+                        Actions.Add( "canview" );
+                    }
+                    if( CanCopy )
+                    {
+                        Actions.Add( "cancopy" );
+                    }
                 }
                 if( CanDelete )
                 {
@@ -543,7 +575,11 @@ namespace ChemSW.Nbt.WebServices
         {
             foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
             {
-                _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid, NodeKey );
+                string PropName = Prop["propname"].ToString();
+                if( _PropNamesOnDisplay.Contains( PropName ) )
+                {
+                    _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid, NodeKey );
+                }
             }
             // Recurse
             for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )

@@ -40,6 +40,8 @@ namespace ChemSW.Nbt.MetaData
             propname,
             isglobalunique,
             extended,
+            textarearows,
+            textareacols,
             Unknown
         }
 

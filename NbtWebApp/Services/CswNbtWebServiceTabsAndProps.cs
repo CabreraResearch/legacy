@@ -13,6 +13,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -288,34 +289,43 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
                 CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
-
-                JProperty JpProp = makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow, Layout.DisplayColumn );
-                ParentObj.Add( JpProp );
-                JObject PropObj = (JObject) JpProp.Value;
-
-                // Handle conditional properties
-                JObject SubPropsObj = new JObject();
-                JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
-                PropObj.Add( SubPropsJProp );
-                bool HasSubProps = false;
-                foreach( CswNbtMetaDataNodeTypeProp FilterProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId, LayoutType ) )
+                if( false == Node.Properties[Prop].Hidden )
                 {
-                    if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
+                    JProperty JpProp = makePropJson(Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow,
+                                                    Layout.DisplayColumn);
+                    ParentObj.Add(JpProp);
+                    JObject PropObj = (JObject) JpProp.Value;
+
+                    // Handle conditional properties
+                    JObject SubPropsObj = new JObject();
+                    JProperty SubPropsJProp = new JProperty("subprops", SubPropsObj);
+                    PropObj.Add(SubPropsJProp);
+                    bool HasSubProps = false;
+                    foreach (
+                        CswNbtMetaDataNodeTypeProp FilterProp in
+                            _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout(Prop.NodeTypeId, Layout.TabId,
+                                                                                      LayoutType))
                     {
-                        HasSubProps = true;
-                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
-                        JProperty JPFilterProp = makePropJson( Node.NodeId, TabId, FilterProp, Node.Properties[FilterProp], FilterPropLayout.DisplayRow, FilterPropLayout.DisplayColumn );
-                        SubPropsObj.Add( JPFilterProp );
-                        JObject FilterPropXml = (JObject) JPFilterProp.Value;
+                        if (FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId)
+                        {
+                            HasSubProps = true;
+                            CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout =
+                                _CswNbtResources.MetaData.NodeTypeLayout.getLayout(LayoutType, FilterProp.PropId, TabId);
+                            JProperty JPFilterProp = makePropJson(Node.NodeId, TabId, FilterProp,
+                                                                  Node.Properties[FilterProp],
+                                                                  FilterPropLayout.DisplayRow,
+                                                                  FilterPropLayout.DisplayColumn);
+                            SubPropsObj.Add(JPFilterProp);
+                            JObject FilterPropXml = (JObject) JPFilterProp.Value;
 
-                        // Hide those for whom the filter doesn't match
-                        // (but we need the XML node to be there to store the value, for client-side changes)
-                        FilterPropXml["display"] = FilterProp.CheckFilter( Node ).ToString().ToLower();
+                            // Hide those for whom the filter doesn't match
+                            // (but we need the XML node to be there to store the value, for client-side changes)
+                            FilterPropXml["display"] = FilterProp.CheckFilter(Node).ToString().ToLower();
 
-                    } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
-                } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
-                PropObj["hassubprops"] = HasSubProps;
-
+                        } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
+                    } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
+                    PropObj["hassubprops"] = HasSubProps;
+                }
             } // if-else( _CswNbtResources.EditMode == NodeEditMode.Add )
         } // addProp()
 
@@ -491,13 +501,12 @@ namespace ChemSW.Nbt.WebServices
             return RetSucceeded;
         }
 
-        public JObject saveProps( Collection<CswPrimaryKey> NodePks, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
+        public JObject saveProps( CswPrimaryKey NodePk, Int32 TabId, string NewPropsJson, Int32 NodeTypeId, CswNbtView View )
         {
             JObject ret = new JObject();
             JObject PropsObj = JObject.Parse( NewPropsJson );
             CswNbtNodeKey RetNbtNodeKey = null;
             bool AllSucceeded = false;
-            Int32 Succeeded = 0;
             CswNbtNode Node = null;
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             CswNbtMetaDataNodeTypeTab NodeTypeTab = _CswNbtResources.MetaData.getNodeTypeTab( TabId );
@@ -513,25 +522,21 @@ namespace ChemSW.Nbt.WebServices
                         AllSucceeded = addNode( NodeType, out Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
                         break;
                     default:
-                        foreach( CswPrimaryKey NodePk in NodePks )
+                        Node = _CswNbtResources.Nodes.GetNode( NodePk );
+                        bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
+                        if( CanEdit )
                         {
-                            Node = _CswNbtResources.Nodes.GetNode( NodePk );
-                            bool CanEdit = _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, NodeType, false, NodeTypeTab, null, Node.NodeId );
-                            if( CanEdit )
+                            if( Node.PendingUpdate )
                             {
-                                if( Node.PendingUpdate )
-                                {
-                                    CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
-                                    Act.UpdateNode( Node, false );
-                                }
-                                RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab );
-                                if( null != RetNbtNodeKey )
-                                {
-                                    Succeeded += 1;
-                                }
+                                CswNbtActUpdatePropertyValue Act = new CswNbtActUpdatePropertyValue( _CswNbtResources );
+                                Act.UpdateNode( Node, false );
+                            }
+                            RetNbtNodeKey = _saveProp( Node, PropsObj, View, NodeTypeTab );
+                            if( null != RetNbtNodeKey )
+                            {
+                                AllSucceeded = true;
                             }
                         }
-                        AllSucceeded = ( NodePks.Count == Succeeded );
                         break;
                 } //switch( _CswNbtResources.EditMode )
                 if( AllSucceeded && null != RetNbtNodeKey )
@@ -555,7 +560,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        ErrString = Succeeded + " out of " + NodePks.Count + " prop updates succeeded. Remaining prop updates failed";
+                        ErrString = "Prop updates failed";
                     }
                     ret = new JObject();
                     ret["result"] = ErrString;
@@ -604,20 +609,48 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        public bool copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] PropIds )
+        public JObject copyPropValues( string SourceNodeKeyStr, string[] CopyNodeIds, string[] CopyNodeKeys, string[] PropIds )
         {
-            bool ret = true;
+            JObject ret = new JObject();
             CswNbtNodeKey SourceNodeKey = new CswNbtNodeKey( _CswNbtResources, SourceNodeKeyStr );
+
+            Collection<CswPrimaryKey> RealCopyNodeIds = new Collection<CswPrimaryKey>();
+            if( CopyNodeIds.Length > 0 )
+            {
+                foreach( string NodeIdStr in CopyNodeIds )
+                {
+                    CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
+                    CopyToNodePk.FromString( NodeIdStr );
+                    if( Int32.MinValue != CopyToNodePk.PrimaryKey )
+                    {
+                        RealCopyNodeIds.Add( CopyToNodePk );
+                    }
+                }
+            }
+            else if( 0 == CopyNodeIds.Length && CopyNodeKeys.Length > 0 )
+            {
+                foreach( string NodeKeyStr in CopyNodeKeys )
+                {
+                    CswNbtNodeKey NodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKeyStr );
+                    if( null != NodeKey )
+                    {
+                        RealCopyNodeIds.Add( NodeKey.NodeId );
+                    }
+                }
+            }
+
             if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
             {
                 CswNbtNode SourceNode = _CswNbtResources.Nodes[SourceNodeKey];
                 if( SourceNode != null )
                 {
-                    foreach( string NodeIdStr in CopyNodeIds )
+                    if( RealCopyNodeIds.Count == 0 )
                     {
-                        CswPrimaryKey CopyToNodePk = new CswPrimaryKey();
-                        CopyToNodePk.FromString( NodeIdStr );
-                        if( Int32.MinValue != CopyToNodePk.PrimaryKey )
+                        ret["result"] = "false";
+                    }
+                    else if( RealCopyNodeIds.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
+                    {
+                        foreach( CswPrimaryKey CopyToNodePk in RealCopyNodeIds )
                         {
                             CswNbtNode CopyToNode = _CswNbtResources.Nodes[CopyToNodePk];
                             if( CopyToNode != null &&
@@ -631,12 +664,22 @@ namespace ChemSW.Nbt.WebServices
 
                                 CopyToNode.postChanges( false );
                             } // if( CopyToNode != null )
-                        }
-                        else
+                        } // foreach( string NodeIdStr in CopyNodeIds )
+                        ret["result"] = "true";
+                    } // else if( RealCopyNodeIds.Count < CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
+                    else
+                    {
+                        // Shelve this to a batch operation
+                        Collection<Int32> NodeTypePropIds = new Collection<Int32>();
+                        foreach( string PropIdAttrStr in PropIds )
                         {
-                            ret = false;
+                            CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdAttrStr );
+                            NodeTypePropIds.Add( PropIdAttr.NodeTypePropId );
                         }
-                    } // foreach( string NodeIdStr in CopyNodeIds )
+                        CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( _CswNbtResources );
+                        CswNbtObjClassBatchOp BatchNode = op.makeBatchOp( SourceNode, RealCopyNodeIds, NodeTypePropIds );
+                        ret["batch"] = BatchNode.NodeId.ToString();
+                    }
                 } // if(SourceNode != null)
             } // if( Int32.MinValue != SourceNodeKey.NodeId.PrimaryKey )
             return ret;

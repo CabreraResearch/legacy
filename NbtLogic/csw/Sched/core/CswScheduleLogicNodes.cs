@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Sched
             List<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.UpdtInspection );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
-                ReturnVal.Add( CswNbtNodeCaster.AsInspectionDesign( CurrentRawNode ) );
+                ReturnVal.Add( (CswNbtObjClassInspectionDesign) CurrentRawNode );
             }
 
             return ( ReturnVal );
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Sched
             List<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenEmailRpt );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
-                ReturnVal.Add( CswNbtNodeCaster.AsMailReport( CurrentRawNode ) );
+                ReturnVal.Add( (CswNbtObjClassMailReport) CurrentRawNode );
             }
 
             return ( ReturnVal );
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Sched
             List<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenNode );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
-                ReturnVal.Add( CswNbtNodeCaster.AsGenerator( CurrentRawNode ) );
+                ReturnVal.Add( (CswNbtObjClassGenerator) CurrentRawNode );
             }
 
             return ( ReturnVal );
