@@ -292,7 +292,11 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Determines whether property displays.
         /// </summary>
-        public bool Hidden = false;
+        public bool Hidden 
+        {
+            get { return _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ); }
+            set { SetPropRowValue(CswNbtSubField.PropColumn.Hidden, value); }
+        }
 
         /// <summary>
         /// Determines whether to treat the property as required, temporarily

@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public void ReadJSON( JObject Object, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap, CswNbtMetaDataNodeTypeTab Tab )
         {
-            if( null != Object )
+            if( null != Object && false == Hidden )
             {
                 _Tab = Tab;
                 if( null != Object["values"] &&
