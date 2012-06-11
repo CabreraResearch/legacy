@@ -5,6 +5,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
+
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
@@ -16,6 +17,8 @@ namespace ChemSW.Nbt.Schema
         {
             string LogFileName = "logmessages";
             string LogFileNamePk = "logmessageid";
+            string SequenceName = LogFileNamePk + "_seq";
+            string TriggerName = LogFileNamePk + "_trig";
             _CswNbtSchemaModTrnsctn.addTable( LogFileName, LogFileNamePk );
 
 
@@ -24,9 +27,11 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addStringColumn( LogFileName, CurrentLegalAttribute.ToString(), "The " + CurrentLegalAttribute.ToString() + " ", false, false, 32 );
             }
 
+            //The bulk loader will hurl on a non-unique pk value unless have a trigger to add a PK val the old-fashioned way
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "create sequence " + SequenceName + " start with 1 increment by 1" );
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "create trigger " + TriggerName + " before insert on " + LogFileName + " for each row begin select " + SequenceName + ".nextval into :new." + LogFileNamePk + " from dual; end;" );
 
-            //bulk loader complains about PKs, so we need to nuke pk column
-            _CswNbtSchemaModTrnsctn.dropColumn( LogFileName, LogFileNamePk );
+
 
         }//Update()
 
