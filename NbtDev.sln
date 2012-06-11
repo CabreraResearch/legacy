@@ -51,6 +51,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtUnitConversion.Test", "CswNbtUnitConversion.Test\NbtUnitConversion.Test.csproj", "{2F9F78BC-D4BD-4FF2-A1D5-5E9436BCD795}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtConfig", "NbtConfig\NbtConfig.csproj", "{DABF9D08-70E8-4D42-AF7A-577335A7129F}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -447,6 +449,24 @@ Global
 		{2F9F78BC-D4BD-4FF2-A1D5-5E9436BCD795}.Release|Mixed Platforms.Build.0 = Release|x64
 		{2F9F78BC-D4BD-4FF2-A1D5-5E9436BCD795}.Release|x64.ActiveCfg = Release|x64
 		{2F9F78BC-D4BD-4FF2-A1D5-5E9436BCD795}.Release|x64.Build.0 = Release|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug (Fast)|64bit.ActiveCfg = Debug (Fast)|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug (Fast)|Any CPU.ActiveCfg = Debug (Fast)|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug (Fast)|Mixed Platforms.ActiveCfg = Debug (Fast)|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug (Fast)|Mixed Platforms.Build.0 = Debug (Fast)|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug (Fast)|x64.ActiveCfg = Debug (Fast)|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug (Fast)|x64.Build.0 = Debug (Fast)|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|64bit.ActiveCfg = Debug|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|x64.ActiveCfg = Debug|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|x64.Build.0 = Debug|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|64bit.ActiveCfg = Release|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|Any CPU.ActiveCfg = Release|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|Mixed Platforms.Build.0 = Release|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|x64.ActiveCfg = Release|x64
+		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
