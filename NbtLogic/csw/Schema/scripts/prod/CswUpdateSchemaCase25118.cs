@@ -1,10 +1,5 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using System.Collections.Generic;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -33,7 +28,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeProp ExpInt = NodeType.getNodeTypeProp( "Expiration Interval" );
                 CswNbtView TimeView = _CswNbtSchemaModTrnsctn.restoreView( ExpInt.ViewId );
-                TimeView.Delete();
+                TimeView.Clear();
                 TimeView.makeNew( "CswNbtNodeTypePropQuantity_" + ExpInt.NodeTypeId.ToString(), NbtViewVisibility.Property );
                 TimeView.AddViewRelationship( TimeNT, true );
                 TimeView.save();
