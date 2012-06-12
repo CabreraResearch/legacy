@@ -92,10 +92,20 @@
                     selectBox.addClass("required");
                 }
 
-            $.validator.addMethod('validateInteger', function (value, element) {
-                return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
-            }, 'Value must be an integer');
-            numberTextBox.addClass('validateInteger');
+                $.validator.addMethod('validateInteger', function (value, element) {
+                    return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
+                }, 'Value must be an integer');
+                numberTextBox.addClass('validateInteger');
+
+                $.validator.addMethod('validateUnitPresent', function (value, element) {
+                    return (false === Csw.isNullOrEmpty(numberTextBox.val()) || Csw.isNullOrEmpty(selectBox.val()));
+                }, 'Unit type must be selected if Quantity is present.');
+                numberTextBox.addClass('validateUnitPresent');
+
+                $.validator.addMethod('validateQuantityPresent', function (value, element) {
+                    return (false === Csw.isNullOrEmpty(selectBox.val()) || Csw.isNullOrEmpty(numberTextBox.val()));
+                }, 'Quantity must have a value if Unit type is selected.');
+                selectBox.addClass('validateQuantityPresent');
 
                 propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
             }
