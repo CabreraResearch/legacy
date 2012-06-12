@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -13,92 +12,54 @@ namespace ChemSW.Nbt.ObjClasses
     public class CswNbtObjClassRequestItem : CswNbtObjClass
     {
 
-        public sealed class PropertyName : CswEnum<PropertyName>
+        public sealed class PropertyName
         {
-            private PropertyName( String Name ) : base( Name ) { }
-            public static IEnumerable<PropertyName> all { get { return All; } }
-            public static implicit operator PropertyName( string Str )
-            {
-                PropertyName Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
-
-            public static readonly PropertyName Request = new PropertyName( "Request" );
-            public static readonly PropertyName Type = new PropertyName( "Type" );
-            public static readonly PropertyName RequestBy = new PropertyName( "Request By" );
-            public static readonly PropertyName Quantity = new PropertyName( "Quantity" );
-            public static readonly PropertyName Size = new PropertyName( "Size" );
-            public static readonly PropertyName Count = new PropertyName( "Count" );
-            public static readonly PropertyName Material = new PropertyName( "Material" );
-            public static readonly PropertyName Container = new PropertyName( "Container" );
-            public static readonly PropertyName Comments = new PropertyName( "Comments" );
-            public static readonly PropertyName Status = new PropertyName( "Status" );
-            public static readonly PropertyName Number = new PropertyName( "Number" );
-            public static readonly PropertyName ExternalOrderNumber = new PropertyName( "External Order Number" );
-            public static readonly PropertyName Location = new PropertyName( "Location" );
-            public static readonly PropertyName Unknown = new PropertyName( "Unknown" );
+            public const string Request = "Request";
+            public const string Type = "Type";
+            public const string RequestBy = "Request By";
+            public const string Quantity = "Quantity";
+            public const string Size = "Size";
+            public const string Count = "Count";
+            public const string Material = "Material";
+            public const string Container = "Container";
+            public const string Comments = "Comments";
+            public const string Status = "Status";
+            public const string Number = "Number";
+            public const string ExternalOrderNumber = "External Order Number";
+            public const string Location = "Location";
         }
 
-        public sealed class Types : CswEnum<Types>
+        public sealed class Types
         {
-            private Types( String Name ) : base( Name ) { }
-            public static IEnumerable<Types> all { get { return All; } }
-            public static explicit operator Types( string Str )
-            {
-                Types Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
-            public static readonly Types Dispense = new Types( "Dispense" );
-            public static readonly Types Request = new Types( "Request" );
-            public static readonly Types Move = new Types( "Move" );
-            public static readonly Types Dispose = new Types( "Dispose" );
-            public static readonly Types Unknown = new Types( "Unknown" );
+            public const string Dispense = "Dispense";
+            public const string Request = "Request";
+            public const string Move = "Move";
+            public const string Dispose = "Dispose";
         }
 
-        public sealed class RequestsBy : CswEnum<RequestsBy>
+        public sealed class RequestsBy
         {
-            private RequestsBy( String Name ) : base( Name ) { }
-            public static IEnumerable<RequestsBy> all { get { return All; } }
-            public static implicit operator RequestsBy( string Str )
-            {
-                RequestsBy Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
+            public const string Bulk = "Bulk";
+            public const string Size = "Size";
+            public const string Quantity = "Quantity";
 
-            public static readonly RequestsBy Bulk = new RequestsBy( "Bulk" );
-            public static readonly RequestsBy Size = new RequestsBy( "Size" );
-            public static readonly RequestsBy Quantity = new RequestsBy( "Quantity" );
-            public static readonly RequestsBy Unknown = new RequestsBy( "Unknown" );
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Bulk, Size };
         }
 
-
-
-        public static readonly CswCommaDelimitedString RequestByOptions = new CswCommaDelimitedString
-                                                                         {
-                                                                             RequestsBy.Bulk.ToString(), RequestsBy.Size.ToString()
-                                                                         };
-
-        public sealed class Statuses : CswEnum<Statuses>
+        public sealed class Statuses
         {
-            private Statuses( String Name ) : base( Name ) { }
-            public static IEnumerable<Statuses> all { get { return All; } }
-            public static explicit operator Statuses( string Str )
-            {
-                Statuses Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
-            public static readonly Statuses Pending = new Statuses( "Pending" );
-            public static readonly Statuses Submitted = new Statuses( "Submitted" );
-            public static readonly Statuses Ordered = new Statuses( "Ordered" );
-            public static readonly Statuses Received = new Statuses( "Received" );
-            public static readonly Statuses Dispensed = new Statuses( "Dispensed" );
-            public static readonly Statuses Completed = new Statuses( "Completed" );
-            public static readonly Statuses Unknown = new Statuses( "Unknown" );
-        }
-        public static readonly CswCommaDelimitedString StatusOptions = new CswCommaDelimitedString
+            public const string Pending = "Pending";
+            public const string Submitted = "Submitted";
+            public const string Ordered = "Ordered";
+            public const string Received = "Received";
+            public const string Dispensed = "Dispensed";
+            public const string Completed = "Completed";
+            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
                                                                            {
-                                                                               Statuses.Pending.ToString(),Statuses.Submitted.ToString(),Statuses.Ordered.ToString(),Statuses.Received.ToString(),Statuses.Dispensed.ToString(),Statuses.Completed.ToString()
+                                                                               Pending,Submitted,Ordered,Received,Dispensed,Completed
                                                                            };
+        }
+
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -142,7 +103,6 @@ namespace ChemSW.Nbt.ObjClasses
 
             CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
             Request.RelatedNodeId = RequestAct.CurrentRequestNode().NodeId;
-
         } // beforeCreateNode()
 
         private string _makeNotificationMessage()
@@ -152,7 +112,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( null != NodeAsMaterial )
             {
-                MessageText += "Material: " + NodeAsMaterial.TradeName + "/n";
+                MessageText += "Material: " + NodeAsMaterial.TradeName.Text + "/n";
             }
 
             CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
@@ -173,7 +133,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 MessageText += "Count: " + Count.Value + "/n";
             }
-            CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.NodeId );
+            CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
             if( null != NodeAsLocation )
             {
                 MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
@@ -188,6 +148,36 @@ namespace ChemSW.Nbt.ObjClasses
         {
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
+
+        private void _setPropDisplayAndEditVals()
+        {
+            if( Type.WasModified )
+            {
+                /* Spec W1010: Location applies to all but Dispose */
+                Location.Hidden = ( Types.Dispose == Type.StaticText );
+                Location.ReadOnly = ( Types.Dispose == Type.StaticText );
+
+                /* Spec W1010: Container applies only to Dispense, Dispose and Move */
+                Container.Hidden = ( Types.Request == Type.StaticText );
+
+                /* Spec W1010: Material applies only to Request by Size, Request by Bulk and Dispense */
+                Material.Hidden = ( Types.Dispose == Type.StaticText || Types.Move == Type.StaticText );
+            }
+            if( RequestBy.WasModified )
+            {
+                /* Spec W1010: Size and Count apply only to Request */
+                Size.Hidden = ( Types.Request != Type.StaticText );
+                Count.Hidden = ( Types.Request != Type.StaticText );
+                Size.ReadOnly = ( Types.Request != Type.StaticText );
+                Count.ReadOnly = ( Types.Request != Type.StaticText );
+
+                /* Spec W1010: Quantity applies only to Request by Bulk and Dispense */
+                Quantity.Hidden = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
+                Quantity.ReadOnly = ( Types.Request == Type.StaticText && Types.Dispense != Type.StaticText );
+            }
+            Material.ReadOnly = Material.ReadOnly || ( null != Material.RelatedNodeId );
+            Container.ReadOnly = Container.ReadOnly || ( null != Container.RelatedNodeId );
+        }
 
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtObjClassRequestItem ItemInstance )
         {
@@ -209,29 +199,44 @@ namespace ChemSW.Nbt.ObjClasses
 
             CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( Request.RelatedNodeId );
 
-            if( ( Type.StaticText == Types.Dispense.ToString() ||
-                Type.StaticText == Types.Move.ToString() ||
-                Type.StaticText == Types.Dispose.ToString() ) &&
-                null != Container.RelatedNodeId &&
-                null != NodeAsRequest &&
-                null != NodeAsRequest.InventoryGroup.RelatedNodeId )
+            _setPropDisplayAndEditVals();
+
+            /* Container-specific logic */
+            if( ( Type.StaticText == Types.Dispense ||
+                Type.StaticText == Types.Move ||
+                Type.StaticText == Types.Dispose ) &&
+                null != Container.RelatedNodeId )
             {
-                CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                if( null == NodeAsContainer )
+                if( null != NodeAsRequest &&
+                    null != NodeAsRequest.InventoryGroup.RelatedNodeId )
                 {
-                    throw new CswDniException( ErrorType.Warning, "A " + Type.StaticText + " type of Request Item requires a valid Container.", "Attempted to edit node without a valid Container relationship." );
-                }
-                CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( NodeAsContainer.Location.NodeId );
-                if( null != NodeAsLocation && NodeAsRequest.InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
-                {
-                    throw new CswDniException( ErrorType.Warning, "For a " + Type.StaticText + " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.", "Attempted to edit node without matching Container and Request Inventory Group relationships." );
+
+                    CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
+                    if( null == NodeAsContainer )
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                  "A " + Type.StaticText +
+                                                  " type of Request Item requires a valid Container.",
+                                                  "Attempted to edit node without a valid Container relationship." );
+                    }
+                    CswNbtObjClassLocation NodeAsLocation =
+                        _CswNbtResources.Nodes.GetNode( NodeAsContainer.Location.NodeId );
+                    if( null != NodeAsLocation &&
+                        NodeAsRequest.InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
+                    {
+                        throw new CswDniException( ErrorType.Warning,
+                                                  "For a " + Type.StaticText +
+                                                  " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.",
+                                                  "Attempted to edit node without matching Container and Request Inventory Group relationships." );
+                    }
                 }
             }
 
+            /* Email notification logic */
             if( Status.WasModified &&
-                Status.Value != Statuses.Pending.ToString() )
+                Status.Value != Statuses.Pending )
             {
-                if( Status.Value == Statuses.Submitted.ToString() )
+                if( Status.Value == Statuses.Submitted )
                 {
                     _toggleReadOnlyProps( true, this );
                 }
@@ -252,6 +257,8 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
+
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
