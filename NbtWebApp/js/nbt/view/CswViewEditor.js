@@ -61,7 +61,10 @@
         // don't activate Save and Finish until step 2
         if (o.startingStep === 1) {
             $wizard.CswWizard('button', 'finish', 'disable');
+        } else {
+            _initStepTwo($wizard);
         }
+    
         // Step 1 - Choose a View
         var $div1 = $($wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.viewselect.step));
         var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  " +
@@ -268,47 +271,8 @@
                 case Csw.enums.wizardSteps_ViewEditor.viewselect.step:
                     break;
                 case Csw.enums.wizardSteps_ViewEditor.attributes.step:
-                    $nextWizard.CswWizard('button', 'finish', 'enable');
-                    $nextWizard.CswWizard('button', 'next', 'disable');
+                    _initStepTwo($nextWizard);
 
-                    var jsonData = {
-                        ViewId: _getSelectedViewId()
-                    };
-
-                    Csw.ajax.post({
-                        url: o.ViewInfoUrl,
-                        data: jsonData,
-                        success: function (data) {
-                            currentViewJson = data.TreeView;
-
-                            viewNameTextBox.val(currentViewJson.viewname);
-                            categoryTextBox.val(currentViewJson.category);
-                            var visibility = Csw.string(currentViewJson.visibility);
-                            if (visibility !== 'Property') {
-                                if (visSelect.$visibilityselect !== undefined) {
-                                    visSelect.$visibilityselect.val(visibility).trigger('change');
-                                    visSelect.$visroleselect.val('nodes_' + currentViewJson.visibilityroleid);
-                                    visSelect.$visuserselect.val('nodes_' + currentViewJson.visibilityuserid);
-                                }
-                            }
-
-                            if (Csw.bool(currentViewJson.formobile)) {
-                                forMobileCheckBox.propDom('checked', 'checked');
-                            }
-                            var mode = currentViewJson.mode;
-                            displayModeSpan.text(mode);
-                            gridWidthTextBox.val(currentViewJson.width);
-                            if (mode === "Grid") {
-                                gridWidthLabelCell.show();
-                                gridWidthTextBox.show();
-                            } else {
-                                gridWidthLabelCell.hide();
-                                gridWidthTextBox.hide();
-                            }
-
-                            $nextWizard.CswWizard('button', 'next', 'enable');
-                        } // success
-                    }); // ajax
                     break;
                 case Csw.enums.wizardSteps_ViewEditor.relationships.step:
                     // save step 2 content to currentviewjson
@@ -330,6 +294,50 @@
                     break;
             } // switch(newstepno)
         } // _handleNext()
+
+        function _initStepTwo($nextWizard) {
+            $nextWizard.CswWizard('button', 'finish', 'enable');
+            $nextWizard.CswWizard('button', 'next', 'disable');
+
+            var jsonData = {
+                ViewId: _getSelectedViewId()
+            };
+
+            Csw.ajax.post({
+                url: o.ViewInfoUrl,
+                data: jsonData,
+                success: function (data) {
+                    currentViewJson = data.TreeView;
+
+                    viewNameTextBox.val(currentViewJson.viewname);
+                    categoryTextBox.val(currentViewJson.category);
+                    var visibility = Csw.string(currentViewJson.visibility);
+                    if (visibility !== 'Property') {
+                        if (visSelect.$visibilityselect !== undefined) {
+                            visSelect.$visibilityselect.val(visibility).trigger('change');
+                            visSelect.$visroleselect.val('nodes_' + currentViewJson.visibilityroleid);
+                            visSelect.$visuserselect.val('nodes_' + currentViewJson.visibilityuserid);
+                        }
+                    }
+
+                    if (Csw.bool(currentViewJson.formobile)) {
+                        forMobileCheckBox.propDom('checked', 'checked');
+                    }
+                    var mode = currentViewJson.mode;
+                    displayModeSpan.text(mode);
+                    gridWidthTextBox.val(currentViewJson.width);
+                    if (mode === "Grid") {
+                        gridWidthLabelCell.show();
+                        gridWidthTextBox.show();
+                    } else {
+                        gridWidthLabelCell.hide();
+                        gridWidthTextBox.hide();
+                    }
+
+                    $nextWizard.CswWizard('button', 'next', 'enable');
+                } // success
+            }); // ajax
+        } // _initStepTwo()
 
         function cacheStepTwo() {
             currentViewJson.viewname = viewNameTextBox.val();
