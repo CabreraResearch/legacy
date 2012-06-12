@@ -122,23 +122,28 @@
                 health: null,
                 special: null
             };
+            var compare = {};
             var redDiv = o.propDiv.find('#' + o.ID + '_red');
             if (false === Csw.isNullOrEmpty(redDiv)) {
                 attributes.flammability = redDiv.val();
+                compare = attributes;
             }
             var yellowDiv = o.propDiv.find('#' + o.ID + '_yellow');
             if (false === Csw.isNullOrEmpty(yellowDiv)) {
                 attributes.reactivity = yellowDiv.val();
+                compare = attributes;
             }
             var blueDiv = o.propDiv.find('#' + o.ID + '_blue');
             if (false === Csw.isNullOrEmpty(blueDiv)) {
                 attributes.health = blueDiv.val();
+                compare = attributes;
             }
             var whiteDiv = o.propDiv.find('#' + o.ID + '_white');
             if (false === Csw.isNullOrEmpty(whiteDiv)) {
                 attributes.special = whiteDiv.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

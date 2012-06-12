@@ -59,10 +59,21 @@
         },
         save: function (o) { //$propdiv, $xml
             var attributes = {
-                base: o.propDiv.find('#' + o.ID + '_val').val(),
-                exponent: o.propDiv.find('#' + o.ID + '_exp').val()
+                base: null,
+                exponent: null
             };
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            var compare = {};
+            var base = o.propDiv.find('#' + o.ID + '_val');
+            if (false === Csw.isNullOrEmpty(base)) {
+                attributes.base = base.val();
+                compare = attributes;
+            }
+            var exp = o.propDiv.find('#' + o.ID + '_exp');
+            if (false === Csw.isNullOrEmpty(exp)) {
+                attributes.exponent = exp.val();
+                compare = attributes;
+            }
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

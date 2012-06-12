@@ -85,19 +85,23 @@
                 correctiveaction: null,
                 comments: null
             };
+            var compare = {};
             var answer = o.propDiv.find('#' + o.ID + '_ans');
             if (false === Csw.isNullOrEmpty(answer, true)) {
                 attributes.answer = answer.val();
+                compare = attributes;
             }
             var correct = o.propDiv.find('#' + o.ID + '_cor');
             if (false === Csw.isNullOrEmpty(correct, true)) {
                 attributes.correctiveaction = correct.val();
+                compare = attributes;
             }
             var comments = o.propDiv.find('#' + o.ID + '_com');
             if (false === Csw.isNullOrEmpty(comments, true)) {
                 attributes.comments = comments.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

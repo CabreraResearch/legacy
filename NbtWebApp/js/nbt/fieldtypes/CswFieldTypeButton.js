@@ -66,16 +66,26 @@
                                         var actionJson = JSON.parse(data.actiondata);
                                         switch(actionJson.requestaction) {
                                             case 'Dispose':
+                                                Csw.publish(Csw.enums.events.Submit_Request);
                                                 break;
                                             default:
-                                                $.CswDialog('EditNodeDialog', {
-                                                    nodeids: [actionJson.requestItemNodeId],
-                                                    nodepks: [actionJson.requestItemNodePk],
-                                                    title: actionJson.titleText
+                                                $.CswDialog('AddNodeDialog', {
+                                                    nodetypeid: actionJson.requestItemNodeTypeId,
+                                                    propertyData: actionJson.requestItemProps,
+                                                    text: actionJson.titleText,
+                                                    onAddNode: function (nodeid, nodekey) {
+                                                        $.CswDialog('EditNodeDialog', {
+                                                            nodeids: [nodeid],
+                                                            nodepks: [nodekey],
+                                                            nodetypeid: actionJson.requestItemNodeTypeId
+                                                        });
+                                                    },
+                                                    onAfterAddNode: function () {
+                                                        Csw.publish(Csw.enums.events.Submit_Request);
+                                                    }
                                                 });
                                                 break;
                                         }
-                                        Csw.publish(Csw.enums.events.Submit_Request);
                                         break;
                                     case Csw.enums.nbtButtonAction.popup:
                                         $btn.button({ disabled: false });

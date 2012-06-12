@@ -22,7 +22,7 @@
             var intervalData = Csw.clientDb.getItem(o.ID + '_rateIntervalSave');
             var $parent = $(this);
             var parent = Csw.literals.factory($parent);
-
+            var compare = {};
             try {
                 var attributes = {
                     Interval: {
@@ -49,6 +49,7 @@
                 var newInterval = attributes.Interval.rateintervalvalue;
                 if (false === o.Multi || parent.find('#' + o.ID + '_textvalue').text() !== Csw.enums.multiEditDefaultValue) {
                     $.extend(true, newInterval, intervalData);
+                    compare = attributes;
                 }
                 var oldInterval = o.propData.values.Interval.rateintervalvalue;
                 switch (attributes.Interval.rateintervalvalue.ratetype) {
@@ -98,7 +99,7 @@
                         break;
                 }
 
-                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+                Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
             } catch (e) {
                 if (Csw.debug) {
                     Csw.log('Error updating propData: ' + e);

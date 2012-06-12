@@ -92,16 +92,19 @@
                 isexpired: null,
                 newpassword: null
             };
+            var compare = {};
             var newPw = o.propDiv.find('input#' + o.ID + '_pwd1');
             if (false === Csw.isNullOrEmpty(newPw)) {
                 attributes.newpassword = newPw.val();
+                compare = attributes;
             }
 
             var isExpiredCheck = o.propDiv.find('input#' + o.ID + '_exp');
             if (false === Csw.isNullOrEmpty(isExpiredCheck) && isExpiredCheck.length() > 0) {
                 attributes.isexpired = isExpiredCheck.$.is(':checked');
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

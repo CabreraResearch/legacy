@@ -30,11 +30,13 @@
         },
         save: function (o) { //$propdiv, $xml
             var attributes = { text: null };
+            var compare = {};
             var textArea = o.propDiv.find('textarea');
             if (false === Csw.isNullOrEmpty(textArea)) {
                 attributes.text = textArea.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

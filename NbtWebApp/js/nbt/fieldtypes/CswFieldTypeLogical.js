@@ -22,9 +22,14 @@
             propDiv.triStateCheckBox(checkOpt);
         },
         save: function (o) {
+            var attributes = { checked: null };
+            var compare = {};
             var propDiv = o.propDiv.find('.CswTristateCheckBox');
-            var attributes = { checked: Csw.string(propDiv.propNonDom('value')) };
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            if (false === Csw.isNullOrEmpty(propDiv)) {
+                attributes.checked = Csw.string(propDiv.propNonDom('value'));
+                compare = attributes;
+            }
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 
