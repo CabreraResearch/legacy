@@ -73,9 +73,7 @@ namespace ChemSW.Nbt.Schema
             NumberNtp.setSequence( SequenceId );
 
             RequestItemNt.addNameTemplateText( NumberNtp.PropName );
-            RequestItemNt.addNameTemplateText( " " );
             RequestItemNt.addNameTemplateText( RequestItemRequestNtp.PropName );
-            RequestItemNt.addNameTemplateText( " " );
             RequestItemNt.addNameTemplateText( TypeNtp.PropName );
 
             #endregion NodeTypes
