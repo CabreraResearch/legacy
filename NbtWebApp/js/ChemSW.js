@@ -13,7 +13,7 @@ window.internetExplorerVersionNo = window.internetExplorerVersionNo || - 1;
             homeUrl: 'Main.html',
             methods: ['register'],
             uniqueIdCount: 0,
-            protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp']
+            protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp', 'displayAllExceptions']
         };
 
         var external = {};
