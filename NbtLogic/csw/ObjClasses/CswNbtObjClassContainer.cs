@@ -1,11 +1,11 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -118,6 +118,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            if( this.Disposed.WasModified )
+            {
+                _applyDisposedLogic();
+            }
+
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -251,6 +256,83 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
+        #endregion
+
+        #region Private Helper Methods
+
+        private void _applyDisposedLogic()
+        {
+            CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
+
+            if( this.Disposed.Checked == Tristate.True && this.Quantity.Quantity > 0 )
+            {
+                _createDisposeTransactionNode( ContDispTransNT );
+                this.Quantity.Quantity = 0;
+            }
+            else if( this.Disposed.Checked == Tristate.False && this.Quantity.Quantity == 0 )
+            {
+                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
+                if( ContDispTransNode != null )
+                {
+                    this.Quantity.Quantity = ContDispTransNode.QuantityDispensed.Quantity;
+                    this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
+                    ContDispTransNode.Node.delete();
+                }
+            }
+        }
+
+        private CswNbtObjClassContainerDispenseTransaction _getMostRecentDisposeTransaction( CswNbtMetaDataNodeType ContDispTransNT )
+        {
+            CswNbtObjClassContainerDispenseTransaction ContDispTransNode = null;
+
+            CswNbtView DisposedContainerTransactionsView = new CswNbtView( _CswNbtResources );
+            DisposedContainerTransactionsView.ViewName = "ContDispTransDisposed";
+            CswNbtViewRelationship ParentRelationship = DisposedContainerTransactionsView.AddViewRelationship( ContDispTransNT, true );
+
+            DisposedContainerTransactionsView.AddViewPropertyAndFilter(
+                ParentRelationship,
+                ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName ),
+                this.NodeId.PrimaryKey.ToString(),
+                CswNbtSubField.SubFieldName.NodeID,
+                false,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                );
+
+            DisposedContainerTransactionsView.AddViewPropertyAndFilter(
+                ParentRelationship,
+                ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName ),
+                CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose._Name,
+                CswNbtSubField.SubFieldName.Value,
+                false,
+                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                );
+
+            ICswNbtTree DispenseTransactionTree = _CswNbtResources.Trees.getTreeFromView( DisposedContainerTransactionsView, true, true, false, false );
+            int NumOfTransactions = DispenseTransactionTree.getChildNodeCount();
+            if( NumOfTransactions > 0 )
+            {
+                DispenseTransactionTree.goToNthChild( 0 );
+                ContDispTransNode = DispenseTransactionTree.getNodeForCurrentPosition();
+            }
+
+            return ContDispTransNode;
+        }
+
+        private void _createDisposeTransactionNode( CswNbtMetaDataNodeType ContDispTransNT )
+        {
+            CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+
+            ContDispTransNode.SourceContainer.RelatedNodeId = this.NodeId;
+            ContDispTransNode.QuantityDispensed.Quantity = this.Quantity.Quantity;
+            ContDispTransNode.QuantityDispensed.UnitId = this.Quantity.UnitId;
+            ContDispTransNode.Type.Value = CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString();
+            ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Today;
+            ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
+            ContDispTransNode.RemainingSourceContainerQuantity.UnitId = this.Quantity.UnitId;
+
+            ContDispTransNode.postChanges( false );
+        }
+
         #endregion
 
         #region Object class specific properties
