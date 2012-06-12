@@ -84,6 +84,9 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26572.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24485.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24441.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25118.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26410.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508B.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514Action.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514NodeType.cs" />
