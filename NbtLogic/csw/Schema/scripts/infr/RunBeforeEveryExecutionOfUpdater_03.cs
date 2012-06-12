@@ -4,7 +4,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_03 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_04 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: Audit Columns";
 
@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Schema
 
         }//Update()
 
-    }//class RunBeforeEveryExecutionOfUpdater_03
+    }//class RunBeforeEveryExecutionOfUpdater_04
 
 }//namespace ChemSW.Nbt.Schema
 

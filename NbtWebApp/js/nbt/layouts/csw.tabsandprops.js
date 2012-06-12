@@ -191,7 +191,7 @@
                         urlMethod: cswPrivate.QuotaUrlMethod,
                         data: {
                             NodeTypeId: cswPrivate.nodetypeid,
-                            NodeId: ''
+                            NodeKey: ''
                         },
                         success: function (data) {
                             if (Csw.bool(data.result)) {
