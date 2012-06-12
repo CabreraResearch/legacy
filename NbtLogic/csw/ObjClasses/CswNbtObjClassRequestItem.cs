@@ -158,10 +158,12 @@ namespace ChemSW.Nbt.ObjClasses
                 Location.ReadOnly = ( Types.Dispose == Type.StaticText );
 
                 /* Spec W1010: Container applies only to Dispense, Dispose and Move */
+                RequestBy.ReadOnly = ( Types.Request != Type.StaticText );
+                RequestBy.Hidden = ( Types.Request != Type.StaticText );
                 Container.Hidden = ( Types.Request == Type.StaticText );
 
-                /* Spec W1010: Material applies only to Request by Size, Request by Bulk and Dispense */
-                Material.Hidden = ( Types.Dispose == Type.StaticText || Types.Move == Type.StaticText );
+                /* Spec W1010: Material applies only to Request and Dispense */
+                Material.Hidden = ( Types.Request != Type.StaticText && Types.Dispense != Type.StaticText );
             }
             if( RequestBy.WasModified )
             {
@@ -182,6 +184,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _toggleReadOnlyProps( bool IsReadOnly, CswNbtObjClassRequestItem ItemInstance )
         {
             ItemInstance.Request.ReadOnly = IsReadOnly;
+            ItemInstance.RequestBy.ReadOnly = IsReadOnly;
             ItemInstance.Type.ReadOnly = IsReadOnly;
             ItemInstance.Quantity.ReadOnly = IsReadOnly;
             ItemInstance.Size.ReadOnly = IsReadOnly;
