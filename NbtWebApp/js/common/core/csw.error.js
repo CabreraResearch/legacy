@@ -49,9 +49,8 @@
 
             if ($errorsdiv.length > 0 && Csw.bool(e.display)) {
                 $errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
-            } else {
-                Csw.log(e.message + '; ' + e.detail);
-            }
+            } 
+            Csw.log(e.message + '; ' + e.detail);
             return true;
         });
 
@@ -88,10 +87,10 @@
     Csw.error.catchException = Csw.error.catchException ||
         Csw.error.register('catchException', function (exception) {
             var e = {
-                type: exception.type,
+                type: 'js',
                 message: exception.message,
-                detail: exception.stack,
-                display: true
+                detail: 'JS Error type: ' + exception.type + '/n' + 'Stack: ' + exception.stack,
+                display: Csw.displayAllExceptions === true
             };
             Csw.error.showError(e);
         });

@@ -25,7 +25,7 @@
                     return func.apply(this, Array.prototype.slice.call(arguments, 1));
                 }
             } catch (exception) {
-                if (exception.name !== 'TypeError' && exception.type !== 'called_non_callable') { /* ignore errors failing to exec self-executing functions */
+                if (exception.name !== 'TypeError' || exception.type !== 'called_non_callable') { /* ignore errors failing to exec self-executing functions */
                     Csw.error.catchException(exception);
                 }
             }
@@ -45,4 +45,10 @@
             }
         });
 
+    Csw.method = Csw.method ||
+        Csw.register('method', function (func) {
+            var that = this;
+            var args = arguments;
+            return function () { Csw.tryExec.apply(that, args); };
+        });
 } ());
