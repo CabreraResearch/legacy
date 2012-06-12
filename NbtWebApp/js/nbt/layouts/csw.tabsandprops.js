@@ -377,7 +377,8 @@
                     }
                 }
 
-                if (Csw.isNullOrEmpty(cswPrivate.propertyData)) {
+                if (Csw.isNullOrEmpty(cswPrivate.propertyData) || 
+                    cswPrivate.EditMode !== Csw.enums.editMode.Add) {
 
                     Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
