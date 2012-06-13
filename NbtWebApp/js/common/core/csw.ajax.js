@@ -43,11 +43,41 @@
             }
 
             if (false === Csw.isNullOrEmpty(result.timer)) {
-                var timer = { };
+                var timer = {};
                 timer[url] = result.timer;
-                Csw.debug.info(timer);
+                if (Csw.isNullOrEmpty(cswPrivate.perflogheaders)) {
+                    cswPrivate.perflogheaders = true;
+                    Csw.debug.info("timestamp\t" +
+                                 "client\t" +
+                                 "serverinit\t" +
+                                 "servertotal\t" +
+                                 "dbinit\t" +
+                                 "dbquery\t" +
+                                 "dbcommit\t" +
+                                 "dbdeinit\t" +
+                                 "treeloadersql\t" +
+                                 "url\t");
+                }
+                var endTime = new Date();
+                var etms = Csw.string(endTime.getMilliseconds());
+                while (etms.length < 3) {
+                    etms = "0" + etms;
+                }
+                if (false === Csw.isNullOrEmpty(result.timer)) {
+                    Csw.debug.info(endTime.toLocaleTimeString() + "." + etms + "\t" +
+                            (endTime - o.startTime) + "\t" +
+                            result.timer.serverinit + "\t" +
+                            result.timer.servertotal + "\t" +
+                            result.timer.dbinit + "\t" +
+                            result.timer.dbquery + "\t" +
+                            result.timer.dbcommit + "\t" +
+                            result.timer.dbdeinit + "\t" +
+                            result.timer.treeloadersql + "\t" +
+                            url);
+                }
+                //Csw.debug.info(timer);
             }
-            Csw.debug.timeEnd(url);
+            
             delete result.AuthenticationStatus;
             delete result.timeout;
             if (Csw.bool(o.removeTimer)) {
@@ -60,6 +90,7 @@
                     Csw.tryExec(o.success, result);
                     if (true === Csw.displayAllExceptions) {
                         Csw.debug.profileEnd(url);
+                        Csw.debug.timeEnd(url);
                     }
                 },
                 failure: o.onloginfail,
@@ -107,9 +138,10 @@
             $.extend(o, options);
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
-        Csw.debug.time(url);
+        o.startTime = new Date();
         if (true === Csw.displayAllExceptions) {
             Csw.debug.profile(url);
+            Csw.debug.time(url);
         }
 
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
