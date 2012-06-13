@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Data;
-using System.Linq;
-using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -24,11 +20,6 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtObjClassContainer.DispensePropertyName
                 }
             );
-
-            //Set Container Quantity on Add
-            CswNbtMetaDataObjectClassProp QuantityNodeTypeProp = ContainerObjClass.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuantityNodeTypeProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuantityNodeTypeProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
 
             foreach( CswNbtMetaDataNodeType ContainerNodeType in ContainerObjClass.getNodeTypes() )
             {

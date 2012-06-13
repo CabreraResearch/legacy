@@ -19,6 +19,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass MaterialObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp PhysicalStateProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialObjClass.ObjectClassId, CswNbtObjClassMaterial.PhysicalStatePropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PhysicalStateProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, "solid,liquid,gas,n/a" );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PhysicalStateProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PhysicalStateProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
             //Set Supplies.PhysicalState DefaultValue to "N/A", ServerManaged = true
             CswNbtMetaDataNodeType SupplyNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Supply" );
@@ -26,7 +28,7 @@ namespace ChemSW.Nbt.Schema
             PhysicalStateNTProp.DefaultValue.AsList.Value = "N/A";
             PhysicalStateNTProp.ServerManaged = true;
 
-            //Set Size.Capacity SetValOnAdd = false (if necessary)
+            //Set Size.Capacity SetValOnAdd = false
             CswNbtMetaDataObjectClass SizeObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeObjClass.ObjectClassId, CswNbtObjClassSize.CapacityPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
