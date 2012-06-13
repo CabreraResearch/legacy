@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 JObject ActionDataObj = new JObject();
                 ActionDataObj["requestaction"] = OCP.PropName;
-                ActionDataObj["titleText"] = Material.CachedNodeName + " " + OCP.PropName + " Request";
+                ActionDataObj["titleText"] = OCP.PropName + " Request for " + Material.CachedNodeName;
                 ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                 ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
 
