@@ -50,7 +50,7 @@
             if ($errorsdiv.length > 0 && Csw.bool(e.display)) {
                 $errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
             } 
-            Csw.log(e.message + '; ' + e.detail);
+            Csw.debug.log(e.message + '; ' + e.detail);
             return true;
         });
 
@@ -58,12 +58,12 @@
         Csw.error.register('errorHandler', function (errorMsg, includeCallStack, includeLocalStorage, doAlert) {
             'use strict';
             if (Csw.hasWebStorage() && includeLocalStorage) {
-                Csw.log(window.localStorage);
+                Csw.debug.log(window.localStorage);
             }
             if (doAlert) {
                 $.CswDialog('ErrorDialog', errorMsg);
             } else {
-                Csw.log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
+                Csw.debug.log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
             }
         });
 
@@ -80,7 +80,7 @@
 
     Csw.error.throwException = Csw.error.throwException ||
         Csw.error.register('throwException', function (exception) {
-            Csw.log(exception);
+            Csw.debug.log(exception);
             throw exception;
         });
 

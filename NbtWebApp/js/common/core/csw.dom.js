@@ -129,7 +129,7 @@
                 try {
                     cswPublic.$.append(object);
                 } catch (e) {
-                    Csw.log('Warning: append() failed, text() was used instead.', true);
+                    Csw.debug.log('Warning: append() failed, text() was used instead.', true);
                     if (Csw.isString(object)) {
                         cswPublic.$.text(object);
                     }

@@ -45,10 +45,9 @@
             }
         });
 
-    Csw.method = Csw.method ||
-        Csw.register('method', function (func) {
-            var that = this;
+    Csw.method = Csw.register('method', function (func) {
+        var that = this;
             var args = arguments;
-            return function () { Csw.tryExec.apply(that, args); };
-        });
+            return function () { return Csw.tryExec.apply(that, func, arguments); };
+    });
 } ());

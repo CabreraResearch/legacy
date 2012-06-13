@@ -5,11 +5,10 @@
 window.initMain = window.initMain || function (undefined) {
 
     "use strict";
-
+    Csw.debug.groupCollapsed('Csw');
     var mainTree;
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
-    var mainSearchId = 'CswSearchForm';
 
     var universalsearch;
 
@@ -125,7 +124,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function initAll() {
-        //if (debugOn()) Csw.log('Main.initAll()');
+        //if (debugOn()) Csw.debug.log('Main.initAll()');
         $('#CenterBottomDiv').CswLogin('init', {
             'onAuthenticate': function (u) {
                 $('#header_username').text(u)
@@ -218,7 +217,7 @@ window.initMain = window.initMain || function (undefined) {
 
 
     function clear(options) {
-        //if (debugOn()) Csw.log('Main.clear()');
+        //if (debugOn()) Csw.debug.log('Main.clear()');
 
         var o = {
             left: false,
@@ -250,7 +249,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function refreshWelcome() {
-        //if (debugOn()) Csw.log('Main.refreshWelcome()');
+        //if (debugOn()) Csw.debug.log('Main.refreshWelcome()');
         clear({ all: true });
 
         $('#CenterBottomDiv').CswWelcome('initTable', {
@@ -279,7 +278,7 @@ window.initMain = window.initMain || function (undefined) {
     // refreshWelcome()
 
     function handleItemSelect(options) {
-        //if (debugOn()) Csw.log('Main.handleItemSelect()');
+        //if (debugOn()) Csw.debug.log('Main.handleItemSelect()');
         var o = {
             type: 'view', // Action, Report, View, Search
             viewmode: 'tree', // Grid, Tree, List
@@ -386,7 +385,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function refreshMainMenu(options) {
-        //if (debugOn()) Csw.log('Main.refreshMainMenu()');
+        //if (debugOn()) Csw.debug.log('Main.refreshMainMenu()');
 
         var o = {
             viewid: '',
@@ -482,7 +481,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     //    function refreshSearchPanel(options) {
-    //        //if (debugOn()) Csw.log('Main.refreshSearchPanel()');
+    //        //if (debugOn()) Csw.debug.log('Main.refreshSearchPanel()');
 
     //        var o = {
     //            viewid: '',
@@ -595,7 +594,7 @@ window.initMain = window.initMain || function (undefined) {
     //    }
 
     function getViewGrid(options) {
-        //if (debugOn()) Csw.log('Main.getViewGrid()');
+        //if (debugOn()) Csw.debug.log('Main.getViewGrid()');
 
         var o = {
             viewid: '',
@@ -734,7 +733,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     var onSelectTreeNode = function (options) {
-        //if (debugOn()) Csw.log('Main.onSelectTreeNode()');
+        //if (debugOn()) Csw.debug.log('Main.onSelectTreeNode()');
         if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
                 viewid: '',
@@ -797,7 +796,7 @@ window.initMain = window.initMain || function (undefined) {
     } // showDefaultContentTable()
 
     function getTabs(options) {
-        //if (debugOn()) Csw.log('Main.getTabs()');
+        //if (debugOn()) Csw.debug.log('Main.getTabs()');
 
         var o = {
             nodeid: '',
@@ -849,7 +848,7 @@ window.initMain = window.initMain || function (undefined) {
     }
 
     function refreshSelected(options) {
-        //if (debugOn()) Csw.log('Main.refreshSelected()');
+        //if (debugOn()) Csw.debug.log('Main.refreshSelected()');
 
         if (Csw.clientChanges.manuallyCheckChanges()) {
             var o = {
@@ -928,7 +927,7 @@ window.initMain = window.initMain || function (undefined) {
     var multi = false;
 
     function refreshNodesTree(options) {
-        //if (debugOn()) Csw.log('Main.refreshNodesTree()');
+        //if (debugOn()) Csw.debug.log('Main.refreshNodesTree()');
 
         var o = {
             'nodeid': '',
