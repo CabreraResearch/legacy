@@ -19,8 +19,16 @@
         Csw.error.showError(errorJson);
     }; /* cswPrivate.handleAjaxError() */
 
+    cswPrivate.consoleTable = null;
+    cswPrivate.consoleRows = 1;
+    cswPrivate.initConsoleTable = function () {
+        cswPrivate.consoleTable = cswPrivate.consoleTable || Csw.literals.div({ ID: 'Csw_output_log' }).table();
+        Csw.debug.info(cswPrivate.consoleTable.$[0]);
+    };
+
     cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
+        cswPrivate.initConsoleTable();
         var result = data;
         if (data.d) {
             result = $.parseJSON(data.d);
@@ -44,9 +52,22 @@
 
             if (false === Csw.isNullOrEmpty(result.timer)) {
                 var timer = {};
-                timer[url] = result.timer;
+                $.extend(true, timer, result.timer);
+                if (Csw.bool(o.removeTimer)) {
+                    delete result.timer;
+                }
                 if (Csw.isNullOrEmpty(cswPrivate.perflogheaders)) {
                     cswPrivate.perflogheaders = true;
+                    cswPrivate.consoleTable.cell(1, 1).span({ text: 'timestamp' });
+                    cswPrivate.consoleTable.cell(1, 2).span({ text: 'client' });
+                    cswPrivate.consoleTable.cell(1, 3).span({ text: 'serverinit' });
+                    cswPrivate.consoleTable.cell(1, 4).span({ text: 'servertotal' });
+                    cswPrivate.consoleTable.cell(1, 5).span({ text: 'dbinit' });
+                    cswPrivate.consoleTable.cell(1, 6).span({ text: 'dbquery' });
+                    cswPrivate.consoleTable.cell(1, 7).span({ text: 'dbcommit' });
+                    cswPrivate.consoleTable.cell(1, 8).span({ text: 'dbdeinit' });
+                    cswPrivate.consoleTable.cell(1, 9).span({ text: 'treeloadersql' });
+                    cswPrivate.consoleTable.cell(1, 10).span({ text: 'url' });
                     Csw.debug.info("timestamp\t" +
                                  "client\t" +
                                  "serverinit\t" +
@@ -63,26 +84,32 @@
                 while (etms.length < 3) {
                     etms = "0" + etms;
                 }
-                if (false === Csw.isNullOrEmpty(result.timer)) {
-                    Csw.debug.info(endTime.toLocaleTimeString() + "." + etms + "\t" +
-                            (endTime - o.startTime) + "\t" +
-                            result.timer.serverinit + "\t" +
-                            result.timer.servertotal + "\t" +
-                            result.timer.dbinit + "\t" +
-                            result.timer.dbquery + "\t" +
-                            result.timer.dbcommit + "\t" +
-                            result.timer.dbdeinit + "\t" +
-                            result.timer.treeloadersql + "\t" +
-                            url);
-                }
-                //Csw.debug.info(timer);
+                cswPrivate.consoleRows += 1;
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 1).span({ text: endTime.toLocaleTimeString() + "." + etms });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 2).span({ text: (endTime - o.startTime) });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 3).span({ text: timer.serverinit });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 4).span({ text: timer.servertotal });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 5).span({ text: timer.dbinit });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 6).span({ text: timer.dbquery });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 7).span({ text: timer.dbcommit });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 8).span({ text: timer.dbdeinit });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 9).span({ text: timer.treeloadersql });
+                cswPrivate.consoleTable.cell(cswPrivate.consoleRows, 10).span({ text: url });
+
+                Csw.debug.info(endTime.toLocaleTimeString() + "." + etms + "\t" +
+                        (endTime - o.startTime) + "\t" +
+                        timer.serverinit + "\t" +
+                        timer.servertotal + "\t" +
+                        timer.dbinit + "\t" +
+                        timer.dbquery + "\t" +
+                        timer.dbcommit + "\t" +
+                        timer.dbdeinit + "\t" +
+                        timer.treeloadersql + "\t" +
+                        url);
             }
-            
+
             delete result.AuthenticationStatus;
             delete result.timeout;
-            if (Csw.bool(o.removeTimer)) {
-                delete result.timer;
-            }
 
             Csw.clientSession.handleAuthenticationStatus({
                 status: auth,
@@ -90,7 +117,7 @@
                     Csw.tryExec(o.success, result);
                     if (true === Csw.displayAllExceptions) {
                         Csw.debug.profileEnd(url);
-                        Csw.debug.timeEnd(url);
+                        Csw.debug.timeEnd('onSuccess called for url: ' + url);
                     }
                 },
                 failure: o.onloginfail,
@@ -193,7 +220,7 @@
             $.extend(o, options);
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
-        Csw.debug.time(url);
+        Csw.debug.time('onSuccess called for url: ' + url);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
 
         $.ajax({

@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
             {
                 Int32 FirsTabId = Int32.MinValue;
                 Int32 PropCount = Int32.MinValue;
-                foreach( CswNbtMetaDataNodeTypeTab Tab in from _Tab in ContainerNt.getNodeTypeTabs() orderby _Tab.TabOrder, _Tab.TabId select _Tab )
+                foreach( CswNbtMetaDataNodeTypeTab Tab in (from _Tab in ContainerNt.getNodeTypeTabs() orderby _Tab.TabOrder, _Tab.TabId select _Tab) )
                 {
                     FirsTabId = Tab.TabId;
                     //PropCount =  
