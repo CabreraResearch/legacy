@@ -182,7 +182,6 @@ window.ChemSW = window.Csw = (function () {
     external.method = external.method ||
         external.register('method', function (func) {
             var that = this;
-            var args = arguments;
             return function () {
                 var args = Array.prototype.slice.call(arguments, 0);
                 args.unshift(func);
