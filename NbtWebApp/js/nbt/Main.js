@@ -5,7 +5,7 @@
 window.initMain = window.initMain || function (undefined) {
 
     "use strict";
-    Csw.debug.groupCollapsed('Csw');
+    Csw.debug.group('Csw');
     var mainTree;
     var mainGridId = 'CswNodeGrid';
     var mainTableId = 'CswNodeTable';
