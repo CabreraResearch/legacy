@@ -138,6 +138,7 @@ namespace ChemSW.Nbt.Schema
                                                      IsRequired = true,
                                                      SetValOnAdd = true
                                                  } );
+
             char FilterDelimiter = '|';
             CswNbtMetaDataObjectClassProp CountOcp =
                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
