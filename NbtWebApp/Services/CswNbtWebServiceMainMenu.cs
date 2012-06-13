@@ -116,49 +116,11 @@ namespace ChemSW.Nbt.WebServices
                     RelatedObjectClassId = Node.getObjectClassId().ToString();
                 }
             }
-
-            //// SEARCH
-            //if( _MenuItems.Contains( "Search" ) )
-            //{
-            //    JObject SearchObj = new JObject();
-            //    bool HasChildren = false;
-            //    if( View != null )
-            //    {
-            //        if( View.IsSearchable() )
-            //        {
-            //            View.SaveToCache( false );
-            //            SearchObj["This View"] = new JObject();
-            //            SearchObj["This View"]["text"] = "This View";
-            //            SearchObj["This View"]["nodeid"] = NodeId;
-            //            SearchObj["This View"]["nodetypeid"] = NodeTypeId;
-            //            SearchObj["This View"]["sessionviewid"] = View.SessionViewId.ToString();
-            //            SearchObj["This View"]["action"] = MenuActions.ViewSearch.ToString();
-            //            HasChildren = true;
-            //        }
-            //        //if( View.Visibility != NbtViewVisibility.Property )
-            //        //{
-            //        //    SearchObj["Generic Search"] = new JObject();
-            //        //    SearchObj["Generic Search"]["nodeid"] = NodeId;
-            //        //    SearchObj["Generic Search"]["nodetypeid"] = NodeTypeId;
-            //        //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-            //        //    HasChildren = true;
-            //        //}
-            //        /* Case 24744: No Generic Search on Grid Props */
-            //    }
-            //    //else
-            //    //{
-            //    //    SearchObj["Generic Search"] = new JObject();
-            //    //    SearchObj["Generic Search"]["action"] = MenuActions.GenericSearch.ToString();
-            //    //    HasChildren = true;
-            //    //}
-
-            //    if( HasChildren )
-            //    {
-            //        SearchObj["haschildren"] = true;
-            //        Ret["Search"] = SearchObj;
-            //    }
-
-            //}
+            else
+            {
+                /* Unfortunately, this will allow adds of unsuported Object Classes at the root of a view. For now. */
+                _permitAdd = true;
+            }
 
             if( View != null )
             {
