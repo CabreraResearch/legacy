@@ -27,6 +27,8 @@
 
         if (o.type.toLowerCase() === "warning") {
             errorDiv.addClass('CswErrorMessage_Warning');
+        } else if (o.type.toLowerCase() === 'js') {
+            errorDiv.addClass('CswErrorMessage_JS');
         } else {
             errorDiv.addClass('CswErrorMessage_Error');
         }
@@ -66,11 +68,11 @@
             parent.append(msg);
         };
 
-        var _makeNodeLink = function(parent, nodeid, nodename) {
+        var _makeNodeLink = function (parent, nodeid, nodename) {
             parent.a({
                 ID: Csw.makeId(id, nodeid),
                 text: nodename,
-                onClick: function() {
+                onClick: function () {
                     $.CswDialog('EditNodeDialog', {
                         nodeids: [nodeid],
                         nodenames: [nodename]
@@ -79,7 +81,7 @@
             }); // link
         };
 
-            ID: Csw.makeId(id, 'expandbtn'),
+        ID: Csw.makeId(id, 'expandbtn'),
         _handleNodeRef(o.message, cell12);
 
         cell13.css({ width: '18px' });
@@ -94,8 +96,7 @@
             }
         });
 
-        if(false === Csw.isNullOrEmpty(o.detail))
-        {
+        if (false === Csw.isNullOrEmpty(o.detail)) {
             cell11.css({ width: '18px' });
             var togglebtn = cell11.imageButton({
                 ButtonType: Csw.enums.imageButton_ButtonType.ToggleInactive,

@@ -6,15 +6,16 @@ using System.Linq;
 using System.Reflection;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.Logic
+namespace ChemSW.Nbt.ServiceDrivers
 {
-    public class CswNbtActGrid
+    public class CswNbtSdGrid
     {
         private CswNbtResources _CswNbtResources;
-        public CswNbtActGrid( CswNbtResources Resources )
+        public CswNbtSdGrid( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
             PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
@@ -319,7 +320,7 @@ namespace ChemSW.Nbt.Logic
             return Ret;
         }
 
-    } // class CswNbtActGrid
+    } // class CswNbtSdGrid
 
     /// <summary>
     /// For the transformation of XElement Attribute types into valid JProperty and JObject types

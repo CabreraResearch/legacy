@@ -173,6 +173,7 @@
                 var attributes = {
                     nodeid: null
                 };
+                var compare = {};
                 var propVals = o.propData.values;
                 var useSearch = Csw.bool(propVals.usesearch);
 
@@ -180,14 +181,16 @@
                     var hiddenValue = o.propDiv.find('input');
                     if (false === Csw.isNullOrEmpty(hiddenValue)) {
                         attributes.nodeid = hiddenValue.val();
+                        compare = attributes;
                     }
                 } else {
                     var selectBox = o.propDiv.find('select');
                     if (false === Csw.isNullOrEmpty(selectBox)) {
                         attributes.nodeid = selectBox.val();
+                        compare = attributes;
                     }
                 }
-                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+                Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
             } // save
         }; // methods
 

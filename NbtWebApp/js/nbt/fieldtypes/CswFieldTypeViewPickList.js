@@ -34,11 +34,13 @@
         },
         'save': function (o) {
             var attributes = { options: null };
+            var compare = {};
             var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
             if (false === o.Multi || false === formdata.MultiIsUnchanged) {
                 attributes.options = formdata.data;
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

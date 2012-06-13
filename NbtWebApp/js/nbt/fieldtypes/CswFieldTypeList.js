@@ -37,11 +37,13 @@
         },
         save: function (o) { //$propdiv, $xml
             var attributes = { value: null };
+            var compare = {};
             var selectBox = o.propDiv.find('select');
             if (false === Csw.isNullOrEmpty(selectBox)) {
                 attributes.value = selectBox.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

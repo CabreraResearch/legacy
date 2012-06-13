@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -158,56 +157,21 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != NodeTypeProp && null != OCP )
             {
                 CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
-                CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestAct.RequestItemNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                if( null == NodeAsRequestItem )
-                {
-                    throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
-                }
-                NodeAsRequestItem.Container.RelatedNodeId = NodeId;
-                NodeAsRequestItem.Size.Hidden = true;
-                NodeAsRequestItem.Count.Hidden = true;
 
-                if( null != Location.NodeId )
-                {
-                    NodeAsRequestItem.Location.NodeId = Location.NodeId;
-                }
-
-                NodeAsRequestItem.Material.Hidden = false == ( OCP.PropName == DispensePropertyName );
-                NodeAsRequestItem.Quantity.Hidden = false == ( OCP.PropName == DispensePropertyName );
-                NodeAsRequestItem.RequestBy.Hidden = false == ( OCP.PropName == DispensePropertyName );
-                NodeAsRequestItem.Location.Hidden = OCP.PropName == DisposePropertyName;
-                NodeAsRequestItem.RequestBy.ReadOnly = true;
-
+                CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, OCP );
                 switch( OCP.PropName )
                 {
                     case DispensePropertyName:
-                        {
-                            NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispense.ToString();
-                            NodeAsRequestItem.Material.RelatedNodeId = Material.NodeId;
-                            NodeAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity.ToString();
-                            break;
-                        }
-                    case DisposePropertyName:
-                        {
-                            NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispose.ToString();
-                            break;
-                        }
-                    case MovePropertyName:
-                        {
-                            NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Move.ToString();
-                            break;
-                        }
-                    default:
-                        throw new CswDniException( ErrorType.Error, "No action has been defined for this button.", "Property named " + OCP.PropName + " has not implemented a button click event." );
-
+                        NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
+                        break;
                 }
-                NodeAsRequestItem.postChanges( true );
 
                 JObject ActionDataObj = new JObject();
                 ActionDataObj["requestaction"] = OCP.PropName;
-                ActionDataObj["requestItemNodeId"] = NodeAsRequestItem.NodeId.ToString();
-                ActionDataObj["requestItemNodePk"] = NodeAsRequestItem.NodeId.PrimaryKey.ToString();
                 ActionDataObj["titleText"] = Material.CachedNodeName + " " + OCP.PropName + " Request";
+                ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+
                 ActionData = ActionDataObj.ToString();
 
                 ButtonAction = NbtButtonAction.request;

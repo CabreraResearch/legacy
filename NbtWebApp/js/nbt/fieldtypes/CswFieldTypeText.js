@@ -38,11 +38,13 @@
             var attributes = {
                 text: null
             };
+            var compare = {};
             var text = o.propDiv.find('input');
             if (false === Csw.isNullOrEmpty(text)) {
                 attributes.text = text.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

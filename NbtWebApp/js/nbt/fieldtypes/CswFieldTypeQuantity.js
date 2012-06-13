@@ -46,7 +46,7 @@
                     MinValue: Csw.number(propVals.minvalue),
                     MaxValue: Csw.number(propVals.maxvalue),
                     ceilingVal: Csw.number(ceilingVal),
-                    Precision: 6,//case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
+                    Precision: 6, //case 24646 - precision is being handled in the validator below, so we don't want to use the one in numberTextBox.
                     ReadOnly: Csw.bool(o.ReadOnly),
                     Required: Csw.bool(o.Required),
                     onChange: o.onChange
@@ -64,7 +64,7 @@
                 Csw.crawlObject(options, function (relatedObj) {
                     if (relatedObj.id === selectedNodeId) {
                         foundSelected = true;
-                    fractional = Csw.bool(relatedObj.fractional);
+                        fractional = Csw.bool(relatedObj.fractional);
                     }
                     relationships.push({ value: relatedObj.id, display: relatedObj.value, frac: Csw.bool(relatedObj.fractional) });
                 }, false);
@@ -75,14 +75,14 @@
                     ID: o.ID,
                     cssclass: 'selectinput',
                     onChange: function () {
-                    Csw.crawlObject(options, function (relatedObj) {
-                        if (relatedObj.id === selectBox.val()) {
-                            fractional = Csw.bool(relatedObj.fractional);
-                        }
-                    }, false);
-                    precision = false === fractional ? 0 : Csw.number(propVals.precision, 6);
-                    o.onChange();
-                },
+                        Csw.crawlObject(options, function (relatedObj) {
+                            if (relatedObj.id === selectBox.val()) {
+                                fractional = Csw.bool(relatedObj.fractional);
+                            }
+                        }, false);
+                        precision = false === fractional ? 0 : Csw.number(propVals.precision, 6);
+                        o.onChange();
+                    },
                     values: relationships,
                     selected: selectedNodeId
                 });
@@ -92,28 +92,34 @@
                     selectBox.addClass("required");
                 }
 
-            $.validator.addMethod('validateInteger', function (value, element) {
-                return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
-            }, 'Value must be an integer');
-            numberTextBox.addClass('validateInteger');
+                $.validator.addMethod('validateInteger', function (value, element) {
+                    return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
+                }, 'Value must be an integer');
+                numberTextBox.addClass('validateInteger');
 
                 propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
             }
         },
         save: function (o) {
+            var attributes = {
+                value: null,
+                nodeid: null
+            };
+            var compare = {};
             if (false === Csw.bool(o.propData.readonly)) {
-                var attributes = {
-                    value: o.propDiv.find('#' + o.ID + '_qty').val(),
-                    nodeid: null
-                };
+                var propDiv = o.propDiv.find('#' + o.ID + '_qty');
+                if (false == Csw.isNullOrEmpty(propDiv)) {
+                    attributes.value = propDiv.val();
+                    compare = attributes;
+                }
 
                 var selectBox = o.propDiv.find('select');
                 if (false === Csw.isNullOrEmpty(selectBox)) {
                     attributes.nodeid = selectBox.val();
+                    compare = attributes;
                 }
-
-                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
             }
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

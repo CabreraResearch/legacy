@@ -18,12 +18,12 @@ msbuild D:\kiln\DailyBuildTools\DailyBuildWeb\DailyBuildWeb.sln /p:Configuration
 
 net start "ChemSW Log Service" >> D:\log\dailylog.txt
 
+iisreset
+
 D:\kiln\Nbt\Nbt\NbtSchemaUpdaterCmdLn\bin\Release\NbtUpdt.exe -all >> D:\log\dailylog.txt
 
 net start "ChemSW NBT Schedule Service" >> D:\log\dailylog.txt
 
 C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp -p d:\kiln\Nbt\Nbt\NbtWebApp >> D:\log\dailylog.txt
-
-iisreset
 
 echo "ASP Precompile Finished" >> D:\log\dailylog.txt    

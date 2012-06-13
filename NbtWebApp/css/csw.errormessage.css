@@ -23,3 +23,13 @@
 	background-color: &cswbgcolorhilite;
 	color: &cswtextcolor;
 }
+.CswErrorMessage_JS
+{
+	background-color: #FF8D33;
+	color: &cswtextcolor;
+}
+.CswErrorMessage_JS a
+{
+	background-color: #FF8D33;
+	color: &cswtextcolor;
+}

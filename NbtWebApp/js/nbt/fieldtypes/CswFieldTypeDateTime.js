@@ -38,18 +38,20 @@
                 value: {
                     date: null,
                     time: null
-                } 
+                }
             };
+            var compare = {};
             dPickerDiv = o.propDiv.find('#' + o.ID + '_date');
             tPickerDiv = o.propDiv.find('#' + o.ID + '_time');
             if (false === Csw.isNullOrEmpty(dPickerDiv)) {
                 attributes.value.date = dPickerDiv.val();
+                compare = attributes;
             }
             if (false === Csw.isNullOrEmpty(tPickerDiv)) {
                 attributes.value.time = tPickerDiv.val();
+                compare = attributes;
             }
-
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
     

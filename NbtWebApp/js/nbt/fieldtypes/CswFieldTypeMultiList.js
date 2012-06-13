@@ -32,9 +32,10 @@
                 multi = o.propDiv.find('#' + o.ID),
                 cachedVals,
                 distinctVals = [];
-
+            var compare = {};
             if (false === Csw.isNullOrEmpty(multi)) {
                 attributes.value = multi.val().split(',').sort().join(',');
+                compare = attributes;
             }
 
             //multiSelect sorts the val for us, sort o.propData.values.value to make comparision work
@@ -49,7 +50,7 @@
             }
             o.propData.values.value = distinctVals.sort().join(',');
 
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

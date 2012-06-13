@@ -267,7 +267,7 @@
 //            });
 
 //            treeDiv.$.jstree('select_node', Csw.tryParseElement(data.selectid));
-//            //setTimeout(function () { Csw.log('select: #' + data.selectid);  }, 1000);
+//            //setTimeout(function () { Csw.debug.log('select: #' + data.selectid);  }, 1000);
 //            rootnode = treeDiv.find('li').first();
 
 //            if (Csw.bool(o.ShowCheckboxes)) {

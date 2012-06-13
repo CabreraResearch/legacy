@@ -23,9 +23,10 @@
                                 } else if (Csw.contains(cellData, 'canview')) {
                                     buttonStr += '<img id="' + rowId + '_view" src="Images/icons/docs.gif" class="csw-grid-edit" alt="View" title="View" />';
                                 }
-                                if (Csw.contains(cellData, 'canedit')) {
+                                /*
+                                if (Csw.contains(cellData, 'cancopy')) {
                                     buttonStr += '<img id="' + rowId + '_edit" src="Images/icons/tree.gif" class="csw-grid-copy" alt="Copy" title="Copy" />';
-                                }
+                                }*/
                             }
                             if (buttonStr.length > 0) {
                                 buttonStr += '<img id="' + rowId + '_spacer" src="Images/icons/spacer.png" />';
