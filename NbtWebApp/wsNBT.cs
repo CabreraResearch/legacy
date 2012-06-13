@@ -18,6 +18,7 @@ using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
@@ -4772,7 +4773,7 @@ namespace ChemSW.Nbt.WebServices
 
                     ReturnVal["success"] = "true";
 
-                    CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
+                    CswNbtSdGrid gd = new CswNbtSdGrid( _CswNbtResources );
                     gd.PkColumn = "RowNumber";
 
                     ReturnVal["jqGridOpt"] = gd.DataTableToJSON( ExcelDataTable, true );

@@ -478,7 +478,7 @@
                     outerDiv.remove();
 
                 } catch (e) {
-                    Csw.log(e);
+                    Csw.debug.log(e);
                 }
 
             };

@@ -108,13 +108,16 @@
             },
             save: function (o) { //($propdiv, $xml
                 var attributes = { nodeid: null };
+                var compare = {};
                 var selectDiv = o.propDiv.find('.locationselect');
-                attributes.nodeid = selectDiv.propNonDom('value');
-                Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+                if (false === Csw.isNullOrEmpty(selectDiv)) {
+                    attributes.nodeid = selectDiv.propNonDom('value');
+                    compare = attributes;
+                }
+                Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
             }
         };
-
-
+        
         function onTreeSelect(selectDiv, comboBox, itemid, text, iconurl, onChange) {
             if (itemid === 'root' || itemid === undefined) itemid = '';   // case 21046
             comboBox.topContent(text, itemid);

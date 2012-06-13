@@ -1,5 +1,3 @@
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -28,6 +26,11 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addLongColumn( "object_class_props", "textareacols", "Width in characters(memo) or pixels(image)", false, false );
             }
 
+            /* TODO: Delete on moving to Quince */
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "hidden" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( "jct_nodes_props", "hidden", "Determines whether property displays.", true, false );
+            }
 
         }//Update()
 

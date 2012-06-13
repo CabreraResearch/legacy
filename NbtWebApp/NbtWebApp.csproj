@@ -1545,7 +1545,6 @@
     <Compile Include="Services\CswNbtWebServiceTree.cs" />
     <Compile Include="Services\CswNbtWebServiceView.cs" />
     <Compile Include="Services\CswNbtWebServiceWelcomeItems.cs" />
-    <Compile Include="Services\CswPropIdAttr.cs" />
     <Compile Include="Services\TimingModule.cs" />
     <Compile Include="Services\wsTools.cs" />
     <Compile Include="Base.master.cs">

@@ -968,7 +968,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 // Case 20480
-                return ( !( IsRequired && DefaultValue.Empty ) && !hasFilter() );
+                return ( !( IsRequired && DefaultValue.Empty ) ); //&& !hasFilter() );
             }
         }
 

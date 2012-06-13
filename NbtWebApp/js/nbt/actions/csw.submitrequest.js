@@ -70,7 +70,6 @@
                                 Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
                             }
                             Csw.tryExec(function () {
-                                var menuCell = cswPrivate.actionTbl.cell(2, 1);
                                 cswPrivate.cartnodeid = json.cartnodeid;
                                 cswPrivate.cartviewid = json.cartviewid;
 
@@ -168,17 +167,17 @@
                 cswPrivate.saveRequestTxt = cswPrivate.saveRequestTbl.cell(1, 3).input().hide();
                 cswPrivate.saveRequestTbl.cell(1, 1).span({ text: 'Save Request' });
                 cswPrivate.saveRequestChk = cswPrivate.saveRequestTbl.cell(1, 2).checkBox({
-                    onChange: function () {
+                    onChange: Csw.method(function () {
                         var val;
                         if (cswPrivate.saveRequestChk.checked()) {
-                            val = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.nowAsString();
+                            val = Csw.cookie.get(Csw.cookie.cookieNames.Username) + ' ' + Csw.todayAsString();
                             cswPrivate.saveRequestTxt.show();
                         } else {
                             val = '';
                             cswPrivate.saveRequestTxt.hide();
                         }
                         cswPrivate.saveRequestTxt.val(val);
-                    }
+                    })
                 });
 
             });

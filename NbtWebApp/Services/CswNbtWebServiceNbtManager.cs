@@ -6,10 +6,12 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
 
@@ -109,7 +111,7 @@ namespace ChemSW.Nbt.WebServices
             CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
             DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            CswNbtActGrid NbtActGrid = new CswNbtActGrid( _OtherResources );
+            CswNbtSdGrid NbtActGrid = new CswNbtSdGrid( _OtherResources );
             string TablePkColumn = "scheduledruleid";
             NbtActGrid.PkColumn = TablePkColumn;
             NbtActGrid.HidePkColumn = true;

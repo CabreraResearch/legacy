@@ -266,6 +266,10 @@ namespace ChemSW.Nbt
         {
             return _CswNbtNodeCollection.GetNode( NodePk, Date );
         }
+        public CswNbtNode getNode( string NodeId, string NodeKey, CswDateTime Date )
+        {
+            return _CswNbtNodeCollection.GetNode( NodeId, NodeKey, Date );
+        }
 
 
         public string makeClientNodeReference( CswNbtNode Node )

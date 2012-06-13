@@ -79,15 +79,18 @@
                 text: null,
                 href: null
             };
+            var compare = {};
             var editText = o.propDiv.find('#' + o.ID + '_text');
             if (false === Csw.isNullOrEmpty(editText)) {
                 attributes.text = editText.val();
+                compare = attributes;
             }
             var editHref = o.propDiv.find('#' + o.ID + '_href');
             if (false === Csw.isNullOrEmpty(editHref)) {
                 attributes.href = editHref.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

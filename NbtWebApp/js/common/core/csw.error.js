@@ -49,9 +49,8 @@
 
             if ($errorsdiv.length > 0 && Csw.bool(e.display)) {
                 $errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
-            } else {
-                Csw.log(e.message + '; ' + e.detail);
-            }
+            } 
+            Csw.debug.log(e.message + '; ' + e.detail);
             return true;
         });
 
@@ -59,12 +58,12 @@
         Csw.error.register('errorHandler', function (errorMsg, includeCallStack, includeLocalStorage, doAlert) {
             'use strict';
             if (Csw.hasWebStorage() && includeLocalStorage) {
-                Csw.log(window.localStorage);
+                Csw.debug.log(window.localStorage);
             }
             if (doAlert) {
                 $.CswDialog('ErrorDialog', errorMsg);
             } else {
-                Csw.log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
+                Csw.debug.log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
             }
         });
 
@@ -81,17 +80,17 @@
 
     Csw.error.throwException = Csw.error.throwException ||
         Csw.error.register('throwException', function (exception) {
-            Csw.log(exception);
+            Csw.debug.log(exception);
             throw exception;
         });
 
     Csw.error.catchException = Csw.error.catchException ||
         Csw.error.register('catchException', function (exception) {
             var e = {
-                type: exception.type,
+                type: 'js',
                 message: exception.message,
-                detail: exception.stack,
-                display: true
+                detail: 'JS Error type: ' + exception.type + '/n' + 'Stack: ' + exception.stack,
+                display: Csw.displayAllExceptions === true
             };
             Csw.error.showError(e);
         });

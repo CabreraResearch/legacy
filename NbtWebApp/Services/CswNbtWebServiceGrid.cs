@@ -11,6 +11,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
@@ -20,7 +21,7 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtResources _CswNbtResources;
         private readonly CswNbtView _View;
         private CswNbtNodeKey _ParentNodeKey;
-        private CswNbtActGrid _CswNbtActGrid;
+        private CswNbtSdGrid _CswNbtSdGrid;
         private bool _ForReport = false;
         private bool _ActionEnabled = false;
         private Collection<CswViewBuilderProp> _PropsInGrid = null;
@@ -107,7 +108,7 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            _CswNbtActGrid = new CswNbtActGrid( _CswNbtResources );
+            _CswNbtSdGrid = new CswNbtSdGrid( _CswNbtResources );
             _PropsInGrid = new Collection<CswViewBuilderProp>();
             _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
@@ -187,14 +188,14 @@ namespace ChemSW.Nbt.WebServices
             RetObj["nodetypeid"] = _View.ViewMetaDataTypeId;
 
             JArray GridOrderedColumnDisplayNames = _makeDefaultColumnNames();
-            _CswNbtActGrid.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
+            _CswNbtSdGrid.getGridColumnNamesJson( GridOrderedColumnDisplayNames, _PropsInGrid );
 
-            JArray GridColumnDefinitions = _CswNbtActGrid.getGridColumnDefinitionJson( _PropsInGrid );
+            JArray GridColumnDefinitions = _CswNbtSdGrid.getGridColumnDefinitionJson( _PropsInGrid );
             _addDefaultColumnDefiniton( GridColumnDefinitions );
 
             if( _View.Visibility != NbtViewVisibility.Property )
             {
-                _CswNbtActGrid.GridTitle = _View.ViewName;
+                _CswNbtSdGrid.GridTitle = _View.ViewName;
             }
 
             // Sort
@@ -203,23 +204,23 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( null != SortProp.NodeTypeProp )
                 {
-                    _CswNbtActGrid.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                    _CswNbtSdGrid.GridSortName = SortProp.NodeTypeProp.PropName.ToUpperInvariant().Replace( " ", "_" );
                 }
                 else if( null != SortProp.ObjectClassProp )
                 {
-                    _CswNbtActGrid.GridSortName = SortProp.ObjectClassProp.PropName.ToUpperInvariant().Replace( " ", "_" );
+                    _CswNbtSdGrid.GridSortName = SortProp.ObjectClassProp.PropName.ToUpperInvariant().Replace( " ", "_" );
                 }
                 else
                 {
-                    _CswNbtActGrid.GridSortName = "nodename";
+                    _CswNbtSdGrid.GridSortName = "nodename";
                 }
             }
             else
             {
-                _CswNbtActGrid.GridSortName = "nodename";
+                _CswNbtSdGrid.GridSortName = "nodename";
             }
 
-            RetObj["jqGridOpt"] = _CswNbtActGrid.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, null );
+            RetObj["jqGridOpt"] = _CswNbtSdGrid.makeJqGridJSON( GridOrderedColumnDisplayNames, GridColumnDefinitions, null );
 
             return RetObj;
         } // getGridOuterJson()
@@ -363,7 +364,7 @@ namespace ChemSW.Nbt.WebServices
             }
             if( EndingNode > 0 )
             {
-                Ret = _getGridRows( Tree, 1, _CswNbtActGrid.PageSize, StartingNode, EndingNode );
+                Ret = _getGridRows( Tree, 1, _CswNbtSdGrid.PageSize, StartingNode, EndingNode );
             }
             return Ret;
         } // getGridOuterJson()
@@ -468,7 +469,7 @@ namespace ChemSW.Nbt.WebServices
                                             new JProperty( "index", "Action" ),
                                             new JProperty( "formatter", "image" ),
                                             new JProperty( "fixed", true ),
-                                            new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 66 )
+                                            new JProperty( CswNbtSdGrid.JqGridJsonOptions.width.ToString(), 66 )
                                             ) );
             }
 
@@ -477,7 +478,7 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "name", "nodename" ),
                                 new JProperty( "index", "nodename" ),
                                 new JProperty( "hidden", true ),
-                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
+                                new JProperty( CswNbtSdGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
             //we'll want CswNbtNodeKey for add/edit/delete
@@ -485,7 +486,7 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "name", "cswnbtnodekey" ),
                                 new JProperty( "index", "cswnbtnodekey" ),
                                 new JProperty( "hidden", true ),
-                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
+                                new JProperty( CswNbtSdGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
             //better to use int for jqGrid key
@@ -494,7 +495,7 @@ namespace ChemSW.Nbt.WebServices
                                 new JProperty( "index", "jqgridid" ),
                                 new JProperty( "key", true ),
                                 new JProperty( "hidden", true ),
-                                new JProperty( CswNbtActGrid.JqGridJsonOptions.width.ToString(), 0 )
+                                new JProperty( CswNbtSdGrid.JqGridJsonOptions.width.ToString(), 0 )
                                 ) );
 
         } // _addDefaultColumnDefiniton()
@@ -524,8 +525,8 @@ namespace ChemSW.Nbt.WebServices
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanEdit;
                 bool CanDelete = ActionEnabled &&
                                _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanDelete;
-                bool CanCopy = ActionEnabled &&
-                               _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanCreate;
+                /*bool CanCopy = ActionEnabled &&
+                               _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanCreate;*/
                 string ThisNodeKeyString = ThisNodeKey.ToString();
                 string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
                 JArray Actions = new JArray();
@@ -548,10 +549,10 @@ namespace ChemSW.Nbt.WebServices
                     {
                         Actions.Add( "canview" );
                     }
-                    if( CanCopy )
+                    /*if( CanCopy )
                     {
                         Actions.Add( "cancopy" );
-                    }
+                    }*/
                 }
                 if( CanDelete )
                 {

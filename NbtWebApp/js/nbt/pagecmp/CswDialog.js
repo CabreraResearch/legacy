@@ -166,7 +166,9 @@
                 relatednodename: '',
                 relatednodetypeid: '',
                 relatedobjectclassid: '',
-                onAddNode: function () { }
+                onAddNode: function () { },
+                onAfterAddNode: function () {},
+                propertyData: null
             };
 
             if (options) {
@@ -183,11 +185,13 @@
                 relatednodename: o.relatednodename,
                 relatednodetypeid: o.relatednodetypeid,
                 relatedobjectclassid: o.relatedobjectclassid,
+                propertyData: o.propertyData,
                 EditMode: Csw.enums.editMode.Add,
                 ReloadTabOnSave: false,
                 onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey, nodename);
+                    Csw.tryExec(o.onAfterAddNode);
                 },
                 onInitFinish: function () {
                     openDialog(div, 800, 600, null, title);

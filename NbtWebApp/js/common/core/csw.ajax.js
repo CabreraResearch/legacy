@@ -19,6 +19,65 @@
         Csw.error.showError(errorJson);
     }; /* cswPrivate.handleAjaxError() */
 
+    cswPrivate.onJsonSuccess = Csw.method(function (o, data, url) {
+        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
+        var result = data;
+        if (data.d) {
+            result = $.parseJSON(data.d);
+        }
+        if (result.error !== undefined) {
+            if (false === o.overrideError) {
+                cswPrivate.handleAjaxError({
+                    'display': result.error.display,
+                    'type': result.error.type,
+                    'message': result.error.message,
+                    'detail': result.error.detail
+                }, '');
+            }
+            Csw.tryExec(o.error, result.error);
+        } else {
+
+            var auth = Csw.string(result.AuthenticationStatus, 'Unknown');
+            if (false === o.formobile) {
+                Csw.clientSession.setExpireTime(Csw.string(result.timeout, ''));
+            }
+
+            if (false === Csw.isNullOrEmpty(result.timer)) {
+                var timer = { };
+                timer[url] = result.timer;
+                Csw.debug.info(timer);
+            }
+            Csw.debug.timeEnd(url);
+            delete result.AuthenticationStatus;
+            delete result.timeout;
+            if (Csw.bool(o.removeTimer)) {
+                delete result.timer;
+            }
+
+            Csw.clientSession.handleAuthenticationStatus({
+                status: auth,
+                success: function () {
+                    Csw.tryExec(o.success, result);
+                    if (true === Csw.displayAllExceptions) {
+                        Csw.debug.profileEnd(url);
+                    }
+                },
+                failure: o.onloginfail,
+                usernodeid: result.nodeid,
+                usernodekey: result.cswnbtnodekey,
+                passwordpropid: result.passwordpropid,
+                ForMobile: o.formobile
+            });
+        }
+    });
+
+    cswPrivate.onJsonError = Csw.method(function (xmlHttpRequest, textStatus, o) {
+        Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
+        Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
+        Csw.tryExec(o.error, textStatus);
+        Csw.debug.timeEnd(url);
+    });
+
     cswPrivate.jsonPost = function (options) {
         /// <summary>Executes Async webservice request for JSON</summary>
         /// <param name="options" type="Object">
@@ -48,15 +107,12 @@
             $.extend(o, options);
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
-        Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
-
-        var startTime = new Date();
-        var stms = Csw.string(startTime.getMilliseconds());
-        while (stms.length < 3) {
-            stms = "0" + stms;
+        Csw.debug.time(url);
+        if (true === Csw.displayAllExceptions) {
+            Csw.debug.profile(url);
         }
-        Csw.log(startTime.toLocaleTimeString() + "." + stms + "\t" +
-                url + "\tstarted\t");
+
+        Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
         $.ajax({
             type: 'POST',
             async: o.async,
@@ -66,81 +122,10 @@
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(o.data),
             success: function (data) {
-                var endTime = new Date();
-                Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
-                var result = data;  
-                if(data.d) {
-                    result = $.parseJSON(data.d);
-                }
-                if (result.error !== undefined) {
-                    if (false === o.overrideError) {
-                        cswPrivate.handleAjaxError({
-                            'display': result.error.display,
-                            'type': result.error.type,
-                            'message': result.error.message,
-                            'detail': result.error.detail
-                        }, '');
-                    }
-                    Csw.tryExec(o.error, result.error);
-                } else {
-
-                    var auth = Csw.string(result.AuthenticationStatus, 'Unknown');
-                    if (false === o.formobile) {
-                        Csw.clientSession.setExpireTime(Csw.string(result.timeout, ''));
-                    }
-
-                    if (Csw.isNullOrEmpty(cswPrivate.perflogheaders)) {
-                        cswPrivate.perflogheaders = true;
-                        Csw.log("timestamp\t" +
-                                 "url\t" +
-                                 "client\t" +
-                                 "serverinit\t" +
-                                 "servertotal\t" +
-                                 "dbinit\t" +
-                                 "dbquery\t" +
-                                 "dbcommit\t" +
-                                 "dbdeinit\t" +
-                                 "treeloadersql");
-                    }
-                    var etms = Csw.string(endTime.getMilliseconds());
-                    while (etms.length < 3) {
-                        etms = "0" + etms;
-                    }
-                    if (false === Csw.isNullOrEmpty(result.timer)) {
-                        Csw.log(endTime.toLocaleTimeString() + "." + etms + "\t" +
-                            url + "\t" +
-                            (endTime - startTime) + "\t" +
-                            result.timer.serverinit + "\t" +
-                            result.timer.servertotal + "\t" +
-                            result.timer.dbinit + "\t" +
-                            result.timer.dbquery + "\t" +
-                            result.timer.dbcommit + "\t" +
-                            result.timer.dbdeinit + "\t" +
-                            result.timer.treeloadersql);
-                    }
-                    delete result.AuthenticationStatus;
-                    delete result.timeout;
-                    if (Csw.bool(o.removeTimer)) {
-                        delete result.timer;
-                    }
-
-                    Csw.clientSession.handleAuthenticationStatus({
-                        status: auth,
-                        success: function () {
-                            Csw.tryExec(o.success, result);
-                        },
-                        failure: o.onloginfail,
-                        usernodeid: result.nodeid,
-                        usernodekey: result.cswnbtnodekey,
-                        passwordpropid: result.passwordpropid,
-                        ForMobile: o.formobile
-                    });
-                }
+                cswPrivate.onJsonSuccess(o, data, url);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus) {
-                Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-                Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
-                Csw.tryExec(o.error, textStatus);
+                cswPrivate.onJsonError(xmlHttpRequest, textStatus, o);
             }
         }); /* $.ajax({ */
     }; /* cswPrivate.jsonPost */
@@ -176,6 +161,7 @@
             $.extend(o, options);
         }
         var url = Csw.string(o.url, o.urlPrefix + o.urlMethod);
+        Csw.debug.time(url);
         Csw.publish(Csw.enums.events.ajax.ajaxStart, o.watchGlobal);
 
         $.ajax({
@@ -185,27 +171,11 @@
             dataType: 'json',
             contentType: 'application/json; charset=utf-8',
             data: $.param(o.data),
-            success: function (result) {
-                Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal);
-
-                if (false === Csw.isNullOrEmpty(result.error)) {
-                    if (false === o.overrideError) {
-                        cswPrivate.handleAjaxError({
-                            'display': result.error.display,
-                            'type': result.error.type,
-                            'message': result.error.message,
-                            'detail': result.error.detail
-                        }, '');
-                    }
-                    Csw.tryExec(o.error, result.error);
-                } else {
-                    Csw.tryExec(o.success, result);
-                }
+            success: function (data) {
+                cswPrivate.onJsonSuccess(o, data, url);
             }, /* success{} */
             error: function (xmlHttpRequest, textStatus) {
-                Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-                Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
-                Csw.tryExec(o.error);
+                cswPrivate.onJsonError(xmlHttpRequest, textStatus, o);
             }
         }); /* $.ajax({ */
     };
@@ -295,7 +265,7 @@
                 }, /* success{} */
                 error: function (xmlHttpRequest, textStatus) {
                     Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
-                    Csw.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
+                    Csw.debug.log('Webservice Request (' + o.url + ') Failed: ' + textStatus);
                     Csw.tryExec(o.error);
                 }
             }); /* $.ajax({ */
