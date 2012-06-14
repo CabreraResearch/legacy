@@ -28,8 +28,8 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeProp ExpInt = NodeType.getNodeTypeProp( "Expiration Interval" );
                 CswNbtView TimeView = _CswNbtSchemaModTrnsctn.restoreView( ExpInt.ViewId );
-                TimeView.Clear();
-                TimeView.makeNew( "CswNbtNodeTypePropQuantity_" + ExpInt.NodeTypeId.ToString(), NbtViewVisibility.Property );
+                TimeView.Root.ChildRelationships.Clear();
+                TimeView.ViewName = "CswNbtNodeTypePropExpirationInterval_" + ExpInt.PropId.ToString();
                 TimeView.AddViewRelationship( TimeNT, true );
                 TimeView.save();
                 ExpInt.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), TimeNT.NodeTypeId );
