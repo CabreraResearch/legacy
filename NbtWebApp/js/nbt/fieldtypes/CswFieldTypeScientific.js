@@ -51,10 +51,20 @@
                     $.validator.addMethod('validateMinValue', function () {
                         var realValue = Csw.number(valueNtb.val()) * Math.pow(10, Csw.number(exponentNtb.val()));
                         return (realValue > minValue || Csw.string(realValue).length === 0);
-                    }, 'Value must be greater than ' + minValue);
+                    }, 'Evaluated expression must be greater than ' + minValue);
                     valueNtb.addClass('validateMinValue');
                     exponentNtb.addClass('validateMinValue');
                 }
+
+                $.validator.addMethod('validateExponentPresent', function (value, element) {
+                    return (false === Csw.isNullOrEmpty(valueNtb.val()) || Csw.isNullOrEmpty(exponentNtb.val()));
+                }, 'Exponent must be defined if Base is defined.');
+                valueNtb.addClass('validateExponentPresent');
+
+                $.validator.addMethod('validateBasePresent', function (value, element) {
+                    return (false === Csw.isNullOrEmpty(exponentNtb.val()) || Csw.isNullOrEmpty(valueNtb.val()));
+                }, 'Base must be defined if Exponent is defined.');
+                exponentNtb.addClass('validateBasePresent');
             }
         },
         save: function (o) { //$propdiv, $xml
