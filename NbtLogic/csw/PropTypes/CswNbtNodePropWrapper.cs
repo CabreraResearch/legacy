@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool IsReadOnly()
         {
             return ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
-                    ( NodeTypeProp.ReadOnly && false == NodeTypeProp.AllowReadOnlyAdd ) ||
+                    ( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
                 //( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add && NodeTypeProp.SetValueOnAddEnabled ) ||              // nodetype_props.readonly
                      NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
                      _CswNbtResources.EditMode == NodeEditMode.Preview ||
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.PropTypes
                 _Tab = Tab;
                 if( null != Object["values"] &&
                     false == IsReadOnly() &&
-                    _wasModified(Object) )
+                    _wasModified( Object ) )
                 {
                     JObject Values = (JObject) Object["values"];
                     _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );

@@ -300,7 +300,13 @@ namespace ChemSW.Nbt.Actions
             RetAsRequestItem.Request.RelatedNodeId = CurrentRequestNode().NodeId;
             if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
             {
-                RetAsRequestItem.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
+                if( null != DefaultAsLocation )
+                {
+                    RetAsRequestItem.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                    RetAsRequestItem.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
+                    RetAsRequestItem.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
+                }
             }
             switch( Item.Value )
             {
@@ -312,8 +318,8 @@ namespace ChemSW.Nbt.Actions
                     break;
                 case RequestItem.Container:
                     RetAsRequestItem.Container.RelatedNodeId = NodeId;
+                    RetAsRequestItem.Container.ReadOnly = true;
                     RetAsRequestItem.RequestBy.ReadOnly = true;
-
                     switch( OCP.PropName )
                     {
                         case CswNbtObjClassContainer.DispensePropertyName:
@@ -325,11 +331,21 @@ namespace ChemSW.Nbt.Actions
                         case CswNbtObjClassContainer.DisposePropertyName:
                             {
                                 RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispose;
+                                /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
+                                RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
+                                RetAsRequestItem.RequestBy.Hidden = true;
+                                RetAsRequestItem.Material.Hidden = true;
+                                RetAsRequestItem.Material.ReadOnly = true;
                                 break;
                             }
                         case CswNbtObjClassContainer.MovePropertyName:
                             {
                                 RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Move;
+                                /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
+                                RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
+                                RetAsRequestItem.RequestBy.Hidden = true;
+                                RetAsRequestItem.Material.Hidden = true;
+                                RetAsRequestItem.Material.ReadOnly = true;
                                 break;
                             }
                         default:
