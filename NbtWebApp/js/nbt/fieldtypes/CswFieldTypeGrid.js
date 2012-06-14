@@ -4,7 +4,7 @@
 (function ($) {
     "use strict";
     var pluginName = 'CswFieldTypeGrid';
-
+    var reinitGrid;
     var methods = {
         'init': function (o) {
             /// <summary>
@@ -33,7 +33,11 @@
                     var filterDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype_filter') });
                     //newDiv.br();
                     var gridDiv = newDiv.div({ ID: Csw.makeId(o.ID, 'grid_as_fieldtype') });
-
+                    reinitGrid = (function () {
+                        return function () {
+                            makeFullGrid(viewid, newDiv);
+                        };
+                    } ());
                     Csw.nbt.viewFilters({
                         ID: o.ID + '_viewfilters',
                         parent: filterDiv,
@@ -54,10 +58,12 @@
                         reinit: false,
                         EditMode: o.EditMode,
                         onEditNode: function () {
-                            o.onReload();
+                            //o.onReload();
+                            reinitGrid();
                         },
                         onDeleteNode: function () {
-                            o.onReload();
+                            //o.onReload();
+                            reinitGrid();
                         },
                         onSuccess: function (grid) {
                             makeGridMenu(menuDiv, o, gridOpts, grid, viewid);
@@ -83,7 +89,8 @@
                                         title: o.nodename + ' ' + o.propData.name,
                                         onOpen: function (dialogDiv) {
                                             makeFullGrid(viewid, dialogDiv);
-                                        }
+                                        },
+                                        onClose: o.onReload
                                     }
                                     );
                                 }
@@ -109,7 +116,8 @@
                                         title: o.propData.name,
                                         onOpen: function (dialogDiv) {
                                             makeFullGrid(viewid, dialogDiv);
-                                        }
+                                        },
+                                        onClose: o.onReload
                                     }
                                     );
                                 }
@@ -146,7 +154,7 @@
                 cswnbtnodekey: o.cswnbtnodekey,
                 propid: o.ID,
                 onAddNode: function () {
-                    o.onReload();
+                    reinitGrid();
                 },
                 onPrintView: function () {
                     cswGrid.print();
