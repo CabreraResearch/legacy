@@ -82,6 +82,13 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsColumn.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsEnums.cs" />
+    <Compile Include="csw\Grid\CswNbtGridExtJsField.cs" />
+    <Compile Include="csw\Grid\CswNbtGrid.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />

@@ -36,7 +36,7 @@ namespace ChemSW.Nbt
 			delimstr.FromString( TestString );
 			
 			return (delimstr.Count == 2 &&
-					delimstr[0] == _StringPrefix &&
+					delimstr[0].ToLower() == _StringPrefix.ToLower() &&
 					CswTools.IsInteger(delimstr[1]));
 		}
 

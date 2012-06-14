@@ -1,4 +1,4 @@
-<!--[if lte IE 8]>
+    <!--[if lte IE 8]>
  <script type="text/javascript" 
      src="//ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
 
@@ -46,7 +46,7 @@ window.internetExplorerVersionNo = 9;
 <!-- <link rel="stylesheet" type="text/css" href="js/thirdparty/theme-aristo/css/Aristo/Aristo.css" /> -->
 <link rel="stylesheet" type="text/css" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/redmond/jquery-ui.css" />
 
-<link defer rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />
+<!--<link defer rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />-->
 
 <link defer rel="stylesheet" type="text/css" href="js/thirdparty/multiselect/jquery.multiselect.css" />
 <link defer rel="stylesheet" type="text/css" href="js/thirdparty/multiselect/jquery.multiselect.filter.css" />
@@ -77,7 +77,156 @@ window.internetExplorerVersionNo = 9;
 <script defer type="text/javascript" src="js/thirdparty/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js"></script>
 
 <script defer type="text/javascript" src="Scripts/i18n/grid.locale-en.js"></script>
-<script defer type="text/javascript" src="Scripts/jquery.jqGrid.min.js"></script>
+<!--<script defer type="text/javascript" src="Scripts/jquery.jqGrid.min.js"></script>-->
+
+<!-- ExtJS -->
+<script language="javascript">
+
+    // from: http://stackoverflow.com/questions/6435833/how-to-scope-the-reset-css-so-that-is-applied-to-ext-components-using-scopereset
+    // Here we define Ext for the first time
+    Ext = {
+        buildSettings:{
+            "scopeResetCSS": true  // Thanks, but I'll do my own scoping please
+        }
+    };
+
+</script>
+<script type="text/javascript" src="js/thirdparty/extjs-4.1.0/ext-all.js"></script>
+<link rel="stylesheet" type="text/css" href="js/thirdparty/extjs-4.1.0/resources/css/ext-all-scoped.css">
+
+<script language="javascript">
+
+    Ext.Loader.setPath('Ext', 'js/thirdparty/extjs-4.1.0');
+    Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+
+    //from: http://docs.sencha.com/ext-js/4-1/source/PagingMemoryProxy.html#Ext-ux-data-PagingMemoryProxy
+    /**
+    * @class Ext.ux.data.PagingMemoryProxy
+    * @extends Ext.data.proxy.Memory
+    * <p>Paging Memory Proxy, allows to use paging grid with in memory dataset</p>
+    */
+    Ext.define('Ext.ux.data.PagingMemoryProxy', {
+        extend: 'Ext.data.proxy.Memory',
+        alias: 'proxy.pagingmemory',
+        alternateClassName: 'Ext.data.PagingMemoryProxy',
+
+        read: function (operation, callback, scope) {
+            var reader = this.getReader(),
+            result = reader.read(this.data),
+            sorters, filters, sorterFn, records;
+
+            scope = scope || this;
+            // filtering
+            filters = operation.filters;
+            if (filters.length > 0) {
+                //at this point we have an array of  Ext.util.Filter objects to filter with,
+                //so here we construct a function that combines these filters by ANDing them together
+                records = [];
+
+                Ext.each(result.records, function (record) {
+                    var isMatch = true,
+                    length = filters.length,
+                    i;
+
+                    for (i = 0; i < length; i++) {
+                        var filter = filters[i],
+                        fn = filter.filterFn,
+                        scope = filter.scope;
+
+                        isMatch = isMatch && fn.call(scope, record);
+                    }
+                    if (isMatch) {
+                        records.push(record);
+                    }
+                }, this);
+
+                result.records = records;
+                result.totalRecords = result.total = records.length;
+            }
+
+            // sorting
+            sorters = operation.sorters;
+            if (sorters.length > 0) {
+                //construct an amalgamated sorter function which combines all of the Sorters passed
+                sorterFn = function (r1, r2) {
+                    var result = sorters[0].sort(r1, r2),
+                    length = sorters.length,
+                    i;
+
+                    //if we have more than one sorter, OR any additional sorter functions together
+                    for (i = 1; i < length; i++) {
+                        result = result || sorters[i].sort.call(this, r1, r2);
+                    }
+
+                    return result;
+                };
+
+                result.records.sort(sorterFn);
+            }
+
+            // paging (use undefined cause start can also be 0 (thus false))
+            if (operation.start !== undefined && operation.limit !== undefined) {
+                result.records = result.records.slice(operation.start, operation.start + operation.limit);
+                result.count = result.records.length;
+            }
+
+            Ext.apply(operation, {
+                resultSet: result
+            });
+
+            operation.setCompleted();
+            operation.setSuccessful();
+
+            Ext.Function.defer(function () {
+                Ext.callback(callback, scope, [operation]);
+            }, 10);
+        }
+    });
+
+    // from: http://www.sencha.com/forum/showthread.php?200248-4.1.0-button-contents-are-cut-off-when-using-scoped-CSS&highlight=scoperesetcss
+    // Fixes the grid pager buttons disappearing if scopeResetCSS=true
+    Ext.override(Ext.button.Button, {
+
+        getPersistentPadding: function () {
+
+            var me = this,
+                padding = me.persistentPadding,
+                btn, leftTop, btnEl, btnInnerEl;
+
+
+            // Create auto-size button offscreen and measure its insides
+            // Short-circuit IE as it sometimes gives false positive for padding
+            if (!padding) {
+                padding = me.self.prototype.persistentPadding = [0, 0, 0, 0];
+                if (!Ext.isIE) {
+
+
+                    // BEGIN PATCH
+                    btn = Ext.create('Ext.button.Button', {
+                        renderTo: Ext.getBody(),
+                        text: 'test',
+                        style: 'position:absolute;top:-999px;'
+                    });
+                    btnEl = btn.btnEl;
+                    // END PATCH
+
+                    btnInnerEl = btn.btnInnerEl;
+                    btnEl.setSize(null, null); //clear any hard dimensions on the button el to see what it does naturally
+                    leftTop = btnInnerEl.getOffsetsTo(btnEl);
+                    padding[0] = leftTop[1];
+                    padding[1] = btnEl.getWidth() - btnInnerEl.getWidth() - leftTop[0];
+                    padding[2] = btnEl.getHeight() - btnInnerEl.getHeight() - leftTop[1];
+                    padding[3] = leftTop[0];
+
+                    btn.destroy();
+                }
+            }
+            return padding;
+        }
+    });
+</script>
+
+<!-- end ExtJS -->
 
 <script type="text/javascript">
     

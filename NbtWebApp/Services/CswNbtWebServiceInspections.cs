@@ -7,7 +7,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -109,8 +109,8 @@ namespace ChemSW.Nbt.WebServices
                 DeficientTree.goToParentNode();
             } // for( Int32 i = 0; i < DeficientTree.getChildNodeCount(); i++ )
 
-            CswNbtSdGrid gd = new CswNbtSdGrid( _CswNbtResources );
-            gd.PkColumn = "rownum";
+            CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
+            //gd.PkColumn = "rownum";
             return gd.DataTableToJSON( InspectionData );
 
         } // getInspectionStatusGrid

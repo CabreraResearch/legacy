@@ -76,6 +76,8 @@
     <Content Include="ConnectTest.html" />
     <Content Include="_MainDevHeader.html" />
     <Content Include="_MainDev.html" />
+    <Content Include="js\common\composites\csw.gridExtJs.js" />
+    <Content Include="js\common\controls\csw.icon.js" />
     <Content Include="js\common\composites\csw.linkgrid.js" />
     <Content Include="css\csw.action.css" />
     <Content Include="js\common\controls\csw.checkbox.js" />
