@@ -53,7 +53,7 @@
                         return (realValue > minValue || Csw.string(realValue).length === 0);
                     }, 'Evaluated expression must be greater than ' + minValue);
                     valueNtb.addClass('validateMinValue');
-                    exponentNtb.addClass('validateMinValue');
+                    //exponentNtb.addClass('validateMinValue');//Case 26668, Review 26672
                 }
 
                 $.validator.addMethod('validateExponentPresent', function (value, element) {
