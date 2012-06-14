@@ -1706,6 +1706,15 @@
     <None Include="Skin\Menu\Thumbs.db" />
     <None Include="Skin\TabStrip\Thumbs.db" />
     <None Include="Skin\ToolTip\Thumbs.db" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Debug %28Fast%29.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
