@@ -566,7 +566,7 @@ namespace ChemSW.Nbt.WebServices
         //        if( _PropNamesOnDisplay.Contains( PropName ) )
         //        {
         //            _addSafeCellContent( _CswNbtResources, Prop, NodeObj, PropsInGrid, NodeKey );
-/       //         }
+        //         }
         //        Tree.goToNthChild( i );
         //        _addPropsRecursive( Tree, NodeObj, PropsInGrid, NodeKey );
         //        Tree.goToParentNode();

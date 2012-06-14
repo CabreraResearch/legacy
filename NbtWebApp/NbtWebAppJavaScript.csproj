@@ -74,6 +74,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
     <Content Include="_MainDevHeader.html" />
     <Content Include="_MainDev.html" />
     <Content Include="js\common\composites\csw.gridExtJs.js" />
