@@ -73,9 +73,7 @@ namespace ChemSW.Nbt.Schema
             NumberNtp.setSequence( SequenceId );
 
             RequestItemNt.addNameTemplateText( NumberNtp.PropName );
-            RequestItemNt.addNameTemplateText( " " );
             RequestItemNt.addNameTemplateText( RequestItemRequestNtp.PropName );
-            RequestItemNt.addNameTemplateText( " " );
             RequestItemNt.addNameTemplateText( TypeNtp.PropName );
 
             #endregion NodeTypes
@@ -132,7 +130,7 @@ namespace ChemSW.Nbt.Schema
                 MyRequestsView.Category = "Requests";
                 MyRequestsView.ViewMode = NbtViewRenderingMode.Tree;
                 CswNbtViewRelationship RequestVr = MyRequestsView.AddViewRelationship( RequestNt, true );
-                MyRequestsView.AddViewPropertyAndFilter( RequestVr, RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() ), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                MyRequestsView.AddViewPropertyAndFilter( RequestVr, RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() ), FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
                 MyRequestsView.save();
             }
             #endregion Views

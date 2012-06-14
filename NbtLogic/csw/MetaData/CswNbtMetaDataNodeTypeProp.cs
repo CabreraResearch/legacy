@@ -495,7 +495,7 @@ namespace ChemSW.Nbt.MetaData
                              Node.Properties[this].TemporarilyRequired ||
                              AddLayout != null );
             var ret = ( ( false == InPopUp || IsOnAdd ) &&
-                        FilterNodeTypePropId == Int32.MinValue &&
+                FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
                         false == Node.Properties[this].Hidden &&
                         _CswNbtMetaDataResources.CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), false, null, User, Node.NodeId, this ) );
             return ret;
@@ -968,7 +968,7 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 // Case 20480
-                return ( !( IsRequired && DefaultValue.Empty ) && !hasFilter() );
+                return ( !( IsRequired && DefaultValue.Empty ) ); //&& !hasFilter() );
             }
         }
 
@@ -1047,7 +1047,7 @@ namespace ChemSW.Nbt.MetaData
 
             // BZ 7363
             //SetValueOnAdd = false;
-            removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            //removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
         }
 
         public void clearFilter()

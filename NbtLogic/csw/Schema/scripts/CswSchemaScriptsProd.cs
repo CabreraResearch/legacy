@@ -32,13 +32,14 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26111() ) );              //01P-05
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514NodeType() ) );      //01P-06
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514Action() ) );        //01P-07
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514RequestButton() ) ); //01P-08
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCaseXXXXX() ) );              //01P-08
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25449() ) );              //01P-09
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24508() ) );              //01P-10
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24441() ) );              //01P-11
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26572() ) );              //01P-12
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26579() ) );              //01P-13
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24485() ) );              //01P-14
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514RequestButton() ) ); //01P-15
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
@@ -52,9 +53,7 @@ namespace ChemSW.Nbt.Schema
 
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01() ), RunBeforeEveryExecutionOfUpdater_01.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02() ), RunBeforeEveryExecutionOfUpdater_02.Title );
-            /* TODO: Delete _03 on moving to Quince */
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_03() ), RunBeforeEveryExecutionOfUpdater_03.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_04() ), RunBeforeEveryExecutionOfUpdater_04.Title );
 
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_01() ), RunAfterEveryExecutionOfUpdater_01.Title );
             _addRunAfterScript( new CswSchemaUpdateDriver( new RunAfterEveryExecutionOfUpdater_02() ), RunAfterEveryExecutionOfUpdater_02.Title );

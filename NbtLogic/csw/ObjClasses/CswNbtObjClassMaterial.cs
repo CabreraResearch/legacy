@@ -1,4 +1,3 @@
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -23,17 +22,17 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
-        public static string SupplierPropertyName { get { return "Supplier"; } }
-        public static string ApprovalStatusPropertyName { get { return "Approval Status"; } }
-        public static string PartNumberPropertyName { get { return "Part Number"; } }
-        public static string SpecificGravityPropertyName { get { return "Specific Gravity"; } }
-        public static string PhysicalStatePropertyName { get { return "Physical State"; } }
-        public static string CasNoPropertyName { get { return "CAS No"; } }
-        public static string RegulatoryListsPropName { get { return "Regulatory Lists"; } }
-        public static string TradenamePropName { get { return "Tradename"; } }
-        public static string StorageCompatibilityPropName { get { return "Storage Compatibility"; } }
-        public static string ExpirationIntervalPropName { get { return "Expiration Interval"; } }
-        public static string RequestPropertyName { get { return "Request"; } }
+        public const string SupplierPropertyName = "Supplier";
+        public const string ApprovalStatusPropertyName = "Approval Status";
+        public const string PartNumberPropertyName = "Part Number";
+        public const string SpecificGravityPropertyName = "Specific Gravity";
+        public const string PhysicalStatePropertyName = "Physical State";
+        public const string CasNoPropertyName = "CAS No";
+        public const string RegulatoryListsPropName = "Regulatory Lists";
+        public const string TradenamePropName = "Tradename";
+        public const string StorageCompatibilityPropName = "Storage Compatibility";
+        public const string ExpirationIntervalPropName = "Expiration Interval";
+        public const string RequestPropertyName = "Request";
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterial
@@ -102,28 +101,13 @@ namespace ChemSW.Nbt.ObjClasses
                 if( RequestPropertyName == OCP.PropName )
                 {
                     CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
-                    CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestAct.RequestItemNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
-                    if( null == NodeAsRequestItem )
-                    {
-                        throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
-                    }
-                    NodeAsRequestItem.Material.RelatedNodeId = NodeId;
-                    NodeAsRequestItem.Container.Hidden = true;
 
-                    if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
-                    {
-                        NodeAsRequestItem.Location.NodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
-                    }
-
-                    NodeAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Request.ToString();
-
-                    NodeAsRequestItem.postChanges( true );
-
+                    CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
                     JObject ActionDataObj = new JObject();
                     ActionDataObj["requestaction"] = OCP.PropName;
-                    ActionDataObj["requestItemNodeId"] = NodeAsRequestItem.NodeId.ToString();
-                    ActionDataObj["requestItemNodePk"] = NodeAsRequestItem.NodeId.PrimaryKey.ToString();
-                    ActionDataObj["titleText"] = TradeName.Text + " Request";
+                    ActionDataObj["titleText"] = "Request for " + TradeName.Text;
+                    ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                    ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
                     ActionData = ActionDataObj.ToString();
 
                     ButtonAction = NbtButtonAction.request;
