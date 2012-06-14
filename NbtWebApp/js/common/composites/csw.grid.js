@@ -521,8 +521,8 @@
 //                cswPublic.setWidth(width);
 //            };
 
-            cswPublic.clearGridRows = function () {
-                cswPublic.gridTable.$.jqGrid('clearGridData');
+//            cswPublic.clearGridRows = function () {
+//                cswPublic.gridTable.$.jqGrid('clearGridData');
 
 //            /* "Constuctor" */
 //            (function () {
