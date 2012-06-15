@@ -351,74 +351,97 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != NodeTypeProp )
             {
                 CswNbtMetaDataObjectClassProp ButtonOCP = NodeTypeProp.getObjectClassProp();
-                if( ButtonOCP.PropName == FinishPropertyName )
+                CswNbtPropEnmrtrFiltered QuestionsFlt;
+                switch( ButtonOCP.PropName )
                 {
+                    case FinishPropertyName:
+                        bool _Deficient = false;
+                        bool _allAnswered = true;
+                        bool _allAnsweredinTime = true;
 
-                    bool _Deficient = false;
-                    bool _allAnswered = true;
-                    bool _allAnsweredinTime = true;
-
-                    CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
-                    QuestionsFlt.Reset();
-                    CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
-                    foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
-                    {
-                        CswNbtNodePropQuestion QuestionProp = Prop.AsQuestion;
-                        _Deficient = ( _Deficient || !QuestionProp.IsCompliant );
-                        if( QuestionProp.Answer.Trim() == string.Empty )
+                        QuestionsFlt = Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                        QuestionsFlt.Reset();
+                        CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
+                        foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                         {
-                            UnansweredQuestions.Add( Prop.NodeTypeProp.FullQuestionNo );
-                            _allAnswered = false;
+                            CswNbtNodePropQuestion QuestionProp = Prop;
+                            _Deficient = ( _Deficient || !QuestionProp.IsCompliant );
+                            if( QuestionProp.Answer.Trim() == string.Empty )
+                            {
+                                UnansweredQuestions.Add( Prop.NodeTypeProp.FullQuestionNo );
+                                _allAnswered = false;
+                            }
+                            _allAnsweredinTime = ( _allAnsweredinTime &&
+                                                  QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
                         }
-                        _allAnsweredinTime = ( _allAnsweredinTime && QuestionProp.DateAnswered.Date <= this.Date.DateTimeValue );
-                    }
 
-                    if( _allAnswered )
-                    {
-                        if( _Deficient )
+                        if( _allAnswered )
                         {
-                            Message = "Inspection is deficient and requires further action.";
-                            this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
-                        }
+                            if( _Deficient )
+                            {
+                                Message = "Inspection is deficient and requires further action.";
+                                this.Status.Value = InspectionStatusAsString( InspectionStatus.Action_Required );
+                            }
+                            else
+                            {
+                                string StatusValue =
+                                    InspectionStatusAsString( _allAnsweredinTime
+                                                                 ? InspectionStatus.Completed
+                                                                 : InspectionStatus.Completed_Late );
+                                Message = "Inspection marked " + StatusValue + ".";
+                                ButtonAction = NbtButtonAction.refresh;
+                                this.Status.Value = StatusValue;
+                            }
+                            if( true == this.InspectionDate.Empty )
+                            {
+                                this.InspectionDate.DateTimeValue = DateTime.Now;
+                                this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                            }
+                            CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
+                            if( ParentNode != null )
+                            {
+                                ICswNbtPropertySetInspectionParent Parent =
+                                    CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
+                                if( false == _Deficient ) //case 25041
+                                {
+                                    _Deficient = areMoreActionsRequired();
+                                }
+                                Parent.Status.Value = _Deficient
+                                                          ? TargetStatusAsString( TargetStatus.Deficient )
+                                                          : TargetStatusAsString( TargetStatus.OK );
+                                //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
+                                ParentNode.postChanges( false );
+                            }
+
+                        } // if( _allAnswered )
                         else
                         {
-                            string StatusValue = InspectionStatusAsString( _allAnsweredinTime ? InspectionStatus.Completed : InspectionStatus.Completed_Late );
-                            Message = "Inspection marked " + StatusValue + ".";
-                            ButtonAction = NbtButtonAction.refresh;
-                            this.Status.Value = StatusValue;
+                            Message =
+                                "Inspection can not be finished until all questions are answered.  Questions remaining: " +
+                                UnansweredQuestions.ToString();
                         }
-                        if( true == this.InspectionDate.Empty )
+                        break;
+
+                    case CancelPropertyName:
+                        Message = "Inspection has been cancelled.";
+                        ButtonAction = NbtButtonAction.refresh;
+                        this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
+                        break;
+
+                    case SetPreferredPropertyName:
+                        QuestionsFlt = Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                        QuestionsFlt.Reset();
+                        foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                         {
-                            this.InspectionDate.DateTimeValue = DateTime.Now;
-                            this.Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                        }
-                        CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
-                        if( ParentNode != null )
-                        {
-                            ICswNbtPropertySetInspectionParent Parent = CswNbtPropSetCaster.AsPropertySetInspectionParent( ParentNode );
-                            if( false == _Deficient )//case 25041
+                            CswNbtNodePropQuestion QuestionProp = Prop;
+                            if( string.IsNullOrEmpty( QuestionProp.Answer.Trim() ) )
                             {
-                                _Deficient = areMoreActionsRequired();
+                                QuestionProp.Answer = QuestionProp.PreferredAnswer;
                             }
-                            Parent.Status.Value = _Deficient ? TargetStatusAsString( TargetStatus.Deficient ) : TargetStatusAsString( TargetStatus.OK );
-                            //Parent.LastInspectionDate.DateTimeValue = DateTime.Now;
-                            ParentNode.postChanges( false );
                         }
-
-                    } // if( _allAnswered )
-                    else
-                    {
-                        Message = "Inspection can not be finished until all questions are answered.  Questions remaining: " + UnansweredQuestions.ToString();
-                    }
-                } // if( ButtonOCP.PropName == FinishPropertyName )
-
-                else if( ButtonOCP.PropName == CancelPropertyName )
-                {
-                    Message = "Inspection has been cancelled.";
-                    ButtonAction = NbtButtonAction.refresh;
-                    this.Status.Value = InspectionStatusAsString( InspectionStatus.Cancelled );
+                        ButtonAction = NbtButtonAction.refresh;
+                        break;
                 }
-
                 this.postChanges( false );
             } // if( null != NodeTypeProp )
             return true;
