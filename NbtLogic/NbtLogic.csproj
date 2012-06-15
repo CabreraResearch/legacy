@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26692SetPreferred.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26471.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />

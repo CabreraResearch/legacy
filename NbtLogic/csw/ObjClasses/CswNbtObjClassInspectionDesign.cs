@@ -16,61 +16,58 @@ namespace ChemSW.Nbt.ObjClasses
         ///// <summary>
         ///// Inspection Route
         ///// </summary>
-        //public static string RoutePropertyName { get { return "Route"; } }
+        //public static string RoutePropertyName = "Route"; } }
         /// <summary>
         /// Target == Owner == Parent
         /// </summary>
-        public static string TargetPropertyName { get { return "Target"; } }
-        ///// <summary>
-        ///// This Inspection's order within Route
-        ///// </summary>
-        //public static string RouteOrderPropertyName { get { return "Route Order"; } }
+        public const string TargetPropertyName = "Target";
         /// <summary>
         /// Inspection name
         /// </summary>
-        public static string NamePropertyName { get { return "Name"; } }
+        public const string NamePropertyName = "Name";
         /// <summary>
         /// Due date
         /// </summary>
-        public static string DatePropertyName { get { return "Due Date"; } }
+        public const string DatePropertyName = "Due Date";
         /// <summary>
         /// Is Future Inspection
         /// </summary>
-        public static string IsFuturePropertyName { get { return "IsFuture"; } }
+        public const string IsFuturePropertyName = "IsFuture";
         /// <summary>
         /// Schedule generating this inspection
         /// </summary>
-        public static string GeneratorPropertyName { get { return "Generator"; } }
+        public const string GeneratorPropertyName = "Generator";
         /// <summary>
         /// Owner == Target == Parent
         /// </summary>
-        public static string OwnerPropertyName { get { return "Target"; } }
+        public const string OwnerPropertyName = "Target";
         /// <summary>
         /// Inspection status as list should match InspectionStatus enum
         /// </summary>
-        public static string StatusPropertyName { get { return "Status"; } }
+        public const string StatusPropertyName = "Status";
         /// <summary>
         /// Finished or submitted
         /// </summary>
-        public static string FinishPropertyName { get { return "Finish"; } }
+        public const string FinishPropertyName = "Finish";
         /// <summary>
         /// Marked cancelled
         /// </summary>
-        public static string CancelPropertyName { get { return "Cancel"; } }
+        public const string CancelPropertyName = "Cancel";
         /// <summary>
         /// Reason for cancel
         /// </summary>
-        public static string CancelReasonPropertyName { get { return "Cancel Reason"; } }
+        public const string CancelReasonPropertyName = "Cancel Reason";
         /// <summary>
         /// Location of Inspection's Target
         /// </summary>
-        public static string LocationPropertyName { get { return "Location"; } }
+        public const string LocationPropertyName = "Location";
         /// <summary>
         /// Nodetype Version
         /// </summary>
-        public static string VersionPropertyName { get { return "Version"; } }
-        public static string InspectionDatePropertyName { get { return "Inspection Date"; } }
-        public static string InspectorPropertyName { get { return "Inspector"; } }
+        public const string VersionPropertyName = "Version";
+        public const string InspectionDatePropertyName = "Inspection Date";
+        public const string InspectorPropertyName = "Inspector";
+        public const string SetPreferredPropertyName = "Set Preferred";
 
         /// <summary>
         /// Possible status values for Inspection. Should match List values on ID Status attribute.
@@ -300,7 +297,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             //case 26113: check parent for bad inspections 
             CswNbtNode ParentNode = _CswNbtResources.Nodes.GetNode( this.Parent.RelatedNodeId );
@@ -314,7 +311,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ParentNode.postChanges( false );
             }
 
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -477,7 +474,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[TargetPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[TargetPropertyName] );
             }
         }
 
@@ -499,7 +496,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
+                return ( _CswNbtNode.Properties[NamePropertyName] );
             }
         }
 
@@ -510,7 +507,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[DatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[DatePropertyName] );
             }
         }
 
@@ -521,7 +518,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[GeneratorTargetGeneratedDatePropertyName] );
             }
         }
 
@@ -532,7 +529,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[IsFuturePropertyName].AsLogical );
+                return ( _CswNbtNode.Properties[IsFuturePropertyName] );
             }
         }
 
@@ -540,7 +537,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[GeneratorPropertyName] );
             }
         }
 
@@ -551,7 +548,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[OwnerPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[OwnerPropertyName] );
             }
         }
 
@@ -562,7 +559,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[GeneratorTargetParentPropertyName] );
             }
         }
 
@@ -573,7 +570,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[StatusPropertyName].AsList );
+                return ( _CswNbtNode.Properties[StatusPropertyName] );
             }
         }
         /// <summary>
@@ -583,7 +580,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[FinishPropertyName].AsButton );
+                return ( _CswNbtNode.Properties[FinishPropertyName] );
             }
         }
 
@@ -594,7 +591,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[CancelPropertyName].AsButton );
+                return ( _CswNbtNode.Properties[CancelPropertyName] );
             }
         }
 
@@ -605,7 +602,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[CancelReasonPropertyName].AsMemo );
+                return ( _CswNbtNode.Properties[CancelReasonPropertyName] );
             }
         }
 
@@ -616,7 +613,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[LocationPropertyName].AsPropertyReference );
+                return ( _CswNbtNode.Properties[LocationPropertyName] );
             }
         }
 
@@ -627,7 +624,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[VersionPropertyName].AsText );
+                return ( _CswNbtNode.Properties[VersionPropertyName] );
             }
         }
 
@@ -638,7 +635,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[InspectionDatePropertyName].AsDateTime );
+                return ( _CswNbtNode.Properties[InspectionDatePropertyName] );
             }
         }
 
@@ -649,9 +646,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[InspectorPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[InspectorPropertyName] );
             }
         }
+
+        public CswNbtNodePropButton SetPreferred { get { return _CswNbtNode.Properties[SetPreferredPropertyName]; } }
 
         #endregion
 
