@@ -80,7 +80,7 @@
 
     Csw.error.throwException = Csw.error.throwException ||
         Csw.error.register('throwException', function (exception) {
-            Csw.debug.log(exception);
+            Csw.debug.error(exception);
             throw exception;
         });
 

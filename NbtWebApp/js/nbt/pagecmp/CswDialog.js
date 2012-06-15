@@ -1124,8 +1124,8 @@
                 $.extend(o, options);
             }
             var div = Csw.literals.div(o.ID);
-            Csw.tryExec(o.onOpen, div);
             openDialog(div, o.width, o.height, o.onClose, o.title);
+            Csw.tryExec(o.onOpen, div);
         },
         CloseDialog: function (id) {
             $('#' + id)

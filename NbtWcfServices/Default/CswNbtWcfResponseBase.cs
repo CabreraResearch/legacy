@@ -16,6 +16,25 @@ namespace NbtWebAppServices.Response
         private double _ServerInitTime;
         private HttpContext _Context;
 
+        public CswNbtWcfResponseBase( bool IsFailed = true )
+        {
+            _ServerInitTime = 0;
+            _Timer = new CswTimer();
+            SessionAuthenticationStatus = new CswNbtSessionAuthenticationStatus();
+            SessionAuthenticationStatus.AuthenticationStatus = AuthenticationStatus.Failed.ToString();
+            Status = new CswNbtWebServiceStatus();
+
+            try
+            {
+                CswNbtWcfSessionResources = null;
+            }
+            catch( Exception ex )
+            {
+                addError( ex );
+            }
+
+        }
+
         public CswNbtWcfResponseBase( HttpContext Context, bool IsMobile, bool AttemptRefresh = false )
         {
             _ServerInitTime = 0;
