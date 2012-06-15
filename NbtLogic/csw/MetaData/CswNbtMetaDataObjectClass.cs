@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.MetaData
             InspectionRouteClass,
             InventoryGroupClass,
             InventoryGroupPermissionClass,
+            InventoryLevelClass,
             LocationClass,
             MailReportClass,
             MaterialClass,
