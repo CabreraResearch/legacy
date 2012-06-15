@@ -9,6 +9,8 @@ using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.MetaData;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -175,6 +177,15 @@ namespace ChemSW.Nbt.WebServices
             Ret["Help"]["Clear Cache"]["action"] = "Clear Cache";
             Ret["Help"]["About"] = new JObject();
             Ret["Help"]["About"]["action"] = "About";
+            CswNbtMetaDataObjectClass feedbackOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass );
+            IEnumerable<CswNbtMetaDataNodeType> feedbackNodeTypes = feedbackOC.getNodeTypes();
+            if( feedbackNodeTypes.Count() > 0 )
+            {
+                Ret["Help"]["Give Feedback"] = new JObject();
+                Ret["Help"]["Give Feedback"]["action"] = "AddNode";
+                CswNbtMetaDataNodeType feedbackNodeType = feedbackNodeTypes.First();
+                Ret["Help"]["Give Feedback"]["nodetypeid"] = feedbackNodeType.NodeTypeId;
+            }
 
             Ret["Logout"] = new JObject( new JProperty( "action", "Logout" ) );
 
