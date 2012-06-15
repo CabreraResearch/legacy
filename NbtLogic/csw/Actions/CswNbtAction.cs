@@ -16,7 +16,9 @@ namespace ChemSW.Nbt.Actions
         Sessions,
         View_Scheduled_Rules,
         Modules,
-        Submit_Request
+        Submit_Request,
+        DispenseContainer,
+        DisposeContainer
     }
 
     public class CswNbtAction

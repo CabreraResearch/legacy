@@ -1,5 +1,4 @@
 using ChemSW.Nbt.MetaData;
-using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -12,6 +11,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string ViewPropertyName { get { return "View"; } }
         public static string EditPropertyName { get { return "Edit"; } }
         public static string DispensePropertyName { get { return "Dispense"; } }
+        public static string DisposePropertyName { get { return "Dispose"; } }
         public static string RequestPropertyName { get { return "Request"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -61,9 +61,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -100,6 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[ViewPropertyName].AsLogical; } }
         public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[EditPropertyName].AsLogical; } }
         public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[DispensePropertyName].AsLogical; } }
+        public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[DisposePropertyName].AsLogical; } }
         public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[RequestPropertyName].AsLogical; } }
 
         #endregion
