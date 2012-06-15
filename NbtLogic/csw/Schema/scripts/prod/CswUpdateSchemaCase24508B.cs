@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
                 new CswNbtWcfMetaDataModel.ObjectClassProp
                 {
                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    PropName = CswNbtObjClassContainer.DispensePropertyName
+                    PropName = CswNbtObjClassContainer.RequestDispensePropertyName
                 }
             );
 
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             {
                 CswNbtMetaDataNodeTypeTab NodeTypeTab = ContainerNodeType.getFirstNodeTypeTab();
                 Int32 FirstTabId = NodeTypeTab.TabId;
-                CswNbtMetaDataNodeTypeProp DispenseNodeTypeProp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.DispensePropertyName );
+                CswNbtMetaDataNodeTypeProp DispenseNodeTypeProp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestDispensePropertyName );
                 DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirstTabId );
                 DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirstTabId );
             }
