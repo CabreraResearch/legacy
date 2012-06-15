@@ -62,6 +62,7 @@ namespace NbtWebAppServices.Response
                 public string Text { get; set; }
                 public string Type { get; set; }
                 public string HelpText { get; set; }
+                public string PreferredAnswer { get; set; }
             }
         }
 
