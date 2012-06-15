@@ -84,12 +84,13 @@ namespace ChemSW.Nbt.Schema
         }//getDriver()
 
 
-        private bool _runScript( CswSchemaUpdateDriver CswSchemaUpdateDriver, bool StampVersion )
+        //case 26617: removing otiose instance of CswNbtResources resolved catastrophic memory leak
+        private bool _runScript( CswNbtResources CswNbtResources, CswSchemaUpdateDriver CswSchemaUpdateDriver, bool StampVersion )
         {
 
             bool ReturnVal = true;
 
-            CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+            //            CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
             CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn = new CswNbtSchemaModTrnsctn( CswNbtResources );
 
             CswTableUpdate _UpdateHistoryTableUpdate = CswNbtResources.makeCswTableUpdate( "schemaupdater_updatehistory_update", "update_history" );
@@ -134,6 +135,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtResources.finalize();
             CswNbtResources.release();
 
+            GC.Collect();
+
             return ( ReturnVal );
 
         }//_runScript()
@@ -142,7 +145,7 @@ namespace ChemSW.Nbt.Schema
 
         public bool runArbitraryScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
-            return ( _runScript( CswSchemaUpdateDriver, false ) );
+            return ( _runScript( _ResourcesInitHandler( _AccessId ), CswSchemaUpdateDriver, false ) );
         }//UpdateArbitraryScript
 
 
@@ -160,14 +163,14 @@ namespace ChemSW.Nbt.Schema
             if( null != ( CurrentUpdateDriver = _CswSchemaScripts.Next( CswNbtResources ) ) )
             {
 
-                UpdateSuccessful = _runScript( CurrentUpdateDriver, true );
+                UpdateSuccessful = _runScript( CswNbtResources, CurrentUpdateDriver, true );
 
 
             } // if update is valid
 
             return UpdateSuccessful;
 
-        }//Update()
+        }//runNextVersionedScript()
 
         public Dictionary<CswSchemaVersion, CswSchemaUpdateDriver> UpdateDrivers
         {
