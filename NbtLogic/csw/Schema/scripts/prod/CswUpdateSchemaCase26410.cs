@@ -24,7 +24,8 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NTPropsToUpdate )
             {
-                CswNbtView UnitView = _CswNbtSchemaModTrnsctn.restoreView( NodeTypeProp.ViewId );
+                CswNbtViewId NewViewId = NodeTypeProp.ViewId;
+                CswNbtView UnitView = _CswNbtSchemaModTrnsctn.restoreView( NewViewId );
                 UnitView.Root.ChildRelationships.Clear();
                 UnitView.ViewName = "CswNbtNodeTypePropQuantity_" + NodeTypeProp.NodeTypeId.ToString();
                 UnitView.AddViewRelationship( UnitOC, true );
