@@ -49,25 +49,27 @@ namespace ChemSW.Nbt.Actions
 
         #region Private
 
-        private static readonly string _SectionName = "SECTION";
-        private static readonly string _QuestionName = "QUESTION";
-        private static readonly string _AllowedAnswersName = "ALLOWED_ANSWERS";
-        private static readonly string _CompliantAnswersName = "COMPLIANT_ANSWERS";
-        private static readonly string _HelpTextName = "HELP_TEXT";
+        private const string _SectionName = "SECTION";
+        private const string _QuestionName = "QUESTION";
+        private const string _AllowedAnswersName = "ALLOWED_ANSWERS";
+        private const string _CompliantAnswersName = "COMPLIANT_ANSWERS";
+        private const string _PreferredAnswer = "PREFERRED_ANSWER";
+        private const string _HelpTextName = "HELP_TEXT";
 
-        private readonly CswCommaDelimitedString _ColumnNames = new CswCommaDelimitedString()
+        private readonly CswCommaDelimitedString _ColumnNames = new CswCommaDelimitedString
                                                            {
                                                                _SectionName,
                                                                _QuestionName,
                                                                _AllowedAnswersName,
                                                                _CompliantAnswersName,
+                                                               _PreferredAnswer,
                                                                _HelpTextName
                                                            };
 
 
-        private readonly string _DefaultSectionName = "Questions";
-        private readonly string _DefaultAllowedAnswers = "Yes,No,N/A";
-        private readonly string _DefaultCompliantAnswers = "Yes";
+        private const string _DefaultSectionName = "Questions";
+        private const string _DefaultAllowedAnswers = "Yes,No,N/A";
+        private const string _DefaultCompliantAnswers = "Yes";
 
         private CswCommaDelimitedString _ProposedNodeTypeNames = new CswCommaDelimitedString();
         private Int32 _DesignNtId = 0;
@@ -239,6 +241,7 @@ namespace ChemSW.Nbt.Actions
                     string Question = CswConvert.ToString( ThisRow[_QuestionName] );
                     string AllowedAnswers = CswConvert.ToString( ThisRow[_AllowedAnswersName] );
                     string CompliantAnswers = CswConvert.ToString( ThisRow[_CompliantAnswersName] );
+                    string PreferredAnswer = CswConvert.ToString( ThisRow[_PreferredAnswer] );
                     string HelpText = CswConvert.ToString( ThisRow[_HelpTextName] );
 
                     if( false == string.IsNullOrEmpty( Question ) )
@@ -266,13 +269,14 @@ namespace ChemSW.Nbt.Actions
                             }
                             else
                             {
-                                _validateAnswers( ref CompliantAnswers, ref AllowedAnswers );
+                                _validateAnswers( ref CompliantAnswers, ref AllowedAnswers, ref PreferredAnswer );
                                 if( false == string.IsNullOrEmpty( HelpText ) )
                                 {
                                     ThisQuestion.HelpText = HelpText;
                                 }
                                 ThisQuestion.ValueOptions = CompliantAnswers;
                                 ThisQuestion.ListOptions = AllowedAnswers;
+                                ThisQuestion.Extended = PreferredAnswer;
                                 ThisQuestion.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
                                 RetCount += 1;
                             }
@@ -759,7 +763,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Ensure that Allowed Answers contains all Compliant Answers and that both collections contain only unique answers.
         /// </summary>
-        private void _validateAnswers( ref string CompliantAnswersString, ref string AllowedAnswersString )
+        private void _validateAnswers( ref string CompliantAnswersString, ref string AllowedAnswersString, ref string PreferredAnswerString )
         {
             string RetCompliantAnswersString = _DefaultCompliantAnswers;
             string RetAllowedAnswersString = _DefaultAllowedAnswers;
@@ -769,6 +773,11 @@ namespace ChemSW.Nbt.Actions
 
             CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
             CompliantAnswers.FromString( CompliantAnswersString );
+
+            if( false == CompliantAnswers.Contains( PreferredAnswerString, CaseSensitive: false ) )
+            {
+                PreferredAnswerString = "";
+            }
 
             if( AllowedAnswers.Count > 0 ||
                     CompliantAnswers.Count > 0 )
@@ -869,10 +878,12 @@ namespace ChemSW.Nbt.Actions
 
                         string AllowedAnswers = CswConvert.ToString( Row[_AllowedAnswersName] );
                         string ComplaintAnswers = CswConvert.ToString( Row[_CompliantAnswersName] );
-                        _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers );
+                        string PreferredAnswer = CswConvert.ToString( Row[_PreferredAnswer] );
+                        _validateAnswers( ref ComplaintAnswers, ref AllowedAnswers, ref PreferredAnswer );
 
                         NewRow[_AllowedAnswersName] = AllowedAnswers;
                         NewRow[_CompliantAnswersName] = ComplaintAnswers;
+                        NewRow[_PreferredAnswer] = PreferredAnswer;
                         NewRow[_HelpTextName] = CswConvert.ToString( Row[_HelpTextName] );
 
                         string SectionName = _standardizeName( Row[_SectionName] );

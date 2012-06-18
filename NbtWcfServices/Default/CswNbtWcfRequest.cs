@@ -8,14 +8,16 @@ namespace NbtWebAppServices.Response
         [DataContract]
         public class CswNbtSessionRequest
         {
-            [DataMember( IsRequired = true )]
-            public string Password { get; set; }
-            [DataMember( IsRequired = true )]
-            public string CustomerId { get; set; }
-            [DataMember( IsRequired = true )]
-            public string UserName { get; set; }
-            [DataMember( IsRequired = true )]
-            public bool IsMobile { get; set; }
+            [DataMember( IsRequired = false )]
+            public string Password = "";
+            [DataMember( IsRequired = false )]
+            public string CustomerId = "";
+            [DataMember( IsRequired = false )]
+            public string UserName = "";
+            [DataMember( IsRequired = false )]
+            public bool IsMobile = true;
         }
     }
+
+
 }

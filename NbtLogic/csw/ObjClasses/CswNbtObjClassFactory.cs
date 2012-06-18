@@ -86,6 +86,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassInventoryGroupPermission( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass:
+                    ReturnVal = new CswNbtObjClassInventoryLevel( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass:
                     ReturnVal = new CswNbtObjClassLocation( CswNbtResources, Node );
                     break;

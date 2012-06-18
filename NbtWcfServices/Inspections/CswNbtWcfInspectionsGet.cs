@@ -78,6 +78,7 @@ namespace NbtWebAppServices.Response
                                                        HelpText = NodeTypeProp.HelpText,
                                                        Type = NodeTypeProp.getFieldType().FieldType.ToString(),
                                                        QuestionId = NodeTypeProp.PropId,
+                                                       PreferredAnswer = NodeTypeProp.Extended,
                                                        Text = NodeTypeProp.PropName,
                                                        Choices = null
                                                    };

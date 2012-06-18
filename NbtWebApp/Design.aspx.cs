@@ -2262,8 +2262,6 @@ namespace ChemSW.Nbt.WebPages
                             QstnPossibleAnswersText.Text = SelectedNodeTypeProp.ListOptions;
                             QstnPossibleAnswersRow.Cells[1].Controls.Add( QstnPossibleAnswersText );
 
-
-
                             //Text: Compliant Answers
                             TableRow QstnCompliantAnswerRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) QstnCompliantAnswerRow.Cells[0].Controls[0] ).Text = "Compliant Answers:";
@@ -2282,6 +2280,7 @@ namespace ChemSW.Nbt.WebPages
                                 AnswerRow[1] = ( CompliantAnswers.Contains( PossibleAnswers[i] ) );
                             }
 
+
                             QstnCompliantAnswerList.CreateCheckBoxes( CompliantAnswersTable, AnswersColumn.ColumnName, AnswersColumn.ColumnName );
                             //TextBox QstnCompliantAnswerList = new TextBox();
                             //QstnCompliantAnswerList.CssClass = "textinput";
@@ -2289,6 +2288,18 @@ namespace ChemSW.Nbt.WebPages
                             //QstnCompliantAnswerList.Text = SelectedNodeTypeProp.ValueOptions;
                             QstnCompliantAnswerRow.Cells[1].Controls.Add( QstnCompliantAnswerList );
 
+                            //Preferred Answer
+                            TableRow PreferredAnswerRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) PreferredAnswerRow.Cells[0].Controls[0] ).Text = "Preferred Answer:";
+                            DropDownList PreferredAnswerValueList = new DropDownList();
+                            PreferredAnswerValueList.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            PreferredAnswerValueList.Items.Add( new ListItem( string.Empty, string.Empty ) );
+                            foreach( string Answer in CompliantAnswers )
+                            {
+                                PreferredAnswerValueList.Items.Add( new ListItem( Answer, Answer ) );
+                            }
+                            PreferredAnswerValueList.SelectedValue = SelectedNodeTypeProp.Extended;
+                            PreferredAnswerRow.Cells[1].Controls.Add( PreferredAnswerValueList );
                             //RequiredFieldValidator QstnCompliantAnswerRFV = new RequiredFieldValidator();
                             //QstnCompliantAnswerRFV.ControlToValidate = QstnCompliantAnswerList.ID;
                             //QstnCompliantAnswerRFV.ID = "EditProp_ValueOptionsValue_RFV" + SelectedNodeTypeProp.PropId.ToString();

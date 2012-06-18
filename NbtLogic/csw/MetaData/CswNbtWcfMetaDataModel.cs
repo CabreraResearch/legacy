@@ -2,7 +2,6 @@
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -115,8 +114,7 @@ namespace ChemSW.Nbt.MetaData
         [DataContract]
         public class NodeTypeProp
         {
-
-            public NodeTypeProp( CswNbtMetaDataNodeType NbtNodeType, CswNbtMetaDataFieldType NbtFieldType, string NbtPropName )
+            private void _init( CswNbtMetaDataNodeType NbtNodeType, CswNbtMetaDataFieldType NbtFieldType, string NbtPropName )
             {
                 if( null == NbtNodeType )
                 {
@@ -149,7 +147,11 @@ namespace ChemSW.Nbt.MetaData
                 IsUnique = ( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
                             FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence );
             }
-
+            public NodeTypeProp( CswNbtMetaDataNodeType NbtNodeType, CswNbtMetaDataFieldType NbtFieldType, string NbtPropName )
+            {
+                _init( NbtNodeType, NbtFieldType, NbtPropName );
+            }
+            
             [DataMember( IsRequired = true )]
             public string PropName = string.Empty;
             [DataMember( IsRequired = true )]
