@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -84,35 +83,33 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtMetaDataNodeTypeProp Capacity = SizeNodeType.getNodeTypeProp( "Capacity" );
                     string UniqueNodeViewName = "CswNbtNodeTypePropQuantity_" + Capacity.NodeTypeId.ToString() + "_" + this.NodeId.ToString();
 
-                    List<CswNbtView> NodeSpecificViewList = _CswNbtResources.ViewSelect.restoreViews( UniqueNodeViewName );
-                    CswNbtView StateSpecificUnitTypeView;
-                    if( 0 == NodeSpecificViewList.Count )
-                    {
-                        StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
-                    }
-                    else
-                    {
-                        StateSpecificUnitTypeView = NodeSpecificViewList[0];
-                        StateSpecificUnitTypeView.Delete();
-                    }
-                    StateSpecificUnitTypeView.makeNew( UniqueNodeViewName, NbtViewVisibility.Property );
+                    CswNbtView StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
+                    StateSpecificUnitTypeView.ViewName = UniqueNodeViewName;
 
                     if( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() == "n/a" )
                     {
                         CswNbtMetaDataNodeType EachNT = _CswNbtResources.MetaData.getNodeType( "Each Unit" );
-                        StateSpecificUnitTypeView.AddViewRelationship( EachNT, true );
+                        if( EachNT != null )
+                        {
+                            StateSpecificUnitTypeView.AddViewRelationship( EachNT, true );
+                        }
                     }
                     else
                     {
                         CswNbtMetaDataNodeType WeightNT = _CswNbtResources.MetaData.getNodeType( "Weight Unit" );
-                        StateSpecificUnitTypeView.AddViewRelationship( WeightNT, true );
+                        if( WeightNT != null )
+                        {
+                            StateSpecificUnitTypeView.AddViewRelationship( WeightNT, true );
+                        }
                         if( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() != "solid" )
                         {
                             CswNbtMetaDataNodeType VolumeNT = _CswNbtResources.MetaData.getNodeType( "Volume Unit" );
-                            StateSpecificUnitTypeView.AddViewRelationship( VolumeNT, true );
+                            if( VolumeNT != null )
+                            {
+                                StateSpecificUnitTypeView.AddViewRelationship( VolumeNT, true );
+                            }
                         }
                     }
-                    StateSpecificUnitTypeView.save();
                     this.Capacity.View = StateSpecificUnitTypeView;
                 }
             }
