@@ -10,10 +10,10 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            //Set Container.Quantity to ServerManaged
+            //Set Container.Quantity to ReadOnly
             CswNbtMetaDataObjectClass ContainerObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp QuantityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerObjClass.ObjectClassId, CswNbtObjClassContainer.QuantityPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuantityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( QuantityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly, true );
 
             //Add "N/A" to Material.PhysicalState
             CswNbtMetaDataObjectClass MaterialObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
@@ -22,11 +22,15 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PhysicalStateProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PhysicalStateProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
 
-            //Set Supplies.PhysicalState DefaultValue to "N/A", ServerManaged = true
+            //Set Supplies.PhysicalState DefaultValue to "N/A", ReadOnly = true
             CswNbtMetaDataNodeType SupplyNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Supply" );
-            CswNbtMetaDataNodeTypeProp PhysicalStateNTProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( SupplyNodeType.NodeTypeId, CswNbtObjClassMaterial.PhysicalStatePropertyName );
-            PhysicalStateNTProp.DefaultValue.AsList.Value = "N/A";
-            PhysicalStateNTProp.ServerManaged = true;
+            if( SupplyNodeType != null )
+            {
+                CswNbtMetaDataNodeTypeProp PhysicalStateNTProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypePropByObjectClassProp( SupplyNodeType.NodeTypeId, PhysicalStateProp.ObjectClassPropId );
+                PhysicalStateNTProp.DefaultValue.AsList.Value = "N/A";
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, PhysicalStateNTProp, PhysicalStateNTProp.AddLayout.TabId );
+                PhysicalStateNTProp.ReadOnly = true;
+            }
 
             //Set Size.Capacity SetValOnAdd = false
             CswNbtMetaDataObjectClass SizeObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
