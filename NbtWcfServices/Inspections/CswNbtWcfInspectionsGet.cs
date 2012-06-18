@@ -166,7 +166,9 @@ namespace NbtWebAppServices.Response
                     InspectionPointName = NodeAsInspectionDesign.Target.CachedNodeName,
                     LocationPath = NodeAsInspectionDesign.Location.Gestalt,
                     RouteName = default( string ),
-                    Status = NodeAsInspectionDesign.Status.Value
+                    Status = NodeAsInspectionDesign.Status.Value,
+                    Counts = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionCounts()
+
                 };
 
                 foreach( CswNbtNodePropWrapper Prop in InspectionNode.Properties )
@@ -174,6 +176,20 @@ namespace NbtWebAppServices.Response
                     if( Prop.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
+                        ResponseInspection.Counts.Total += 1;
+                        if( PropAsQuestion.IsActionRequired )
+                        {
+                            ResponseInspection.Counts.Ooc += 1;
+                        }
+                        if( false == string.IsNullOrEmpty( PropAsQuestion.Answer ) )
+                        {
+                            ResponseInspection.Counts.Answered += 1;
+                        }
+                        else
+                        {
+                            ResponseInspection.Counts.UnAnswered += 1;
+                        }
+
                         var ResponseQuestion = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer
                         {
                             Answer = PropAsQuestion.Answer,
