@@ -21,6 +21,11 @@ namespace ChemSW.Nbt.Schema
                 CswNbtObjClassContainer.DisposePropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Button );
 
+            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
+                CswNbtObjClassContainer.UndisposePropertyName,
+                CswNbtMetaDataFieldType.NbtFieldType.Button );
+
         }//Update()
 
     }//class CswUpdateSchemaCase26665

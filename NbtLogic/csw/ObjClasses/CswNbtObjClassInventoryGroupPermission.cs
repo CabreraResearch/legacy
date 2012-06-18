@@ -12,6 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string EditPropertyName { get { return "Edit"; } }
         public static string DispensePropertyName { get { return "Dispense"; } }
         public static string DisposePropertyName { get { return "Dispose"; } }
+        public static string UndisposePropertyName { get { return "Undispose"; } }
         public static string RequestPropertyName { get { return "Request"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -101,6 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[EditPropertyName].AsLogical; } }
         public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[DispensePropertyName].AsLogical; } }
         public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[DisposePropertyName].AsLogical; } }
+        public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[UndisposePropertyName].AsLogical; } }
         public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[RequestPropertyName].AsLogical; } }
 
         #endregion

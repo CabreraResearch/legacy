@@ -26,6 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string RequestMovePropertyName = "Request Move";
         public const string DispensePropertyName = "Dispense";
         public const string DisposePropertyName = "Dispose";
+        public const string UndisposePropertyName = "Undispose";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -135,7 +136,18 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             //this.Dispense.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DispenseContainer, true, "" ) );
-            //this.Dispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DisposeContainer, true, "" ) );
+            if( this.Disposed.Checked == Tristate.False )
+            {
+                this.Dispose.Hidden = false;
+                this.Undispose.Hidden = true;
+                //this.Dispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DisposeContainer, true, "" ) );
+            }
+            else if( this.Disposed.Checked == Tristate.True )
+            {
+                this.Undispose.Hidden = false;
+                this.Dispose.Hidden = true;
+                //this.Undispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.UndisposeContainer, true, "" ) );
+            }
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -163,7 +175,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( OCP.PropName == DisposePropertyName )
                 {
-                    _applyDisposedLogic();//case 26665
+                    _DisposeContainer();//case 26665
+                    postChanges( true );
+                    ButtonAction = NbtButtonAction.refresh;
+                }
+                else if( OCP.PropName == UndisposePropertyName )
+                {
+                    _UndisposeContainer();
                     postChanges( true );
                     ButtonAction = NbtButtonAction.refresh;
                 }
@@ -208,29 +226,29 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Private Helper Methods
 
-        private void _applyDisposedLogic()
+        private void _DisposeContainer()
         {
             CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
 
-            if( this.Disposed.Checked == Tristate.False )
+            _createDisposeTransactionNode( ContDispTransNT );
+            this.Quantity.Quantity = 0;
+            this.Disposed.Checked = Tristate.True;
+            _setDisposedReadOnly( true );
+        }
+
+        private void _UndisposeContainer()
+        {
+            CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
+            CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
+
+            if( ContDispTransNode != null )
             {
-                _createDisposeTransactionNode( ContDispTransNT );
-                this.Quantity.Quantity = 0;
-                this.Disposed.Checked = Tristate.True;
-                _setDisposedReadOnly( true );
+                this.Quantity.Quantity = ContDispTransNode.QuantityDispensed.Quantity;
+                this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
+                ContDispTransNode.Node.delete();
             }
-            else if( this.Disposed.Checked == Tristate.True )
-            {
-                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
-                if( ContDispTransNode != null )
-                {
-                    this.Quantity.Quantity = ContDispTransNode.QuantityDispensed.Quantity;
-                    this.Quantity.UnitId = ContDispTransNode.QuantityDispensed.UnitId;
-                    ContDispTransNode.Node.delete();
-                }
-                this.Disposed.Checked = Tristate.False;
-                _setDisposedReadOnly( false );
-            }
+            this.Disposed.Checked = Tristate.False;
+            _setDisposedReadOnly( false );
         }
 
         private CswNbtObjClassContainerDispenseTransaction _getMostRecentDisposeTransaction( CswNbtMetaDataNodeType ContDispTransNT )
@@ -324,6 +342,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton RequestMove { get { return ( _CswNbtNode.Properties[RequestMovePropertyName] ); } }
         public CswNbtNodePropButton Dispense { get { return ( _CswNbtNode.Properties[DispensePropertyName] ); } }
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[DisposePropertyName] ); } }
+        public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[UndisposePropertyName] ); } }
         #endregion
 
 

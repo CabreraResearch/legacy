@@ -22,6 +22,16 @@ namespace ChemSW.Nbt.Schema
                     }
                 );
 
+            CswNbtMetaDataObjectClassProp UndisposeProp =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                    InvGrpPermObjClass,
+                    new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassInventoryGroupPermission.UndisposePropertyName,
+                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Logical
+                    }
+                );
+
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp DisposedProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.DisposedPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisposedProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
