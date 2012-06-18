@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
             {
                 PropName = CswNbtObjClassFeedback.ViewPropertyName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.ViewReference,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.ViewPickList,
                 ServerManaged = true
             } );
 
@@ -129,6 +129,12 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp caseNumberNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.CaseNumberPropertyName );
             caseNumberNTP.setSequence( sequenceId );
             caseNumberNTP.ReadOnly = true; //default to read-only, but allow it to be changed
+
+            CswNbtMetaDataNodeTypeProp authorNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.AuthorPropertyName );
+            authorNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+
+            CswNbtMetaDataNodeTypeProp dateNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.DateSubmittedPropertyName );
+            dateNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
             CswNbtMetaDataNodeTypeProp viewNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.ViewPropertyName );
             viewNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );

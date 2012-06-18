@@ -2,6 +2,8 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.ServiceDrivers;
+using ChemSW.Core;
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -51,6 +53,26 @@ namespace ChemSW.Nbt.ObjClasses
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
+            //Grab the name of the person submitting feedback and the current time
+            this.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            this.DateSubmitted.DateTimeValue = System.DateTime.Now;
+
+            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ) )
+            {
+                CswNbtViewId CurrentViewId = new CswNbtViewId( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] );
+                View.SelectedViewIds = new Core.CswCommaDelimitedString() { CurrentViewId.get().ToString() };
+            }
+
+            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) )
+            {
+                Action.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"];
+            }
+
+            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
+            {
+                SelectedNodeId.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"];
+            }
+
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
@@ -82,10 +104,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            //Grab the name of the person submitting feedback and the current time
-            this.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-            this.DateSubmitted.DateTimeValue = System.DateTime.Now;
-
             //might cause a problem here, case 26683
             if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
@@ -107,18 +125,34 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonAction = NbtButtonAction.Unknown;
             if( null != NodeTypeProp )
             {
-                //CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
-                //if( LoadUserContextPropertyName == OCP.PropName )
-                //{
-                //    //ButtonAction = NbtButtonAction.
-                //    CswNbtSdTabsAndProps propsSD = new CswNbtSdTabsAndProps( _CswNbtResources );
-                //    _CswNbtResources.EditMode = NodeEditMode.Add;
+                CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
+                if( LoadUserContextPropertyName == OCP.PropName )
+                {
+                    JObject ActionDataObj = new JObject();
+                    ActionDataObj["action"] = OCP.PropName;
+                    ActionDataObj["actionid"] = Action.Text;
+                    ActionDataObj["selectedNodeId"] = SelectedNodeId.Text;
+                    CswNbtViewId delimitedViewId = new CswNbtViewId( CswConvert.ToInt32( View.SelectedViewIds.ToString() ) );
+                    if( null != delimitedViewId )
+                    {
+                        ActionDataObj["viewid"] = delimitedViewId.ToString();
+                    }
+                    if( null != Author.RelatedNodeId )
+                    {
+                        if( _CswNbtResources.CurrentNbtUser.UserId != Author.RelatedNodeId )
+                        {
+                            ActionDataObj["userid"] = Author.RelatedNodeId.ToString();
+                            CswNbtObjClassUser userNode = _CswNbtResources.Nodes[Author.RelatedNodeId];
+                            if( null != userNode )
+                            {
+                                ActionDataObj["username"] = userNode.Username;
+                            }
+                        }
+                    }
+                    ActionData = ActionDataObj.ToString();
+                    ButtonAction = NbtButtonAction.loadView;
 
-                //    JObject ActionDataObj = new JObject();
-                //    ActionDataObj["action"] = OCP.PropName;
-                //    ActionDataObj["properties"] = propsSD.getProps( Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true ); //gets the props for the add form
-                //}
-
+                }
             }
             return true;
         }
@@ -158,7 +192,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropComments Dicsussion
+        public CswNbtNodePropComments Discussion
         {
             get
             {
@@ -190,7 +224,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropViewReference View
+        public CswNbtNodePropViewPickList View
         {
             get
             {
