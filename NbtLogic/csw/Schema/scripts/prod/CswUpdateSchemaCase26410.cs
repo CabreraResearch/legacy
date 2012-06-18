@@ -1,10 +1,5 @@
-﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
+﻿using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using System.Collections.Generic;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -29,10 +24,12 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in NTPropsToUpdate )
             {
-                CswNbtView UnitView = _CswNbtSchemaModTrnsctn.makeView();
-                UnitView.makeNew( "CswNbtNodeTypePropQuantity_" + NodeTypeProp.NodeTypeId.ToString(), NbtViewVisibility.Property );
+                CswNbtView UnitView = _CswNbtSchemaModTrnsctn.restoreView( NodeTypeProp.ViewId );
+                UnitView.Root.ChildRelationships.Clear();
+                UnitView.ViewName = "CswNbtNodeTypePropQuantity_" + NodeTypeProp.NodeTypeId.ToString();
                 UnitView.AddViewRelationship( UnitOC, true );
                 UnitView.save();
+
                 NodeTypeProp.ViewId = UnitView.ViewId;
                 NodeTypeProp.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), UnitOC.ObjectClassId );
             }
