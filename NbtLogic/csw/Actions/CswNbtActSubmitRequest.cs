@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -67,23 +68,45 @@ namespace ChemSW.Nbt.Actions
 
         #region Public methods and props
 
+        [DefaultProperty( "Value" )]
         public sealed class RequestItem
         {
+            private const string Unknown = "Unknown";
             public readonly string Value;
-            public RequestItem( string ItemName = Container )
+            private static string _Parse( string Val )
             {
-                switch( ItemName )
+                string ret = Unknown;
+                switch( Val )
                 {
                     case Material:
-                        Value = Material;
+                        ret = Material;
                         break;
-                    default:
-                        Value = Container;
+                    case Container:
+                        ret = Container;
                         break;
                 }
+                return ret;
             }
+            public RequestItem( string ItemName = Container )
+            {
+                Value = _Parse( ItemName );
+            }
+
+            public static explicit operator RequestItem( string Val )
+            {
+                return new RequestItem( Val );
+            }
+            public static implicit operator string( RequestItem item )
+            {
+                return item.Value;
+            }
+
             public const string Material = "Material";
             public const string Container = "Container";
+            public override string ToString()
+            {
+                return Value;
+            }
         }
 
         private CswNbtMetaDataNodeType _RequestItemNt = null;
@@ -91,6 +114,16 @@ namespace ChemSW.Nbt.Actions
         {
             get
             {
+                string M = "Material";
+                RequestItem x = (RequestItem) M;
+                if( x == RequestItem.Material )
+                {
+                    switch( x )
+                    {
+                        case RequestItem.Material:
+                            break;
+                    }
+                }
                 if( null == _RequestItemNt )
                 {
                     _RequestItemNt = _RequestItemOc.getNodeTypes().FirstOrDefault();

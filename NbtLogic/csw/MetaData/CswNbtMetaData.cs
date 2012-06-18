@@ -478,7 +478,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataFieldType makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType, CswNbtMetaDataFieldType.DataType DataType, string FieldPrecision = "", string Mask = "" )
         {
             CswNbtMetaDataFieldType RetFieldType = null;
-            if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown && DataType != CswNbtMetaDataFieldType.DataType.UNKNOWN )
+            if( FieldType != CswNbtResources.UnknownEnum && DataType != CswNbtMetaDataFieldType.DataType.UNKNOWN )
             {
                 RetFieldType = getFieldType( FieldType );
                 if( null == RetFieldType )

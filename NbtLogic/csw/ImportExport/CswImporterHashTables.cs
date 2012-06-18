@@ -700,7 +700,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( i % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + i.ToString() + " of " + ImportedNodes.Count.ToString() );
 
-                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.ViewPickList] )
+                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.ViewPickList] )
                 {
                     CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
                     Collection<int> SelectedViewIds = ViewProp.AsViewPickList.SelectedViewIds.ToIntCollection();

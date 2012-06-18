@@ -23,8 +23,9 @@ namespace ChemSW.Nbt.MetaData
              */
             [DataMember( IsRequired = true )]
             public string PropName = string.Empty;
+
             [DataMember( IsRequired = true )]
-            public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+            public CswNbtMetaDataFieldType.NbtFieldType FieldType;
 
             [DataMember]
             public bool AuditLevel;
@@ -151,7 +152,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 _init( NbtNodeType, NbtFieldType, NbtPropName );
             }
-            
+
             [DataMember( IsRequired = true )]
             public string PropName = string.Empty;
             [DataMember( IsRequired = true )]

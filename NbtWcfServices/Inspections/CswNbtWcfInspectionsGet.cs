@@ -128,7 +128,8 @@ namespace NbtWebAppServices.Response
 
         private bool _propIsSupportedInMobile( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
-            return ( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&
+            return ( FieldType != CswNbtResources.UnknownEnum &&
+                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Composite &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
@@ -144,7 +145,6 @@ namespace NbtWebAppServices.Response
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Quantity &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Scientific &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.TimeInterval &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.UserSelect &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewPickList &&
                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewReference
