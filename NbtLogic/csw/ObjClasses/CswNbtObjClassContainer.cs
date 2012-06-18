@@ -236,53 +236,57 @@ namespace ChemSW.Nbt.ObjClasses
         private CswNbtObjClassContainerDispenseTransaction _getMostRecentDisposeTransaction( CswNbtMetaDataNodeType ContDispTransNT )
         {
             CswNbtObjClassContainerDispenseTransaction ContDispTransNode = null;
-
-            CswNbtView DisposedContainerTransactionsView = new CswNbtView( _CswNbtResources );
-            DisposedContainerTransactionsView.ViewName = "ContDispTransDisposed";
-            CswNbtViewRelationship ParentRelationship = DisposedContainerTransactionsView.AddViewRelationship( ContDispTransNT, true );
-
-            DisposedContainerTransactionsView.AddViewPropertyAndFilter(
-                ParentRelationship,
-                ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName ),
-                this.NodeId.PrimaryKey.ToString(),
-                CswNbtSubField.SubFieldName.NodeID,
-                false,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals
-                );
-
-            DisposedContainerTransactionsView.AddViewPropertyAndFilter(
-                ParentRelationship,
-                ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName ),
-                CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose._Name,
-                CswNbtSubField.SubFieldName.Value,
-                false,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals
-                );
-
-            ICswNbtTree DispenseTransactionTree = _CswNbtResources.Trees.getTreeFromView( DisposedContainerTransactionsView, true, true, false, false );
-            int NumOfTransactions = DispenseTransactionTree.getChildNodeCount();
-            if( NumOfTransactions > 0 )
+            if( ContDispTransNT != null )
             {
-                DispenseTransactionTree.goToNthChild( 0 );
-                ContDispTransNode = DispenseTransactionTree.getNodeForCurrentPosition();
-            }
+                CswNbtView DisposedContainerTransactionsView = new CswNbtView( _CswNbtResources );
+                DisposedContainerTransactionsView.ViewName = "ContDispTransDisposed";
+                CswNbtViewRelationship ParentRelationship = DisposedContainerTransactionsView.AddViewRelationship( ContDispTransNT, false );
 
+                DisposedContainerTransactionsView.AddViewPropertyAndFilter(
+                    ParentRelationship,
+                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName ),
+                    this.NodeId.PrimaryKey.ToString(),
+                    CswNbtSubField.SubFieldName.NodeID,
+                    false,
+                    CswNbtPropFilterSql.PropertyFilterMode.Equals
+                    );
+
+                DisposedContainerTransactionsView.AddViewPropertyAndFilter(
+                    ParentRelationship,
+                    ContDispTransNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.TypePropertyName ),
+                    CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString(),
+                    CswNbtSubField.SubFieldName.Value,
+                    false,
+                    CswNbtPropFilterSql.PropertyFilterMode.Equals
+                    );
+
+                ICswNbtTree DispenseTransactionTree = _CswNbtResources.Trees.getTreeFromView( DisposedContainerTransactionsView, false, true );
+                int NumOfTransactions = DispenseTransactionTree.getChildNodeCount();
+                if( NumOfTransactions > 0 )
+                {
+                    DispenseTransactionTree.goToNthChild( 0 );
+                    ContDispTransNode = DispenseTransactionTree.getNodeForCurrentPosition();
+                }
+            }
             return ContDispTransNode;
         }
 
         private void _createDisposeTransactionNode( CswNbtMetaDataNodeType ContDispTransNT )
         {
-            CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            if( ContDispTransNT != null )
+            {
+                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
 
-            ContDispTransNode.SourceContainer.RelatedNodeId = this.NodeId;
-            ContDispTransNode.QuantityDispensed.Quantity = this.Quantity.Quantity;
-            ContDispTransNode.QuantityDispensed.UnitId = this.Quantity.UnitId;
-            ContDispTransNode.Type.Value = CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString();
-            ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Today;
-            ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
-            ContDispTransNode.RemainingSourceContainerQuantity.UnitId = this.Quantity.UnitId;
+                ContDispTransNode.SourceContainer.RelatedNodeId = this.NodeId;
+                ContDispTransNode.QuantityDispensed.Quantity = this.Quantity.Quantity;
+                ContDispTransNode.QuantityDispensed.UnitId = this.Quantity.UnitId;
+                ContDispTransNode.Type.Value = CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString();
+                ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Today;
+                ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
+                ContDispTransNode.RemainingSourceContainerQuantity.UnitId = this.Quantity.UnitId;
 
-            ContDispTransNode.postChanges( false );
+                ContDispTransNode.postChanges( false );
+            }
         }
 
         private void _setDisposedReadOnly( bool isReadOnly )//case 25814
