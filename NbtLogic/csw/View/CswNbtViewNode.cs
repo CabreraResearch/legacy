@@ -248,6 +248,15 @@ namespace ChemSW.Nbt
         //    return ret;
         //}
 
+        private bool _canAddThisObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
+        {
+            return ( ( ( ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
+                     ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
+                    _CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
+                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass &&
+                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass );
+        }
+
         public Collection<CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes( bool LimitToFirstGeneration )
         {
             Collection<CswNbtViewAddNodeTypeEntry> ret = new Collection<CswNbtViewAddNodeTypeEntry>();
@@ -304,10 +313,8 @@ namespace ChemSW.Nbt
                         //if( !ret.Contains( NewEntry ) )
                         //{
                         CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
-                        if( ( ( ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RoleClass &&
-                                ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.UserClass ) ||
-                              _CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
-                            _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType ) )
+                        if( _canAddThisObjectClass(ObjectClass) &&
+                            _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType )
                         {
                             // Only use the first view relationship found per nodetype
                             bool FoundMatch = false;
