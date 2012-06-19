@@ -138,6 +138,7 @@ namespace ChemSW.Nbt.Schema
                                                      IsRequired = true,
                                                      SetValOnAdd = true
                                                  } );
+
             char FilterDelimiter = '|';
             CswNbtMetaDataObjectClassProp CountOcp =
                _CswNbtSchemaModTrnsctn.createObjectClassProp( RequestItemOc,
@@ -233,7 +234,8 @@ namespace ChemSW.Nbt.Schema
                             IsFk = true,
                             FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                             FkValue = LocationOc.ObjectClassId,
-                            SetValOnAdd = true
+                            SetValOnAdd = true,
+                            IsRequired = true
                         }
                  );
 

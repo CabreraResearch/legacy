@@ -20,72 +20,95 @@ namespace NbtWebAppServices.WebServices
         private CswNbtWcfSessionResources _CswNbtWcfSessionResources = null;
 
         [OperationContract]
+        [WebGet( RequestFormat = WebMessageFormat.Json )]
+        public CswNbtWcfRequest.CswNbtSessionRequest template()
+        {
+            return new CswNbtWcfRequest.CswNbtSessionRequest();
+        }
+
+        [OperationContract]
         [WebInvoke( Method = "POST" )]
         public CswNbtWcfResponseBase init( CswNbtWcfRequest.CswNbtSessionRequest request )
         {
-            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase( _Context, request.IsMobile );
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            try
+            CswNbtWcfResponseBase Ret = new CswNbtWcfResponseBase();
+            if( false == string.IsNullOrEmpty( request.CustomerId ) &&
+                false == string.IsNullOrEmpty( request.UserName ) &&
+                false == string.IsNullOrEmpty( request.Password ) )
             {
-                _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
+                Ret = new CswNbtWcfResponseBase( _Context, request.IsMobile );
+
+
                 try
                 {
-                    string ParsedAccessId = request.CustomerId.ToLower().Trim();
-                    if( false == string.IsNullOrEmpty( ParsedAccessId ) )
+                    _CswNbtWcfSessionResources = Ret.CswNbtWcfSessionResources;
+                    try
                     {
-                        _CswNbtWcfSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
+                        string ParsedAccessId = request.CustomerId.ToLower().Trim();
+                        if( false == string.IsNullOrEmpty( ParsedAccessId ) )
+                        {
+                            _CswNbtWcfSessionResources.CswSessionManager.setAccessId( ParsedAccessId );
+                        }
+                        else
+                        {
+                            throw new CswDniException( ErrorType.Warning,
+                                                      "There is no configuration information for this CustomerId",
+                                                      "CustomerId is null or empty." );
+                        }
                     }
-                    else
+                    catch( CswDniException ex )
                     {
-                        throw new CswDniException( ErrorType.Warning, "There is no configuration information for this CustomerId", "CustomerId is null or empty." );
+                        if( false == ex.Message.Contains( "There is no configuration information for this CustomerId" ) )
+                        {
+                            throw ex;
+                        }
+                        AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
                     }
+
+                    if( AuthenticationStatus == AuthenticationStatus.Unknown )
+                    {
+                        AuthenticationStatus =
+                            _CswNbtWcfSessionResources.CswSessionManager.beginSession( request.UserName, request.Password,
+                                                                                      CswNbtWcfTools.getIpAddress(),
+                                                                                      request.IsMobile );
+                    }
+
+                    // case 21211
+                    if( AuthenticationStatus == AuthenticationStatus.Authenticated )
+                    {
+                        // case 21036
+                        if( request.IsMobile &&
+                            false ==
+                            _CswNbtWcfSessionResources.CswNbtResources.IsModuleEnabled(
+                                CswNbtResources.CswNbtModule.Mobile ) )
+                        {
+                            AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
+                            _CswNbtWcfSessionResources.CswSessionManager.clearSession();
+                        }
+                        CswLicenseManager LicenseManager =
+                            new CswLicenseManager( _CswNbtWcfSessionResources.CswNbtResources );
+
+                        if( _CswNbtWcfSessionResources.CswNbtResources.CurrentNbtUser.PasswordIsExpired )
+                        {
+                            // BZ 9077 - Password expired
+                            AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
+                        }
+                        else if( LicenseManager.MustShowLicense( _CswNbtWcfSessionResources.CswNbtResources.CurrentUser ) )
+                        {
+                            // BZ 8133 - make sure they've seen the License
+                            AuthenticationStatus = AuthenticationStatus.ShowLicense;
+                        }
+                    }
+
+                    //bury the overhead of nuking old sessions in the overhead of authenticating
+                    _CswNbtWcfSessionResources.purgeExpiredSessions();
                 }
-                catch( CswDniException ex )
+                catch( Exception ex )
                 {
-                    if( false == ex.Message.Contains( "There is no configuration information for this CustomerId" ) )
-                    {
-                        throw ex;
-                    }
-                    AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
+                    Ret.addError( ex );
                 }
-
-                if( AuthenticationStatus == AuthenticationStatus.Unknown )
-                {
-                    AuthenticationStatus = _CswNbtWcfSessionResources.CswSessionManager.beginSession( request.UserName, request.Password, CswNbtWcfTools.getIpAddress(), request.IsMobile );
-                }
-
-                // case 21211
-                if( AuthenticationStatus == AuthenticationStatus.Authenticated )
-                {
-                    // case 21036
-                    if( request.IsMobile &&
-                         false == _CswNbtWcfSessionResources.CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.Mobile ) )
-                    {
-                        AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
-                        _CswNbtWcfSessionResources.CswSessionManager.clearSession();
-                    }
-                    CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtWcfSessionResources.CswNbtResources );
-
-                    if( _CswNbtWcfSessionResources.CswNbtResources.CurrentNbtUser.PasswordIsExpired )
-                    {
-                        // BZ 9077 - Password expired
-                        AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
-                    }
-                    else if( LicenseManager.MustShowLicense( _CswNbtWcfSessionResources.CswNbtResources.CurrentUser ) )
-                    {
-                        // BZ 8133 - make sure they've seen the License
-                        AuthenticationStatus = AuthenticationStatus.ShowLicense;
-                    }
-                }
-
-                //bury the overhead of nuking old sessions in the overhead of authenticating
-                _CswNbtWcfSessionResources.purgeExpiredSessions();
+                Ret.SessionAuthenticationStatus.AuthenticationStatus = AuthenticationStatus.ToString();
             }
-            catch( Exception ex )
-            {
-                Ret.addError( ex );
-            }
-            Ret.SessionAuthenticationStatus.AuthenticationStatus = AuthenticationStatus.ToString();
             Ret.finalizeResponse();
 
             return Ret; //_AddAuthenticationStatus( SessionAuthenticationStatus.Authenticated );

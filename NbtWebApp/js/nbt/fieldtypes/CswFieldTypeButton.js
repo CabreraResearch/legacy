@@ -73,13 +73,6 @@
                                                     nodetypeid: actionJson.requestItemNodeTypeId,
                                                     propertyData: actionJson.requestItemProps,
                                                     text: actionJson.titleText,
-                                                    onAddNode: function (nodeid, nodekey) {
-                                                        $.CswDialog('EditNodeDialog', {
-                                                            nodeids: [nodeid],
-                                                            nodepks: [nodekey],
-                                                            nodetypeid: actionJson.requestItemNodeTypeId
-                                                        });
-                                                    },
                                                     onAfterAddNode: function () {
                                                         Csw.publish(Csw.enums.events.Submit_Request);
                                                     }

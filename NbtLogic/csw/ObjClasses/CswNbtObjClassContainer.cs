@@ -159,16 +159,24 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
 
                 CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem(), NodeId, OCP );
+                NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
+                NodeAsRequestItem.Material.ReadOnly = true;
                 switch( OCP.PropName )
                 {
                     case DispensePropertyName:
-                        NodeAsRequestItem.Material.RelatedNodeId = Material.RelatedNodeId;
+                        break;
+                    case DisposePropertyName:
+                        NodeAsRequestItem.Material.Hidden = true;
+                        NodeAsRequestItem.postChanges( true ); /* This is the only condition in which we want to commit the node upfront. */
+                        break;
+                    case MovePropertyName:
+                        NodeAsRequestItem.Material.Hidden = true;
                         break;
                 }
 
                 JObject ActionDataObj = new JObject();
                 ActionDataObj["requestaction"] = OCP.PropName;
-                ActionDataObj["titleText"] = Material.CachedNodeName + " " + OCP.PropName + " Request";
+                ActionDataObj["titleText"] = OCP.PropName + " Request for " + Material.CachedNodeName;
                 ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
                 ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
 

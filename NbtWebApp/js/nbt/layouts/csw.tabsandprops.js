@@ -377,7 +377,7 @@
                     }
                 }
 
-                if (Csw.isNullOrEmpty(cswPrivate.propertyData) || 
+                if (Csw.isNullOrEmpty(cswPrivate.propertyData) ||
                     cswPrivate.EditMode !== Csw.enums.editMode.Add) {
 
                     Csw.ajax.post({
@@ -385,6 +385,15 @@
                         urlMethod: cswPrivate.PropsUrlMethod,
                         data: jsonData,
                         success: function (data) {
+                            if (Csw.isNullOrEmpty(data)) {
+                                Csw.error.throwException({
+                                    type: 'warning',
+                                    message: 'No properties have been configured for this layout: ' + cswPrivate.EditMode,
+                                    name: 'Csw_client_exception',
+                                    fileName: 'csw.tabsandprops.js',
+                                    lineNumber: 387
+                                });
+                            }
                             cswPrivate.propertyData = data;
                             makePropLayout();
                         } // success{}

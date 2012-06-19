@@ -75,8 +75,8 @@
   <ItemGroup>
     <Content Include="ConnectTest.html" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
-    <Content Include="_MainDevHeader.html" />
-    <Content Include="_MainDev.html" />
+    <Content Include="DevHeader.html" />
+    <Content Include="Dev.html" />
     <Content Include="js\common\composites\csw.gridExtJs.js" />
     <Content Include="js\common\controls\csw.icon.js" />
     <Content Include="js\common\composites\csw.linkgrid.js" />
@@ -254,7 +254,7 @@
     <Content Include="MainIncludes.html" />
     <Content Include="NodeReport.html" />
     <Content Include="Scripts\jquery-1.7.1-vsdoc.js" />
-    <Content Include="_DevIncludes.html" />
+    <Content Include="DevIncludes.html" />
     <None Include="js\_updateIncludes.pl" />
   </ItemGroup>
   <ItemGroup>

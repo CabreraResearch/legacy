@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
                 bool AtLeastOneQuestion = false;
                 CswNbtNode InspectionNode = DeficientTree.getNodeForCurrentPosition();
                 CswNbtObjClassInspectionDesign NodeAsInspection = (CswNbtObjClassInspectionDesign) InspectionNode;
-                CswNbtPropEnmrtrFiltered QuestionProps = InspectionNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                CswNbtPropEnmrtrFiltered QuestionProps = InspectionNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                 foreach( CswNbtNodePropWrapper QuestionProp in QuestionProps )
                 {
                     if( !QuestionProp.AsQuestion.IsCompliant )

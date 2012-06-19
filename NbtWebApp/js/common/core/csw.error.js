@@ -50,7 +50,7 @@
             if ($errorsdiv.length > 0 && Csw.bool(e.display)) {
                 $errorsdiv.CswErrorMessage({ 'type': e.type, 'message': e.message, 'detail': e.detail });
             } 
-            Csw.debug.log(e.message + '; ' + e.detail);
+            Csw.debug.error(e.message + '; ' + e.detail);
             return true;
         });
 
@@ -63,7 +63,7 @@
             if (doAlert) {
                 $.CswDialog('ErrorDialog', errorMsg);
             } else {
-                Csw.debug.log('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
+                Csw.debug.error('Error: ' + errorMsg.message + ' (Code ' + errorMsg.code + ')', includeCallStack);
             }
         });
 
@@ -80,7 +80,7 @@
 
     Csw.error.throwException = Csw.error.throwException ||
         Csw.error.register('throwException', function (exception) {
-            Csw.debug.log(exception);
+            Csw.debug.error(exception);
             throw exception;
         });
 

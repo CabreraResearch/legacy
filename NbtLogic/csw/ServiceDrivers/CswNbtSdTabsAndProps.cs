@@ -329,52 +329,52 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private void _addProp( JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 TabId )
         {
-            if( _CswNbtResources.EditMode == NodeEditMode.Add )
+            //if( _CswNbtResources.EditMode == NodeEditMode.Add )
+            //{
+            //    ParentObj.Add( makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Prop.AddLayout.DisplayRow, Prop.AddLayout.DisplayColumn ) );
+            //}
+            //else
+            //{
+            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
+            CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
+            if( false == Node.Properties[Prop].Hidden )
             {
-                ParentObj.Add( makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Prop.AddLayout.DisplayRow, Prop.AddLayout.DisplayColumn ) );
-            }
-            else
-            {
-                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
-                CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
-                if( false == Node.Properties[Prop].Hidden )
+                JProperty JpProp = makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow,
+                                                Layout.DisplayColumn );
+                ParentObj.Add( JpProp );
+                JObject PropObj = (JObject) JpProp.Value;
+
+                // Handle conditional properties
+                JObject SubPropsObj = new JObject();
+                JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
+                PropObj.Add( SubPropsJProp );
+                bool HasSubProps = false;
+                foreach(
+                    CswNbtMetaDataNodeTypeProp FilterProp in
+                        _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId,
+                                                                                  LayoutType ) )
                 {
-                    JProperty JpProp = makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow,
-                                                    Layout.DisplayColumn );
-                    ParentObj.Add( JpProp );
-                    JObject PropObj = (JObject) JpProp.Value;
-
-                    // Handle conditional properties
-                    JObject SubPropsObj = new JObject();
-                    JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
-                    PropObj.Add( SubPropsJProp );
-                    bool HasSubProps = false;
-                    foreach(
-                        CswNbtMetaDataNodeTypeProp FilterProp in
-                            _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId,
-                                                                                      LayoutType ) )
+                    if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
-                        if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
-                        {
-                            HasSubProps = true;
-                            CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout =
-                                _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
-                            JProperty JPFilterProp = makePropJson( Node.NodeId, TabId, FilterProp,
-                                                                  Node.Properties[FilterProp],
-                                                                  FilterPropLayout.DisplayRow,
-                                                                  FilterPropLayout.DisplayColumn );
-                            SubPropsObj.Add( JPFilterProp );
-                            JObject FilterPropXml = (JObject) JPFilterProp.Value;
+                        HasSubProps = true;
+                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout =
+                            _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
+                        JProperty JPFilterProp = makePropJson( Node.NodeId, TabId, FilterProp,
+                                                              Node.Properties[FilterProp],
+                                                              FilterPropLayout.DisplayRow,
+                                                              FilterPropLayout.DisplayColumn );
+                        SubPropsObj.Add( JPFilterProp );
+                        JObject FilterPropXml = (JObject) JPFilterProp.Value;
 
-                            // Hide those for whom the filter doesn't match
-                            // (but we need the XML node to be there to store the value, for client-side changes)
-                            FilterPropXml["display"] = FilterProp.CheckFilter( Node ).ToString().ToLower();
+                        // Hide those for whom the filter doesn't match
+                        // (but we need the XML node to be there to store the value, for client-side changes)
+                        FilterPropXml["display"] = FilterProp.CheckFilter( Node ).ToString().ToLower();
 
-                        } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
-                    } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
-                    PropObj["hassubprops"] = HasSubProps;
-                }
-            } // if-else( _CswNbtResources.EditMode == NodeEditMode.Add )
+                    } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
+                } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
+                PropObj["hassubprops"] = HasSubProps;
+            }
+            // } // if-else( _CswNbtResources.EditMode == NodeEditMode.Add )
         } // addProp()
 
         private Dictionary<Int32, Collection<Int32>> _DisplayRowsAndCols = new Dictionary<Int32, Collection<Int32>>();

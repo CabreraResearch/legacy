@@ -45,9 +45,11 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     // When a property changes, we need to:
                     // 1. mark composite property values which include changed properties on this node as pending update
-                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.Composite] )
+                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Composite] )
                     {
-                        if( CompositeProp.AsComposite.TemplateValue.Contains( CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() ) ) )
+                        if(
+                            CompositeProp.AsComposite.TemplateValue.Contains(
+                                CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() ) ) )
                         {
                             CompositeProp.PendingUpdate = true;
                         }
@@ -56,7 +58,7 @@ namespace ChemSW.Nbt.ObjClasses
                     // 2. mark property references attached to relationships whose values changed as pending update
                     if( CurrentProp.getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
                     {
-                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
+                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
                         {
                             CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
                             if( ( PropRefProp.RelationshipType == NbtViewPropIdType.NodeTypePropId &&
@@ -279,12 +281,12 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtNode NodeToDelete = _CswNbtResources.Nodes.GetNode( MatchNodePk );
                         if( null != NodeToDelete )
                         {
-                            NodeToDelete.delete(DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes);
+                            NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
                         }
                     }
                     else
                     {
-                        InUseStr.Add(_CswNbtResources.makeClientNodeReference(_CswNbtResources.Nodes[MatchNodePk]));
+                        InUseStr.Add( _CswNbtResources.makeClientNodeReference( _CswNbtResources.Nodes[MatchNodePk] ) );
                     }
                 }
                 if( false == DeleteAllRequiredRelatedNodes )
