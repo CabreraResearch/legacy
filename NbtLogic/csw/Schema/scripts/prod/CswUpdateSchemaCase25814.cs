@@ -36,6 +36,33 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp DisposedProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( ContainerOC.ObjectClassId, CswNbtObjClassContainer.DisposedPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisposedProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged, true );
 
+            CswNbtMetaDataObjectClassProp ContainerDispenseProp = ContainerOC.getObjectClassProp( "Dispense" );
+            if( ContainerDispenseProp != null )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
+                    ContainerDispenseProp,
+                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname,
+                    CswNbtObjClassContainer.RequestDispensePropertyName );
+            }
+
+            CswNbtMetaDataObjectClassProp ContainerDisposeProp = ContainerOC.getObjectClassProp( "Dispose" );
+            if( ContainerDispenseProp != null )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
+                    ContainerDisposeProp,
+                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname,
+                    CswNbtObjClassContainer.RequestDisposePropertyName );
+            }
+
+            CswNbtMetaDataObjectClassProp ContainerMoveProp = ContainerOC.getObjectClassProp( "Move" );
+            if( ContainerDispenseProp != null )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
+                    ContainerMoveProp,
+                    CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname,
+                    CswNbtObjClassContainer.RequestMovePropertyName );
+            }
+
         }//Update()
 
     }//class CswUpdateSchemaCase25814
