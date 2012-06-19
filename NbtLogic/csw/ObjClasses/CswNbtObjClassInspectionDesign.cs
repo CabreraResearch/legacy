@@ -326,7 +326,7 @@ namespace ChemSW.Nbt.ObjClasses
             //case 25035
             if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Action_Required ) )
             {
-                CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                CswNbtPropEnmrtrFiltered QuestionsFlt = this.Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                 QuestionsFlt.Reset();
                 foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                 {
@@ -359,7 +359,7 @@ namespace ChemSW.Nbt.ObjClasses
                         bool _allAnswered = true;
                         bool _allAnsweredinTime = true;
 
-                        QuestionsFlt = Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                        QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                         QuestionsFlt.Reset();
                         CswCommaDelimitedString UnansweredQuestions = new CswCommaDelimitedString();
                         foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
@@ -429,7 +429,7 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
 
                     case SetPreferredPropertyName:
-                        QuestionsFlt = Node.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                        QuestionsFlt = Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                         QuestionsFlt.Reset();
                         foreach( CswNbtNodePropWrapper Prop in QuestionsFlt )
                         {

@@ -171,6 +171,16 @@ namespace ChemSW.Nbt.Actions
             return _CurrentRequestNode;
         }
 
+        public CswPrimaryKey CurrentRequestNodeId()
+        {
+            CswPrimaryKey Ret = null;
+            if( null != CurrentRequestNode() )
+            {
+                Ret = CurrentRequestNode().NodeId;
+            }
+            return Ret;
+        }
+
         public void applyCartFilter( CswPrimaryKey NodeId )
         {
             CswNbtMetaDataObjectClassProp RequestOcp = _RequestItemOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
@@ -296,66 +306,69 @@ namespace ChemSW.Nbt.Actions
             {
                 throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
             }
-
-            RetAsRequestItem.Request.RelatedNodeId = CurrentRequestNode().NodeId;
-            if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
+            if( null != CurrentRequestNodeId() )
             {
-                CswNbtObjClassLocation DefaultAsLocation = _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
-                if( null != DefaultAsLocation )
+                RetAsRequestItem.Request.RelatedNodeId = CurrentRequestNodeId();
+                if( null != _CswNbtResources.CurrentNbtUser.DefaultLocationId )
                 {
-                    RetAsRequestItem.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
-                    RetAsRequestItem.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
-                    RetAsRequestItem.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
+                    CswNbtObjClassLocation DefaultAsLocation =
+                        _CswNbtResources.Nodes.GetNode( _CswNbtResources.CurrentNbtUser.DefaultLocationId );
+                    if( null != DefaultAsLocation )
+                    {
+                        RetAsRequestItem.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                        RetAsRequestItem.Location.CachedNodeName = DefaultAsLocation.Location.CachedNodeName;
+                        RetAsRequestItem.Location.CachedPath = DefaultAsLocation.Location.CachedPath;
+                    }
+                }
+                switch( Item.Value )
+                {
+                    case RequestItem.Material:
+                        RetAsRequestItem.Material.RelatedNodeId = NodeId;
+                        RetAsRequestItem.Container.Hidden = true;
+                        RetAsRequestItem.Container.ReadOnly = true;
+                        RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Request;
+                        break;
+                    case RequestItem.Container:
+                        RetAsRequestItem.Container.RelatedNodeId = NodeId;
+                        RetAsRequestItem.Container.ReadOnly = true;
+                        RetAsRequestItem.RequestBy.ReadOnly = true;
+                        switch( OCP.PropName )
+                        {
+                            case CswNbtObjClassContainer.RequestDispensePropertyName:
+                                {
+                                    RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispense;
+                                    RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity;
+                                    break;
+                                }
+                            case CswNbtObjClassContainer.RequestDisposePropertyName:
+                                {
+                                    RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispose;
+                                    /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
+                                    RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
+                                    RetAsRequestItem.RequestBy.Hidden = true;
+                                    RetAsRequestItem.Material.Hidden = true;
+                                    RetAsRequestItem.Material.ReadOnly = true;
+                                    break;
+                                }
+                            case CswNbtObjClassContainer.RequestMovePropertyName:
+                                {
+                                    RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Move;
+                                    /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
+                                    RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
+                                    RetAsRequestItem.RequestBy.Hidden = true;
+                                    RetAsRequestItem.Material.Hidden = true;
+                                    RetAsRequestItem.Material.ReadOnly = true;
+                                    break;
+                                }
+                            default:
+                                throw new CswDniException( ErrorType.Error, "No action has been defined for this button.",
+                                                          "Property named " + OCP.PropName +
+                                                          " has not implemented a button click event." );
+
+                        }
+                        break;
                 }
             }
-            switch( Item.Value )
-            {
-                case RequestItem.Material:
-                    RetAsRequestItem.Material.RelatedNodeId = NodeId;
-                    RetAsRequestItem.Container.Hidden = true;
-                    RetAsRequestItem.Container.ReadOnly = true;
-                    RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Request;
-                    break;
-                case RequestItem.Container:
-                    RetAsRequestItem.Container.RelatedNodeId = NodeId;
-                    RetAsRequestItem.Container.ReadOnly = true;
-                    RetAsRequestItem.RequestBy.ReadOnly = true;
-                    switch( OCP.PropName )
-                    {
-                        case CswNbtObjClassContainer.RequestDispensePropertyName:
-                            {
-                                RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispense;
-                                RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity;
-                                break;
-                            }
-                        case CswNbtObjClassContainer.RequestDisposePropertyName:
-                            {
-                                RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispose;
-                                /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
-                                RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                                RetAsRequestItem.RequestBy.Hidden = true;
-                                RetAsRequestItem.Material.Hidden = true;
-                                RetAsRequestItem.Material.ReadOnly = true;
-                                break;
-                            }
-                        case CswNbtObjClassContainer.RequestMovePropertyName:
-                            {
-                                RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Move;
-                                /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
-                                RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Size;
-                                RetAsRequestItem.RequestBy.Hidden = true;
-                                RetAsRequestItem.Material.Hidden = true;
-                                RetAsRequestItem.Material.ReadOnly = true;
-                                break;
-                            }
-                        default:
-                            throw new CswDniException( ErrorType.Error, "No action has been defined for this button.", "Property named " + OCP.PropName + " has not implemented a button click event." );
-
-                    }
-                    break;
-            }
-
-
             return RetAsRequestItem;
         }
 

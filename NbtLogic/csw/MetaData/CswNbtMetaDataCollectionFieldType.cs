@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 
@@ -44,13 +43,13 @@ namespace ChemSW.Nbt.MetaData
         {
             Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32> ret = new Dictionary<CswNbtMetaDataFieldType.NbtFieldType, Int32>();
             Dictionary<string, Int32> FTDict = _CollImpl.getPkDict();
-            CswNbtMetaDataFieldType.NbtFieldType FTKey = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
             foreach( string Key in FTDict.Keys )
             {
-                Enum.TryParse<CswNbtMetaDataFieldType.NbtFieldType>( Key, out FTKey );
-                if( false == ret.ContainsKey( FTKey ) )
+                CswNbtMetaDataFieldType.NbtFieldType Ft = (CswNbtMetaDataFieldType.NbtFieldType) Key;
+                if( Ft != CswNbtResources.UnknownEnum &&
+                    false == ret.ContainsKey( Ft ) )
                 {
-                    ret.Add( FTKey, FTDict[Key] );
+                    ret.Add( Ft, FTDict[Key] );
                 }
             }
             return ret;
@@ -73,22 +72,22 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForNodeTypePropId( Int32 NodeTypePropId )
         {
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtResources.UnknownEnum;
             if( NodeTypePropId != Int32.MinValue )
             {
                 string FieldTypeStr = _CollImpl.getNameWhereFirst( "where fieldtypeid = (select fieldtypeid from nodetype_props where nodetypepropid = " + NodeTypePropId.ToString() + ")" );
-                Enum.TryParse<CswNbtMetaDataFieldType.NbtFieldType>( FieldTypeStr, out FieldType );
+                FieldType = FieldTypeStr;
             }
             return FieldType;
         } // getFieldTypeValueForNodeTypePropId()
 
         public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValueForObjectClassPropId( Int32 ObjectClassPropId )
         {
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtResources.UnknownEnum;
             if( ObjectClassPropId != Int32.MinValue )
             {
                 string FieldTypeStr = _CollImpl.getNameWhereFirst( "where fieldtypeid = (select fieldtypeid from object_class_props where objectclasspropid = " + ObjectClassPropId.ToString() + ")" );
-                Enum.TryParse<CswNbtMetaDataFieldType.NbtFieldType>( FieldTypeStr, out FieldType );
+                FieldType = FieldTypeStr;
             }
             return FieldType;
         } // getFieldTypeValueForObjectClassPropId()

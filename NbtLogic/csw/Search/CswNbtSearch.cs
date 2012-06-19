@@ -1,14 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.Search
@@ -276,7 +272,7 @@ namespace ChemSW.Nbt.Search
                     foreach( JObject Prop in Props )
                     {
                         Int32 NodeTypePropId = CswConvert.ToInt32( Prop["nodetypepropid"] );
-                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), Prop["fieldtype"].ToString() ) );
+                        CswNbtMetaDataFieldType FieldType = _CswNbtResources.MetaData.getFieldType( CswConvert.ToString( Prop["fieldtype"] ) );
                         if( false == FilteredPropIds.Contains( NodeTypePropId ) && FieldType.Searchable )
                         {
                             string Gestalt = Prop["gestalt"].ToString();

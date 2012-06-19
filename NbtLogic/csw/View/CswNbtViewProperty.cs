@@ -155,7 +155,7 @@ namespace ChemSW.Nbt
         }
 
         //public CswNbtMetaDataFieldType FieldType = null;
-        public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+        public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtResources.UnknownEnum;
         public Int32 Order = Int32.MinValue;
         public Int32 Width = Int32.MinValue;
         public bool ShowInGrid = true;
@@ -435,7 +435,7 @@ namespace ChemSW.Nbt
             NewPropNode.Attributes.Append( SortMethodAttribute );
 
             XmlAttribute FieldTypeAttribute = XmlDoc.CreateAttribute( "fieldtype" );
-            if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown )
+            if( FieldType != CswNbtResources.UnknownEnum )
             { FieldTypeAttribute.Value = FieldType.ToString(); }
             else
             { FieldTypeAttribute.Value = string.Empty; }
@@ -486,7 +486,7 @@ namespace ChemSW.Nbt
                                             new JProperty( "arbitraryid", ArbitraryId ),
                                             new JProperty( "sortby", SortBy.ToString() ),
                                             new JProperty( "sortmethod", SortMethod.ToString() ),
-                                            new JProperty( "fieldtype", ( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown ) ? FieldType.ToString() : "" ),
+                                            new JProperty( "fieldtype", ( FieldType != CswNbtResources.UnknownEnum ) ? FieldType.ToString() : "" ),
                                             new JProperty( "order", ( Order != Int32.MinValue ) ? Order.ToString() : "" ),
                                             new JProperty( "width", ( Width != Int32.MinValue ) ? Width.ToString() : "" ),
                                             new JProperty( "filters", FilterObj ),
@@ -522,7 +522,7 @@ namespace ChemSW.Nbt
             ret.Add( SortBy.ToString() );
             ret.Add( SortMethod.ToString() );
 
-            if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown )
+            if( FieldType != CswNbtResources.UnknownEnum )
             { ret.Add( FieldType.ToString() ); }
             else
             { ret.Add( "" ); }

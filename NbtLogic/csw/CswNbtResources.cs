@@ -129,7 +129,6 @@ namespace ChemSW.Nbt
         /// <returns></returns>
         public bool IsDbConnectionHealthy( ref string ErrorMessage ) { return ( _CswResources.IsDbConnectionHealthy( ref ErrorMessage ) ); }
 
-
         private CswResources _CswResources;
         private CswNbtNodeCollection _CswNbtNodeCollection = null;
         private CswNbtActionCollection _ActionCollection;
@@ -177,7 +176,7 @@ namespace ChemSW.Nbt
 
         public AppType AppType { get { return _CswResources.AppType; } }
         public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
-
+        public const string UnknownEnum = CswResources.UnknownEnum;
         /// <summary>
         /// Constructor
         /// </summary>
@@ -185,7 +184,6 @@ namespace ChemSW.Nbt
         {
 
             _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
-
             _DebugID = Guid.NewGuid().ToString(); // DateTime.Now.ToString();
             logMessage( "CswNbtResources CREATED GUID: " + _DebugID );
 

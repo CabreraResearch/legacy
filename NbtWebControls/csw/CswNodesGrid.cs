@@ -348,7 +348,7 @@ namespace ChemSW.NbtWebControls
                         CswNbtViewProperty CurrentViewProp = View.findPropertyByName( RealColumnName );
                         //if( CurrentViewProp == null )
                         //    CurrentViewProp = View.FindPropertyByName( CurrentNodeTypeProp.PropName );
-                        CswNbtMetaDataFieldType.NbtFieldType ColFieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+                        CswNbtMetaDataFieldType.NbtFieldType ColFieldType = CswNbtResources.UnknownEnum;
                         if( CurrentViewProp != null )
                         {
                             if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == NbtViewRelatedIdType.NodeTypeId )
@@ -379,11 +379,11 @@ namespace ChemSW.NbtWebControls
                                 thisColumn.DataFormatString = "{0:M/d/yyyy}";
                                 thisColumn.DataType = typeof( DateTime );
                                 break;
-							//case CswNbtMetaDataFieldType.NbtFieldType.Time:
-							//    thisColumn = new GridDateTimeColumn();
-							//    thisColumn.DataFormatString = "{0:H:mm:ss}";
-							//    thisColumn.DataType = typeof( DateTime );
-							//    break;
+                            //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                            //    thisColumn = new GridDateTimeColumn();
+                            //    thisColumn.DataFormatString = "{0:H:mm:ss}";
+                            //    thisColumn.DataType = typeof( DateTime );
+                            //    break;
                             default:
                                 thisColumn = new GridBoundColumn();
                                 break;

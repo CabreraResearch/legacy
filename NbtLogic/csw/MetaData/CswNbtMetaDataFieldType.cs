@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -7,48 +8,121 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataFieldType : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataFieldType>, IComparable
     {
-        public enum NbtFieldType
+
+        private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
+                                                               {
+                                                                   { NbtFieldType.Barcode, NbtFieldType.Barcode },
+                                                                    { NbtFieldType.Button, NbtFieldType.Button }   ,
+                                                                    { NbtFieldType.Comments, NbtFieldType.Comments },
+                                                                    { NbtFieldType.Composite, NbtFieldType.Composite },
+                                                                    { NbtFieldType.DateTime, NbtFieldType.DateTime },
+                                                                    { NbtFieldType.External, NbtFieldType.External },
+                                                                    { NbtFieldType.File, NbtFieldType.File },
+                                                                    { NbtFieldType.Grid, NbtFieldType.Grid },
+                                                                    { NbtFieldType.Image, NbtFieldType.Image },
+                                                                    { NbtFieldType.ImageList, NbtFieldType.ImageList },
+                                                                    { NbtFieldType.Link, NbtFieldType.Link },
+                                                                    { NbtFieldType.List, NbtFieldType.List },
+                                                                    { NbtFieldType.Location, NbtFieldType.Location },
+                                                                    { NbtFieldType.LocationContents, NbtFieldType.LocationContents},
+                                                                    { NbtFieldType.Logical, NbtFieldType.Logical },
+                                                                    { NbtFieldType.LogicalSet, NbtFieldType.LogicalSet },
+                                                                    { NbtFieldType.Memo, NbtFieldType.Memo },
+                                                                    { NbtFieldType.MOL, NbtFieldType.MOL },
+                                                                    { NbtFieldType.MTBF, NbtFieldType.MTBF },
+                                                                    { NbtFieldType.MultiList, NbtFieldType.MultiList },
+                                                                    { NbtFieldType.NFPA,NbtFieldType. NFPA },
+                                                                    { NbtFieldType.NodeTypeSelect, NbtFieldType.NodeTypeSelect },
+                                                                    { NbtFieldType.Number, NbtFieldType.Number },
+                                                                    { NbtFieldType.Password, NbtFieldType.Password },
+                                                                    { NbtFieldType.PropertyReference, NbtFieldType.PropertyReference },
+                                                                    { NbtFieldType.Quantity, NbtFieldType.Quantity },
+                                                                    { NbtFieldType.Question, NbtFieldType.Question },
+                                                                    { NbtFieldType.Relationship, NbtFieldType.Relationship },
+                                                                    { NbtFieldType.Scientific, NbtFieldType.Scientific },
+                                                                    { NbtFieldType.Sequence, NbtFieldType.Sequence },
+                                                                    { NbtFieldType.Static, NbtFieldType.Static },
+                                                                    { NbtFieldType.Text, NbtFieldType.Text },
+                                                                    { NbtFieldType.TimeInterval, NbtFieldType.TimeInterval },
+                                                                    { NbtFieldType.UserSelect, NbtFieldType.UserSelect },
+                                                                    { NbtFieldType.ViewPickList, NbtFieldType.ViewPickList },
+                                                                    { NbtFieldType.ViewReference,NbtFieldType.ViewReference}
+                                                                    
+                                                               };
+
+
+        public sealed class NbtFieldType
         {
-            Unknown,
-            Barcode,
-            Button,
-            Comments,
-            Composite,
-            DateTime,
-            External,
-            File,
-            Grid,
-            Image,
-            ImageList,
-            Link,
-            List,
-            Location,
-            LocationContents,
-            Logical,
-            LogicalSet,
-            Memo,
-            MOL,
-            MTBF,
-            //MultiRelationship,
-            MultiList,
-            //NodeTypePermissions,
-            NFPA,
-            NodeTypeSelect,
-            Number,
-            Password,
-            PropertyReference,
-            Quantity,
-            Question,
-            Relationship,
-            Scientific,
-            Sequence,
-            Static,
-            Text,
-            //Time,
-            TimeInterval,
-            UserSelect,
-            ViewPickList,
-            ViewReference
+            public readonly string Value;
+
+            private static string _Parse( string Val )
+            {
+                string ret = CswNbtResources.UnknownEnum;
+                if( _Enums.ContainsKey( Val ) )
+                {
+                    ret = _Enums[Val];
+                }
+                return ret;
+            }
+            public NbtFieldType( string ItemName = CswNbtResources.UnknownEnum )
+            {
+                Value = _Parse( ItemName );
+            }
+
+            public static implicit operator NbtFieldType( string Val )
+            {
+                return new NbtFieldType( Val );
+            }
+            public static implicit operator string( NbtFieldType item )
+            {
+                return item.Value;
+            }
+
+            public override string ToString()
+            {
+                return Value;
+            }
+            
+            public const string Barcode = "Barcode";
+            public const string Button = "Button";
+            public const string Comments = "Comments";
+            public const string Composite = "Composite";
+            public const string DateTime = "DateTime";
+            public const string External = "External";
+            public const string File = "File";
+            public const string Grid = "Grid";
+            public const string Image = "Image";
+            public const string ImageList = "ImageList";
+            public const string Link = "Link";
+            public const string List = "List";
+            public const string Location = "Location";
+            public const string LocationContents = "LocationContents";
+            public const string Logical = "Logical";
+            public const string LogicalSet = "LogicalSet";
+            public const string Memo = "Memo";
+            public const string MOL = "MOL";
+            public const string MTBF = "MTBF";
+            //public const string MultiRelationship= "";
+            public const string MultiList = "MultiList";
+            //public const string //NodeTypePermissions= "";
+            public const string NFPA = "NFPA";
+            public const string NodeTypeSelect = "NodeTypeSelect";
+            public const string Number = "Number";
+            public const string Password = "Password";
+            public const string PropertyReference = "PropertyReference";
+            public const string Quantity = "Quantity";
+            public const string Question = "Question";
+            public const string Relationship = "Relationship";
+            public const string Scientific = "Scientific";
+            public const string Sequence = "Sequence";
+            public const string Static = "Static";
+            public const string Text = "Text";
+            //public const string //Time= "";
+            public const string TimeInterval = "TimeInterval";
+            public const string UserSelect = "UserSelect";
+            public const string ViewPickList = "ViewPickList";
+            public const string ViewReference = "ViewReference";
+
         };
 
         public enum DataType
@@ -82,9 +156,7 @@ namespace ChemSW.Nbt.MetaData
 
         public static NbtFieldType getFieldTypeFromString( string FieldTypeName )
         {
-            NbtFieldType Ret = NbtFieldType.Unknown;
-            NbtFieldType.TryParse( FieldTypeName, true, out Ret );
-            return Ret;
+            return FieldTypeName;
         }
 
         public DataRow _DataRow
@@ -117,9 +189,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                NbtFieldType Ret = NbtFieldType.Unknown;
-                NbtFieldType.TryParse( _FieldTypeRow["fieldtype"].ToString(), true, out Ret );
-                return Ret;
+                return CswConvert.ToString( _FieldTypeRow["fieldtype"] );
             }
         }
 
@@ -167,8 +237,8 @@ namespace ChemSW.Nbt.MetaData
         public bool IsCopyable()
         {
             return ( !IsDisplayType() &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Image );
+                     FieldType != NbtFieldType.File &&
+                     FieldType != NbtFieldType.Image );
         }
 
         /// <summary>
@@ -177,10 +247,10 @@ namespace ChemSW.Nbt.MetaData
         public bool CanHaveDefaultValue()
         {
             return ( !IsDisplayType() &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewPickList &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Image &&
-                     FieldType != NbtFieldType.Comments);
+                     FieldType != NbtFieldType.ViewPickList &&
+                     FieldType != NbtFieldType.File &&
+                     FieldType != NbtFieldType.Image &&
+                     FieldType != NbtFieldType.Comments );
         }
 
         /// <summary>
@@ -188,26 +258,26 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public bool ShowLabel()
         {
-            return ( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.LocationContents &&
-                     FieldType != CswNbtMetaDataFieldType.NbtFieldType.Static );
+            return ( FieldType != NbtFieldType.Grid &&
+                     FieldType != NbtFieldType.LocationContents &&
+                     FieldType != NbtFieldType.Static );
         }
 
-        public bool IsLayoutCompatible(CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType)
+        public bool IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
         {
             bool ret = true;
             switch( LayoutType )
             {
                 case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add:
-                    ret = (FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid );
+                    ret = ( FieldType != NbtFieldType.Grid );
                     break;
                 case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit:
                     break;
                 case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview:
-                    ret = (FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid );
+                    ret = ( FieldType != NbtFieldType.Grid );
                     break;
                 case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table:
-                    ret = ( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid );
+                    ret = ( FieldType != NbtFieldType.Grid );
                     break;
                 default:
                     throw new CswDniException( ErrorType.Error, "Unrecognized Layout Type", "CswNbtMetaDataFieldType.IsLayoutCompatible has not been updated with the following layout: " + LayoutType.ToString() );
@@ -235,7 +305,7 @@ namespace ChemSW.Nbt.MetaData
         public static bool operator ==( CswNbtMetaDataFieldType ft1, CswNbtMetaDataFieldType ft2 )
         {
             // If both are null, or both are same instance, return true.
-            if( System.Object.ReferenceEquals( ft1, ft2 ) )
+            if( ReferenceEquals( ft1, ft2 ) )
             {
                 return true;
             }
@@ -267,12 +337,12 @@ namespace ChemSW.Nbt.MetaData
 
         public bool Equals( CswNbtMetaDataFieldType obj )
         {
-            return this == (CswNbtMetaDataFieldType) obj;
+            return this == obj;
         }
 
         public override int GetHashCode()
         {
-            return this.FieldType.GetHashCode();
+            return FieldType.GetHashCode();
         }
 
         #endregion IEquatable
