@@ -263,7 +263,7 @@ namespace NbtWebAppServices.Response
             return new CswDateTime( _CswNbtWcfSessionResources.CswNbtResources, Date );
         }
 
-        public void addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null )
+        public void addSystemViewPropFilter( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
         {
             try
             {
@@ -277,7 +277,7 @@ namespace NbtWebAppServices.Response
                         if( null != InstancePropertyOcp )
                         {
                             string FilterValueString = CswConvert.ToString( FilterValue );
-                            CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( InstancePropertyOcp, FilterValueString, FilterMode );
+                            CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( InstancePropertyOcp, FilterValueString, FilterMode, FieldType: FieldType );
                             _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, InstanceOc );
                         }
                     }

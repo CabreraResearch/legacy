@@ -305,10 +305,22 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new <see cref="CswNbtViewProperty"/> for this view for unique FieldTypes (Barcode/Location)
         /// </summary>
-        public CswNbtViewProperty AddViewPropertyByFieldType( CswNbtViewRelationship ParentViewRelationship, CswNbtMetaDataObjectClass ObjectClass, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public CswNbtViewProperty AddViewPropertyByFieldType( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataObject MetaDataObject, CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
-            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+            if( MetaDataObject.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
             {
+                CswNbtMetaDataObjectClass ObjectClass = (CswNbtMetaDataObjectClass) MetaDataObject;
+
+
+
+                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                {
+                    AddViewPropertyByFieldType( ParentViewRelationship, NodeType, FieldType );
+                }
+            }
+            else if( MetaDataObject.UniqueIdFieldName == CswNbtMetaDataNodeType.MetaDataUniqueType )
+            {
+                CswNbtMetaDataNodeType NodeType = (CswNbtMetaDataNodeType) MetaDataObject;
                 switch( FieldType )
                 {
                     case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
@@ -326,7 +338,9 @@ namespace ChemSW.Nbt
                         }
                         break;
                     default:
-                        throw new CswDniException( ErrorType.Error, "Cannot add a View Property without a Location or Barcode property.", "Attempted to call AddViewPropertyByFieldType() with an unsupported FieldType." );
+                        throw new CswDniException( ErrorType.Error,
+                                                  "Cannot add a View Property without a Location or Barcode property.",
+                                                  "Attempted to call AddViewPropertyByFieldType() with an unsupported FieldType." );
                 }
             }
             return null;

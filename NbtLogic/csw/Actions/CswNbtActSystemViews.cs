@@ -336,9 +336,10 @@ namespace ChemSW.Nbt.Actions
             public string FilterValue { get; set; }
             public CswNbtPropFilterSql.PropertyFilterMode FilterMode { get; set; }
             public CswNbtSubField.SubFieldName SubFieldName { get; set; }
+            public CswNbtMetaDataFieldType.NbtFieldType FieldType { get; set; }
         }
 
-        public SystemViewPropFilterDefinition makeSystemViewFilter( CswNbtMetaDataObjectClassProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null )
+        public SystemViewPropFilterDefinition makeSystemViewFilter( CswNbtMetaDataObjectClassProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
         {
             SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
             return new SystemViewPropFilterDefinition
@@ -346,7 +347,8 @@ namespace ChemSW.Nbt.Actions
                            ObjectClassProp = ObjectClassProp,
                            FilterValue = FilterValue,
                            FilterMode = FilterMode,
-                           SubFieldName = SubFieldName
+                           SubFieldName = SubFieldName,
+                           FieldType = FieldType
                        };
         }
 
@@ -359,7 +361,19 @@ namespace ChemSW.Nbt.Actions
                 if( null == ExpectedObjectClass || PotentialSystemViewRelationship.isExpectedMetaDataType( ExpectedObjectClass ) )
                 {
                     Ret = true;
-                    SystemView.AddViewPropertyAndFilter( PotentialSystemViewRelationship, FilterDefinition.ObjectClassProp, FilterDefinition.FilterValue, FilterMode: FilterDefinition.FilterMode, SubFieldName: FilterDefinition.SubFieldName );
+                    if( null != FilterDefinition.ObjectClassProp )
+                    {
+                        SystemView.AddViewPropertyAndFilter(PotentialSystemViewRelationship,
+                                                            FilterDefinition.ObjectClassProp,
+                                                            FilterDefinition.FilterValue,
+                                                            FilterMode: FilterDefinition.FilterMode,
+                                                            SubFieldName: FilterDefinition.SubFieldName);
+                    }
+                    else if( FilterDefinition.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                    {
+                        ICswNbtMetaDataObject Object = PotentialSystemViewRelationship.SecondMetaDataObject();
+                        SystemView.AddViewPropertyByFieldType( PotentialSystemViewRelationship, Object, FilterDefinition.FieldType );
+                    }
                 }
                 if( PotentialSystemViewRelationship.ChildRelationships.Count > 0 )
                 {
