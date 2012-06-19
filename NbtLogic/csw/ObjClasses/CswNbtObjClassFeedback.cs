@@ -86,6 +86,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            //CswNbtViewId myFeedbackViewId = null;
+            //DataTable viewsTable = _CswNbtResources.ViewSelect.getUserViews();
+            //foreach( DataRow row in viewsTable )
+            //{
+            //    get view id of My Feedback
+            //    if( row["viewname"].Equals( "My Feedback" ) )
+            //    {
+            //        myFeedbackViewId.set( CswConvert.ToInt32( row["viewid"].ToString() ) );
+            //    }
+            //}
+
+            //Message = string.Empty;
+            //string ActionData = string.Empty;
+            //if( null != NodeTypeProp )
+            //{
+            //    JObject ActionDataObj = new JObject();
+            //    ActionDataObj["viewid"] = myFeedbackViewId.ToString();
+            //}
+
+
+
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -138,6 +159,8 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     JObject ActionDataObj = new JObject();
                     ActionDataObj["action"] = OCP.PropName;
+
+                    ActionDataObj["type"] = "view"; //assume it's a view unless it's an action
                     CswNbtActionName ActionName = CswNbtActionName.Unknown;
                     Enum.TryParse<CswNbtActionName>( Action.Text, out ActionName );
                     if( CswNbtActionName.Unknown != ActionName )
@@ -145,11 +168,13 @@ namespace ChemSW.Nbt.ObjClasses
                         if( null != _CswNbtResources.Actions[ActionName] )
                         {
                             CswNbtAction action = _CswNbtResources.Actions[ActionName];
+                            ActionDataObj["type"] = "action";
                             ActionDataObj["actionname"] = action.Name.ToString();
                             ActionDataObj["actionid"] = action.ActionId.ToString();
                             ActionDataObj["actionurl"] = action.Url.ToString();
                         }
                     }
+
                     ActionDataObj["selectedNodeId"] = SelectedNodeId.Text;
                     if( null != CurrentViewMode )
                     {
