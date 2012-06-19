@@ -38,11 +38,11 @@ window.initMain = window.initMain || function (undefined) {
         if (false === Csw.isNullOrEmpty(actionData.userid)) {
             handleImpersonation(actionData.userid, actionData.username, function () {
                 initAll(function () {
-                    handleItemSelect({ actionid: actionData.actionid, viewid: actionData.viewid, nodeid: actionData.selectedNodeId });
+                    handleItemSelect({ actionid: actionData.actionid, viewid: actionData.viewid, nodeid: actionData.selectedNodeId, viewmode: actionData.viewmode, actionname: actionData.actionname, actionurl: actionData.actionurl });
                 });
             });
         } else {
-            handleItemSelect({ actionid: actionData.actionid, viewid: actionData.viewid, nodeid: actionData.selectedNodeId });
+            handleItemSelect({ actionid: actionData.actionid, viewid: actionData.viewid, nodeid: actionData.selectedNodeId, viewmode: actionData.viewmode, actionname: actionData.actionname, actionurl: actionData.actionurl });
         }
     }
 
@@ -329,7 +329,7 @@ window.initMain = window.initMain || function (undefined) {
         if (options) {
             $.extend(o, options);
         }
-        Csw.debug.log(o);
+
         multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
         var linkType = Csw.string(o.linktype).toLowerCase();
 

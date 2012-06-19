@@ -3,7 +3,9 @@ using ChemSW.Nbt.PropTypes;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using System;
+using System.Data;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -22,6 +24,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string StatusPropertyName = "Status";
         public const string CategoryPropertyName = "Category";
         public const string CaseNumberPropertyName = "Case Number";
+        public const string CurrentViewModePropertyName = "Current View Mode";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -71,6 +74,11 @@ namespace ChemSW.Nbt.ObjClasses
             if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
             {
                 SelectedNodeId.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"];
+            }
+
+            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewmode" ) )
+            {
+                CurrentViewMode.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewmode"];
             }
 
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
@@ -130,8 +138,23 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     JObject ActionDataObj = new JObject();
                     ActionDataObj["action"] = OCP.PropName;
-                    ActionDataObj["actionid"] = Action.Text;
+                    CswNbtActionName ActionName = CswNbtActionName.Unknown;
+                    Enum.TryParse<CswNbtActionName>( Action.Text, out ActionName );
+                    if( CswNbtActionName.Unknown != ActionName )
+                    {
+                        if( null != _CswNbtResources.Actions[ActionName] )
+                        {
+                            CswNbtAction action = _CswNbtResources.Actions[ActionName];
+                            ActionDataObj["actionname"] = action.Name.ToString();
+                            ActionDataObj["actionid"] = action.ActionId.ToString();
+                            ActionDataObj["actionurl"] = action.Url.ToString();
+                        }
+                    }
                     ActionDataObj["selectedNodeId"] = SelectedNodeId.Text;
+                    if( null != CurrentViewMode )
+                    {
+                        ActionDataObj["viewmode"] = CurrentViewMode.Text;
+                    }
                     CswNbtViewId delimitedViewId = new CswNbtViewId( CswConvert.ToInt32( View.SelectedViewIds.ToString() ) );
                     if( null != delimitedViewId )
                     {
@@ -253,6 +276,14 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[CaseNumberPropertyName] );
+            }
+        }
+
+        public CswNbtNodePropText CurrentViewMode
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[CurrentViewModePropertyName] );
             }
         }
 

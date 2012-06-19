@@ -110,6 +110,13 @@ namespace ChemSW.Nbt.Schema
                 ServerManaged = true
             } );
 
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
+            {
+                PropName = CswNbtObjClassFeedback.CurrentViewModePropertyName,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                ServerManaged = true
+            } );
+
             //create a default node-type of feedbackobj called feedback
             CswNbtMetaDataNodeType feedbackNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( feedbackOC.ObjectClassId, "Feedback", "System" );
             feedbackNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassFeedback.CaseNumberPropertyName ) );
@@ -144,6 +151,10 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataNodeTypeProp selectedNodeIdNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.SelectedNodeIDPropertyName );
             selectedNodeIdNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
+
+            CswNbtMetaDataNodeTypeProp currentViewModeNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.CurrentViewModePropertyName );
+            currentViewModeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
+            currentViewModeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
             //create the role view for admins
             CswNbtNode adminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
