@@ -167,7 +167,7 @@
                 relatednodetypeid: '',
                 relatedobjectclassid: '',
                 onAddNode: function () { },
-                onAfterAddNode: function () {},
+                onSaveImmediate: function () {},
                 propertyData: null
             };
 
@@ -191,7 +191,7 @@
                 onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
                     div.$.dialog('close');
                     Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey, nodename);
-                    Csw.tryExec(o.onAfterAddNode);
+                    Csw.tryExec(o.onSaveImmediate);
                 },
                 onInitFinish: function () {
                     openDialog(div, 800, 600, null, title);
