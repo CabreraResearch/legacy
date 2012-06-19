@@ -57,12 +57,12 @@
                 }
 
                 $.validator.addMethod('validateExponentPresent', function (value, element) {
-                    return (false === Csw.isNullOrEmpty(valueNtb.val()) || Csw.isNullOrEmpty(exponentNtb.val()));
+                    return (false === Csw.isNullOrEmpty(exponentNtb.val()) || Csw.isNullOrEmpty(valueNtb.val()));
                 }, 'Exponent must be defined if Base is defined.');
-                valueNtb.addClass('validateExponentPresent');
+                exponentNtb.addClass('validateExponentPresent');
 
                 $.validator.addMethod('validateBasePresent', function (value, element) {
-                    return (false === Csw.isNullOrEmpty(exponentNtb.val()) || Csw.isNullOrEmpty(valueNtb.val()));
+                    return (false === Csw.isNullOrEmpty(valueNtb.val()) || Csw.isNullOrEmpty(exponentNtb.val()));
                 }, 'Base must be defined if Exponent is defined.');
                 exponentNtb.addClass('validateBasePresent');
             }
