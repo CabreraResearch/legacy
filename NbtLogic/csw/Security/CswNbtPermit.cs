@@ -478,22 +478,15 @@ namespace ChemSW.Nbt.Security
             bool ret = true;
             if( null != ContainerNodeId && Int32.MinValue != ContainerNodeId.PrimaryKey )
             {
-                // case 24510
-                // Special container permissions, based on Inventory Group
-                //if( ( Permission != null // ||
-                //    // restore this when 24508 and 24516 are implemented
-                //    //( Action != null &&
-                //    //  ( Action.Name == CswNbtActionName.DispenseContainer ||       // case 24508
-                //    //    Action.Name == CswNbtActionName.RequestContainer ) )       // case 24516
-                //    ) )
-                //{
-                ret = false;
+                // Special container permissions, based on Inventory Group                
 
                 // We find the matching InventoryGroupPermission based on:
                 //   the Container's Location's Inventory Group
                 //   the User's WorkUnit
                 //   the User's Role
                 // We allow or deny permission to perform the action using the appropriate Logical
+
+                ret = false;
 
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
                 CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
@@ -542,25 +535,26 @@ namespace ChemSW.Nbt.Security
                                 InvGrpPermTree.goToNthChild( 0 ); // inventory group permission
                                 CswNbtNode PermNode = InvGrpPermTree.getNodeForCurrentPosition();
                                 CswNbtObjClassInventoryGroupPermission PermNodeAsPerm = (CswNbtObjClassInventoryGroupPermission) PermNode;
-                                //if( Permission != null )
-                                //{
-                                if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
-                                    ( Permission == NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                    ( Permission == NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
-                                    ( Permission == NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
+                                if( Action != null )
                                 {
-                                    ret = true;
+                                    if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.DisposeContainer && PermNodeAsPerm.Dispose.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.UndisposeContainer && PermNodeAsPerm.Undispose.Checked == Tristate.True ) ||
+                                        ( Action.Name == CswNbtActionName.Submit_Request && PermNodeAsPerm.Request.Checked == Tristate.True ) )
+                                    {
+                                        ret = true;
+                                    }
                                 }
-                                //}
-                                //else
-                                //{
-                                //    // restore this when 24508 and 24516 are implemented
-                                //    //if( ( Action.Name == CswNbtActionName.DispenseContainer && PermNodeAsPerm.Dispense.Checked == Tristate.True ) ||
-                                //    //    ( Action.Name == CswNbtActionName.RequestContainer && PermNodeAsPerm.Request.Checked == Tristate.True ) )
-                                //    //{
-                                //    //    ret = true;
-                                //    //}
-                                //}
+                                else
+                                {
+                                    if( ( Permission == NodeTypePermission.View && PermNodeAsPerm.View.Checked == Tristate.True ) ||
+                                        ( Permission == NodeTypePermission.Edit && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
+                                        ( Permission == NodeTypePermission.Create && PermNodeAsPerm.Edit.Checked == Tristate.True ) ||
+                                        ( Permission == NodeTypePermission.Delete && PermNodeAsPerm.Edit.Checked == Tristate.True ) )
+                                    {
+                                        ret = true;
+                                    }
+                                }
                             } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group permission
                         } // if( InvGrpPermTree.getChildNodeCount() > 0 ) inventory group
                         else

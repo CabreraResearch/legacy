@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 
@@ -135,18 +136,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            //this.Dispense.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DispenseContainer, true, "" ) );
+            this.Dispense.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DispenseContainer, true, "" ) );
             if( this.Disposed.Checked == Tristate.False )
             {
-                this.Dispose.Hidden = false;
                 this.Undispose.Hidden = true;
-                //this.Dispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DisposeContainer, true, "" ) );
+                this.Dispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DisposeContainer, true, "" ) );
             }
             else if( this.Disposed.Checked == Tristate.True )
             {
-                this.Undispose.Hidden = false;
                 this.Dispose.Hidden = true;
-                //this.Undispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.UndisposeContainer, true, "" ) );
+                this.Undispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.UndisposeContainer, true, "" ) );
             }
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
