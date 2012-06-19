@@ -313,8 +313,8 @@ namespace ChemSW.Nbt
                         //if( !ret.Contains( NewEntry ) )
                         //{
                         CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
-                        if( _canAddThisObjectClass(ObjectClass) &&
-                            _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType )
+                        if( _canAddThisObjectClass( ObjectClass.ObjectClass ) &&
+                            _CswNbtResources.Permit.can( Security.CswNbtPermit.NodeTypePermission.Create, FirstVersionNodeType ) )
                         {
                             // Only use the first view relationship found per nodetype
                             bool FoundMatch = false;
