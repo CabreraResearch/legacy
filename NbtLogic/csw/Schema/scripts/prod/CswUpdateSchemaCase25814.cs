@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             CswNbtMetaDataObjectClassProp ContainerDisposeProp = ContainerOC.getObjectClassProp( "Dispose" );
-            if( ContainerDispenseProp != null )
+            if( ContainerDisposeProp != null )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
                     ContainerDisposeProp,
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             CswNbtMetaDataObjectClassProp ContainerMoveProp = ContainerOC.getObjectClassProp( "Move" );
-            if( ContainerDispenseProp != null )
+            if( ContainerMoveProp != null )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp(
                     ContainerMoveProp,
