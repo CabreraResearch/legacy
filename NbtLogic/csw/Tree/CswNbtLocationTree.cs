@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -88,7 +89,7 @@ namespace ChemSW.Nbt
         }
 
         public Dictionary<CswPrimaryKey, string> Locations = new Dictionary<CswPrimaryKey, string>();
-        public CswCommaDelimitedString LocationIds = new CswCommaDelimitedString();
+        public Collection<CswPrimaryKey> LocationIds = new Collection<CswPrimaryKey>();
         /// <summary>
         /// Deprecated
         /// </summary>
@@ -113,7 +114,7 @@ namespace ChemSW.Nbt
                     if( false == Locations.ContainsKey( NodeId ) )
                     {
                         Locations.Add( NodeId, NodeName );
-                        LocationIds.Add( NodeId.PrimaryKey.ToString() );
+                        LocationIds.Add( NodeId );
                     }
                     string PropSql = @"select op.propname, j.field1
                                     from nodes n
