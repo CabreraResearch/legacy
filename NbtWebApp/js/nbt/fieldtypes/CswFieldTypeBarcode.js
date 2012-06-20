@@ -6,7 +6,7 @@
     var pluginName = 'CswFieldTypeBarcode';
 
     var methods = {
-        init: function (o) { 
+        init: function (o) {
 
             var propDiv = o.propDiv;
             propDiv.empty();
@@ -47,11 +47,13 @@
         },
         save: function (o) {
             var attributes = { barcode: null };
+            var compare = {};
             var textBox = o.propDiv.find('input');
             if (false === Csw.isNullOrEmpty(textBox)) {
                 attributes.barcode = textBox.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

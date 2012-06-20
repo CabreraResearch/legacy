@@ -69,13 +69,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtView RequestItemsView = new CswNbtView( _CswNbtResources );
                 CswNbtMetaDataObjectClass RequestItemsOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-                CswNbtMetaDataObjectClassProp RiRequestOcp = RequestItemsOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request.ToString() );
+                CswNbtMetaDataObjectClassProp RiRequestOcp = RequestItemsOc.getObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
 
                 CswNbtViewRelationship RequestItemVr = RequestItemsView.AddViewRelationship( RequestItemsOc, false );
                 RequestItemsView.AddViewPropertyAndFilter( RequestItemVr,
                                                           RequestItemsOc.getObjectClassProp(
-                                                              CswNbtObjClassRequestItem.PropertyName.Status.ToString() ),
-                                                          CswNbtObjClassRequestItem.Statuses.Pending.ToString(),
+                                                              CswNbtObjClassRequestItem.PropertyName.Status ),
+                                                          CswNbtObjClassRequestItem.Statuses.Pending,
                                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
                 RequestItemsView.AddViewPropertyAndFilter( RequestItemVr, RiRequestOcp, NodeId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
 
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         Tree.goToNthChild( N );
                         CswNbtObjClassRequestItem NodeAsRequestItem = _CswNbtResources.Nodes.GetNode( Tree.getNodeIdForCurrentPosition() );
-                        NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Submitted.ToString();
+                        NodeAsRequestItem.Status.Value = CswNbtObjClassRequestItem.Statuses.Submitted;
                         NodeAsRequestItem.postChanges( true );
                         Tree.goToParentNode();
                     }

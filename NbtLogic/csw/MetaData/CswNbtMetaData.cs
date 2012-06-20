@@ -357,6 +357,14 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId );
         }
 
+        /// <summary>
+        /// Fetches all Object Class Properties that are of the given fieldType
+        /// </summary>
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByFieldType( FieldType );
+        }
+
         public ICswNbtFieldTypeRule getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.makeFieldTypeRule( FieldType );
@@ -478,7 +486,7 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataFieldType makeNewFieldType( CswNbtMetaDataFieldType.NbtFieldType FieldType, CswNbtMetaDataFieldType.DataType DataType, string FieldPrecision = "", string Mask = "" )
         {
             CswNbtMetaDataFieldType RetFieldType = null;
-            if( FieldType != CswNbtMetaDataFieldType.NbtFieldType.Unknown && DataType != CswNbtMetaDataFieldType.DataType.UNKNOWN )
+            if( FieldType != CswNbtResources.UnknownEnum && DataType != CswNbtMetaDataFieldType.DataType.UNKNOWN )
             {
                 RetFieldType = getFieldType( FieldType );
                 if( null == RetFieldType )
@@ -1032,7 +1040,10 @@ namespace ChemSW.Nbt.MetaData
             }
             NtpModel.NodeType = CheckVersioning( NtpModel.NodeType );
             CswNbtMetaDataNodeTypeTab Tab = NtpModel.NodeType.getNodeTypeTab( OriginalTabName );
-
+            if( null == Tab )
+            {
+                Tab = NtpModel.NodeType.getNodeTypeTab( NtpModel.TabId );
+            }
             // Create row
             DataTable NodeTypePropsTable = _CswNbtMetaDataResources.NodeTypePropTableUpdate.getEmptyTable();
             DataRow InsertedRow = NodeTypePropsTable.NewRow();
@@ -1078,7 +1089,8 @@ namespace ChemSW.Nbt.MetaData
             }
             else //if( NodeTypeTabs.Rows.Count > 0 )
             {
-                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, Tab.TabId, Int32.MinValue, Int32.MinValue );
+                Int32 TabId = ( Tab != null ) ? Tab.TabId : Int32.MinValue;
+                NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, NewProp.NodeTypeId, NewProp.PropId, true, TabId, Int32.MinValue, Int32.MinValue );
                 if( NtpModel.FieldType.IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
                 {
                     NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, NewProp.NodeTypeId, NewProp.PropId, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );

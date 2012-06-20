@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool IsReadOnly()
         {
             return ( _CswNbtNodePropData.ReadOnly ||       // jct_nodes_props.readonly
-                    ( NodeTypeProp.ReadOnly && false == NodeTypeProp.AllowReadOnlyAdd ) ||
+                    ( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add ) ||
                 //( NodeTypeProp.ReadOnly && _CswNbtResources.EditMode != NodeEditMode.Add && NodeTypeProp.SetValueOnAddEnabled ) ||              // nodetype_props.readonly
                      NodeTypeProp.ServerManaged ||         // nodetype_props.servermanaged
                      _CswNbtResources.EditMode == NodeEditMode.Preview ||
@@ -245,6 +245,14 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodeProp.ToJSON( Values );
         }
 
+        private bool _wasModified( JObject Prop )
+        {
+            return ( _CswNbtResources.EditMode == NodeEditMode.Add ||
+                    null == Prop["wasmodified"] ||
+                    CswConvert.ToBoolean( Prop["wasmodified"] ) );
+
+        }
+
         /// <summary>
         /// Parses defined Field Type attributes/subfields into a JToken class JObject
         /// </summary>
@@ -255,8 +263,7 @@ namespace ChemSW.Nbt.PropTypes
                 _Tab = Tab;
                 if( null != Object["values"] &&
                     false == IsReadOnly() &&
-                    ( null == Object["wasmodified"] ||
-                     CswConvert.ToBoolean( Object["wasmodified"] ) ) )
+                    _wasModified( Object ) )
                 {
                     JObject Values = (JObject) Object["values"];
                     _CswNbtNodeProp.ReadJSON( Values, NodeMap, NodeTypeMap );

@@ -31,14 +31,16 @@
         },
         save: function (o) { //$propdiv, $xml
             var attributes = { logicalsetjson: null };
+            var compare = {};
             var formdata = Csw.clientDb.getItem(o.ID + '_cba' + '_cswCbaArrayDataStore'); 
             
             if(false === Csw.isNullOrEmpty(formdata) && (
                false === o.Multi || 
                     false === formdata.MultiIsUnchanged)) {
                 attributes.logicalsetjson = formdata;
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
             return $(this);
         } // save()
     };

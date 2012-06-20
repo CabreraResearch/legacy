@@ -7,7 +7,7 @@ namespace ChemSW.Nbt
 {
     public class CswNbtPropEnmrtrFiltered : IEnumerator
     {
-        CswNbtMetaDataFieldType.NbtFieldType _FieldType = CswNbtMetaDataFieldType.NbtFieldType.Unknown;
+        CswNbtMetaDataFieldType.NbtFieldType _FieldType;
         private ArrayList _PropList;
         int _Position = -1;
 

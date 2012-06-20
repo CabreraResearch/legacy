@@ -1,6 +1,5 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -59,9 +58,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -93,37 +92,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
-            }
-        }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[NamePropertyName] ); } }
+        public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[BaseUnitPropertyName] ); } }
+        public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[ConversionFactorPropertyName] ); } }
+        public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[FractionalPropertyName] ); } }
 
-        public CswNbtNodePropText BaseUnit
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
-            }
-        }
-
-        public CswNbtNodePropScientific ConversionFactor
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ConversionFactorPropertyName].AsScientific );
-            }
-        }
-
-        public CswNbtNodePropLogical Fractional
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[FractionalPropertyName].AsLogical );
-            }
-        }
         #endregion
 
     }//CswNbtObjClassUnitOfMeasure

@@ -87,11 +87,11 @@
                     false === Csw.isNullOrEmpty(row) &&
                         false === Csw.isNullOrEmpty(col)) {
                     if (row <= 0) {
-                        Csw.log("table.cell() error: row must be greater than 1, got: " + row);
+                        Csw.debug.log("table.cell() error: row must be greater than 1, got: " + row);
                         row = 1;
                     }
                     if (col <= 0) {
-                        Csw.log("table.cell() error: col must be greater than 1, got: " + col);
+                        Csw.debug.log("table.cell() error: col must be greater than 1, got: " + col);
                         col = 1;
                     }
 

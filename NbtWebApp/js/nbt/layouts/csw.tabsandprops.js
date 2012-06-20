@@ -50,7 +50,7 @@
                 showSaveButton: true,
                 atLeastOne: {},
                 saveBtn: {},
-                propertyData: {},
+                propertyData: null,
                 excludeOcProps: []
             };
             var cswPublic = {};
@@ -223,165 +223,184 @@
                     ConfigMode: cswPrivate.Config
                 };
 
-                Csw.ajax.post({
-                    watchGlobal: cswPrivate.AjaxWatchGlobal,
-                    urlMethod: cswPrivate.PropsUrlMethod,
-                    data: jsonData,
-                    success: function (data) {
-                        cswPrivate.propertyData = data;
-                        cswPrivate.form = tabContentDiv.children('form');
-                        cswPrivate.form.empty();
+                function makePropLayout() {
+                    cswPrivate.form = tabContentDiv.children('form');
+                    cswPrivate.form.empty();
 
-                        if (false === Csw.isNullOrEmpty(cswPrivate.title)) {
-                            cswPrivate.form.append(cswPrivate.title);
-                        }
+                    if (false === Csw.isNullOrEmpty(cswPrivate.title)) {
+                        cswPrivate.form.append(cswPrivate.title);
+                    }
 
-                        var formTable = cswPrivate.form.table({
-                            ID: cswPrivate.ID + '_formtbl',
-                            width: '100%'
-                        });
-                        //var formTblCell11 = formTable.cell(1, 1);
-                        //var formTblCell12 = formTable.cell(1, 2);
+                    var formTable = cswPrivate.form.table({
+                        ID: cswPrivate.ID + '_formtbl',
+                        width: '100%'
+                    });
+                    //var formTblCell11 = formTable.cell(1, 1);
+                    //var formTblCell12 = formTable.cell(1, 2);
 
 
-                        cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable({
-                            ID: cswPrivate.ID + '_props',
-                            OddCellRightAlign: true,
-                            ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
-                            cellSet: {
-                                rows: 1,
-                                columns: 2
-                            },
-                            onSwap: function (e, onSwapData) {
-                                cswPrivate.onSwap(tabid, onSwapData);
-                            },
-                            showConfigButton: false, //o.Config,
-                            showExpandRowButton: cswPrivate.Config,
-                            showExpandColButton: (cswPrivate.Config && cswPrivate.EditMode !== Csw.enums.editMode.Table),
-                            showRemoveButton: cswPrivate.Config,
-                            onConfigOn: function () {
-                                doUpdateSubProps(true);
-                            }, // onConfigOn
-                            onConfigOff: function () {
-                                doUpdateSubProps(false);
-                            }, // onConfigOff
-                            onRemove: function (event, onRemoveData) {
-                                cswPrivate.onRemove(tabid, onRemoveData);
-                            } // onRemove
-                        }); // Csw.literals.layoutTable()
+                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable({
+                        ID: cswPrivate.ID + '_props',
+                        OddCellRightAlign: true,
+                        ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
+                        cellSet: {
+                            rows: 1,
+                            columns: 2
+                        },
+                        onSwap: function (e, onSwapData) {
+                            cswPrivate.onSwap(tabid, onSwapData);
+                        },
+                        showConfigButton: false, //o.Config,
+                        showExpandRowButton: cswPrivate.Config,
+                        showExpandColButton: (cswPrivate.Config && cswPrivate.EditMode !== Csw.enums.editMode.Table),
+                        showRemoveButton: cswPrivate.Config,
+                        onConfigOn: function () {
+                            doUpdateSubProps(true);
+                        }, // onConfigOn
+                        onConfigOff: function () {
+                            doUpdateSubProps(false);
+                        }, // onConfigOff
+                        onRemove: function (event, onRemoveData) {
+                            cswPrivate.onRemove(tabid, onRemoveData);
+                        } // onRemove
+                    }); // Csw.literals.layoutTable()
 
-                        function doUpdateSubProps(configOn) {
-                            var updOnSuccess = function (thisProp, key) {
-                                if (Csw.bool(thisProp.hassubprops)) {
-                                    var propId = key; //key
-                                    var subTable = cswPrivate.layoutTable[propId + '_subproptable'];
-                                    var parentCell = subTable.parent().parent();
-                                    var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
-                                    cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: propId });
-                                    var propCell = cswPrivate.getPropertyCell(cellSet);
+                    function doUpdateSubProps(configOn) {
+                        var updOnSuccess = function (thisProp, key) {
+                            if (Csw.bool(thisProp.hassubprops)) {
+                                var propId = key; //key
+                                var subTable = cswPrivate.layoutTable[propId + '_subproptable'];
+                                var parentCell = subTable.parent().parent();
+                                var cellSet = cswPrivate.layoutTable.cellSet(parentCell.propNonDom('row'), parentCell.propNonDom('column'));
+                                cswPrivate.layoutTable.addCellSetAttributes(cellSet, { propId: propId });
+                                var propCell = cswPrivate.getPropertyCell(cellSet);
 
-                                    if (subTable.length > 0) {
-                                        var fieldOpt = {
-                                            fieldtype: thisProp.fieldtype,
-                                            nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
-                                            relatednodeid: cswPrivate.relatednodeid,
-                                            relatednodename: cswPrivate.relatednodename,
-                                            relatednodetypeid: cswPrivate.relatednodetypeid,
-                                            relatedobjectclassid: cswPrivate.relatedobjectclassid,
-                                            propid: propId,
-                                            propDiv: propCell.children('div'),
-                                            propData: thisProp,
-                                            onChange: function () {
-                                            },
-                                            onReload: function (afterReload) {
-                                                cswPrivate.getProps(tabContentDiv, tabid, afterReload);
-                                            },
-                                            EditMode: cswPrivate.EditMode,
-                                            Multi: cswPrivate.Multi,
-                                            cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0)
-                                        };
+                                if (subTable.length > 0) {
+                                    var fieldOpt = {
+                                        fieldtype: thisProp.fieldtype,
+                                        nodeid: Csw.tryParseObjByIdx(cswPrivate.nodeids, 0),
+                                        relatednodeid: cswPrivate.relatednodeid,
+                                        relatednodename: cswPrivate.relatednodename,
+                                        relatednodetypeid: cswPrivate.relatednodetypeid,
+                                        relatedobjectclassid: cswPrivate.relatedobjectclassid,
+                                        propid: propId,
+                                        propDiv: propCell.children('div'),
+                                        propData: thisProp,
+                                        onChange: function () {
+                                        },
+                                        onReload: function (afterReload) {
+                                            cswPrivate.getProps(tabContentDiv, tabid, afterReload);
+                                        },
+                                        EditMode: cswPrivate.EditMode,
+                                        Multi: cswPrivate.Multi,
+                                        cswnbtnodekey: Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0)
+                                    };
 
-                                        cswPrivate.updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn);
-                                    }
-                                }
-                                return false;
-                            };
-                            Csw.crawlObject(cswPrivate.propertyData, updOnSuccess, false);
-                        }
-
-                        if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.showSaveButton)) {
-                            cswPrivate.saveBtn = formTable.cell(2, 1).button({
-                                ID: 'SaveTab',
-                                enabledText: 'Save Changes',
-                                disabledText: 'Saving...',
-                                onClick: function () { cswPublic.save(tabContentDiv, tabid); }
-                            });
-                        }
-                        cswPrivate.atLeastOne = cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
-                        if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
-                            false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
-                            cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
-                        }
-                        // Validation
-                        cswPrivate.form.$.validate({
-                            highlight: function (element) {
-                                var $elm = $(element);
-                                $elm.attr('csw_invalid', '1');
-                                $elm.animate({ backgroundColor: '#ff6666' });
-                            },
-                            unhighlight: function (element) {
-                                var $elm = $(element);
-                                if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
-                                {
-                                    $elm.css('background-color', '#66ff66');
-                                    $elm.attr('csw_invalid', '0');
-                                    setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                                    cswPrivate.updateSubProps(fieldOpt, propId, thisProp, propCell, tabContentDiv, tabid, configOn);
                                 }
                             }
-                        }); // validate()
+                            return false;
+                        };
+                        Csw.crawlObject(cswPrivate.propertyData, updOnSuccess, false);
+                    }
 
-                        if (Csw.bool(cswPrivate.Config)) {
-                            cswPrivate.layoutTable.configOn();
-                        } else if (!cswPrivate.Config &&
+                    if (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport && Csw.bool(cswPrivate.showSaveButton)) {
+                        cswPrivate.saveBtn = formTable.cell(2, 1).button({
+                            ID: 'SaveTab',
+                            enabledText: 'Save Changes',
+                            disabledText: 'Saving...',
+                            onClick: function () { cswPublic.save(tabContentDiv, tabid); }
+                        });
+                    }
+                    cswPrivate.atLeastOne = cswPrivate.handleProperties(null, tabContentDiv, tabid, false);
+                    if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
+                            false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
+                        cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
+                    }
+                    // Validation
+                    cswPrivate.form.$.validate({
+                        highlight: function (element) {
+                            var $elm = $(element);
+                            $elm.attr('csw_invalid', '1');
+                            $elm.animate({ backgroundColor: '#ff6666' });
+                        },
+                        unhighlight: function (element) {
+                            var $elm = $(element);
+                            if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+                            {
+                                $elm.css('background-color', '#66ff66');
+                                $elm.attr('csw_invalid', '0');
+                                setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                            }
+                        }
+                    }); // validate()
+
+                    if (Csw.bool(cswPrivate.Config)) {
+                        cswPrivate.layoutTable.configOn();
+                    } else if (!cswPrivate.Config &&
                             Csw.isNullOrEmpty(cswPrivate.date) &&
                                 cswPrivate.filterToPropId === '' &&
                                     cswPrivate.EditMode !== Csw.enums.editMode.PrintReport &&
                                         Csw.bool(tabContentDiv.data('canEditLayout'))) {
-                            /* Case 24437 */
-                            var editLayoutOpt = {
-                                ID: cswPrivate.ID,
-                                nodeids: cswPrivate.nodeids,
-                                nodekeys: cswPrivate.nodekeys,
-                                tabid: cswPrivate.tabid,
-                                nodetypeid: cswPrivate.nodetypeid,
-                                Refresh: function () {
-                                    Csw.tryExec(cswPrivate.Refresh);
-                                    cswPrivate.Config = false;
-                                    cswPrivate.getTabs(tabContentDiv);
-                                }
-                            };
+                        /* Case 24437 */
+                        var editLayoutOpt = {
+                            ID: cswPrivate.ID,
+                            nodeids: cswPrivate.nodeids,
+                            nodekeys: cswPrivate.nodekeys,
+                            tabid: cswPrivate.tabid,
+                            nodetypeid: cswPrivate.nodetypeid,
+                            Refresh: function () {
+                                Csw.tryExec(cswPrivate.Refresh);
+                                cswPrivate.Config = false;
+                                cswPrivate.getTabs(tabContentDiv);
+                            }
+                        };
 
-                            /* Show the 'fake' config button to open the dialog */
-                            formTable.cell(1, 2).imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.Configure,
-                                AlternateText: 'Configure',
-                                ID: cswPrivate.ID + 'configbtn',
-                                onClick: function () {
-                                    cswPrivate.clearTabs();
-                                    $.CswDialog('EditLayoutDialog', editLayoutOpt);
-                                }
-                            });
-                        }
+                        /* Show the 'fake' config button to open the dialog */
+                        formTable.cell(1, 2).imageButton({
+                            ButtonType: Csw.enums.imageButton_ButtonType.Configure,
+                            AlternateText: 'Configure',
+                            ID: cswPrivate.ID + 'configbtn',
+                            onClick: function () {
+                                cswPrivate.clearTabs();
+                                $.CswDialog('EditLayoutDialog', editLayoutOpt);
+                            }
+                        });
+                    }
 
-                        /* case 8494 */
-                        if (!cswPrivate.Config && !cswPrivate.atLeastOne.Saveable && cswPrivate.EditMode === Csw.enums.editMode.Add) {
-                            cswPublic.save(tabContentDiv, tabid);
-                        } else {
-                            Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
-                            Csw.tryExec(onSuccess);
-                        }
-                    } // success{}
-                }); // ajax
+                    /* case 8494 */
+                    if (!cswPrivate.Config && !cswPrivate.atLeastOne.Saveable && cswPrivate.EditMode === Csw.enums.editMode.Add) {
+                        cswPublic.save(tabContentDiv, tabid);
+                    } else {
+                        Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
+                        Csw.tryExec(onSuccess);
+                    }
+                }
+
+                if (Csw.isNullOrEmpty(cswPrivate.propertyData) ||
+                    cswPrivate.EditMode !== Csw.enums.editMode.Add) {
+
+                    Csw.ajax.post({
+                        watchGlobal: cswPrivate.AjaxWatchGlobal,
+                        urlMethod: cswPrivate.PropsUrlMethod,
+                        data: jsonData,
+                        success: function (data) {
+                            if (Csw.isNullOrEmpty(data)) {
+                                Csw.error.throwException({
+                                    type: 'warning',
+                                    message: 'No properties have been configured for this layout: ' + cswPrivate.EditMode,
+                                    name: 'Csw_client_exception',
+                                    fileName: 'csw.tabsandprops.js',
+                                    lineNumber: 387
+                                });
+                            }
+                            cswPrivate.propertyData = data;
+                            makePropLayout();
+                        } // success{}
+                    }); // ajax
+                } else {
+                    makePropLayout();
+                }
             };
 
             // getPropsImpl()
@@ -653,7 +672,9 @@
                 setTimeout(function () {
                     // do a fake 'save' to update the json with the current value
                     $.CswFieldTypeFactory('save', fieldOpt);
-
+                    if (cswPrivate.EditMode == Csw.enums.editMode.Add) {
+                        fieldOpt.propData.wasmodified = true;
+                    }
                     if (fieldOpt.propData.wasmodified) {
                         // update the propxml from the server
                         var jsonData = {
@@ -687,13 +708,13 @@
                 /// <param name="propData" type="Object">(Optional) an object representing CswNbt node properties.</param>
                 /// <returns type="Array">An array of propIds</returns>
                 'use strict';
-                Csw.tryExec(function() {
+                Csw.tryExec(function () {
 
                     layoutTable = layoutTable || cswPrivate.layoutTable;
                     propData = propData || cswPrivate.propertyData;
 
                     var propIds = [];
-                    var updSuccess = function(thisProp) {
+                    var updSuccess = function (thisProp) {
                         var propOpt = {
                             propData: thisProp,
                             propDiv: '',

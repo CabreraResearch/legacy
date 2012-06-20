@@ -180,7 +180,7 @@ namespace ChemSW.Nbt
                                                      CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                      NodesRow["propname"].ToString(),
                                                      NodesRow["gestalt"].ToString(),
-                                                     (CswNbtMetaDataFieldType.NbtFieldType) Enum.Parse( typeof( CswNbtMetaDataFieldType.NbtFieldType ), NodesRow["fieldtype"].ToString() ) );
+                                                     CswConvert.ToString( NodesRow["fieldtype"] ) );
 
                         } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         if( ParentNodeKeys.Count > 0 )

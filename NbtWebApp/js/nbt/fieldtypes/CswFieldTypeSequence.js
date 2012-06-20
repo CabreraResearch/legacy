@@ -35,11 +35,13 @@
             var attributes = {
                 sequence: null
             };
+            var compare = {};
             var sequence = o.propDiv.find('input');
             if (false === Csw.isNullOrEmpty(sequence)) {
                 attributes.sequence = sequence.val();
+                compare = attributes;
             }
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
     

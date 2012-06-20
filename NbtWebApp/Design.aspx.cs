@@ -2209,6 +2209,46 @@ namespace ChemSW.Nbt.WebPages
                             if( !Double.IsNaN( SelectedNodeTypeProp.MaxValue ) )
                                 QtyMaxValue.Text = SelectedNodeTypeProp.MaxValue.ToString();
                             QtyMaxValueRow.Cells[1].Controls.Add( QtyMaxValue );
+
+                            //case 26410 - add relationship stuff
+
+                            TableRow UnitRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) UnitRow.Cells[0].Controls[0] ).Text = "UnitTarget:";
+                            CswNodeTypeDropDown UnitValue = new CswNodeTypeDropDown( Master.CswNbtResources );
+                            if( SelectedNodeTypeProp.InUse )
+                            {
+                                UnitValue.Enabled = false;
+                            }
+                            UnitValue.CssClass = "selectinput";
+                            UnitValue.ID = "EditProp_TargetValue" + SelectedNodeTypeProp.PropId.ToString();
+                            UnitValue.ConstrainToObjectClassId = ObjectClassProp.FKValue;
+
+                            UnitValue.DataBind();
+
+                            if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                                UnitValue.SelectedNodeTypeFirstVersionId = SelectedNodeTypeProp.FKValue;
+                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                                UnitValue.SelectedObjectClassId = SelectedNodeTypeProp.FKValue;
+
+                            UnitRow.Cells[1].Controls.Add( UnitValue );
+
+                            _ViewXmlRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) _ViewXmlRow.Cells[0].Controls[0] ).Text = "UnitView:";
+                            CswNbtView UnitView = Master.CswNbtResources.ViewSelect.restoreView( SelectedNodeTypeProp.ViewId );
+
+                            _RelationshipViewTree = new CswViewStructureTree( Master.CswNbtResources );
+                            _RelationshipViewTree.ID = "RelationshipViewTree";
+                            _RelationshipViewTree.OnError += new CswErrorHandler( Master.HandleError );
+                            _RelationshipViewTree.reinitTreeFromView( UnitView, null, null, CswViewStructureTree.ViewTreeSelectType.None );
+                            _ViewXmlRow.Cells[1].Controls.Add( _RelationshipViewTree );
+
+                            Button EditUnitViewButton = new Button();
+                            EditUnitViewButton.ID = "EditRelationshipViewButton";
+                            EditUnitViewButton.CssClass = "Button";
+                            //TODO - fix this button so that it opens the edit view workflow (and fix the one for relationship too)
+                            EditUnitViewButton.OnClientClick = "window.location='Main.html?step=2&viewid=" + SelectedNodeTypeProp.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
+                            EditUnitViewButton.Text = "Edit View";
+                            _ViewXmlRow.Cells[1].Controls.Add( EditUnitViewButton );
                             break;
 
                         case CswNbtMetaDataFieldType.NbtFieldType.Question:
@@ -2221,8 +2261,6 @@ namespace ChemSW.Nbt.WebPages
                             QstnPossibleAnswersText.ID = "EditProp_OptionsValue" + SelectedNodeTypeProp.PropId.ToString();
                             QstnPossibleAnswersText.Text = SelectedNodeTypeProp.ListOptions;
                             QstnPossibleAnswersRow.Cells[1].Controls.Add( QstnPossibleAnswersText );
-
-
 
                             //Text: Compliant Answers
                             TableRow QstnCompliantAnswerRow = makeEditPropTableRow( EditPropPlaceHolder );
@@ -2242,6 +2280,7 @@ namespace ChemSW.Nbt.WebPages
                                 AnswerRow[1] = ( CompliantAnswers.Contains( PossibleAnswers[i] ) );
                             }
 
+
                             QstnCompliantAnswerList.CreateCheckBoxes( CompliantAnswersTable, AnswersColumn.ColumnName, AnswersColumn.ColumnName );
                             //TextBox QstnCompliantAnswerList = new TextBox();
                             //QstnCompliantAnswerList.CssClass = "textinput";
@@ -2249,6 +2288,18 @@ namespace ChemSW.Nbt.WebPages
                             //QstnCompliantAnswerList.Text = SelectedNodeTypeProp.ValueOptions;
                             QstnCompliantAnswerRow.Cells[1].Controls.Add( QstnCompliantAnswerList );
 
+                            //Preferred Answer
+                            TableRow PreferredAnswerRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) PreferredAnswerRow.Cells[0].Controls[0] ).Text = "Preferred Answer:";
+                            DropDownList PreferredAnswerValueList = new DropDownList();
+                            PreferredAnswerValueList.ID = "EditProp_ExtendedValue" + SelectedNodeTypeProp.PropId.ToString();
+                            PreferredAnswerValueList.Items.Add( new ListItem( string.Empty, string.Empty ) );
+                            foreach( string Answer in CompliantAnswers )
+                            {
+                                PreferredAnswerValueList.Items.Add( new ListItem( Answer, Answer ) );
+                            }
+                            PreferredAnswerValueList.SelectedValue = SelectedNodeTypeProp.Extended;
+                            PreferredAnswerRow.Cells[1].Controls.Add( PreferredAnswerValueList );
                             //RequiredFieldValidator QstnCompliantAnswerRFV = new RequiredFieldValidator();
                             //QstnCompliantAnswerRFV.ControlToValidate = QstnCompliantAnswerList.ID;
                             //QstnCompliantAnswerRFV.ID = "EditProp_ValueOptionsValue_RFV" + SelectedNodeTypeProp.PropId.ToString();

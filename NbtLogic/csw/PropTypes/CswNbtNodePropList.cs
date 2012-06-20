@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( null == _CswNbtNodeTypePropListOptions )
                 {
-                    _CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp.PropId );
+                    _CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
                 }
 
                 return ( _CswNbtNodeTypePropListOptions );

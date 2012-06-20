@@ -286,12 +286,30 @@ namespace ChemSW.Nbt.PropTypes
             {
                 string AnswerString = _CswNbtMetaDataNodeTypeProp.ListOptions;
                 if( string.IsNullOrEmpty( AnswerString ) )
-                    AnswerString = "Yes,No,N/A";
+                { AnswerString = "Yes,No,N/A"; }
                 return AnswerString;
             }
         }
 
-
+        public string PreferredAnswer
+        {
+            get
+            {
+                string Ret = "";
+                if( AllowedAnswers.Contains( _CswNbtMetaDataNodeTypeProp.Extended, CaseSensitive: false ) )
+                {
+                    Ret = _CswNbtMetaDataNodeTypeProp.Extended;
+                }
+                return Ret;
+            }
+            set
+            {
+                if( AllowedAnswers.Contains( value, CaseSensitive: false ) )
+                {
+                    _CswNbtMetaDataNodeTypeProp.Extended = value;
+                }
+            }
+        }
 
         public override void ToXml( XmlNode ParentNode )
         {

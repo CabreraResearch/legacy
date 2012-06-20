@@ -62,6 +62,7 @@ namespace NbtWebAppServices.Response
                 public string Text { get; set; }
                 public string Type { get; set; }
                 public string HelpText { get; set; }
+                public string PreferredAnswer { get; set; }
             }
         }
 
@@ -80,8 +81,24 @@ namespace NbtWebAppServices.Response
             public string RouteName { get; set; }
             public string Status { get; set; }
             public string Action { get; set; }
+            public bool ReadOnly { get; set; }
+            public QuestionCounts Counts { get; set; }
             public Collection<QuestionAnswer> Questions { get; set; }
 
+            public class QuestionCounts
+            {
+                public QuestionCounts()
+                {
+                    Total = 0;
+                    Answered = 0;
+                    UnAnswered = 0;
+                    Ooc = 0;
+                }
+                public Int32 Total { get; set; }
+                public Int32 Answered { get; set; }
+                public Int32 UnAnswered { get; set; }
+                public Int32 Ooc { get; set; }
+            }
 
             public class QuestionAnswer
             {

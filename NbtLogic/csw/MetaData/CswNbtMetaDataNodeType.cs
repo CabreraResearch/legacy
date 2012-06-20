@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void addNameTemplateText( string value )
         {
-            NameTemplateValue += CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), CswNbtMetaData.MakeTemplateEntry( value ) );
+            NameTemplateValue += CswNbtMetaData.TemplateTextToTemplateValue( getNodeTypeProps(), CswNbtMetaData.MakeTemplateEntry( value ) ) + " ";
         }
 
         public Int32 PriorVersionNodeTypeId

@@ -1,14 +1,23 @@
 ﻿
+using System.Runtime.Serialization;
+
 namespace NbtWebAppServices.Response
 {
     public class CswNbtWcfRequest : ICswNbtWcfRequest
     {
+        [DataContract]
         public class CswNbtSessionRequest
         {
-            public string Password { get; set; }
-            public string CustomerId { get; set; }
-            public string UserName { get; set; }
-            public bool IsMobile { get; set; }
+            [DataMember( IsRequired = false )]
+            public string Password = "";
+            [DataMember( IsRequired = false )]
+            public string CustomerId = "";
+            [DataMember( IsRequired = false )]
+            public string UserName = "";
+            [DataMember( IsRequired = false )]
+            public bool IsMobile = true;
         }
     }
+
+
 }

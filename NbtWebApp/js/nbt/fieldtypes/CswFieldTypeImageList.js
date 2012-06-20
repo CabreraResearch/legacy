@@ -145,13 +145,14 @@
 
         },
         save: function (o) {
-            var imageList = null;
+            var attributes = { value: null };
+            var compare = {};
             var hiddenValue = o.propDiv.find('#' + o.ID + '_value');
             if (false === Csw.isNullOrEmpty(hiddenValue)) {
-                imageList = hiddenValue.text();
+                attributes.value = hiddenValue.text();
+                compare = attributes;
             }
-            var attributes = { value: imageList };
-            Csw.preparePropJsonForSave(o.Multi, o.propData, attributes);
+            Csw.preparePropJsonForSave(o.Multi, o.propData, compare);
         }
     };
 

@@ -35,10 +35,10 @@ namespace ChemSW.Nbt
             //_CswNbtNodeWriter = new CswNbtNodeWriter( _CswNbtResources );
             NodeHash = new Hashtable();
         }
-        
+
 
         //necessary to allow clearing of node factory in order to avoid memory leak
-        private CswNbtNodeFactory __CswNbtNodeFactory = null; 
+        private CswNbtNodeFactory __CswNbtNodeFactory = null;
         private CswNbtNodeFactory _CswNbtNodeFactory
         {
             get
@@ -48,14 +48,14 @@ namespace ChemSW.Nbt
                     __CswNbtNodeFactory = new CswNbtNodeFactory( _CswNbtResources ); //, ICswNbtObjClassFactory );
                 }
 
-                return(__CswNbtNodeFactory); 
+                return ( __CswNbtNodeFactory );
             }
         }//_CswNbtNodeFactory
 
         public void Clear()
         {
             NodeHash.Clear();
-            _CswNbtNodeFactory.CswNbtNodeWriter.clear(); 
+            _CswNbtNodeFactory.CswNbtNodeWriter.clear();
         }
 
         #region Getting Nodes
@@ -68,6 +68,32 @@ namespace ChemSW.Nbt
         {
             get { return GetNode( NodeId, DateTime.MinValue ); }
         }
+
+        public CswNbtNode GetNode( string NodeId, string NodeKey, CswDateTime Date )
+        {
+            CswNbtNode Node = null;
+            if( !string.IsNullOrEmpty( NodeKey ) )
+            {
+                //CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );
+                CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( _CswNbtResources, NodeKey );
+                Node = _CswNbtResources.getNode( RealNodeKey, Date.ToDateTime() );
+            }
+            else if( !string.IsNullOrEmpty( NodeId ) )
+            {
+                CswPrimaryKey RealNodeId = new CswPrimaryKey();
+                if( CswTools.IsInteger( NodeId ) )
+                {
+                    RealNodeId.TableName = "nodes";
+                    RealNodeId.PrimaryKey = CswConvert.ToInt32( NodeId );
+                }
+                else
+                {
+                    RealNodeId.FromString( NodeId );
+                }
+                Node = _CswNbtResources.getNode( RealNodeId, Date.ToDateTime() );
+            }
+            return Node;
+        } // getNode()
 
         /// <summary>
         /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(int, int, NodeSpecies)"/>

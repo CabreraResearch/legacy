@@ -5,6 +5,7 @@ using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 
@@ -59,7 +60,7 @@ namespace ChemSW.Nbt.WebServices
                 bool AtLeastOneQuestion = false;
                 CswNbtNode InspectionNode = DeficientTree.getNodeForCurrentPosition();
                 CswNbtObjClassInspectionDesign NodeAsInspection = (CswNbtObjClassInspectionDesign) InspectionNode;
-                CswNbtPropEnmrtrFiltered QuestionProps = InspectionNode.Properties[CswNbtMetaDataFieldType.NbtFieldType.Question];
+                CswNbtPropEnmrtrFiltered QuestionProps = InspectionNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Question];
                 foreach( CswNbtNodePropWrapper QuestionProp in QuestionProps )
                 {
                     if( !QuestionProp.AsQuestion.IsCompliant )
@@ -108,7 +109,7 @@ namespace ChemSW.Nbt.WebServices
                 DeficientTree.goToParentNode();
             } // for( Int32 i = 0; i < DeficientTree.getChildNodeCount(); i++ )
 
-            CswNbtActGrid gd = new CswNbtActGrid( _CswNbtResources );
+            CswNbtSdGrid gd = new CswNbtSdGrid( _CswNbtResources );
             gd.PkColumn = "rownum";
             return gd.DataTableToJSON( InspectionData );
 
