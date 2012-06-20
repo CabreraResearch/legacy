@@ -22,14 +22,16 @@ namespace ChemSW.Nbt.Schema
                 IsFk = true,
                 FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                 FkValue = MaterialOc.ObjectClassId,
-                IsRequired = true
+                IsRequired = true,
+                IsCompoundUnique = true
             } );
 
             CswNbtMetaDataObjectClassProp IlLocationOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryLevelOc, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassInventoryLevel.PropertyName.Location,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
-                IsRequired = true
+                IsRequired = true,
+                IsCompoundUnique = true
             } );
 
             CswNbtMetaDataObjectClassProp IlTypeOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryLevelOc, new CswNbtWcfMetaDataModel.ObjectClassProp
@@ -37,7 +39,8 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassInventoryLevel.PropertyName.Type,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
                 ListOptions = CswNbtObjClassInventoryLevel.Types.Options.ToString(),
-                IsRequired = true
+                IsRequired = true,
+                IsCompoundUnique = true
             } );
 
             CswNbtMetaDataObjectClassProp IlLevelOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryLevelOc, new CswNbtWcfMetaDataModel.ObjectClassProp
