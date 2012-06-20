@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.PropTypes
             else
             {
                 // BZ 9133
-                //ret = CswNbtLocationTree.TopLevelName + PathDelimiter + ret;
+                //ret = CswNbtLocationTreeDeprecated.TopLevelName + PathDelimiter + ret;
             }
             return ret;
         }
