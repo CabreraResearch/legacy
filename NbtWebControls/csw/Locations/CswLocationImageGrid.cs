@@ -205,7 +205,7 @@ namespace ChemSW.NbtWebControls
                     currentCol++;
 
                     // Non-Location Children
-                    XmlNodeList ChildNodes = CellNode.SelectNodes(CswNbtLocationTree.XmlNodeName_Child);
+                    XmlNodeList ChildNodes = CellNode.SelectNodes(CswNbtLocationTree.Node);
                     foreach (XmlNode Child in ChildNodes)
                     {
                         CswPrimaryKey ChildNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Child.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );

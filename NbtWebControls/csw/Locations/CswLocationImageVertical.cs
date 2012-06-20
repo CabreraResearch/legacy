@@ -73,7 +73,7 @@ namespace ChemSW.NbtWebControls
                     _Table.addControl((ImagesMade * 2) + 1, 0, makeImage(KeyPrefix,
                                                                           new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
                                                                          _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText,
-                                                                         //_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_IconFileName).InnerText,
+                                                                         //_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_IconFileName).InnerText,
                                                                          string.Empty,
                                                                          (CswNbtLocationTree.VerticalLocationTemplate)Enum.Parse(typeof(CswNbtLocationTree.VerticalLocationTemplate), _ParentNodeSet.ChildNodes[ElementsMade].Attributes[CswNbtLocationTree.XmlAttrName_LocationTemplate].Value),
                                                                          true));

@@ -133,7 +133,7 @@ namespace ChemSW.NbtWebControls
                 string ret = String.Empty;
                 if( SelectedNodeId != null && _CswNbtLocationTree != null )
                 {
-                    XmlNode SelectedNode = _CswNbtLocationTree.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTree.XmlNodeName_Child + "[" + CswNbtLocationTree.XmlNodeName_Key + " = \"" + SelectedNodeId + "\"]/" + CswNbtLocationTree.XmlNodeName_Display );
+                    XmlNode SelectedNode = _CswNbtLocationTree.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTree.Node + "[" + CswNbtLocationTree.XmlNodeName_Key + " = \"" + SelectedNodeId + "\"]/" + CswNbtLocationTree.XmlNodeName_Display );
                     if( SelectedNode != null )
                         ret = SelectedNode.InnerText;
                 }
@@ -405,7 +405,7 @@ namespace ChemSW.NbtWebControls
             if( _CswNbtLocationTree != null )
             {
                 if( ParentNodeId != null )
-                    ret = _CswNbtLocationTree.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTree.XmlNodeName_Child + "[" + CswNbtLocationTree.XmlNodeName_Key + " = \"" + ParentNodeId + "\"]" );
+                    ret = _CswNbtLocationTree.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTree.Node + "[" + CswNbtLocationTree.XmlNodeName_Key + " = \"" + ParentNodeId + "\"]" );
                 else
                     ret = _CswNbtLocationTree.LocationTreeXml.DocumentElement;
             }
@@ -422,7 +422,7 @@ namespace ChemSW.NbtWebControls
             XmlNode ParentNode = getParentXmlNode();
             if( ParentNode != null )
             {
-                XmlNode ChildSet = ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_ChildSet );
+                XmlNode ChildSet = ParentNode.SelectSingleNode( CswNbtLocationTree.Nodes );
                 if( ChildSet != null )
                 {
                     ret = ( ChildSet.ChildNodes.Count > 0 );

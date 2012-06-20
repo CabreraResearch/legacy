@@ -41,7 +41,7 @@ namespace ChemSW.NbtWebControls
             CswLocationImage Ret = null;
 
             CswNbtLocationTree.LocationType Type = CswNbtLocationTree.LocationType.Unknown;
-            XmlNode ChildSetNode = ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_ChildSet);
+            XmlNode ChildSetNode = ParentNode.SelectSingleNode(CswNbtLocationTree.Nodes);
             if (ChildSetNode != null)
             {
                 XmlAttribute LocationTypeAttribute = ChildSetNode.Attributes[CswNbtLocationTree.XmlAttrName_LocationType];
@@ -88,7 +88,7 @@ namespace ChemSW.NbtWebControls
         {
             _CswNbtResources = CswNbtResources;
             _ParentNode = ParentNode;
-            _ParentNodeSet = ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_ChildSet);
+            _ParentNodeSet = ParentNode.SelectSingleNode(CswNbtLocationTree.Nodes);
             //_TitleText = ParentNode.SelectSingleNode(XmlNodeName_Display).InnerText;
             _SelectedNodeId = SelectedNodeId;
         }
