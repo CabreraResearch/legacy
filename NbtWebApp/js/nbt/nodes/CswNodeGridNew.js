@@ -347,7 +347,7 @@
                                     }
                                 });
 
-                Csw.tryExec(o.onSuccess);
+                Csw.tryExec(o.onSuccess, ret);
 
             })();
             return ret;
