@@ -170,7 +170,7 @@
                     },
                     deselect: function(rowModel, record, index, eOpts){ 
                         Csw.tryExec(cswPrivate.onDeselect, record.data);  
-                    }, 
+                    }
                 });
 
             }; // initGrid()
@@ -223,7 +223,6 @@
                 if (Csw.isNullOrEmpty(rowindex)) {
                     rowindex = cswPublic.getSelectedRowId();
                 }
-Csw.debug.log(rowindex);
                 var ret = cswPublic.getCell(rowindex, columnname);
                 return ret;
             };
