@@ -1,4 +1,5 @@
-﻿using ChemSW.Exceptions;
+﻿using ChemSW.Config;
+using ChemSW.Log;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -24,14 +25,10 @@ namespace ChemSW.Nbt.Schema
                 IsRequired = true
             } );
 
-            CswNbtMetaDataObjectClass LocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp IlLocationOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryLevelOc, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassInventoryLevel.PropertyName.Location,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location,
-                IsFk = true,
-                FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = LocationOc.ObjectClassId,
                 IsRequired = true
             } );
 
@@ -67,9 +64,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp IlStatusOcp = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryLevelOc, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassInventoryLevel.PropertyName.Status,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Static
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                ListOptions = CswNbtObjClassInventoryLevel.Statuses.Options.ToString(),
+                ServerManaged = true
             } );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IlStatusOcp, CswNbtSubField.SubFieldName.Text, CswNbtObjClassInventoryLevel.Statuses.Ok );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IlStatusOcp, IlStatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtObjClassInventoryLevel.Statuses.Ok );
 
             _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswNbtResources.CswNbtModule.CISPro, InventoryLevelOc.ObjectClassId );
 
@@ -80,7 +79,13 @@ namespace ChemSW.Nbt.Schema
             }
             if( null != InventoryLevelNt && InventoryLevelNt.ObjectClassId != InventoryLevelOc.ObjectClassId )
             {
-                throw new CswDniException( ErrorType.Error, "Could not create a new, unique Inventory Level nodetype.", "Nodetypes 'Inventory Level' and 'CISPro Inventory Level' already exist and are not of the InventoryLevel Object Class." );
+                CswStatusMessage Msg = new CswStatusMessage
+                                            {
+                                                AppType = AppType.SchemUpdt,
+                                                ContentType = ContentType.Error
+                                            };
+                Msg.Attributes.Add( "Error", "Nodetypes 'Inventory Level' and 'CISPro Inventory Level' already exist and are not of the InventoryLevel Object Class." );
+                _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
             }
             if( null == InventoryLevelNt )
             {
@@ -89,8 +94,10 @@ namespace ChemSW.Nbt.Schema
                                                                              NodeTypeName = "Inventory Level",
                                                                              Category = "Materials",
                                                                          } );
+                CswNbtMetaDataNodeTypeProp Material = InventoryLevelNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
                 CswNbtMetaDataNodeTypeProp Level = InventoryLevelNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Level );
                 CswNbtMetaDataNodeTypeProp Type = InventoryLevelNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Type );
+                InventoryLevelNt.addNameTemplateText( Material.PropName );
                 InventoryLevelNt.addNameTemplateText( Type.PropName );
                 InventoryLevelNt.addNameTemplateText( Level.PropName );
             }
@@ -127,8 +134,8 @@ namespace ChemSW.Nbt.Schema
                 LevelsView.ViewMode = NbtViewRenderingMode.Grid;
                 LevelsView.Visibility = NbtViewVisibility.Property;
 
-                CswNbtViewRelationship RootRel = LevelsView.AddViewRelationship( MaterialNt, false );
-                CswNbtViewRelationship LevelRel = LevelsView.AddViewRelationship( RootRel, NbtViewPropOwnerType.Second, IlMaterialOcp, false );
+                CswNbtViewRelationship RootRel = LevelsView.AddViewRelationship( MaterialNt, true );
+                CswNbtViewRelationship LevelRel = LevelsView.AddViewRelationship( RootRel, NbtViewPropOwnerType.Second, IlMaterialOcp, true );
                 LevelsView.AddViewProperty( LevelRel, IlTypeOcp );
                 LevelsView.AddViewProperty( LevelRel, IlLevelOcp );
                 LevelsView.AddViewProperty( LevelRel, IlLocationOcp );
