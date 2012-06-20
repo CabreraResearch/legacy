@@ -1,6 +1,7 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -82,6 +83,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( CurrentQuantity.WasModified )
+            {
+                CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr(_CswNbtResources, this);
+                if( LevelMgr.doSendEmail() )
+                {
+                    LevelMgr.sendPastThreshholdEmail();
+                }
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
         }//beforeWriteNode()
