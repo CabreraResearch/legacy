@@ -54,7 +54,8 @@
                         reinit: false,
                         EditMode: o.EditMode,
                         onEditNode: function () {
-                            o.onReload();
+                            //o.onReload();
+                            Csw.publish('foo');
                         },
                         onDeleteNode: function () {
                             o.onReload();

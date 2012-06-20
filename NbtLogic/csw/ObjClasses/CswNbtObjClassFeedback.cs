@@ -25,6 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string CategoryPropertyName = "Category";
         public const string CaseNumberPropertyName = "Case Number";
         public const string CurrentViewModePropertyName = "Current View Mode";
+        public const string LastCommentPropertyName = "Last Comment";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -81,38 +82,23 @@ namespace ChemSW.Nbt.ObjClasses
                 CurrentViewMode.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewmode"];
             }
 
+            LastComment.Text = ""; //give LastComment an empty string so we don't get an ORNY
+
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
         {
-            //CswNbtViewId myFeedbackViewId = null;
-            //DataTable viewsTable = _CswNbtResources.ViewSelect.getUserViews();
-            //foreach( DataRow row in viewsTable )
-            //{
-            //    get view id of My Feedback
-            //    if( row["viewname"].Equals( "My Feedback" ) )
-            //    {
-            //        myFeedbackViewId.set( CswConvert.ToInt32( row["viewid"].ToString() ) );
-            //    }
-            //}
-
-            //Message = string.Empty;
-            //string ActionData = string.Empty;
-            //if( null != NodeTypeProp )
-            //{
-            //    JObject ActionDataObj = new JObject();
-            //    ActionDataObj["viewid"] = myFeedbackViewId.ToString();
-            //}
-
-
-
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+            if( Discussion.WasModified )
+            {
+                LastComment.Text = Discussion.Last["message"].ToString();
+            }
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -149,6 +135,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
+            Summary.Text = Discussion.CommentsJson[0]["message"].ToString();
+            this.postChanges( false );//---------------------------------------------------------------------------------------------------------for testing lsat comment
             Message = string.Empty;
             ActionData = string.Empty;
             ButtonAction = NbtButtonAction.Unknown;
@@ -199,7 +187,6 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     ActionData = ActionDataObj.ToString();
                     ButtonAction = NbtButtonAction.loadView;
-
                 }
             }
             return true;
@@ -309,6 +296,14 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[CurrentViewModePropertyName] );
+            }
+        }
+
+        public CswNbtNodePropText LastComment
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[LastCommentPropertyName] );
             }
         }
 

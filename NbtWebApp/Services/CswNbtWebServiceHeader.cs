@@ -182,7 +182,8 @@ namespace ChemSW.Nbt.WebServices
             if( feedbackNodeTypes.Count() > 0 )
             {
                 Ret["Help"]["Give Feedback"] = new JObject();
-                Ret["Help"]["Give Feedback"]["action"] = "AddNode";
+                //Ret["Help"]["Give Feedback"]["action"] = "AddNode";
+                Ret["Help"]["Give Feedback"]["action"] = "AddFeedback";
                 CswNbtMetaDataNodeType feedbackNodeType = feedbackNodeTypes.First();
                 Ret["Help"]["Give Feedback"]["nodetypeid"] = feedbackNodeType.NodeTypeId;
             }
