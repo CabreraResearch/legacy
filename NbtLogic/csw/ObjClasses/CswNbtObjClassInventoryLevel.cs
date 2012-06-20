@@ -16,6 +16,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Location = "Location";
             public const string LastNotified = "Last Notified";
             public const string Status = "Status";
+            public const string CurrentQuantity = "Current Quantity";
+            public const string CurrentQuantityLog = "Current Quantity Log";
         }
 
         public sealed class Statuses
@@ -132,6 +134,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime LastNotified { get { return _CswNbtNode.Properties[PropertyName.LastNotified]; } }
         public CswNbtNodePropUserSelect Subscribe { get { return _CswNbtNode.Properties[PropertyName.Subscribe]; } }
         public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
+        public CswNbtNodePropQuantity CurrentQuantity { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantity]; } }
+        public CswNbtNodePropComments CurrentQuantityLog { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantityLog]; } }
+
         #endregion
     }//CswNbtObjClassInventoryLevel
 
