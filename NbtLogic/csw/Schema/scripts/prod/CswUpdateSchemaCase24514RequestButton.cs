@@ -1,6 +1,8 @@
 ﻿
 using System.Linq;
+using ChemSW.Config;
 using ChemSW.Exceptions;
+using ChemSW.Log;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -88,80 +90,129 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType RequestNt = RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null == RequestNt )
             {
-                throw new CswDniException( ErrorType.Error, "Could not get a Request NodeType", "Request nodetypes named 'Request' or 'CISPro Request' do not exist." );
+                CswStatusMessage Msg = new CswStatusMessage
+                {
+                    AppType = AppType.SchemUpdt,
+                    ContentType = ContentType.Error
+                };
+                Msg.Attributes.Add( "Error", "Could not get a Request NodeType" );
+                _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
             }
-
-            CswNbtMetaDataNodeTypeProp NameNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Name.ToString() );
-            CswNbtMetaDataNodeTypeProp SubmittedDateNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString() );
-            CswNbtMetaDataNodeTypeProp CompletedDateNtpNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate.ToString() );
-            CswNbtMetaDataNodeTypeProp RequestorNtp = RequestNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor.ToString() );
-
-            CswNbtMetaDataObjectClass RequestItemOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass );
-            CswNbtMetaDataNodeType RequestItemNt = RequestItemOc.getLatestVersionNodeTypes().FirstOrDefault();
-            if( null == RequestItemNt )
+            else
             {
-                throw new CswDniException( ErrorType.Error, "Could not get a Request Item NodeType", "No Request Items have been defined." );
+
+                CswNbtMetaDataNodeTypeProp NameNtp =
+                    RequestNt.getNodeTypePropByObjectClassProp(CswNbtObjClassRequest.PropertyName.Name.ToString());
+                CswNbtMetaDataNodeTypeProp SubmittedDateNtp =
+                    RequestNt.getNodeTypePropByObjectClassProp(
+                        CswNbtObjClassRequest.PropertyName.SubmittedDate.ToString());
+                CswNbtMetaDataNodeTypeProp CompletedDateNtpNtp =
+                    RequestNt.getNodeTypePropByObjectClassProp(
+                        CswNbtObjClassRequest.PropertyName.CompletedDate.ToString());
+                CswNbtMetaDataNodeTypeProp RequestorNtp =
+                    RequestNt.getNodeTypePropByObjectClassProp(CswNbtObjClassRequest.PropertyName.Requestor.ToString());
+
+                CswNbtMetaDataObjectClass RequestItemOc =
+                    _CswNbtSchemaModTrnsctn.MetaData.getObjectClass(
+                        CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass);
+                CswNbtMetaDataNodeType RequestItemNt = RequestItemOc.getLatestVersionNodeTypes().FirstOrDefault();
+                if( null == RequestItemNt )
+                {
+                    CswStatusMessage Msg = new CswStatusMessage
+                    {
+                        AppType = AppType.SchemUpdt,
+                        ContentType = ContentType.Error
+                    };
+                    Msg.Attributes.Add( "Error", "Could not get a Request Item NodeType" );
+                    _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
+
+                }
+                else
+                {
+                    CswNbtMetaDataNodeTypeProp TypeNtp =
+                        RequestItemNt.getNodeTypePropByObjectClassProp(CswNbtObjClassRequestItem.PropertyName.Type);
+                    CswNbtMetaDataNodeTypeProp StatusNtp =
+                        RequestItemNt.getNodeTypePropByObjectClassProp(CswNbtObjClassRequestItem.PropertyName.Status);
+                    CswNbtMetaDataNodeTypeProp ExternalOrderNoNtp =
+                        RequestItemNt.getNodeTypePropByObjectClassProp(
+                            CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber);
+                    CswNbtMetaDataNodeTypeProp NumberNtp =
+                        RequestItemNt.getNodeTypePropByObjectClassProp(CswNbtObjClassRequestItem.PropertyName.Number);
+
+                    GridView.Root.ChildRelationships.Clear();
+                    GridView.ViewName = RootNt.NodeTypeName + " Request Items Grid Property View";
+                    GridView.Visibility = NbtViewVisibility.Property;
+                    GridView.ViewMode = NbtViewRenderingMode.Grid;
+                    GridView.Category = "Requests";
+
+                    CswNbtViewRelationship RootRel = GridView.AddViewRelationship(RootNt, false);
+
+                    CswNbtMetaDataNodeTypeProp RelationshipToRootNtp = null;
+                    switch (RootNt.getObjectClass().ObjectClass)
+                    {
+                        case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass:
+                            RelationshipToRootNtp =
+                                RequestItemNt.getNodeTypePropByObjectClassProp(
+                                    CswNbtObjClassRequestItem.PropertyName.Material);
+                            break;
+
+                        case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
+                            RelationshipToRootNtp =
+                                RequestItemNt.getNodeTypePropByObjectClassProp(
+                                    CswNbtObjClassRequestItem.PropertyName.Container);
+                            break;
+                        default:
+                            CswStatusMessage Msg = new CswStatusMessage
+                                                       {
+                                                           AppType = AppType.SchemUpdt,
+                                                           ContentType = ContentType.Error
+                                                       };
+                            Msg.Attributes.Add("Error", "Request grids of this type are not supported.");
+                            _CswNbtSchemaModTrnsctn.CswLogger.send(Msg);
+                            break;
+                    }
+                    if (null != RelationshipToRootNtp)
+                    {
+                        CswNbtViewRelationship RequestItemRel = GridView.AddViewRelationship(RootRel,
+                                                                                             NbtViewPropOwnerType.Second,
+                                                                                             RelationshipToRootNtp,
+                                                                                             false);
+                        CswNbtMetaDataNodeTypeProp RiRequestNtp =
+                            RequestItemNt.getNodeTypePropByObjectClassProp(
+                                CswNbtObjClassRequestItem.PropertyName.Request);
+                        CswNbtViewRelationship RequestRel = GridView.AddViewRelationship(RequestItemRel,
+                                                                                         NbtViewPropOwnerType.First,
+                                                                                         RiRequestNtp, false);
+
+                        CswNbtViewProperty CompletedVp = GridView.AddViewProperty(RequestRel, CompletedDateNtpNtp);
+                        CompletedVp.Order = 3;
+                        CompletedVp.SortBy = true;
+                        CompletedVp.SortMethod = NbtViewPropertySortMethod.Descending;
+
+                        CswNbtViewProperty SubmittedVp = GridView.AddViewProperty(RequestRel, SubmittedDateNtp);
+                        SubmittedVp.Order = 2;
+                        SubmittedVp.SortMethod = NbtViewPropertySortMethod.Descending;
+
+                        CswNbtViewProperty NameVp = GridView.AddViewProperty(RequestRel, NameNtp);
+                        NameVp.Order = 1;
+                        NameVp.SortMethod = NbtViewPropertySortMethod.Descending;
+
+                        CswNbtViewProperty RequestorVp = GridView.AddViewProperty(RequestRel, RequestorNtp);
+                        RequestorVp.Order = 4;
+
+                        CswNbtViewProperty TypeVp = GridView.AddViewProperty(RequestItemRel, TypeNtp);
+                        TypeVp.Order = 5;
+                        CswNbtViewProperty NumberVp = GridView.AddViewProperty(RequestItemRel, NumberNtp);
+                        NumberVp.Order = 6;
+                        CswNbtViewProperty OrderVp = GridView.AddViewProperty(RequestItemRel, ExternalOrderNoNtp);
+                        OrderVp.Order = 7;
+                        CswNbtViewProperty StatusVp = GridView.AddViewProperty(RequestItemRel, StatusNtp);
+                        StatusVp.Order = 8;
+
+                        GridView.save();
+                    }
+                }
             }
-            CswNbtMetaDataNodeTypeProp TypeNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Type );
-            CswNbtMetaDataNodeTypeProp StatusNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Status );
-            CswNbtMetaDataNodeTypeProp ExternalOrderNoNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.ExternalOrderNumber );
-            CswNbtMetaDataNodeTypeProp NumberNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Number );
-
-            GridView.Root.ChildRelationships.Clear();
-            GridView.ViewName = RootNt.NodeTypeName + " Request Items Grid Property View";
-            GridView.Visibility = NbtViewVisibility.Property;
-            GridView.ViewMode = NbtViewRenderingMode.Grid;
-            GridView.Category = "Requests";
-
-            CswNbtViewRelationship RootRel = GridView.AddViewRelationship( RootNt, false );
-
-            CswNbtMetaDataNodeTypeProp RelationshipToRootNtp;
-            switch( RootNt.getObjectClass().ObjectClass )
-            {
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass:
-                    RelationshipToRootNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Material );
-                    break;
-
-                case CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass:
-                    RelationshipToRootNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Container );
-                    break;
-                default:
-                    throw new CswDniException( ErrorType.Error, "Request grids of this type are not supported.", "Cannot create a request grid view on this Object Class." );
-                    break;
-            }
-
-            CswNbtViewRelationship RequestItemRel = GridView.AddViewRelationship( RootRel, NbtViewPropOwnerType.Second, RelationshipToRootNtp, false );
-            CswNbtMetaDataNodeTypeProp RiRequestNtp = RequestItemNt.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestItem.PropertyName.Request );
-            CswNbtViewRelationship RequestRel = GridView.AddViewRelationship( RequestItemRel, NbtViewPropOwnerType.First, RiRequestNtp, false );
-
-            CswNbtViewProperty CompletedVp = GridView.AddViewProperty( RequestRel, CompletedDateNtpNtp );
-            CompletedVp.Order = 3;
-            CompletedVp.SortBy = true;
-            CompletedVp.SortMethod = NbtViewPropertySortMethod.Descending;
-
-            CswNbtViewProperty SubmittedVp = GridView.AddViewProperty( RequestRel, SubmittedDateNtp );
-            SubmittedVp.Order = 2;
-            SubmittedVp.SortBy = true;
-            SubmittedVp.SortMethod = NbtViewPropertySortMethod.Descending;
-
-            CswNbtViewProperty NameVp = GridView.AddViewProperty( RequestRel, NameNtp );
-            NameVp.Order = 1;
-            NameVp.SortBy = true;
-            NameVp.SortMethod = NbtViewPropertySortMethod.Descending;
-
-            CswNbtViewProperty RequestorVp = GridView.AddViewProperty( RequestRel, RequestorNtp );
-            RequestorVp.Order = 4;
-
-            CswNbtViewProperty TypeVp = GridView.AddViewProperty( RequestItemRel, TypeNtp );
-            TypeVp.Order = 5;
-            CswNbtViewProperty NumberVp = GridView.AddViewProperty( RequestItemRel, NumberNtp );
-            NumberVp.Order = 6;
-            CswNbtViewProperty OrderVp = GridView.AddViewProperty( RequestItemRel, ExternalOrderNoNtp );
-            OrderVp.Order = 7;
-            CswNbtViewProperty StatusVp = GridView.AddViewProperty( RequestItemRel, StatusNtp );
-            OrderVp.Order = 8;
-
-            GridView.save();
         }
 
 

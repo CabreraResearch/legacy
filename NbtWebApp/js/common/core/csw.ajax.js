@@ -106,7 +106,7 @@
         Csw.publish(Csw.enums.events.ajax.ajaxStop, o.watchGlobal, xmlHttpRequest, textStatus);
         Csw.debug.error('Webservice Request (' + o.url + ') Failed: ' + textStatus);
         Csw.tryExec(o.error, textStatus);
-        Csw.debug.timeEnd(url);
+        Csw.debug.timeEnd(o.url);
     });
 
     cswPrivate.jsonPost = function (options) {

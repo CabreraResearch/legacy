@@ -1,7 +1,7 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -17,6 +17,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Location = "Location";
             public const string LastNotified = "Last Notified";
             public const string Status = "Status";
+            public const string CurrentQuantity = "Current Quantity";
+            public const string CurrentQuantityLog = "Current Quantity Log";
         }
 
         public sealed class Statuses
@@ -63,7 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ); }
         }
 
         #region Inherited Events
@@ -81,11 +83,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-            if( LastNotified.DateTimeValue == DateTime.MinValue )
+            if( CurrentQuantity.WasModified )
             {
-                Status.StaticText = Statuses.Ok;
+                CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr(_CswNbtResources, this);
+                if( LevelMgr.doSendEmail() )
+                {
+                    LevelMgr.sendPastThreshholdEmail();
+                }
             }
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -129,13 +136,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropStatic Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
+        public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         public CswNbtNodePropQuantity Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropDateTime LastNotified { get { return _CswNbtNode.Properties[PropertyName.LastNotified]; } }
         public CswNbtNodePropUserSelect Subscribe { get { return _CswNbtNode.Properties[PropertyName.Subscribe]; } }
-        public CswNbtNodePropStatic Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
+        public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
+        public CswNbtNodePropQuantity CurrentQuantity { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantity]; } }
+        public CswNbtNodePropComments CurrentQuantityLog { get { return _CswNbtNode.Properties[PropertyName.CurrentQuantityLog]; } }
+
         #endregion
     }//CswNbtObjClassInventoryLevel
 

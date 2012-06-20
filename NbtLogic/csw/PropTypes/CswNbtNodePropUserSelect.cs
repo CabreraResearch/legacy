@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Xml;
 using System.Xml.Linq;
@@ -95,10 +96,18 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if user is subscribed
         /// </summary>
+        private bool _IsSubscribed( Int32 UserId )
+        {
+            bool ret = Int32.MinValue != UserId && SelectedUserIds.Contains( UserId.ToString() );
+            return ret;
+        }
+
+        /// <summary>
+        /// True if user is subscribed
+        /// </summary>
         public bool IsSubscribed( CswPrimaryKey UserId )
         {
-            bool ret = SelectedUserIds.Contains( UserId.PrimaryKey.ToString() );
-            return ret;
+            return _IsSubscribed( UserId.PrimaryKey );
         }
 
         /// <summary>
@@ -110,6 +119,20 @@ namespace ChemSW.Nbt.PropTypes
             {
                 SelectedUserIds.Add( UserId.PrimaryKey.ToString() );
             }
+        }
+
+        /// <summary>
+        /// Subscribes a user by adding the userid to the SelectedUserIds list
+        /// </summary>
+        public CswNbtObjClassUser GetUser( Int32 UserId )
+        {
+            CswNbtNode Ret = null;
+            if( _IsSubscribed( UserId ) )
+            {
+                CswPrimaryKey UserPk = new CswPrimaryKey( "nodes", UserId );
+                Ret = _CswNbtResources.Nodes.GetNode( UserPk );
+            }
+            return Ret;
         }
 
         /// <summary>
@@ -339,6 +362,18 @@ namespace ChemSW.Nbt.PropTypes
             return SelectedUserNames;
         } // SelectedUserNames()
 
-
+        public Collection<CswNbtObjClassUser> SelectedUsers()
+        {
+            Collection<CswNbtObjClassUser> Ret = new Collection<CswNbtObjClassUser>();
+            foreach( Int32 UserId in SelectedUserIds.ToIntCollection() )
+            {
+                CswNbtObjClassUser User = GetUser( UserId );
+                if( null != User )
+                {
+                    Ret.Add( User );
+                }
+            }
+            return Ret;
+        } // SelectedUserNames()
     }//CswNbtNodePropUserSelect
 }//namespace ChemSW.Nbt.PropTypes
