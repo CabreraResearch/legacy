@@ -92,37 +92,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
-            }
-        }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[NamePropertyName] ); } }
+        public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[BaseUnitPropertyName] ); } }
+        public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[ConversionFactorPropertyName] ); } }
+        public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[FractionalPropertyName] ); } }
 
-        public CswNbtNodePropText BaseUnit
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[BaseUnitPropertyName].AsText );
-            }
-        }
-
-        public CswNbtNodePropScientific ConversionFactor
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ConversionFactorPropertyName].AsScientific );
-            }
-        }
-
-        public CswNbtNodePropLogical Fractional
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[FractionalPropertyName].AsLogical );
-            }
-        }
         #endregion
 
     }//CswNbtObjClassUnitOfMeasure
