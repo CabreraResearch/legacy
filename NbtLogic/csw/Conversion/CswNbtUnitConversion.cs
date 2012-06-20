@@ -1,53 +1,106 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.csw.Conversion
 {
     public class CswNbtUnitConversion
     {
+        #region Properties and ctor
+
+        private CswNbtResources _CswNbtResources;
+        private CswNbtObjClassUnitOfMeasure.UnitTypes _OldUnitType = CswNbtObjClassUnitOfMeasure.UnitTypes.Unknown;
+        private CswNbtObjClassUnitOfMeasure.UnitTypes _NewUnitType = CswNbtObjClassUnitOfMeasure.UnitTypes.Unknown;
+        private Double _OldConversionFactor = Double.NaN;
+        private Double _NewConversionFactor = Double.NaN;
+        private Double _MaterialSpecificGravity = Double.NaN;
+
+        public CswNbtUnitConversion()
+        { }
+
+        public CswNbtUnitConversion( CswNbtResources _CswNbtResourcesIn, CswPrimaryKey OldUnitNodeId, CswPrimaryKey NewUnitNodeId, CswPrimaryKey MaterialNodeId = null )
+        {
+            _CswNbtResources = _CswNbtResourcesIn;
+
+            if( OldUnitNodeId != null && NewUnitNodeId != null )
+            {
+                CswNbtObjClassUnitOfMeasure OldUnitNode = _CswNbtResources.Nodes.GetNode( OldUnitNodeId );
+                CswNbtObjClassUnitOfMeasure NewUnitNode = _CswNbtResources.Nodes.GetNode( NewUnitNodeId );
+                setOldUnitProps( OldUnitNode );
+                setNewUnitProps( NewUnitNode );
+                if( MaterialNodeId != null )
+                {
+                    CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( MaterialNodeId );
+                    setMaterialProps( MaterialNode );
+                }
+            }
+        }
+
+        #endregion
+
+        #region Setters
+
+        public void setOldUnitProps( CswNbtObjClassUnitOfMeasure OldUnitNode )
+        {
+            if( OldUnitNode != null )
+            {
+                _OldConversionFactor = _getScientificValue( OldUnitNode.ConversionFactor );
+                _OldUnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) OldUnitNode.UnitType.Value;
+            }
+        }
+
+        public void setNewUnitProps( CswNbtObjClassUnitOfMeasure NewUnitNode )
+        {
+            if( NewUnitNode != null )
+            {
+                _NewConversionFactor = _getScientificValue( NewUnitNode.ConversionFactor );
+                _NewUnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) NewUnitNode.UnitType.Value;
+            }
+        }
+
+        public void setMaterialProps( CswNbtObjClassMaterial MaterialNode )
+        {
+            if( MaterialNode != null )
+            {
+                _MaterialSpecificGravity = _getScientificValue( MaterialNode.SpecificGravity );
+            }
+        }
+
+        #endregion
+
+        #region Unit Conversion Functions
+
         /// <summary>
-        /// Takes a numeric value and interconverts it between different Unit Types using the given UnitOfMeasure and Material nodes.
+        /// Takes a numeric value and interconverts it between different Unit Types using the class-set UnitOfMeasure and Material prop values.
         /// If unit conversion cannot be applied, an error is thrown.
         /// </summary>
-        public static Double convertUnit( Double ValueToConvert, CswNbtNode OldUnitOfMeasureNode, CswNbtNode NewUnitOfMeasureNode, CswNbtNode MaterialNodeIn = null )
+        public Double convertUnit( Double ValueToConvert )
         {
             Double ConvertedValue = ValueToConvert;
 
-            if( OldUnitOfMeasureNode != null && NewUnitOfMeasureNode != null )
+            if( _OldConversionFactor != Double.NaN && _NewConversionFactor != Double.NaN )
             {
-                CswNbtObjClassUnitOfMeasure OldUnitNode = OldUnitOfMeasureNode;
-                CswNbtObjClassUnitOfMeasure NewUnitNode = NewUnitOfMeasureNode;
-                Double OldConversionFactor = _getScientificValue( OldUnitNode.ConversionFactor );
-                Double NewConversionFactor = _getScientificValue( NewUnitNode.ConversionFactor );
-
-                CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( OldUnitNode.NodeType, NewUnitNode.NodeType );
+                CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( _OldUnitType, _NewUnitType );
 
                 if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.Same )
                 {
-                    ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor, NewConversionFactor );
+                    ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor );
                 }
-                else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported && MaterialNodeIn != null )
+                else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported && _MaterialSpecificGravity != Double.NaN )
                 {
-                    CswNbtObjClassMaterial MaterialNode = MaterialNodeIn;
-                    Double SpecificGravity = _getScientificValue( MaterialNode.SpecificGravity );
-
-                    if( SpecificGravity != 0 && SpecificGravity != Double.NaN )
+                    if( _MaterialSpecificGravity != 0 )
                     {
-                        //NodeType-specific logic (Operator logic defined in W1005)
+                        //UnitType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor, NewConversionFactor, 1.0 / SpecificGravity );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, 1.0 / _MaterialSpecificGravity );
                         }
                         else if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight )
                         {
-                            ConvertedValue = applyUnitConversion( ValueToConvert, OldConversionFactor, NewConversionFactor, SpecificGravity );
+                            ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, _MaterialSpecificGravity );
                         }
                     }
                     else
@@ -60,8 +113,48 @@ namespace ChemSW.Nbt.csw.Conversion
                     throw new CswDniException( ErrorType.Error, "Conversion failed: Unable to apply unit conversion between the selected unit types.", "Conversion failed: Unsupported unit types." );
                 }
             }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data supplied.", "Conversion failed: Unable to determine appropriate conversion factors." );
+            }
             return ConvertedValue;
         }
+
+        /// <summary>
+        /// Takes a numeric value and interconverts it between different Unit Types using the given UnitOfMeasure and Material nodes.
+        /// If unit conversion cannot be applied, an error is thrown.
+        /// </summary>
+        public static Double convertUnit( Double ValueToConvert, CswNbtNode OldUnitOfMeasureNode, CswNbtNode NewUnitOfMeasureNode, CswNbtNode MaterialNodeIn = null )
+        {
+            Double ConvertedValue = ValueToConvert;
+
+            if( OldUnitOfMeasureNode != null && NewUnitOfMeasureNode != null )
+            {
+                CswNbtObjClassUnitOfMeasure OldUnitNode = OldUnitOfMeasureNode;
+                CswNbtObjClassUnitOfMeasure NewUnitNode = NewUnitOfMeasureNode;
+
+                CswNbtUnitConversion UnitConverter = new CswNbtUnitConversion();
+
+                UnitConverter.setOldUnitProps( OldUnitNode );
+                UnitConverter.setNewUnitProps( NewUnitNode );
+                if( MaterialNodeIn != null )
+                {
+                    CswNbtObjClassMaterial MaterialNode = MaterialNodeIn;
+                    UnitConverter.setMaterialProps( MaterialNode );
+                }
+                ConvertedValue = UnitConverter.convertUnit( ValueToConvert );
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data supplied.", "Conversion failed: Null Node(s) provided." );
+            }
+
+            return ConvertedValue;
+        }
+
+        #endregion
+
+        #region Conversion Logic
 
         /// <summary>
         /// Takes a numeric value and converts it from one Unit of Measurement into another using the given Conversion Factor values
@@ -94,22 +187,26 @@ namespace ChemSW.Nbt.csw.Conversion
             return ScientificNodeProp.Base * Math.Pow( 10, ScientificNodeProp.Exponent );
         }
 
+        #endregion
+
+        #region UnitType Relationship
+
         /// <summary>
-        /// Identifies the UnitType relationship between two UnitOfMeasure Nodes.
+        /// Identifies the UnitType relationship between two UnitTypes.
         /// </summary>
-        private static CswNbtUnitConversionEnums.UnitTypeRelationship _getUnitTypeRelationship( CswNbtMetaDataNodeType OldNodeType, CswNbtMetaDataNodeType NewNodeType )
+        private static CswNbtUnitConversionEnums.UnitTypeRelationship _getUnitTypeRelationship( CswNbtObjClassUnitOfMeasure.UnitTypes OldUnitType, CswNbtObjClassUnitOfMeasure.UnitTypes NewUnitType )
         {
             CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Unknown;
 
-            if( OldNodeType.NodeTypeName == NewNodeType.NodeTypeName )
+            if( OldUnitType.ToString() == NewUnitType.ToString() )
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Same;
             }
-            else if( OldNodeType.NodeTypeName.Contains( "Weight" ) && NewNodeType.NodeTypeName.Contains( "Volume" ) )
+            else if( OldUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight && NewUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Volume )
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume;
             }
-            else if( OldNodeType.NodeTypeName.Contains( "Volume" ) && NewNodeType.NodeTypeName.Contains( "Weight" ) )
+            else if( OldUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Volume && NewUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight )
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight;
             }
@@ -144,5 +241,7 @@ namespace ChemSW.Nbt.csw.Conversion
                 public static readonly UnitTypeRelationship VolumeToWeight = new UnitTypeRelationship( "VolumeToWeight" );
             }
         }
+
+        #endregion
     }
 }

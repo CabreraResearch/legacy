@@ -60,6 +60,9 @@
                 if (o.Multi) {
                     relationships.push({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue });
                 }
+                if (false === o.Required && false === Csw.isNullOrEmpty(selectedName)) {
+                    relationships.push({ value: '', display: '', frac: true });
+                }
                 var foundSelected = false;
                 Csw.crawlObject(options, function (relatedObj) {
                     if (relatedObj.id === selectedNodeId) {
@@ -89,13 +92,24 @@
                 cellCol++;
 
                 if (o.Required) {
-                    selectBox.addClass("required");
+                    selectBox.addClass('required');
+                    numberTextBox.addClass('required');
                 }
 
                 $.validator.addMethod('validateInteger', function (value, element) {
                     return (precision != 0 || Csw.validateInteger(numberTextBox.val()));
                 }, 'Value must be an integer');
                 numberTextBox.addClass('validateInteger');
+
+                $.validator.addMethod('validateUnitPresent', function (value, element) {
+                    return (false === Csw.isNullOrEmpty(selectBox.val()) || Csw.isNullOrEmpty(numberTextBox.val()));
+                }, 'Unit must be selected if Quantity is present.');
+                selectBox.addClass('validateUnitPresent');
+
+                $.validator.addMethod('validateQuantityPresent', function (value, element) {
+                    return (false === Csw.isNullOrEmpty(numberTextBox.val()) || Csw.isNullOrEmpty(selectBox.val()));
+                }, 'Quantity must have a value if Unit is selected.');
+                selectBox.addClass('validateQuantityPresent');
 
                 propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
             }

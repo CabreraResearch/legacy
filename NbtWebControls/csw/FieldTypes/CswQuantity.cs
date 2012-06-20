@@ -20,7 +20,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private Label _UnitLabel;
         private DropDownList _UnitList;
         private CswInvalidImage _InvalidImg;
-        private CswImageButton _AddNewButton;
 
         public CswQuantity( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
@@ -185,10 +184,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             Table.addControl( 0, 2, new CswLiteralNbsp() );
 
-            _AddNewButton = new CswImageButton( CswImageButton.ButtonType.Add );
-            _AddNewButton.ID = "newrel";
-            Table.addControl( 0, 3, _AddNewButton );
-
             _InvalidImg = new CswInvalidImage();
             _InvalidImg.ID = "InvalidImg";
             Table.addControl( 0, 4, _InvalidImg );
@@ -218,21 +213,6 @@ namespace ChemSW.NbtWebControls.FieldTypes
             try
             {
                 _UnitList.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange()" );
-
-                if( _EditMode != NodeEditMode.Add &&
-                    _EditMode != NodeEditMode.EditInPopup &&
-                    _EditMode != NodeEditMode.Demo &&
-                    !ReadOnly &&
-                    Prop.AsQuantity.TargetType == NbtViewRelatedIdType.NodeTypeId &&
-                    _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) )
-                {
-                    _AddNewButton.OnClientClick = "return RelationshipAddNodeDialog_openPopup('" + Prop.AsQuantity.TargetId.ToString() + "');";
-                    _AddNewButton.Visible = true;
-                }
-                else
-                {
-                    _AddNewButton.Visible = false;
-                }
 
                 if( ReadOnly )
                 {
