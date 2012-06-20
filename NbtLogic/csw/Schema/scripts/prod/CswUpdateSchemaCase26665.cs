@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Schema
@@ -25,6 +26,9 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass,
                 CswNbtObjClassContainer.UndisposePropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Button );
+
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.UndisposeContainer, false, "", "Materials" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.UndisposeContainer );
 
         }//Update()
 

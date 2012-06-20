@@ -1,5 +1,6 @@
 ﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -62,6 +63,9 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname,
                     CswNbtObjClassContainer.RequestMovePropertyName );
             }
+
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.DisposeContainer, false, "", "Materials" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.DisposeContainer );
 
         }//Update()
 

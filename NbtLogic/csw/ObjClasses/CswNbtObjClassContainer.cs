@@ -136,16 +136,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
-            this.Dispense.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DispenseContainer, true, "" ) );
+            this.Dispense.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.Actions[CswNbtActionName.DispenseContainer] );
             if( this.Disposed.Checked == Tristate.False )
             {
                 this.Undispose.Hidden = true;
-                this.Dispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.DisposeContainer, true, "" ) );
+                this.Dispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.DisposeContainer] );
             }
             else if( this.Disposed.Checked == Tristate.True )
             {
                 this.Dispose.Hidden = true;
-                this.Undispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, new CswNbtAction( _CswNbtResources, Int32.MinValue, "", CswNbtActionName.UndisposeContainer, true, "" ) );
+                this.Undispose.Hidden = false == _CswNbtResources.Permit.canContainer( NodeId, CswNbtPermit.NodeTypePermission.Edit, _CswNbtResources.Actions[CswNbtActionName.UndisposeContainer] );
             }
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()

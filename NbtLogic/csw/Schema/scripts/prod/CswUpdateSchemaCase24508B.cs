@@ -1,6 +1,7 @@
 ﻿using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -37,6 +38,9 @@ namespace ChemSW.Nbt.Schema
                 "Container Dispense Transaction",
                 "Materials"
                 );
+
+            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.DispenseContainer, false, "", "Materials" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtResources.CswNbtModule.CISPro, CswNbtActionName.DispenseContainer );
 
         }//Update()
 
