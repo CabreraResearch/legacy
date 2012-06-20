@@ -10,6 +10,7 @@
                 ID: 'extjsGrid',
                 storeId: '',
                 title: 'Untitled Grid',
+                truncated: false,
                 //readonly: false,
                 stateId: '',
                 usePaging: true,
@@ -132,7 +133,6 @@
                 }
 
                 cswPrivate.store = Ext.create('Ext.data.Store', storeopts);
-                cswPrivate.store.loadPage(1);
 
                 var gridopts = {
                     title: cswPrivate.title,
@@ -173,6 +173,10 @@
                     }
                 });
 
+                if(Csw.bool(cswPrivate.truncated))
+                {
+                    cswParent.span({ cssclass: 'truncated', text: 'Results Truncated' });
+                }
             }; // initGrid()
 
 
@@ -475,9 +479,13 @@
                                 if (Csw.bool(cswPrivate.usePaging)) {
                                     cswPrivate.height = 25 + // title bar
                                                         23 + // grid header
-                                                        (cswPrivate.pageSize * 24.5) + // rows
+                                                        (cswPrivate.pageSize * 26) + // rows
                                                         14 + // horizontal scrollbar
                                                         27;  // grid footer
+                                }
+                                if(false === Csw.isNullOrEmpty(result.grid.truncated))
+                                {
+                                    cswPrivate.truncated = result.grid.truncated;
                                 }
                                 cswPrivate.title = result.grid.title;
                                 cswPrivate.fields = result.grid.fields;

@@ -39,6 +39,8 @@ namespace ChemSW.Nbt.Grid
                 Tree.goToNthChild( 0 );
             }
 
+            grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
+
             CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( "nodeId" );
             CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField();
             nodeIdFld.dataIndex = nodeIdDataIndex;

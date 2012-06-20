@@ -34,7 +34,11 @@ namespace ChemSW.Nbt.Grid.ExtJs
         /// <summary>
         /// Page size
         /// </summary>
-        public Int32 PageSize = 50;
+        public Int32 PageSize = 25;
+        /// <summary>
+        /// Truncated
+        /// </summary>
+        public bool Truncated = false;
 
         public CswNbtGridExtJsGrid()
         {
@@ -105,6 +109,10 @@ namespace ChemSW.Nbt.Grid.ExtJs
             JObject Jret = new JObject();
             Jret["grid"] = new JObject();
             Jret["grid"]["title"] = title;
+            if( Truncated )
+            {
+                Jret["grid"]["truncated"] = Truncated;
+            }
             Jret["grid"]["fields"] = Jfields;
             Jret["grid"]["columns"] = Jcolumns;
             Jret["grid"]["pageSize"] = PageSize;
