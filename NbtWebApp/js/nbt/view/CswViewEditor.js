@@ -19,10 +19,10 @@
             viewname: '',
             viewmode: '',
             ID: 'vieweditor',
-            ColumnViewName: 'VIEWNAME',
-            ColumnViewId: 'NODEVIEWID',
-            ColumnFullViewId: 'VIEWID',
-            ColumnViewMode: 'VIEWMODE',
+            ColumnViewName: 'viewname',
+            ColumnViewId: 'nodeviewid',
+            ColumnFullViewId: 'viewid',
+            ColumnViewMode: 'viewmode',
             onCancel: null, // function ($wizard) {},
             onFinish: null, // function (viewid, viewmode) {},
             onDeleteView: null, // function (deletedviewid) {},
@@ -509,16 +509,29 @@
                                 fields: gridJson.grid.fields,  
                                 columns: gridJson.grid.columns,
                                 data: gridJson.grid.data,     
-                                pageSize: gridJson.grid.pageSize
+                                pageSize: gridJson.grid.pageSize,
+                                onSelect: function(row){
+                                    copyViewBtn.enable();
+                                    deleteViewBtn.enable();
+                                    $selview_span.text(row.viewname);
+                                    $wizard.CswWizard('button', 'next', 'enable');
+                                },
+                                onDeselect: function(row){
+                                    copyViewBtn.disable();
+                                    deleteViewBtn.disable();
+                                    $selview_span.text("");
+                                    $wizard.CswWizard('button', 'next', 'disable');
+                                    //cswViewGrid.resetSelection();
+                                },
+                                onLoad: function(grid) {
+                                    if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
+                                        rowid = grid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
+                                        grid.setSelection(rowid);
+                                        grid.scrollToRow(rowid);
+                                    }
+                                }
                         });
                         //cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
-
-                        //cswViewGrid.hideColumn(o.ColumnFullViewId);
-//                        if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
-//                            rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
-//                            cswViewGrid.setSelection(rowid);
-//                            cswViewGrid.scrollToRow(rowid);
-//                        }
                     } // success
                 }); // ajax
             }

@@ -89,7 +89,7 @@
             var e = {
                 type: 'js',
                 message: exception.message,
-                detail: 'JS Error type: ' + exception.type + '<br/>' + 'Stack: ' + exception.stack,
+                detail: 'JS Error type: ' + exception.type + '<br/>\n' + 'Stack: ' + exception.stack,
                 display: Csw.displayAllExceptions === true
             };
             Csw.error.showError(e);
