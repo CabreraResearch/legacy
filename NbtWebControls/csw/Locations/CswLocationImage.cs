@@ -40,17 +40,17 @@ namespace ChemSW.NbtWebControls
         {
             CswLocationImage Ret = null;
 
-            CswNbtLocationTree.LocationType Type = CswNbtLocationTree.LocationType.Unknown;
-            XmlNode ChildSetNode = ParentNode.SelectSingleNode(CswNbtLocationTree.Nodes);
+            CswNbtLocationTreeDeprecated.LocationType Type = CswNbtLocationTreeDeprecated.LocationType.Unknown;
+            XmlNode ChildSetNode = ParentNode.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_ChildSet );
             if (ChildSetNode != null)
             {
-                XmlAttribute LocationTypeAttribute = ChildSetNode.Attributes[CswNbtLocationTree.XmlAttrName_LocationType];
+                XmlAttribute LocationTypeAttribute = ChildSetNode.Attributes[CswNbtLocationTreeDeprecated.XmlAttrName_LocationType];
                 if (LocationTypeAttribute != null)
                 {
                     string TypeString = LocationTypeAttribute.Value;
                     try
                     {
-                        Type = (CswNbtLocationTree.LocationType)Enum.Parse(typeof(CswNbtLocationTree.LocationType), TypeString, true);
+                        Type = (CswNbtLocationTreeDeprecated.LocationType)Enum.Parse(typeof(CswNbtLocationTreeDeprecated.LocationType), TypeString, true);
                     }
                     catch (Exception e)
                     {
@@ -61,13 +61,13 @@ namespace ChemSW.NbtWebControls
 
             switch (Type)
             {
-                case CswNbtLocationTree.LocationType.Horizontal:
+                case CswNbtLocationTreeDeprecated.LocationType.Horizontal:
                     Ret = new CswLocationImageHorizontal( CswNbtResources, ParentNode, SelectedNodeId );
                     break;
-                case CswNbtLocationTree.LocationType.Vertical:
+                case CswNbtLocationTreeDeprecated.LocationType.Vertical:
                     Ret = new CswLocationImageVertical( CswNbtResources, ParentNode, SelectedNodeId );
                     break;
-                case CswNbtLocationTree.LocationType.Grid:
+                case CswNbtLocationTreeDeprecated.LocationType.Grid:
                     Ret = new CswLocationImageGrid( CswNbtResources, ParentNode, SelectedNodeId );
                     break;
                 default:
@@ -88,7 +88,7 @@ namespace ChemSW.NbtWebControls
         {
             _CswNbtResources = CswNbtResources;
             _ParentNode = ParentNode;
-            _ParentNodeSet = ParentNode.SelectSingleNode(CswNbtLocationTree.Nodes);
+            _ParentNodeSet = ParentNode.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_ChildSet );
             //_TitleText = ParentNode.SelectSingleNode(XmlNodeName_Display).InnerText;
             _SelectedNodeId = SelectedNodeId;
         }
