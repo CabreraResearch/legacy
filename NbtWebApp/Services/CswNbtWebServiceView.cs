@@ -337,7 +337,10 @@ namespace ChemSW.Nbt.WebServices
                         ViewsTable.Columns.Remove( "rolename" );
                 }
 
-                ReturnVal = gd.DataTableToJSON( ViewsTable );
+                ChemSW.Nbt.Grid.ExtJs.CswNbtGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
+                grid.getColumn("nodeviewid").hidden = true;
+
+                ReturnVal = grid.ToJson();
             } // if(ViewsTable != null)
 
             return ReturnVal;

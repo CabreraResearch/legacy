@@ -470,43 +470,55 @@
                             $viewgrid.empty();
                         }
 
-                        var g = {
-                            ID: o.ID,
-                            pagermode: 'none',
-                            gridOpts: {
-                                autowidth: true,
-                                height: 180,
-                                onSelectRow: function (id, selected) {
-                                    rowid = id;
-                                    if (selected) {
-                                        copyViewBtn.enable();
-                                        deleteViewBtn.enable();
-                                        $selview_span.text(_getSelectedViewName(id));
-                                        $wizard.CswWizard('button', 'next', 'enable');
-                                    } else {
-                                        copyViewBtn.disable();
-                                        deleteViewBtn.disable();
-                                        $selview_span.text("");
-                                        $wizard.CswWizard('button', 'next', 'disable');
-                                        cswViewGrid.resetSelection();
-                                    }
-                                }
-                            }
-                        };
-                        $.extend(g.gridOpts, gridJson);
-                        g.gridOpts.rowNum = 100000;
+//                        var g = {
+//                            ID: o.ID,
+//                            pagermode: 'none',
+//                            gridOpts: {
+//                                autowidth: true,
+//                                height: 180,
+//                                onSelectRow: function (id, selected) {
+//                                    rowid = id;
+//                                    if (selected) {
+//                                        copyViewBtn.enable();
+//                                        deleteViewBtn.enable();
+//                                        $selview_span.text(_getSelectedViewName(id));
+//                                        $wizard.CswWizard('button', 'next', 'enable');
+//                                    } else {
+//                                        copyViewBtn.disable();
+//                                        deleteViewBtn.disable();
+//                                        $selview_span.text("");
+//                                        $wizard.CswWizard('button', 'next', 'disable');
+//                                        cswViewGrid.resetSelection();
+//                                    }
+//                                }
+//                            }
+//                        };
+//                        $.extend(g.gridOpts, gridJson);
+//                        g.gridOpts.rowNum = 100000;
 
 
                         var parent = Csw.literals.factory($viewgrid);
-                        cswViewGrid = parent.grid(g);
-                        cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
+                        cswViewGrid = parent.grid({
+                                ID: o.ID + '_grid',
+                                storeId: o.ID + '_store',
+                                title: '',
+                                stateId: o.ID + '_gridstate',
+                                usePaging: false,
+                                showActionColumn: false,
+                                height: 230,
+                                fields: gridJson.grid.fields,  
+                                columns: gridJson.grid.columns,
+                                data: gridJson.grid.data,     
+                                pageSize: gridJson.grid.pageSize
+                        });
+                        //cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
 
-                        cswViewGrid.hideColumn(o.ColumnFullViewId);
-                        if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
-                            rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
-                            cswViewGrid.setSelection(rowid);
-                            cswViewGrid.scrollToRow(rowid);
-                        }
+                        //cswViewGrid.hideColumn(o.ColumnFullViewId);
+//                        if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
+//                            rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
+//                            cswViewGrid.setSelection(rowid);
+//                            cswViewGrid.scrollToRow(rowid);
+//                        }
                     } // success
                 }); // ajax
             }

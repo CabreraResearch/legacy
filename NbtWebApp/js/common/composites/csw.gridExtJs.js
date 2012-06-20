@@ -28,8 +28,6 @@
                 onEdit: null,   // function(row)
                 onDelete: null, // function(row)
 
-                maxHeight: '',
-                maxWidth: '',
                 height: '',  // overridden by webservice if paging is on
                 width: '100%',
 
@@ -144,8 +142,6 @@
                     forceFit: true,               // expand columns to fill width
                     viewConfig: {
                         //                        shrinkWrap: true,
-                        //                        maxWidth: cswPrivate.maxWidth,
-                        //                        maxHeight: cswPrivate.maxHeight,
                         deferEmptyText: false,
                         emptyText: 'No Results'
                     },

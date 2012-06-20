@@ -68,7 +68,20 @@ namespace ChemSW.Nbt.Grid.ExtJs
                 ret = ret || ( col.header.ToLower() == header.ToLower() );
             }
             return ret;
-        } // columnsContains
+        } // columnsContains()
+
+        public CswNbtGridExtJsColumn getColumn( string header )
+        {
+            CswNbtGridExtJsColumn ret = null;
+            foreach( CswNbtGridExtJsColumn col in columns )
+            {
+                if( col.header.ToLower() == header.ToLower() )
+                {
+                    ret = col;
+                }
+            }
+            return ret;
+        } // getColumn()
 
         public JObject ToJson()
         {

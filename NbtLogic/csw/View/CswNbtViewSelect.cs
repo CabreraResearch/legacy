@@ -404,8 +404,11 @@ namespace ChemSW.Nbt
                         ( IncludeEmptyViews || ThisView.ViewMode != NbtViewRenderingMode.Grid || null != ThisView.findFirstProperty() ) &&
                         ( !SearchableOnly || ThisView.IsSearchable() ) )
                     {
-                        RowsToRemove.Add( Row );
                         Ret.Add( ThisView.ViewId, ThisView );
+                    }
+                    else
+                    {
+                        RowsToRemove.Add( Row );
                     }
                 } // foreach( DataRow Row in ViewsTable.Rows )
                 foreach( DataRow Row in RowsToRemove )
