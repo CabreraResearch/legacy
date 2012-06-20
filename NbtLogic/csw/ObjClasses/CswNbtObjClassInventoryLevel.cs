@@ -1,4 +1,3 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -63,7 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ); }
         }
 
         #region Inherited Events
@@ -82,10 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-            if( LastNotified.DateTimeValue == DateTime.MinValue )
-            {
-                Status.StaticText = Statuses.Ok;
-            }
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -129,13 +125,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropStatic Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
+        public CswNbtNodePropList Type { get { return _CswNbtNode.Properties[PropertyName.Type]; } }
         public CswNbtNodePropQuantity Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         public CswNbtNodePropLocation Location { get { return _CswNbtNode.Properties[PropertyName.Location]; } }
         public CswNbtNodePropDateTime LastNotified { get { return _CswNbtNode.Properties[PropertyName.LastNotified]; } }
         public CswNbtNodePropUserSelect Subscribe { get { return _CswNbtNode.Properties[PropertyName.Subscribe]; } }
-        public CswNbtNodePropStatic Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
+        public CswNbtNodePropList Status { get { return _CswNbtNode.Properties[PropertyName.Status]; } }
         #endregion
     }//CswNbtObjClassInventoryLevel
 
