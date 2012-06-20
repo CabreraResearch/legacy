@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24507.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26665.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25814.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25759.cs" />
