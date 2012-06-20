@@ -7,7 +7,7 @@ using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtLocationTree
+    public class CswNbtLocationTreeDeprecated
     {
         public static string TopLevelName = "Top";
 
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt
         public XmlDocument LocationTreeXml;
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtLocationTree( CswNbtResources Rsc, CswPrimaryKey StartingNodeId, string StartingNodeName, Int32 DepthToInit, string NodeIdsToFilterOut )
+        public CswNbtLocationTreeDeprecated( CswNbtResources Rsc, CswPrimaryKey StartingNodeId, string StartingNodeName, Int32 DepthToInit, string NodeIdsToFilterOut )
         {
             CswTimer Timer = new CswTimer();
             _CswNbtResources = Rsc;
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt
                     }
                     catch( Exception ex )
                     {
-						throw new CswDniException( ErrorType.Error, "Invalid View", "getLocationXml() attempted to run invalid SQL: " + PropSql, ex );
+                        throw new CswDniException( ErrorType.Error, "Invalid View", "getLocationXml() attempted to run invalid SQL: " + PropSql, ex );
                     }
 
                     foreach( DataRow PropRow in PropTable.Rows )
@@ -285,7 +285,7 @@ select n.nodeid, n.nodename, o.objectclass, t.iconfilename
             }
             catch( Exception ex )
             {
-				throw new CswDniException( ErrorType.Error, "Invalid View", "getLocationXmlRecursive() attempted to run invalid SQL: " + ChildLocationsSql, ex );
+                throw new CswDniException( ErrorType.Error, "Invalid View", "getLocationXmlRecursive() attempted to run invalid SQL: " + ChildLocationsSql, ex );
             }
 
             if( ChildLocationsTable.Rows.Count > 0 )
