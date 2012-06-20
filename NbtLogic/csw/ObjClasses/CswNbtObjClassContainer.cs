@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
-            _createReceiveTransactionNode();
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, this.Quantity.Quantity );
 
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _DisposeContainer()
         {
-            _createDisposeTransactionNode();
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, 0 );
             this.Quantity.Quantity = 0;
             this.Disposed.Checked = Tristate.True;
             _setDisposedReadOnly( true );
@@ -285,16 +285,6 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
             return ContDispTransNode;
-        }
-
-        private void _createDisposeTransactionNode()
-        {
-            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, 0 );
-        }
-
-        private void _createReceiveTransactionNode()
-        {
-            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, this.Quantity.Quantity );
         }
 
         private void _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double RemainingSourceContainerQuantity )
