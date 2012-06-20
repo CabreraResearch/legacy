@@ -334,13 +334,13 @@ namespace ChemSW.Nbt.Actions
                         RetAsRequestItem.RequestBy.ReadOnly = true;
                         switch( OCP.PropName )
                         {
-                            case CswNbtObjClassContainer.DispensePropertyName:
+                            case CswNbtObjClassContainer.RequestDispensePropertyName:
                                 {
                                     RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispense;
                                     RetAsRequestItem.RequestBy.Value = CswNbtObjClassRequestItem.RequestsBy.Quantity;
                                     break;
                                 }
-                            case CswNbtObjClassContainer.DisposePropertyName:
+                            case CswNbtObjClassContainer.RequestDisposePropertyName:
                                 {
                                     RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Dispose;
                                     /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */
@@ -350,7 +350,7 @@ namespace ChemSW.Nbt.Actions
                                     RetAsRequestItem.Material.ReadOnly = true;
                                     break;
                                 }
-                            case CswNbtObjClassContainer.MovePropertyName:
+                            case CswNbtObjClassContainer.RequestMovePropertyName:
                                 {
                                     RetAsRequestItem.Type.StaticText = CswNbtObjClassRequestItem.Types.Move;
                                     /* Kludge Alert: We don't have compound conditionals yet. Set it and hide it for now to squash the Quantity subprop. TODO: Remove this when compound conditionals arrive. */

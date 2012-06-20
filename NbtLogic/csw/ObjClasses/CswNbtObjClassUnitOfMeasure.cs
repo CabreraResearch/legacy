@@ -1,6 +1,7 @@
+using System.Collections.Generic;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -11,6 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string BaseUnitPropertyName { get { return "Base Unit"; } }
         public static string ConversionFactorPropertyName { get { return "Conversion Factor"; } }
         public static string FractionalPropertyName { get { return "Fractional"; } }
+        public static string UnitTypePropertyName { get { return "Unit Type"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -59,9 +61,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -72,6 +74,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPopulateProps()
         {
+            this.UnitType.Hidden = true;
+
             _CswNbtObjClassDefault.afterPopulateProps();
         }//afterPopulateProps()
 
@@ -93,38 +97,34 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
-            }
-        }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[NamePropertyName] ); } }
+        public CswNbtNodePropText BaseUnit { get { return ( _CswNbtNode.Properties[BaseUnitPropertyName] ); } }
+        public CswNbtNodePropScientific ConversionFactor { get { return ( _CswNbtNode.Properties[ConversionFactorPropertyName] ); } }
+        public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[FractionalPropertyName] ); } }
+        public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[UnitTypePropertyName] ); } }
 
-        public CswNbtNodePropText BaseUnit
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
-            }
-        }
-
-        public CswNbtNodePropScientific ConversionFactor
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ConversionFactorPropertyName].AsScientific );
-            }
-        }
-
-        public CswNbtNodePropLogical Fractional
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[FractionalPropertyName].AsLogical );
-            }
-        }
         #endregion
+
+        /// <summary>
+        /// Enum: Used to identify the UnitType of a UnitOfMeasure Node/NodeType in order to apply correct unit conversion logic
+        /// </summary>
+        public sealed class UnitTypes : CswEnum<UnitTypes>
+        {
+            private UnitTypes( string Name ) : base( Name ) { }
+            public static IEnumerable<UnitTypes> _All { get { return CswEnum<UnitTypes>.All; } }
+
+            public static explicit operator UnitTypes( string str )
+            {
+                UnitTypes ret = Parse( str );
+                return ( ret != null ) ? ret : UnitTypes.Unknown;
+            }
+
+            public static readonly UnitTypes Unknown = new UnitTypes( "Unknown" );
+            public static readonly UnitTypes Weight = new UnitTypes( "Weight" );
+            public static readonly UnitTypes Volume = new UnitTypes( "Volume" );
+            public static readonly UnitTypes Time = new UnitTypes( "Time" );
+            public static readonly UnitTypes Each = new UnitTypes( "Each" );
+        }
 
     }//CswNbtObjClassUnitOfMeasure
 
