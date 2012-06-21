@@ -357,6 +357,14 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId );
         }
 
+        /// <summary>
+        /// Fetches all Object Class Properties that are of the given fieldType
+        /// </summary>
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getObjectClassProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        {
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByFieldType( FieldType );
+        }
+
         public ICswNbtFieldTypeRule getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.makeFieldTypeRule( FieldType );

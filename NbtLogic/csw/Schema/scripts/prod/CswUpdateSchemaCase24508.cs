@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -41,7 +38,7 @@ namespace ChemSW.Nbt.Schema
                         IsFk = true,
                         FkType = NbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = ContainerObjClass.ObjectClassId
-                    } 
+                    }
                 );
 
             CswNbtMetaDataObjectClassProp DestinationContainerProp =
@@ -68,11 +65,11 @@ namespace ChemSW.Nbt.Schema
                 );
 
             Collection<String> DispenseTypes = new Collection<string>();
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive._Name );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense._Name );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste._Name );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose._Name );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add._Name );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive.ToString() );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste.ToString() );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString() );
+            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString() );
 
             CswNbtMetaDataObjectClassProp TypeProp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp(
@@ -81,7 +78,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         PropName = CswNbtObjClassContainerDispenseTransaction.TypePropertyName,
                         FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                        ListOptions = String.Join(",", DispenseTypes)
+                        ListOptions = String.Join( ",", DispenseTypes )
                     }
                 );
 

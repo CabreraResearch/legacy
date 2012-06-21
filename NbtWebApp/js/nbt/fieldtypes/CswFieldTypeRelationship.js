@@ -115,57 +115,60 @@
 
                         propDiv.$.hover(function (event) { Csw.nodeHoverIn(event, selectBox.val()); }, Csw.nodeHoverOut);
                     } //if-else(useSearch)
-                    if (allowAdd) {//case 25721 
-                        var makeAddImage = function (nodeTypeCount, lastNodeTypeId) {
-                            addImage = table.cell(1, cellCol)
-                            .div()
-                            .imageButton({
-                                ButtonType: Csw.enums.imageButton_ButtonType.Add,
-                                AlternateText: "Add New " + o.propData.name,
-                                onClick: function () {
-                                    if (nodeTypeCount === 1 && false === Csw.isNullOrEmpty(selectedNodeType)) {
-                                        //case 26376 - get nodetypeoption
-                                        nodeTypeId = lastNodeTypeId;
-                                    }
-                                    if (false === Csw.isNullOrEmpty(nodeTypeId)) {
-                                        $.CswDialog('AddNodeDialog', {
-                                            'nodetypeid': nodeTypeId,
-                                            'onAddNode': o.onReload
-                                        });
-                                    }
-                                    if (Csw.number(nodeTypeCount) > 1) {
-                                        addImage.hide();
-                                        selectedNodeType.show();
-                                    }
-                                }
+                    if (allowAdd) {
+
+                        var openAddNodeDialog = function (nodetypeToAdd) {
+                            $.CswDialog('AddNodeDialog', {
+                                'nodetypeid': nodetypeToAdd,
+                                'onAddNode': o.onReload
                             });
-                            cellCol++;
-                        };
-                        if (false === Csw.isNullOrEmpty(nodeTypeId)) {
-                            makeAddImage();
                         }
-                        if (false === Csw.isNullOrEmpty(objectClassId)) {
+
+                        var getNodeTypeOptions = function () {
                             var blankText = '[Select One]';
                             selectedNodeType = table.cell(1, cellCol)
                                 .nodeTypeSelect({
                                     objectClassId: objectClassId,
                                     onSelect: function (data, nodeTypeCount) {
                                         if (blankText !== selectedNodeType.val()) {
-                                            $.CswDialog('AddNodeDialog', {
-                                                'nodetypeid': selectedNodeType.val(),
-                                                'onAddNode': o.onReload
-                                            });
+                                            openAddNodeDialog(selectedNodeType.val());
                                         }
                                     },
                                     onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
-                                        makeAddImage(Csw.number(nodeTypeCount), Csw.number(lastNodeTypeId));
-                                        selectedNodeType.hide();
+                                        if (Csw.number(nodeTypeCount) > 1) {
+                                            selectedNodeType.show();
+                                            addImage.hide();
+                                        }
+                                        if (nodeTypeCount === 1 && false === Csw.isNullOrEmpty(selectedNodeType)) {
+                                            openAddNodeDialog(lastNodeTypeId);
+                                        }
                                     },
                                     blankOptionText: blankText,
                                     filterToPermission: 'Create'
-                                });
+                                })
+                                .hide();
                             cellCol++;
                         }
+
+                        var makeAddImage = function (nodeTypeCount, lastNodeTypeId) {
+                            addImage = table.cell(1, cellCol).div()
+                                .imageButton({
+                                    ButtonType: Csw.enums.imageButton_ButtonType.Add,
+                                    AlternateText: "Add New " + o.propData.name,
+                                    onClick: function () {
+                                        if (false === Csw.isNullOrEmpty(nodeTypeId)) {
+                                            openAddNodeDialog(nodeTypeId);
+                                        }
+                                        else {
+                                            getNodeTypeOptions();
+                                        }
+                                    }
+                                });
+                            cellCol++;
+                        };
+
+                        makeAddImage();
+
                     } //if (allowAdd)
                 } // if-else (o.ReadOnly) {
             }, // init
