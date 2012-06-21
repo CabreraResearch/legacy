@@ -81,7 +81,7 @@ window.initMain = window.initMain || function (undefined) {
     if (false == Csw.isNullOrEmpty(qs.action)) {
         var actopts = {};
         $.extend(actopts, qs);
-        initAll(function () { handleAction({ actionname: qs.action, ActionOptions: actopts }) });
+        initAll(function() {handleAction({ actionname: qs.action, ActionOptions: actopts }) });
     } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
         var setView = function () {
             Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode));
@@ -208,7 +208,7 @@ window.initMain = window.initMain || function (undefined) {
 
 
 
-                if (Csw.isNullOrEmpty(onSuccess)) {
+                if(Csw.isNullOrEmpty(onSuccess)) {
                     onSuccess = function () {
                         var current = Csw.clientState.getCurrent();
                         if (false === Csw.isNullOrEmpty(current.viewid)) {
