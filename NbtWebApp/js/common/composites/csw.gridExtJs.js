@@ -44,6 +44,7 @@
             };
             var cswPublic = {};
 
+
             cswPrivate.makeActionButton = function (cellId, buttonName, iconType, clickFunc, record, rowIndex, colIndex) {
                 // Possible race condition - have to make the button after the cell is added, but it isn't added yet
                 setTimeout(function () {
@@ -64,7 +65,8 @@
                     }
                     cell.icon(iconopts);
                 }, 50);
-            } // makeActionButton()
+            }; // makeActionButton()
+
 
             cswPrivate.addActionColumn = function () {
                 if (cswPrivate.showActionColumn) {
@@ -110,15 +112,12 @@
                     cswPrivate.fields.splice(0, 0, newfld);
                     cswPrivate.columns.splice(0, 0, newcol);
                 } // if (cswPrivate.showActionColumn)
-            } //addActionColumn()
+            }; //addActionColumn()
 
-            cswPrivate.initGrid = function () {
 
-                cswPrivate.addActionColumn();
-                cswPrivate.storeId = cswPrivate.ID + 'store';
-
+            cswPrivate.makeStore = function(storeId, usePaging) {
                 var storeopts = {
-                    storeId: cswPrivate.storeId,
+                    storeId: storeId,
                     fields: cswPrivate.fields,
                     data: cswPrivate.data,
                     proxy: {
@@ -129,16 +128,19 @@
                         }
                     }
                 };
-                if (Csw.bool(cswPrivate.usePaging)) {
+                if (Csw.bool(usePaging)) {
                     storeopts.pageSize = cswPrivate.pageSize;
                     storeopts.proxy.type = 'pagingmemory';
                 }
 
-                cswPrivate.store = Ext.create('Ext.data.Store', storeopts);
+                return Ext.create('Ext.data.Store', storeopts);
+            }; // makeStore()
 
+            
+            cswPrivate.makeGrid = function (renderTo, store) {
                 var gridopts = {
                     title: cswPrivate.title,
-                    store: cswPrivate.store,
+                    store: store,
                     columns: cswPrivate.columns,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
@@ -156,9 +158,12 @@
                         viewready: function () {
                             Csw.tryExec(cswPrivate.onLoad, cswPublic);
                         }
-                    },
-                    renderTo: cswParent.getId()
+                    }
                 };
+                if(false === Csw.isNullOrEmpty(renderTo))
+                {
+                    gridopts.renderTo = renderTo;
+                }
                 if (Csw.bool(cswPrivate.usePaging)) {
                     gridopts.dockedItems = [{
                         xtype: 'pagingtoolbar',
@@ -168,7 +173,15 @@
                     }];
                 }
 
-                cswPrivate.gridPanel = Ext.create('Ext.grid.Panel', gridopts);
+                return Ext.create('Ext.grid.Panel', gridopts);
+            }; // makeGrid()
+
+
+            cswPrivate.init = function () {
+                cswPrivate.addActionColumn();
+                cswPrivate.store = cswPrivate.makeStore(cswPrivate.ID + '_store', cswPrivate.usePaging);
+                cswPrivate.gridPanel = cswPrivate.makeGrid(cswParent.getId(), cswPrivate.store);
+
                 cswPrivate.gridPanel.on({
                     select: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onSelect, record.data);
@@ -177,11 +190,11 @@
                         Csw.tryExec(cswPrivate.onDeselect, record.data);
                     }
                 });
-
+                
                 if (Csw.bool(cswPrivate.truncated)) {
                     cswParent.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
-            }; // initGrid()
+            }; // init()
 
 
             cswPublic.getCell = function (rowindex, key) {
@@ -235,8 +248,12 @@
             };
 
             cswPublic.print = function (onSuccess) {
+                // turn paging off
+                var printStore = cswPrivate.makeStore(cswPrivate.ID + '_printstore', false);
+                var printGrid = cswPrivate.makeGrid('', printStore);
+
                 Ext.ux.grid.Printer.stylesheetPath = '/NbtWebApp/js/thirdparty/extJS-4.1.0/ux/grid/gridPrinterCss/print.css';
-                Ext.ux.grid.Printer.print(cswPrivate.gridPanel);
+                Ext.ux.grid.Printer.print(printGrid);
             };
 
             cswPublic.isMulti = function () {
@@ -269,13 +286,13 @@
                                 cswPrivate.fields = result.grid.fields;
                                 cswPrivate.columns = result.grid.columns;
                                 cswPrivate.data = result.grid.data;
-                                cswPrivate.initGrid();
+                                cswPrivate.init();
 
                             } // if(false === Csw.isNullOrEmpty(data.griddata)) {
                         } // success
                     }); // ajax.post()
                 } else {
-                    cswPrivate.initGrid();
+                    cswPrivate.init();
                 }
             } ());
 
