@@ -35,7 +35,7 @@ namespace ChemSW.NbtWebControls
 
             CswImageOverlay Title = new CswImageOverlay();
             Title.ID = "title";
-            Title.ButtonText = KeyPrefix + _ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText;
+            Title.ButtonText = KeyPrefix + _ParentNode.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Key).InnerText;
             Title.ImageUrl = ImageUrlBase + "v_title.gif";
             Title.ImageHeight = 34;
             Title.ImageWidth = 180;
@@ -45,8 +45,8 @@ namespace ChemSW.NbtWebControls
             
             Label TitleLabel = new Label();
             TitleLabel.ID = this.ID + "_label";
-            TitleLabel.Text = _ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText;
-            if (_SelectedNodeId.PrimaryKey == CswConvert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText))
+            TitleLabel.Text = _ParentNode.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Display).InnerText;
+            if (_SelectedNodeId.PrimaryKey == CswConvert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Key).InnerText))
                 TitleLabel.CssClass = "LocationTitleTextSelected";
             else
                 TitleLabel.CssClass = "LocationTitleText";
@@ -57,8 +57,8 @@ namespace ChemSW.NbtWebControls
             if (_MoveMode)
             {
                 _Table.addControl((ImagesMade * 2) + 1, 0, makeSpacer());
-                _Table.addControl((ImagesMade * 2) + 2, 0, makeImage(KeyPrefix, new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
-                                                            "", "", CswNbtLocationTree.VerticalLocationTemplate.Slot, true));
+                _Table.addControl((ImagesMade * 2) + 2, 0, makeImage(KeyPrefix, new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNode.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Key).InnerText)),
+                                                            "", "", CswNbtLocationTreeDeprecated.VerticalLocationTemplate.Slot, true));
                 ImagesMade++;
             }
 
@@ -67,15 +67,15 @@ namespace ChemSW.NbtWebControls
 
 
 
-                if (_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_ObjectClass).InnerText == "LocationClass")
+                if (_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_ObjectClass).InnerText == "LocationClass")
                 {
                     //Locations
                     _Table.addControl((ImagesMade * 2) + 1, 0, makeImage(KeyPrefix,
-                                                                          new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
-                                                                         _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText,
-                                                                         //_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_IconFileName).InnerText,
+                                                                          new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Key).InnerText)),
+                                                                         _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Display).InnerText,
+                                                                         //_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecatedDeprecated.XmlNodeName_IconFileName).InnerText,
                                                                          string.Empty,
-                                                                         (CswNbtLocationTree.VerticalLocationTemplate)Enum.Parse(typeof(CswNbtLocationTree.VerticalLocationTemplate), _ParentNodeSet.ChildNodes[ElementsMade].Attributes[CswNbtLocationTree.XmlAttrName_LocationTemplate].Value),
+                                                                         (CswNbtLocationTreeDeprecated.VerticalLocationTemplate)Enum.Parse(typeof(CswNbtLocationTreeDeprecated.VerticalLocationTemplate), _ParentNodeSet.ChildNodes[ElementsMade].Attributes[CswNbtLocationTreeDeprecated.XmlAttrName_LocationTemplate].Value),
                                                                          true));
                     _Table.addControl((ImagesMade * 2) + 2, 0, makeSpacer());
                     ElementsMade++;
@@ -85,10 +85,10 @@ namespace ChemSW.NbtWebControls
                 {
                     //Non-Locations
                     _Table.addControl((ImagesMade * 2) + 1, 0, makeImage(NodePrefix, 
-                                                                         new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Key).InnerText)),
-                                                                         _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText,
-                                                                         _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTree.XmlNodeName_IconFileName).InnerText,
-                                                                         CswNbtLocationTree.VerticalLocationTemplate.Empty,
+                                                                         new CswPrimaryKey("nodes", CswConvert.ToInt32(_ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Key).InnerText)),
+                                                                         _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Display).InnerText,
+                                                                         _ParentNodeSet.ChildNodes[ElementsMade].SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_IconFileName).InnerText,
+                                                                         CswNbtLocationTreeDeprecated.VerticalLocationTemplate.Empty,
                                                                          !_MoveMode));
                     _Table.addControl((ImagesMade * 2) + 2, 0, makeSpacer());
                     ElementsMade++;
@@ -98,7 +98,7 @@ namespace ChemSW.NbtWebControls
 
             while (ImagesMade < _ElementCountPad)
             {
-                _Table.addControl((ImagesMade * 2) + 1, 0, makeImage(KeyPrefix, null, "", "", CswNbtLocationTree.VerticalLocationTemplate.Empty, false));
+                _Table.addControl((ImagesMade * 2) + 1, 0, makeImage(KeyPrefix, null, "", "", CswNbtLocationTreeDeprecated.VerticalLocationTemplate.Empty, false));
                 _Table.addControl((ImagesMade * 2) + 2, 0, makeSpacer());
                 ImagesMade++;
             }
@@ -122,7 +122,7 @@ namespace ChemSW.NbtWebControls
             return Spacer;
         }
 
-        private CswImageOverlay makeImage( string Prefix, CswPrimaryKey NodeId, string Name, string IconFileName, CswNbtLocationTree.VerticalLocationTemplate Template, bool IsButton )
+        private CswImageOverlay makeImage( string Prefix, CswPrimaryKey NodeId, string Name, string IconFileName, CswNbtLocationTreeDeprecated.VerticalLocationTemplate Template, bool IsButton )
         {
             CswImageOverlay Image = new CswImageOverlay();
             if (IsButton && NodeId != null)
@@ -137,17 +137,17 @@ namespace ChemSW.NbtWebControls
 
             switch (Template)
             {
-                case CswNbtLocationTree.VerticalLocationTemplate.Shelf:
+                case CswNbtLocationTreeDeprecated.VerticalLocationTemplate.Shelf:
                     Image.ImageUrl = "v_shelf";
                     break;
-                case CswNbtLocationTree.VerticalLocationTemplate.Slot:
+                case CswNbtLocationTreeDeprecated.VerticalLocationTemplate.Slot:
                     Image.ImageUrl = "v_slot";
                     break;
-                case CswNbtLocationTree.VerticalLocationTemplate.Empty:
+                case CswNbtLocationTreeDeprecated.VerticalLocationTemplate.Empty:
                     Image.ImageUrl = "v_empty";
                     break;
             }
-            if (Template != CswNbtLocationTree.VerticalLocationTemplate.Empty)
+            if (Template != CswNbtLocationTreeDeprecated.VerticalLocationTemplate.Empty)
             {
                 Image.HoverImageUrl = Image.ImageUrl + "_hover";
                 if (_SelectedNodeId == NodeId)

@@ -39,7 +39,8 @@ namespace ChemSW.Nbt.MetaData
             //set { _UniqueId = value; }
         }
 
-        public string UniqueIdFieldName { get { return "nodetypeid"; } }
+        public const string MetaDataUniqueType = "nodetypeid";
+        public string UniqueIdFieldName { get { return MetaDataUniqueType; } }
 
         //public void Reassign( DataRow NewRow )
         //{

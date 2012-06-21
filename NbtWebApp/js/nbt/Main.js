@@ -48,7 +48,11 @@ window.initMain = window.initMain || function (undefined) {
 
     // handle querystring arguments
     var qs = Csw.queryString();
-    if (false == Csw.isNullOrEmpty(qs.viewid)) {
+    if (false == Csw.isNullOrEmpty(qs.action)) {
+        var actopts = {};
+        $.extend(actopts, qs);
+        initAll(function() {handleAction({ actionname: qs.action, ActionOptions: actopts }) });
+    } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
         var setView = function () {
             Csw.clientState.setCurrentView(qs.viewid, Csw.string(qs.viewmode));
             Csw.window.location("Main.html");
@@ -129,7 +133,7 @@ window.initMain = window.initMain || function (undefined) {
         }); // CswMenuHeader
     }
 
-    function initAll() {
+    function initAll(onSuccess) {
         //if (debugOn()) Csw.debug.log('Main.initAll()');
         $('#CenterBottomDiv').CswLogin('init', {
             'onAuthenticate': function (u) {
@@ -167,34 +171,38 @@ window.initMain = window.initMain || function (undefined) {
 
 
 
-                refreshViewSelect(function () {
-                    var current = Csw.clientState.getCurrent();
-                    if (false === Csw.isNullOrEmpty(current.viewid)) {
-                        handleItemSelect({
-                            'type': 'view',
-                            'viewid': current.viewid,
-                            'viewmode': current.viewmode
-                        });
-                    } else if (false === Csw.isNullOrEmpty(current.actionname)) {
-                        handleItemSelect({
-                            'type': 'action',
-                            'actionname': current.actionname,
-                            'actionurl': current.actionurl
-                        });
-                    } else if (false === Csw.isNullOrEmpty(current.reportid)) {
-                        handleItemSelect({
-                            'type': 'report',
-                            'reportid': current.reportid
-                        });
-                    } else if (false === Csw.isNullOrEmpty(current.searchid)) {
-                        handleItemSelect({
-                            'type': 'search',
-                            'searchid': current.searchid
-                        });
-                    } else {
-                        refreshWelcome();
-                    }
-                });
+                if(Csw.isNullOrEmpty(onSuccess)) {
+                    onSuccess = function () {
+                        var current = Csw.clientState.getCurrent();
+                        if (false === Csw.isNullOrEmpty(current.viewid)) {
+                            handleItemSelect({
+                                'type': 'view',
+                                'viewid': current.viewid,
+                                'viewmode': current.viewmode
+                            });
+                        } else if (false === Csw.isNullOrEmpty(current.actionname)) {
+                            handleItemSelect({
+                                'type': 'action',
+                                'actionname': current.actionname,
+                                'actionurl': current.actionurl
+                            });
+                        } else if (false === Csw.isNullOrEmpty(current.reportid)) {
+                            handleItemSelect({
+                                'type': 'report',
+                                'reportid': current.reportid
+                            });
+                        } else if (false === Csw.isNullOrEmpty(current.searchid)) {
+                            handleItemSelect({
+                                'type': 'search',
+                                'searchid': current.searchid
+                            });
+                        } else {
+                            refreshWelcome();
+                        }
+                    };
+                }
+                refreshViewSelect(onSuccess);
+
             } // onAuthenticate
         }); // CswLogin
 
@@ -398,7 +406,8 @@ window.initMain = window.initMain || function (undefined) {
             viewmode: '',
             nodeid: '',
             cswnbtnodekey: '',
-            prefix: 'csw'
+            prefix: 'csw',
+            grid: ''
         };
 
         if (options) {
@@ -435,8 +444,7 @@ window.initMain = window.initMain || function (undefined) {
             'onPrintView': function () {
                 switch (o.viewmode) {
                     case Csw.enums.viewMode.grid.name:
-                        if (Csw.contains(o, 'grid') &&
-                             false == Csw.isNullOrEmpty(o.grid)) {
+                        if (false == Csw.isNullOrEmpty(o.grid)) {
                             o.grid.print();
                         }
                         break;

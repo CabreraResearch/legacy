@@ -65,6 +65,23 @@ namespace ChemSW.Nbt
                      SecondId == NodeType.getFirstVersionNodeType().NodeTypeId );
         }
 
+        public ICswNbtMetaDataObject SecondMetaDataObject()
+        {
+            ICswNbtMetaDataObject Ret = null;
+            if( Int32.MinValue != SecondId )
+            {
+                if( SecondType == NbtViewRelatedIdType.ObjectClassId )
+                {
+                    Ret = _CswNbtResources.MetaData.getObjectClass( SecondId );
+                }
+                else if( SecondType == NbtViewRelatedIdType.NodeTypeId )
+                {
+                    Ret = _CswNbtResources.MetaData.getNodeType( SecondId );
+                }
+            }
+            return Ret;
+        }
+
         public bool isExpectedMetaDataType( CswNbtMetaDataObjectClass ObjectClass )
         {
             bool Ret = ( null != ObjectClass &&

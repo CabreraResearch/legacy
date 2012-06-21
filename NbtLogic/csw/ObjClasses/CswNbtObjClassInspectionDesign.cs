@@ -278,14 +278,6 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
-                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
-                this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
-                this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
-            {
-                _CswNbtNode.ReadOnly = true;
-            }
-
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -334,8 +326,21 @@ namespace ChemSW.Nbt.ObjClasses
                     QuestionProp.IsActionRequired = true;
                 }
             }
+
             _CswNbtObjClassDefault.afterPopulateProps();
-            this.Status.ReadOnly = ( true != _CswNbtResources.CurrentNbtUser.IsAdministrator() );
+
+            // case 26584
+            if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+            {
+                if( this.Status.Value == InspectionStatusAsString( InspectionStatus.Cancelled ) ||
+                    this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed ) ||
+                    this.Status.Value == InspectionStatusAsString( InspectionStatus.Completed_Late ) ||
+                    this.Status.Value == InspectionStatusAsString( InspectionStatus.Missed ) )
+                {
+                    _CswNbtNode.ReadOnly = true;
+                }
+                this.Status.ReadOnly = true;
+            }  
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )

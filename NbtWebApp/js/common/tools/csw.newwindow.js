@@ -24,7 +24,7 @@
             html += '<head>';
             html += '<link rel="stylesheet" type="text/css" href="Content/themes/base/jquery.ui.all.css" />';
             html += '<link rel="stylesheet" type="text/css" href="//ajax.aspnetcdn.com/ajax/jquery.ui/1.8.19/themes/redmond/jquery-ui.css" />';
-            html += '<link rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />';
+            //html += '<link rel="stylesheet" type="text/css" href="Content/jquery.jqGrid/ui.jqgrid.css" />';
             html += '<title>';
             html += printDoc.title;
             html += '</title>';

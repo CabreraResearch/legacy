@@ -1216,10 +1216,10 @@ namespace ChemSW.Nbt.MetaData
 
                 NodeType._DataRow["objectclassid"] = CswConvert.ToDbVal( NewObjectClass.ObjectClassId );
                 NodeType.IconFileName = NewObjectClass.IconFileName;
-                Collection<CswNbtMetaDataNodeTypeProp> MatchingProps = new Collection<CswNbtMetaDataNodeTypeProp>();
                 // Synchronize Object Class Props from the new object class
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in getObjectClassProps( NodeType.ObjectClassId ) )
                 {
+                    Collection<CswNbtMetaDataNodeTypeProp> MatchingProps = new Collection<CswNbtMetaDataNodeTypeProp>();
                     bool FoundMatch = false;
                     foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
                     {

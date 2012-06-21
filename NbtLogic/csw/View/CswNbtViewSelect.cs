@@ -318,9 +318,9 @@ namespace ChemSW.Nbt
 
 
         //private DataTable _LastVisibleViews = null;
-        private string _LastOrderBy = string.Empty;
-        private ICswNbtUser _LastUser = null;
-        private bool _LastIncludeEmptyViews = false;
+        //private string _LastOrderBy = string.Empty;
+        //private ICswNbtUser _LastUser = null;
+        //private bool _LastIncludeEmptyViews = false;
 
         /// <summary>
         /// Reset the cached visibile views table
@@ -335,12 +335,21 @@ namespace ChemSW.Nbt
         /// </summary>
         public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, CswCommaDelimitedString LimitToViews = null )
         {
+            DataTable ViewsTable = null;
+            return getVisibleViews( OrderBy, User, IncludeEmptyViews, MobileOnly, SearchableOnly, ViewRenderingMode, out ViewsTable, LimitToViews );
+        }
+
+        /// <summary>
+        /// Get a Collection of all views visible to the current user, and the DataTable
+        /// </summary>
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, out DataTable ViewsTable, CswCommaDelimitedString LimitToViews = null )
+        {
             CswTimer VisibleViewsTimer = new CswTimer();
+            ViewsTable = null;
 
             Dictionary<CswNbtViewId, CswNbtView> Ret = new Dictionary<CswNbtViewId, CswNbtView>();
             if( null == LimitToViews || LimitToViews.Count > 0 )
             {
-                DataTable ViewsTable = null;
                 //if( _LastVisibleViews != null &&
                 //    _LastOrderBy == OrderBy &&
                 //    _LastUser == User &&
@@ -381,6 +390,7 @@ namespace ChemSW.Nbt
                 //}
 
                 // BZ 7074 - Make sure the user has permissions to at least one root node
+                Collection<DataRow> RowsToRemove = new Collection<DataRow>();
                 foreach( DataRow Row in ViewsTable.Rows )
                 {
                     CswNbtView ThisView = new CswNbtView( _CswNbtResources );
@@ -396,11 +406,19 @@ namespace ChemSW.Nbt
                     {
                         Ret.Add( ThisView.ViewId, ThisView );
                     }
+                    else
+                    {
+                        RowsToRemove.Add( Row );
+                    }
                 } // foreach( DataRow Row in ViewsTable.Rows )
-            }
-            _LastIncludeEmptyViews = IncludeEmptyViews;
-            _LastOrderBy = OrderBy;
-            _LastUser = User;
+                foreach( DataRow Row in RowsToRemove )
+                {
+                    ViewsTable.Rows.Remove( Row );
+                }
+            } // if( null == LimitToViews || LimitToViews.Count > 0 )
+            //_LastIncludeEmptyViews = IncludeEmptyViews;
+            //_LastOrderBy = OrderBy;
+            //_LastUser = User;
             //_LastVisibleViews = ViewsTable;
 
             _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );

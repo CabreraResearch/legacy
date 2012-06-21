@@ -19,10 +19,10 @@
             viewname: '',
             viewmode: '',
             ID: 'vieweditor',
-            ColumnViewName: 'VIEWNAME',
-            ColumnViewId: 'NODEVIEWID',
-            ColumnFullViewId: 'VIEWID',
-            ColumnViewMode: 'VIEWMODE',
+            ColumnViewName: 'viewname',
+            ColumnViewId: 'nodeviewid',
+            ColumnFullViewId: 'viewid',
+            ColumnViewMode: 'viewmode',
             onCancel: null, // function ($wizard) {},
             onFinish: null, // function (viewid, viewmode) {},
             onDeleteView: null, // function (deletedviewid) {},
@@ -61,7 +61,10 @@
         // don't activate Save and Finish until step 2
         if (o.startingStep === 1) {
             $wizard.CswWizard('button', 'finish', 'disable');
+        } else {
+            _initStepTwo($wizard);
         }
+    
         // Step 1 - Choose a View
         var $div1 = $($wizard.CswWizard('div', Csw.enums.wizardSteps_ViewEditor.viewselect.step));
         var instructions = "A <em>View</em> controls the arrangement of information you see in a tree or grid.  " +
@@ -268,47 +271,8 @@
                 case Csw.enums.wizardSteps_ViewEditor.viewselect.step:
                     break;
                 case Csw.enums.wizardSteps_ViewEditor.attributes.step:
-                    $nextWizard.CswWizard('button', 'finish', 'enable');
-                    $nextWizard.CswWizard('button', 'next', 'disable');
+                    _initStepTwo($nextWizard);
 
-                    var jsonData = {
-                        ViewId: _getSelectedViewId()
-                    };
-
-                    Csw.ajax.post({
-                        url: o.ViewInfoUrl,
-                        data: jsonData,
-                        success: function (data) {
-                            currentViewJson = data.TreeView;
-
-                            viewNameTextBox.val(currentViewJson.viewname);
-                            categoryTextBox.val(currentViewJson.category);
-                            var visibility = Csw.string(currentViewJson.visibility);
-                            if (visibility !== 'Property') {
-                                if (visSelect.$visibilityselect !== undefined) {
-                                    visSelect.$visibilityselect.val(visibility).trigger('change');
-                                    visSelect.$visroleselect.val('nodes_' + currentViewJson.visibilityroleid);
-                                    visSelect.$visuserselect.val('nodes_' + currentViewJson.visibilityuserid);
-                                }
-                            }
-
-                            if (Csw.bool(currentViewJson.formobile)) {
-                                forMobileCheckBox.propDom('checked', 'checked');
-                            }
-                            var mode = currentViewJson.mode;
-                            displayModeSpan.text(mode);
-                            gridWidthTextBox.val(currentViewJson.width);
-                            if (mode === "Grid") {
-                                gridWidthLabelCell.show();
-                                gridWidthTextBox.show();
-                            } else {
-                                gridWidthLabelCell.hide();
-                                gridWidthTextBox.hide();
-                            }
-
-                            $nextWizard.CswWizard('button', 'next', 'enable');
-                        } // success
-                    }); // ajax
                     break;
                 case Csw.enums.wizardSteps_ViewEditor.relationships.step:
                     // save step 2 content to currentviewjson
@@ -330,6 +294,50 @@
                     break;
             } // switch(newstepno)
         } // _handleNext()
+
+        function _initStepTwo($nextWizard) {
+            $nextWizard.CswWizard('button', 'finish', 'enable');
+            $nextWizard.CswWizard('button', 'next', 'disable');
+
+            var jsonData = {
+                ViewId: _getSelectedViewId()
+            };
+
+            Csw.ajax.post({
+                url: o.ViewInfoUrl,
+                data: jsonData,
+                success: function (data) {
+                    currentViewJson = data.TreeView;
+
+                    viewNameTextBox.val(currentViewJson.viewname);
+                    categoryTextBox.val(currentViewJson.category);
+                    var visibility = Csw.string(currentViewJson.visibility);
+                    if (visibility !== 'Property') {
+                        if (visSelect.$visibilityselect !== undefined) {
+                            visSelect.$visibilityselect.val(visibility).trigger('change');
+                            visSelect.$visroleselect.val('nodes_' + currentViewJson.visibilityroleid);
+                            visSelect.$visuserselect.val('nodes_' + currentViewJson.visibilityuserid);
+                        }
+                    }
+
+                    if (Csw.bool(currentViewJson.formobile)) {
+                        forMobileCheckBox.propDom('checked', 'checked');
+                    }
+                    var mode = currentViewJson.mode;
+                    displayModeSpan.text(mode);
+                    gridWidthTextBox.val(currentViewJson.width);
+                    if (mode === "Grid") {
+                        gridWidthLabelCell.show();
+                        gridWidthTextBox.show();
+                    } else {
+                        gridWidthLabelCell.hide();
+                        gridWidthTextBox.hide();
+                    }
+
+                    $nextWizard.CswWizard('button', 'next', 'enable');
+                } // success
+            }); // ajax
+        } // _initStepTwo()
 
         function cacheStepTwo() {
             currentViewJson.viewname = viewNameTextBox.val();
@@ -462,43 +470,68 @@
                             $viewgrid.empty();
                         }
 
-                        var g = {
-                            ID: o.ID,
-                            pagermode: 'none',
-                            gridOpts: {
-                                autowidth: true,
-                                height: 180,
-                                onSelectRow: function (id, selected) {
-                                    rowid = id;
-                                    if (selected) {
-                                        copyViewBtn.enable();
-                                        deleteViewBtn.enable();
-                                        $selview_span.text(_getSelectedViewName(id));
-                                        $wizard.CswWizard('button', 'next', 'enable');
-                                    } else {
-                                        copyViewBtn.disable();
-                                        deleteViewBtn.disable();
-                                        $selview_span.text("");
-                                        $wizard.CswWizard('button', 'next', 'disable');
-                                        cswViewGrid.resetSelection();
-                                    }
-                                }
-                            }
-                        };
-                        $.extend(g.gridOpts, gridJson);
-                        g.gridOpts.rowNum = 100000;
+//                        var g = {
+//                            ID: o.ID,
+//                            pagermode: 'none',
+//                            gridOpts: {
+//                                autowidth: true,
+//                                height: 180,
+//                                onSelectRow: function (id, selected) {
+//                                    rowid = id;
+//                                    if (selected) {
+//                                        copyViewBtn.enable();
+//                                        deleteViewBtn.enable();
+//                                        $selview_span.text(_getSelectedViewName(id));
+//                                        $wizard.CswWizard('button', 'next', 'enable');
+//                                    } else {
+//                                        copyViewBtn.disable();
+//                                        deleteViewBtn.disable();
+//                                        $selview_span.text("");
+//                                        $wizard.CswWizard('button', 'next', 'disable');
+//                                        cswViewGrid.resetSelection();
+//                                    }
+//                                }
+//                            }
+//                        };
+//                        $.extend(g.gridOpts, gridJson);
+//                        g.gridOpts.rowNum = 100000;
 
 
                         var parent = Csw.literals.factory($viewgrid);
-                        cswViewGrid = parent.grid(g);
-                        cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
-
-                        cswViewGrid.hideColumn(o.ColumnFullViewId);
-                        if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
-                            rowid = cswViewGrid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
-                            cswViewGrid.setSelection(rowid);
-                            cswViewGrid.scrollToRow(rowid);
-                        }
+                        cswViewGrid = parent.grid({
+                                ID: o.ID + '_grid',
+                                storeId: o.ID + '_store',
+                                title: '',
+                                stateId: o.ID + '_gridstate',
+                                usePaging: false,
+                                showActionColumn: false,
+                                height: 230,
+                                fields: gridJson.grid.fields,  
+                                columns: gridJson.grid.columns,
+                                data: gridJson.grid.data,     
+                                pageSize: gridJson.grid.pageSize,
+                                onSelect: function(row){
+                                    copyViewBtn.enable();
+                                    deleteViewBtn.enable();
+                                    $selview_span.text(row.viewname);
+                                    $wizard.CswWizard('button', 'next', 'enable');
+                                },
+                                onDeselect: function(row){
+                                    copyViewBtn.disable();
+                                    deleteViewBtn.disable();
+                                    $selview_span.text("");
+                                    $wizard.CswWizard('button', 'next', 'disable');
+                                    //cswViewGrid.resetSelection();
+                                },
+                                onLoad: function(grid) {
+                                    if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
+                                        rowid = grid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
+                                        grid.setSelection(rowid);
+                                        grid.scrollToRow(rowid);
+                                    }
+                                }
+                        });
+                        //cswViewGrid.gridPager.css({ width: '100%', height: '20px' });
                     } // success
                 }); // ajax
             }

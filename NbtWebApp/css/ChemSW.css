@@ -1333,3 +1333,9 @@ ul li div {
     font-size: 9px;
     overflow: auto; 
 }
+
+.truncated
+{
+    color: #ff0000;
+    font-weight: bold;
+}

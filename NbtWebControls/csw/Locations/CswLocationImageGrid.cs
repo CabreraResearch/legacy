@@ -21,8 +21,8 @@ namespace ChemSW.NbtWebControls
         {
             get
             {
-                if( _ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ) != null )
-                    return new CswPrimaryKey( "nodes", CswConvert.ToInt32( _ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
+                if( _ParentNode.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Key ) != null )
+                    return new CswPrimaryKey( "nodes", CswConvert.ToInt32( _ParentNode.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Key ).InnerText ) );
                 else
                     return null;
             }
@@ -31,11 +31,11 @@ namespace ChemSW.NbtWebControls
         public CswLocationImageGrid( CswNbtResources CswNbtResources, XmlNode ParentNode, CswPrimaryKey SelectedNodeId )
             : base( CswNbtResources, ParentNode, SelectedNodeId )
         {
-            XmlNodeList Rows = _ParentNodeSet.SelectNodes(CswNbtLocationTree.XmlNodeName_Row);
+            XmlNodeList Rows = _ParentNodeSet.SelectNodes(CswNbtLocationTreeDeprecated.XmlNodeName_Row);
             TotalRows = Rows.Count;
             foreach (XmlNode Row in Rows)
             {
-                Int32 currentCellCount = Row.SelectNodes(CswNbtLocationTree.XmlNodeName_Cell).Count;
+                Int32 currentCellCount = Row.SelectNodes(CswNbtLocationTreeDeprecated.XmlNodeName_Cell).Count;
                 if (currentCellCount > TotalColumns)
                     TotalColumns = currentCellCount;
             }
@@ -73,7 +73,7 @@ namespace ChemSW.NbtWebControls
 
             Label TitleLabel = new Label();
             TitleLabel.ID = this.ID + "_label";
-            TitleLabel.Text = _ParentNode.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText;
+            TitleLabel.Text = _ParentNode.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Display).InnerText;
             if (_SelectedNodeId == _ParentNodeId)
                 TitleLabel.CssClass = "LocationTitleTextSelected";
             else
@@ -162,12 +162,12 @@ namespace ChemSW.NbtWebControls
                 while (currentCol < TotalColumns + 1)
                 {
                     // Content Cells
-                    XmlNode CellNode = _ParentNodeSet.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Row + "[" + (currentRow - 2) + "]/" + CswNbtLocationTree.XmlNodeName_Cell + "[" + (currentCol) + "]");
-                    CswNbtLocationTree.GridLocationTemplate Template = (CswNbtLocationTree.GridLocationTemplate)Enum.Parse(typeof(CswNbtLocationTree.GridLocationTemplate), CellNode.Attributes[CswNbtLocationTree.XmlAttrName_LocationTemplate].Value, true);
+                    XmlNode CellNode = _ParentNodeSet.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Row + "[" + (currentRow - 2) + "]/" + CswNbtLocationTreeDeprecated.XmlNodeName_Cell + "[" + (currentCol) + "]");
+                   CswNbtLocationTreeDeprecated.GridLocationTemplate Template = (CswNbtLocationTreeDeprecated.GridLocationTemplate)Enum.Parse(typeof(CswNbtLocationTreeDeprecated.GridLocationTemplate), CellNode.Attributes[CswNbtLocationTreeDeprecated.XmlAttrName_LocationTemplate].Value, true);
 
                     CswImageOverlay CellImage = new CswImageOverlay();
                     CellImage.ID = GridKeyPrefix + (currentRow - 3).ToString() +"_"+ (currentCol-1).ToString();
-                    if (Template != CswNbtLocationTree.GridLocationTemplate.Empty)
+                    if (Template !=CswNbtLocationTreeDeprecated.GridLocationTemplate.Empty)
                     {
                         CellImage.ID = GridKeyPrefix + (currentRow - 3).ToString() +"_"+ (currentCol-1).ToString();
                         CellImage.ButtonText = GridKeyPrefix + (currentRow - 3).ToString() +"_"+ (currentCol-1).ToString();
@@ -178,15 +178,15 @@ namespace ChemSW.NbtWebControls
 
                     switch (Template)
                     {
-                        case CswNbtLocationTree.GridLocationTemplate.Grid:
+                        case CswNbtLocationTreeDeprecated.GridLocationTemplate.Grid:
                             CellImage.ImageUrl = "g_grid";
                             break;
-                        case CswNbtLocationTree.GridLocationTemplate.Empty:
+                        case CswNbtLocationTreeDeprecated.GridLocationTemplate.Empty:
                             CellImage.ImageUrl = "g_empty";
                             break;
                     }
 
-                    if (Template != CswNbtLocationTree.GridLocationTemplate.Empty)
+                    if (Template !=CswNbtLocationTreeDeprecated.GridLocationTemplate.Empty)
                     {
                         //CellImage.HoverImageUrl = CellImage.ImageUrl + "_hover";
                         if (_SelectedNodeId == _ParentNodeId && SelectedRow == (currentRow - 3) && SelectedColumn == currentCol-1)
@@ -205,10 +205,10 @@ namespace ChemSW.NbtWebControls
                     currentCol++;
 
                     // Non-Location Children
-                    XmlNodeList ChildNodes = CellNode.SelectNodes(CswNbtLocationTree.XmlNodeName_Child);
+                    XmlNodeList ChildNodes = CellNode.SelectNodes( CswNbtLocationTreeDeprecated.XmlNodeName_ChildSet );
                     foreach (XmlNode Child in ChildNodes)
                     {
-                        CswPrimaryKey ChildNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Child.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
+                        CswPrimaryKey ChildNodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Child.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Key ).InnerText ) );
 
                         string ThisPropString = string.Empty;
                         if( CswNbtTree != null )
@@ -249,11 +249,11 @@ namespace ChemSW.NbtWebControls
                         CellImage.Content.Add(NodeButton);
 
                         Image Icon = new Image();
-                        Icon.ImageUrl = "Images/icons/" + Child.SelectSingleNode(CswNbtLocationTree.XmlNodeName_IconFileName).InnerText;
+                        Icon.ImageUrl = "Images/icons/" + Child.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_IconFileName).InnerText;
                         NodeButton.Content.Add(Icon);
 
                         Label NodeLabel = new Label();
-                        NodeLabel.Text = Child.SelectSingleNode(CswNbtLocationTree.XmlNodeName_Display).InnerText + "<BR>";
+                        NodeLabel.Text = Child.SelectSingleNode(CswNbtLocationTreeDeprecated.XmlNodeName_Display).InnerText + "<BR>";
                         if(ChildNodeId == _SelectedNodeId)
                             NodeLabel.CssClass = "LocationTextSelected";
                         else

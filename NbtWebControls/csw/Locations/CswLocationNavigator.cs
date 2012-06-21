@@ -13,14 +13,14 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.NbtWebControls
 {
-    public class CswLocationNavigator : CompositeControl, INamingContainer, IPostBackDataHandler
+    public class CswLocationNavigator : CompositeControl, IPostBackDataHandler
     {
         #region Properties
 
         //private bool _UseUpdatePanel = true;
         public bool MoveMode = false;
 
-        private CswNbtLocationTree _CswNbtLocationTree;
+        private CswNbtLocationTreeDeprecated _CswNbtLocationTreeDeprecated;
         private CswNbtResources _CswNbtResources;
 
         private CswNbtView _View;
@@ -73,7 +73,7 @@ namespace ChemSW.NbtWebControls
                 else
                 {
                     if( ParentNodeId == null )
-                        return CswNbtLocationTree.TopLevelName;
+                        return CswNbtLocationTreeDeprecated.TopLevelName;
                     else
                         return "Unknown Node";
                 }
@@ -131,9 +131,9 @@ namespace ChemSW.NbtWebControls
             get
             {
                 string ret = String.Empty;
-                if( SelectedNodeId != null && _CswNbtLocationTree != null )
+                if( SelectedNodeId != null && _CswNbtLocationTreeDeprecated != null )
                 {
-                    XmlNode SelectedNode = _CswNbtLocationTree.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTree.XmlNodeName_Child + "[" + CswNbtLocationTree.XmlNodeName_Key + " = \"" + SelectedNodeId + "\"]/" + CswNbtLocationTree.XmlNodeName_Display );
+                    XmlNode SelectedNode = _CswNbtLocationTreeDeprecated.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTreeDeprecated.XmlNodeName_ChildSet + "[" + CswNbtLocationTreeDeprecated.XmlNodeName_Key + " = \"" + SelectedNodeId + "\"]/" + CswNbtLocationTreeDeprecated.XmlNodeName_Display );
                     if( SelectedNode != null )
                         ret = SelectedNode.InnerText;
                 }
@@ -286,7 +286,7 @@ namespace ChemSW.NbtWebControls
         protected override void Render( HtmlTextWriter writer )
         {
             base.Render( writer );
-            string ParentNodeIdVal = CswNbtLocationTree.TopLevelName;
+            string ParentNodeIdVal = CswNbtLocationTreeDeprecated.TopLevelName;
             string SelectedNodeIdVal = "Nothing selected";
             if( ParentNodeId != null )
             {
@@ -402,19 +402,19 @@ namespace ChemSW.NbtWebControls
         private XmlNode getParentXmlNode()
         {
             XmlNode ret = null;
-            if( _CswNbtLocationTree != null )
+            if( _CswNbtLocationTreeDeprecated != null )
             {
                 if( ParentNodeId != null )
-                    ret = _CswNbtLocationTree.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTree.XmlNodeName_Child + "[" + CswNbtLocationTree.XmlNodeName_Key + " = \"" + ParentNodeId + "\"]" );
+                    ret = _CswNbtLocationTreeDeprecated.LocationTreeXml.SelectSingleNode( "//" + CswNbtLocationTreeDeprecated.XmlNodeName_ChildSet + "[" + CswNbtLocationTreeDeprecated.XmlNodeName_Key + " = \"" + ParentNodeId + "\"]" );
                 else
-                    ret = _CswNbtLocationTree.LocationTreeXml.DocumentElement;
+                    ret = _CswNbtLocationTreeDeprecated.LocationTreeXml.DocumentElement;
             }
             return ret;
         }
         public string getParentDisplay()
         {
             XmlNode ParentNode = getParentXmlNode();
-            return ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Display ).InnerText;
+            return ParentNode.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Display ).InnerText;
         }
         private bool ParentNodeHasChildren()
         {
@@ -422,7 +422,7 @@ namespace ChemSW.NbtWebControls
             XmlNode ParentNode = getParentXmlNode();
             if( ParentNode != null )
             {
-                XmlNode ChildSet = ParentNode.SelectSingleNode( CswNbtLocationTree.XmlNodeName_ChildSet );
+                XmlNode ChildSet = ParentNode.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_ChildSet );
                 if( ChildSet != null )
                 {
                     ret = ( ChildSet.ChildNodes.Count > 0 );
@@ -439,7 +439,7 @@ namespace ChemSW.NbtWebControls
             string PropOwnerNodeIdString = String.Empty;
             if( PropOwnerNodeId != null )
                 PropOwnerNodeIdString = PropOwnerNodeId.PrimaryKey.ToString();
-            _CswNbtLocationTree = new CswNbtLocationTree( _CswNbtResources, ParentNodeId, ParentNodeName, 2, PropOwnerNodeIdString );
+            _CswNbtLocationTreeDeprecated = new CswNbtLocationTreeDeprecated( _CswNbtResources, ParentNodeId, ParentNodeName, 2, PropOwnerNodeIdString );
 
             XmlNode ParentNode = getParentXmlNode();
 
@@ -491,8 +491,8 @@ namespace ChemSW.NbtWebControls
         protected void InitBreadCrumbRecursive( XmlNode Node )
         {
             CswPrimaryKey NodeId = null;
-            if( Node.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText != string.Empty )
-                NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Key ).InnerText ) );
+            if( Node.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Key ).InnerText != string.Empty )
+                NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Node.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Key ).InnerText ) );
 
             if( Node.ParentNode != null && Node.ParentNode.ParentNode != null )
             {
@@ -504,7 +504,7 @@ namespace ChemSW.NbtWebControls
                     InitBreadCrumbRecursive( NodeId );
             }
             _Path.addLink( CswLocationImage.KeyPrefix + NodeId,
-                          Node.SelectSingleNode( CswNbtLocationTree.XmlNodeName_Display ).InnerText );
+                          Node.SelectSingleNode( CswNbtLocationTreeDeprecated.XmlNodeName_Display ).InnerText );
         }
 
         #endregion Private Helpers

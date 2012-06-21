@@ -92,39 +92,39 @@ namespace ChemSW.Nbt
         //} // enum _AttrName
 
         // All
-        private static string _AttrName_ElemType = "name";
+        public static string _AttrName_ElemType = "name";
         public static string _AttrName_ChildNodes = "childnodes";
         public static string _AttrName_ChildProps = "childprops";
 
         // NbtTree element
         public static string _ElemName_Tree = "NbtTree";
-        private static string _AttrName_TreeName = "treename";
+        public static string _AttrName_TreeName = "treename";
 
         // NbtNode element
         public static string _ElemName_Node = "NbtNode";
         //private static string _AttrName_TableName = "tablename";
-        private static string _AttrName_NodeId = "nodeid";
-        private static string _AttrName_Key = "key";
-        private static string _AttrName_IconFileName = "iconfilename";
-        private static string _AttrName_NodeName = "nodename";
-        private static string _AttrName_NodeTypeId = "nodetypeid";
+        public static string _AttrName_NodeId = "nodeid";
+        public static string _AttrName_Key = "key";
+        public static string _AttrName_IconFileName = "iconfilename";
+        public static string _AttrName_NodeName = "nodename";
+        public static string _AttrName_NodeTypeId = "nodetypeid";
         //private static string _AttrName_NodeTypeName = "nodetypename";
         //private static string _AttrName_ObjectClass = "objectclassname";
-        private static string _AttrName_ObjectClassId = "objectclassid";
-        private static string _AttrName_Selectable = "selectable";
-        private static string _AttrName_ShowInTree = "showintree";
+        public static string _AttrName_ObjectClassId = "objectclassid";
+        public static string _AttrName_Selectable = "selectable";
+        public static string _AttrName_ShowInTree = "showintree";
         //private static string _AttrName_AddChildren = "addchildren";
-        private static string _AttrName_ExpandMode = "expandmode";
-        private static string _AttrName_Truncated = "truncated";
-        private static string _AttrName_Locked = "locked";
+        public static string _AttrName_ExpandMode = "expandmode";
+        public static string _AttrName_Truncated = "truncated";
+        public static string _AttrName_Locked = "locked";
 
         // NbtNodeProp element
         public static string _ElemName_NodeProp = "NbtNodeProp";
-        private static string _AttrName_NodePropId = "nodetypepropid";
-        private static string _AttrName_JctNodePropId = "jctnodepropid";
-        private static string _AttrName_NodePropName = "propname";
-        private static string _AttrName_NodePropGestalt = "gestalt";
-        private static string _AttrName_NodePropFieldType = "fieldtype";
+        public static string _AttrName_NodePropId = "nodetypepropid";
+        public static string _AttrName_JctNodePropId = "jctnodepropid";
+        public static string _AttrName_NodePropName = "propname";
+        public static string _AttrName_NodePropGestalt = "gestalt";
+        public static string _AttrName_NodePropFieldType = "fieldtype";
 
         // NbtNodeGroup element
         public static string _ElemName_NodeGroup = "NbtNodeGroup";
