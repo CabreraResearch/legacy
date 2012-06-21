@@ -171,6 +171,13 @@
                         dock: 'bottom',
                         displayInfo: true
                     }];
+                    
+                    var rows = cswPrivate.data.items.length;
+                    if(rows <= cswPrivate.pageSize) {
+                        gridopts.height = cswPrivate.calculateHeight(rows);
+                    } else {
+                        gridopts.height = cswPrivate.calculateHeight(cswPrivate.pageSize);
+                    }
                 }
 
                 return Ext.create('Ext.grid.Panel', gridopts);
@@ -260,6 +267,14 @@
                 return cswPrivate.multiEdit;
             };
 
+            cswPrivate.calculateHeight = function(rows) {
+                return 25 + // title bar
+                       23 + // grid header
+                       (rows * 28) + // rows
+                       14 + // horizontal scrollbar
+                       27;  // grid footer
+            };
+
             //constructor
             (function () {
                 if (options) $.extend(cswPrivate, options);
@@ -272,13 +287,6 @@
                         success: function (result) {
                             if (false === Csw.isNullOrEmpty(result.grid)) {
                                 cswPrivate.pageSize = Csw.number(result.grid.pageSize);
-                                if (Csw.bool(cswPrivate.usePaging)) {
-                                    cswPrivate.height = 25 + // title bar
-                                                        23 + // grid header
-                                                        (cswPrivate.pageSize * 26) + // rows
-                                                        14 + // horizontal scrollbar
-                                                        27;  // grid footer
-                                }
                                 if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
                                     cswPrivate.truncated = result.grid.truncated;
                                 }
