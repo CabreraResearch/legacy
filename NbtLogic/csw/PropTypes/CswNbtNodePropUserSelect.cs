@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
-        /// Subscribes a user by adding the userid to the SelectedUserIds list
+        /// Gets a CswNbtObjClassUser from the SelectedUserIds list
         /// </summary>
         public CswNbtObjClassUser GetUser( Int32 UserId )
         {
