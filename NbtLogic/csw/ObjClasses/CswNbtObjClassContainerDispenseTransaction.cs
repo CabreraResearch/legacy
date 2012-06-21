@@ -23,11 +23,11 @@ namespace ChemSW.Nbt.ObjClasses
         public sealed class DispenseType : CswEnum<DispenseType>
         {
             private DispenseType( string Name ) : base( Name ) { }
-            public static IEnumerable<DispenseType> _All { get { return CswEnum<DispenseType>.All; } }
+            public static IEnumerable<DispenseType> _All { get { return All; } }
             public static implicit operator DispenseType( string str )
             {
                 DispenseType ret = Parse( str );
-                return ( ret != null ) ? ret : DispenseType.Unknown;
+                return ret ?? Unknown;
             }
             public static readonly DispenseType Unknown = new DispenseType( "Unknown" );
             /// <summary>

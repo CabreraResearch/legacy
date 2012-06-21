@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ServiceDrivers
     public class CswNbtSdInventoryLevelMgr
     {
         private CswNbtResources _CswNbtResources;
-        private CswNbtObjClassInventoryLevel _InventoryLevel;
+        private CswNbtObjClassInventoryLevel _InventoryLevel = null;
 
         public CswNbtSdInventoryLevelMgr( CswNbtResources Resources )
         {
@@ -213,6 +213,48 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             }
             return Ret;
+        }
+
+        private void _addToCurrentQuantity( CswNbtObjClassInventoryLevel InventoryLevel, double Quantity, CswPrimaryKey UnitId, string Reason )
+        {
+            if( null != InventoryLevel )
+            {
+                CswNbtUnitConversion Conversion = new CswNbtUnitConversion( _CswNbtResources, InventoryLevel.Level.UnitId, UnitId, InventoryLevel.Material.RelatedNodeId );
+                InventoryLevel.CurrentQuantity.Quantity += Conversion.convertUnit( Quantity );
+                InventoryLevel.CurrentQuantityLog.AddComment( Reason );
+                InventoryLevel.postChanges( true );
+            }
+        }
+
+        public void addToCurrentQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId = null, CswPrimaryKey LocationId = null )
+        {
+            if( null != MaterialId && null != LocationId )
+            {
+                CswNbtView InventoryLevelView = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass );
+                CswNbtViewRelationship InventoryLevelRel = InventoryLevelView.AddViewRelationship( InventoryLevelOc, false );
+                CswNbtMetaDataObjectClassProp MaterialOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
+                CswNbtMetaDataObjectClassProp LocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
+                InventoryLevelView.AddViewPropertyAndFilter( InventoryLevelRel, MaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                InventoryLevelView.AddViewPropertyAndFilter( InventoryLevelRel, LocationOcp, LocationId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( InventoryLevelView, false, false );
+                Int32 LevelCount = Tree.getChildNodeCount();
+                if( LevelCount > 0 )
+                {
+                    for( Int32 L = 0; L < LevelCount; L += 1 )
+                    {
+                        Tree.goToNthChild( L );
+                        CswNbtObjClassInventoryLevel InventoryLevel = Tree.getNodeForCurrentPosition();
+                        _addToCurrentQuantity( InventoryLevel, Quantity, UnitId, Reason );
+                        Tree.goToParentNode();
+                    }
+                }
+            }
+            else if( null != _InventoryLevel )
+            {
+                _addToCurrentQuantity( _InventoryLevel, Quantity, UnitId, Reason );
+            }
         }
 
         #endregion Inventory
