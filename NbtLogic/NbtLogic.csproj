@@ -91,6 +91,7 @@
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508C.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24507.cs" />
