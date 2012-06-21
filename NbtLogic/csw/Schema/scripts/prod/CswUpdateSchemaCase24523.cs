@@ -17,9 +17,6 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-
-
-
             CswNbtMetaDataObjectClass feedbackOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass, "docs.gif", false, false );
 
             CswNbtMetaDataObjectClassProp caseNumberOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
@@ -46,6 +43,7 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
                 Extended = CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString(),
                 ServerManaged = true,
+
                 SetValOnAdd = true
             } );
 
@@ -102,7 +100,8 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
             {
                 PropName = CswNbtObjClassFeedback.ViewPropertyName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.ViewPickList,
+                //FieldType = CswNbtMetaDataFieldType.NbtFieldType.ViewPickList,
+                FieldType = CswNbtMetaDataFieldType.NbtFieldType.ViewReference,
                 ServerManaged = true
             } );
 

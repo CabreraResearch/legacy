@@ -59,25 +59,36 @@ namespace ChemSW.Nbt.ObjClasses
             this.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
             this.DateSubmitted.DateTimeValue = System.DateTime.Now;
 
-            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ) )
-            {
-                CswNbtViewId CurrentViewId = new CswNbtViewId( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] );
-                View.SelectedViewIds = new Core.CswCommaDelimitedString() { CurrentViewId.get().ToString() };
-            }
-
-            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) )
+            //if we have an action this is all we want/need/care about
+            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"] ) )
             {
                 Action.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"];
             }
-
-            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
+            else //if we DONT have an action, we want the info required to load a view
             {
-                SelectedNodeId.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"];
-            }
+                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ) )
+                {
+                    CswNbtViewId CurrentViewId = new CswNbtViewId( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] );
+                    //View.SelectedViewIds = new Core.CswCommaDelimitedString() { CurrentViewId.get().ToString() };
 
-            if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewmode" ) )
-            {
-                CurrentViewMode.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewmode"];
+                    CswNbtView cookieView = _getView( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] ); //this view doesn't exist in the the DB, which is why we save it below
+
+                    CswNbtView view = _CswNbtResources.ViewSelect.restoreView( View.ViewId ); //WARNING!!!! calling View.ViewId creates a ViewId if there isn't one!
+                    view.LoadXml( cookieView.ToXml() );
+                    view.ViewId = View.ViewId; //correct view.ViewId because of above problem.
+                    view.ViewName = cookieView.ViewName; //same as above, but cookie
+                    view.Visibility = NbtViewVisibility.Property;
+                    view.save();
+                }
+                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentnodeid" ) )
+                {
+                    SelectedNodeId.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"];
+                }
+
+                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewmode" ) )
+                {
+                    CurrentViewMode.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewmode"];
+                }
             }
 
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
@@ -152,26 +163,29 @@ namespace ChemSW.Nbt.ObjClasses
                             ActionDataObj["actionurl"] = action.Url.ToString();
                         }
                     }
-
-                    ActionDataObj["selectedNodeId"] = SelectedNodeId.Text;
-                    if( null != CurrentViewMode )
+                    else
                     {
-                        ActionDataObj["viewmode"] = CurrentViewMode.Text;
-                    }
-                    CswNbtViewId delimitedViewId = new CswNbtViewId( CswConvert.ToInt32( View.SelectedViewIds.ToString() ) );
-                    if( null != delimitedViewId )
-                    {
-                        ActionDataObj["viewid"] = delimitedViewId.ToString();
-                    }
-                    if( null != Author.RelatedNodeId )
-                    {
-                        if( _CswNbtResources.CurrentNbtUser.UserId != Author.RelatedNodeId )
+                        ActionDataObj["selectedNodeId"] = SelectedNodeId.Text;
+                        if( null != CurrentViewMode )
                         {
-                            ActionDataObj["userid"] = Author.RelatedNodeId.ToString();
-                            CswNbtObjClassUser userNode = _CswNbtResources.Nodes[Author.RelatedNodeId];
-                            if( null != userNode )
+                            ActionDataObj["viewmode"] = CurrentViewMode.Text;
+                        }
+                        //CswNbtViewId delimitedViewId = new CswNbtViewId( CswConvert.ToInt32( View.SelectedViewIds.ToString() ) );
+                        CswNbtViewId delimitedViewId = View.ViewId;
+                        if( null != delimitedViewId )
+                        {
+                            ActionDataObj["viewid"] = delimitedViewId.ToString();
+                        }
+                        if( null != Author.RelatedNodeId )
+                        {
+                            if( _CswNbtResources.CurrentNbtUser.UserId != Author.RelatedNodeId )
                             {
-                                ActionDataObj["username"] = userNode.Username;
+                                ActionDataObj["userid"] = Author.RelatedNodeId.ToString();
+                                CswNbtObjClassUser userNode = _CswNbtResources.Nodes[Author.RelatedNodeId];
+                                if( null != userNode )
+                                {
+                                    ActionDataObj["username"] = userNode.Username;
+                                }
                             }
                         }
                     }
@@ -249,7 +263,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropViewPickList View
+        public CswNbtNodePropViewReference View //formerly CswNbtNodePropViewPickList
         {
             get
             {
@@ -290,6 +304,22 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #endregion
+
+        private CswNbtView _getView( string ViewId )
+        {
+            CswNbtView View = null;
+            if( CswNbtViewId.isViewIdString( ViewId ) )
+            {
+                CswNbtViewId realViewid = new CswNbtViewId( ViewId );
+                View = _CswNbtResources.ViewSelect.restoreView( realViewid );
+            }
+            else if( CswNbtSessionDataId.isSessionDataIdString( ViewId ) )
+            {
+                CswNbtSessionDataId SessionViewid = new CswNbtSessionDataId( ViewId );
+                View = _CswNbtResources.ViewSelect.getSessionView( SessionViewid );
+            }
+            return View;
+        } // _getView()
 
     }//CswNbtObjClassFeedback
 

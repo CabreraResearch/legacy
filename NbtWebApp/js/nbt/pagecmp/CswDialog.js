@@ -167,7 +167,7 @@
                 relatednodetypeid: '',
                 relatedobjectclassid: '',
                 onAddNode: function () { },
-                onSaveImmediate: function () {},
+                onSaveImmediate: function () { },
                 propertyData: null
             };
 
@@ -224,15 +224,21 @@
                         urlMethod: 'GetFeedbackCaseNumber',
                         data: { nodeId: nodeid },
                         success: function (result) {
+
+                            var closeDialog = function () { div.$.dialog('close'); };
+
                             div.$.empty();
-                            div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
+                            //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
+                            div.nodeLink({
+                                text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
+                                onClick: closeDialog
+                            });
+
                             div.br();
                             div.button({
                                 ID: '_feedbackOk',
                                 enabledText: 'Ok',
-                                onClick: function () {
-                                    div.$.dialog('close');
-                                }
+                                onClick: closeDialog
                             });
                             Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey, nodename);
                         }

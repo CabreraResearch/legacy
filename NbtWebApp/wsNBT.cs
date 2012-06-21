@@ -1169,7 +1169,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // runGrid()
-        
+
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -4081,6 +4081,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtObjClassFeedback feedbackNode = node;
                             ReturnVal["casenumber"] = feedbackNode.CaseNumber.Sequence;
+                            ReturnVal["noderef"] = _CswNbtResources.makeClientNodeReference( node );
                         }
                     }
                 }
@@ -4096,7 +4097,7 @@ namespace ChemSW.Nbt.WebServices
             _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
 
             return ReturnVal.ToString();
-        } // GetViews()
+        } // GetFeedbackCaseNumber
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
