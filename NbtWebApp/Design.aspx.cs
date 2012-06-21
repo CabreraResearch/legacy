@@ -1764,7 +1764,7 @@ namespace ChemSW.Nbt.WebPages
                             Button EditGridViewButton = new Button();
                             EditGridViewButton.ID = "EditGridViewButton";
                             EditGridViewButton.CssClass = "Button";
-                            EditGridViewButton.OnClientClick = "window.location='Main.html?step=2&viewid=" + GridView.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
+                            EditGridViewButton.OnClientClick = "window.location='Main.html?action=Edit_View&startingStep=2&IgnoreReturn=1&viewid=" + GridView.ViewId + "';";
                             EditGridViewButton.Text = "Edit View";
                             GridViewXmlRow.Cells[1].Controls.Add( EditGridViewButton );
                             break;
@@ -1886,7 +1886,7 @@ namespace ChemSW.Nbt.WebPages
                             Button EditLCViewButton = new Button();
                             EditLCViewButton.ID = "EditLCViewButton";
                             EditLCViewButton.CssClass = "Button";
-                            EditLCViewButton.OnClientClick = "window.location='Main.html?step=2&viewid=" + LCView.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
+                            EditLCViewButton.OnClientClick = "window.location='Main.html?action=Edit_View&startingStep=2&IgnoreReturn=1&viewid=" + LCView.ViewId + "';";
                             EditLCViewButton.Text = "Edit View";
                             LCViewXmlRow.Cells[1].Controls.Add( EditLCViewButton );
                             break;
@@ -2411,7 +2411,7 @@ namespace ChemSW.Nbt.WebPages
                             Button EditRelationshipViewButton = new Button();
                             EditRelationshipViewButton.ID = "EditRelationshipViewButton";
                             EditRelationshipViewButton.CssClass = "Button";
-                            EditRelationshipViewButton.OnClientClick = "window.location='Main.html?step=2&viewid=" + SelectedNodeTypeProp.ViewId + "&return=" + _ReturnURLForQueryString() + "';";
+                            EditRelationshipViewButton.OnClientClick = "window.location='Main.html?action=Edit_View&startingStep=2&IgnoreReturn=1&viewid=" + SelectedNodeTypeProp.ViewId + "';";
                             EditRelationshipViewButton.Text = "Edit View";
                             _ViewXmlRow.Cells[1].Controls.Add( EditRelationshipViewButton );
 

@@ -65,8 +65,8 @@
                     $.extend(cswPrivate.gridOpts, gridJson);
 
                     cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
-                    cswPublic.grid.hideColumn('NODEID');
-                    cswPublic.grid.hideColumn('NODEPK');
+//                    cswPublic.grid.hideColumn('NODEID');
+//                    cswPublic.grid.hideColumn('NODEPK');
 
                 }, // success
                 error: function () { }

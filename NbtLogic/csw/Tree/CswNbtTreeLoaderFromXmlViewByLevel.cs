@@ -287,7 +287,7 @@ namespace ChemSW.Nbt
                 Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
 
             // Parent Node
-            if( Relationship.FirstId != Int32.MinValue )
+            if( Relationship.PropId != Int32.MinValue )
             {
                 if( false == IsParentQuery )
                 {
@@ -329,7 +329,7 @@ namespace ChemSW.Nbt
                     }
                     From += @"        ) parent on (parent.thisnodeid = n.nodeid)";
                 }
-            } // if( Relationship.FirstId != Int32.MinValue )
+            } // if( Relationship.PropId != Int32.MinValue )
 
             // Grouping
             if( false == IsParentQuery )

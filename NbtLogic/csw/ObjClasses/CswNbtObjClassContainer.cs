@@ -65,7 +65,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
-            //TODO - case 24508 - create a new ContainerDispenseTransaction node of type Receiving, with this node as the SourceContainer
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, this.Quantity.Quantity );
+
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -255,9 +256,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _DisposeContainer()
         {
-            CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
-
-            _createDisposeTransactionNode( ContDispTransNT );
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose, 0 );
             this.Quantity.Quantity = 0;
             this.Disposed.Checked = Tristate.True;
             _setDisposedReadOnly( true );
@@ -316,8 +315,9 @@ namespace ChemSW.Nbt.ObjClasses
             return ContDispTransNode;
         }
 
-        private void _createDisposeTransactionNode( CswNbtMetaDataNodeType ContDispTransNT )
+        private void _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double RemainingSourceContainerQuantity )
         {
+            CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
             if( ContDispTransNT != null )
             {
                 CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
@@ -325,9 +325,9 @@ namespace ChemSW.Nbt.ObjClasses
                 ContDispTransNode.SourceContainer.RelatedNodeId = this.NodeId;
                 ContDispTransNode.QuantityDispensed.Quantity = this.Quantity.Quantity;
                 ContDispTransNode.QuantityDispensed.UnitId = this.Quantity.UnitId;
-                ContDispTransNode.Type.Value = CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString();
+                ContDispTransNode.Type.Value = DispenseType.ToString();
                 ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Today;
-                ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
+                ContDispTransNode.RemainingSourceContainerQuantity.Quantity = RemainingSourceContainerQuantity;
                 ContDispTransNode.RemainingSourceContainerQuantity.UnitId = this.Quantity.UnitId;
 
                 ContDispTransNode.postChanges( false );
