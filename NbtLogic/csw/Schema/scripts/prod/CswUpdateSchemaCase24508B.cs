@@ -1,7 +1,5 @@
-﻿using System;
+﻿using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -12,24 +10,24 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass ContainerObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClassProp DispenseProp = _CswNbtSchemaModTrnsctn.createObjectClassProp(
-                ContainerObjClass,
-                new CswNbtWcfMetaDataModel.ObjectClassProp
-                {
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
-                    PropName = CswNbtObjClassContainer.RequestDispensePropertyName
-                }
-            );
+            //CswNbtMetaDataObjectClass ContainerObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+            //CswNbtMetaDataObjectClassProp DispenseProp = _CswNbtSchemaModTrnsctn.createObjectClassProp(
+            //    ContainerObjClass,
+            //    new CswNbtWcfMetaDataModel.ObjectClassProp
+            //    {
+            //        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+            //        PropName = CswNbtObjClassContainer.DispensePropertyName
+            //    }
+            //);
 
-            foreach( CswNbtMetaDataNodeType ContainerNodeType in ContainerObjClass.getNodeTypes() )
-            {
-                CswNbtMetaDataNodeTypeTab NodeTypeTab = ContainerNodeType.getFirstNodeTypeTab();
-                Int32 FirstTabId = NodeTypeTab.TabId;
-                CswNbtMetaDataNodeTypeProp DispenseNodeTypeProp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.RequestDispensePropertyName );
-                DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirstTabId );
-                DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirstTabId );
-            }
+            //foreach( CswNbtMetaDataNodeType ContainerNodeType in ContainerObjClass.getNodeTypes() )
+            //{
+            //    CswNbtMetaDataNodeTypeTab NodeTypeTab = ContainerNodeType.getFirstNodeTypeTab();
+            //    Int32 FirstTabId = NodeTypeTab.TabId;
+            //    CswNbtMetaDataNodeTypeProp DispenseNodeTypeProp = ContainerNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.DispensePropertyName );
+            //    DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, FirstTabId );
+            //    DispenseNodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, FirstTabId );
+            //}
 
             //Add ContainerDispenseTransaction NodeType
 
