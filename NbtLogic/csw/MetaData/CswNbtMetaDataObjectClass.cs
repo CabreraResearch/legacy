@@ -24,6 +24,7 @@ namespace ChemSW.Nbt.MetaData
             EquipmentAssemblyClass,
             EquipmentClass,
             EquipmentTypeClass,
+            FeedbackClass,
             GeneratorClass,
             GenericClass,
             InspectionDesignClass,

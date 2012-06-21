@@ -852,15 +852,44 @@
 
                                 if (doSave) {
                                     // reload tab
-                                    if (cswPrivate.ReloadTabOnSave) {
-                                        cswPrivate.getProps(tabContentDiv, tabid, function () {
+                                    var onSaveSuccess = function () {
+
+                                        var onSaveRefresh = function () {
                                             Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
                                             Csw.tryExec(onSuccess);
-                                        });
+                                        };
+
+                                        //                                        switch (successData.action) {
+                                        //                                            case 'loadView':
+                                        //                                                //Csw.ajax('getviewofnode'
+                                        //                                                //success: load view(data.viewid)
+                                        //                                               
+
+                                        //                                                var dialogOptions = {
+                                        //                                                    div: Csw.literals.div({ text: 'Warning: You are about to lose your work!' }),
+                                        //                                                    title: '',
+                                        //                                                    onOk: onSaveRefresh,
+                                        //                                                    onCancel: null,
+                                        //                                                    onClose: null,
+                                        //                                                    height: 400,
+                                        //                                                    width: 600,
+                                        //                                                    okText: 'Continue Working',
+                                        //                                                    cancelText: 'Go to My Feedback'
+                                        //                                                };
+
+                                        //                                                $.CswDialog('GenericDialog', dialogOptions)
+
+                                        //                                                break;
+                                        //default:
+                                        onSaveRefresh();
+                                        //  break;
+                                        // }
+                                    };
+                                    if (cswPrivate.ReloadTabOnSave) {
+                                        cswPrivate.getProps(tabContentDiv, tabid, onSaveSuccess);
                                     } else {
                                         // cswPublic events
-                                        Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.cswnbtnodekey, cswPrivate.tabcnt, successData.nodename);
-                                        Csw.tryExec(onSuccess);
+                                        onSaveSuccess();
                                     }
                                 }
 

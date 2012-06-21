@@ -93,6 +93,8 @@
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24523.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24507.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26665.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25814.cs" />

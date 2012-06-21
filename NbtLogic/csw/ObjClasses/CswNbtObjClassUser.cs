@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -115,6 +116,8 @@ namespace ChemSW.Nbt.ObjClasses
             _RoleNodeObjClass.postChanges( ForceUpdate );
         }
 
+        public Dictionary<string, string> Cookies { get; set; }
+
         public Int32 UserNodeTypeId { get { return NodeTypeId; } }
         public Int32 UserObjectClassId { get { return ObjectClass.ObjectClassId; } }
         public Int32 RoleNodeTypeId { get { return RoleNode.NodeTypeId; } }
@@ -201,9 +204,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
             //prevent user from deleting their own user
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )

@@ -66,6 +66,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassEquipmentType( CswNbtResources, Node );
                     break;
 
+                case CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass:
+                    ReturnVal = new CswNbtObjClassFeedback( CswNbtResources, Node );
+                    break;
+
                 case CswNbtMetaDataObjectClass.NbtObjectClass.GenericClass:
                     ReturnVal = new CswNbtObjClassGeneric( CswNbtResources, Node );
                     break;

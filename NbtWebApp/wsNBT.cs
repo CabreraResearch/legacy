@@ -4061,6 +4061,77 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
         } // GetViews()
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string GetFeedbackCaseNumber( string nodeId )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtNode node = _CswNbtResources.Nodes[_getNodeId( nodeId )];
+                    if( null != node )
+                    {
+                        if( node.getObjectClass().ObjectClass == CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass )
+                        {
+                            CswNbtObjClassFeedback feedbackNode = node;
+                            ReturnVal["casenumber"] = feedbackNode.CaseNumber.Sequence;
+                        }
+                    }
+                }
+
+                _deInitResources();
+            }
+
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
+
+            return ReturnVal.ToString();
+        } // GetViews()
+
+        //[WebMethod( EnableSession = false )]
+        //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        //public string GetViewFromNodeId( string nodeId )
+        //{
+        //    JObject ReturnVal = new JObject();
+        //    AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+        //    try
+        //    {
+        //        _initResources();
+        //        AuthenticationStatus = _attemptRefresh( true );
+
+        //        CswPrimaryKey nodePk = _getNodeId( nodeId );
+        //        if( null != nodePk )
+        //        {
+        //            CswNbtNode Node = _CswNbtResources.Nodes.GetNode( nodePk );
+        //            CswNbtView NodeView = Node.getViewOfNode();
+        //            NodeView.SaveToCache();
+        //            //CswNbtWebServiceTree view = new CswNbtWebServiceTree( _CswNbtResources, NodeView );
+        //            ReturnVal["viewid"] = NodeView.SessionViewId.ToString();
+        //        }
+
+        //        _deInitResources();
+        //    }
+
+        //    catch( Exception ex )
+        //    {
+        //        ReturnVal = jError( ex );
+        //    }
+
+        //    _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated, ForMobile );
+
+        //    return ReturnVal.ToString();
+        //} // GetViews()
+
         #endregion Mobile
 
         #region Nbt Manager

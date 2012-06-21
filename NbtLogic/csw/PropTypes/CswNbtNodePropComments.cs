@@ -46,6 +46,17 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        /// <summary>
+        /// Gets the last comment
+        /// </summary>
+        public JObject Last
+        {
+            get
+            {
+                return CswConvert.ToJObject( CommentsJson.Last.ToString() );
+            }
+        }
+
         public JArray CommentsJson
         {
             get

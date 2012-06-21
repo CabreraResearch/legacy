@@ -1,4 +1,5 @@
 using System.Web;
+using System.Collections.Generic;
 using ChemSW;
 using ChemSW.Config;
 using ChemSW.Exceptions;
@@ -56,7 +57,13 @@ namespace NbtWebAppServices.Session
             {
                 RecordStatistics = ( "1" == CswNbtResources.SetupVbls[RecordStatisticsVblName] );
             }
-            
+
+            Dictionary<string, string> Cookies = new Dictionary<string, string>();
+            foreach( HttpCookie Cookie in Context.Request.Cookies )
+            {
+                Cookies[Cookie.Name] = Cookie.Value;
+            }
+
             CswSessionManager = new CswSessionManager( _AppType,
                                                        new CswNbtWcfCookies( _Context.Request, _Context.Response ),
                                                        LoginAccessId,
@@ -66,6 +73,7 @@ namespace NbtWebAppServices.Session
                                                        CswNbtResources,
                                                        CswResourcesMaster,
                                                        new CswNbtSchemaAuthenticator( CswNbtResources ),
+                                                       Cookies,
                                                        _CswNbtWcfStatistics = new CswNbtWcfStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
                                                                                                   RecordStatistics ) );
             CswNbtStatisticsEvents = _CswNbtWcfStatistics.CswNbtStatisticsEvents;
