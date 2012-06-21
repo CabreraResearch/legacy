@@ -94,7 +94,8 @@ namespace ChemSW.Nbt.MetaData
             //set { _UniqueId = value; }
         }
 
-        public string UniqueIdFieldName { get { return "objectclassid"; } }
+        public const string MetaDataUniqueType = "objectclassid";
+        public string UniqueIdFieldName { get { return MetaDataUniqueType; } }
 
         public void Reassign( DataRow NewRow )
         {

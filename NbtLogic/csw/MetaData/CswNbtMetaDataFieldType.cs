@@ -11,42 +11,42 @@ namespace ChemSW.Nbt.MetaData
 
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
                                                                {
-                                                                   { NbtFieldType.Barcode, NbtFieldType.Barcode },
-                                                                    { NbtFieldType.Button, NbtFieldType.Button }   ,
-                                                                    { NbtFieldType.Comments, NbtFieldType.Comments },
-                                                                    { NbtFieldType.Composite, NbtFieldType.Composite },
-                                                                    { NbtFieldType.DateTime, NbtFieldType.DateTime },
-                                                                    { NbtFieldType.External, NbtFieldType.External },
-                                                                    { NbtFieldType.File, NbtFieldType.File },
-                                                                    { NbtFieldType.Grid, NbtFieldType.Grid },
-                                                                    { NbtFieldType.Image, NbtFieldType.Image },
-                                                                    { NbtFieldType.ImageList, NbtFieldType.ImageList },
-                                                                    { NbtFieldType.Link, NbtFieldType.Link },
-                                                                    { NbtFieldType.List, NbtFieldType.List },
-                                                                    { NbtFieldType.Location, NbtFieldType.Location },
-                                                                    { NbtFieldType.LocationContents, NbtFieldType.LocationContents},
-                                                                    { NbtFieldType.Logical, NbtFieldType.Logical },
-                                                                    { NbtFieldType.LogicalSet, NbtFieldType.LogicalSet },
-                                                                    { NbtFieldType.Memo, NbtFieldType.Memo },
-                                                                    { NbtFieldType.MOL, NbtFieldType.MOL },
-                                                                    { NbtFieldType.MTBF, NbtFieldType.MTBF },
-                                                                    { NbtFieldType.MultiList, NbtFieldType.MultiList },
-                                                                    { NbtFieldType.NFPA,NbtFieldType. NFPA },
-                                                                    { NbtFieldType.NodeTypeSelect, NbtFieldType.NodeTypeSelect },
-                                                                    { NbtFieldType.Number, NbtFieldType.Number },
-                                                                    { NbtFieldType.Password, NbtFieldType.Password },
-                                                                    { NbtFieldType.PropertyReference, NbtFieldType.PropertyReference },
-                                                                    { NbtFieldType.Quantity, NbtFieldType.Quantity },
-                                                                    { NbtFieldType.Question, NbtFieldType.Question },
-                                                                    { NbtFieldType.Relationship, NbtFieldType.Relationship },
-                                                                    { NbtFieldType.Scientific, NbtFieldType.Scientific },
-                                                                    { NbtFieldType.Sequence, NbtFieldType.Sequence },
-                                                                    { NbtFieldType.Static, NbtFieldType.Static },
-                                                                    { NbtFieldType.Text, NbtFieldType.Text },
-                                                                    { NbtFieldType.TimeInterval, NbtFieldType.TimeInterval },
-                                                                    { NbtFieldType.UserSelect, NbtFieldType.UserSelect },
-                                                                    { NbtFieldType.ViewPickList, NbtFieldType.ViewPickList },
-                                                                    { NbtFieldType.ViewReference,NbtFieldType.ViewReference}
+                                                                   { NbtFieldType.Barcode, NbtFieldType.Barcode },                          //public const string Barcode = "Barcode";
+                                                                    { NbtFieldType.Button, NbtFieldType.Button }   ,                        //public const string Button = "Button";
+                                                                    { NbtFieldType.Comments, NbtFieldType.Comments },                       //public const string Comments = "Comments";
+                                                                    { NbtFieldType.Composite, NbtFieldType.Composite },                     //public const string Composite = "Composite";
+                                                                    { NbtFieldType.DateTime, NbtFieldType.DateTime },                       //public const string DateTime = "DateTime";
+                                                                    { NbtFieldType.External, NbtFieldType.External },                       //public const string External = "External";
+                                                                    { NbtFieldType.File, NbtFieldType.File },                               //public const string File = "File";
+                                                                    { NbtFieldType.Grid, NbtFieldType.Grid },                               //public const string Grid = "Grid";
+                                                                    { NbtFieldType.Image, NbtFieldType.Image },                             //public const string Image = "Image";
+                                                                    { NbtFieldType.ImageList, NbtFieldType.ImageList },                     //public const string ImageList = "ImageList";
+                                                                    { NbtFieldType.Link, NbtFieldType.Link },                               //public const string Link = "Link";
+                                                                    { NbtFieldType.List, NbtFieldType.List },                               //public const string List = "List";
+                                                                    { NbtFieldType.Location, NbtFieldType.Location },                       //public const string Location = "Location";
+                                                                    { NbtFieldType.LocationContents, NbtFieldType.LocationContents},        //public const string LocationContents = "LocationContents";
+                                                                    { NbtFieldType.Logical, NbtFieldType.Logical },                         //public const string Logical = "Logical";
+                                                                    { NbtFieldType.LogicalSet, NbtFieldType.LogicalSet },                   //public const string LogicalSet = "LogicalSet";
+                                                                    { NbtFieldType.Memo, NbtFieldType.Memo },                               //public const string Memo = "Memo";
+                                                                    { NbtFieldType.MOL, NbtFieldType.MOL },                                 //public const string MOL = "MOL";
+                                                                    { NbtFieldType.MTBF, NbtFieldType.MTBF },                               //public const string MTBF = "MTBF";
+                                                                    { NbtFieldType.MultiList, NbtFieldType.MultiList },                     //public const string MultiList = "MultiList";
+                                                                    { NbtFieldType.NFPA,NbtFieldType. NFPA },                               //public const string NFPA = "NFPA";
+                                                                    { NbtFieldType.NodeTypeSelect, NbtFieldType.NodeTypeSelect },           //public const string NodeTypeSelect = "NodeTypeSelect";
+                                                                    { NbtFieldType.Number, NbtFieldType.Number },                           //public const string Number = "Number";
+                                                                    { NbtFieldType.Password, NbtFieldType.Password },                       //public const string Password = "Password";
+                                                                    { NbtFieldType.PropertyReference, NbtFieldType.PropertyReference },     //public const string PropertyReference = "PropertyReference";
+                                                                    { NbtFieldType.Quantity, NbtFieldType.Quantity },                       //public const string Quantity = "Quantity";
+                                                                    { NbtFieldType.Question, NbtFieldType.Question },                       //public const string Question = "Question";
+                                                                    { NbtFieldType.Relationship, NbtFieldType.Relationship },               //public const string Relationship = "Relationship";
+                                                                    { NbtFieldType.Scientific, NbtFieldType.Scientific },                   //public const string Scientific = "Scientific";
+                                                                    { NbtFieldType.Sequence, NbtFieldType.Sequence },                       //public const string Sequence = "Sequence";
+                                                                    { NbtFieldType.Static, NbtFieldType.Static },                           //public const string Static = "Static";
+                                                                    { NbtFieldType.Text, NbtFieldType.Text },                               //public const string Text = "Text";
+                                                                    { NbtFieldType.TimeInterval, NbtFieldType.TimeInterval },               //public const string TimeInterval = "TimeInterval";
+                                                                    { NbtFieldType.UserSelect, NbtFieldType.UserSelect },                   //public const string UserSelect = "UserSelect";
+                                                                    { NbtFieldType.ViewPickList, NbtFieldType.ViewPickList },               //public const string ViewPickList = "ViewPickList";
+                                                                    { NbtFieldType.ViewReference,NbtFieldType.ViewReference}                //public const string ViewReference = "ViewReference";
                                                                     
                                                                };
 
@@ -102,9 +102,7 @@ namespace ChemSW.Nbt.MetaData
             public const string Memo = "Memo";
             public const string MOL = "MOL";
             public const string MTBF = "MTBF";
-            //public const string MultiRelationship= "";
             public const string MultiList = "MultiList";
-            //public const string //NodeTypePermissions= "";
             public const string NFPA = "NFPA";
             public const string NodeTypeSelect = "NodeTypeSelect";
             public const string Number = "Number";
@@ -117,7 +115,6 @@ namespace ChemSW.Nbt.MetaData
             public const string Sequence = "Sequence";
             public const string Static = "Static";
             public const string Text = "Text";
-            //public const string //Time= "";
             public const string TimeInterval = "TimeInterval";
             public const string UserSelect = "UserSelect";
             public const string ViewPickList = "ViewPickList";

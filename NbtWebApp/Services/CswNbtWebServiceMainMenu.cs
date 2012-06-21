@@ -88,8 +88,6 @@ namespace ChemSW.Nbt.WebServices
                    ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass;
         }
 
-        private bool _permitAdd;
-
         public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr )
         {
 
@@ -112,20 +110,14 @@ namespace ChemSW.Nbt.WebServices
                     RelatedNodeId = Node.NodeId;
                     RelatedNodeName = Node.NodeName;
                     RelatedNodeTypeId = Node.NodeTypeId.ToString();
-                    _permitAdd = _checkPermitAdd( Node.ObjClass.ObjectClass.ObjectClass );
                     RelatedObjectClassId = Node.getObjectClassId().ToString();
                 }
-            }
-            else
-            {
-                /* Unfortunately, this will allow adds of unsuported Object Classes at the root of a view. For now. */
-                _permitAdd = true;
             }
 
             if( View != null )
             {
                 // ADD
-                if( _MenuItems.Contains( "Add" ) && _permitAdd )
+                if( _MenuItems.Contains( "Add" ) )
                 {
                     JObject AddObj = new JObject();
 

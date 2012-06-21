@@ -76,6 +76,7 @@ namespace NbtWebAppServices.Response
                         }
                         else
                         {
+                            Inspection.Counts = new CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionCounts();
                             /* We loop once to set the property values */
                             foreach( CswNbtWcfInspectionsDataModel.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                             {
@@ -91,6 +92,19 @@ namespace NbtWebAppServices.Response
                                     PropAsQuestion.DateAnswered = DateAnswered;
                                     PropAsQuestion.DateCorrected = DateCorrected;
                                     PropAsQuestion.Comments = Question.Comments;
+                                    if( false == string.IsNullOrEmpty( Question.Answer ) )
+                                    {
+                                        Inspection.Counts.Answered += 1;
+                                    }
+                                    else
+                                    {
+                                        Inspection.Counts.UnAnswered += 1;
+                                    }
+                                    if( false == PropAsQuestion.IsCompliant )
+                                    {
+                                        Inspection.Counts.Ooc += 1;
+                                    }
+                                    Inspection.Counts.Total += 1;
                                 }
                             }
                             InspectionNode.postChanges( true );

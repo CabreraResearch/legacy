@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -33,6 +30,13 @@ namespace ChemSW.Nbt.Schema
                 CswNbtObjClassUnitOfMeasure.FractionalPropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
+            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass,
+                CswNbtObjClassUnitOfMeasure.UnitTypePropertyName,
+                CswNbtMetaDataFieldType.NbtFieldType.List,
+                ServerManaged: true,
+                ListOptions: String.Join( ",", CswNbtObjClassUnitOfMeasure.UnitTypes._All )
+                );
             #endregion
 
             #region Delete Unit Of Measure ViewSelect View

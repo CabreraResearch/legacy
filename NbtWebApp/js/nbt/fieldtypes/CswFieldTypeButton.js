@@ -73,7 +73,7 @@
                                                     nodetypeid: actionJson.requestItemNodeTypeId,
                                                     propertyData: actionJson.requestItemProps,
                                                     text: actionJson.titleText,
-                                                    onAfterAddNode: function () {
+                                                    onSaveImmediate: function () {
                                                         Csw.publish(Csw.enums.events.Submit_Request);
                                                     }
                                                 });
