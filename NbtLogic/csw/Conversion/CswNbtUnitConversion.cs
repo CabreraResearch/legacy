@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.csw.Conversion
                 }
                 else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported && CswTools.IsDouble( _MaterialSpecificGravity ) )
                 {
-                    if( CswTools.IsDouble( _MaterialSpecificGravity, ZeroIsInvalid: true ) )
+                    if( CswTools.IsDouble( _MaterialSpecificGravity ) && _MaterialSpecificGravity != 0 )
                     {
                         //UnitType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.csw.Conversion
         public static double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
         {
             Double ConvertedValue;
-            if( CswTools.IsDouble( OldConversionFactor, ZeroIsInvalid: true ) && CswTools.IsDouble( NewConversionFactor, ZeroIsInvalid: true ) )
+            if( CswTools.IsDouble( OldConversionFactor ) && OldConversionFactor != 0 && CswTools.IsDouble( NewConversionFactor ) && NewConversionFactor != 0 )
             {
                 //Operator logic defined in W1005 - Math is hard.
                 ConvertedValue = ValueToConvert / OldConversionFactor * SpecificGravity * NewConversionFactor;
