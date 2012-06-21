@@ -17,6 +17,9 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
+
+
+
             CswNbtMetaDataObjectClass feedbackOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass, "docs.gif", false, false );
 
             CswNbtMetaDataObjectClassProp caseNumberOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
@@ -83,11 +86,11 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button
             } );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
-            {
-                PropName = CswNbtObjClassFeedback.DiscussionPropertyName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments
-            } );
+            CswNbtMetaDataObjectClassProp commentsOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
+             {
+                 PropName = CswNbtObjClassFeedback.DiscussionPropertyName,
+                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Comments
+             } );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
             {
@@ -113,13 +116,6 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
             {
                 PropName = CswNbtObjClassFeedback.CurrentViewModePropertyName,
-                FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
-                ServerManaged = true
-            } );
-
-            CswNbtMetaDataObjectClassProp lastCommentOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
-            {
-                PropName = CswNbtObjClassFeedback.LastCommentPropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                 ServerManaged = true
             } );
@@ -163,11 +159,6 @@ namespace ChemSW.Nbt.Schema
             currentViewModeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
             currentViewModeNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
 
-            CswNbtMetaDataNodeTypeProp lastCommentNTP = feedbackNT.getNodeTypePropByObjectClassProp( CswNbtObjClassFeedback.LastCommentPropertyName );
-            lastCommentNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit );
-            lastCommentNTP.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
-
-
             //create the role view for admins
             CswNbtNode adminRoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "Administrator" );
             if( null != adminRoleNode )
@@ -187,7 +178,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtViewProperty authorVP = feedbackView.AddViewProperty( ParentRelationship, authorOCP );
                 CswNbtViewProperty subjectVP = feedbackView.AddViewProperty( ParentRelationship, subjectOCP );
                 CswNbtViewProperty statusVP = feedbackView.AddViewProperty( ParentRelationship, statusOCP );
-                CswNbtViewProperty lastCommentVP = feedbackView.AddViewProperty( ParentRelationship, lastCommentOCP );
+                CswNbtViewProperty commentsVP = feedbackView.AddViewProperty( ParentRelationship, commentsOCP );
 
                 caseNumberVP.Order = 1;
                 dateSubmittedVp.Order = 2;
@@ -195,7 +186,7 @@ namespace ChemSW.Nbt.Schema
                 authorVP.Order = 4;
                 subjectVP.Order = 5;
                 statusVP.Order = 6;
-                lastCommentVP.Order = 7;
+                commentsVP.Order = 7;
 
                 feedbackView.SetViewMode( NbtViewRenderingMode.Grid );
 
@@ -219,7 +210,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewProperty myAuthorVP = myFeedbackView.AddViewProperty( myParentRelationship, authorOCP );
             CswNbtViewProperty mySubjectVP = myFeedbackView.AddViewProperty( myParentRelationship, subjectOCP );
             CswNbtViewProperty myStatusVP = myFeedbackView.AddViewProperty( myParentRelationship, statusOCP );
-            CswNbtViewProperty myLastCommentVP = myFeedbackView.AddViewProperty( myParentRelationship, lastCommentOCP );
+            CswNbtViewProperty myCommentsVP = myFeedbackView.AddViewProperty( myParentRelationship, commentsOCP );
 
             myCaseNumberVP.Order = 1;
             myDateSubmittedVp.Order = 2;
@@ -227,7 +218,7 @@ namespace ChemSW.Nbt.Schema
             myAuthorVP.Order = 4;
             mySubjectVP.Order = 5;
             myStatusVP.Order = 6;
-            myLastCommentVP.Order = 7;
+            myCommentsVP.Order = 7;
 
             myFeedbackView.SetViewMode( NbtViewRenderingMode.Grid );
 

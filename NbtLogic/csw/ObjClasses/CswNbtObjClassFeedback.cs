@@ -11,7 +11,6 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassFeedback : CswNbtObjClass
     {
-        //public static string ChildFeedbackTypePropertyName { get { return "Child Feedback Type"; } }
         public const string AuthorPropertyName = "Author";
         public const string DateSubmittedPropertyName = "Date Submitted";
         public const string SubjectPropertyName = "Subject";
@@ -25,7 +24,6 @@ namespace ChemSW.Nbt.ObjClasses
         public const string CategoryPropertyName = "Category";
         public const string CaseNumberPropertyName = "Case Number";
         public const string CurrentViewModePropertyName = "Current View Mode";
-        public const string LastCommentPropertyName = "Last Comment";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -82,8 +80,6 @@ namespace ChemSW.Nbt.ObjClasses
                 CurrentViewMode.Text = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewmode"];
             }
 
-            LastComment.Text = ""; //give LastComment an empty string so we don't get an ORNY
-
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
         } // beforeCreateNode()
 
@@ -95,10 +91,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-            if( Discussion.WasModified )
-            {
-                LastComment.Text = Discussion.Last["message"].ToString();
-            }
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -135,8 +127,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool onButtonClick( CswNbtMetaDataNodeTypeProp NodeTypeProp, out NbtButtonAction ButtonAction, out string ActionData, out string Message )
         {
-            Summary.Text = Discussion.CommentsJson[0]["message"].ToString();
-            this.postChanges( false );//---------------------------------------------------------------------------------------------------------for testing lsat comment
             Message = string.Empty;
             ActionData = string.Empty;
             ButtonAction = NbtButtonAction.Unknown;
@@ -296,14 +286,6 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[CurrentViewModePropertyName] );
-            }
-        }
-
-        public CswNbtNodePropText LastComment
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[LastCommentPropertyName] );
             }
         }
 

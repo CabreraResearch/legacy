@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.PropTypes
                     new JProperty( "commenter", commenter ),
                     new JProperty( "message", message ) ) );
                 CommentsJson = _CommentsJson;
-_CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, message ); //the caches the last message and sets it to Gestalt
+                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, message ); //the caches the last message and sets it to Gestalt
             }
 
         }
