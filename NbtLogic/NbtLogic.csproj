@@ -141,7 +141,6 @@
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_02.cs" />
     <Compile Include="csw\Schema\scripts\tests\cases\029\CswTestCase_029_01.cs" />
     <Compile Include="csw\Schema\scripts\tests\rsrcs\CswTstCaseRsrc_029.cs" />
-    <Compile Include="csw\Tree\CswNbtLocationTree.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
