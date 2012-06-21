@@ -50,32 +50,32 @@ namespace ChemSW.Nbt
 
         // NbtTree element
         public const string _ElemName_Tree = "NbtTree";
-        private const string _AttrName_TreeName = "treename";
+        public const string _AttrName_TreeName = "treename";
 
         // NbtNode element
         public const string _ElemName_Node = "NbtNode";
-        private const string _AttrName_NodeId = "nodeid";
-        private const string _AttrName_Key = "key";
-        private const string _AttrName_IconFileName = "iconfilename";
-        private const string _AttrName_NodeName = "nodename";
-        private const string _AttrName_NodeTypeId = "nodetypeid";
-        private const string _AttrName_ObjectClassId = "objectclassid";
-        private const string _AttrName_Selectable = "selectable";
-        private const string _AttrName_ShowInTree = "showintree";
-        private const string _AttrName_ExpandMode = "expandmode";
-        private const string _AttrName_Truncated = "truncated";
-        private const string _AttrName_Locked = "locked";
+        public const string _AttrName_NodeId = "nodeid";
+        public const string _AttrName_Key = "key";
+        public const string _AttrName_IconFileName = "iconfilename";
+        public const string _AttrName_NodeName = "nodename";
+        public const string _AttrName_NodeTypeId = "nodetypeid";
+        public const string _AttrName_ObjectClassId = "objectclassid";
+        public const string _AttrName_Selectable = "selectable";
+        public const string _AttrName_ShowInTree = "showintree";
+        public const string _AttrName_ExpandMode = "expandmode";
+        public const string _AttrName_Truncated = "truncated";
+        public const string _AttrName_Locked = "locked";
 
         // NbtNodeProp element
         public const string _ElemName_NodeProp = "NbtNodeProp";
-        private const string _AttrName_NodePropId = "nodetypepropid";
-        private const string _AttrName_JctNodePropId = "jctnodepropid";
-        private const string _AttrName_NodePropName = "propname";
-        private const string _AttrName_NodePropGestalt = "gestalt";
-        private const string _AttrName_NodePropField1 = "field1";
-        private const string _AttrName_NodePropField1_Fk = "field1_fk";
-        private const string _AttrName_NodePropField1_Numeric = "field1_numeric";
-        private const string _AttrName_NodePropFieldType = "fieldtype";
+        public const string _AttrName_NodePropId = "nodetypepropid";
+        public const string _AttrName_JctNodePropId = "jctnodepropid";
+        public const string _AttrName_NodePropName = "propname";
+        public const string _AttrName_NodePropGestalt = "gestalt";
+        public const string _AttrName_NodePropField1 = "field1";
+        public const string _AttrName_NodePropField1_Fk = "field1_fk";
+        public const string _AttrName_NodePropField1_Numeric = "field1_numeric";
+        public const string _AttrName_NodePropFieldType = "fieldtype";
 
         // NbtNodeGroup element
         public const string _ElemName_NodeGroup = "NbtNodeGroup";
