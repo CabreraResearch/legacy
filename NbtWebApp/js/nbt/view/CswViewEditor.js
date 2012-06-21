@@ -525,7 +525,7 @@
                                 },
                                 onLoad: function(grid) {
                                     if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
-                                        rowid = grid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
+                                        rowid = grid.getRowIdForVal(o.ColumnViewId, gridJson.selectedpk);
                                         grid.setSelection(rowid);
                                         grid.scrollToRow(rowid);
                                     }

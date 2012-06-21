@@ -17,28 +17,28 @@
                 onSelectRow: null, //function (date) {},
                 selectedDate: '',
                 allowEditRow: true,
-                preventSelectTrigger: false,
-                canEdit: true,
-                pagermode: 'default',
-                gridOpts: {
-                    height: 180,
-                    rowNum: 10,
-                    onSelectRow: function (selRowid) {
-                        if (false === cswPrivate.preventSelectTrigger && false === Csw.isNullOrEmpty(selRowid)) {
-                            var cellVal = cswPublic.grid.getValueForColumn('CHANGEDATE', selRowid);
-                            Csw.tryExec(cswPrivate.onSelectRow, cellVal);
-                        }
-                    },
-                    add: false,
-                    view: false,
-                    del: false,
-                    refresh: false,
-                    search: false
-                }
+                width: 180,
+                preventSelectTrigger: false //,
+//                canEdit: true,
+//                pagermode: 'default',
+//                gridOpts: {
+//                    height: 180,
+//                    rowNum: 10,
+//                    onSelectRow: function (selRowid) {
+//                        if (false === cswPrivate.preventSelectTrigger && false === Csw.isNullOrEmpty(selRowid)) {
+//                            var cellVal = cswPublic.grid.getValueForColumn('CHANGEDATE', selRowid);
+//                            Csw.tryExec(cswPrivate.onSelectRow, cellVal);
+//                        }
+//                    },
+//                    add: false,
+//                    view: false,
+//                    del: false,
+//                    refresh: false,
+//                    search: false
+//                }
             };
-            if (options) {
-                $.extend(cswPrivate, options);
-            }
+            if (options) $.extend(cswPrivate, options);
+
             var cswPublic = { };
             cswParent.empty();
 
@@ -48,6 +48,14 @@
                 storeId: gridId,
                 title: 'History',
                 stateId: '',
+                width: cswPrivate.width,
+
+                showActionColumn: cswPrivate.allowEditRow,
+                showView: false,
+                showLock: false,
+                showEdit: true,
+                showDelete: false,
+
                 usePaging: (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport),
                 ajax: {
                     urlMethod: cswPrivate.urlMethod,
@@ -57,19 +65,24 @@
                         JustDateColumn: cswPrivate.JustDateColumn
                     }
                 },
-                showDelete: false,
+                onLoad: function(grid)
+                {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.selectedDate)) {
+                        cswPrivate.preventSelectTrigger = true;
+                        var rowid = grid.getRowIdForVal('changedate', cswPrivate.selectedDate.toString());
+                        grid.setSelection(rowid);
+                        cswPrivate.preventSelectTrigger = false;
+                    }
+                },
+                onSelect: function (row) {
+                    if (false === cswPrivate.preventSelectTrigger && false === Csw.isNullOrEmpty(row)) {
+                        Csw.tryExec(cswPrivate.onSelectRow, row.changedate);
+                    }
+                },
                 onEdit: function (row) {
                     Csw.tryExec(cswPrivate.onEditRow, row.changedate);
                 }
             });
-//                        // set selected row by date
-
-//                        if (false === Csw.isNullOrEmpty(cswPrivate.selectedDate)) {
-//                            cswPrivate.preventSelectTrigger = true;
-//                            var rowid = cswPublic.grid.getRowIdForVal('CHANGEDATE', cswPrivate.selectedDate.toString());
-//                            cswPublic.grid.setSelection(rowid);
-//                            cswPrivate.preventSelectTrigger = false;
-//                        }
-
+            // set selected row by date
         });
 } ());

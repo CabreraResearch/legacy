@@ -211,7 +211,7 @@
                 cswPrivate.gridPanel.getView().focusRow(rowindex);
             };
 
-            cswPublic.getRowIdForVal = function (value, column) {
+            cswPublic.getRowIdForVal = function (column, value) {
                 ///<summary>Gets a row index by column name and value.</summary>
                 ///<param name="value" type="String">Cell value</param>
                 ///<param name="column" type="String">Column name</param>
@@ -240,7 +240,10 @@
 
             cswPublic.setSelection = function (rowindex) {
                 ///<summary>Sets the selected row by index</summary>
-                cswPrivate.gridPanel.getSelectionModel().select(rowindex);
+                if(rowindex > -1)
+                {
+                    cswPrivate.gridPanel.getSelectionModel().select(rowindex);
+                }
             };
 
             cswPublic.resetSelection = function () {
