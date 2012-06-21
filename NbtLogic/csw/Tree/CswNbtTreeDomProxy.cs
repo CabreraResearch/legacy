@@ -174,7 +174,7 @@ namespace ChemSW.Nbt
         {
             return _CswNbtTreeNodes.getRawJSON();
         }//getRawTreeJSON()
-        
+
         /// <summary>
         /// Returns a CswNbtNode indexed by a CswNbtNodeKey
         /// </summary>
@@ -219,7 +219,7 @@ namespace ChemSW.Nbt
         {
             return _CswNbtTreeNodes.getNodeKeysByNodeIdAndViewNode( NodeId, ViewNode );
         } // getNodeKeysByNodeIdAndViewNode()
-        
+
         /// <summary>
         /// Returns the currently indexed node
         /// </summary>
@@ -349,7 +349,7 @@ namespace ChemSW.Nbt
         {
             _CswNbtTreeNodes.makeNodeCurrent( CswNbtNodeKey );
         }//makeNodeCurrent() 
-        
+
         /// <summary>
         /// Returns true if there is a currently indexed node 
         /// </summary>
@@ -567,9 +567,9 @@ namespace ChemSW.Nbt
         /// <param name="Name">Name of Property</param>
         /// <param name="Gestalt">Text representation of the value of the property</param>
         /// <param name="FieldType">FieldType of the property</param>
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, Int32 Field1_Number  )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, Int32 Field1_Numeric )
         {
-            _CswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field1_Fk, Field1_Number );
+            _CswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field1_Fk, Field1_Numeric );
         }//addProperty
 
 

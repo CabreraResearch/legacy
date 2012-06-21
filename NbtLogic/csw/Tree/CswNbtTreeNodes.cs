@@ -74,7 +74,7 @@ namespace ChemSW.Nbt
         private const string _AttrName_NodePropGestalt = "gestalt";
         private const string _AttrName_NodePropField1 = "field1";
         private const string _AttrName_NodePropField1_Fk = "field1_fk";
-        private const string _AttrName_NodePropField1_Number = "field1_number";
+        private const string _AttrName_NodePropField1_Numeric = "field1_numeric";
         private const string _AttrName_NodePropFieldType = "fieldtype";
 
         // NbtNodeGroup element
@@ -181,7 +181,7 @@ namespace ChemSW.Nbt
                                       CswNbtMetaDataFieldType.NbtFieldType FieldType,
                                       string Field1,
                                       Int32 Field1_Fk,
-                                      Int32 Field1_Number )
+                                      Int32 Field1_Numeric )
         {
             // BZ 7135 - write dates in XML format
             string PropValue = Gestalt;
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt
             NewProp[_AttrName_NodePropGestalt] = PropValue;
             NewProp[_AttrName_NodePropField1] = Field1;
             NewProp[_AttrName_NodePropField1_Fk] = Field1_Fk;
-            NewProp[_AttrName_NodePropField1_Number] = Field1_Number;
+            NewProp[_AttrName_NodePropField1_Numeric] = Field1_Numeric;
             NewProp[_AttrName_NodePropFieldType] = FieldType.ToString();
             ( (JArray) NodeObj[_AttrName_ChildProps] ).Add( NewProp );
 
@@ -811,10 +811,10 @@ namespace ChemSW.Nbt
             return _getChildProps();
         }
 
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, Int32 Field1_Number )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, Int32 Field1_Numeric )
         {
             _checkCurrentNode();
-            _makePropJObject( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field1_Fk, Field1_Number );
+            _makePropJObject( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field1_Fk, Field1_Numeric );
 
         }//addProperty()
 

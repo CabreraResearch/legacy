@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Xml;
-using System.Xml.Linq;
 //using ChemSW.Nbt.PropTypes;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -395,7 +392,7 @@ namespace ChemSW.Nbt
         /// Sets whether the current node's children are truncated
         /// </summary>
         void setCurrentNodeChildrenTruncated( bool Truncated );
-        
+
         /// <summary>
         /// True if the current node's children are truncated
         /// </summary>
@@ -409,7 +406,7 @@ namespace ChemSW.Nbt
         /// <param name="Name">Name of Property</param>
         /// <param name="Gestalt">Text representation of the value of the property</param>
         /// <param name="FieldType">FieldType of the property</param>
-        void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, Int32 Field1_Number );
+        void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, Int32 Field1_Numeric );
 
         //CswNbtNodeKey loadNodeAsChildFromDb( System.Int32 NodeId, string GroupName );
 
