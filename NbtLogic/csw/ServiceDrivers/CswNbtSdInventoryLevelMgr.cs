@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Mail;
+using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -81,63 +86,132 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         #region Inventory
 
-        public Collection<CswPrimaryKey> getInventoryLevelLocationIds()
+        public CswNbtView QuantityView( CswPrimaryKey StartLocationId )
         {
-            Collection<CswPrimaryKey> Ret = new Collection<CswPrimaryKey>();
-            try
-            {
-                CswNbtLocationTree LocationTree = new CswNbtLocationTree( _CswNbtResources, _InventoryLevel.Location, Int32.MaxValue );
-                Ret = LocationTree.LocationIds;
-            }
-            catch( Exception Ex )
-            {
-                throw new CswDniException( "Failed to get Inventory Level locations", Ex );
-            }
+            CswNbtView Ret = null;
+            
+            Ret = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship LocationRel = _getLocationRelationship( Ret, StartLocationId );
+
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
+            CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName );
+            CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.DisposedPropertyName );
+            CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName );
+            CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
+
+            CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
+            Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, _InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            Ret.AddViewProperty( ContainerRel, QuantityOcp );
             return Ret;
         }
 
-        private CswNbtView _QuantityView = null;
-        public CswNbtView QuantityView
+        private CswNbtViewRelationship _getLocationRelationship( CswNbtView LocationsView, CswPrimaryKey StartLocationId )
         {
-            get
+            CswNbtViewRelationship LocationRel = null;
+            if( null != StartLocationId )
             {
-                if( null == _QuantityView )
+                string LocationSql = @"select distinct nodeid from (select n.nodeid, jnp.field1_fk
+                                      from nodes n 
+                                      join nodetypes nt on n.nodetypeid=nt.nodetypeid
+                                      join object_class oc on nt.objectclassid=oc.objectclassid
+                                      join jct_nodes_props jnp on n.nodeid=jnp.nodeid
+                                      join nodetype_props ntp on jnp.nodetypepropid=ntp.nodetypepropid
+                                      join field_types ft on ntp.fieldtypeid=ft.fieldtypeid
+                                      where oc.objectclass='LocationClass' 
+                                            and ft.fieldtype='Location'  
+                                      start with n.nodeid = " + StartLocationId.PrimaryKey + " " +
+                                     " connect by jnp.field1_fk = prior n.nodeid )";
+                CswArbitrarySelect LocationSelect = _CswNbtResources.makeCswArbitrarySelect( "populateLocations_select", LocationSql );
+                DataTable LocationTable = null;
+                try
                 {
-                    _QuantityView = new CswNbtView( _CswNbtResources );
+                    LocationTable = LocationSelect.getTable();
+                    //For faster lookup
+                    Dictionary<Int32, Int32> LocationDict = new Dictionary<int, int>();
+                    //For assignment
+                    Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
+                    LocationDict.Add( StartLocationId.PrimaryKey, StartLocationId.PrimaryKey );
+                    LocationPks.Add( StartLocationId );
                     CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                    CswNbtViewRelationship LocationRel = _QuantityView.AddViewRelationship( LocationOc, false );
+                    LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
 
-                    Collection<CswPrimaryKey> LocationIds = getInventoryLevelLocationIds();
-                    if( LocationIds.Count > 0 )
+                    if( LocationTable.Rows.Count > 0 )
                     {
-                        LocationRel.NodeIdsToFilterIn = LocationIds;
+                        foreach( DataRow Row in LocationTable.Rows )
+                        {
+                            Int32 LocationNodeId = CswConvert.ToInt32( Row["nodeid"] );
+                            if( false == LocationDict.ContainsKey( LocationNodeId ) )
+                            {
+                                LocationDict.Add( LocationNodeId, LocationNodeId );
+                                CswPrimaryKey LocationPk = new CswPrimaryKey( "nodes", LocationNodeId );
+                                LocationPks.Add( LocationPk );
+                            }
+                        }
                     }
-                    else
-                    {
-                        LocationRel.NodeIdsToFilterIn.Add( _InventoryLevel.Location.NodeId );
-                    }
-
-                    CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
-                    CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
-                    CswNbtMetaDataObjectClassProp MaterialOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MaterialPropertyName );
-                    CswNbtMetaDataObjectClassProp DisposedOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.DisposedPropertyName );
-                    CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.MissingPropertyName );
-
-                    CswNbtViewRelationship ContainerRel = _QuantityView.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
-                    _QuantityView.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, _InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                    _QuantityView.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, Tristate.False.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-                    _QuantityView.AddViewPropertyAndFilter( ContainerRel, MissingOcp, Tristate.False.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+                    LocationRel.NodeIdsToFilterIn = LocationPks;
                 }
-                return _QuantityView;
+                catch( Exception ex )
+                {
+                    throw new CswDniException( ErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
+                }
             }
+            return LocationRel;
         }
-
-
 
         public double getCurrentInventoryLevel()
         {
             double Ret = 0;
-            
+            CswNbtView ContainerView = QuantityView( _InventoryLevel.Location.SelectedNodeId );
+            if( null != ContainerView )
+            {
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false );
+                Int32 LocationNodeCount = Tree.getChildNodeCount();
+                if( LocationNodeCount > 0 )
+                {
+                    Dictionary<Int32, CswNbtUnitConversion> UnitConversions = new Dictionary<int, CswNbtUnitConversion>();
+                    for( Int32 L = 0; L < LocationNodeCount; L += 1 )
+                    {
+                        Tree.goToNthChild( L );
+                        Int32 ContainerNodeCount = Tree.getChildNodeCount();
+                        if( ContainerNodeCount > 0 )
+                        {
+                            for( Int32 C = 0; C < ContainerNodeCount; C += 1 )
+                            {
+                                Tree.goToNthChild( C );
+                                foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
+                                {
+                                    CswNbtMetaDataFieldType.NbtFieldType FieldType = CswConvert.ToString( Prop["fieldtype"] );
+                                    if( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Quantity )
+                                    {
+                                        Int32 UnitTypeId = CswConvert.ToInt32( Prop["field1_fk"] );
+                                        CswNbtUnitConversion Conversion;
+                                        if( UnitConversions.ContainsKey( UnitTypeId ) )
+                                        {
+                                            Conversion = UnitConversions[UnitTypeId];
+                                        }
+                                        else
+                                        {
+                                            Conversion = new CswNbtUnitConversion( _CswNbtResources, _InventoryLevel.Level.UnitId, new CswPrimaryKey( "nodes", UnitTypeId ), _InventoryLevel.Material.RelatedNodeId );
+                                            UnitConversions.Add( UnitTypeId, Conversion );
+                                        }
+                                        if( null != Conversion )
+                                        {
+                                            double ContainerQuantity = CswConvert.ToDouble( Prop["field1_numeric"] );
+                                            Ret += Conversion.convertUnit( ContainerQuantity );
+                                        }
+                                    }
+                                }
+                                Tree.goToParentNode();
+                            }
+                        }
+                        Tree.goToParentNode();
+                    }
+                }
+
+            }
             return Ret;
         }
 

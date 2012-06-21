@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
+            
         } // beforeCreateNode()
 
 
@@ -83,6 +83,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( Location.WasModified )
+            {
+                CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, this );
+                CurrentQuantity.Quantity = LevelMgr.getCurrentInventoryLevel();
+                CurrentQuantity.UnitId = Level.UnitId;
+            }
+            
             if( CurrentQuantity.WasModified )
             {
                 CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, this );
