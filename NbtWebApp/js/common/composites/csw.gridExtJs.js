@@ -150,7 +150,7 @@
                         emptyText: 'No Results'
                     },
                     listeners: {
-                        beforeselect: function() {
+                        beforeselect: function () {
                             return Csw.bool(cswPrivate.canSelectRow);
                         },
                         viewready: function () {
@@ -184,26 +184,14 @@
             }; // initGrid()
 
 
-            // Old public grid interfaces:
-
             cswPublic.getCell = function (rowindex, key) {
                 ///<summary>Gets the contents of a jqGrid cell by rowid and column key</summary>
                 return cswPrivate.store.getAt(rowindex).raw[key];
             };
 
-            //            cswPublic.getDataIds = function () {
-            //                //                ///<summary>Gets the contents of a jqGrid column</summary>
-            //                //                return cswPublic.gridTable.$.jqGrid('getDataIDs');
-            //            };
-
             cswPublic.getSelectedRowId = function () {
                 return cswPrivate.store.indexOf(cswPrivate.gridPanel.getSelectionModel().getSelection()[0]);
             };
-
-            //            cswPublic.hideColumn = function (colName) {
-            //                ///<summary>Hides a column by name</summary>
-            //                //                cswPublic.gridTable.$.jqGrid('hideCol', colName);
-            //            };
 
             cswPublic.scrollToRow = function (rowindex) {
                 ///<summary>Scrolls the grid to the specified index</summary>
@@ -235,13 +223,6 @@
                 return ret;
             };
 
-            //            cswPublic.setRowData = function (rowId, columnName, columnData) {
-            //                //                ///<summary>Update a cell with new content.</summary>
-            //                //                var cellData = {};
-            //                //                cellData[columnName] = columnData;
-            //                //                return cswPublic.gridTable.$.jqGrid('setRowData', rowId, cellData);
-            //            };
-
             cswPublic.setSelection = function (rowindex) {
                 ///<summary>Sets the selected row by index</summary>
                 if (rowindex > -1) {
@@ -249,87 +230,8 @@
                 }
             };
 
-            //            cswPublic.resetSelection = function () {
-            //                ///<summary>Deselects all grid rows.</summary>
-            //                //cswPublic.gridTable.$.jqGrid('resetSelection');
-            //            };
-
-            cswPublic.changeGridOpts = function (opts, toggleColumns) {
-                //                var delBtn, editBtn;
-                //                $.extend(true, cswPrivate, opts);
-                //                cswPrivate.makeGrid(cswPrivate);
-
-                //                Csw.each(toggleColumns, function (val) {
-                //                    if (Csw.contains(cswPrivate.gridOpts.colNames, val)) {
-                //                        if (cswPublic.isMulti()) {
-                //                            cswPublic.gridTable.$.jqGrid('hideCol', val);
-                //                        }
-                //                    }
-                //                });
-                //                if (false === cswPublic.isMulti()) {
-                //                    if (false === cswPrivate.canEdit) {
-                //                        editBtn = cswPublic.gridPager.find('#edit_' + cswPrivate.gridTableId);
-                //                        if (Csw.contains(editBtn, 'remove')) {
-                //                            editBtn.remove();
-                //                        }
-                //                    }
-                //                    if (false === cswPrivate.canDelete) {
-                //                        delBtn = cswPublic.gridPager.find('#del_' + cswPrivate.gridTableId).remove();
-                //                        if (Csw.contains(delBtn, 'remove')) {
-                //                            delBtn.remove();
-                //                        }
-                //                    }
-                //                }
-                //                cswPublic.resizeWithParent(cswPrivate.resizeWithParentElement);
-            };
-
-            cswPublic.opGridRows = function (opts, rowid, onSelect, onEmpty) {
-                //                var ret = false;
-                //                var haveSelectedRows = false,
-                //                    i;
-
-                //                var rowids = [];
-
-                //                function onEachGridRow(prop, key, parent) {
-                //                    if (false === Csw.isFunction(parent[key])) {
-                //                        if (Csw.isArray(parent[key])) {
-                //                            rowid = rowids[i];
-                //                            parent[key].push(cswPublic.getValueForColumn(key, rowid));
-                //                        } else {
-                //                            parent[key] = cswPublic.getValueForColumn(key, rowid);
-                //                        }
-                //                    }
-                //                    return false;
-                //                }
-
-                //                if (cswPrivate.multiEdit) {
-                //                    rowids = cswPrivate.getSelectedRowsIds();
-                //                } else if (false === Csw.isNullOrEmpty(rowid)) {
-                //                    rowids.push(rowid);
-                //                } else {
-                //                    rowids.push(cswPublic.getSelectedRowId());
-                //                }
-
-                //                if (rowids.length > 0) {
-                //                    haveSelectedRows = true;
-                //                    for (i = 0; i < rowids.length; i += 1) {
-                //                        Csw.crawlObject(opts, onEachGridRow, false);
-                //                    }
-                //                }
-
-                //                if (haveSelectedRows) {
-                //                    if (Csw.isFunction(onSelect)) {
-                //                        opts.Multi = cswPrivate.multiEdit;
-                //                        ret = onSelect(opts);
-                //                    }
-                //                } else if (Csw.isFunction(onEmpty)) {
-                //                    onEmpty(opts);
-                //                }
-                //                return ret;
-            };
-
             cswPublic.getAllGridRows = function () {
-                //                return cswPublic.gridTable.$.jqGrid('getRowData');
+                return cswPrivate.store.data;
             };
 
             cswPublic.print = function (onSuccess) {
@@ -429,46 +331,9 @@
 
             };
 
-            // Row scrolling adapted from 
-            // http://stackoverflow.com/questions/2549466/is-there-a-way-to-make-jqgrid-scroll-to-the-bottom-when-a-new-row-is-added/2549654#2549654
-            cswPublic.getGridRowHeight = function () {
-
-                //                var height = null; // Default
-                //                try {
-                //                    height = cswPublic.gridTable.$.find('tbody').find('tr:first').outerHeight();
-                //                } catch (e) {
-                //                    //catch and just suppress error
-                //                }
-                //                return height;
-            };
-
             cswPublic.isMulti = function () {
-                //                return cswPrivate.multiEdit;
+                return cswPrivate.multiEdit;
             };
-
-            cswPublic.setWidth = function (width) {
-                //                cswPublic.gridTable.$.jqGrid('setGridWidth', width);
-            };
-
-            cswPublic.resizeWithParent = function () {
-                //                var i = 0;
-                //                function handleRestoreDownRecursive($elem) {
-                //                    i += 1;
-                //                    if ($elem.width() !== null &&
-                //                        $elem.parent().width() !== null) {
-                //                        if ($elem.parent().width() < $elem.width()) {
-                //                            element = $elem.parent();
-                //                        } else if (i <= 15) {
-                //                            handleRestoreDownRecursive($elem.parent());
-                //                        }
-                //                    }
-                //                }
-                //                var element = cswPrivate.resizeWithParentElement || cswParent.$;
-                //                handleRestoreDownRecursive(element);
-                //                var width = element.width() - 50;
-                //                cswPublic.setWidth(width);
-            };
-
 
             //constructor
             (function () {

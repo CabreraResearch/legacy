@@ -74,8 +74,8 @@
                                 cswPrivate.cartviewid = json.cartviewid;
 
                                 $.extend(true, cswPrivate.gridOpts, json.jqGridOpt);
-                                cswPrivate.resizeWithParent = true;
-                                cswPrivate.resizeWithParentElement = cswPrivate.action.actionDiv.$;
+//                                cswPrivate.resizeWithParent = true;
+//                                cswPrivate.resizeWithParentElement = cswPrivate.action.actionDiv.$;
                                 cswPrivate.gridOpts.rowNum = 10;
                                 cswPrivate.gridOpts.height = 180;
                                 cswPrivate.gridOpts.caption = 'Your Cart';

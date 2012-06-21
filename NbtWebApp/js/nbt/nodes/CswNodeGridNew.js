@@ -81,11 +81,11 @@
                 onDeleteNode: null,
                 onSuccess: null,
                 onEditView: null,
-                onRefresh: null,
-                gridOpts: {
-                    multiselect: false
-                },
-                resizeWithParent: true
+                onRefresh: null //,
+//                gridOpts: {
+//                    multiselect: false
+//                },
+//                resizeWithParent: true
             };
 
             if (options) {
