@@ -108,6 +108,14 @@
                     return Csw.controls.nodeSelect(cswParent, opts);
                 };
 
+                cswParent.nodeLink = function (opts) {
+                    /// <summary> Creates a Csw.nodeSelect on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the nodeSelect.</param>
+                    /// <returns type="Csw.controls.nodeSelect">A Csw.controls.nodeSelect</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'nodeLink');
+                    return Csw.controls.nodeLink(cswParent, opts);
+                };
+
                 cswParent.nodeTypeSelect = function (opts) {
                     /// <summary> Creates a Csw.nodeTypeSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the nodeTypeSelect.</param>
