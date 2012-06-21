@@ -85,10 +85,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( CurrentQuantity.WasModified )
             {
-                CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr(_CswNbtResources, this);
+                CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, this );
                 if( LevelMgr.doSendEmail() )
                 {
-                    LevelMgr.sendPastThreshholdEmail();
+                    LastNotified.DateTimeValue = LevelMgr.sendPastThreshholdEmail();
                 }
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );

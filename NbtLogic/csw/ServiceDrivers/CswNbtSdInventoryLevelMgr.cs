@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret = ( _InventoryLevel.CurrentQuantity.Quantity > _InventoryLevel.Level.Quantity );
                     break;
                 case CswNbtObjClassInventoryLevel.Types.Minimum:
-                    Ret = ( _InventoryLevel.CurrentQuantity.Quantity > _InventoryLevel.Level.Quantity );
+                    Ret = ( _InventoryLevel.CurrentQuantity.Quantity < _InventoryLevel.Level.Quantity );
                     break;
             }
 
@@ -61,7 +61,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             _CswNbtResources.sendEmailNotification( EmailMessage );
         }
 
-        public void sendPastThreshholdEmail()
+        /// <summary>
+        /// Sends notification email and returns Now
+        /// </summary>
+        /// <returns></returns>
+        public DateTime sendPastThreshholdEmail()
         {
             foreach( CswNbtObjClassUser User in _InventoryLevel.Subscribe.SelectedUsers() )
             {
@@ -70,6 +74,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     _sendEmail( User.Email );
                 }
             }
+            return DateTime.Now;
         }
 
         #endregion Email
@@ -127,13 +132,13 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
+
+
         public double getCurrentInventoryLevel()
         {
-
-
-
-
-            return 0;
+            double Ret = 0;
+            
+            return Ret;
         }
 
         #endregion Inventory
