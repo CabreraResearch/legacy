@@ -510,6 +510,7 @@
                                 columns: gridJson.grid.columns,
                                 data: gridJson.grid.data,     
                                 pageSize: gridJson.grid.pageSize,
+                                canSelectRow: true,
                                 onSelect: function(row){
                                     copyViewBtn.enable();
                                     deleteViewBtn.enable();

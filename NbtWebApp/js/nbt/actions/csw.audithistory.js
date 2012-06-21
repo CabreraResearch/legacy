@@ -55,6 +55,7 @@
                 showLock: false,
                 showEdit: true,
                 showDelete: false,
+                canSelectRow: cswPrivate.JustDateColumn,
 
                 usePaging: (cswPrivate.EditMode !== Csw.enums.editMode.PrintReport),
                 ajax: {

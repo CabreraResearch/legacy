@@ -26,6 +26,8 @@
                 showEdit: true,
                 showDelete: true,
 
+                canSelectRow: false,
+
                 onLoad: null,   // function()
                 onEdit: null,   // function(row)
                 onDelete: null, // function(row)
@@ -148,7 +150,10 @@
                         emptyText: 'No Results'
                     },
                     listeners: {
-                        viewready: function() {
+                        beforeselect: function() {
+                            return Csw.bool(cswPrivate.canSelectRow);
+                        },
+                        viewready: function () {
                             Csw.tryExec(cswPrivate.onLoad, cswPublic);
                         }
                     },
@@ -165,16 +170,15 @@
 
                 cswPrivate.gridPanel = Ext.create('Ext.grid.Panel', gridopts);
                 cswPrivate.gridPanel.on({
-                    select: function(rowModel, record, index, eOpts){ 
-                        Csw.tryExec(cswPrivate.onSelect, record.data);  
+                    select: function (rowModel, record, index, eOpts) {
+                        Csw.tryExec(cswPrivate.onSelect, record.data);
                     },
-                    deselect: function(rowModel, record, index, eOpts){ 
-                        Csw.tryExec(cswPrivate.onDeselect, record.data);  
+                    deselect: function (rowModel, record, index, eOpts) {
+                        Csw.tryExec(cswPrivate.onDeselect, record.data);
                     }
                 });
 
-                if(Csw.bool(cswPrivate.truncated))
-                {
+                if (Csw.bool(cswPrivate.truncated)) {
                     cswParent.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
             }; // initGrid()
@@ -187,19 +191,19 @@
                 return cswPrivate.store.getAt(rowindex).raw[key];
             };
 
-            cswPublic.getDataIds = function () {
-                //                ///<summary>Gets the contents of a jqGrid column</summary>
-                //                return cswPublic.gridTable.$.jqGrid('getDataIDs');
-            };
+            //            cswPublic.getDataIds = function () {
+            //                //                ///<summary>Gets the contents of a jqGrid column</summary>
+            //                //                return cswPublic.gridTable.$.jqGrid('getDataIDs');
+            //            };
 
             cswPublic.getSelectedRowId = function () {
                 return cswPrivate.store.indexOf(cswPrivate.gridPanel.getSelectionModel().getSelection()[0]);
             };
 
-            cswPublic.hideColumn = function (colName) {
-                ///<summary>Hides a column by name</summary>
-                //                cswPublic.gridTable.$.jqGrid('hideCol', colName);
-            };
+            //            cswPublic.hideColumn = function (colName) {
+            //                ///<summary>Hides a column by name</summary>
+            //                //                cswPublic.gridTable.$.jqGrid('hideCol', colName);
+            //            };
 
             cswPublic.scrollToRow = function (rowindex) {
                 ///<summary>Scrolls the grid to the specified index</summary>
@@ -231,25 +235,24 @@
                 return ret;
             };
 
-            cswPublic.setRowData = function (rowId, columnName, columnData) {
-                //                ///<summary>Update a cell with new content.</summary>
-                //                var cellData = {};
-                //                cellData[columnName] = columnData;
-                //                return cswPublic.gridTable.$.jqGrid('setRowData', rowId, cellData);
-            };
+            //            cswPublic.setRowData = function (rowId, columnName, columnData) {
+            //                //                ///<summary>Update a cell with new content.</summary>
+            //                //                var cellData = {};
+            //                //                cellData[columnName] = columnData;
+            //                //                return cswPublic.gridTable.$.jqGrid('setRowData', rowId, cellData);
+            //            };
 
             cswPublic.setSelection = function (rowindex) {
                 ///<summary>Sets the selected row by index</summary>
-                if(rowindex > -1)
-                {
+                if (rowindex > -1) {
                     cswPrivate.gridPanel.getSelectionModel().select(rowindex);
                 }
             };
 
-            cswPublic.resetSelection = function () {
-                ///<summary>Deselects all grid rows.</summary>
-                //cswPublic.gridTable.$.jqGrid('resetSelection');
-            };
+            //            cswPublic.resetSelection = function () {
+            //                ///<summary>Deselects all grid rows.</summary>
+            //                //cswPublic.gridTable.$.jqGrid('resetSelection');
+            //            };
 
             cswPublic.changeGridOpts = function (opts, toggleColumns) {
                 //                var delBtn, editBtn;
@@ -486,8 +489,7 @@
                                                         14 + // horizontal scrollbar
                                                         27;  // grid footer
                                 }
-                                if(false === Csw.isNullOrEmpty(result.grid.truncated))
-                                {
+                                if (false === Csw.isNullOrEmpty(result.grid.truncated)) {
                                     cswPrivate.truncated = result.grid.truncated;
                                 }
                                 cswPrivate.title = result.grid.title;
