@@ -251,11 +251,6 @@ namespace ChemSW.Nbt.WebServices
                 if( All )
                 {
                     ViewsTable = _CswNbtResources.ViewSelect.getAllEnabledViews();
-                    ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
-                    foreach( DataRow Row in ViewsTable.Rows )
-                    {
-                        Row["viewid"] = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) ).ToString();
-                    }
                 }
                 else
                 {
@@ -267,6 +262,10 @@ namespace ChemSW.Nbt.WebServices
             else
             {
                 ViewsTable = _CswNbtResources.ViewSelect.getUserViews();
+            }
+
+            if( ViewsTable != null )
+            {
                 ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
                 foreach( DataRow Row in ViewsTable.Rows )
                 {
@@ -337,7 +336,11 @@ namespace ChemSW.Nbt.WebServices
                         ViewsTable.Columns.Remove( "rolename" );
                 }
 
-                ReturnVal = gd.DataTableToJSON( ViewsTable );
+                ChemSW.Nbt.Grid.ExtJs.CswNbtGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
+                grid.getColumn( "nodeviewid" ).hidden = true;
+                grid.getColumn( "viewid" ).hidden = true;
+
+                ReturnVal = grid.ToJson();
             } // if(ViewsTable != null)
 
             return ReturnVal;

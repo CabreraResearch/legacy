@@ -444,7 +444,8 @@ window.initMain = window.initMain || function (undefined) {
             viewmode: '',
             nodeid: '',
             cswnbtnodekey: '',
-            prefix: 'csw'
+            prefix: 'csw',
+            grid: ''
         };
 
         if (options) {
@@ -481,8 +482,7 @@ window.initMain = window.initMain || function (undefined) {
             'onPrintView': function () {
                 switch (o.viewmode) {
                     case Csw.enums.viewMode.grid.name:
-                        if (Csw.contains(o, 'grid') &&
-                             false == Csw.isNullOrEmpty(o.grid)) {
+                        if (false == Csw.isNullOrEmpty(o.grid)) {
                             o.grid.print();
                         }
                         break;

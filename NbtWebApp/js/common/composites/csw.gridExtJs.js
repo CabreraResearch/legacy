@@ -10,6 +10,7 @@
                 ID: 'extjsGrid',
                 storeId: '',
                 title: 'Untitled Grid',
+                truncated: false,
                 //readonly: false,
                 stateId: '',
                 usePaging: true,
@@ -25,11 +26,12 @@
                 showEdit: true,
                 showDelete: true,
 
+                onLoad: null,   // function()
                 onEdit: null,   // function(row)
                 onDelete: null, // function(row)
+                onSelect: null, // function(row)
+                onDeselect: null, // function(row)
 
-                maxHeight: '',
-                maxWidth: '',
                 height: '',  // overridden by webservice if paging is on
                 width: '100%',
 
@@ -130,12 +132,11 @@
                     storeopts.proxy.type = 'pagingmemory';
                 }
 
-                var gridStore = Ext.create('Ext.data.Store', storeopts);
-                gridStore.loadPage(1);
+                cswPrivate.store = Ext.create('Ext.data.Store', storeopts);
 
                 var gridopts = {
                     title: cswPrivate.title,
-                    store: gridStore,
+                    store: cswPrivate.store,
                     columns: cswPrivate.columns,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
@@ -143,73 +144,47 @@
                     stateId: cswPrivate.stateId,
                     forceFit: true,               // expand columns to fill width
                     viewConfig: {
-                        //                        shrinkWrap: true,
-                        //                        maxWidth: cswPrivate.maxWidth,
-                        //                        maxHeight: cswPrivate.maxHeight,
                         deferEmptyText: false,
                         emptyText: 'No Results'
+                    },
+                    listeners: {
+                        viewready: function() {
+                            Csw.tryExec(cswPrivate.onLoad, cswPublic);
+                        }
                     },
                     renderTo: cswParent.getId()
                 };
                 if (Csw.bool(cswPrivate.usePaging)) {
                     gridopts.dockedItems = [{
                         xtype: 'pagingtoolbar',
-                        store: gridStore,
+                        store: cswPrivate.store,
                         dock: 'bottom',
                         displayInfo: true
                     }];
                 }
 
-                // Apparently there's a race condition between creating the store and using it?
-                setTimeout(function () {
-                    Ext.create('Ext.grid.Panel', gridopts);
-                }, 50);
+                cswPrivate.gridPanel = Ext.create('Ext.grid.Panel', gridopts);
+                cswPrivate.gridPanel.on({
+                    select: function(rowModel, record, index, eOpts){ 
+                        Csw.tryExec(cswPrivate.onSelect, record.data);  
+                    },
+                    deselect: function(rowModel, record, index, eOpts){ 
+                        Csw.tryExec(cswPrivate.onDeselect, record.data);  
+                    }
+                });
 
-            }; // initGrid()
-
-            //constructor
-            (function () {
-                if (options) $.extend(cswPrivate, options);
-
-                if (Csw.isNullOrEmpty(cswPrivate.data)) {
-                    Csw.ajax.post({
-                        url: cswPrivate.ajax.url,
-                        urlMethod: cswPrivate.ajax.urlMethod,
-                        data: cswPrivate.ajax.data,
-                        success: function (result) {
-                            if (false === Csw.isNullOrEmpty(result.grid)) {
-                                cswPrivate.pageSize = Csw.number(result.grid.pageSize);
-                                if (Csw.bool(cswPrivate.usePaging)) {
-                                    cswPrivate.height = 25 + // title bar
-                                                        23 + // grid header
-                                                        (cswPrivate.pageSize * 24.5) + // rows
-                                                        14 + // horizontal scrollbar
-                                                        27;  // grid footer
-                                }
-                                cswPrivate.title = result.grid.title;
-                                cswPrivate.fields = result.grid.fields;
-                                cswPrivate.columns = result.grid.columns;
-                                cswPrivate.data = result.grid.data;
-                                cswPrivate.initGrid();
-
-                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
-                        } // success
-                    }); // ajax.post()
-                } else {
-                    cswPrivate.initGrid();
+                if(Csw.bool(cswPrivate.truncated))
+                {
+                    cswParent.span({ cssclass: 'truncated', text: 'Results Truncated' });
                 }
-            } ());
+            }; // initGrid()
 
 
             // Old public grid interfaces:
 
-            cswPublic.getCell = function (rowid, key) {
-                //                ///<summary>Gets the contents of a jqGrid cell by rowid and column key</summary>
-                //                var ret = '';
-                //                if (false === Csw.isNullOrEmpty(rowid) && false === Csw.isNullOrEmpty(key)) {
-                //                    ret = cswPublic.gridTable.$.jqGrid('getCell', rowid, key);
-                //                }
-                //                return ret;
+            cswPublic.getCell = function (rowindex, key) {
+                ///<summary>Gets the contents of a jqGrid cell by rowid and column key</summary>
+                return cswPrivate.store.getAt(rowindex).raw[key];
             };
 
             cswPublic.getDataIds = function () {
@@ -218,8 +193,7 @@
             };
 
             cswPublic.getSelectedRowId = function () {
-                //                var rowid = cswPublic.gridTable.$.jqGrid('getGridParam', 'selrow');
-                //                return rowid;
+                return cswPrivate.store.indexOf(cswPrivate.gridPanel.getSelectionModel().getSelection()[0]);
             };
 
             cswPublic.hideColumn = function (colName) {
@@ -227,43 +201,34 @@
                 //                cswPublic.gridTable.$.jqGrid('hideCol', colName);
             };
 
-            cswPublic.scrollToRow = function (rowid) {
-                //                ///<summary>Scrolls the grid to the specified rowid</summary>
-                //                ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
-                //                ///<returns type="Void"></returns>
-                //                if (Csw.isNullOrEmpty(rowid)) {
-                //                    rowid = cswPublic.getSelectedRowId();
-                //                }
-                //                var rowHeight = cswPublic.getGridRowHeight() || 23; // Default height
-                //                var index = cswPublic.gridTable.$.getInd(rowid);
-                //                cswPublic.gridTable.$.closest(".ui-jqgrid-bdiv").scrollTop(rowHeight * (index - 1));
+            cswPublic.scrollToRow = function (rowindex) {
+                ///<summary>Scrolls the grid to the specified index</summary>
+                ///<param name="rowid" type="String">Optional. jqGrid rowid. If null, selected row is assumed.</param>
+                ///<returns type="Void"></returns>
+                if (Csw.isNullOrEmpty(rowindex)) {
+                    rowindex = cswPublic.getSelectedRowId();
+                }
+                cswPrivate.gridPanel.getView().focusRow(rowindex);
             };
 
             cswPublic.getRowIdForVal = function (value, column) {
-                //                ///<summary>Gets a jqGrid rowid by column name and value.</summary>
-                //                ///<param name="value" type="String">Cell value</param>
-                //                ///<param name="column" type="String">Column name</param>
-                //                ///<returns type="String">jqGrid row id.</returns>
-                //                var pks = cswPrivate.getColumn(column, true);
-                //                var rowid = 0;
-                //                Csw.each(pks, function (obj) {
-                //                    if (Csw.contains(obj, 'value') && Csw.string(obj.value) === Csw.string(value)) {
-                //                        rowid = obj.id;
-                //                    }
-                //                });
-                //                return rowid;
+                ///<summary>Gets a row index by column name and value.</summary>
+                ///<param name="value" type="String">Cell value</param>
+                ///<param name="column" type="String">Column name</param>
+                ///<returns type="String">row index.</returns>
+                return cswPrivate.store.findExact(column, value);
             };
 
-            cswPublic.getValueForColumn = function (columnname, rowid) {
-                //                ///<summary>Gets a cell value by column name.</summary>
-                //                ///<param name="columnname" type="String">Grid column name.</param>
-                //                ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
-                //                ///<returns type="String">Value of the cell.</returns>
-                //                if (Csw.isNullOrEmpty(rowid)) {
-                //                    rowid = cswPublic.getSelectedRowId();
-                //                }
-                //                var ret = cswPublic.getCell(rowid, columnname);
-                //                return ret;
+            cswPublic.getValueForColumn = function (columnname, rowindex) {
+                ///<summary>Gets a cell value by column name.</summary>
+                ///<param name="columnname" type="String">Grid column name.</param>
+                ///<param name="rowid" type="String">Optional. If null, selected row is assumed.</param>
+                ///<returns type="String">Value of the cell.</returns>
+                if (Csw.isNullOrEmpty(rowindex)) {
+                    rowindex = cswPublic.getSelectedRowId();
+                }
+                var ret = cswPublic.getCell(rowindex, columnname);
+                return ret;
             };
 
             cswPublic.setRowData = function (rowId, columnName, columnData) {
@@ -273,14 +238,9 @@
                 //                return cswPublic.gridTable.$.jqGrid('setRowData', rowId, cellData);
             };
 
-            cswPublic.setSelection = function (rowid) {
-                //                ///<summary>Sets the selected row by jqGrid's rowid</summary>
-                //                if (Csw.isNullOrEmpty(rowid)) {
-                //                    rowid = cswPublic.getSelectedRowId();
-                //                }
-                //                if (false === Csw.isNullOrEmpty(rowid)) {
-                //                    cswPublic.gridTable.$.jqGrid('setSelection', rowid);
-                //                }
+            cswPublic.setSelection = function (rowindex) {
+                ///<summary>Sets the selected row by index</summary>
+                cswPrivate.gridPanel.getSelectionModel().select(rowindex);
             };
 
             cswPublic.resetSelection = function () {
@@ -502,6 +462,44 @@
                 //                var width = element.width() - 50;
                 //                cswPublic.setWidth(width);
             };
+
+
+            //constructor
+            (function () {
+                if (options) $.extend(cswPrivate, options);
+
+                if (Csw.isNullOrEmpty(cswPrivate.data)) {
+                    Csw.ajax.post({
+                        url: cswPrivate.ajax.url,
+                        urlMethod: cswPrivate.ajax.urlMethod,
+                        data: cswPrivate.ajax.data,
+                        success: function (result) {
+                            if (false === Csw.isNullOrEmpty(result.grid)) {
+                                cswPrivate.pageSize = Csw.number(result.grid.pageSize);
+                                if (Csw.bool(cswPrivate.usePaging)) {
+                                    cswPrivate.height = 25 + // title bar
+                                                        23 + // grid header
+                                                        (cswPrivate.pageSize * 26) + // rows
+                                                        14 + // horizontal scrollbar
+                                                        27;  // grid footer
+                                }
+                                if(false === Csw.isNullOrEmpty(result.grid.truncated))
+                                {
+                                    cswPrivate.truncated = result.grid.truncated;
+                                }
+                                cswPrivate.title = result.grid.title;
+                                cswPrivate.fields = result.grid.fields;
+                                cswPrivate.columns = result.grid.columns;
+                                cswPrivate.data = result.grid.data;
+                                cswPrivate.initGrid();
+
+                            } // if(false === Csw.isNullOrEmpty(data.griddata)) {
+                        } // success
+                    }); // ajax.post()
+                } else {
+                    cswPrivate.initGrid();
+                }
+            } ());
 
             return cswPublic;
         });

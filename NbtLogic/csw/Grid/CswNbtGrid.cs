@@ -39,6 +39,8 @@ namespace ChemSW.Nbt.Grid
                 Tree.goToNthChild( 0 );
             }
 
+            grid.Truncated = Tree.getCurrentNodeChildrenTruncated();
+
             CswNbtGridExtJsDataIndex nodeIdDataIndex = new CswNbtGridExtJsDataIndex( "nodeId" );
             CswNbtGridExtJsField nodeIdFld = new CswNbtGridExtJsField();
             nodeIdFld.dataIndex = nodeIdDataIndex;
@@ -174,9 +176,10 @@ namespace ChemSW.Nbt.Grid
                 _TreeNodeToGrid( View, Tree, grid, gridrow );
                 Tree.goToParentNode();
             }
-        } // _TreeNodeToGrid
+        } // _TreeNodeToGrid()
 
-        public JObject DataTableToJSON( DataTable DT, bool Editable = false )
+
+        public CswNbtGridExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false )
         {
             CswNbtGridExtJsGrid grid = new CswNbtGridExtJsGrid();
             grid.title = DT.TableName;
@@ -207,8 +210,14 @@ namespace ChemSW.Nbt.Grid
                 grid.rows.Add( gridrow );
             } // foreach( DataRow Row in DT.Rows )
 
+            return grid;
+        } // DataTableToGrid()
+
+        public JObject DataTableToJSON( DataTable DT, bool Editable = false )
+        {
+            CswNbtGridExtJsGrid grid = DataTableToGrid( DT, Editable );
             return grid.ToJson();
-        } // DataTableToJSON
+        } // DataTableToJSON()
 
 
     } // class CswNbtGridExtJs
