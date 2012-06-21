@@ -98,7 +98,10 @@ namespace ChemSW.Nbt
                                                          CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                          NodesRow["propname"].ToString(),
                                                          NodesRow["gestalt"].ToString(),
-                                                         CswConvert.ToString( NodesRow["fieldtype"] ) );
+                                                         CswConvert.ToString( NodesRow["fieldtype"] ),
+                                                         CswConvert.ToString( NodesRow["field1"] ),
+                                                         CswConvert.ToInt32( NodesRow["field1_fk"] ),
+                                                         CswConvert.ToInt32( NodesRow["field1_number"] ) );
 
                             } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         } // if( ThisNTPId != Int32.MinValue )
