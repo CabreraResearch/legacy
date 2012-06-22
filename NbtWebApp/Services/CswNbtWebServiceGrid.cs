@@ -517,33 +517,33 @@ namespace ChemSW.Nbt.WebServices
         //                       _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanEdit;
         //        bool CanDelete = ActionEnabled &&
         //                       _Permissions[ThisNodeType.FirstVersionNodeTypeId].CanDelete;
-                /*bool CanCopy = ActionEnabled &&
-        //        string ThisNodeKeyString = ThisNodeKey.ToString();
-        //        string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
-        //        JArray Actions = new JArray();
+        /*bool CanCopy = ActionEnabled &&
+//        string ThisNodeKeyString = ThisNodeKey.ToString();
+//        string ThisNodeId = ThisNodeKey.NodeId.PrimaryKey.ToString();
+//        JArray Actions = new JArray();
 
-        //        if( Tree.getNodeLockedForCurrentPosition() )
-        //        {
-        //            Actions.Add( "islocked" );
-        //            if( CanView )
-        //            {
-        //                Actions.Add( "canview" );
-        //            }
-        //        }
-        //        else
-        //        {
-        //            if( CanEdit )
-        //            {
-        //                Actions.Add( "canedit" );
-        //            }
-        //            else if( CanView )
-        //            {
-        //                Actions.Add( "canview" );
-        //            }
-        //            /*if( CanCopy )
-        //            {
-        //                Actions.Add( "cancopy" );
-        //            }*/
+//        if( Tree.getNodeLockedForCurrentPosition() )
+//        {
+//            Actions.Add( "islocked" );
+//            if( CanView )
+//            {
+//                Actions.Add( "canview" );
+//            }
+//        }
+//        else
+//        {
+//            if( CanEdit )
+//            {
+//                Actions.Add( "canedit" );
+//            }
+//            else if( CanView )
+//            {
+//                Actions.Add( "canview" );
+//            }
+//            /*if( CanCopy )
+//            {
+//                Actions.Add( "cancopy" );
+//            }*/
         //        }
 
         //        ThisNodeObj["jqgridid"] = ThisNodeId;

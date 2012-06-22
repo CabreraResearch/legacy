@@ -55,6 +55,11 @@ namespace ChemSW.Nbt.ObjClasses
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
+
+            //Grab the name of the person submitting feedback and the current time
+            this.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+            this.DateSubmitted.DateTimeValue = System.DateTime.Now;
+
             //if we have an action this is all we want/need/care about
             if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) && false == String.IsNullOrEmpty( _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"] ) )
             {
@@ -102,9 +107,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
-            //Grab the name of the person submitting feedback and the current time
-            this.Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-            this.DateSubmitted.DateTimeValue = System.DateTime.Now;
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
