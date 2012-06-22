@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.MetaData
                                                                     { NbtFieldType.UserSelect, NbtFieldType.UserSelect },                   //public const string UserSelect = "UserSelect";
                                                                     { NbtFieldType.ViewPickList, NbtFieldType.ViewPickList },               //public const string ViewPickList = "ViewPickList";
                                                                     { NbtFieldType.ViewReference,NbtFieldType.ViewReference}                //public const string ViewReference = "ViewReference";
-                                                                    
+                                                                   
                                                                };
 
 

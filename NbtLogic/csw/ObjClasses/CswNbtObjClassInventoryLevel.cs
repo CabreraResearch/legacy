@@ -96,6 +96,18 @@ namespace ChemSW.Nbt.ObjClasses
                 if( LevelMgr.doSendEmail() )
                 {
                     LastNotified.DateTimeValue = LevelMgr.sendPastThreshholdEmail();
+                    if( CurrentQuantity.Quantity > Level.Quantity )
+                    {
+                        Status.Value = Statuses.Above;
+                    }
+                    else
+                    {
+                        Status.Value = Statuses.Below;
+                    }
+                }
+                else
+                {
+                    Status.Value = Statuses.Ok;
                 }
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
