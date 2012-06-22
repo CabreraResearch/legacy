@@ -35,7 +35,6 @@ namespace ChemSW.Nbt.MetaData
             LocationClass,
             MailReportClass,
             MaterialClass,
-            MaterialSubclassClass,
             MaterialSynonymClass,
             InspectionTargetClass,
             InspectionTargetGroupClass,

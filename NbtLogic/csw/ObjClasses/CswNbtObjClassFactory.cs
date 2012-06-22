@@ -106,10 +106,6 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMaterialComponent( CswNbtResources, Node );
                     break;
 
-                case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSubclassClass:
-                    ReturnVal = new CswNbtObjClassMaterialSubclass( CswNbtResources, Node );
-                    break;
-
                 case CswNbtMetaDataObjectClass.NbtObjectClass.MaterialSynonymClass:
                     ReturnVal = new CswNbtObjClassMaterialSynonym( CswNbtResources, Node );
                     break;
