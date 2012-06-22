@@ -14,7 +14,7 @@ using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -111,10 +111,10 @@ namespace ChemSW.Nbt.WebServices
             CswTableSelect ScheduledRulesSelect = _OtherResources.makeCswTableSelect( "Scheduledrules_select_on_" + _OtherResources.AccessId, "scheduledrules" );
             DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
-            CswNbtSdGrid NbtActGrid = new CswNbtSdGrid( _OtherResources );
+            CswNbtGrid NbtActGrid = new CswNbtGrid( _OtherResources );
             string TablePkColumn = "scheduledruleid";
-            NbtActGrid.PkColumn = TablePkColumn;
-            NbtActGrid.HidePkColumn = true;
+            //NbtActGrid.PkColumn = TablePkColumn;
+            //NbtActGrid.HidePkColumn = true;
 
             CswCommaDelimitedString ExcludedColumns = new CswCommaDelimitedString()
                                                           {
@@ -135,14 +135,14 @@ namespace ChemSW.Nbt.WebServices
                 ScheduledRulesTable.Columns.Remove( ColumnName );
             }
 
-            NbtActGrid.EditableColumns = new CswCommaDelimitedString();
-            foreach( DataColumn Column in ScheduledRulesTable.Columns )
-            {
-                if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
-                {
-                    NbtActGrid.EditableColumns.Add( Column.ColumnName );
-                }
-            }
+            //NbtActGrid.EditableColumns = new CswCommaDelimitedString();
+            //foreach( DataColumn Column in ScheduledRulesTable.Columns )
+            //{
+            //    if( false == ReadOnlyColumns.Contains( Column.ColumnName ) )
+            //    {
+            //        NbtActGrid.EditableColumns.Add( Column.ColumnName );
+            //    }
+            //}
 
             RetObj = NbtActGrid.DataTableToJSON( ScheduledRulesTable, true );
 

@@ -385,7 +385,7 @@
                         urlMethod: cswPrivate.PropsUrlMethod,
                         data: jsonData,
                         success: function (data) {
-                            if (Csw.isNullOrEmpty(data)) {
+                            if (Csw.isNullOrEmpty(data) && cswPrivate.EditMode === Csw.enums.editMode.Edit) {
                                 Csw.error.throwException({
                                     type: 'warning',
                                     message: 'No properties have been configured for this layout: ' + cswPrivate.EditMode,

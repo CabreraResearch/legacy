@@ -4,6 +4,7 @@ using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -55,8 +56,9 @@ namespace ChemSW.Nbt.WebServices
                 CswArbitrarySelect HistorySelect = _CswNbtResources.makeCswArbitrarySelect( "CswNbtWebServiceAuditing_getAuditHistory_select", SQL );
                 DataTable HistoryTable = HistorySelect.getTable();
 
-                CswNbtSdGrid g = new CswNbtSdGrid( _CswNbtResources );
-                ret["jqGridOpt"] = g.DataTableToJSON( HistoryTable );
+                CswNbtGrid g = new CswNbtGrid( _CswNbtResources );
+                //ret["jqGridOpt"] = g.DataTableToJSON( HistoryTable );
+                ret = g.DataTableToJSON( HistoryTable );
             }
             return ret;
 

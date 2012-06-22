@@ -121,10 +121,11 @@ namespace ChemSW.Nbt.PropTypes
             if( StartDate > DateTime.MinValue )
             {
                 TimeSpan Diff;
-                if( EndDate > DateTime.MinValue )
-                    Diff = EndDate.Subtract( StartDate );
-                else
-                    Diff = DateTime.Now.Subtract( StartDate );
+                if( DateTime.MinValue == EndDate )
+                {
+                    EndDate = DateTime.Now;
+                }                
+                Diff = EndDate.Subtract( StartDate );
 
                 days = Diff.TotalDays;
                 hours = Diff.TotalHours;

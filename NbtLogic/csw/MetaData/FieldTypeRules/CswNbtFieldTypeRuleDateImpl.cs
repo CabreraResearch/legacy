@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
             else
             {
-                FilterValue = CswConvert.ToDateTime( CswNbtViewPropertyFilterIn.Value ).Date;
+                FilterValue = CswConvert.ToDateTime( CswNbtViewPropertyFilterIn.Value );
             }
 
             if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )

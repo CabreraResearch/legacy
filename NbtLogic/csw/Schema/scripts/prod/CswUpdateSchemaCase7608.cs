@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -33,6 +30,13 @@ namespace ChemSW.Nbt.Schema
                 CswNbtObjClassUnitOfMeasure.FractionalPropertyName,
                 CswNbtMetaDataFieldType.NbtFieldType.Logical );
 
+            _CswNbtSchemaModTrnsctn.createObjectClassProp(
+                CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass,
+                CswNbtObjClassUnitOfMeasure.UnitTypePropertyName,
+                CswNbtMetaDataFieldType.NbtFieldType.List,
+                ServerManaged: true,
+                ListOptions: String.Join( ",", CswNbtObjClassUnitOfMeasure.UnitTypes._All )
+                );
             #endregion
 
             #region Delete Unit Of Measure ViewSelect View
@@ -67,6 +71,8 @@ namespace ChemSW.Nbt.Schema
             WeightUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp WeightBaseUnitProp = WeightUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             WeightBaseUnitProp.DefaultValue.AsText.Text = "kg";
+            CswNbtMetaDataNodeTypeProp WeightUnitTypeProp = WeightUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+            WeightUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Weight.ToString();
 
             createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "kg", 1.0, 0, Tristate.True );
             createUnitOfMeasureNode( WeightUnitNodeType.NodeTypeId, "g", 1.0, 3, Tristate.True );
@@ -78,6 +84,8 @@ namespace ChemSW.Nbt.Schema
             VolumeUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp VolumeBaseUnitProp = VolumeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             VolumeBaseUnitProp.DefaultValue.AsText.Text = "Liters";
+            CswNbtMetaDataNodeTypeProp VolumeUnitTypeProp = VolumeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+            VolumeUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Volume.ToString();
 
             createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "Liters", 1.0, 0, Tristate.True );
             createUnitOfMeasureNode( VolumeUnitNodeType.NodeTypeId, "mL", 1.0, 3, Tristate.True );
@@ -89,6 +97,8 @@ namespace ChemSW.Nbt.Schema
             EachUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp EachBaseUnitProp = EachUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             EachBaseUnitProp.DefaultValue.AsText.Text = "Each";
+            CswNbtMetaDataNodeTypeProp EachUnitTypeProp = EachUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+            EachUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString();
 
             createUnitOfMeasureNode( EachUnitNodeType.NodeTypeId, "Each", 1.0, 0, Tristate.False );
             createUnitOfMeasureNode( EachUnitNodeType.NodeTypeId, "Boxes", Int32.MinValue, Int32.MinValue, Tristate.False );
@@ -99,6 +109,8 @@ namespace ChemSW.Nbt.Schema
             TimeUnitNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassUnitOfMeasure.NamePropertyName ) );
             CswNbtMetaDataNodeTypeProp TimeBaseUnitProp = TimeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.BaseUnitPropertyName );
             TimeBaseUnitProp.DefaultValue.AsText.Text = "Days";
+            CswNbtMetaDataNodeTypeProp TimeUnitTypeProp = TimeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+            TimeUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Time.ToString();
 
             createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Days", 1.0, 0, Tristate.True );
             createUnitOfMeasureNode( TimeUnitNodeType.NodeTypeId, "Weeks", 1.42857143, -1, Tristate.True );

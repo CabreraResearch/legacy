@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.csw.Conversion
         {
             Double ConvertedValue = ValueToConvert;
 
-            if( _OldConversionFactor != Double.NaN && _NewConversionFactor != Double.NaN )
+            if( CswTools.IsDouble( _OldConversionFactor ) && CswTools.IsDouble( _NewConversionFactor ) )
             {
                 CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( _OldUnitType, _NewUnitType );
 
@@ -89,9 +89,9 @@ namespace ChemSW.Nbt.csw.Conversion
                 {
                     ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor );
                 }
-                else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported && _MaterialSpecificGravity != Double.NaN )
+                else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported && CswTools.IsDouble( _MaterialSpecificGravity ) )
                 {
-                    if( _MaterialSpecificGravity != 0 )
+                    if( CswTools.IsDouble( _MaterialSpecificGravity ) && _MaterialSpecificGravity != 0 )
                     {
                         //UnitType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.csw.Conversion
         public static double applyUnitConversion( Double ValueToConvert, Double OldConversionFactor, Double NewConversionFactor, Double SpecificGravity = 1 )
         {
             Double ConvertedValue;
-            if( ( OldConversionFactor != 0 && OldConversionFactor != Double.NaN ) && ( NewConversionFactor != 0 && NewConversionFactor != Double.NaN ) )
+            if( CswTools.IsDouble( OldConversionFactor ) && OldConversionFactor != 0 && CswTools.IsDouble( NewConversionFactor ) && NewConversionFactor != 0 )
             {
                 //Operator logic defined in W1005 - Math is hard.
                 ConvertedValue = ValueToConvert / OldConversionFactor * SpecificGravity * NewConversionFactor;
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.csw.Conversion
             {
                 throw new CswDniException( ErrorType.Error, "Conversion Factor must be defined as a positive number.", "Conversion Factor must be defined as a positive number." );
             }
-            if( ConvertedValue == Double.NaN || ConvertedValue < 0 )
+            if( false == CswTools.IsDouble( ConvertedValue ) || ConvertedValue < 0 )
             {
                 throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data provided.", "Conversion failed: One or more parameters are negative or undefined." );
             }
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.csw.Conversion
                 public static explicit operator UnitTypeRelationship( string str )
                 {
                     UnitTypeRelationship ret = Parse( str );
-                    return ( ret != null ) ? ret : UnitTypeRelationship.Unknown;
+                    return ret ?? UnitTypeRelationship.Unknown;
                 }
 
                 public static readonly UnitTypeRelationship Unknown = new UnitTypeRelationship( "Unknown" );

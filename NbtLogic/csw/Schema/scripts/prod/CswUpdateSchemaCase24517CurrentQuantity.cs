@@ -35,8 +35,18 @@ namespace ChemSW.Nbt.Schema
                 }
                 CswNbtMetaDataNodeTypeProp QuantityLogNtp = LocationLevelNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.CurrentQuantityLog );
                 QuantityLogNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, LogTab.TabId );
+                QuantityLogNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                CswNbtMetaDataNodeTypeProp QuantityNtp = LocationLevelNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.CurrentQuantity );
+                QuantityNtp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
             }
 
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            foreach( CswNbtMetaDataNodeType SizeNt in SizeOc.getLatestVersionNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp Capacity = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+                SizeNt.setNameTemplateText( "" );
+                SizeNt.addNameTemplateText( Capacity.PropName );
+            }
 
         }//Update()
 

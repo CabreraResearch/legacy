@@ -14,7 +14,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
-
+using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -235,8 +235,8 @@ namespace ChemSW.Nbt.WebServices
         public JObject getViewGrid( bool All )
         {
             JObject ReturnVal = new JObject();
-            CswNbtSdGrid gd = new CswNbtSdGrid( _CswNbtResources );
-            gd.PkColumn = "nodeviewid";
+            CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
+            //gd.PkColumn = "nodeviewid";
 
             JArray JColumnNames = new JArray();
             JArray JColumnDefs = new JArray();
@@ -251,20 +251,21 @@ namespace ChemSW.Nbt.WebServices
                 if( All )
                 {
                     ViewsTable = _CswNbtResources.ViewSelect.getAllEnabledViews();
-                    ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
-                    foreach( DataRow Row in ViewsTable.Rows )
-                    {
-                        Row["viewid"] = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) ).ToString();
-                    }
                 }
                 else
                 {
-                    Views = _CswNbtResources.ViewSelect.getVisibleViews( true );
+                    Views = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, 
+                                                                         true, false, false, NbtViewRenderingMode.Any, 
+                                                                         out ViewsTable, null );
                 }
             }
             else
             {
                 ViewsTable = _CswNbtResources.ViewSelect.getUserViews();
+            }
+
+            if( ViewsTable != null )
+            {
                 ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
                 foreach( DataRow Row in ViewsTable.Rows )
                 {
@@ -272,47 +273,49 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
 
-            if( null == ViewsTable )
-            {
-                gd.makeJqColumn( null, "NODEVIEWID", JColumnNames, JColumnDefs, false, true );
-                gd.makeJqColumn( null, "VIEWID", JColumnNames, JColumnDefs, true, true );
-                gd.makeJqColumn( null, "VIEWNAME", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( null, "VIEWMODE", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( null, "VISIBILITY", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( null, "CATEGORY", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( null, "ROLENAME", JColumnNames, JColumnDefs, false, false );
-                gd.makeJqColumn( null, "USERNAME", JColumnNames, JColumnDefs, false, false );
-                foreach( CswNbtView View in Views.Values )
-                {
-                    if( View.IsFullyEnabled() )
-                    {
-                        string RoleName = string.Empty;
-                        CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
-                        if( null != Role )
-                        {
-                            RoleName = Role.NodeName;
-                        }
-                        string UserName = string.Empty;
-                        CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
-                        if( null != User )
-                        {
-                            UserName = User.NodeName;
-                        }
-                        JObject RowObj = new JObject();
-                        JRows.Add( RowObj );
-                        gd.makeJqCell( RowObj, "NODEVIEWID", View.ViewId.get().ToString() );
-                        gd.makeJqCell( RowObj, "VIEWID", View.ViewId.ToString() );
-                        gd.makeJqCell( RowObj, "VIEWNAME", View.ViewName );
-                        gd.makeJqCell( RowObj, "VIEWMODE", View.ViewMode.ToString() );
-                        gd.makeJqCell( RowObj, "VISIBILITY", View.Visibility.ToString() );
-                        gd.makeJqCell( RowObj, "CATEGORY", View.Category );
-                        gd.makeJqCell( RowObj, "ROLENAME", RoleName );
-                        gd.makeJqCell( RowObj, "USERNAME", UserName );
-                    }
-                }
-                ReturnVal = gd.makeJqGridJSON( JColumnNames, JColumnDefs, JRows );
-            }
-            else
+            //if( null == ViewsTable )
+            //{
+            //    gd.makeJqColumn( null, "NODEVIEWID", JColumnNames, JColumnDefs, false, true );
+            //    gd.makeJqColumn( null, "VIEWID", JColumnNames, JColumnDefs, true, true );
+            //    gd.makeJqColumn( null, "VIEWNAME", JColumnNames, JColumnDefs, false, false );
+            //    gd.makeJqColumn( null, "VIEWMODE", JColumnNames, JColumnDefs, false, false );
+            //    gd.makeJqColumn( null, "VISIBILITY", JColumnNames, JColumnDefs, false, false );
+            //    gd.makeJqColumn( null, "CATEGORY", JColumnNames, JColumnDefs, false, false );
+            //    gd.makeJqColumn( null, "ROLENAME", JColumnNames, JColumnDefs, false, false );
+            //    gd.makeJqColumn( null, "USERNAME", JColumnNames, JColumnDefs, false, false );
+            //    foreach( CswNbtView View in Views.Values )
+            //    {
+            //        if( View.IsFullyEnabled() )
+            //        {
+            //            string RoleName = string.Empty;
+            //            CswNbtNode Role = _CswNbtResources.Nodes.GetNode( View.VisibilityRoleId );
+            //            if( null != Role )
+            //            {
+            //                RoleName = Role.NodeName;
+            //            }
+            //            string UserName = string.Empty;
+            //            CswNbtNode User = _CswNbtResources.Nodes.GetNode( View.VisibilityUserId );
+            //            if( null != User )
+            //            {
+            //                UserName = User.NodeName;
+            //            }
+            //            JObject RowObj = new JObject();
+            //            JRows.Add( RowObj );
+            //            gd.makeJqCell( RowObj, "NODEVIEWID", View.ViewId.get().ToString() );
+            //            gd.makeJqCell( RowObj, "VIEWID", View.ViewId.ToString() );
+            //            gd.makeJqCell( RowObj, "VIEWNAME", View.ViewName );
+            //            gd.makeJqCell( RowObj, "VIEWMODE", View.ViewMode.ToString() );
+            //            gd.makeJqCell( RowObj, "VISIBILITY", View.Visibility.ToString() );
+            //            gd.makeJqCell( RowObj, "CATEGORY", View.Category );
+            //            gd.makeJqCell( RowObj, "ROLENAME", RoleName );
+            //            gd.makeJqCell( RowObj, "USERNAME", UserName );
+            //        }
+            //    }
+            //    ReturnVal = gd.makeJqGridJSON( JColumnNames, JColumnDefs, JRows );
+            //}
+            //else
+            //{
+            if(ViewsTable != null)
             {
                 if( ViewsTable.Columns.Contains( "viewxml" ) )
                     ViewsTable.Columns.Remove( "viewxml" );
@@ -333,8 +336,12 @@ namespace ChemSW.Nbt.WebServices
                         ViewsTable.Columns.Remove( "rolename" );
                 }
 
-                ReturnVal = gd.DataTableToJSON( ViewsTable );
-            }
+                ChemSW.Nbt.Grid.ExtJs.CswNbtGridExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
+                grid.getColumn( "nodeviewid" ).hidden = true;
+                grid.getColumn( "viewid" ).hidden = true;
+
+                ReturnVal = grid.ToJson();
+            } // if(ViewsTable != null)
 
             return ReturnVal;
         } // getViewGrid()

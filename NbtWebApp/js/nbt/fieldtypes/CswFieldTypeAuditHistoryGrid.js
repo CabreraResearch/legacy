@@ -16,6 +16,7 @@
                     nodeid: o.nodeid,
                     cswnbtnodekey: o.cswnbtnodekey,
                     EditMode: o.EditMode,
+                    width: '100%',
                     onEditRow: function (date) {
                         $.CswDialog('EditNodeDialog', {
                             nodeids: [o.nodeid],
