@@ -509,7 +509,10 @@ namespace ChemSW.Nbt.Security
                 // filter to container id
                 ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
                 // filter to role and workunit
-                InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                if( false == User is CswNbtSystemUser )
+                {
+                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                }
                 if( null != User.WorkUnitId )
                 {
                     InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
