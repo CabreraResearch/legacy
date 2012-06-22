@@ -21,43 +21,55 @@ namespace ChemSW.Nbt.Schema
                 ListOptions: UnitTypeList );
 
             CswNbtMetaDataNodeType WeightUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Weight Unit" );
-            CswNbtMetaDataNodeTypeProp WeightUnitTypeProp = WeightUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
-            WeightUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Weight.ToString();
-
-            foreach( CswNbtNode WeightNode in WeightUnitNodeType.getNodes( false, false ) )
+            if( WeightUnitNodeType != null )
             {
-                WeightNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Weight.ToString();
-                WeightNode.postChanges( true );
+                CswNbtMetaDataNodeTypeProp WeightUnitTypeProp = WeightUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+                WeightUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Weight.ToString();
+
+                foreach( CswNbtNode WeightNode in WeightUnitNodeType.getNodes( false, false ) )
+                {
+                    WeightNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Weight.ToString();
+                    WeightNode.postChanges( true );
+                }
             }
 
             CswNbtMetaDataNodeType VolumeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Volume Unit" );
-            CswNbtMetaDataNodeTypeProp VolumeUnitTypeProp = VolumeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
-            VolumeUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Volume.ToString();
-
-            foreach( CswNbtNode VolumeNode in VolumeUnitNodeType.getNodes( false, false ) )
+            if( VolumeUnitNodeType != null )
             {
-                VolumeNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Volume.ToString();
-                VolumeNode.postChanges( true );
+                CswNbtMetaDataNodeTypeProp VolumeUnitTypeProp = VolumeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+                VolumeUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Volume.ToString();
+
+                foreach( CswNbtNode VolumeNode in VolumeUnitNodeType.getNodes( false, false ) )
+                {
+                    VolumeNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Volume.ToString();
+                    VolumeNode.postChanges( true );
+                }
             }
 
             CswNbtMetaDataNodeType TimeUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Time Unit" );
-            CswNbtMetaDataNodeTypeProp TimeUnitTypeProp = TimeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
-            TimeUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Time.ToString();
-
-            foreach( CswNbtNode TimeNode in TimeUnitNodeType.getNodes( false, false ) )
+            if( TimeUnitNodeType != null )
             {
-                TimeNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Time.ToString();
-                TimeNode.postChanges( true );
+                CswNbtMetaDataNodeTypeProp TimeUnitTypeProp = TimeUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+                TimeUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Time.ToString();
+
+                foreach( CswNbtNode TimeNode in TimeUnitNodeType.getNodes( false, false ) )
+                {
+                    TimeNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Time.ToString();
+                    TimeNode.postChanges( true );
+                }
             }
 
             CswNbtMetaDataNodeType EachUnitNodeType = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Each Unit" );
-            CswNbtMetaDataNodeTypeProp EachUnitTypeProp = EachUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
-            EachUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString();
-
-            foreach( CswNbtNode EachNode in EachUnitNodeType.getNodes( false, false ) )
+            if( EachUnitNodeType != null )
             {
-                EachNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString();
-                EachNode.postChanges( true );
+                CswNbtMetaDataNodeTypeProp EachUnitTypeProp = EachUnitNodeType.getNodeTypeProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+                EachUnitTypeProp.DefaultValue.AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString();
+
+                foreach( CswNbtNode EachNode in EachUnitNodeType.getNodes( false, false ) )
+                {
+                    EachNode.Properties[CswNbtObjClassUnitOfMeasure.UnitTypePropertyName].AsList.Value = CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString();
+                    EachNode.postChanges( true );
+                }
             }
 
         }//Update()

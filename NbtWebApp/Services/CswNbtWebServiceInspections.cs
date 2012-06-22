@@ -111,7 +111,10 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
             //gd.PkColumn = "rownum";
-            return gd.DataTableToJSON( InspectionData );
+            ChemSW.Nbt.Grid.ExtJs.CswNbtGridExtJsGrid grid = gd.DataTableToGrid( InspectionData );
+            grid.getColumn( "nodeid" ).hidden = true;
+            grid.getColumn( "nodepk" ).hidden = true;
+            return grid.ToJson();
 
         } // getInspectionStatusGrid
 

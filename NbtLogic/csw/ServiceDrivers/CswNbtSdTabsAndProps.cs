@@ -467,11 +467,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                 PropObj["name"] = "Audit History";
                 PropObj["helptext"] = string.Empty;
                 PropObj["fieldtype"] = "AuditHistoryGrid";
-                PropObj["displayrow"] = "1";
-                PropObj["displaycol"] = "1";
-                PropObj["required"] = "false";
-                PropObj["readonly"] = "true";
+                PropObj["displayrow"] = 1;
+                PropObj["displaycol"] = 1;
+                PropObj["required"] = false;
+                PropObj["readonly"] = true;
                 PropObj["id"] = FakePropIdAttr;
+                PropObj["showpropertyname"] = false;
             }
             //CswNbtWebServiceAuditing wsAuditing = new CswNbtWebServiceAuditing(_CswNbtResources);
             //PropXmlNode.InnerText = wsAuditing.getAuditHistoryGrid( Node ).ToString();

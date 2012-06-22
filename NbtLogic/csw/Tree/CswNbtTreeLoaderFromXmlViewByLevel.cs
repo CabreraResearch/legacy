@@ -115,7 +115,7 @@ namespace ChemSW.Nbt
                     {
                         PriorNodeId = ThisNodeId;
                         PriorParentNodeId = ThisParentNodeId;
-                        NewNodeKeys = new Collection<CswNbtNodeKey>(); 
+                        NewNodeKeys = new Collection<CswNbtNodeKey>();
                         Collection<CswNbtNodeKey> ThisNewNodeKeys = new Collection<CswNbtNodeKey>();
                         ParentNodeKeys = new Collection<CswNbtNodeKey>();
 
@@ -180,7 +180,10 @@ namespace ChemSW.Nbt
                                                      CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                      NodesRow["propname"].ToString(),
                                                      NodesRow["gestalt"].ToString(),
-                                                     CswConvert.ToString( NodesRow["fieldtype"] ) );
+                                                     CswConvert.ToString( NodesRow["fieldtype"] ),
+                                                     CswConvert.ToString( NodesRow["field1"] ),
+                                                     CswConvert.ToInt32( NodesRow["field1_fk"] ),
+                                                     CswConvert.ToInt32( NodesRow["field1_numeric"] ) );
 
                         } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         if( ParentNodeKeys.Count > 0 )
@@ -256,24 +259,24 @@ namespace ChemSW.Nbt
             string OrderBy = string.Empty;
 
             // Filter out disabled nodetypes/object classes
-//            Where += @"where ((exists (select j.jctmoduleobjectclassid
-//                              from jct_modules_objectclass j
-//                              join modules m on j.moduleid = m.moduleid
-//                             where j.objectclassid = t.objectclassid
-//                               and m.enabled = '1')
-//                or not exists (select j.jctmoduleobjectclassid
-//                                 from jct_modules_objectclass j
-//                                 join modules m on j.moduleid = m.moduleid
-//                                where j.objectclassid = t.objectclassid) )
-//               and (exists (select j.jctmodulenodetypeid
-//                              from jct_modules_nodetypes j
-//                              join modules m on j.moduleid = m.moduleid
-//                             where j.nodetypeid = t.firstversionid
-//                               and m.enabled = '1')
-//                or not exists (select j.jctmodulenodetypeid
-//                                 from jct_modules_nodetypes j
-//                                 join modules m on j.moduleid = m.moduleid
-//                                where j.nodetypeid = t.firstversionid) )) ";
+            //            Where += @"where ((exists (select j.jctmoduleobjectclassid
+            //                              from jct_modules_objectclass j
+            //                              join modules m on j.moduleid = m.moduleid
+            //                             where j.objectclassid = t.objectclassid
+            //                               and m.enabled = '1')
+            //                or not exists (select j.jctmoduleobjectclassid
+            //                                 from jct_modules_objectclass j
+            //                                 join modules m on j.moduleid = m.moduleid
+            //                                where j.objectclassid = t.objectclassid) )
+            //               and (exists (select j.jctmodulenodetypeid
+            //                              from jct_modules_nodetypes j
+            //                              join modules m on j.moduleid = m.moduleid
+            //                             where j.nodetypeid = t.firstversionid
+            //                               and m.enabled = '1')
+            //                or not exists (select j.jctmodulenodetypeid
+            //                                 from jct_modules_nodetypes j
+            //                                 join modules m on j.moduleid = m.moduleid
+            //                                where j.nodetypeid = t.firstversionid) )) ";
             // case 26029
             Where += "where t.enabled = '1' ";
 
@@ -365,7 +368,7 @@ namespace ChemSW.Nbt
                         if( null != Prop.MetaDataProp )
                         {
                             CswNbtSubField.PropColumn SubFieldColumn = Prop.MetaDataProp.getFieldTypeRule().SubFields.Default.Column;
-                            if ( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                            if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
                                  SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
                                  SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
                                  SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
@@ -378,12 +381,12 @@ namespace ChemSW.Nbt
                             }
 
                             // Case 10533
-                            if ( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
+                            if( SubFieldColumn == CswNbtSubField.PropColumn.Gestalt ||
                                  SubFieldColumn == CswNbtSubField.PropColumn.ClobData )
                             {
                                 OrderByString = "lower(to_char(j" + sortAlias + "." + SubFieldColumn.ToString() + "))";
                             }
-                            else if ( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
+                            else if( SubFieldColumn == CswNbtSubField.PropColumn.Field1_Numeric ||
                                       SubFieldColumn == CswNbtSubField.PropColumn.Field1_Date ||
                                       SubFieldColumn == CswNbtSubField.PropColumn.Field2_Numeric ||
                                       SubFieldColumn == CswNbtSubField.PropColumn.Field2_Date )
@@ -412,9 +415,9 @@ namespace ChemSW.Nbt
                             }
 
                             Int32 OrderByOrder = Prop.Order;
-                            if ( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
+                            if( OrderByOrder != 0 && ( OrderByProps.Count <= OrderByOrder || OrderByOrder < 0 ) )
                             {
-                                if ( OrderByProps.Count == 0 )
+                                if( OrderByProps.Count == 0 )
                                 {
                                     OrderByOrder = 0;
                                 }
@@ -490,7 +493,7 @@ namespace ChemSW.Nbt
                         From += @"   ) props on (props.nodetypeid = t.nodetypeid)";  // intentional multiplexing
 
                         // Property Values
-                        Select += @" ,propval.jctnodepropid, propval.gestalt ";
+                        Select += @" ,propval.jctnodepropid, propval.gestalt, propval.field1, propval.field1_fk, propval.field1_numeric ";
                         From += @"  left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid) ";  // better performance from indexes if we do this first
                         From += @"  left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
 

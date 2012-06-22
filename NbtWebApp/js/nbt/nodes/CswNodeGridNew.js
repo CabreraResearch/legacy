@@ -84,8 +84,8 @@
                 onRefresh: null,
                 gridOpts: {
                     multiselect: false
-                },
-                resizeWithParent: true
+                }//,
+//                resizeWithParent: true
             };
 
             if (options) {

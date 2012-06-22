@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryLevel( CswNbtNode Node )
         {
             CswNbtObjClassInventoryLevel ret = null;
-            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass ) )
+            if( null != Node && _Validate( Node, CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ) )
             {
                 ret = (CswNbtObjClassInventoryLevel) Node.ObjClass;
             }
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
+
         } // beforeCreateNode()
 
 
@@ -83,12 +83,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, this );
+            if( Location.WasModified || Material.WasModified )
+            {
+                CurrentQuantity.UnitId = Level.UnitId;
+                CurrentQuantity.Quantity = LevelMgr.getCurrentInventoryLevel();
+                CurrentQuantityLog.AddComment( "Set initial Inventory Level Quantity: " + CurrentQuantity.Gestalt );
+            }
+
             if( CurrentQuantity.WasModified )
             {
-                CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr(_CswNbtResources, this);
                 if( LevelMgr.doSendEmail() )
                 {
-                    LevelMgr.sendPastThreshholdEmail();
+                    LastNotified.DateTimeValue = LevelMgr.sendPastThreshholdEmail();
                 }
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );

@@ -81,13 +81,6 @@ namespace ChemSW.Nbt.WebServices
 
         }
 
-        private bool _checkPermitAdd( CswNbtMetaDataObjectClass.NbtObjectClass ObjectClass )
-        {
-            return ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown &&
-                   ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestClass &&
-                   ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.RequestItemClass;
-        }
-
         public JObject getMenu( CswNbtView View, string SafeNodeKey, string PropIdAttr )
         {
 

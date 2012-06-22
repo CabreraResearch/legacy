@@ -49,8 +49,8 @@
 
                     var gridOpts = {
                         ID: o.ID + '_fieldtypegrid',
-                        resizeWithParent: false,
-                        resizeWithParentElement: $('#nodetabs_props'),
+//                        resizeWithParent: false,
+//                        resizeWithParentElement: $('#nodetabs_props'),
                         viewid: viewid,
                         nodeid: o.nodeid,
                         cswnbtnodekey: o.cswnbtnodekey,
@@ -160,16 +160,16 @@
                     cswGrid.print();
                 },
                 onMultiEdit: function () {
-                    var multi = (false === cswGrid.isMulti());
-                    var g = {
-                        canEdit: multi,
-                        canDelete: multi,
-                        gridOpts: {
-                            multiselect: multi
-                        }
-                    };
-                    cswGrid.changeGridOpts(g, ['Action', 'Delete']);
-                    cswGrid.setWidth(600);
+//                    var multi = (false === cswGrid.isMulti());
+//                    var g = {
+//                        canEdit: multi,
+//                        canDelete: multi,
+//                        gridOpts: {
+//                            multiselect: multi
+//                        }
+//                    };
+//                    cswGrid.changeGridOpts(g, ['Action', 'Delete']);
+//                    cswGrid.setWidth(600);
                 },
                 onEditView: function () {
                     if (Csw.isFunction(o.onEditView)) {
