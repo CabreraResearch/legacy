@@ -187,6 +187,14 @@ namespace ChemSW.Nbt.Schema
                 statusVP.Order = 6;
                 commentsVP.Order = 7;
 
+                caseNumberVP.Width = 15;
+                dateSubmittedVp.Width = 20;
+                categoryVP.Width = 20;
+                authorVP.Width = 20;
+                subjectVP.Width = 25;
+                statusVP.Width = 20;
+                commentsVP.Width = 100;
+
                 feedbackView.SetViewMode( NbtViewRenderingMode.Grid );
 
                 CswNbtViewPropertyFilter feedbackViewFilter = feedbackView.AddViewPropertyFilter( statusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: "Resolved", ShowAtRuntime: true );
@@ -218,6 +226,14 @@ namespace ChemSW.Nbt.Schema
             mySubjectVP.Order = 5;
             myStatusVP.Order = 6;
             myCommentsVP.Order = 7;
+
+            myCaseNumberVP.Width = 15;
+            myDateSubmittedVp.Width = 20;
+            myCategoryVP.Width = 20;
+            myAuthorVP.Width = 20;
+            mySubjectVP.Width = 25;
+            myStatusVP.Width = 20;
+            myCommentsVP.Width = 100;
 
             myFeedbackView.SetViewMode( NbtViewRenderingMode.Grid );
 

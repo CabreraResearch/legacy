@@ -162,12 +162,14 @@ namespace ChemSW.Nbt.PropTypes
                 JArray _CommentsJson = CommentsJson;
                 //comments:  [ { datetime: '12/31/2012', commenter: 'david', message: 'yuck' }, { ... } ]
 
+                var dateSubmitted = CswConvert.ToDbVal( DateTime.Now );
+
                 _CommentsJson.Add( new JObject(
-                    new JProperty( "datetime", CswConvert.ToDbVal( DateTime.Now ) ),
+                    new JProperty( "datetime", dateSubmitted ),
                     new JProperty( "commenter", commenter ),
                     new JProperty( "message", message ) ) );
                 CommentsJson = _CommentsJson;
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, message ); //the caches the last message and sets it to Gestalt
+                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message ); //the caches the last message and sets it to Gestalt
             }
 
         }
