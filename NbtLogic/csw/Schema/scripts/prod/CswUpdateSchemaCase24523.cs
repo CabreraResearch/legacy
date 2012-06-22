@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.Schema
 
                 feedbackView.SetViewMode( NbtViewRenderingMode.Grid );
 
-                CswNbtViewPropertyFilter feedbackViewFilter = feedbackView.AddViewPropertyFilter( statusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: "Resolved", ShowAtRuntime: true );
+                CswNbtViewPropertyFilter feedbackViewFilter = feedbackView.AddViewPropertyFilter( statusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals, Value: "Pending review", ShowAtRuntime: true );
                 feedbackView.save();
             }
 
