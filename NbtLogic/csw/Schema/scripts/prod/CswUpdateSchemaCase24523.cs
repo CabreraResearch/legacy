@@ -73,10 +73,10 @@ namespace ChemSW.Nbt.Schema
             {
                 PropName = CswNbtObjClassFeedback.StatusPropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                ListOptions = "Open,Closed"
+                ListOptions = "Pending review,Resolved,Awaiting author response"
             } );
-            statusOCP.DefaultValue.Field1 = "Open";
-            statusOCP.DefaultValue.Gestalt = "Open";
+            statusOCP.DefaultValue.Field1 = "Pending review"; //indicates the ball is in supports/admins court
+            statusOCP.DefaultValue.Gestalt = "Pending review";
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( feedbackOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
             {
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Schema
 
                 feedbackView.SetViewMode( NbtViewRenderingMode.Grid );
 
-                CswNbtViewPropertyFilter feedbackViewFilter = feedbackView.AddViewPropertyFilter( statusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: "Closed", ShowAtRuntime: true );
+                CswNbtViewPropertyFilter feedbackViewFilter = feedbackView.AddViewPropertyFilter( statusVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: "Resolved", ShowAtRuntime: true );
                 feedbackView.save();
             }
 
