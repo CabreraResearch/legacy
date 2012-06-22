@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.csw.Conversion
             {
                 throw new CswDniException( ErrorType.Error, "Conversion Factor must be defined as a positive number.", "Conversion Factor must be defined as a positive number." );
             }
-            if( false == CswTools.IsDouble( ConvertedValue ) || ConvertedValue < 0 )
+            if( false == CswTools.IsDouble( ConvertedValue ) )
             {
                 throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data provided.", "Conversion failed: One or more parameters are negative or undefined." );
             }
