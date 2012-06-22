@@ -2,8 +2,10 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 
@@ -116,6 +118,32 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             }
+
+            if( Location.WasModified )
+            {
+                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
+                string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
+                CswPrimaryKey PrevLocationPk = new CswPrimaryKey();
+                PrevLocationPk.FromString( PrevLocationId );
+                string Reason = "Container  [" + Barcode.Barcode + "] moved to new location: " + Location.CachedNodeName;
+                Mgr.addToCurrentQuantity( -( Quantity.Quantity ), Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk );
+                Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk );
+            }
+            if( Quantity.WasModified )
+            {
+                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                CswNbtNodePropWrapper QuantityWrapper = Node.Properties[QuantityPropertyName];
+                double PrevQuantity = CswConvert.ToDouble( QuantityWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( QuantityWrapper.getFieldType().FieldType ) ).QuantitySubField.Column ) );
+                double Diff = Quantity.Quantity - PrevQuantity;
+                string Reason = "Container [" + Barcode.Barcode + "] quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
+                if( Disposed.Checked == Tristate.True )
+                {
+                    Reason += " on disposal.";
+                }
+                Mgr.addToCurrentQuantity( Diff, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+            }
+            
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 

@@ -510,6 +510,7 @@
                                 columns: gridJson.grid.columns,
                                 data: gridJson.grid.data,     
                                 pageSize: gridJson.grid.pageSize,
+                                canSelectRow: true,
                                 onSelect: function(row){
                                     copyViewBtn.enable();
                                     deleteViewBtn.enable();
@@ -525,7 +526,7 @@
                                 },
                                 onLoad: function(grid) {
                                     if (false === Csw.isNullOrEmpty(gridJson.selectedpk)) {
-                                        rowid = grid.getRowIdForVal(gridJson.selectedpk, o.ColumnViewId);
+                                        rowid = grid.getRowIdForVal(o.ColumnViewId, gridJson.selectedpk);
                                         grid.setSelection(rowid);
                                         grid.scrollToRow(rowid);
                                     }
