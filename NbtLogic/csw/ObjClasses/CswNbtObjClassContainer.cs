@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
                             PrevLocationPk.FromString( PrevLocationId );
                             if( PrevLocationPk != Location.SelectedNodeId )
                             {
-                                Mgr.changeQuantityLocation( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
+                                Mgr.changeLocationOfQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
                             }
                         }
                         else

@@ -67,6 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ); }
         }
+        
 
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )

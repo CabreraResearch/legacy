@@ -256,10 +256,10 @@ namespace ChemSW.Nbt.ServiceDrivers
         }
 
         private const string _ParentLocationInventoryLevelViewName = "ParentLocationInventoryLevelView";
-        private CswNbtView _getParentLocationInventoryLevelView( CswPrimaryKey MaterialId, CswPrimaryKey LocationId )
+        private CswNbtView _getParentLocationInventoryLevelView( CswPrimaryKey LocationId, CswPrimaryKey MaterialId = null )
         {
             CswNbtView Ret = null;
-            if( null != MaterialId && null != LocationId )
+            if( null != LocationId )
             {
                 Ret = new CswNbtView( _CswNbtResources );
                 Ret.ViewName = _ParentLocationInventoryLevelViewName;
@@ -267,10 +267,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass );
                 CswNbtMetaDataObjectClassProp LocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
                 CswNbtViewRelationship InventoryLevelRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
-                CswNbtMetaDataObjectClassProp MaterialOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
 
-                Ret.AddViewPropertyAndFilter( InventoryLevelRel, MaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-
+                if( null != MaterialId )
+                {
+                    CswNbtMetaDataObjectClassProp MaterialOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
+                    Ret.AddViewPropertyAndFilter( InventoryLevelRel, MaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                }
             }
             return Ret;
         }
@@ -313,15 +315,57 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
-        public void changeQuantityLocation( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId, CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
+        private void _getInventoryLevelCollections( out Collection<CswNbtObjClassInventoryLevel> PrevLevels, out Collection<CswNbtObjClassInventoryLevel> CurrentLevels, CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId, CswPrimaryKey MaterialId = null )
         {
-            if( null != MaterialId && null != PrevLocationId && null != CurrentLocationId )
-            {
-                CswNbtView PrevInventoryVelView = _getParentLocationInventoryLevelView( MaterialId, PrevLocationId );
-                Collection<CswNbtObjClassInventoryLevel> PrevLevels = _InventoryLevels( PrevInventoryVelView );
+            CswNbtView PrevInventoryVelView = _getParentLocationInventoryLevelView( PrevLocationId, MaterialId );
+            PrevLevels = _InventoryLevels( PrevInventoryVelView );
 
-                CswNbtView CurrentInventoryVelView = _getParentLocationInventoryLevelView( MaterialId, CurrentLocationId );
-                Collection<CswNbtObjClassInventoryLevel> CurrentLevels = _InventoryLevels( CurrentInventoryVelView );
+            CswNbtView CurrentInventoryVelView = _getParentLocationInventoryLevelView( CurrentLocationId, MaterialId );
+            CurrentLevels = _InventoryLevels( CurrentInventoryVelView );
+        }
+
+        public void changeLocationOfLocation( CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
+        {
+            if( null != PrevLocationId &&
+                null != CurrentLocationId )
+            {
+                Collection<CswNbtObjClassInventoryLevel> PrevLevels;
+                Collection<CswNbtObjClassInventoryLevel> CurrentLevels;
+                _getInventoryLevelCollections( out PrevLevels, out CurrentLevels, PrevLocationId, CurrentLocationId );
+
+                Collection<CswNbtObjClassInventoryLevel> AppliesToLevels = new Collection<CswNbtObjClassInventoryLevel>();
+                foreach( CswNbtObjClassInventoryLevel Prev in PrevLevels )
+                {
+                    if( false == CurrentLevels.Contains( Prev ) )
+                    {
+                        AppliesToLevels.Add( Prev );
+                    }
+                }
+                foreach( CswNbtObjClassInventoryLevel Current in CurrentLevels )
+                {
+                    if( false == PrevLevels.Contains( Current ) && false == AppliesToLevels.Contains( Current ) )
+                    {
+                        AppliesToLevels.Add( Current );
+                    }
+                }
+                foreach( CswNbtObjClassInventoryLevel LevelToUpdate in AppliesToLevels )
+                {
+                    CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, LevelToUpdate );
+                    LevelToUpdate.CurrentQuantity.Quantity = Mgr.getCurrentInventoryLevel();
+                    LevelToUpdate.postChanges( true );
+                }
+            }
+        }
+
+        public void changeLocationOfQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId, CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
+        {
+            if( null != MaterialId &&
+                null != PrevLocationId &&
+                null != CurrentLocationId )
+            {
+                Collection<CswNbtObjClassInventoryLevel> PrevLevels;
+                Collection<CswNbtObjClassInventoryLevel> CurrentLevels;
+                _getInventoryLevelCollections( out PrevLevels, out CurrentLevels, PrevLocationId, CurrentLocationId, MaterialId );
 
                 Collection<CswNbtObjClassInventoryLevel> AppliesToPrevLevels = new Collection<CswNbtObjClassInventoryLevel>();
                 foreach( CswNbtObjClassInventoryLevel Prev in PrevLevels )
