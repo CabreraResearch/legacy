@@ -7,7 +7,6 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.Schema
 {
 
-    enum MailRptFormatOptions { Link, CSV };
     /// <summary>
     /// Schema Update for case 26609
     /// </summary>

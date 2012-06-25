@@ -10,6 +10,10 @@ using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
+
+
+enum MailRptFormatOptions { Link, CSV };
+
 namespace ChemSW.Nbt.Sched
 {
 
@@ -141,6 +145,10 @@ namespace ChemSW.Nbt.Sched
                                                         string EmailAddy = UserNodeAsUser.Email.Trim();
                                                         if( EmailAddy != string.Empty )
                                                         {
+                                                            DataTable ReportTable = null;
+                                                            CswNbtNode ReportNode = null;
+                                                            CswNbtObjClassReport ReportObjClass = null;
+
                                                             string ReportLink = string.Empty;
                                                             bool ContinueWithReport = false;
                                                             bool HasResults = false;
@@ -167,38 +175,39 @@ namespace ChemSW.Nbt.Sched
                                                             {
                                                                 if( null != _CswNbtResources.Nodes[CurrentMailReport.Report.NodeId] )
                                                                 {
-                                                                    CswNbtNode ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
-                                                                    CswNbtObjClassReport ReportObjClass = (CswNbtObjClassReport) ReportNode;
+                                                                    ReportNode = _CswNbtResources.Nodes[CurrentMailReport.Report.RelatedNodeId];
                                                                     //ViewId = ReportObjClass.View.ViewId;
 
                                                                     CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportObjClass.SQL.Text );
-                                                                    DataTable ReportTable = ReportSelect.getTable();
+                                                                    ReportTable = ReportSelect.getTable();
 
-                                                                    ReportLink = makeReportUrl( ReportObjClass );
                                                                     ContinueWithReport = true;
 
                                                                     Subject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
                                                                     HasResults = ( ReportTable.Rows.Count > 0 );
 
-                                                                    if( HasResults )
-                                                                    {
-                                                                        //ReportTable.cs
-                                                                    }
                                                                 }
                                                             }
 
                                                             if( ContinueWithReport )
                                                             {
-                                                                if( string.Empty != ReportLink )
-                                                                {
-                                                                    CswNbtMailReportStatus.Link = ReportLink;
-                                                                }
+
                                                                 if( CswNbtMailReportStatus.ReportReadyForQuery )
                                                                 {
+
+                                                                    MailRptFormatOptions MailRptFormat = (MailRptFormatOptions) Enum.Parse( typeof( MailRptFormatOptions ), CurrentMailReport.OutputFormat.Value.ToString() );
+                                                                    ReportObjClass = (CswNbtObjClassReport) ReportNode;
 
                                                                     string Message = string.Empty;
                                                                     if( HasResults )
                                                                     {
+
+                                                                        if( MailRptFormatOptions.Link == MailRptFormat )
+                                                                        {
+                                                                            ReportLink = makeReportUrl( ReportObjClass );
+                                                                            CswNbtMailReportStatus.Link = ReportLink;
+
+                                                                        }
                                                                         CswNbtMailReportStatus.ReportDataExist = true;
                                                                         Message = CurrentMailReport.Message.Text + "\r\n";
                                                                         Message += ReportLink;
@@ -232,7 +241,17 @@ namespace ChemSW.Nbt.Sched
                                                                         MailMessage.RecipientDisplayName = UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName;
                                                                         MailMessage.Subject = Subject;
                                                                         MailMessage.Content = Message;
-                                                                        MailMessage.Attachment = null;
+
+
+                                                                        if( MailRptFormatOptions.CSV == MailRptFormat )
+                                                                        {
+                                                                            string TableAsCSV = ( ( CswDataTable ) ReportTable ).ToCsv();
+
+                                                                            System.IO.MemoryStream MemoryStream = new System.IO.MemoryStream( new System.Text.UTF8Encoding().GetBytes( TableAsCSV ), false );
+                                                                            
+                                                                                //System.IO.StringWriter StringWriter = new System.IO.StringWriter()
+                                                                            MailMessage.Attachment = MemoryStream;
+                                                                        }
 
                                                                         string StatusMessage = string.Empty;
                                                                         if( CswMail.send( MailMessage ) )
