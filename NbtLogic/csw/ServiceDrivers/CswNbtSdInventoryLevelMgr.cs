@@ -86,12 +86,12 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         #region Inventory
 
-        public CswNbtView QuantityView( CswPrimaryKey StartLocationId )
+        public CswNbtView GetCurrentQuantityView( CswPrimaryKey StartLocationId )
         {
             CswNbtView Ret = null;
-            
+
             Ret = new CswNbtView( _CswNbtResources );
-            CswNbtViewRelationship LocationRel = _getLocationRelationship( Ret, StartLocationId );
+            CswNbtViewRelationship LocationRel = _getAllChildrenLocationRelationship( Ret, StartLocationId );
 
             CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp LocationOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
@@ -108,7 +108,68 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        private CswNbtViewRelationship _getLocationRelationship( CswNbtView LocationsView, CswPrimaryKey StartLocationId )
+        private CswNbtViewRelationship _getLocationRelationship( string LocationSql, CswNbtView LocationsView, CswPrimaryKey StartLocationId )
+        {
+            CswNbtViewRelationship LocationRel = null;
+            CswArbitrarySelect LocationSelect = _CswNbtResources.makeCswArbitrarySelect( "populateLocations_select", LocationSql );
+            DataTable LocationTable = null;
+            try
+            {
+                LocationTable = LocationSelect.getTable();
+                //For faster lookup
+                Dictionary<Int32, Int32> LocationDict = new Dictionary<int, int>();
+                //For assignment
+                Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
+                LocationDict.Add( StartLocationId.PrimaryKey, StartLocationId.PrimaryKey );
+                LocationPks.Add( StartLocationId );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
+                LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
+
+                if( LocationTable.Rows.Count > 0 )
+                {
+                    foreach( DataRow Row in LocationTable.Rows )
+                    {
+                        Int32 LocationNodeId = CswConvert.ToInt32( Row["nodeid"] );
+                        if( false == LocationDict.ContainsKey( LocationNodeId ) )
+                        {
+                            LocationDict.Add( LocationNodeId, LocationNodeId );
+                            CswPrimaryKey LocationPk = new CswPrimaryKey( "nodes", LocationNodeId );
+                            LocationPks.Add( LocationPk );
+                        }
+                    }
+                }
+                LocationRel.NodeIdsToFilterIn = LocationPks;
+            }
+            catch( Exception ex )
+            {
+                throw new CswDniException( ErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
+            }
+            return LocationRel;
+        }
+
+        private CswNbtViewRelationship _getAllParentsLocationRelationship( CswNbtView LocationsView, CswPrimaryKey StartLocationId )
+        {
+            CswNbtViewRelationship LocationRel = null;
+            if( null != StartLocationId )
+            {
+                string LocationSql = @"select distinct nodeid from (select n.nodeid, jnp.field1_fk
+                                      from nodes n 
+                                      join nodetypes nt on n.nodetypeid=nt.nodetypeid
+                                      join object_class oc on nt.objectclassid=oc.objectclassid
+                                      join jct_nodes_props jnp on n.nodeid=jnp.nodeid
+                                      join nodetype_props ntp on jnp.nodetypepropid=ntp.nodetypepropid
+                                      join field_types ft on ntp.fieldtypeid=ft.fieldtypeid
+                                      where oc.objectclass='LocationClass' 
+                                            and ft.fieldtype='Location'  
+                                            and n.nodeid != " + StartLocationId.PrimaryKey + " " +
+                                     " start with jnp.nodeid = " + StartLocationId.PrimaryKey + " " +
+                                     " connect by n.nodeid = prior jnp.field1_fk )";
+                LocationRel = _getLocationRelationship( LocationSql, LocationsView, StartLocationId );
+            }
+            return LocationRel;
+        }
+
+        private CswNbtViewRelationship _getAllChildrenLocationRelationship( CswNbtView LocationsView, CswPrimaryKey StartLocationId )
         {
             CswNbtViewRelationship LocationRel = null;
             if( null != StartLocationId )
@@ -124,39 +185,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                             and ft.fieldtype='Location'  
                                       start with n.nodeid = " + StartLocationId.PrimaryKey + " " +
                                      " connect by jnp.field1_fk = prior n.nodeid )";
-                CswArbitrarySelect LocationSelect = _CswNbtResources.makeCswArbitrarySelect( "populateLocations_select", LocationSql );
-                DataTable LocationTable = null;
-                try
-                {
-                    LocationTable = LocationSelect.getTable();
-                    //For faster lookup
-                    Dictionary<Int32, Int32> LocationDict = new Dictionary<int, int>();
-                    //For assignment
-                    Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
-                    LocationDict.Add( StartLocationId.PrimaryKey, StartLocationId.PrimaryKey );
-                    LocationPks.Add( StartLocationId );
-                    CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
-                    LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
-
-                    if( LocationTable.Rows.Count > 0 )
-                    {
-                        foreach( DataRow Row in LocationTable.Rows )
-                        {
-                            Int32 LocationNodeId = CswConvert.ToInt32( Row["nodeid"] );
-                            if( false == LocationDict.ContainsKey( LocationNodeId ) )
-                            {
-                                LocationDict.Add( LocationNodeId, LocationNodeId );
-                                CswPrimaryKey LocationPk = new CswPrimaryKey( "nodes", LocationNodeId );
-                                LocationPks.Add( LocationPk );
-                            }
-                        }
-                    }
-                    LocationRel.NodeIdsToFilterIn = LocationPks;
-                }
-                catch( Exception ex )
-                {
-                    throw new CswDniException( ErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
-                }
+                LocationRel = _getLocationRelationship( LocationSql, LocationsView, StartLocationId );
             }
             return LocationRel;
         }
@@ -164,7 +193,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         public double getCurrentInventoryLevel()
         {
             double Ret = 0;
-            CswNbtView ContainerView = QuantityView( _InventoryLevel.Location.SelectedNodeId );
+            CswNbtView ContainerView = GetCurrentQuantityView( _InventoryLevel.Location.SelectedNodeId );
             if( null != ContainerView )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false );
@@ -226,30 +255,149 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
+        private const string _ParentLocationInventoryLevelViewName = "ParentLocationInventoryLevelView";
+        private CswNbtView _getParentLocationInventoryLevelView( CswPrimaryKey LocationId, CswPrimaryKey MaterialId = null )
+        {
+            CswNbtView Ret = null;
+            if( null != LocationId )
+            {
+                Ret = new CswNbtView( _CswNbtResources );
+                Ret.ViewName = _ParentLocationInventoryLevelViewName;
+                CswNbtViewRelationship LocationRel = _getAllParentsLocationRelationship( Ret, LocationId );
+                CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass );
+                CswNbtMetaDataObjectClassProp LocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
+                CswNbtViewRelationship InventoryLevelRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
+
+                if( null != MaterialId )
+                {
+                    CswNbtMetaDataObjectClassProp MaterialOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
+                    Ret.AddViewPropertyAndFilter( InventoryLevelRel, MaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+                }
+            }
+            return Ret;
+        }
+
+        private Collection<CswNbtObjClassInventoryLevel> _InventoryLevels( CswNbtView InventoryLevelView )
+        {
+            Collection<CswNbtObjClassInventoryLevel> Ret = new Collection<CswNbtObjClassInventoryLevel>();
+            if( null != InventoryLevelView && InventoryLevelView.ViewName == _ParentLocationInventoryLevelViewName )
+            {
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( InventoryLevelView, false, false );
+                Int32 LocationCount = Tree.getChildNodeCount();
+                if( LocationCount > 0 )
+                {
+                    for( Int32 Loc = 0; Loc < LocationCount; Loc += 1 )
+                    {
+                        Tree.goToNthChild( Loc );
+                        Int32 LevelCount = Tree.getChildNodeCount();
+                        if( LevelCount > 0 )
+                        {
+                            for( Int32 Lev = 0; Lev < LevelCount; Lev += 1 )
+                            {
+                                Tree.goToNthChild( Lev );
+                                CswNbtObjClassInventoryLevel InventoryLevel = Tree.getNodeForCurrentPosition();
+                                Ret.Add( InventoryLevel );
+                                Tree.goToParentNode();
+                            }
+                        }
+                        Tree.goToParentNode();
+                    }
+                }
+            }
+            return Ret;
+        }
+
+        private void _applyQuantityToInventoryLevels( Collection<CswNbtObjClassInventoryLevel> InbtObjClassInventoryLevels, double Quantity, CswPrimaryKey UnitId, string Reason )
+        {
+            foreach( CswNbtObjClassInventoryLevel Level in InbtObjClassInventoryLevels )
+            {
+                _addToCurrentQuantity( Level, Quantity, UnitId, Reason );
+            }
+        }
+
+        private void _getInventoryLevelCollections( out Collection<CswNbtObjClassInventoryLevel> PrevLevels, out Collection<CswNbtObjClassInventoryLevel> CurrentLevels, CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId, CswPrimaryKey MaterialId = null )
+        {
+            CswNbtView PrevInventoryVelView = _getParentLocationInventoryLevelView( PrevLocationId, MaterialId );
+            PrevLevels = _InventoryLevels( PrevInventoryVelView );
+
+            CswNbtView CurrentInventoryVelView = _getParentLocationInventoryLevelView( CurrentLocationId, MaterialId );
+            CurrentLevels = _InventoryLevels( CurrentInventoryVelView );
+        }
+
+        public void changeLocationOfLocation( CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
+        {
+            if( null != PrevLocationId &&
+                null != CurrentLocationId )
+            {
+                Collection<CswNbtObjClassInventoryLevel> PrevLevels;
+                Collection<CswNbtObjClassInventoryLevel> CurrentLevels;
+                _getInventoryLevelCollections( out PrevLevels, out CurrentLevels, PrevLocationId, CurrentLocationId );
+
+                Collection<CswNbtObjClassInventoryLevel> AppliesToLevels = new Collection<CswNbtObjClassInventoryLevel>();
+                foreach( CswNbtObjClassInventoryLevel Prev in PrevLevels )
+                {
+                    if( false == CurrentLevels.Contains( Prev ) )
+                    {
+                        AppliesToLevels.Add( Prev );
+                    }
+                }
+                foreach( CswNbtObjClassInventoryLevel Current in CurrentLevels )
+                {
+                    if( false == PrevLevels.Contains( Current ) && false == AppliesToLevels.Contains( Current ) )
+                    {
+                        AppliesToLevels.Add( Current );
+                    }
+                }
+                foreach( CswNbtObjClassInventoryLevel LevelToUpdate in AppliesToLevels )
+                {
+                    CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, LevelToUpdate );
+                    LevelToUpdate.CurrentQuantity.Quantity = Mgr.getCurrentInventoryLevel();
+                    LevelToUpdate.postChanges( true );
+                }
+            }
+        }
+
+        public void changeLocationOfQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId, CswPrimaryKey PrevLocationId, CswPrimaryKey CurrentLocationId )
+        {
+            if( null != MaterialId &&
+                null != PrevLocationId &&
+                null != CurrentLocationId )
+            {
+                Collection<CswNbtObjClassInventoryLevel> PrevLevels;
+                Collection<CswNbtObjClassInventoryLevel> CurrentLevels;
+                _getInventoryLevelCollections( out PrevLevels, out CurrentLevels, PrevLocationId, CurrentLocationId, MaterialId );
+
+                Collection<CswNbtObjClassInventoryLevel> AppliesToPrevLevels = new Collection<CswNbtObjClassInventoryLevel>();
+                foreach( CswNbtObjClassInventoryLevel Prev in PrevLevels )
+                {
+                    if( false == CurrentLevels.Contains( Prev ) )
+                    {
+                        AppliesToPrevLevels.Add( Prev );
+                    }
+                }
+                //These Inventory Levels are losing inventory
+                _applyQuantityToInventoryLevels( AppliesToPrevLevels, -( Quantity ), UnitId, Reason );
+
+                Collection<CswNbtObjClassInventoryLevel> AppliesToCurrentLevels = new Collection<CswNbtObjClassInventoryLevel>();
+                foreach( CswNbtObjClassInventoryLevel Current in CurrentLevels )
+                {
+                    if( false == PrevLevels.Contains( Current ) )
+                    {
+                        AppliesToCurrentLevels.Add( Current );
+                    }
+                }
+                //These Inventory Levels are gaining inventory
+                _applyQuantityToInventoryLevels( AppliesToCurrentLevels, Quantity, UnitId, Reason );
+            }
+        }
+
         public void addToCurrentQuantity( double Quantity, CswPrimaryKey UnitId, string Reason, CswPrimaryKey MaterialId = null, CswPrimaryKey LocationId = null )
         {
             if( null != MaterialId && null != LocationId )
             {
-                CswNbtView InventoryLevelView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass );
-                CswNbtViewRelationship InventoryLevelRel = InventoryLevelView.AddViewRelationship( InventoryLevelOc, false );
-                CswNbtMetaDataObjectClassProp MaterialOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
-                CswNbtMetaDataObjectClassProp LocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
-                InventoryLevelView.AddViewPropertyAndFilter( InventoryLevelRel, MaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                InventoryLevelView.AddViewPropertyAndFilter( InventoryLevelRel, LocationOcp, LocationId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( InventoryLevelView, false, false );
-                Int32 LevelCount = Tree.getChildNodeCount();
-                if( LevelCount > 0 )
-                {
-                    for( Int32 L = 0; L < LevelCount; L += 1 )
-                    {
-                        Tree.goToNthChild( L );
-                        CswNbtObjClassInventoryLevel InventoryLevel = Tree.getNodeForCurrentPosition();
-                        _addToCurrentQuantity( InventoryLevel, Quantity, UnitId, Reason );
-                        Tree.goToParentNode();
-                    }
-                }
+                CswNbtView InventoryLevelView = _getParentLocationInventoryLevelView( MaterialId, LocationId );
+                Collection<CswNbtObjClassInventoryLevel> InventoryLevels = _InventoryLevels( InventoryLevelView );
+                _applyQuantityToInventoryLevels( InventoryLevels, Quantity, UnitId, Reason );
             }
             else if( null != _InventoryLevel )
             {

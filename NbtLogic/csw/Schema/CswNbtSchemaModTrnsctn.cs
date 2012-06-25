@@ -514,6 +514,9 @@ namespace ChemSW.Nbt.Schema
 
         public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
 
+        /// <summary>
+        /// Returns a new CswNbtView. Does not actually call make()
+        /// </summary>
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
         public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }

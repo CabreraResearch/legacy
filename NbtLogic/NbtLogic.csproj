@@ -82,6 +82,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25898.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24517InventoryLevelsViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24507.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="csw\Batch\CswNbtBatchManager.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassBatchOp.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassDocument.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase9111.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26579.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26572.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24485.cs" />
