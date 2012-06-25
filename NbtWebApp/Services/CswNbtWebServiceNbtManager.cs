@@ -6,15 +6,13 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Logic;
+using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -102,8 +100,6 @@ namespace ChemSW.Nbt.WebServices
             }
             return RetObj;
         }
-
-
 
         public JObject getScheduledRulesGrid()
         {

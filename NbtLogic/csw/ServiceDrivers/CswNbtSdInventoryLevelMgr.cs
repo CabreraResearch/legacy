@@ -112,10 +112,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 LocationTable = LocationSelect.getTable();
                 //For faster lookup
-                Dictionary<Int32, Int32> LocationDict = new Dictionary<int, int>();
+                //Dictionary<Int32, Int32> LocationDict = new Dictionary<int, int>();
                 //For assignment
                 Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
-                LocationDict.Add( StartLocationId.PrimaryKey, StartLocationId.PrimaryKey );
+                //LocationDict.Add( StartLocationId.PrimaryKey, StartLocationId.PrimaryKey );
                 LocationPks.Add( StartLocationId );
                 CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
                 LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
@@ -125,12 +125,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                     foreach( DataRow Row in LocationTable.Rows )
                     {
                         Int32 LocationNodeId = CswConvert.ToInt32( Row["nodeid"] );
-                        if( false == LocationDict.ContainsKey( LocationNodeId ) )
-                        {
-                            LocationDict.Add( LocationNodeId, LocationNodeId );
-                            CswPrimaryKey LocationPk = new CswPrimaryKey( "nodes", LocationNodeId );
-                            LocationPks.Add( LocationPk );
-                        }
+                        //We're already wrapping the SQL in a distinct()
+                        //if( false == LocationDict.ContainsKey( LocationNodeId ) )
+                        //LocationDict.Add( LocationNodeId, LocationNodeId );
+                        CswPrimaryKey LocationPk = new CswPrimaryKey( "nodes", LocationNodeId );
+                        LocationPks.Add( LocationPk );
+                        
                     }
                 }
                 LocationRel.NodeIdsToFilterIn = LocationPks;
