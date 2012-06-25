@@ -243,6 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( OCP.PropName == DispensePropertyName )
                 {
+                    ActionData = this.NodeId.ToString();
                     ButtonAction = NbtButtonAction.dispense;
                 }
                 else
