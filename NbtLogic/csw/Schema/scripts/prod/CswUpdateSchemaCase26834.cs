@@ -19,15 +19,16 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp StorCompatOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.StorageCompatibilityPropertyName );
 
             CswDelimitedString ImageNames = new CswDelimitedString( '\n' ) {
-                "0",
-                "1",
-                "2",
-                "3",
-                "4",
-                "5",
-                "6",
-                "7"
+                "0 - None",
+		        "1 - Inorganic Acids",
+		        "2 - Organic Acids",
+		        "3 - Bases",
+		        "4 - Oxidizing Inorganic Acids",
+		        "5 - Oxidizers",
+		        "6 - Toxics",
+		        "7 - Flammables"
             };
+
             CswDelimitedString ImageUrls = new CswDelimitedString( '\n' ) {
                 "/NbtWebApp/Images/cispro/0w.gif",
                 "/NbtWebApp/Images/cispro/1o.gif",
