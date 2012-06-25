@@ -179,6 +179,11 @@ namespace ChemSW.Nbt.Sched
 
                                                                     Subject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;
                                                                     HasResults = ( ReportTable.Rows.Count > 0 );
+
+                                                                    if( HasResults )
+                                                                    {
+                                                                        ReportTable.cs
+                                                                    }
                                                                 }
                                                             }
 
@@ -227,6 +232,7 @@ namespace ChemSW.Nbt.Sched
                                                                         MailMessage.RecipientDisplayName = UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName;
                                                                         MailMessage.Subject = Subject;
                                                                         MailMessage.Content = Message;
+                                                                        MailMessage.Attachment = null; 
 
                                                                         string StatusMessage = string.Empty;
                                                                         if( CswMail.send( MailMessage ) )

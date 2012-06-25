@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26579() ) );                //01P-13
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24485() ) );                //01P-14
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24514RequestButton() ) );   //01P-15
-             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26471() ) );                //01P-16
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26471() ) );                //01P-16
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26692SetPreferred() ) );    //01P-17
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24517InventoryLevels() ) ); //01P-18
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24508B() ) );               //01P-19
@@ -55,8 +55,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26584() ) );                //01P-28
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26763() ) );                //01P-29
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase9111() ) );               //01P-30
-            
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609() ) );               //01P-31
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;
