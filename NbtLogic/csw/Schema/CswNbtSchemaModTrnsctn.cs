@@ -978,7 +978,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswTableUpdate ObjectClassPropUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class_props" );
                     DataTable UpdateTable = ObjectClassPropUpdate.getEmptyTable();
-                    addObjectClassPropRow( UpdateTable,
+                    _addObjectClassPropRow( UpdateTable,
                                            ObjectClassOc,
                                            OcpModel );
 
@@ -1041,7 +1041,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswTableUpdate ObjectClassPropUpdate = makeCswTableUpdate( "SchemaModTrnsctn_ObjectClassUpdate", "object_class_props" );
                     DataTable UpdateTable = ObjectClassPropUpdate.getEmptyTable();
-                    DataRow NewPropRow = addObjectClassPropRow( UpdateTable,
+                    DataRow NewPropRow = _addObjectClassPropRow( UpdateTable,
                                                                ObjectClassOc,
                                                                PropName,
                                                                FieldType,
@@ -1153,7 +1153,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// (Deprecated) Convenience function for making new Object Class Props with more granular control
         /// </summary>
-        public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
+        private DataRow _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
                                              CswNbtMetaDataFieldType.NbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
                                              bool IsFk, string FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
                                              bool ServerManaged, string ListOptions, Int32 DisplayColAdd, Int32 DisplayRowAdd, Int32 NumberPrecision )
@@ -1210,7 +1210,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Class Props with more granular control
         /// </summary>
-        public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
+        private DataRow _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
             OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname.ToString()] = OcpModel.PropName;
