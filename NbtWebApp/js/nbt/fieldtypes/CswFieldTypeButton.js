@@ -64,7 +64,7 @@
                                     case Csw.enums.nbtButtonAction.request:
                                         $btn.button({ disabled: false });
                                         var actionJson = JSON.parse(data.actiondata);
-                                        switch(actionJson.requestaction) {
+                                        switch (actionJson.requestaction) {
                                             case 'Dispose':
                                                 Csw.publish(Csw.enums.events.Submit_Request);
                                                 break;
@@ -83,6 +83,10 @@
                                     case Csw.enums.nbtButtonAction.popup:
                                         $btn.button({ disabled: false });
                                         Csw.openPopup(data.actiondata, 600, 800);
+                                        break;
+                                    case Csw.enums.nbtButtonAction.loadView:
+                                        var actionJson = JSON.parse(data.actiondata);
+                                         Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
                                         break;
                                     default:
                                         $btn.button({ disabled: false });
