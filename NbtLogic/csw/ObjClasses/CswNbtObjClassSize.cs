@@ -79,38 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassMaterial MaterialNodeAsMaterial = (CswNbtObjClassMaterial) MaterialNode;
                 if( false == String.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
                 {
-                    CswNbtMetaDataNodeType SizeNodeType = this.Node.getNodeType();
-                    CswNbtMetaDataNodeTypeProp Capacity = SizeNodeType.getNodeTypeProp( "Capacity" );
-                    string UniqueNodeViewName = "CswNbtNodeTypePropQuantity_" + Capacity.NodeTypeId.ToString() + "_" + this.NodeId.ToString();
-
-                    CswNbtView StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
-                    StateSpecificUnitTypeView.ViewName = UniqueNodeViewName;
-
-                    if( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() == "n/a" )
-                    {
-                        CswNbtMetaDataNodeType EachNT = _CswNbtResources.MetaData.getNodeType( "Each Unit" );
-                        if( EachNT != null )
-                        {
-                            StateSpecificUnitTypeView.AddViewRelationship( EachNT, true );
-                        }
-                    }
-                    else
-                    {
-                        CswNbtMetaDataNodeType WeightNT = _CswNbtResources.MetaData.getNodeType( "Weight Unit" );
-                        if( WeightNT != null )
-                        {
-                            StateSpecificUnitTypeView.AddViewRelationship( WeightNT, true );
-                        }
-                        if( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() != "solid" )
-                        {
-                            CswNbtMetaDataNodeType VolumeNT = _CswNbtResources.MetaData.getNodeType( "Volume Unit" );
-                            if( VolumeNT != null )
-                            {
-                                StateSpecificUnitTypeView.AddViewRelationship( VolumeNT, true );
-                            }
-                        }
-                    }
-                    this.Capacity.View = StateSpecificUnitTypeView;
+                    this.Capacity.View = _getQuantityUnitOfMeasureView( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() );
                 }
             }
 
@@ -130,6 +99,55 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+        #endregion
+
+        #region Private Helper Functions
+
+        private CswNbtView _getQuantityUnitOfMeasureView( string MaterialPhysicalState )
+        {
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.UnitOfMeasureClass );
+
+            CswNbtView StateSpecificUnitTypeView = new CswNbtView( _CswNbtResources );
+            StateSpecificUnitTypeView.ViewName = "CswNbtNodeTypePropQuantity_" + this.NodeId.ToString();
+
+            foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
+            {
+                CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.UnitTypePropertyName );
+                CswNbtObjClassUnitOfMeasure.UnitTypes UnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
+                if( _physicalStateMatchesUnitType( MaterialPhysicalState, UnitType ) )
+                {
+                    StateSpecificUnitTypeView.AddViewRelationship( UnitOfMeasureNodeType, true );
+                }
+            }
+
+            return StateSpecificUnitTypeView;
+        }
+
+        private bool _physicalStateMatchesUnitType( string PhysicalState, CswNbtObjClassUnitOfMeasure.UnitTypes UnitType )
+        {
+            bool matchFound = false;
+
+            switch( PhysicalState )
+            {
+                case "n/a":
+                    matchFound = UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Each;
+                    break;
+                case "solid":
+                    matchFound = UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight;
+                    break;
+                case "liquid":
+                case "gas":
+                    matchFound = UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight ||
+                                    UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Volume;
+                    break;
+                default:
+                    matchFound = false;
+                    break;
+            }
+
+            return matchFound;
+        }
+
         #endregion
 
         #region Object class specific properties
