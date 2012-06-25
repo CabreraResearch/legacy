@@ -194,7 +194,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a root node on the tree.  Mostly used by TreeLoaders.
         /// </summary>
-        /// <param name="ViewRoot">The corresponding ViewRoot node in the View</param>
+        /// <param name="ViewRoot">The corresponding TopLevelName node in the View</param>
         void makeRootNode( CswNbtViewRoot ViewRoot );
         /// <summary>
         /// Creates a root node on the tree.  Mostly used by TreeLoaders.
