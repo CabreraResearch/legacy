@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.WebServices
             DataTable ScheduledRulesTable = ScheduledRulesSelect.getTable();
 
             CswNbtGrid NbtActGrid = new CswNbtGrid( _OtherResources );
-            string TablePkColumn = "scheduledruleid";
+            //string TablePkColumn = "scheduledruleid";
             //NbtActGrid.PkColumn = TablePkColumn;
             //NbtActGrid.HidePkColumn = true;
 
