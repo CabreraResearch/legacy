@@ -24,17 +24,17 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             CswNbtMetaDataNodeTypeLayoutMgr.LayoutType EditLayout = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit;
+            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType AddLayout = CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add;
 
-
-                            CswNbtMetaDataNodeTypeTab IdentityTab;
-                            CswNbtMetaDataNodeTypeTab namedTab; 
-                            CswNbtMetaDataNodeTypeTab HazardsTab;
-                            CswNbtMetaDataNodeTypeTab PhysicalTab; 
-                            CswNbtMetaDataNodeTypeTab StructureTab;
-                            CswNbtMetaDataNodeTypeTab DocumentsTab;
-                            CswNbtMetaDataNodeTypeTab ContainersTab;
-                            CswNbtMetaDataNodeTypeTab BiosafetyTab;
-                            CswNbtMetaDataNodeTypeTab PictureTab;
+            CswNbtMetaDataNodeTypeTab IdentityTab;
+            CswNbtMetaDataNodeTypeTab namedTab;
+            CswNbtMetaDataNodeTypeTab HazardsTab;
+            CswNbtMetaDataNodeTypeTab PhysicalTab;
+            CswNbtMetaDataNodeTypeTab StructureTab;
+            CswNbtMetaDataNodeTypeTab DocumentsTab;
+            CswNbtMetaDataNodeTypeTab ContainersTab;
+            CswNbtMetaDataNodeTypeTab BiosafetyTab;
+            CswNbtMetaDataNodeTypeTab PictureTab;
 
             foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
             {
@@ -45,6 +45,9 @@ namespace ChemSW.Nbt.Schema
                     switch( MaterialNT.NodeTypeName )
                     {
                         case "Chemical":
+                            MaterialNT.IconFileName = "atom.gif";
+                            MaterialNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.TradenamePropertyName ) );
+
                             IdentityTab = _getTab( MaterialNT, "Identity", 0 );
                             namedTab = _getTab( MaterialNT, MaterialNT.NodeTypeName, 1 );
                             HazardsTab = _getTab( MaterialNT, "Hazards", 2 );
@@ -56,49 +59,72 @@ namespace ChemSW.Nbt.Schema
                             switch( MatNTP.PropName )
                             {
                                 // Identity
-                                case CswNbtObjClassMaterial.TradenamePropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 1 ); break;
-                                case CswNbtObjClassMaterial.SupplierPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 2 ); break;
-                                case CswNbtObjClassMaterial.PartNumberPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 3 ); break;
-                                case CswNbtObjClassMaterial.RequestPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 4 ); break;
+                                case CswNbtObjClassMaterial.TradenamePropertyName: 
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 1, 1 ); 
+                                    break;
+                                case CswNbtObjClassMaterial.SupplierPropertyName: 
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 2, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 2, 1 ); 
+                                    break;
+                                case CswNbtObjClassMaterial.PartNumberPropertyName: 
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 3, 1 ); 
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 3, 1 ); 
+                                    break;
+                                case CswNbtObjClassMaterial.RequestPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 4, 1 ); break;
 
                                 // Chemical
                                 case "Synonyms": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 1 ); break;
-                                case CswNbtObjClassMaterial.CasNoPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 2 ); break;
-                                case "Components": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 3 ); break;
-                                case CswNbtObjClassMaterial.RegulatoryListsPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 4 ); break; ;
-                                case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 5 ); break;
-                                case CswNbtObjClassMaterial.ApprovalStatusPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 6 ); break;
+                                case CswNbtObjClassMaterial.CasNoPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 2, 1 ); break;
+                                case "Components": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 3, 1 ); break;
+                                case CswNbtObjClassMaterial.RegulatoryListsPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 4, 1 ); break; ;
+                                case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 5, 1 ); break;
+                                case CswNbtObjClassMaterial.ApprovalStatusPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 6, 1 ); break;
 
                                 // Hazards
                                 case "Hazardous": MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 1, 1 ); break;
-                                case "NFPA": MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 1, 2 ); break;
-                                case CswNbtObjClassMaterial.StorageCompatibilityPropertyName: MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 1, 3 ); break;
-                                case "PPE": MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 1, 4 ); break;
+                                case "NFPA": MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 2, 1 ); break;
+                                case CswNbtObjClassMaterial.StorageCompatibilityPropertyName: MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 3, 1 ); break;
+                                case "PPE": MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 4, 1 ); break;
 
                                 // Physical
-                                case "Physical Description": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 1 ); break;
-                                case CswNbtObjClassMaterial.PhysicalStatePropertyName: MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 2 ); break;
-                                case "Molecular Weight": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 3 ); break;
-                                case CswNbtObjClassMaterial.SpecificGravityPropertyName: MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 4 ); break;
-                                case "pH": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 5 ); break;
-                                case "Boiling Point": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 2, 3 ); break;
-                                case "Melting Point": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 2, 4 ); break;
-                                case "Aqueous Solubility": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 2, 5 ); break;
+                                case "Physical Description":
+                                    MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 1 );
+                                    MatNTP.TextAreaColumns = 20;
+                                    break;
+                                case CswNbtObjClassMaterial.PhysicalStatePropertyName: 
+                                    MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 2, 1 ); 
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 4, 1 );
+                                    break;
+                                case "Molecular Weight": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 3, 1 ); break;
+                                case CswNbtObjClassMaterial.SpecificGravityPropertyName: MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 4, 1 ); break;
+                                case "pH": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 5, 1 ); break;
+                                case "Boiling Point": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 3, 2 ); break;
+                                case "Melting Point": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 4, 2 ); break;
+                                case "Aqueous Solubility": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 5, 2 ); break;
                                 case "Flash Point": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 3, 3 ); break;
-                                case "Vapor Pressure": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 3, 4 ); break;
-                                case "Vapor Density": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 3, 5 ); break;
-                                case "Inventory Levels": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 6 ); break;
-
+                                case "Vapor Pressure": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 4, 3 ); break;
+                                case "Vapor Density": MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 5, 3 ); break;
+                                
                                 // Structure
                                 case "Formula": MatNTP.updateLayout( EditLayout, false, StructureTab.TabId, 1, 1 ); break;
-                                case "Structure": MatNTP.updateLayout( EditLayout, false, StructureTab.TabId, 1, 2 ); break;
+                                case "Structure": MatNTP.updateLayout( EditLayout, false, StructureTab.TabId, 2, 1 ); break;
 
                                 // Documents
                                 case "Documents": MatNTP.updateLayout( EditLayout, false, DocumentsTab.TabId, 1, 1 ); break;
+
+                                // Containers
+                                case "Inventory Levels": MatNTP.updateLayout( EditLayout, false, ContainersTab.TabId, 1, 2 ); break;
+
+                                // (delete)
+                                case "Storage Type": _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( MatNTP ); break;
                             }
 
                             break;
                         case "Biological":
+                            MaterialNT.IconFileName = "dna.gif";
+                            MaterialNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Biological Name" ) );
+
                             IdentityTab = _getTab( MaterialNT, "Identity", 0 );
                             namedTab = _getTab( MaterialNT, MaterialNT.NodeTypeName, 1 );
                             BiosafetyTab = _getTab( MaterialNT, "Biosafety", 2 );
@@ -106,63 +132,62 @@ namespace ChemSW.Nbt.Schema
                             DocumentsTab = _getTab( MaterialNT, "Documents", 4 );
                             ContainersTab = _getTab( MaterialNT, "Containers", 5 );
 
+                            _removeTab( MaterialNT, "Physical" );
+
                             switch( MatNTP.PropName )
                             {
-                                case CswNbtObjClassMaterial.TradenamePropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 1 ); break;
-                                case CswNbtObjClassMaterial.SupplierPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 2 ); break;
-                                case CswNbtObjClassMaterial.PartNumberPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 3 ); break;
-                                case CswNbtObjClassMaterial.RequestPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 4 ); break;
+                                // Identity
+                                case CswNbtObjClassMaterial.TradenamePropertyName:
+                                    MatNTP.PropName = "Biological Name";
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 1, 1 );
+                                    break;
+                                case CswNbtObjClassMaterial.SupplierPropertyName:
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 2, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 2, 1 );
+                                    break;
+                                case CswNbtObjClassMaterial.PartNumberPropertyName:
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 3, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 3, 1 );
+                                    break;
+                                case CswNbtObjClassMaterial.RequestPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 4, 1 ); break;
 
+                                // Biological
                                 case "Synonyms": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 1 ); break;
-                                case CswNbtObjClassMaterial.CasNoPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 2 ); break;
-                                case CswNbtObjClassMaterial.RegulatoryListsPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 4 ); break; ;
-                                case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 5 ); break;
-                                case CswNbtObjClassMaterial.ApprovalStatusPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 6 ); break;
-                                case "Reference Type": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 7 ); break;
-                                case "Reference Number": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 8 ); break;
-                                case "Type": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 9 ); break;
-                                case "Species Origin": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 10 ); break;
+                                case "Reference Number": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 2, 1 ); break;
+                                case "Type": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 3, 1 ); break;
+                                case "Species Origin": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 4, 1 ); break;
+                                case "Reference Type": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 5, 1 ); break;
+                                case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 6, 1 ); break;
+                                case CswNbtObjClassMaterial.ApprovalStatusPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 7, 1 ); break;
 
+                                // Biosafety
                                 case "Biosafety Level": MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 1, 1 ); break;
-                                case "Vectors": MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 1, 2 ); break;
-                                case "Inventory Levels": MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 1, 3 ); break;
-                                case CswNbtObjClassMaterial.StorageCompatibilityPropertyName: MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 1, 4 ); break;
+                                case "Vectors": MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 2, 1 ); break;
+                                case CswNbtObjClassMaterial.PhysicalStatePropertyName: 
+                                    MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 3, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 4, 1 );
+                                    MatNTP.ListOptions = "solid,liquid,n/a";
+                                    break;
+                                case CswNbtObjClassMaterial.SpecificGravityPropertyName: MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 4, 1 ); break;
+                                case CswNbtObjClassMaterial.StorageCompatibilityPropertyName: MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 5, 1 ); break;
 
-                                case CswNbtObjClassMaterial.PhysicalStatePropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 2 ); break;
-                                case CswNbtObjClassMaterial.SpecificGravityPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 4 ); break;
-
+                                // Documents
                                 case "Documents": MatNTP.updateLayout( EditLayout, false, DocumentsTab.TabId, 1, 1 ); break;
-                            }
 
+                                // Containers
+                                case "Inventory Levels": MatNTP.updateLayout( EditLayout, false, ContainersTab.TabId, 1, 2 ); break;
+
+                                //case CswNbtObjClassMaterial.CasNoPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 2 ); break;
+                                //case CswNbtObjClassMaterial.RegulatoryListsPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 4 ); break;
+
+                                // (delete)
+                                case "Storage Type": _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( MatNTP ); break;
+                            }
                             break;
                         case "Supply":
-
-                            //Supply
-                            //    Supply
-                            //        materialsubclass
-                            //        physical_state
-                            //        Approval Status
-                            //        Specific Gravity
-                            //        Physical State
-                            //        CAS No
-                            //        Regulatory Lists
-                            //        Part Number
-                            //        Tradename
-                            //        Storage Compatibility
-                            //        Supplier
-                            //        Expiration Interval
-                            //    Identity
-                            //        Description
-                            //        Synonyms
-                            //    Picture
-                            //        Picture
-                            //    Documents
-                            //        Documents
-                            //    Requests
-                            //        Request
-                            //        Submitted Requests
-                            //    Physical
-                            //        Inventory Levels
+                            MaterialNT.IconFileName = "tube.gif";
+                            MaterialNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassMaterial.TradenamePropertyName ) );
 
                             IdentityTab = _getTab( MaterialNT, "Identity", 0 );
                             namedTab = _getTab( MaterialNT, MaterialNT.NodeTypeName, 1 );
@@ -170,64 +195,55 @@ namespace ChemSW.Nbt.Schema
                             DocumentsTab = _getTab( MaterialNT, "Documents", 3 );
                             ContainersTab = _getTab( MaterialNT, "Containers", 4 );
 
+                            _removeTab( MaterialNT, "Physical" );
+
                             switch( MatNTP.PropName )
                             {
-                                case CswNbtObjClassMaterial.TradenamePropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 1 ); break;
-                                case CswNbtObjClassMaterial.SupplierPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 2 ); break;
-                                case CswNbtObjClassMaterial.PartNumberPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 3 ); break;
-                                case CswNbtObjClassMaterial.RequestPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 4 ); break;
+                                // Identity
+                                case CswNbtObjClassMaterial.TradenamePropertyName:
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 1, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 1, 1 );
+                                    break;
+                                case CswNbtObjClassMaterial.SupplierPropertyName:
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 2, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 2, 1 );
+                                    break;
+                                case CswNbtObjClassMaterial.PartNumberPropertyName:
+                                    MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 3, 1 );
+                                    MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 3, 1 );
+                                    break;
+                                case CswNbtObjClassMaterial.RequestPropertyName: MatNTP.updateLayout( EditLayout, false, IdentityTab.TabId, 4, 1 ); break;
 
-                                case "Synonyms": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 1 ); break;
-                                case CswNbtObjClassMaterial.CasNoPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 2 ); break;
-                                case "Components": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 3 ); break;
-                                case CswNbtObjClassMaterial.RegulatoryListsPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 4 ); break; ;
-                                case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 5 ); break;
-                                case CswNbtObjClassMaterial.ApprovalStatusPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 6 ); break;
+                                // Supply
+                                case "Description": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 1 ); break;
+                                case "Synonyms": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 2, 1 ); break;
+                                //case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 4, 1 ); break;
+                                case CswNbtObjClassMaterial.ApprovalStatusPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 5, 1 ); break;
 
+                                // Picture
+                                case "Picture": MatNTP.updateLayout( EditLayout, false, PictureTab.TabId, 1, 1 ); break;
+
+                                // Documents
+                                case "Documents": MatNTP.updateLayout( EditLayout, false, DocumentsTab.TabId, 1, 1 ); break;
+
+                                //case CswNbtObjClassMaterial.CasNoPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 2 ); break;
+                                //case CswNbtObjClassMaterial.RegulatoryListsPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 1, 4 ); break; ;
                                 //case CswNbtObjClassMaterial.StorageCompatibilityPropertyName: MatNTP.updateLayout( EditLayout, false, HazardsTab.TabId, 1, 3 ); break;
-
                                 //case CswNbtObjClassMaterial.PhysicalStatePropertyName: MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 2 ); break;
                                 //case CswNbtObjClassMaterial.SpecificGravityPropertyName: MatNTP.updateLayout( EditLayout, false, PhysicalTab.TabId, 1, 4 ); break;
 
-                                case "Documents": MatNTP.updateLayout( EditLayout, false, DocumentsTab.TabId, 1, 1 ); break;
-                                case "": break;
+                                // Containers
+                                case "Inventory Levels": MatNTP.updateLayout( EditLayout, false, ContainersTab.TabId, 1, 2 ); break;
+
+                                // (delete)
+                                case "Storage Type": _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( MatNTP ); break;
+                                case "Components": _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( MatNTP ); break;
                             }
 
                             break;
                     } // switch( MaterialNT.NodeTypeName )
                 } // foreach( CswNbtMetaDataNodeTypeProp MatNTP in MaterialNT.getNodeTypeProps() )
             } // foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
-
-
-            //1) move all Identity tab properties to [nodetypename] tab (eg. "Chemical" tab for Chemicals)
-            //2) remove Identity tab
-            //3) Add form, first 3 fields: Tradename*, Supplier*, Part#, physical state
-            //4) physical state must always be set, but only visible for Chemicals and Biologicals. Supplies are always solid. Biologicals can only be liquid or solid (never gas). Goes on Physical tab.
-            //5) physical state should be on Physical tab for Chemicals and Biosafety tab for Biologicals
-            //6) property Storage Type should be named "Storage Compatibility" and is only visible and only tested for chemicals. Goes on Hazards tab. Add graphics to imagelist.
-            //7) new Containers tab: has Sizes linkgrid at top, then thickgrid of Containers (barcode, quantity, owner, expiration,location)
-            //8) Move Inventory Levels prop to above containers tab rid (1 row: sizes on left, Inventory Levels on right)
-            //9) add icons to all nodetypes
-            //10) set nodenametemplate to {tradename} for all nodetypes
-            //11) components linkgrid only applies to chemicals
-            //12) specific gravity is required, always defaults to 1.0, should be numeric not scientific, and is only visible under same conditions as physical state.
-
-
-            //Chemicals:
-            //1) Structure tab has Structure (ft=MOL) property, and move Formula property above it
-
-            //Supplies:
-            //1) Picture is an image, not imagelist
-            //2) hide (not used here): expiration interval,casno,reglists
-            //3) hide reglists
-
-
-            //Biologicals:
-            //1) rename property "Tradename to "Bioliogical Name"
-            //2) hide: casno, storage compatability
-            //3) new property Storage Conditions (list: 37C, 25C, 5C, -20C, -80C) 
-            //4) hide reglists
-
         } // update() 
 
 
@@ -236,7 +252,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeTab tab = MaterialNT.getNodeTypeTab( TabName );
             if( null == tab )
             {
-                tab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MaterialNT, MaterialNT.NodeTypeName, Order );
+                tab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MaterialNT, TabName, Order );
             }
             else
             {
@@ -244,14 +260,15 @@ namespace ChemSW.Nbt.Schema
             }
             return tab;
         } // _getTab()
-        //private void _removeTab( CswNbtMetaDataNodeType MaterialNT, string TabName )
-        //{
-        //    CswNbtMetaDataNodeTypeTab tab = MaterialNT.getNodeTypeTab( TabName );
-        //    if( null != tab )
-        //    {
-        //        _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeTab( tab );
-        //    }
-        //} // _removeTab()
+
+        private void _removeTab( CswNbtMetaDataNodeType MaterialNT, string TabName )
+        {
+            CswNbtMetaDataNodeTypeTab tab = MaterialNT.getNodeTypeTab( TabName );
+            if( null != tab )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeTab( tab );
+            }
+        } // _removeTab()
 
     }//class CswUpdateSchemaCase25898
 
