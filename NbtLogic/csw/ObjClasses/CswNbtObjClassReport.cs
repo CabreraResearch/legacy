@@ -1,12 +1,6 @@
 ﻿using System.Collections.ObjectModel;
-using System.Data;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
-using ChemSW.DB;
-using ChemSW.Nbt;
-using ChemSW.Nbt.Logic;
-using ChemSW.Exceptions;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -72,7 +66,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return "Report.html?reportid=" + NodeId.ToString();
+                return "?reportid=" + NodeId.ToString();
             }
         }
 
@@ -108,9 +102,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
