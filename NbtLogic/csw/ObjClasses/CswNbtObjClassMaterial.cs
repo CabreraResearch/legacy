@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Supplier { get { return ( _CswNbtNode.Properties[SupplierPropertyName] ); } }
         public CswNbtNodePropLogical ApprovalStatus { get { return ( _CswNbtNode.Properties[ApprovalStatusPropertyName] ); } }
         public CswNbtNodePropText PartNumber { get { return ( _CswNbtNode.Properties[PartNumberPropertyName] ); } }
-        public CswNbtNodePropScientific SpecificGravity { get { return ( _CswNbtNode.Properties[SpecificGravityPropertyName] ); } }
+        public CswNbtNodePropNumber SpecificGravity { get { return ( _CswNbtNode.Properties[SpecificGravityPropertyName] ); } }
         public CswNbtNodePropList PhysicalState { get { return ( _CswNbtNode.Properties[PhysicalStatePropertyName] ); } }
         public CswNbtNodePropText CasNo { get { return ( _CswNbtNode.Properties[CasNoPropertyName] ); } }
         public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[RegulatoryListsPropName] ); } }

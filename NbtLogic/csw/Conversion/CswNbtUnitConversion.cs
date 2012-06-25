@@ -65,7 +65,8 @@ namespace ChemSW.Nbt.csw.Conversion
         {
             if( MaterialNode != null )
             {
-                _MaterialSpecificGravity = _getScientificValue( MaterialNode.SpecificGravity );
+                //_MaterialSpecificGravity = _getScientificValue( MaterialNode.SpecificGravity );
+                _MaterialSpecificGravity = CswConvert.ToDouble( MaterialNode.SpecificGravity );
             }
         }
 
