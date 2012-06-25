@@ -182,7 +182,7 @@ namespace ChemSW.Nbt.Sched
 
                                                                     if( HasResults )
                                                                     {
-                                                                        ReportTable.cs
+                                                                        //ReportTable.cs
                                                                     }
                                                                 }
                                                             }
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.Sched
                                                                         MailMessage.RecipientDisplayName = UserNodeAsUser.FirstName + " " + UserNodeAsUser.LastName;
                                                                         MailMessage.Subject = Subject;
                                                                         MailMessage.Content = Message;
-                                                                        MailMessage.Attachment = null; 
+                                                                        MailMessage.Attachment = null;
 
                                                                         string StatusMessage = string.Empty;
                                                                         if( CswMail.send( MailMessage ) )
