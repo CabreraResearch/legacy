@@ -14,6 +14,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -24,7 +25,6 @@ using ChemSW.Nbt.Welcome;
 using ChemSW.Security;
 using ChemSW.Session;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -1169,7 +1169,7 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal.ToString();
 
         } // runGrid()
-        
+
 
         //[WebMethod( EnableSession = false )]
         //[ScriptMethod( ResponseFormat = ResponseFormat.Json )]
@@ -4801,6 +4801,45 @@ namespace ChemSW.Nbt.WebServices
         } // finalizeInspectionDesign()
 
         #endregion Inspection Design
+
+        #region Dispense Container
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string ContainerNodeTypeId, string DesignGrid )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceDispenseContainer ws = new CswNbtWebServiceDispenseContainer( _CswNbtResources );
+                    if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() )
+                    {
+                        ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid );
+                    }
+                    else
+                    {
+                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity );
+                    }
+
+                    ReturnVal["success"] = "true";
+
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // finalizeDispenseContainer()
+
+        #endregion Dispense Container
 
         #endregion Web Methods
 

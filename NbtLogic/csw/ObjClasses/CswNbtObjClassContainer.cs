@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( OCP.PropName == DispensePropertyName )
                 {
-                    //TODO - case 24508
+                    ButtonAction = NbtButtonAction.dispense;
                 }
                 else
                 {

@@ -90,12 +90,14 @@
     <Compile Include="csw\Grid\CswNbtGridExtJsEnums.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsField.cs" />
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
+    <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26763.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24517InventoryLevelsViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508C.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24507.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26665.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25814.cs" />
@@ -105,7 +107,6 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24517InventoryLevels.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26692SetPreferred.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26471.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26763.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInventoryLevelMgr.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdNode.cs" />
