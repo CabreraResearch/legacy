@@ -25,6 +25,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string RunTimePropertyName { get { return "Run Time"; } }
         public static string EnabledPropertyName { get { return "Enabled"; } }
         public static string RunNowPropertyName { get { return "Run Now"; } }
+        public static string OutputFormatPropertyName { get { return "Output Format"; } }
 
         public static string TypeOptionReport = "Report";
         public static string TypeOptionView = "View";
@@ -126,9 +127,9 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtPropertySetSchedulerImpl.setLastFutureDate();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -256,6 +257,14 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[RunNowPropertyName].AsButton );
+            }
+        }
+
+        public CswNbtNodePropList OutputFormat
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties["OutputFormatPropertyName"].AsList );
             }
         }
 

@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
 
             //Set ExpirationInterval ObjectClassProp default FKValue to Time Unit NodeType (so that new material NodeTypes will start with this Unit NodeType restriction)
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp ExpirationInterval = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.ExpirationIntervalPropName );
+            CswNbtMetaDataObjectClassProp ExpirationInterval = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( MaterialOC.ObjectClassId, CswNbtObjClassMaterial.ExpirationIntervalPropertyName );
 
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ExpirationInterval, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk, true );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ExpirationInterval, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype, NbtViewRelatedIdType.NodeTypeId.ToString() );

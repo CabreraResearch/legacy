@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.Schema
                     AppType = AppType.SchemUpdt,
                     ContentType = ContentType.Error
                 };
-                //Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Could not get a Request NodeType" );
+                Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Could not get a Request NodeType" );
                 _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
             }
             else
@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.Schema
                         AppType = AppType.SchemUpdt,
                         ContentType = ContentType.Error
                     };
-                    // Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Could not get a Request Item NodeType" );
+                    Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Could not get a Request Item NodeType" );
                     _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
 
                 }
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.Schema
                                                            AppType = AppType.SchemUpdt,
                                                            ContentType = ContentType.Error
                                                        };
-                            // Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Request grids of this type are not supported." );
+                            Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Request grids of this type are not supported." );
                             _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
                             break;
                     }
