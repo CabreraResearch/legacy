@@ -1,6 +1,9 @@
+using System;
+using ChemSW.Core;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
-using Newtonsoft.Json.Linq;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -57,6 +60,26 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) &&
+                Location.WasModified &&
+                _CswNbtResources.EditMode != NodeEditMode.Add )
+            {
+                CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
+                string PrevLocationName = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NameSubField.Column );
+                string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
+                if( false == string.IsNullOrEmpty( PrevLocationId ) &&
+                    PrevLocationName != CswNbtNodePropLocation.ViewRoot )
+                {
+                    CswPrimaryKey PrevLocationPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( PrevLocationId ) );
+                    if( Int32.MinValue != PrevLocationPk.PrimaryKey &&
+                        PrevLocationPk != Location.SelectedNodeId )
+                    {
+                        //We should only be here if the change can actually affect inventory levels: not adding a new location node, not changing a location's location from Top, not setting a previous unset location's location value
+                        CswNbtBatchOpInventoryLevels BatchOp = new CswNbtBatchOpInventoryLevels( _CswNbtResources );
+                        BatchOp.makeBatchOp( PrevLocationPk, Location.SelectedNodeId );
+                    }
+                }
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -65,9 +88,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -179,7 +202,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        
+
 
         #endregion
 

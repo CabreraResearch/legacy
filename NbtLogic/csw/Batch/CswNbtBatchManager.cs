@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Data;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Batch
 {
@@ -38,7 +32,7 @@ namespace ChemSW.Nbt.Batch
                 CswNbtNode Node = CswNbtResources.Nodes[BatchId];
                 if( Node != null )
                 {
-                    BatchNode = (CswNbtObjClassBatchOp) Node;
+                    BatchNode = Node;
                 }
             }
             return BatchNode;
@@ -61,7 +55,7 @@ namespace ChemSW.Nbt.Batch
                 if( BatchOpNT != null )
                 {
                     CswNbtNode Node = CswNbtResources.Nodes.makeNodeFromNodeTypeId( BatchOpNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                    BatchNode = (CswNbtObjClassBatchOp) Node;
+                    BatchNode = Node;
 
                     BatchNode.BatchData.Text = BatchData;
                     BatchNode.CreatedDate.DateTimeValue = DateTime.Now;
@@ -99,21 +93,28 @@ namespace ChemSW.Nbt.Batch
             {
                 BatchOpTree.goToNthChild( 0 );
                 CswNbtNode Node = BatchOpTree.getNodeForCurrentPosition();
-                CswNbtObjClassBatchOp BatchNode = (CswNbtObjClassBatchOp) Node;
+                CswNbtObjClassBatchOp BatchNode = Node;
 
                 NbtBatchOpName OpName = BatchNode.OpNameValue;
+                ICswNbtBatchOp op = null;
                 if( OpName == NbtBatchOpName.FutureNodes )
                 {
-                    CswNbtBatchOpFutureNodes op = new CswNbtBatchOpFutureNodes( CswNbtResources );
-                    op.runBatchOp( BatchNode );
+                    op = new CswNbtBatchOpFutureNodes( CswNbtResources );
                 }
                 else if( OpName == NbtBatchOpName.MultiEdit )
                 {
-                    CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( CswNbtResources );
-                    op.runBatchOp( BatchNode );
+                    op = new CswNbtBatchOpMultiEdit( CswNbtResources );
+                }
+                else if( OpName == NbtBatchOpName.InventoryLevel )
+                {
+                    op = new CswNbtBatchOpInventoryLevels( CswNbtResources );
                 }
                 // New batch ops go here
                 // else if( OpName == NbtBatchOpName.NEWNAME ) 
+                if( null != op )
+                {
+                    op.runBatchOp( BatchNode );
+                }
             }
         }
 
