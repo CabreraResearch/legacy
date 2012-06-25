@@ -1,11 +1,5 @@
-﻿using System;
-using System.Data;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.DB;
 
 namespace ChemSW.Nbt.Batch
 {
@@ -15,16 +9,17 @@ namespace ChemSW.Nbt.Batch
     public sealed class NbtBatchOpName : CswEnum<NbtBatchOpName>
     {
         private NbtBatchOpName( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtBatchOpName> _All { get { return CswEnum<NbtBatchOpName>.All; } }
-        public static explicit operator NbtBatchOpName( string str )
+        public static IEnumerable<NbtBatchOpName> _All { get { return All; } }
+        public static implicit operator NbtBatchOpName( string str )
         {
             NbtBatchOpName ret = Parse( str );
-            return ( ret != null ) ? ret : NbtBatchOpName.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtBatchOpName Unknown = new NbtBatchOpName( "Unknown" );
 
         public static readonly NbtBatchOpName FutureNodes = new NbtBatchOpName( "FutureNodes" );
         public static readonly NbtBatchOpName MultiEdit = new NbtBatchOpName( "MultiEdit" );
+        public static readonly NbtBatchOpName InventoryLevel = new NbtBatchOpName( "InventoryLevel" );
     }
 
     /// <summary>
@@ -33,11 +28,11 @@ namespace ChemSW.Nbt.Batch
     public sealed class NbtBatchOpStatus : CswEnum<NbtBatchOpStatus>
     {
         private NbtBatchOpStatus( string Name ) : base( Name ) { }
-        public static IEnumerable<NbtBatchOpStatus> _All { get { return CswEnum<NbtBatchOpStatus>.All; } }
-        public static explicit operator NbtBatchOpStatus( string str )
+        public static IEnumerable<NbtBatchOpStatus> _All { get { return All; } }
+        public static implicit operator NbtBatchOpStatus( string str )
         {
             NbtBatchOpStatus ret = Parse( str );
-            return ( ret != null ) ? ret : NbtBatchOpStatus.Unknown;
+            return ret ?? Unknown;
         }
         public static readonly NbtBatchOpStatus Unknown = new NbtBatchOpStatus( "Unknown" );
 

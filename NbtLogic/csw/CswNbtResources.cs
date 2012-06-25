@@ -901,7 +901,7 @@ namespace ChemSW.Nbt
 
 
         public void execStoredProc( string StoredProcName, List<CswStoredProcParam> Params ) { _CswResources.execStoredProc( StoredProcName, Params ); }
-        public DataTable getStoredProcResult( string StoredProcName, List<CswStoredProcParam> Params ) { return ( _CswResources.getStoredProcResult( StoredProcName, Params ) ); }
+        //public DataTable getStoredProcResult( string StoredProcName, List<CswStoredProcParam> Params ) { return ( _CswResources.getStoredProcResult( StoredProcName, Params ) ); }
 
 
 

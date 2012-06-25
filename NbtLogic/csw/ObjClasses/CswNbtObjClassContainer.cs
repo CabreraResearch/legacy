@@ -119,31 +119,59 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            if( Location.WasModified )
+            if( _CswNbtResources.EditMode == NodeEditMode.Add )
             {
                 CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
-                string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
-                CswPrimaryKey PrevLocationPk = new CswPrimaryKey();
-                PrevLocationPk.FromString( PrevLocationId );
-                string Reason = "Container  [" + Barcode.Barcode + "] moved to new location: " + Location.CachedNodeName;
-                Mgr.addToCurrentQuantity( -( Quantity.Quantity ), Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk );
-                Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk );
+                Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, "Container  [" + Barcode.Barcode + "] created.", Material.RelatedNodeId, Location.SelectedNodeId );
             }
-            if( Quantity.WasModified )
+            else
             {
-                CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
-                CswNbtNodePropWrapper QuantityWrapper = Node.Properties[QuantityPropertyName];
-                double PrevQuantity = CswConvert.ToDouble( QuantityWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( QuantityWrapper.getFieldType().FieldType ) ).QuantitySubField.Column ) );
-                double Diff = Quantity.Quantity - PrevQuantity;
-                string Reason = "Container [" + Barcode.Barcode + "] quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
-                if( Disposed.Checked == Tristate.True )
+                if( Location.WasModified &&
+                    false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
+                    Location.CachedNodeName != CswNbtNodePropLocation.ViewRoot )
                 {
-                    Reason += " on disposal.";
+                    if( CswConvert.ToInt32( Quantity.Quantity ) != 0 )
+                    {
+                        CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                        CswNbtNodePropWrapper LocationWrapper = Node.Properties[LocationPropertyName];
+                        string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
+                        string Reason = "Container  [" + Barcode.Barcode + "] moved to new location: " + Location.CachedNodeName;
+                        if( false == string.IsNullOrEmpty( PrevLocationId ) )
+                        {
+                            CswPrimaryKey PrevLocationPk = new CswPrimaryKey();
+                            PrevLocationPk.FromString( PrevLocationId );
+                            if( PrevLocationPk != Location.SelectedNodeId )
+                            {
+                                Mgr.changeLocationOfQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, PrevLocationPk, Location.SelectedNodeId );
+                            }
+                        }
+                        else
+                        {
+                            Mgr.addToCurrentQuantity( Quantity.Quantity, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                        }
+                    }
                 }
-                Mgr.addToCurrentQuantity( Diff, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                if( Quantity.WasModified )
+                {
+                    CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                    CswNbtNodePropWrapper QuantityWrapper = Node.Properties[QuantityPropertyName];
+                    double PrevQuantity = CswConvert.ToDouble( QuantityWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleQuantity) _CswNbtResources.MetaData.getFieldTypeRule( QuantityWrapper.getFieldType().FieldType ) ).QuantitySubField.Column ) );
+                    if( false == CswTools.IsDouble( PrevQuantity ) )
+                    {
+                        PrevQuantity = 0;
+                    }
+                    double Diff = Quantity.Quantity - PrevQuantity;
+                    if( CswConvert.ToInt32( Diff ) != 0 )
+                    {
+                        string Reason = "Container [" + Barcode.Barcode + "] quantity changed by: " + Diff + " " + Quantity.CachedUnitName;
+                        if( Disposed.Checked == Tristate.True )
+                        {
+                            Reason += " on disposal.";
+                        }
+                        Mgr.addToCurrentQuantity( Diff, Quantity.UnitId, Reason, Material.RelatedNodeId, Location.SelectedNodeId );
+                    }
+                }
             }
-            
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 

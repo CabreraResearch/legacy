@@ -67,6 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ); }
         }
+        
 
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
@@ -96,6 +97,18 @@ namespace ChemSW.Nbt.ObjClasses
                 if( LevelMgr.doSendEmail() )
                 {
                     LastNotified.DateTimeValue = LevelMgr.sendPastThreshholdEmail();
+                    if( CurrentQuantity.Quantity > Level.Quantity )
+                    {
+                        Status.Value = Statuses.Above;
+                    }
+                    else
+                    {
+                        Status.Value = Statuses.Below;
+                    }
+                }
+                else
+                {
+                    Status.Value = Statuses.Ok;
                 }
             }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );

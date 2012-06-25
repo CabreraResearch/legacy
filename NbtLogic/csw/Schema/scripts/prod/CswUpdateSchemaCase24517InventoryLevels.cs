@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.Schema
                                                 AppType = AppType.SchemUpdt,
                                                 ContentType = ContentType.Error
                                             };
-                Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Nodetypes 'Inventory Level' and 'CISPro Inventory Level' already exist and are not of the InventoryLevel Object Class." );
+               // Msg.Attributes.Add( ChemSW.Log.LegalAttribute.exoteric_message, "Nodetypes 'Inventory Level' and 'CISPro Inventory Level' already exist and are not of the InventoryLevel Object Class." );
                 _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
             }
             if( null == InventoryLevelNt )

@@ -82,6 +82,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="csw\Batch\CswNbtBatchOpInventoryLevels.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsDataIndex.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsGrid.cs" />
     <Compile Include="csw\Grid\CswNbtGridExtJsRow.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24517InventoryLevelsViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24507.cs" />
