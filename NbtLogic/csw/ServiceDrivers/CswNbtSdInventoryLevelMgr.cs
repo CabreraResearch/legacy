@@ -16,36 +16,31 @@ namespace ChemSW.Nbt.ServiceDrivers
     public class CswNbtSdInventoryLevelMgr
     {
         private CswNbtResources _CswNbtResources;
-        private CswNbtObjClassInventoryLevel _InventoryLevel = null;
+
 
         public CswNbtSdInventoryLevelMgr( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
         }
-        public CswNbtSdInventoryLevelMgr( CswNbtResources Resources, CswNbtObjClassInventoryLevel InventoryLevel )
-        {
-            _CswNbtResources = Resources;
-            _InventoryLevel = InventoryLevel;
-        }
 
         #region Validation
 
-        public bool doSendEmail()
+        public bool doSendEmail( CswNbtObjClassInventoryLevel InventoryLevel )
         {
-            return isLevelPastThreshhold() && _InventoryLevel.LastNotified.DateTimeValue <= DateTime.Now.AddDays( -1 );
+            return isLevelPastThreshhold( InventoryLevel ) && InventoryLevel.LastNotified.DateTimeValue <= DateTime.Now.AddDays( -1 );
         }
 
-        public bool isLevelPastThreshhold()
+        public bool isLevelPastThreshhold( CswNbtObjClassInventoryLevel InventoryLevel )
         {
             bool Ret = false;
 
-            switch( _InventoryLevel.Type.Value )
+            switch( InventoryLevel.Type.Value )
             {
                 case CswNbtObjClassInventoryLevel.Types.Maximum:
-                    Ret = ( _InventoryLevel.CurrentQuantity.Quantity > _InventoryLevel.Level.Quantity );
+                    Ret = ( InventoryLevel.CurrentQuantity.Quantity > InventoryLevel.Level.Quantity );
                     break;
                 case CswNbtObjClassInventoryLevel.Types.Minimum:
-                    Ret = ( _InventoryLevel.CurrentQuantity.Quantity < _InventoryLevel.Level.Quantity );
+                    Ret = ( InventoryLevel.CurrentQuantity.Quantity < InventoryLevel.Level.Quantity );
                     break;
             }
 
@@ -70,9 +65,9 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// Sends notification email and returns Now
         /// </summary>
         /// <returns></returns>
-        public DateTime sendPastThreshholdEmail()
+        public DateTime sendPastThreshholdEmail( CswNbtObjClassInventoryLevel InventoryLevel )
         {
-            foreach( CswNbtObjClassUser User in _InventoryLevel.Subscribe.SelectedUsers() )
+            foreach( CswNbtObjClassUser User in InventoryLevel.Subscribe.SelectedUsers() )
             {
                 if( false == string.IsNullOrEmpty( User.Email ) )
                 {
@@ -86,7 +81,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         #region Inventory
 
-        public CswNbtView GetCurrentQuantityView( CswPrimaryKey StartLocationId )
+        public CswNbtView GetCurrentQuantityView( CswNbtObjClassInventoryLevel InventoryLevel, CswPrimaryKey StartLocationId )
         {
             CswNbtView Ret = null;
 
@@ -101,7 +96,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.QuantityPropertyName );
 
             CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
-            Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, _InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
             Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, Tristate.True.ToString(), CswNbtSubField.SubFieldName.Checked, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
             Ret.AddViewProperty( ContainerRel, QuantityOcp );
@@ -190,10 +185,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             return LocationRel;
         }
 
-        public double getCurrentInventoryLevel()
+        public double getCurrentInventoryLevel( CswNbtObjClassInventoryLevel InventoryLevel )
         {
             double Ret = 0;
-            CswNbtView ContainerView = GetCurrentQuantityView( _InventoryLevel.Location.SelectedNodeId );
+            CswNbtView ContainerView = GetCurrentQuantityView( InventoryLevel, InventoryLevel.Location.SelectedNodeId );
             if( null != ContainerView )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ContainerView, false, false );
@@ -223,7 +218,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         }
                                         else
                                         {
-                                            Conversion = new CswNbtUnitConversion( _CswNbtResources, _InventoryLevel.Level.UnitId, new CswPrimaryKey( "nodes", UnitTypeId ), _InventoryLevel.Material.RelatedNodeId );
+                                            Conversion = new CswNbtUnitConversion( _CswNbtResources, InventoryLevel.Level.UnitId, new CswPrimaryKey( "nodes", UnitTypeId ), InventoryLevel.Material.RelatedNodeId );
                                             UnitConversions.Add( UnitTypeId, Conversion );
                                         }
                                         if( null != Conversion )
@@ -350,8 +345,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
                 foreach( CswNbtObjClassInventoryLevel LevelToUpdate in AppliesToLevels )
                 {
-                    CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, LevelToUpdate );
-                    LevelToUpdate.CurrentQuantity.Quantity = Mgr.getCurrentInventoryLevel();
+                    CswNbtSdInventoryLevelMgr Mgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
+                    LevelToUpdate.CurrentQuantity.Quantity = Mgr.getCurrentInventoryLevel( LevelToUpdate );
                     LevelToUpdate.postChanges( true );
                 }
             }
@@ -399,9 +394,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                 Collection<CswNbtObjClassInventoryLevel> InventoryLevels = _InventoryLevels( InventoryLevelView );
                 _applyQuantityToInventoryLevels( InventoryLevels, Quantity, UnitId, Reason );
             }
-            else if( null != _InventoryLevel )
+        }
+
+        public void addToCurrentQuantity( CswNbtObjClassInventoryLevel InventoryLevel, double Quantity, CswPrimaryKey UnitId, string Reason )
+        {
+            if( null != InventoryLevel )
             {
-                _addToCurrentQuantity( _InventoryLevel, Quantity, UnitId, Reason );
+                _addToCurrentQuantity( InventoryLevel, Quantity, UnitId, Reason );
             }
         }
 
