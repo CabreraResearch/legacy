@@ -29,7 +29,6 @@ namespace ChemSW.Nbt.Schema
             }
         }//Update()
 
-        //TODO - case 24508, part 3 - replace RequestItem stuff in the code below with ContainerDispenseTransaction stuff
         private void makeDispenseTransactionGridView( CswNbtView GridView, CswNbtMetaDataNodeType RootNt )
         {
             CswNbtMetaDataObjectClass ContDispTransOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerDispenseTransactionClass );
@@ -62,8 +61,7 @@ namespace ChemSW.Nbt.Schema
 
                 CswNbtViewRelationship RootRel = GridView.AddViewRelationship( RootNt, false );
 
-                CswNbtMetaDataNodeTypeProp RelationshipToRootNtp = ContDispTransNt.getNodeTypePropByObjectClassProp( CswNbtObjClassContainerDispenseTransaction.SourceContainerPropertyName );
-                if( null == RelationshipToRootNtp )
+                if( null == SourceContainerNtp )
                 {
                     CswStatusMessage Msg = new CswStatusMessage
                                                 {
@@ -75,7 +73,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 else
                 {
-                    CswNbtViewRelationship SrcContDispTransRel = GridView.AddViewRelationship( RootRel, NbtViewPropOwnerType.Second, RelationshipToRootNtp, false );
+                    CswNbtViewRelationship SrcContDispTransRel = GridView.AddViewRelationship( RootRel, NbtViewPropOwnerType.Second, SourceContainerNtp, false );
 
                     CswNbtViewProperty SourceContainerVp = GridView.AddViewProperty( SrcContDispTransRel, SourceContainerNtp );
                     SourceContainerVp.Order = 1;
