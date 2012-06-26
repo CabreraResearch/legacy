@@ -1,13 +1,7 @@
 ﻿using System;
-using ChemSW;
-using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.Config;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
-using ChemSW.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace NbtLogic.Test
@@ -17,24 +11,12 @@ namespace NbtLogic.Test
     {
         #region Setup and Teardown
 
-        private CswNbtResources _CswNbtResources = null;
-        private ICswDbCfgInfo _CswDbCfgInfoNbt = null;
         private TestData TestData = null;
-        private string UserName = "TestUser";
 
         [TestInitialize()]
         public void MyTestInitialize()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
-            _CswNbtResources.InitCurrentUser = InitUser;
-            _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
-            TestData = new TestData( _CswNbtResources );
-        }
-
-        public ICswUser InitUser( ICswResources Resources )
-        {
-            return new CswNbtSystemUser( Resources, UserName );
+            TestData = new TestData();
         }
 
         [TestCleanup()]
@@ -57,6 +39,20 @@ namespace NbtLogic.Test
             Double Expected = 85048.574076;
             //Rounding to sixth significant digit since the numbers are stored in the DB as number (15,6)
             Double Actual = Math.Round( CswNbtUnitConversion.convertUnit( ValueToConvert, OuncesNode, MilligramNode ), 6 );
+            Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
+        }
+
+        /// <summary>
+        /// Given a numeric value and two UnitOfMeasure Nodes of the Same Unit, when unit conversion is applied, 
+        /// the returning number should be the same as the value provided.
+        /// </summary>
+        [TestMethod]
+        public void convertUnitTestStaticSameUnit()
+        {
+            Double ValueToConvert = 4;
+            CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            Double Expected = 4;
+            Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, LiterNode, LiterNode );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
         }
 
@@ -183,7 +179,7 @@ namespace NbtLogic.Test
             CswNbtNode MilliliterNode = TestData.createUnitOfMeasureNode( "Volume", "mL", 1.0, 3, Tristate.True );
             Double Expected = 4000;
 
-            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, LiterNode.NodeId, MilliliterNode.NodeId );
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, LiterNode.NodeId, MilliliterNode.NodeId );
 
             Double Actual = ConversionObj.convertUnit( ValueToConvert );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
@@ -203,7 +199,7 @@ namespace NbtLogic.Test
             CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", 1, -1 );
             Double Expected = 0.4;
 
-            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, LiterNode.NodeId, KilogramNode.NodeId, ChemicalNode.NodeId );
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, LiterNode.NodeId, KilogramNode.NodeId, ChemicalNode.NodeId );
 
             Double Actual = ConversionObj.convertUnit( ValueToConvert );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
@@ -223,7 +219,7 @@ namespace NbtLogic.Test
             CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", 1, -1 );
             Double Expected = 40;
 
-            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, KilogramNode.NodeId, LiterNode.NodeId, ChemicalNode.NodeId );
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, KilogramNode.NodeId, LiterNode.NodeId, ChemicalNode.NodeId );
 
             Double Actual = ConversionObj.convertUnit( ValueToConvert );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );

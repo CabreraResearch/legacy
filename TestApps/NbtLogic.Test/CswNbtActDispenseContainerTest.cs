@@ -1,13 +1,7 @@
 ﻿using System;
-using ChemSW;
-using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Nbt;
-using ChemSW.Nbt.Config;
 using ChemSW.Nbt.csw.Actions;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
-using ChemSW.Security;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json.Linq;
 
@@ -18,24 +12,12 @@ namespace NbtLogic.Test
     {
         #region Setup and Teardown
 
-        private CswNbtResources _CswNbtResources = null;
-        private ICswDbCfgInfo _CswDbCfgInfoNbt = null;
         private TestData TestData = null;
-        private string UserName = "TestUser";
 
         [TestInitialize()]
         public void MyTestInitialize()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
-            _CswNbtResources.InitCurrentUser = InitUser;
-            _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
-            TestData = new TestData( _CswNbtResources );
-        }
-
-        public ICswUser InitUser( ICswResources Resources )
-        {
-            return new CswNbtSystemUser( Resources, UserName );
+            TestData = new TestData();
         }
 
         [TestCleanup()]
@@ -49,12 +31,13 @@ namespace NbtLogic.Test
         [TestMethod]
         public void updateDispensedContainerTestInvalidDispenseType()
         {
-            string SourceContainerId = "nodeid_99999";
+            CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "gal", 2.64172052, -1, Tristate.True );
+            CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, LiterNode );
             string InvalidDispenseType = "Receive";
-            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerId );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             try
             {
-                JObject obj = wiz.updateDispensedContainer( InvalidDispenseType, "5 gal" );
+                JObject obj = wiz.updateDispensedContainer( InvalidDispenseType, "5", LiterNode.NodeId.ToString() );
                 Assert.Fail( "Exception should have been thrown." );
             }
             catch( Exception e )
@@ -70,10 +53,60 @@ namespace NbtLogic.Test
             double Expected = 1.0;
             CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
             CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, LiterNode );
-            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, ContainerNode.NodeId.ToString() );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Add";
-            JObject obj = wiz.updateDispensedContainer( DispenseType, ".5 Liters" );
-            CswNbtNode UpdatedContainerNode = _CswNbtResources.Nodes.GetNode( ContainerNode.NodeId );
+            JObject obj = wiz.updateDispensedContainer( DispenseType, ".5", LiterNode.NodeId.ToString() );
+            CswNbtNode UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( ContainerNode.NodeId );
+            CswNbtObjClassContainer NodeAsContianer = UpdatedContainerNode;
+            double Actual = NodeAsContianer.Quantity.Quantity;
+            Assert.AreEqual( Expected, Actual );
+        }
+
+        [TestMethod]
+        public void updateDispensedContainerTestAddBasicConversion()
+        {
+            double Expected = 1.0;
+            CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, LiterNode );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
+            string DispenseType = "Add";
+            CswNbtNode MilliliterNode = TestData.createUnitOfMeasureNode( "Volume", "Milliliters", 1.0, 3, Tristate.True );
+            JObject obj = wiz.updateDispensedContainer( DispenseType, "500", MilliliterNode.NodeId.ToString() );
+            CswNbtNode UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( ContainerNode.NodeId );
+            CswNbtObjClassContainer NodeAsContianer = UpdatedContainerNode;
+            double Actual = NodeAsContianer.Quantity.Quantity;
+            Assert.AreEqual( Expected, Actual );
+        }
+
+        [TestMethod]
+        public void updateDispensedContainerTestAddWeightToVolumeConversion()
+        {
+            double Expected = 1.0;
+            CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", 1, -1 );
+            CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, LiterNode, ChemicalNode );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
+            string DispenseType = "Add";
+            CswNbtNode GramNode = TestData.createUnitOfMeasureNode( "Weight", "g", 1.0, 3, Tristate.True );
+            JObject obj = wiz.updateDispensedContainer( DispenseType, "50", GramNode.NodeId.ToString() );
+            CswNbtNode UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( ContainerNode.NodeId );
+            CswNbtObjClassContainer NodeAsContianer = UpdatedContainerNode;
+            double Actual = NodeAsContianer.Quantity.Quantity;
+            Assert.AreEqual( Expected, Actual );
+        }
+
+        [TestMethod]
+        public void updateDispensedContainerTestAddVolumeToWeightConversion()
+        {
+            double Expected = 1.0;
+            CswNbtNode KilogramNode = TestData.createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
+            CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", 1, -1 );
+            CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, KilogramNode, ChemicalNode );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
+            string DispenseType = "Add";
+            CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            JObject obj = wiz.updateDispensedContainer( DispenseType, "5", LiterNode.NodeId.ToString() );
+            CswNbtNode UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( ContainerNode.NodeId );
             CswNbtObjClassContainer NodeAsContianer = UpdatedContainerNode;
             double Actual = NodeAsContianer.Quantity.Quantity;
             Assert.AreEqual( Expected, Actual );
@@ -82,13 +115,13 @@ namespace NbtLogic.Test
         [TestMethod]
         public void updateDispensedContainerTestWaste()
         {
-            double Expected = 0.5;
+            double Expected = 1.0;
             CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 1.0, LiterNode );
-            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, ContainerNode.NodeId.ToString() );
+            CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 1.5, LiterNode );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Waste";
-            JObject obj = wiz.updateDispensedContainer( DispenseType, ".5 Liters" );
-            CswNbtNode UpdatedContainerNode = _CswNbtResources.Nodes.GetNode( ContainerNode.NodeId );
+            JObject obj = wiz.updateDispensedContainer( DispenseType, ".5", LiterNode.NodeId.ToString() );
+            CswNbtNode UpdatedContainerNode = TestData.CswNbtResources.Nodes.GetNode( ContainerNode.NodeId );
             CswNbtObjClassContainer NodeAsContianer = UpdatedContainerNode;
             double Actual = NodeAsContianer.Quantity.Quantity;
             Assert.AreEqual( Expected, Actual );
