@@ -20,13 +20,16 @@ namespace ChemSW.Nbt.Schema
                 PropName = CswNbtObjClassSize.CatalogNoPropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text
             } );
-            
+
             CswNbtMetaDataObjectClass MaterialOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( MaterialOc, new CswNbtWcfMetaDataModel.ObjectClassProp
             {
                 PropName = CswNbtObjClassMaterial.ReceivePropertyName,
                 FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button
             } );
+
+            CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeOc.ObjectClassId, CswNbtObjClassSize.CapacityPropertyName );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
 
         }//Update()
 

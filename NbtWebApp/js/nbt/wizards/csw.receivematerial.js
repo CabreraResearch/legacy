@@ -3,6 +3,11 @@
 
 (function () {
 
+    var _internal = {
+        lastReceivingMaterialId: 'lastReceivingMaterialId',
+        lastReceivingViewId: 'lastReceivingViewId'
+    };
+
     Csw.nbt.receiveMaterialWizard = Csw.nbt.receiveMaterialWizard ||
         Csw.nbt.register('receiveMaterialWizard', function (cswParent, options) {
             'use strict';
@@ -21,6 +26,8 @@
                 divStep1: '', divStep2: '', divStep3: '',
                 materialId: null,
                 tradeName: '',
+                sizesViewId: '',
+                selectedSizeId: '',
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false
@@ -48,6 +55,25 @@
                     $.extend(cswPrivate, options);
                 }
 
+                if (Csw.isNullOrEmpty(cswParent)) {
+                    Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a parent.', '', 'csw.receivematerial.js', 57));
+                }
+                if (Csw.isNullOrEmpty(cswPrivate.materialId)) {
+                    cswPrivate.materialId = Csw.clientDb.getItem(_internal.lastReceivingMaterialId);
+                    if (Csw.isNullOrEmpty(cswPrivate.materialId)) {
+                        Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a Material ID.', '', 'csw.receivematerial.js', 60));
+                    }
+                }
+                Csw.clientDb.setItem(_internal.lastReceivingMaterialId, cswPrivate.materialId);
+
+                if (Csw.isNullOrEmpty(cswPrivate.sizesViewId)) {
+                    cswPrivate.sizesViewId = Csw.clientDb.getItem(_internal.lastReceivingViewId);
+                    if (Csw.isNullOrEmpty(cswPrivate.sizesViewId)) {
+                        Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a Sizes View.', '', 'csw.receivematerial.js', 68));
+                    }
+                }
+                Csw.clientDb.setItem(_internal.lastReceivingViewId, cswPrivate.sizesViewId);
+
                 cswPrivate.wizardSteps = {
                     1: 'Size',
                     2: 'Property',
@@ -61,16 +87,6 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
-
-                        //                        if (cswPrivate.currentStepNo === 4 &&
-                        //                            cswPrivate.useExistingMaterial) {
-                        //                            if (cswPrivate.currentStepNo > cswPrivate.lastStepNo) {
-                        //                                cswPrivate.toggleButton(cswPrivate.buttons.next, true, true);
-                        //                            }
-                        //                            else if (cswPrivate.currentStepNo < cswPrivate.lastStepNo) {
-                        //                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                        //                            }
-                        //                        }
                     }
                 };
 
@@ -92,8 +108,7 @@
                     doNextOnInit: false
                 });
 
-            } ());
-
+            } ()); //_preCtor
 
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
@@ -108,11 +123,12 @@
                 return false;
             };
 
+            //SIZES
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
                     var nextBtnEnabled = function () {
-                        //return false === Csw.isNullOrEmpty(cswPrivate.materialType);
+                        return false === Csw.isNullOrEmpty(cswPrivate.selectedSizeId);
                     };
 
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -123,8 +139,20 @@
                     if (false === cswPrivate.stepOneComplete) {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
-
+                        cswPrivate.divStep1.span({ text: 'Select a Size to Receive' });
                         cswPrivate.divStep1.br({ number: 2 });
+
+                        var sizeGrid = Csw.nbt.wizardNodeGrid(cswPrivate.divStep1, {
+                            nodeid: cswPrivate.materialId,
+                            viewid: cswPrivate.sizesViewId,
+                            onSelect: function () {
+                                cswPrivate.selectedSizeId = sizeGrid.getSelectedNodeId();
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                            }
+                        });
+
+                        //var containerDiv = cswPrivate.divStep1.div().hide();
+                        //var containerSelect = containerDiv.nodeTypeSelect();
 
                         cswPrivate.stepOneComplete = true;
                     }

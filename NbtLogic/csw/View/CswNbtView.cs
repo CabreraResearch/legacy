@@ -172,7 +172,15 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtViewId ViewId
         {
-            get { return Root.ViewId; }
+            get
+            {
+                CswNbtViewId Ret = new CswNbtViewId();
+                if( null != Root && null != Root.ViewId )
+                {
+                    Ret = Root.ViewId;
+                }
+                return Ret;
+            }
             set { Root.ViewId = value; }
         }
 
@@ -1515,8 +1523,10 @@ namespace ChemSW.Nbt
         public void SaveToCache( bool IncludeInQuickLaunch, bool ForceCache = false, bool KeepInQuickLaunch = false )
         {
             // don't cache twice
-            if( SessionViewId == null || ForceCache
-                || IncludeInQuickLaunch )  // case 23999
+            if( SessionViewId == null ||
+                false == SessionViewId.isSet() ||
+                ForceCache ||
+                IncludeInQuickLaunch )  // case 23999
             {
                 bool ForQuickLaunch = ( IncludeInQuickLaunch && IsQuickLaunch );
                 _SessionViewId = _CswNbtResources.ViewSelect.saveSessionView( this, ForQuickLaunch, KeepInQuickLaunch );
@@ -1534,7 +1544,10 @@ namespace ChemSW.Nbt
         /// </summary>
         public CswNbtSessionDataId SessionViewId
         {
-            get { return _SessionViewId; }
+            get
+            {
+                return _SessionViewId ?? new CswNbtSessionDataId();
+            }
             set { _SessionViewId = value; }
         }
 

@@ -79,6 +79,8 @@
                 EditMode: Csw.enums.editMode.Edit,
                 onEditNode: null,
                 onDeleteNode: null,
+                canSelectRow: false,
+                onSelect: null,
                 onSuccess: null,
                 onEditView: null,
                 onRefresh: null,
@@ -316,6 +318,8 @@
                                     readonly: forReporting,
                                     usePaging: false === forReporting,
                                     showActionColumn: true,
+                                    canSelectRow: o.canSelectRow,
+                                    onSelect: o.onSelect,
                                     onEdit: function(row) {
                                         var nodeid = row['nodeid'];
                                         var nodekey = row['nodekey'];

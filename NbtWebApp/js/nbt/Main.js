@@ -1190,10 +1190,7 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
             case 'Receiving':
-                Csw.nbt.receiveMaterialWizard(centerTopDiv, {
-                    materialId: o.materialid,
-                    tradeName: o.tradename
-                });
+                Csw.nbt.receiveMaterialWizard(centerTopDiv, o);
                 break;
             case 'Sessions':
                 Csw.actions.sessions(centerTopDiv);

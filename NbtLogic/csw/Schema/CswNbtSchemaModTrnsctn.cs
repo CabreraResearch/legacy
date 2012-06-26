@@ -518,6 +518,16 @@ namespace ChemSW.Nbt.Schema
         /// Returns a new CswNbtView. Does not actually call makeNew()
         /// </summary>
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
+
+        /// <summary>
+        /// Returns a new CswNbtView. (really) Does actually call makeNew()
+        /// </summary>
+        public CswNbtView makeView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        {
+            CswNbtView Ret = new CswNbtView( _CswNbtResources );
+            Ret.makeNew( ViewName, Visibility, RoleId, UserId, CopyViewId );
+            return Ret;
+        }
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
         public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
         public CswNbtView restoreView( string ViewName )

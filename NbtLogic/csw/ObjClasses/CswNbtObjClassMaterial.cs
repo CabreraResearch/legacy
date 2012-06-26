@@ -48,8 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return ret;
         }
-
-
+        
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -118,8 +117,27 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonAction = NbtButtonAction.request;
                         break;
                     case ReceivePropertyName:
-                        ActionDataObj["materialid"] = NodeId.ToString();
-                        ActionDataObj["tradename"] = TradeName.Text;
+                        ActionDataObj["materialId"] = NodeId.ToString();
+                        ActionDataObj["tradeName"] = TradeName.Text;
+                        CswNbtView SizeView = new CswNbtView( _CswNbtResources );
+                        SizeView.Visibility = NbtViewVisibility.Property;
+                        SizeView.ViewMode = NbtViewRenderingMode.Grid;
+
+                        CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( ObjectClass, true );
+                        CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                        CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+                        CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+                        CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
+                        CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
+
+                        CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, true );
+                        SizeView.AddViewProperty( SizeRel, CapacityOcp );
+                        CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
+                        DispensableVp.ShowInGrid = false;
+                        SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: "true" );
+                        SizeView.AddViewProperty( SizeRel, CatalogNoOcp );
+                        SizeView.SaveToCache( false );
+                        ActionDataObj["sizesViewId"] = SizeView.SessionViewId.ToString();
                         ButtonAction = NbtButtonAction.receive;
                         break;
                 }
@@ -131,7 +149,6 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Object class specific properties
-
 
         public CswNbtNodePropRelationship Supplier { get { return ( _CswNbtNode.Properties[SupplierPropertyName] ); } }
         public CswNbtNodePropLogical ApprovalStatus { get { return ( _CswNbtNode.Properties[ApprovalStatusPropertyName] ); } }
@@ -145,6 +162,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[ExpirationIntervalPropertyName] ); } }
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[ReceivePropertyName] ); } }
+ 
         #endregion
 
     }//CswNbtObjClassMaterial
