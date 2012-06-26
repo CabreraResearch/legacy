@@ -67,18 +67,57 @@
 
             //Step 1. Select a Dispense Type.
             cswPrivate.makeStepOne = (function () {
-                var stepOneComplete = false;
                 return function () {
+
+                    var dispenseTypeTable = '',
+                    dispenseTypes = {
+                        0: '',
+                        1: 'Add',
+                        2: 'Waste',
+                        3: 'Dispense'
+                    }
+
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+
+                    cswPrivate.divStep1 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step1.step);
+                    cswPrivate.divStep1.br();
+
+                    dispenseTypeTable = cswPrivate.divStep1.table({
+                        ID: cswPrivate.makeStepId('setDispenseTypeTable')
+                    });
+
+                    dispenseTypeTable.cell(1, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'What kind of dispense would you like to do?' });
+
+                    var dispenseTypeDiv = dispenseTypeTable.cell(1, 2)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .div();
+
+                    var dispenseTypeSelect = dispenseTypeDiv.select({
+                        ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
+                        cssclass: 'selectinput',
+                        values: dispenseTypes,
+                        onChange: function () {
+                            if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
+                                cswPrivate.dispenseType = dispenseTypeSelect.val();
+                                cswPrivate.wizard.next.enable();
+                            }
+                            else {
+                                cswPrivate.wizard.next.disable();
+                            }
+                        },
+                        selected: dispenseTypes[0]
+                    });
                 };
             } ());
 
             //Step 2. Select a Destination Container NodeType .
             //if( only one NodeType exists || Dispense Type != Dispense ) skip this step            
             cswPrivate.makeStepTwo = (function () {
-                var stepTwoComplete = false;
                 return function () {
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);                    
                 };
             } ());
 
@@ -87,13 +126,11 @@
             //Select a Quantity :
             //Select the number of destination containers and their quantities.
             cswPrivate.makeStepThree = (function () {
-                var stepThreeAComplete = false;
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                 };
             } ());
 
-            //TODO - determine if we really need both handleNext and handlePrevious functions
             cswPrivate.handleNext = function (newStepNo) {
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
@@ -137,7 +174,7 @@
                     Quantity: cswPrivate.quantity,
                     UnitId: cswPrivate.unitId,
                     ContainerNodeTypeId: cswPrivate.containerNodeTypeId,
-                    DesignGrid: designGrid                
+                    DesignGrid: designGrid
                 };
 
                 Csw.ajax.post({
@@ -158,7 +195,7 @@
             };
 
             //TODO - parse, refactor, and rebuild makeGrid for dispensedContainers
-            
+
             (function () {
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
