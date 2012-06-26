@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.Schema
 
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( materialSubclassOCP, true );
 
-
         }//Update()
 
     }//class CswUpdateSchemaCase26757

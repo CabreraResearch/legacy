@@ -21,7 +21,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass ); }
         }
 
-
         public const string SupplierPropertyName = "Supplier";
         public const string ApprovalStatusPropertyName = "Approval Status";
         public const string PartNumberPropertyName = "Part Number";
