@@ -93,8 +93,11 @@
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26834.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26763.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25898.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24517InventoryLevelsViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508C.cs" />

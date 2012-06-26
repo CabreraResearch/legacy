@@ -39,6 +39,7 @@
 
                     var layoutTable = welcomeDiv.layoutTable({
                         ID: 'welcometable',
+                        width: null,
                         cellSet: { rows: 2, columns: 1 },
                         TableCssClass: 'WelcomeTable',
                         cellpadding: 10,

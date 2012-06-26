@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Schema
                     AppType = AppType.SchemUpdt,
                     ContentType = ContentType.Error
                 };
-                Msg.Attributes.Add( "Error", "Could not get a Container Dispense Transaction NodeType" );
+                Msg.Attributes.Add( Log.LegalAttribute.escoteric_message, "Could not get a Container Dispense Transaction NodeType" );
                 _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
             }
             else
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.Schema
                                                     AppType = AppType.SchemUpdt,
                                                     ContentType = ContentType.Error
                                                 };
-                    Msg.Attributes.Add( "Error", "Container Dispense Transaction grids of this type are not supported." );
+                    Msg.Attributes.Add( Log.LegalAttribute.escoteric_message, "Container Dispense Transaction grids of this type are not supported." );
                     _CswNbtSchemaModTrnsctn.CswLogger.send( Msg );
                 }
                 else
