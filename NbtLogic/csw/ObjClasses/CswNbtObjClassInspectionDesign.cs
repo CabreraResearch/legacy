@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.ObjClasses
                     _CswNbtNode.ReadOnly = true;
                 }
                 this.Status.ReadOnly = true;
-            }  
+            }
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
