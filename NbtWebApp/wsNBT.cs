@@ -4806,7 +4806,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string ContainerNodeTypeId, string DesignGrid )
+        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string UnitId, string ContainerNodeTypeId, string DesignGrid )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -4823,7 +4823,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity );
+                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity, UnitId );
                     }
 
                     ReturnVal["success"] = "true";

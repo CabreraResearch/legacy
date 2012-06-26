@@ -33,6 +33,7 @@
                 gridOptions: {},
                 dispenseType: 'Unknown',
                 quantity: 'Unknown',
+                unitId: 'Unknown',
                 containerNodeTypeId: 'Unknown'
             };
             if (options) $.extend(cswPrivate, options);
@@ -134,6 +135,7 @@
                     SourceContainerNodeId: cswPrivate.nodeId,
                     DispenseType: cswPrivate.dispenseType,
                     Quantity: cswPrivate.quantity,
+                    UnitId: cswPrivate.unitId,
                     ContainerNodeTypeId: cswPrivate.containerNodeTypeId,
                     DesignGrid: designGrid                
                 };
@@ -155,7 +157,7 @@
                 }); //Csw.ajax                
             };
 
-            //TODO - parse, refacotr, and rebuild makeGrid for dispensedContainers
+            //TODO - parse, refactor, and rebuild makeGrid for dispensedContainers
             
             (function () {
 

@@ -29,14 +29,14 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject upsertDispenseContainers( string SourceContainerNodeId, string ContainerNodeTypeId, string DesignGrid )
         {
-            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources );
-            return ( wiz.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid ) );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId );
+            return ( wiz.upsertDispenseContainers( ContainerNodeTypeId, DesignGrid ) );
         }
 
-        public JObject updateDispensedContainer( string SourceContainerNodeId, string DispenseType, string Quantity )
+        public JObject updateDispensedContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string UnitId )
         {
-            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources );
-            return ( wiz.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity ) );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId );
+            return ( wiz.updateDispensedContainer( DispenseType, Quantity, UnitId ) );
         }
 
         #endregion Public

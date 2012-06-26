@@ -1,6 +1,7 @@
 ﻿using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
@@ -11,6 +12,7 @@ namespace ChemSW.Nbt.csw.Actions
     public class CswNbtActDispenseContainer
     {
         private CswNbtResources _CswNbtResources = null;
+        private CswNbtObjClassContainer _SourceContainer = null;
 
         #region Constructor
 
@@ -22,6 +24,14 @@ namespace ChemSW.Nbt.csw.Actions
             {
                 throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
+        }
+
+        public CswNbtActDispenseContainer( CswNbtResources CswNbtResources, string SourceContainerNodeId )
+            : this( CswNbtResources )
+        {
+            CswPrimaryKey SourceContainerPK = new CswPrimaryKey();
+            SourceContainerPK.FromString( SourceContainerNodeId );
+            _SourceContainer = _CswNbtResources.Nodes.GetNode( SourceContainerPK );
         }
 
         #endregion Constructor
@@ -84,16 +94,16 @@ namespace ChemSW.Nbt.csw.Actions
             return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
         }
 
-        public JObject updateDispensedContainer( string SourceContainerNodeId, string DispenseType, string Quantity )
+        public JObject updateDispensedContainer( string DispenseType, string Quantity, string UnitId )
         {
             JObject ret = new JObject();
             if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString() )
             {
-                ret = _addMaterialToContainer( SourceContainerNodeId, Quantity );
+                ret = _addMaterialToContainer( Quantity, UnitId );
             }
             else if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste.ToString() )
             {
-                ret = _wasteMaterialFromContainer( SourceContainerNodeId, Quantity );
+                ret = _wasteMaterialFromContainer( Quantity, UnitId );
             }
             else
             {
@@ -102,28 +112,73 @@ namespace ChemSW.Nbt.csw.Actions
             return ret;
         }
 
-        private JObject _addMaterialToContainer( string SourceContainerNodeId, string Quantity )
+        private JObject _addMaterialToContainer( string Quantity, string UnitId )
         {
-            //TODO - add quantity to source container, create transaction node
+            double QuantityToAdd = _getDispenseAmountInProperUnits( Quantity, UnitId );
+            _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity + QuantityToAdd;
+            _SourceContainer.postChanges( false );
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add, QuantityToAdd );
+            //TODO - create view with the container and return it
             return new JObject();
         }
 
-        private JObject _wasteMaterialFromContainer( string SourceContainerNodeId, string Quantity )
+        private JObject _wasteMaterialFromContainer( string Quantity, string UnitId )
         {
+            double QuantityToWaste = _getDispenseAmountInProperUnits( Quantity, UnitId );
+            _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity - QuantityToWaste;
+            _SourceContainer.postChanges( false );
+            _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste, QuantityToWaste );
             //TODO - waste quantity from source container, create transaction node
             return new JObject();
         }
 
-        public JObject upsertDispenseContainers( string SourceContainerNodeId, string ContainerNodeTypeId, string DesignGrid )
+        private double _getDispenseAmountInProperUnits( string Quantity, string UnitId )
         {
-            JArray GridArray = JArray.Parse( DesignGrid );
-            return _upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, GridArray );
+            double ValueToConvert = CswConvert.ToDouble( Quantity );
+            CswPrimaryKey UnitOfMeasurePK = new CswPrimaryKey();
+            UnitOfMeasurePK.FromString( UnitId );
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, UnitOfMeasurePK, _SourceContainer.Quantity.UnitId, _SourceContainer.Material.RelatedNodeId );
+            double convertedValue = ConversionObj.convertUnit( ValueToConvert );
+            return convertedValue;
         }
 
-        private JObject _upsertDispenseContainers( string SourceContainerNodeId, string ContainerNodeTypeId, JArray DesignGrid )
+        public JObject upsertDispenseContainers( string ContainerNodeTypeId, string DesignGrid )
+        {
+            JArray GridArray = JArray.Parse( DesignGrid );
+            return _upsertDispenseContainers( ContainerNodeTypeId, GridArray );
+        }
+
+        private JObject _upsertDispenseContainers( string ContainerNodeTypeId, JArray DesignGrid )
         {
             //TODO - create distination containers with respective quantities, create transaction nodes for each dispense instance, update source container
+            //TODO - create view with the container and return it
             return new JObject();
+        }
+
+        private void _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityDispensed )
+        {
+            CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
+            if( ContDispTransNT != null )
+            {
+                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+
+                if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste )
+                {
+                    ContDispTransNode.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
+                }
+                if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Add )
+                {
+                    ContDispTransNode.DestinationContainer.RelatedNodeId = _SourceContainer.NodeId;
+                }
+                ContDispTransNode.QuantityDispensed.Quantity = QuantityDispensed;
+                ContDispTransNode.QuantityDispensed.UnitId = _SourceContainer.Quantity.UnitId;
+                ContDispTransNode.Type.Value = DispenseType.ToString();
+                ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Today;
+                ContDispTransNode.RemainingSourceContainerQuantity.Quantity = _SourceContainer.Quantity.Quantity;
+                ContDispTransNode.RemainingSourceContainerQuantity.UnitId = _SourceContainer.Quantity.UnitId;
+
+                ContDispTransNode.postChanges( false );
+            }
         }
 
         #endregion Public Methods
