@@ -4774,13 +4774,11 @@ namespace ChemSW.Nbt.WebServices
                         throw new CswDniException( ErrorType.Warning, "Could not read Excel file.", ErrorMessage );
                     }
 
-                    ReturnVal["success"] = "true";
-
                     CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
                     //gd.PkColumn = "RowNumber";
+                    ReturnVal = gd.DataTableToJSON( ExcelDataTable, true );
 
-                    ReturnVal["jqGridOpt"] = gd.DataTableToJSON( ExcelDataTable, true );
-
+                    ReturnVal["success"] = "true";
                     if( false == string.IsNullOrEmpty( WarningMessage ) )
                     {
                         ReturnVal["error"] = WarningMessage;
