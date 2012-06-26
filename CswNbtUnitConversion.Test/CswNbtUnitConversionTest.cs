@@ -80,8 +80,11 @@ namespace NbtUnitConversion.Test
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             CswNbtObjClassMaterial NodeAsMaterial = MaterialNode;
             NodeAsMaterial.PhysicalState.Value = State;
+            if( SpecificGravity != Int32.MinValue )
+            {
+                NodeAsMaterial.SpecificGravity.Value = SpecificGravity;
+            }
             NodeAsMaterial.postChanges( true );
-
             TestNodeIds.Add( NodeAsMaterial.NodeId );
 
             return MaterialNode;
@@ -146,8 +149,7 @@ namespace NbtUnitConversion.Test
             Double ValueToConvert = 4;
             CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
             CswNbtNode KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
-            //CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
-            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1 );
+            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", .1 );
             Double Expected = 0.4;
             Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, LiterNode, KilogramNode, ChemicalNode );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
@@ -164,8 +166,7 @@ namespace NbtUnitConversion.Test
             Double ValueToConvert = 4;
             CswNbtNode KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
             CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            //CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
-            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1 );
+            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", .1 );
             Double Expected = 40;
             Double Actual = CswNbtUnitConversion.convertUnit( ValueToConvert, KilogramNode, LiterNode, ChemicalNode );
             Assert.AreEqual( Expected, Actual, "Conversion applied incorrectly." );
@@ -262,8 +263,7 @@ namespace NbtUnitConversion.Test
             Double ValueToConvert = 4;
             CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
             CswNbtNode KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
-            //CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
-            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1 );
+            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", .1 );
             Double Expected = 0.4;
 
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, LiterNode.NodeId, KilogramNode.NodeId, ChemicalNode.NodeId );
@@ -283,8 +283,7 @@ namespace NbtUnitConversion.Test
             Double ValueToConvert = 4;
             CswNbtNode KilogramNode = _createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
             CswNbtNode LiterNode = _createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            //CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1, -1 );
-            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", 1 );
+            CswNbtNode ChemicalNode = _createMaterialNode( "Chemical", "Liquid", .1 );
             Double Expected = 40;
 
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, KilogramNode.NodeId, LiterNode.NodeId, ChemicalNode.NodeId );
