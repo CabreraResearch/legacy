@@ -69,14 +69,6 @@
             DispenseContainer: 'DispenseContainer'
         });
 
-    Csw.enums.wizardSteps_DispenseContainer = Csw.enums.wizardSteps_DispenseContainer ||
-        Csw.enums.register('wizardSteps_DispenseContainer', {
-            step1: { step: 1, description: 'Select a Dispense Type' },
-            step2: { step: 2, description: 'Select a Destination Container NodeType' },
-            step3: { step: 3, description: 'Select Amount' },
-            stepcount: 3
-        });
-
     Csw.enums.wizardSteps_InspectionDesign = Csw.enums.wizardSteps_InspectionDesign ||
         Csw.enums.register('wizardSteps_InspectionDesign', {
             step1: { step: 1, description: 'Select an Inspection Target' },
