@@ -19,7 +19,8 @@ namespace ChemSW.Nbt.Actions
         Submit_Request,
         DispenseContainer,
         DisposeContainer,
-        UndisposeContainer
+        UndisposeContainer,
+        Receiving
     }
 
     public class CswNbtAction

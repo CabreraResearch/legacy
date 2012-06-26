@@ -7,10 +7,11 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassSize : CswNbtObjClass
     {
-        public static string MaterialPropertyName { get { return "Material"; } }
-        public static string CapacityPropertyName { get { return "Capacity"; } }
-        public static string QuantityEditablePropertyName { get { return "Quantity Editable"; } }
-        public static string DispensablePropertyName { get { return "Dispensable"; } }
+        public const string MaterialPropertyName = "Material";
+        public const string CapacityPropertyName = "Capacity";
+        public const string QuantityEditablePropertyName = "Quantity Editable";
+        public const string DispensablePropertyName = "Dispensable";
+        public const string CatalogNoPropertyName = "Catalog No";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -152,22 +153,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Material
-        {
-            get { return _CswNbtNode.Properties[MaterialPropertyName].AsRelationship; }
-        }
-        public CswNbtNodePropQuantity Capacity
-        {
-            get { return _CswNbtNode.Properties[CapacityPropertyName].AsQuantity; }
-        }
-        public CswNbtNodePropLogical QuantityEditable
-        {
-            get { return _CswNbtNode.Properties[QuantityEditablePropertyName].AsLogical; }
-        }
-        public CswNbtNodePropLogical Dispensable
-        {
-            get { return _CswNbtNode.Properties[DispensablePropertyName].AsLogical; }
-        }
+        public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[MaterialPropertyName]; } }
+        public CswNbtNodePropQuantity Capacity { get { return _CswNbtNode.Properties[CapacityPropertyName]; } }
+        public CswNbtNodePropLogical QuantityEditable { get { return _CswNbtNode.Properties[QuantityEditablePropertyName]; } }
+        public CswNbtNodePropLogical Dispensable { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
+        public CswNbtNodePropText CatalogNo { get { return _CswNbtNode.Properties[DispensablePropertyName]; } }
+
         #endregion
 
 

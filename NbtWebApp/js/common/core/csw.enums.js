@@ -65,7 +65,7 @@
                 globalAjaxStart: 'globalAjaxStart',
                 globalAjaxStop: 'globalAjaxStop'
             },
-            Submit_Request: 'Submit_Request'
+            objectClassButtonClick: 'objectClassButtonClick'
         });
 
     Csw.enums.wizardSteps_InspectionDesign = Csw.enums.wizardSteps_InspectionDesign ||
@@ -103,6 +103,7 @@
         Csw.enums.register('nbtButtonAction', {
             reauthenticate: 'reauthenticate',
             //home: 'home',
+            receive: 'receive',
             refresh: 'refresh',
             popup: 'popup',
             request: 'request'

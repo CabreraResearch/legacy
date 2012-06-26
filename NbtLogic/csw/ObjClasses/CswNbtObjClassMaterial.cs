@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -33,6 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string StorageCompatibilityPropertyName = "Storage Compatibility";
         public const string ExpirationIntervalPropertyName = "Expiration Interval";
         public const string RequestPropertyName = "Request";
+        public const string ReceivePropertyName = "Receive";
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterial
@@ -61,6 +63,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( ApprovalStatus.WasModified )
+            {
+                Receive.Hidden = ApprovalStatus.Checked != Tristate.True;
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -98,21 +104,28 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
             if( null != NodeTypeProp && null != OCP )
             {
-                if( RequestPropertyName == OCP.PropName )
+                JObject ActionDataObj = new JObject();
+                switch( OCP.PropName )
                 {
-                    CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+                    case RequestPropertyName:
+                        CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
 
-                    CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
-                    JObject ActionDataObj = new JObject();
-                    ActionDataObj["requestaction"] = OCP.PropName;
-                    ActionDataObj["titleText"] = "Request for " + TradeName.Text;
-                    ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                    ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
-                    ActionData = ActionDataObj.ToString();
-
-                    ButtonAction = NbtButtonAction.request;
+                        CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
+                        ActionDataObj["requestaction"] = OCP.PropName;
+                        ActionDataObj["titleText"] = "Request for " + TradeName.Text;
+                        ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                        ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                        ButtonAction = NbtButtonAction.request;
+                        break;
+                    case ReceivePropertyName:
+                        ActionDataObj["materialid"] = NodeId.ToString();
+                        ActionDataObj["tradename"] = TradeName.Text;
+                        ButtonAction = NbtButtonAction.receive;
+                        break;
                 }
+                ActionData = ActionDataObj.ToString();
             }
+
             return true;
         }
         #endregion
@@ -131,7 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[StorageCompatibilityPropertyName] ); } }
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[ExpirationIntervalPropertyName] ); } }
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
-
+        public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[ReceivePropertyName] ); } }
         #endregion
 
     }//CswNbtObjClassMaterial

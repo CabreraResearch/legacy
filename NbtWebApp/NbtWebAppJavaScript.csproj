@@ -86,6 +86,7 @@
     <Content Include="js\common\controls\csw.buttongroup.js" />
     <Content Include="js\common\layouts\csw.action.js" />
     <Content Include="js\nbt\actions\csw.submitrequest.js" />
+    <Content Include="js\nbt\wizards\csw.receivematerial.js" />
     <Content Include="MainCswIncludes.html" />
     <Content Include="JavaScriptTest.html" />
     <Content Include="css\ChemSW.css" />
