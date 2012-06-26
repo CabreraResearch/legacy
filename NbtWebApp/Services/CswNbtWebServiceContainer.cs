@@ -6,14 +6,14 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
-    public class CswNbtWebServiceDispenseContainer
+    public class CswNbtWebServiceContainer
     {
         #region ctor
 
         private CswNbtResources _CswNbtResources;
         private readonly ICswNbtUser _CurrentUser;
         private readonly TextInfo _TextInfo;
-        public CswNbtWebServiceDispenseContainer( CswNbtResources CswNbtResources )
+        public CswNbtWebServiceContainer( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
 

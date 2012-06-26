@@ -4816,7 +4816,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh();
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtWebServiceDispenseContainer ws = new CswNbtWebServiceDispenseContainer( _CswNbtResources );
+                    CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
                     if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() )
                     {
                         ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid );
