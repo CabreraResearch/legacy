@@ -257,8 +257,10 @@
                     var toggleNewDesignName = function () {
                         if (cswPrivate.isNewInspectionDesign()) {
                             cswPrivate.newDesignName.show();
+                            cswPrivate.newDesignNameLabel.show();
                         } else {
                             cswPrivate.newDesignName.hide();
+                            cswPrivate.newDesignNameLabel.hide();
                         }
                     };
                     var nextBtnEnabled = function () {
@@ -319,6 +321,10 @@
                         inspectionTable.cell(2, 1).br();
 
                         //2. New Inspection Design Name
+                        cswPrivate.newDesignNameLabel = inspectionTable.cell(3, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'New Inspection Design Name' });
+
                         cswPrivate.newDesignName = inspectionTable.cell(3, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .input({
