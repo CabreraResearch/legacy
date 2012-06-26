@@ -45,9 +45,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24517InventoryLevels() ) );      //01P-18
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24508B() ) );                    //01P-19
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26410() ) );                     //01P-20
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26575() ) );                //01P-21
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26584() ) );                //01P-22
-
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26575() ) );                     //01P-21
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26584() ) );                     //01P-22
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25118() ) );                     //01P-23
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25759() ) );                     //01P-24
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25814() ) );                     //01P-25
@@ -68,6 +67,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24523() ) );                     //01P-41
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26757() ) );                     //01P-42
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26835() ) );                     //01P-43
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26806() ) );                     //01P-44
 
 
 
