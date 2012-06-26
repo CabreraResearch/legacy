@@ -257,8 +257,10 @@
                     var toggleNewDesignName = function () {
                         if (cswPrivate.isNewInspectionDesign()) {
                             cswPrivate.newDesignName.show();
+                            cswPrivate.newDesignNameLabel.show();
                         } else {
                             cswPrivate.newDesignName.hide();
+                            cswPrivate.newDesignNameLabel.hide();
                         }
                     };
                     var nextBtnEnabled = function () {
@@ -319,6 +321,10 @@
                         inspectionTable.cell(2, 1).br();
 
                         //2. New Inspection Design Name
+                        cswPrivate.newDesignNameLabel = inspectionTable.cell(3, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'New Inspection Design Name' });
+
                         cswPrivate.newDesignName = inspectionTable.cell(3, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .input({
@@ -366,7 +372,7 @@
             } ());
             
             //File upload onSuccess event to prep Step 4
-            cswPrivate.makeInspectionDesignGrid = function (jqGridOpts, onSuccess) {
+            cswPrivate.makeInspectionDesignGrid = function (gridJson, onSuccess) {
                 Csw.tryExec(onSuccess);
                 cswPrivate.gridIsPopulated = true;
 
@@ -385,40 +391,68 @@
 
                 cswPrivate.inspectionGridDiv = cswPrivate.divStep4.div({ ID: previewGridId });
                 
-                cswPrivate.gridOptions = {
-                    ID: cswPrivate.makeStepId('previewGrid'),
-                    pagermode: 'default',
-                    gridOpts: {
-                        autowidth: true,
-                        height: '200'
-                    },
-                    optNav: {
-                        add: true,
-                        del: true,
-                        edit: true,
-                        view: false,
-                        editfunc: function (rowid) {
-                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
-                        },
-                        addfunc: function () {
-                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
-                        },
-                        delfunc: function (rowid) {
-                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('delRowData', rowid);
-                        }
-                    }
-                };
+//                cswPrivate.gridOptions = {
+//                    ID: cswPrivate.makeStepId('previewGrid'),
+//                    pagermode: 'default',
+//                    gridOpts: {
+//                        autowidth: true,
+//                        height: '200'
+//                    },
+//                    optNav: {
+//                        add: true,
+//                        del: true,
+//                        edit: true,
+//                        view: false,
+//                        editfunc: function (rowid) {
+//                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', rowid, { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterEdit: true });
+//                        },
+//                        addfunc: function () {
+//                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('editGridRow', 'new', { url: '/NbtWebApp/wsNBT.asmx/ReturnTrue', reloadAfterSubmit: false, closeAfterAdd: true });
+//                        },
+//                        delfunc: function (rowid) {
+//                            return cswPrivate.inspectionGrid.gridTable.$.jqGrid('delRowData', rowid);
+//                        }
+//                    }
+//                };
 
-                if (false === Csw.contains(jqGridOpts, 'data') ||
-                    false === Csw.contains(jqGridOpts, 'colNames') ||
-                        jqGridOpts.colNames.length === 0) {
+//                if (false === Csw.contains(jqGridOpts, 'data') ||
+//                    false === Csw.contains(jqGridOpts, 'colNames') ||
+//                        jqGridOpts.colNames.length === 0) {
+//                    Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
+//                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+//                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+//                } else {
+//                    $.extend(cswPrivate.gridOptions.gridOpts, jqGridOpts);
+//                }
+//                cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
+
+                if (false === Csw.contains(grid, 'data') || false === Csw.contains(grid, 'columns') || grid.columns.length === 0) {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                 } else {
-                    $.extend(cswPrivate.gridOptions.gridOpts, jqGridOpts);
+                    var previewId = cswPrivate.makeStepId('previewGrid');
+                    cswPrivate.gridOptions = {
+                        ID: previewId,
+                        storeId: previewId,
+                        title: 'Preview Inspection Design',
+                        stateId: previewId,
+                        usePaging: false,
+                        showActionColumn: false,
+                        canSelectRow: false,
+                        onLoad: null,   // function()
+                        onEdit: null,   // function(row)
+                        onDelete: null, // function(row)
+                        onSelect: null, // function(row)
+                        onDeselect: null, // function(row)
+                        height: 200,
+                        width: '100%',
+                        fields: gridJson.fields,
+                        columns: gridJson.columns,
+                        data: gridJson.data
+                    };
+                    cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
                 }
-                cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
             };
 
             //File upload button for Step 3
@@ -439,8 +473,8 @@
                     paramName: 'fileupload',
                     done: function (e, ret) {
                         var gridData = {};
-                        if (Csw.contains(ret, 'result') && Csw.contains(ret.result, 'jqGridOpt')) {
-                            gridData = ret.result.jqGridOpt;
+                        if (Csw.contains(ret, 'result') && Csw.contains(ret.result, 'grid')) {
+                            gridData = ret.result.grid;
                             cswPrivate.makeInspectionDesignGrid(gridData, f.onSuccess);
                         }
                     }
@@ -567,25 +601,11 @@
                             }
 
                             confirmGridOptions.ID = cswPrivate.makeStepId('confirmGrid');
-                            confirmGridOptions.gridOpts.data = cswPrivate.inspectionGrid.gridTable.$.jqGrid('getRowData');
-                            confirmGridOptions.gridOpts.autowidth = false;
-                            confirmGridOptions.gridOpts.shrinkToFit = true;
-                            confirmGridOptions.gridOpts.height = 150;
-                            confirmGridOptions.optNav.add = false;
-                            confirmGridOptions.optNav.del = false;
-                            confirmGridOptions.optNav.edit = false;
-                            confirmGridOptions.optNav.view = false;
-                            confirmGridOptions.optNav.editfunc = null;
-                            confirmGridOptions.optNav.addfunc = null;
-                            confirmGridOptions.optNav.delfunc = null;
-                            Csw.each(confirmGridOptions.gridOpts.colModel, function (col) {
-                                if (Csw.contains(col, 'editable')) {
-                                    delete col.editable;
-                                }
-                                if (Csw.contains(col, 'edittype')) {
-                                    delete col.edittype;
-                                }
-                            });
+                            confirmGridOptions.storeId = cswPrivate.makeStepId('confirmGrid');
+                            confirmGridOptions.stateId = cswPrivate.makeStepId('confirmGrid');
+                            confirmGridOptions.height = 150;
+                            confirmGridOptions.onEdit = null;
+                            confirmGridOptions.onDelete = null;
 
                             var confirmGridParent = confirmationList.li({
                                 text: 'Creating a new Inspection Design <b>' + cswPrivate.selectedInspectionDesign.name + '</b>.'

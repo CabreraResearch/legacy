@@ -31,7 +31,7 @@ window.initMain = window.initMain || function (undefined) {
         }
     };
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
-
+   
     function onObjectClassButtonClick(eventOj, data) {
         switch (Csw.string(data.action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.request:
@@ -44,8 +44,38 @@ window.initMain = window.initMain || function (undefined) {
                 break;
         }
     }
-
     Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
+
+
+    function loadImpersonation(eventObj, actionData) {
+        if (false === Csw.isNullOrEmpty(actionData.userid)) {
+            handleImpersonation(actionData.userid, actionData.username, function () {
+                initAll(function () {
+                    handleItemSelect({
+                        actionid: actionData.actionid,
+                        viewid: actionData.viewid,
+                        nodeid: actionData.selectedNodeId,
+                        viewmode: actionData.viewmode,
+                        actionname: actionData.actionname,
+                        actionurl: actionData.actionurl,
+                        type: actionData.type
+                    });
+                });
+            });
+        } else {
+            handleItemSelect({
+                actionid: actionData.actionid,
+                viewid: actionData.viewid,
+                nodeid: actionData.selectedNodeId,
+                viewmode: actionData.viewmode,
+                actionname: actionData.actionname,
+                actionurl: actionData.actionurl,
+                type: actionData.type
+            });
+        }
+    }
+
+    Csw.subscribe(Csw.enums.events.RestoreViewContext, loadImpersonation);
 
     // watermark
     if (-1 === window.internetExplorerVersionNo) {
@@ -93,6 +123,21 @@ window.initMain = window.initMain || function (undefined) {
         initAll();
     }
 
+    function handleImpersonation(userid, username, onSuccess) {
+        var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
+        Csw.ajax.post({
+            url: '/NbtWebApp/wsNBT.asmx/impersonate',
+            data: { UserId: userid },
+            success: function (data) {
+                if (Csw.bool(data.result)) {
+                    Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
+                    Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
+                    Csw.tryExec(onSuccess);
+                }
+            } // success
+        }); // ajax
+    }
+
     function refreshHeaderMenu() {
         var $header = $('#header_menu');
         var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
@@ -114,18 +159,10 @@ window.initMain = window.initMain || function (undefined) {
                 handleAction({ 'actionname': 'Sessions' });
             },
             onImpersonate: function (userid, username) {
-                Csw.ajax.post({
-                    url: '/NbtWebApp/wsNBT.asmx/impersonate',
-                    data: { UserId: userid },
-                    success: function (data) {
-                        if (Csw.bool(data.result)) {
-                            Csw.cookie.set(Csw.cookie.cookieNames.OriginalUsername, u);
-                            Csw.cookie.set(Csw.cookie.cookieNames.Username, u + ' as ' + username);
-                            Csw.goHome();
-                        }
-                    } // success
-                }); // ajax
-            }, // onImpersonate
+                handleImpersonation(userid, username, function () {
+                    Csw.goHome();
+                });
+            },
             onEndImpersonation: function () {
                 Csw.ajax.post({
                     url: '/NbtWebApp/wsNBT.asmx/endImpersonation',
@@ -316,6 +353,7 @@ window.initMain = window.initMain || function (undefined) {
         if (options) {
             $.extend(o, options);
         }
+
         multi = false; /* Case 26134. Revert multi-edit selection when switching views, etc. */
         var linkType = Csw.string(o.linktype).toLowerCase();
 

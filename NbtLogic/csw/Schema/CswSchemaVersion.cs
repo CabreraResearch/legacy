@@ -535,8 +535,6 @@ namespace ChemSW.Nbt.Schema
             materialname,
             casno,
             einecs,
-            materialsubclassid,
-            materialsubclass,
             inventoryrequired,
             keywords,
             creationdate,
@@ -570,17 +568,6 @@ namespace ChemSW.Nbt.Schema
             flash_point,
             vapor_density,
             vapor_pressure,
-            isdemo
-        }
-
-        public enum MaterialsSubclassColumns
-        {
-            materialsubclassid,
-            nodetypeid,
-            nodename,
-            deleted,
-            pendingupdate,
-            subclassname,
             isdemo
         }
 
