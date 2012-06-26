@@ -67,57 +67,105 @@
 
             //Step 1. Select a Dispense Type.
             cswPrivate.makeStepOne = (function () {
+                var stepOneComplete = false;
                 return function () {
-
                     var dispenseTypeTable = '',
-                    dispenseTypes = {
-                        0: '',
-                        1: 'Add',
-                        2: 'Waste',
-                        3: 'Dispense'
-                    }
+                        dispenseTypes = {
+                            0: '',
+                            1: 'Add',
+                            2: 'Waste',
+                            3: 'Dispense'
+                        };
 
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
-                    cswPrivate.divStep1 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step1.step);
-                    cswPrivate.divStep1.br();
+                    if (false === stepOneComplete) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
-                    dispenseTypeTable = cswPrivate.divStep1.table({
-                        ID: cswPrivate.makeStepId('setDispenseTypeTable')
-                    });
+                        cswPrivate.divStep1 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step1.step);
+                        cswPrivate.divStep1.br();
 
-                    dispenseTypeTable.cell(1, 1)
+                        dispenseTypeTable = cswPrivate.divStep1.table({
+                            ID: cswPrivate.makeStepId('setDispenseTypeTable')
+                        });
+
+                        dispenseTypeTable.cell(1, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'What kind of dispense would you like to do?' });
 
-                    var dispenseTypeDiv = dispenseTypeTable.cell(1, 2)
+                        var dispenseTypeDiv = dispenseTypeTable.cell(1, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .div();
 
-                    var dispenseTypeSelect = dispenseTypeDiv.select({
-                        ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
-                        cssclass: 'selectinput',
-                        values: dispenseTypes,
-                        onChange: function () {
-                            if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
-                                cswPrivate.dispenseType = dispenseTypeSelect.val();
-                                cswPrivate.wizard.next.enable();
-                            }
-                            else {
-                                cswPrivate.wizard.next.disable();
-                            }
-                        },
-                        selected: dispenseTypes[0]
-                    });
+                        var dispenseTypeSelect = dispenseTypeDiv.select({
+                            ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
+                            cssclass: 'selectinput',
+                            values: dispenseTypes,
+                            onChange: function () {
+                                if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
+                                    cswPrivate.dispenseType = dispenseTypeSelect.val();
+                                    cswPrivate.wizard.next.enable();
+                                }
+                                else {
+                                    cswPrivate.wizard.next.disable();
+                                }
+                            },
+                            selected: dispenseTypes[0]
+                        });
+
+                        stepOneComplete = true;
+                    }
                 };
             } ());
 
             //Step 2. Select a Destination Container NodeType .
-            //if( only one NodeType exists || Dispense Type != Dispense ) skip this step            
+            //if( only one NodeType exists || Dispense Type != Dispense ) skip this step
             cswPrivate.makeStepTwo = (function () {
+                var stepTwoComplete = false;
                 return function () {
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);                    
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    if (false === stepTwoComplete) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                        var containerTypeTable = '',
+                            blankText = '[Select One]';
+
+                        cswPrivate.divStep2 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step2.step);
+                        cswPrivate.divStep2.br();
+
+                        containerTypeTable = cswPrivate.divStep2.table({
+                            ID: cswPrivate.makeStepId('setContainerTypeTable')
+                        });
+
+                        containerTypeTable.cell(1, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'What kind of container would you like to use?' });
+
+                        var containerTypeDiv = containerTypeTable.cell(1, 2)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .div();
+
+                        var containerTypeSelect = containerTypeDiv.nodeTypeSelect({
+                            ID: Csw.makeSafeId('nodeTypeSelect'),
+                            objectClassName: 'ContainerClass',
+                            blankOptionText: blankText,
+                            onSelect: function (data, nodeTypeCount) {
+                                if (blankText !== containerTypeSelect.val()) {
+                                    cswPrivate.containerNodeTypeId = containerTypeSelect.val();
+                                    cswPrivate.wizard.next.enable();
+                                }
+                                else {
+                                    cswPrivate.wizard.next.disable();
+                                }
+                            },
+                            onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
+                                if (Csw.number(nodeTypeCount) > 1) {
+                                    ;
+                                }
+                            }
+                        });
+
+                        stepTwoComplete = true;
+                    }
                 };
             } ());
 
@@ -126,8 +174,18 @@
             //Select a Quantity :
             //Select the number of destination containers and their quantities.
             cswPrivate.makeStepThree = (function () {
+                var stepThreeComplete = false;
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                    if (false === stepThreeComplete) {
+                        if (cswPrivate.dispenseType === 'Dispense') {
+                            stepThreeComplete = true; //do step 3B
+                        }
+                        else {
+                            stepThreeComplete = true; //do step 3A
+                        }
+                        stepThreeComplete = true;
+                    }
                 };
             } ());
 
@@ -135,7 +193,12 @@
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case Csw.enums.wizardSteps_DispenseContainer.step2.step:
-                        cswPrivate.makeStepTwo();
+                        if (stepTwoNeeded()) {
+                            cswPrivate.makeStepTwo();
+                        }
+                        else {
+                            cswPrivate.wizard.next.click();
+                        }
                         break;
                     case Csw.enums.wizardSteps_DispenseContainer.step3.step:
                         cswPrivate.makeStepThree();
@@ -150,10 +213,30 @@
                         cswPrivate.makeStepOne();
                         break;
                     case Csw.enums.wizardSteps_DispenseContainer.step2.step:
-                        cswPrivate.makeStepTwo();
+                        if (stepTwoNeeded()) {
+                            cswPrivate.makeStepTwo();
+                        }
+                        else {
+                            cswPrivate.wizard.previous.click();
+                        }
                         break;
                 }
             };
+
+            var stepTwoNeeded = function () {
+                var doStepTwo = true;
+                if (cswPrivate.dispenseType !== 'Dispense') {
+                    doStepTwo = false;
+                }
+                else {
+                    var numOfContianerNodeTypes = 1;
+                    //if (Csw.number(nodeTypeCount) <= 1) {
+                    //    doStepTwo = false;
+                    //}
+                    //TODO - figure out how to call nodetypeSelect here so that we can determine correct nodeTypeCount 
+                }
+                return doStepTwo;
+            }
 
             cswPrivate.onConfirmFinish = function () {
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
