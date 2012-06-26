@@ -173,7 +173,9 @@
                     }];
                     
                     var rows = cswPrivate.data.items.length;
-                    if(rows <= cswPrivate.pageSize) {
+                    if(rows === 0){
+                        gridopts.height = cswPrivate.calculateHeight(1);
+                    } else if( rows <= cswPrivate.pageSize) {
                         gridopts.height = cswPrivate.calculateHeight(rows);
                     } else {
                         gridopts.height = cswPrivate.calculateHeight(cswPrivate.pageSize);
