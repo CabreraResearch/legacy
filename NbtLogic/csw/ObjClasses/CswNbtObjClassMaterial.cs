@@ -28,10 +28,10 @@ namespace ChemSW.Nbt.ObjClasses
         public const string SpecificGravityPropertyName = "Specific Gravity";
         public const string PhysicalStatePropertyName = "Physical State";
         public const string CasNoPropertyName = "CAS No";
-        public const string RegulatoryListsPropName = "Regulatory Lists";
-        public const string TradenamePropName = "Tradename";
-        public const string StorageCompatibilityPropName = "Storage Compatibility";
-        public const string ExpirationIntervalPropName = "Expiration Interval";
+        public const string RegulatoryListsPropertyName = "Regulatory Lists";
+        public const string TradenamePropertyName = "Tradename";
+        public const string StorageCompatibilityPropertyName = "Storage Compatibility";
+        public const string ExpirationIntervalPropertyName = "Expiration Interval";
         public const string RequestPropertyName = "Request";
 
         /// <summary>
@@ -126,10 +126,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropNumber SpecificGravity { get { return ( _CswNbtNode.Properties[SpecificGravityPropertyName] ); } }
         public CswNbtNodePropList PhysicalState { get { return ( _CswNbtNode.Properties[PhysicalStatePropertyName] ); } }
         public CswNbtNodePropText CasNo { get { return ( _CswNbtNode.Properties[CasNoPropertyName] ); } }
-        public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[RegulatoryListsPropName] ); } }
-        public CswNbtNodePropText TradeName { get { return ( _CswNbtNode.Properties[TradenamePropName] ); } }
-        public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[StorageCompatibilityPropName] ); } }
-        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[ExpirationIntervalPropName] ); } }
+        public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[RegulatoryListsPropertyName] ); } }
+        public CswNbtNodePropText TradeName { get { return ( _CswNbtNode.Properties[TradenamePropertyName] ); } }
+        public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[StorageCompatibilityPropertyName] ); } }
+        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[ExpirationIntervalPropertyName] ); } }
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
 
         #endregion
