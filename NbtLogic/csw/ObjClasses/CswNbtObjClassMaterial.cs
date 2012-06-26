@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return ret;
         }
-        
+
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.ObjClasses
                         SizeView.AddViewProperty( SizeRel, CapacityOcp );
                         CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
                         DispensableVp.ShowInGrid = false;
-                        SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: "true" );
+                        SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: Tristate.True.ToString() );
                         SizeView.AddViewProperty( SizeRel, CatalogNoOcp );
                         SizeView.SaveToCache( false );
                         ActionDataObj["sizesViewId"] = SizeView.SessionViewId.ToString();
@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[ExpirationIntervalPropertyName] ); } }
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
         public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[ReceivePropertyName] ); } }
- 
+
         #endregion
 
     }//CswNbtObjClassMaterial
