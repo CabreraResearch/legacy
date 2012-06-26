@@ -80,7 +80,7 @@ namespace NbtUnitConversion.Test
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             CswNbtObjClassMaterial NodeAsMaterial = MaterialNode;
             NodeAsMaterial.PhysicalState.Value = State;
-            if( SpecificGravity != Int32.MinValue )
+            if( CswTools.IsDouble( SpecificGravity ) )
             {
                 NodeAsMaterial.SpecificGravity.Value = SpecificGravity;
             }
