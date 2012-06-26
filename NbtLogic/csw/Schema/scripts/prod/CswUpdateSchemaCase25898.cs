@@ -157,13 +157,13 @@ namespace ChemSW.Nbt.Schema
                                 case "Reference Number": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 2, 1 ); break;
                                 case "Type": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 3, 1 ); break;
                                 case "Species Origin": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 4, 1 ); break;
-                                case "Reference Type": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 5, 1 ); break;
-                                case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 6, 1 ); break;
+                                case "Vectors": MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 5, 1 ); break;
+                                case "Reference Type": MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 6, 1 ); break;
+                                //case CswNbtObjClassMaterial.ExpirationIntervalPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 6, 1 ); break;
                                 case CswNbtObjClassMaterial.ApprovalStatusPropertyName: MatNTP.updateLayout( EditLayout, false, namedTab.TabId, 7, 1 ); break;
 
                                 // Biosafety
                                 case "Biosafety Level": MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 1, 1 ); break;
-                                case "Vectors": MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 2, 1 ); break;
                                 case CswNbtObjClassMaterial.PhysicalStatePropertyName: 
                                     MatNTP.updateLayout( EditLayout, false, BiosafetyTab.TabId, 3, 1 );
                                     MatNTP.updateLayout( AddLayout, false, Int32.MinValue, 4, 1 );
