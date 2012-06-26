@@ -121,8 +121,9 @@
             //Step 2. Select a Destination Container NodeType .
             //if( only one NodeType exists || Dispense Type != Dispense ) skip this step
             cswPrivate.makeStepTwo = (function () {
-                var stepTwoComplete = false;
-                return function () {
+                var stepTwoComplete = false,
+                    skipThisStep = false;
+                return function (movingForward) {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                     if (false === stepTwoComplete) {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
@@ -136,13 +137,14 @@
                             ID: cswPrivate.makeStepId('setContainerTypeTable')
                         });
 
-                        containerTypeTable.cell(1, 1)
+                        var containerTypeText = containerTypeTable.cell(1, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ text: 'What kind of container would you like to use?' });
+                            .span({ text: 'What kind of container would you like to use?' })
+                            .hide();
 
                         var containerTypeDiv = containerTypeTable.cell(1, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .div();
+                            .div().hide();
 
                         var containerTypeSelect = containerTypeDiv.nodeTypeSelect({
                             ID: Csw.makeSafeId('nodeTypeSelect'),
@@ -159,12 +161,22 @@
                             },
                             onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
                                 if (Csw.number(nodeTypeCount) > 1) {
-                                    ;
+                                    containerTypeText.show();
+                                    containerTypeDiv.show();
+                                }
+                                else {
+                                    cswPrivate.containerNodeTypeId = lastNodeTypeId;
+                                    skipThisStep = true;
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                                    cswPrivate.wizard.next.click();
                                 }
                             }
                         });
 
                         stepTwoComplete = true;
+                    }
+                    if (skipThisStep) {
+                        movingForward ? cswPrivate.wizard.next.click() : cswPrivate.wizard.previous.click();
                     }
                 };
             } ());
@@ -176,13 +188,70 @@
             cswPrivate.makeStepThree = (function () {
                 var stepThreeComplete = false;
                 return function () {
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                     if (false === stepThreeComplete) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                         if (cswPrivate.dispenseType === 'Dispense') {
-                            stepThreeComplete = true; //do step 3B
+                            //TODO - step 3B - container/quantity grid
+                            var temp = ''; //delete me
                         }
                         else {
-                            stepThreeComplete = true; //do step 3A
+                            var quantityTable = '',
+                            blankText = '[Select One]';
+
+                            cswPrivate.divStep3 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step3.step);
+                            cswPrivate.divStep3.br();
+
+                            quantityTable = cswPrivate.divStep3.table({
+                                ID: cswPrivate.makeStepId('setQuantityTable')
+                            });
+
+                            quantityTable.cell(1, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'Select the quantity you wish to dispense:' });
+
+                            var quantityNumDiv = quantityTable.cell(1, 2)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .div();
+
+                            var quantityNumBox = quantityNumDiv.numberTextBox({
+                                ID: cswPrivate.makeStepId('setQuantityNumBox'),
+                                value: '',
+                                MinValue: 0,
+                                MaxValue: 999999999,
+                                Precision: 6,
+                                Required: true,
+                                onChange: function () {
+                                    cswPrivate.quantity = quantityNumBox.val();
+                                    cswPrivate.unitId = quantityUnitSelect.val();
+                                    if (false === Csw.isNullOrEmpty(quantityNumBox.val())
+                                    && false === Csw.isNullOrEmpty(quantityUnitSelect.val())) {
+                                        cswPrivate.wizard.finish.enable();
+                                    }
+                                    else {
+                                        cswPrivate.wizard.finish.disable();
+                                    }
+                                }
+                            });
+
+                            var quantityUnitDiv = quantityTable.cell(1, 3)
+                            .css({ 'padding': '1px' })
+                            .div();
+
+                            var quantityUnitSelect = quantityUnitDiv.nodeSelect({
+                                ID: Csw.makeSafeId('nodeSelect'),
+                                objectClassName: 'UnitOfMeasureClass',
+                                onSelect: function (data, nodeTypeCount) {
+                                    cswPrivate.unitId = quantityUnitSelect.val();
+                                    if (false === Csw.isNullOrEmpty(quantityNumBox.val())
+                                    && false === Csw.isNullOrEmpty(quantityUnitSelect.val())) {
+                                        cswPrivate.wizard.finish.enable();
+                                    }
+                                    else {
+                                        cswPrivate.wizard.finish.disable();
+                                    }
+                                }
+                            });
+
                         }
                         stepThreeComplete = true;
                     }
@@ -193,8 +262,8 @@
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case Csw.enums.wizardSteps_DispenseContainer.step2.step:
-                        if (stepTwoNeeded()) {
-                            cswPrivate.makeStepTwo();
+                        if ('Dispense' === cswPrivate.dispenseType) {
+                            cswPrivate.makeStepTwo(true);
                         }
                         else {
                             cswPrivate.wizard.next.click();
@@ -213,8 +282,8 @@
                         cswPrivate.makeStepOne();
                         break;
                     case Csw.enums.wizardSteps_DispenseContainer.step2.step:
-                        if (stepTwoNeeded()) {
-                            cswPrivate.makeStepTwo();
+                        if ('Dispense' === cswPrivate.dispenseType) {
+                            cswPrivate.makeStepTwo(false);
                         }
                         else {
                             cswPrivate.wizard.previous.click();
@@ -223,28 +292,13 @@
                 }
             };
 
-            var stepTwoNeeded = function () {
-                var doStepTwo = true;
-                if (cswPrivate.dispenseType !== 'Dispense') {
-                    doStepTwo = false;
-                }
-                else {
-                    var numOfContianerNodeTypes = 1;
-                    //if (Csw.number(nodeTypeCount) <= 1) {
-                    //    doStepTwo = false;
-                    //}
-                    //TODO - figure out how to call nodetypeSelect here so that we can determine correct nodeTypeCount 
-                }
-                return doStepTwo;
-            }
-
             cswPrivate.onConfirmFinish = function () {
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                var designGrid = 'undefined';
+                var designGrid = 'unknown';
 
                 if (false === Csw.isNullOrEmpty(cswPrivate.dispensedContainerGrid)) {
                     designGrid = JSON.stringify(cswPrivate.dispensedContainerGrid.getAllGridRows());

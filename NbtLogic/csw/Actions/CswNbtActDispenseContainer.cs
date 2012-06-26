@@ -80,21 +80,24 @@ namespace ChemSW.Nbt.csw.Actions
         private double _getDispenseAmountInProperUnits( string Quantity, string UnitId )
         {
             double ValueToConvert = CswConvert.ToDouble( Quantity );
+            double convertedValue = ValueToConvert;
             CswPrimaryKey UnitOfMeasurePK = new CswPrimaryKey();
             UnitOfMeasurePK.FromString( UnitId );
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, UnitOfMeasurePK, _SourceContainer.Quantity.UnitId, _SourceContainer.Material.RelatedNodeId );
-            double convertedValue = ConversionObj.convertUnit( ValueToConvert );
+            try
+            {
+                convertedValue = ConversionObj.convertUnit( ValueToConvert );
+            }
+            catch( Exception e )
+            {
+                throw new CswDniException( ErrorType.Error, "Failed to dispense container: Source Container has unknown Quantity.", "Dispense failed - Source Container Quantity is null: " + e.StackTrace );
+            }
             return convertedValue;
         }
 
         public JObject upsertDispenseContainers( string ContainerNodeTypeId, string DesignGrid )
         {
             JArray GridArray = JArray.Parse( DesignGrid );
-            return _upsertDispenseContainers( ContainerNodeTypeId, GridArray );
-        }
-
-        private JObject _upsertDispenseContainers( string ContainerNodeTypeId, JArray DesignGrid )
-        {
             //TODO - create distination containers with respective quantities, create transaction nodes for each dispense instance, update source container
             //TODO - create view with the container and return it
             return new JObject();
@@ -107,10 +110,7 @@ namespace ChemSW.Nbt.csw.Actions
             {
                 CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
 
-                if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste )
-                {
-                    ContDispTransNode.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
-                }
+                ContDispTransNode.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Add )
                 {
                     ContDispTransNode.DestinationContainer.RelatedNodeId = _SourceContainer.NodeId;
