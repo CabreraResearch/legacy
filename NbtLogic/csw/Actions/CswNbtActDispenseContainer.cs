@@ -15,20 +15,11 @@ namespace ChemSW.Nbt.csw.Actions
 
         #region Constructor
 
-        public CswNbtActDispenseContainer( CswNbtResources CswNbtResources )
+        public CswNbtActDispenseContainer( CswNbtResources CswNbtResources, string SourceContainerNodeId )
         {
             _CswNbtResources = CswNbtResources;
 
-            if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
-            {
-                throw new CswDniException( ErrorType.Error, "Cannot use the Dispense action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
-            }
-        }
-
-        public CswNbtActDispenseContainer( CswNbtResources CswNbtResources, string SourceContainerNodeId )
-            : this( CswNbtResources )
-        {
-            if( SourceContainerNodeId != null )
+            if( false == String.IsNullOrEmpty( SourceContainerNodeId ) )
             {
                 CswPrimaryKey SourceContainerPK = new CswPrimaryKey();
                 SourceContainerPK.FromString( SourceContainerNodeId );
@@ -37,6 +28,10 @@ namespace ChemSW.Nbt.csw.Actions
             else
             {
                 throw new CswDniException( ErrorType.Error, "Cannot execute dispense contianer action with an undefined Source Container.", "Attempted to constuct CswNbtActDispenseContainer without a valid Source Container." );
+            }
+            if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot use the Dispense action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
         }
 
