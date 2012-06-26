@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.MetaData
                                                                };
 
 
-        public sealed class NbtFieldType
+        public sealed class NbtFieldType : IEquatable<NbtFieldType>
         {
             public readonly string Value;
 
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 return Value;
             }
-            
+
             public const string Barcode = "Barcode";
             public const string Button = "Button";
             public const string Comments = "Comments";
@@ -119,6 +119,33 @@ namespace ChemSW.Nbt.MetaData
             public const string UserSelect = "UserSelect";
             public const string ViewPickList = "ViewPickList";
             public const string ViewReference = "ViewReference";
+
+            #region IEquatable (NbtFieldType)
+
+            public static bool operator ==( NbtFieldType ft1, NbtFieldType ft2 )
+            {
+                //do a string comparison on the fieldtypes
+                return ft1.ToString() == ft2.ToString();
+            }
+
+            public static bool operator !=( NbtFieldType ft1, NbtFieldType ft2 )
+            {
+                return !( ft1 == ft2 );
+            }
+
+            public override bool Equals( object obj )
+            {
+                if( !( obj is NbtFieldType ) )
+                    return false;
+                return this == (NbtFieldType) obj;
+            }
+
+            public bool Equals( NbtFieldType obj )
+            {
+                return this == obj;
+            }
+
+            #endregion IEquatable (NbtFieldType)
 
         };
 

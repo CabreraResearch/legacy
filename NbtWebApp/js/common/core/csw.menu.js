@@ -81,6 +81,16 @@
                             return false;
                         });
                         break;
+                    case 'AddFeedback':
+                        $a.click(function () {
+                            $.CswDialog('AddFeedbackDialog', {
+                                text: text,
+                                nodetypeid: Csw.string(json.nodetypeid),
+                                onAddNode: o.onAlterNode
+                            });
+                            return false;
+                        });
+                        break;
                     case 'Clear Cache':
                         $a.click(function () {
                             return window.location.reload(true);

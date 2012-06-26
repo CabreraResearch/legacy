@@ -46,7 +46,7 @@
             // Constructor
             // Adds a searchbox to the form
             (function () {
-                
+                cswPrivate.$searchbox_parent.empty();
                 var cswtable = Csw.literals.table({
                     ID: Csw.makeId(cswPrivate.ID, '', '_div'),
                     $parent: cswPrivate.$searchbox_parent
@@ -78,7 +78,7 @@
 
                 Csw.ajax.post({
                     url: cswPrivate.newsearchurl,
-                    data: { 
+                    data: {
                         SearchTerm: cswPrivate.searchterm,
                         NodeTypeId: cswPrivate.nodetypeid,
                         ObjectClassId: cswPrivate.objectclassid
@@ -98,7 +98,7 @@
                 // Search results
 
                 function _renderResultsTable(columns) {
-                    
+
                     cswPrivate.$searchresults_parent.contents().remove();
                     cswPrivate.$searchresults_parent.css({ paddingTop: '15px' });
 
@@ -283,7 +283,7 @@
                 $.CswDialog('AddViewDialog', {
                     ID: Csw.makeId(cswPrivate.ID, '', 'addviewdialog'),
                     //viewmode: 'table',
-                category: 'Saved Searches',
+                    category: 'Saved Searches',
                     onAddView: function (newviewid, viewmode) {
 
                         Csw.ajax.post({
@@ -293,7 +293,7 @@
                                 ViewId: newviewid
                             },
                             success: function (data) {
-                            Csw.tryExec(cswPrivate.onAddView, newviewid, viewmode);
+                                Csw.tryExec(cswPrivate.onAddView, newviewid, viewmode);
                                 Csw.tryExec(cswPrivate.onLoadView, newviewid, viewmode);
                             }
                         }); // ajax  
