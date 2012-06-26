@@ -4,7 +4,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.csw.Actions
@@ -22,77 +21,28 @@ namespace ChemSW.Nbt.csw.Actions
 
             if( false == _CswNbtResources.IsModuleEnabled( CswNbtResources.CswNbtModule.CISPro ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
+                throw new CswDniException( ErrorType.Error, "Cannot use the Dispense action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
         }
 
         public CswNbtActDispenseContainer( CswNbtResources CswNbtResources, string SourceContainerNodeId )
             : this( CswNbtResources )
         {
-            CswPrimaryKey SourceContainerPK = new CswPrimaryKey();
-            SourceContainerPK.FromString( SourceContainerNodeId );
-            _SourceContainer = _CswNbtResources.Nodes.GetNode( SourceContainerPK );
+            if( SourceContainerNodeId != null )
+            {
+                CswPrimaryKey SourceContainerPK = new CswPrimaryKey();
+                SourceContainerPK.FromString( SourceContainerNodeId );
+                _SourceContainer = _CswNbtResources.Nodes.GetNode( SourceContainerPK );
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot execute dispense contianer action with an undefined Source Container.", "Attempted to constuct CswNbtActDispenseContainer without a valid Source Container." );
+            }
         }
 
         #endregion Constructor
 
         #region Public Methods
-
-        public JObject getRequestHistory()
-        {
-            JObject Ret = new JObject();
-
-            //ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestHistoryView, true, false );
-            //Int32 RequestCount = Tree.getChildNodeCount();
-            //Ret["count"] = RequestCount;
-            //if( RequestCount > 0 )
-            //{
-            //    for( Int32 I = 0; I < RequestCount; I += 1 )
-            //    {
-            //        Tree.goToNthChild( I );
-
-            //        Ret[Tree.getNodeNameForCurrentPosition()] = new JObject();
-            //        Ret[Tree.getNodeNameForCurrentPosition()]["requestnodeid"] = Tree.getNodeIdForCurrentPosition().ToString();
-            //        foreach( JObject Prop in Tree.getChildNodePropsOfNode() )
-            //        {
-            //            string PropName = Prop["propname"].ToString().ToLower();
-            //            Ret[Tree.getNodeNameForCurrentPosition()][PropName] = Prop["gestalt"].ToString();
-            //        }
-
-            //        Tree.goToParentNode();
-            //    }
-            //}
-            return Ret;
-        }
-
-        public JObject submitRequest( CswPrimaryKey NodeId, string NodeName )
-        {
-            JObject Ret = new JObject();
-            if( null != NodeId )
-            {
-                CswNbtObjClassRequest NodeAsRequest = _CswNbtResources.Nodes.GetNode( NodeId );
-                if( null != NodeAsRequest )
-                {
-                    NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
-                    NodeAsRequest.Name.Text = NodeName;
-                    NodeAsRequest.postChanges( true );
-                    Ret["succeeded"] = true;
-                }
-            }
-
-            return Ret;
-        }
-
-        /// <summary>
-        /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
-        /// </summary>
-        public JObject getRequestItemAddProps( CswNbtObjClassRequestItem RetAsRequestItem )
-        {
-            CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-            _CswNbtResources.EditMode = NodeEditMode.Add;
-
-            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
-        }
 
         public JObject updateDispensedContainer( string DispenseType, string Quantity, string UnitId )
         {
