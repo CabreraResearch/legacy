@@ -45,7 +45,8 @@ window.initMain = window.initMain || function (undefined) {
             case Csw.enums.nbtButtonAction.dispense:
                 //TODO - close open Container dialog when entering wizard
                 //TODO - get rid of the Containers grid & Welcomeitems showing underneath the wizard
-                handleAction({ actionname: 'DispenseContainer', ActionOptions: data.actiondata });
+                data.actionname = 'DispenseContainer';
+                handleAction(data);
                 break;
         }
     }
@@ -1156,9 +1157,9 @@ window.initMain = window.initMain || function (undefined) {
             case 'DispenseContainer':
                 var designOpt = {
                     ID: 'cswDispenseContainerWizard',
-                    nodeId: o.ActionOptions,
-                    //viewid: o.ActionOptions.viewid,
-                    //viewmode: o.ActionOptions.viewmode,
+                    nodeId: o.nodeId,
+                    currentQuantity: o.currentQuantity,
+                    currentUnitName: o.currentUnitName,
                     onCancel: function () {
                         clear({ 'all': true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());

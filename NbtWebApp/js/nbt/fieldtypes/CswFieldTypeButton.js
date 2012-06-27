@@ -70,7 +70,7 @@
 
                                     case Csw.enums.nbtButtonAction.dispense:
                                         $btn.button({ disabled: false });
-                                        Csw.publish(Csw.enums.events.objectClassButtonClick, data);
+                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
                                         break;
 
                                     case Csw.enums.nbtButtonAction.request:

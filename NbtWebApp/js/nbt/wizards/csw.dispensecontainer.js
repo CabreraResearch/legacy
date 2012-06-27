@@ -19,6 +19,8 @@
             var cswPrivate = {
                 ID: 'cswDispenseContainerWizard',
                 nodeId: 'Unknown',
+                currentQuantity: '',
+                currentUnitName: '',
                 onCancel: null,
                 onFinish: null,
                 startingStep: 1,
@@ -215,9 +217,13 @@
 
                             quantityTable.cell(1, 1)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
+                            .span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
+
+                            quantityTable.cell(2, 1)
+                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .span({ text: 'Select the quantity you wish to dispense:' });
 
-                            var quantityNumDiv = quantityTable.cell(1, 2)
+                            var quantityNumDiv = quantityTable.cell(2, 2)
                             .css({ 'padding': '1px', 'vertical-align': 'middle' })
                             .div();
 
@@ -241,7 +247,7 @@
                                 }
                             });
 
-                            var quantityUnitDiv = quantityTable.cell(1, 3)
+                            var quantityUnitDiv = quantityTable.cell(2, 3)
                             .css({ 'padding': '1px' })
                             .div();
 
@@ -346,6 +352,8 @@
                 cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
                     ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
                     nodeId: cswPrivate.nodeId,
+                    currentQuantity: cswPrivate.currentQuantity,
+                    currentUnitName: cswPrivate.currentUnitName,
                     Title: 'Create New Inspection',
                     StepCount: Csw.enums.wizardSteps_DispenseContainer.stepcount,
                     Steps: cswPrivate.wizardSteps,

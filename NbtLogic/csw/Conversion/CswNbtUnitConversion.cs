@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.csw.Conversion
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Conversion failed: Unable to apply unit conversion between the selected unit types.", "Conversion failed: Unsupported unit types." );
+                    throw new CswDniException( ErrorType.Warning, "Conversion failed: Unable to apply unit conversion between the selected unit types.", "Conversion failed: Unsupported unit type match." );
                 }
             }
             else
