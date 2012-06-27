@@ -332,7 +332,10 @@
             /// <returns type="Object"> An object. </returns>
             var ret = {};
             Csw.tryExec(function () { ret = $.parseJSON(data); });
-            return ret;
+            if(Csw.isNullOrEmpty(ret)) {
+				ret = {};
+			}
+			return ret;
         });
 
 } ());

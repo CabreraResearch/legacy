@@ -59,9 +59,9 @@ namespace NbtWebAppServices.Session
             }
 
             Dictionary<string, string> Cookies = new Dictionary<string, string>();
-            foreach( HttpCookie Cookie in Context.Request.Cookies )
+            foreach( string CookieName in Context.Request.Cookies )
             {
-                Cookies[Cookie.Name] = Cookie.Value;
+                Cookies[CookieName] = Context.Request.Cookies[CookieName].Value;
             }
 
             CswSessionManager = new CswSessionManager( _AppType,
