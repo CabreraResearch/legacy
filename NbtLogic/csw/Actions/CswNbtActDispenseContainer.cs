@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.csw.Conversion;
@@ -12,6 +13,7 @@ namespace ChemSW.Nbt.csw.Actions
     {
         private CswNbtResources _CswNbtResources = null;
         private CswNbtObjClassContainer _SourceContainer = null;
+        private Collection<CswPrimaryKey> _ContainersToView = new Collection<CswPrimaryKey>();
 
         #region Constructor
 
@@ -44,37 +46,47 @@ namespace ChemSW.Nbt.csw.Actions
             JObject ret = new JObject();
             if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString() )
             {
-                ret = _addMaterialToContainer( Quantity, UnitId );
+                _addMaterialToContainer( Quantity, UnitId );
             }
             else if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste.ToString() )
             {
-                ret = _wasteMaterialFromContainer( Quantity, UnitId );
+                _wasteMaterialFromContainer( Quantity, UnitId );
             }
             else
             {
                 throw new CswDniException( ErrorType.Error, "Failed to dispense container: Dispense type not supported.", "Invalid Dispense Type." );
             }
+            CswNbtViewId ViewId = _getViewForAllDispenseContainers();
+            ret["viewId"] = ViewId.ToString();
+
             return ret;
         }
 
-        private JObject _addMaterialToContainer( string Quantity, string UnitId )
+        public JObject upsertDispenseContainers( string ContainerNodeTypeId, string DesignGrid )
+        {
+            JObject ret = new JObject();
+            JArray GridArray = JArray.Parse( DesignGrid );
+            //TODO - create distination containers with respective quantities, create transaction nodes for each dispense instance, update source container
+            CswNbtViewId ViewId = _getViewForAllDispenseContainers();
+            ret["viewId"] = ViewId.ToString();
+
+            return new JObject();
+        }
+
+        private void _addMaterialToContainer( string Quantity, string UnitId )
         {
             double QuantityToAdd = _getDispenseAmountInProperUnits( Quantity, UnitId );
             _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity + QuantityToAdd;
             _SourceContainer.postChanges( false );
             _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add, QuantityToAdd );
-            //TODO - create view with the container and return it
-            return new JObject();
         }
 
-        private JObject _wasteMaterialFromContainer( string Quantity, string UnitId )
+        private void _wasteMaterialFromContainer( string Quantity, string UnitId )
         {
             double QuantityToWaste = _getDispenseAmountInProperUnits( Quantity, UnitId );
             _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity - QuantityToWaste;
             _SourceContainer.postChanges( false );
             _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste, QuantityToWaste );
-            //TODO - waste quantity from source container, create transaction node
-            return new JObject();
         }
 
         private double _getDispenseAmountInProperUnits( string Quantity, string UnitId )
@@ -86,14 +98,6 @@ namespace ChemSW.Nbt.csw.Actions
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, UnitOfMeasurePK, _SourceContainer.Quantity.UnitId, _SourceContainer.Material.RelatedNodeId );
             convertedValue = ConversionObj.convertUnit( ValueToConvert );
             return convertedValue;
-        }
-
-        public JObject upsertDispenseContainers( string ContainerNodeTypeId, string DesignGrid )
-        {
-            JArray GridArray = JArray.Parse( DesignGrid );
-            //TODO - create distination containers with respective quantities, create transaction nodes for each dispense instance, update source container
-            //TODO - create view with the container and return it
-            return new JObject();
         }
 
         private void _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType, double QuantityDispensed )
@@ -117,6 +121,28 @@ namespace ChemSW.Nbt.csw.Actions
 
                 ContDispTransNode.postChanges( false );
             }
+        }
+
+        private CswNbtViewId _getViewForAllDispenseContainers()
+        {
+            Collection<CswPrimaryKey> SourceContainerRoot = new Collection<CswPrimaryKey>();
+            SourceContainerRoot.Add( _SourceContainer.NodeId );
+            CswNbtView DispenseContainerView = new CswNbtView( _CswNbtResources );
+            DispenseContainerView.makeNew( "Containers Dispensed - " + DateTime.Now.ToString(), NbtViewVisibility.User, null, _CswNbtResources.CurrentNbtUser.UserId, null );
+
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
+            CswNbtViewRelationship RootRelationship = DispenseContainerView.AddViewRelationship( ContainerOc, false );
+            RootRelationship.NodeIdsToFilterIn = SourceContainerRoot;
+
+            if( _ContainersToView.Count > 0 )
+            {
+                CswNbtMetaDataObjectClassProp SourceContainerProp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.SourceContainerPropertyName );
+                CswNbtViewRelationship ChildRelationship = DispenseContainerView.AddViewRelationship( RootRelationship, NbtViewPropOwnerType.Second, SourceContainerProp, false );
+                ChildRelationship.NodeIdsToFilterIn = _ContainersToView;
+            }
+
+            DispenseContainerView.save();
+            return DispenseContainerView.ViewId;
         }
 
         #endregion Public Methods

@@ -332,9 +332,8 @@
                     url: '/NbtWebApp/wsNBT.asmx/finalizeDispenseContainer',
                     data: jsonData,
                     success: function (data) {
-                        //TODO - set up the right view
-                        var views = data.views,
-                            values = [];
+                        var viewId = data.viewId;
+                        Csw.tryExec(cswPrivate.onFinish, viewId);
                         //TODO - make a printLabel dialog to show after confirmFinish
 
                     },
