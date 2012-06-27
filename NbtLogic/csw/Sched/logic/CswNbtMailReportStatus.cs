@@ -4,19 +4,10 @@ namespace ChemSW.Nbt.Sched
 
     public class CswNbtMailReportStatus
     {
-        public bool ReportReadyForQuery
-        {
-            get
-            {
-                return ( string.Empty != Link );
-
-            }//get
-        }//ReportReadyForQuery
 
         public bool ReportDataExist = false;
 
         public bool EmailWasSent = false;
-        public string Link = string.Empty;
         public string ReportReason = string.Empty;
         public string ReportNotMadeReason = string.Empty;
         public string ReportFailureReason = string.Empty;

@@ -27,7 +27,8 @@ namespace ChemSW.Nbt.Schema
                                                  {
                                                      PropName = CswNbtObjClassMailReport.OutputFormatPropertyName.ToString(),
                                                      FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
-                                                     ListOptions = FormatOptionString.ToString()
+                                                     ListOptions = FormatOptionString.ToString(),
+                                                     SetValOnAdd = false
                                                  }
                       );
 
