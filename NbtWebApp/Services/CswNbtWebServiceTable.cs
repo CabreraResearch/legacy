@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
             foreach( JObject PropElm in TreeProps )
             {
                 Int32 NodeTypePropId = CswConvert.ToInt32( PropElm["nodetypepropid"].ToString() );
-                if( PropsToHide != null && false == PropsToHide.Contains( NodeTypePropId ) )
+                if( PropsToHide == null || false == PropsToHide.Contains( NodeTypePropId ) )
                 {
                     CswPropIdAttr PropId = new CswPropIdAttr( NodeId, NodeTypePropId );
                     string FieldType = PropElm["fieldtype"].ToString();
