@@ -90,9 +90,9 @@ namespace ChemSW.Nbt.csw.Conversion
                 {
                     ConvertedValue = applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor );
                 }
-                else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported && CswTools.IsDouble( _MaterialSpecificGravity ) )
+                else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported )
                 {
-                    if( CswTools.IsDouble( _MaterialSpecificGravity ) && _MaterialSpecificGravity != 0 )
+                    if( CswTools.IsDouble( _MaterialSpecificGravity ) && _MaterialSpecificGravity > 0 )
                     {
                         //UnitType-specific logic (Operator logic defined in W1005)
                         if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.csw.Conversion
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Error, "Specific Gravity must be defined as a positive number.", "Specific Gravity must be defined as a positive number." );
+                        throw new CswDniException( ErrorType.Error, "Conversion failed: The Container Material's specific gravity is zero, negative, or undefined.", "Specific Gravity must be defined as a positive number." );
                     }
                 }
                 else
@@ -116,7 +116,16 @@ namespace ChemSW.Nbt.csw.Conversion
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Conversion failed: Insufficient data supplied.", "Conversion failed: Unable to determine appropriate conversion factors." );
+                string UserMessage = "Conversion failed: Insufficient data supplied.";
+                if( false == CswTools.IsDouble( ValueToConvert ) )
+                {
+                    UserMessage = "Conversion failed: Container has no Quantity defined.";
+                }
+                else if( false == CswTools.IsDouble( _NewConversionFactor ) )
+                {
+                    UserMessage = "Conversion failed: The unit of measurement with which to convert is undefined.";
+                }
+                throw new CswDniException( ErrorType.Error, UserMessage, "Conversion failed: Unable to determine appropriate conversion factors." );
             }
             return ConvertedValue;
         }

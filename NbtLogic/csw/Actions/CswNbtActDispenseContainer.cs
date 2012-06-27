@@ -84,14 +84,7 @@ namespace ChemSW.Nbt.csw.Actions
             CswPrimaryKey UnitOfMeasurePK = new CswPrimaryKey();
             UnitOfMeasurePK.FromString( UnitId );
             CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( _CswNbtResources, UnitOfMeasurePK, _SourceContainer.Quantity.UnitId, _SourceContainer.Material.RelatedNodeId );
-            try
-            {
-                convertedValue = ConversionObj.convertUnit( ValueToConvert );
-            }
-            catch( Exception e )
-            {
-                throw new CswDniException( ErrorType.Error, "Failed to dispense container: Source Container has unknown Quantity.", "Dispense failed - Source Container Quantity is null: " + e.StackTrace );
-            }
+            convertedValue = ConversionObj.convertUnit( ValueToConvert );
             return convertedValue;
         }
 
