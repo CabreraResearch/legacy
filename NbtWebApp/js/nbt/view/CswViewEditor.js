@@ -511,13 +511,13 @@
                                 data: gridJson.grid.data,     
                                 pageSize: gridJson.grid.pageSize,
                                 canSelectRow: true,
-                                onSelect: function(rows){
+                                onSelect: function(row){
                                     copyViewBtn.enable();
                                     deleteViewBtn.enable();
-                                    $selview_span.text(rows[0].viewname);
+                                    $selview_span.text(row.viewname);
                                     $wizard.CswWizard('button', 'next', 'enable');
                                 },
-                                onDeselect: function(rows){
+                                onDeselect: function(row){
                                     copyViewBtn.disable();
                                     deleteViewBtn.disable();
                                     $selview_span.text("");

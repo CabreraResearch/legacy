@@ -32,8 +32,8 @@
                 onLoad: null,   // function()
                 onEdit: null,   // function(rows)
                 onDelete: null, // function(rows)
-                onSelect: null, // function(rows)
-                onDeselect: null, // function(rows)
+                onSelect: null, // function(row)
+                onDeselect: null, // function(row)
 
                 height: '',  // overridden by webservice if paging is on
                 width: '100%',
