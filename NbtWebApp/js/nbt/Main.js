@@ -470,16 +470,19 @@ window.initMain = window.initMain || function (undefined) {
             'onMultiEdit': function () {
                 switch (o.viewmode) {
                     case Csw.enums.viewMode.grid.name:
-                        multi = (false === o.grid.isMulti());
-                        var g = {
-                            canEdit: multi,
-                            canDelete: multi,
-                            gridOpts: {
-                                //reinit: true,
-                                multiselect: multi
-                            }
-                        };
-                        o.grid.changeGridOpts(g, ['Action', 'Delete']);
+//                        multi = (false === o.grid.isMulti());
+//                        var g = {
+//                            canEdit: multi,
+//                            canDelete: multi,
+//                            gridOpts: {
+//                                //reinit: true,
+//                                multiselect: multi
+//                            }
+//                        };
+//                        o.grid.changeGridOpts(g, ['Action', 'Delete']);
+                        
+                        o.grid.toggleShowCheckboxes();
+                        
                         break;
                     default:
                         multi = (false === multi);

@@ -320,10 +320,10 @@
                                     showActionColumn: true,
                                     canSelectRow: o.canSelectRow,
                                     onSelect: o.onSelect,
-                                    onEdit: function(row) {
-                                        var nodeid = row['nodeid'];
-                                        var nodekey = row['nodekey'];
-                                        var nodename = row['nodename'];
+                                    onEdit: function(rows) {
+                                        var nodeid = rows[0]['nodeid'];
+                                        var nodekey = rows[0]['nodekey'];
+                                        var nodename = rows[0]['nodename'];
                 
                                         $.CswDialog('EditNodeDialog', {
                                             nodeids: [ nodeid ],
@@ -335,10 +335,10 @@
                                             onRefresh: o.onRefresh
                                         });
                                     },
-                                    onDelete: function(row) {
-                                        var nodeid = row['nodeid'];
-                                        var nodekey = row['nodekey'];
-                                        var nodename = row['nodename'];
+                                    onDelete: function(rows) {
+                                        var nodeid = rows[0]['nodeid'];
+                                        var nodekey = rows[0]['nodekey'];
+                                        var nodename = rows[0]['nodename'];
 
                                         $.CswDialog('DeleteNodeDialog', {
                                             nodeids: [ nodeid ],
