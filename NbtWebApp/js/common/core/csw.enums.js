@@ -66,6 +66,7 @@
                 globalAjaxStop: 'globalAjaxStop'
             },
             Submit_Request: 'Submit_Request',
+            objectClassButtonClick: 'objectClassButtonClick'
             DispenseContainer: 'DispenseContainer'
         });
 
@@ -105,6 +106,7 @@
             dispense: 'dispense',
             reauthenticate: 'reauthenticate',
             //home: 'home',
+            receive: 'receive',
             refresh: 'refresh',
             popup: 'popup',
             request: 'request'

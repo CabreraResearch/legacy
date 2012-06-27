@@ -64,6 +64,7 @@ namespace ChemSW.Nbt.ObjClasses
             public static readonly NbtButtonAction dispense = new NbtButtonAction( "dispense" );
             public static readonly NbtButtonAction reauthenticate = new NbtButtonAction( "reauthenticate" );
             public static readonly NbtButtonAction refresh = new NbtButtonAction( "refresh" );
+            public static readonly NbtButtonAction receive = new NbtButtonAction( "receive" );
             public static readonly NbtButtonAction request = new NbtButtonAction( "request" );
             public static readonly NbtButtonAction popup = new NbtButtonAction( "popup" );
         }

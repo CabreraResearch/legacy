@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -33,6 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string StorageCompatibilityPropertyName = "Storage Compatibility";
         public const string ExpirationIntervalPropertyName = "Expiration Interval";
         public const string RequestPropertyName = "Request";
+        public const string ReceivePropertyName = "Receive";
 
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassMaterial
@@ -46,8 +48,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return ret;
         }
-
-
+        
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
         {
@@ -61,6 +62,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( ApprovalStatus.WasModified )
+            {
+                Receive.Hidden = ApprovalStatus.Checked != Tristate.True;
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -98,27 +103,52 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp OCP = NodeTypeProp.getObjectClassProp();
             if( null != NodeTypeProp && null != OCP )
             {
-                if( RequestPropertyName == OCP.PropName )
+                JObject ActionDataObj = new JObject();
+                switch( OCP.PropName )
                 {
-                    CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
+                    case RequestPropertyName:
+                        CswNbtActSubmitRequest RequestAct = new CswNbtActSubmitRequest( _CswNbtResources, CswNbtActSystemViews.SystemViewName.CISProRequestCart );
 
-                    CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
-                    JObject ActionDataObj = new JObject();
-                    ActionDataObj["requestaction"] = OCP.PropName;
-                    ActionDataObj["titleText"] = "Request for " + TradeName.Text;
-                    ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
-                    ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
-                    ActionData = ActionDataObj.ToString();
+                        CswNbtObjClassRequestItem NodeAsRequestItem = RequestAct.makeRequestItem( new CswNbtActSubmitRequest.RequestItem( CswNbtActSubmitRequest.RequestItem.Material ), NodeId, OCP );
+                        ActionDataObj["requestaction"] = OCP.PropName;
+                        ActionDataObj["titleText"] = "Request for " + TradeName.Text;
+                        ActionDataObj["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsRequestItem );
+                        ActionDataObj["requestItemNodeTypeId"] = RequestAct.RequestItemNt.NodeTypeId;
+                        ButtonAction = NbtButtonAction.request;
+                        break;
+                    case ReceivePropertyName:
+                        ActionDataObj["materialId"] = NodeId.ToString();
+                        ActionDataObj["tradeName"] = TradeName.Text;
+                        CswNbtView SizeView = new CswNbtView( _CswNbtResources );
+                        SizeView.Visibility = NbtViewVisibility.Property;
+                        SizeView.ViewMode = NbtViewRenderingMode.Grid;
 
-                    ButtonAction = NbtButtonAction.request;
+                        CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( ObjectClass, true );
+                        CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+                        CswNbtMetaDataObjectClassProp CapacityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+                        CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName );
+                        CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
+                        CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.DispensablePropertyName );
+
+                        CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, true );
+                        SizeView.AddViewProperty( SizeRel, CapacityOcp );
+                        CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
+                        DispensableVp.ShowInGrid = false;
+                        SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: "true" );
+                        SizeView.AddViewProperty( SizeRel, CatalogNoOcp );
+                        SizeView.SaveToCache( false );
+                        ActionDataObj["sizesViewId"] = SizeView.SessionViewId.ToString();
+                        ButtonAction = NbtButtonAction.receive;
+                        break;
                 }
+                ActionData = ActionDataObj.ToString();
             }
+
             return true;
         }
         #endregion
 
         #region Object class specific properties
-
 
         public CswNbtNodePropRelationship Supplier { get { return ( _CswNbtNode.Properties[SupplierPropertyName] ); } }
         public CswNbtNodePropLogical ApprovalStatus { get { return ( _CswNbtNode.Properties[ApprovalStatusPropertyName] ); } }
@@ -131,7 +161,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[StorageCompatibilityPropertyName] ); } }
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[ExpirationIntervalPropertyName] ); } }
         public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[RequestPropertyName] ); } }
-
+        public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[ReceivePropertyName] ); } }
+ 
         #endregion
 
     }//CswNbtObjClassMaterial

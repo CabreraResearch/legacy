@@ -31,7 +31,8 @@
                                     var $newmessagediv = $('#' + messagediv.getId());
                                     $newmessagediv.text(data.message);
                                 }
-
+                                var actionJson = Csw.deserialize(data.actiondata);
+                                actionJson.action = data.action;
                                 switch (data.action) {
                                     case Csw.enums.nbtButtonAction.reauthenticate:
                                         if (Csw.clientChanges.manuallyCheckChanges()) {
@@ -46,6 +47,11 @@
                                                 }
                                             });
                                         }
+                                        break;
+
+                                    case Csw.enums.nbtButtonAction.receive:
+                                        $btn.button({ disabled: false });
+                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
                                         break;
 
                                     case Csw.enums.nbtButtonAction.refresh: //cases 26201, 26107 
@@ -69,10 +75,10 @@
 
                                     case Csw.enums.nbtButtonAction.request:
                                         $btn.button({ disabled: false });
-                                        var actionJson = JSON.parse(data.actiondata);
+                                        
                                         switch (actionJson.requestaction) {
                                             case 'Dispose':
-                                                Csw.publish(Csw.enums.events.Submit_Request);
+                                                Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
                                                 break;
                                             default:
                                                 $.CswDialog('AddNodeDialog', {
@@ -80,7 +86,7 @@
                                                     propertyData: actionJson.requestItemProps,
                                                     text: actionJson.titleText,
                                                     onSaveImmediate: function () {
-                                                        Csw.publish(Csw.enums.events.Submit_Request);
+                                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
                                                     }
                                                 });
                                                 break;
@@ -93,6 +99,7 @@
                                         break;
 
                                     default:
+                                        Csw.debug.error('No event has been defined for button click ' + data.action);
                                         $btn.button({ disabled: false });
                                         break;
                                 }

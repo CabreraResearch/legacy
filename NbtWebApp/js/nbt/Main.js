@@ -21,7 +21,6 @@ window.initMain = window.initMain || function (undefined) {
             Csw.debug.group('ajax');
         }
     }
-
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStart, startSpinner);
 
     function stopSpinner() {
@@ -31,8 +30,22 @@ window.initMain = window.initMain || function (undefined) {
             Csw.debug.groupEnd('ajax');
         }
     };
-
     Csw.subscribe(Csw.enums.events.ajax.globalAjaxStop, stopSpinner);
+
+    function onObjectClassButtonClick(eventOj, data) {
+        switch (Csw.string(data.action).toLowerCase()) {
+            case Csw.enums.nbtButtonAction.request:
+                refreshHeaderMenu();
+                //handleAction({ actionname: 'Submit_Request', ActionOptions: data });
+                break;
+            case Csw.enums.nbtButtonAction.receive:
+                data.actionname = 'Receiving';
+                handleAction(data);
+                break;
+        }
+    }
+
+    Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
 
     // watermark
     if (-1 === window.internetExplorerVersionNo) {
@@ -79,11 +92,6 @@ window.initMain = window.initMain || function (undefined) {
     } else {
         initAll();
     }
-
-    Csw.subscribe(Csw.enums.events.Submit_Request, function (eventObj, data) {
-        refreshHeaderMenu();
-        //handleAction({ actionname: 'Submit_Request', ActionOptions: data });
-    });
 
     Csw.subscribe(Csw.enums.events.DispenseContainer, function (eventObj, data) {
         //TODO - close open Container dialog when entering wizard
@@ -1053,11 +1061,11 @@ window.initMain = window.initMain || function (undefined) {
         clear({ 'all': true });
         refreshMainMenu();
         switch (o.actionname) {
-            //			case 'Assign_Inspection':                                                                              
-            //				break;                                                                              
-            //			case 'Assign_Tests':                                                                              
-            //				break;                                                                              
-            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                                              
+            //			case 'Assign_Inspection':                                                                            
+            //				break;                                                                            
+            //			case 'Assign_Tests':                                                                            
+            //				break;                                                                            
+            // NOTE: Create Inspection currently only works if you are logged in as chemsw_admin                                                                            
             case 'Create_Inspection':
                 var designOpt = {
                     ID: 'cswInspectionDesignWizard',
@@ -1212,6 +1220,9 @@ window.initMain = window.initMain || function (undefined) {
                         refreshViewSelect();
                     }
                 });
+                break;
+            case 'Receiving':
+                Csw.nbt.receiveMaterialWizard(centerTopDiv, o);
                 break;
             case 'Sessions':
                 Csw.actions.sessions(centerTopDiv);
