@@ -42,6 +42,12 @@ window.initMain = window.initMain || function (undefined) {
                 data.actionname = 'Receiving';
                 handleAction(data);
                 break;
+            case Csw.enums.nbtButtonAction.dispense:
+                //TODO - close open Container dialog when entering wizard
+                //TODO - get rid of the Containers grid & Welcomeitems showing underneath the wizard
+                data.actionname = 'DispenseContainer';
+                handleAction(data);
+                break;
         }
     }
     Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
@@ -1151,8 +1157,34 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.nbt.createMaterialWizard(centerTopDiv, createOpt);
                 break;
 
-            //			case 'Design':                                                                            
-            //				break;                                                                            
+            case 'DispenseContainer':
+                var designOpt = {
+                    ID: 'cswDispenseContainerWizard',
+                    nodeId: o.nodeId,
+                    currentQuantity: o.currentQuantity,
+                    currentUnitName: o.currentUnitName,
+                    onCancel: function () {
+                        clear({ 'all': true });
+                        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                        refreshSelected();
+                    },
+                    onFinish: function (viewid) {
+                        clear({ 'all': true });
+                        handleItemSelect({
+                            type: 'view',
+                            viewmode: 'tree',
+                            viewid: viewid
+                        });
+                    },
+                    startingStep: 1,
+                    menuRefresh: refreshSelected()
+                };
+                Csw.nbt.dispenseContainerWizard(centerTopDiv, designOpt);
+
+                break;
+
+            //			case 'Design':                                                                              
+            //				break;                                                                              
             case 'Edit_View':
                 var editViewOptions = {
                     'viewid': o.ActionOptions.viewid,
@@ -1192,8 +1224,8 @@ window.initMain = window.initMain || function (undefined) {
                 $('#CenterTopDiv').CswViewEditor(editViewOptions);
 
                 break;
-            //			case 'Enter_Results':                                                                            
-            //				break;                                                                            
+            //			case 'Enter_Results':                                                                              
+            //				break;                                                                              
 
             case 'Future_Scheduling':
                 Csw.nbt.futureSchedulingWizard(centerTopDiv, {
@@ -1204,10 +1236,10 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 break;
 
-            //			case 'Import_Fire_Extinguisher_Data':                                                                            
-            //				break;                                                                            
-            //			case 'Inspection_Design':                                                                            
-            //				break;                                                                            
+            //			case 'Import_Fire_Extinguisher_Data':                                                                              
+            //				break;                                                                              
+            //			case 'Inspection_Design':                                                                              
+            //				break;                                                                              
 
             case 'Deficient_Inspections':
                 setupDeficientInspections();
@@ -1265,14 +1297,14 @@ window.initMain = window.initMain || function (undefined) {
 
                 Csw.nbt.scheduledRulesWizard(centerTopDiv, rulesOpt);
                 break;
-            //			case 'Load_Mobile_Data':                                                                            
-            //				break;                                                                            
-            //			case 'Receiving':                                                                            
-            //				break;                                                                            
-            //			case 'Split_Samples':                                                                            
-            //				break;                                                                            
-            //			case 'View_By_Location':                                                                            
-            //				break;                                                                            
+            //			case 'Load_Mobile_Data':                                                                              
+            //				break;                                                                              
+            //			case 'Receiving':                                                                              
+            //				break;                                                                              
+            //			case 'Split_Samples':                                                                              
+            //				break;                                                                              
+            //			case 'View_By_Location':                                                                              
+            //				break;                                                                              
             default:
                 if (false == Csw.isNullOrEmpty(o.actionurl)) {
                     Csw.window.location(o.actionurl);

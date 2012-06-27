@@ -243,7 +243,14 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else if( OCP.PropName == DispensePropertyName )
                 {
-                    //TODO - case 24508
+                    ActionData = this.NodeId.ToString();
+                    JObject ActionDataObj = new JObject();
+                    ActionDataObj["nodeId"] = this.NodeId.ToString();
+                    ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
+                    CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
+                    ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+                    ActionData = ActionDataObj.ToString();
+                    ButtonAction = NbtButtonAction.dispense;
                 }
                 else
                 {
