@@ -7,14 +7,6 @@
         Csw.nbt.register('dispenseContainerWizard', function (cswParent, options) {
             'use strict';
 
-            Csw.enums.wizardSteps_DispenseContainer = Csw.enums.wizardSteps_DispenseContainer ||
-                Csw.enums.register('wizardSteps_DispenseContainer', {
-                    step1: { step: 1, description: 'Select a Dispense Type' },
-                    step2: { step: 2, description: 'Select a Destination Container NodeType' },
-                    step3: { step: 3, description: 'Select Amount' },
-                    stepcount: 3
-                });
-
             //#region Variable Declaration
             var cswPrivate = {
                 ID: 'cswDispenseContainerWizard',
@@ -26,9 +18,9 @@
                 startingStep: 1,
                 wizard: '',
                 wizardSteps: {
-                    1: Csw.enums.wizardSteps_DispenseContainer.step1.description,
-                    2: Csw.enums.wizardSteps_DispenseContainer.step2.description,
-                    3: Csw.enums.wizardSteps_DispenseContainer.step3.description
+                    1: 'Select a Dispense Type',
+                    2: 'Select a Destination Container NodeType',
+                    3: 'Select Amount',
                 },
                 buttons: {
                     next: 'next',
@@ -92,7 +84,7 @@
                     if (false === stepOneComplete) {
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
-                        cswPrivate.divStep1 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step1.step);
+                        cswPrivate.divStep1 = cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.br();
 
                         dispenseTypeTable = cswPrivate.divStep1.table({
@@ -140,7 +132,7 @@
                         var containerTypeTable = '',
                             blankText = '[Select One]';
 
-                        cswPrivate.divStep2 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step2.step);
+                        cswPrivate.divStep2 = cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.br();
 
                         containerTypeTable = cswPrivate.divStep2.table({
@@ -203,12 +195,13 @@
                         if (cswPrivate.dispenseType === 'Dispense') {
                             //TODO - step 3B - container/quantity grid
                             var temp = ''; //delete me
+                            //TODO - if a user goes back and changes the dispense type, this step needs to be refreshed
                         }
                         else {
                             var quantityTable = '',
                             blankText = '[Select One]';
 
-                            cswPrivate.divStep3 = cswPrivate.wizard.div(Csw.enums.wizardSteps_DispenseContainer.step3.step);
+                            cswPrivate.divStep3 = cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.br();
 
                             quantityTable = cswPrivate.divStep3.table({
@@ -275,7 +268,7 @@
             cswPrivate.handleNext = function (newStepNo) {
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case Csw.enums.wizardSteps_DispenseContainer.step2.step:
+                    case 2:
                         if ('Dispense' === cswPrivate.dispenseType) {
                             cswPrivate.makeStepTwo(true);
                         }
@@ -283,7 +276,7 @@
                             cswPrivate.wizard.next.click();
                         }
                         break;
-                    case Csw.enums.wizardSteps_DispenseContainer.step3.step:
+                    case 3:
                         cswPrivate.makeStepThree();
                         break;
                 }
@@ -292,10 +285,10 @@
             cswPrivate.handlePrevious = function (newStepNo) {
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
-                    case Csw.enums.wizardSteps_DispenseContainer.step1.step:
+                    case 1:
                         cswPrivate.makeStepOne();
                         break;
-                    case Csw.enums.wizardSteps_DispenseContainer.step2.step:
+                    case 2:
                         if ('Dispense' === cswPrivate.dispenseType) {
                             cswPrivate.makeStepTwo(false);
                         }
@@ -354,7 +347,7 @@
                     currentQuantity: cswPrivate.currentQuantity,
                     currentUnitName: cswPrivate.currentUnitName,
                     Title: 'Create New Inspection',
-                    StepCount: Csw.enums.wizardSteps_DispenseContainer.stepcount,
+                    StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
                     FinishText: 'Finish',
