@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtSubField _PathSubField;
         private CswNbtSubField _BarcodeSubField;
 
-        public const string ViewRoot = "Top";
+        public const string TopLevelName = "Top";
 
         override public bool Empty
         {
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtMetaDataObjectClassProp LocationClassProp = LocationClass.getObjectClassProp( CswNbtObjClassLocation.LocationPropertyName );
 
                     _View = new CswNbtView( _CswNbtResources );
-                    _View.ViewName = ViewRoot;
+                    _View.ViewName = TopLevelName;
 
                     CswNbtViewRelationship LocationLevel1 = _View.AddViewRelationship( LocationClass, true );
                     if( NodeId != null )

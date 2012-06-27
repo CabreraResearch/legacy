@@ -315,4 +315,24 @@
             return JSON.parse(JSON.stringify(data));
         });
 
+    Csw.serialize = Csw.serialize ||
+        Csw.register('serialize', function (data) {
+            /// <summary>Convert an object to a string</summary>
+            /// <param name="data" type="Object"> An object </param>
+            /// <returns type="String"> A string representation of the object. </returns>
+            var ret = '';
+            Csw.tryExec(function() { ret = JSON.stringify(data); });
+            return ret;
+        });
+
+    Csw.deserialize = Csw.deserialize ||
+        Csw.register('deserialize', function (data) {
+            /// <summary>Convert a string to a native JS Object</summary>
+            /// <param name="data" type="String"> A string representation of an object </param>
+            /// <returns type="Object"> An object. </returns>
+            var ret = {};
+            Csw.tryExec(function () { ret = $.parseJSON(data); });
+            return ret;
+        });
+
 } ());

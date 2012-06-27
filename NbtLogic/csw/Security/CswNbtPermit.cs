@@ -476,7 +476,9 @@ namespace ChemSW.Nbt.Security
         public bool canContainer( CswPrimaryKey ContainerNodeId, NodeTypePermission Permission, CswNbtAction Action, ICswNbtUser User )
         {
             bool ret = true;
-            if( null != ContainerNodeId && Int32.MinValue != ContainerNodeId.PrimaryKey )
+            if( false == ( User is CswNbtSystemUser ) &&
+                null != ContainerNodeId &&
+                Int32.MinValue != ContainerNodeId.PrimaryKey )
             {
                 // Special container permissions, based on Inventory Group                
 
@@ -509,10 +511,8 @@ namespace ChemSW.Nbt.Security
                 // filter to container id
                 ContainerVR.NodeIdsToFilterIn.Add( ContainerNodeId );
                 // filter to role and workunit
-                if( false == User is CswNbtSystemUser )
-                {
-                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
-                }
+                InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, User.RoleId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );
+
                 if( null != User.WorkUnitId )
                 {
                     InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, User.WorkUnitId.PrimaryKey.ToString(), CswNbtSubField.SubFieldName.NodeID );

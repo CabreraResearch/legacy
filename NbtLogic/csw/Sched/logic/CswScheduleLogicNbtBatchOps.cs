@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Sched
 
     public class CswScheduleLogicNbtBatchOps : ICswScheduleLogic
     {
-        private Int32 _GeneratorLimit = 1;
+        //private Int32 _GeneratorLimit = 1;
 
         public string RuleName
         {

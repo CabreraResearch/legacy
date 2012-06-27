@@ -66,18 +66,18 @@ namespace ChemSW.Nbt.Schema
                 } );
             foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeTab RequestsTab = MaterialNt.getNodeTypeTab( "Requests" );
-                if( null == RequestsTab )
-                {
-                    RequestsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MaterialNt, "Requests", MaterialNt.getNodeTypeTabIds().Count );
-                }
+                //CswNbtMetaDataNodeTypeTab RequestsTab = MaterialNt.getNodeTypeTab( "Requests" );
+                //if( null == RequestsTab )
+                //{
+                //    RequestsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( MaterialNt, "Requests", MaterialNt.getNodeTypeTabIds().Count );
+                //}
                 CswNbtMetaDataNodeTypeProp RequestBtnNtp = MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.RequestPropertyName );
-                RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, RequestsTab.TabId, 1, 1 );
-                RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, RequestsTab.TabId, 1, 1 );
+                //RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, RequestsTab.TabId, 1, 1 );
+                //RequestBtnNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, true, RequestsTab.TabId, 1, 1 );
 
-                CswNbtMetaDataNodeTypeProp RequestsGridNtp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MaterialNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Submitted Requests", RequestsTab.TabId );
-                CswNbtView GridView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( RequestsGridNtp.ViewId );
-                makeRequestGridView( GridView, MaterialNt );
+                //CswNbtMetaDataNodeTypeProp RequestsGridNtp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( MaterialNt, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Submitted Requests", RequestsTab.TabId );
+                //CswNbtView GridView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( RequestsGridNtp.ViewId );
+                //makeRequestGridView( GridView, MaterialNt );
             }
 
         }//Update()
