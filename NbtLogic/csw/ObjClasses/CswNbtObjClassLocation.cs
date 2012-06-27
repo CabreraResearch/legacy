@@ -10,15 +10,18 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassLocation : CswNbtObjClass
     {
-        public static string ChildLocationTypePropertyName { get { return "Child Location Type"; } }
-        public static string LocationTemplatePropertyName { get { return "Location Template"; } }
-        public static string LocationPropertyName { get { return "Location"; } }
-        public static string OrderPropertyName { get { return "Order"; } }
-        public static string RowsPropertyName { get { return "Rows"; } }
-        public static string ColumnsPropertyName { get { return "Columns"; } }
-        public static string BarcodePropertyName { get { return "Barcode"; } }
-        public static string NamePropertyName { get { return "Name"; } }
-        public static string InventoryGroupPropertyName { get { return "Inventory Group"; } }
+        public const string ChildLocationTypePropertyName = "Child Location Type";
+        public const string LocationTemplatePropertyName = "Location Template";
+        public const string LocationPropertyName = "Location";
+        public const string OrderPropertyName = "Order";
+        public const string RowsPropertyName = "Rows";
+        public const string ColumnsPropertyName = "Columns";
+        public const string BarcodePropertyName = "Barcode";
+        public const string NamePropertyName = "Name";
+        public const string InventoryGroupPropertyName = "Inventory Group";
+        public const string LocationCodePropertyName = "Location Code";
+        public const string AllowInventoryPropertyName = "Allow Inventory";
+        public const string StorageCompatabilityPropertyName = "Storage Compatability";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -68,7 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string PrevLocationName = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NameSubField.Column );
                 string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldType().FieldType ) ).NodeIdSubField.Column );
                 if( false == string.IsNullOrEmpty( PrevLocationId ) &&
-                    PrevLocationName != CswNbtNodePropLocation.ViewRoot )
+                    PrevLocationName != CswNbtNodePropLocation.TopLevelName )
                 {
                     CswPrimaryKey PrevLocationPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( PrevLocationId ) );
                     if( Int32.MinValue != PrevLocationPk.PrimaryKey &&
@@ -136,7 +139,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ChildLocationTypePropertyName].AsList );
+                return ( _CswNbtNode.Properties[ChildLocationTypePropertyName] );
             }
         }
 
@@ -144,7 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[LocationTemplatePropertyName].AsList );
+                return ( _CswNbtNode.Properties[LocationTemplatePropertyName] );
             }
         }
 
@@ -152,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[LocationPropertyName].AsLocation );
+                return ( _CswNbtNode.Properties[LocationPropertyName] );
             }
         }
 
@@ -160,7 +163,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[OrderPropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[OrderPropertyName] );
             }
         }
 
@@ -168,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[RowsPropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[RowsPropertyName] );
             }
         }
 
@@ -176,7 +179,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[ColumnsPropertyName].AsNumber );
+                return ( _CswNbtNode.Properties[ColumnsPropertyName] );
             }
         }
 
@@ -184,25 +187,44 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[BarcodePropertyName].AsBarcode );
+                return ( _CswNbtNode.Properties[BarcodePropertyName] );
             }
         }
         public CswNbtNodePropText Name
         {
             get
             {
-                return ( _CswNbtNode.Properties[NamePropertyName].AsText );
+                return ( _CswNbtNode.Properties[NamePropertyName] );
             }
         }
         public CswNbtNodePropRelationship InventoryGroup
         {
             get
             {
-                return ( _CswNbtNode.Properties[InventoryGroupPropertyName].AsRelationship );
+                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
             }
         }
-
-
+        public CswNbtNodePropText LocationCode
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+            }
+        }
+        public CswNbtNodePropLogical AllowInventory
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+            }
+        }
+        public CswNbtNodePropImageList StorageCompatability
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[InventoryGroupPropertyName] );
+            }
+        }
 
         #endregion
 

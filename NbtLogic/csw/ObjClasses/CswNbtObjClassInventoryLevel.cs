@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass ); }
         }
-        
+
 
         #region Inherited Events
         public override void beforeCreateNode( bool OverrideUniqueValidation )
@@ -84,19 +84,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources, this );
+            CswNbtSdInventoryLevelMgr LevelMgr = new CswNbtSdInventoryLevelMgr( _CswNbtResources );
             if( Location.WasModified || Material.WasModified )
             {
                 CurrentQuantity.UnitId = Level.UnitId;
-                CurrentQuantity.Quantity = LevelMgr.getCurrentInventoryLevel();
+                CurrentQuantity.Quantity = LevelMgr.getCurrentInventoryLevel( this );
                 CurrentQuantityLog.AddComment( "Set initial Inventory Level Quantity: " + CurrentQuantity.Gestalt );
             }
 
             if( CurrentQuantity.WasModified )
             {
-                if( LevelMgr.doSendEmail() )
+                if( LevelMgr.doSendEmail( this ) )
                 {
-                    LastNotified.DateTimeValue = LevelMgr.sendPastThreshholdEmail();
+                    LastNotified.DateTimeValue = LevelMgr.sendPastThreshholdEmail( this );
                     if( CurrentQuantity.Quantity > Level.Quantity )
                     {
                         Status.Value = Statuses.Above;

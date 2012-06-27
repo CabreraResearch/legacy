@@ -32,10 +32,10 @@ namespace ChemSW.Nbt.Schema
                 PhysicalStateNTProp.ReadOnly = true;
             }
 
-            //Set Size.Capacity SetValOnAdd = false
+            //Undo Set Size.Capacity SetValOnAdd = false
             CswNbtMetaDataObjectClass SizeObjClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeObjClass.ObjectClassId, CswNbtObjClassSize.CapacityPropertyName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, false );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
 
         }//Update()
 

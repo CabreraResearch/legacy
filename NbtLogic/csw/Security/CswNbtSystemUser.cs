@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -66,6 +67,7 @@ namespace ChemSW.Nbt.Security
         public string DateFormat { get { return string.Empty; } }
         public string TimeFormat { get { return string.Empty; } }
         public Int32 PageSize { get { return 50; } }
+        public Dictionary<string, string> Cookies { get; set; }
 
         public void postChanges( bool ForceUpdate )
         {

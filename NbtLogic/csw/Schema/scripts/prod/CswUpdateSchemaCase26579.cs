@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Schema
         {
             // materialobjclassprops
             CswNbtMetaDataObjectClass matOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp tradeNameOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, CswNbtObjClassMaterial.TradenamePropName );
+            CswNbtMetaDataObjectClassProp tradeNameOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, CswNbtObjClassMaterial.TradenamePropertyName );
             CswNbtMetaDataObjectClassProp supplierOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, CswNbtObjClassMaterial.SupplierPropertyName );
             CswNbtMetaDataObjectClassProp partOcp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( matOC.ObjectClassId, CswNbtObjClassMaterial.PartNumberPropertyName );
 

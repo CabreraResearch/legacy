@@ -1608,83 +1608,92 @@ namespace ChemSW.Nbt.MetaData
         /// <returns>Tab of deleted property (for UI to select)</returns>
         protected CswNbtMetaDataNodeTypeTab DeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp, bool Internal )
         {
-            CswNbtMetaDataNodeTypeTab ret = getNodeTypeTab( NodeTypeProp.FirstEditLayout.TabId );
-            if( false == Internal )
+            CswNbtMetaDataNodeTypeTab ret = null;
+            if( null != NodeTypeProp )
             {
-                if( false == NodeTypeProp.IsDeletable() )
-                    throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
-
-                //string OriginalPropName = NodeTypeProp.PropName;
-                CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.getNodeType() );
-                NodeTypeProp = getNodeTypePropVersion( NodeType.NodeTypeId, NodeTypeProp.PropId );
-            }
-
-            // Delete Jct_Nodes_Props records
-            /* Case 26285: This is a bit of a hack (admittedly), but the crux of the issue is this: 
-             * because JctNodesPropsTableUpdate is a CswTableUpdate and not a CswTableSelect, we must commit the underlying DataTables, 
-             * which contain the row for this property's DefaultValue, which we fetched when we clicked the property in order to delete it. 
-             * Short of refactoring the CswTable instances into read/write pairs and implementing read and write getters, this'll do.
-             * TODO: Remove _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear(); when Design mode is refactored.
-             */
-            _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
-            CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
-            DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
-            foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
-            {
-                CurrentJctNodesPropsRow.Delete();
-            }
-            JctNodesPropsUpdate.update( JctNodesPropsTable );
-
-            // Delete nodetype_layout records
-            NodeTypeLayout.removePropFromAllLayouts( NodeTypeProp );
-
-            // Delete Views
-            // This has to come after because nodetype_props has an fk to node_views.
-            CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_nodeview_update", "node_views" );
-            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
-            SelectCols.Add( "nodeviewid" );
-            SelectCols.Add( "viewxml" );
-            DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
-            foreach( DataRow CurrentRow in ViewsTable.Rows )
-            {
-                if( CurrentRow.RowState != DataRowState.Deleted )
+                if( null != NodeTypeProp.FirstEditLayout )
                 {
-                    CswNbtView CurrentView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                    CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
-                    CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
-
-                    if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
-                        CurrentView.Delete();
+                    ret = getNodeTypeTab( NodeTypeProp.FirstEditLayout.TabId );
                 }
+                if( false == Internal )
+                {
+                    if( false == NodeTypeProp.IsDeletable() )
+                        throw new CswDniException( ErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: PropId = " + NodeTypeProp.PropId );
+
+                    //string OriginalPropName = NodeTypeProp.PropName;
+                    CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.getNodeType() );
+                    NodeTypeProp = getNodeTypePropVersion( NodeType.NodeTypeId, NodeTypeProp.PropId );
+                }
+
+                // Delete Jct_Nodes_Props records
+                /* Case 26285: This is a bit of a hack (admittedly), but the crux of the issue is this: 
+                 * because JctNodesPropsTableUpdate is a CswTableUpdate and not a CswTableSelect, we must commit the underlying DataTables, 
+                 * which contain the row for this property's DefaultValue, which we fetched when we clicked the property in order to delete it. 
+                 * Short of refactoring the CswTable instances into read/write pairs and implementing read and write getters, this'll do.
+                 * TODO: Remove _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear(); when Design mode is refactored.
+                 */
+                _CswNbtMetaDataResources.JctNodesPropsTableUpdate.clear();
+                CswTableUpdate JctNodesPropsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_jct_update", "jct_nodes_props" );
+                DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", NodeTypeProp.PropId );
+                foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
+                {
+                    CurrentJctNodesPropsRow.Delete();
+                }
+                JctNodesPropsUpdate.update( JctNodesPropsTable );
+
+                // Delete nodetype_layout records
+                NodeTypeLayout.removePropFromAllLayouts( NodeTypeProp );
+
+                // Delete Views
+                // This has to come after because nodetype_props has an fk to node_views.
+                CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_nodeview_update", "node_views" );
+                CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+                SelectCols.Add( "nodeviewid" );
+                SelectCols.Add( "viewxml" );
+                DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
+                foreach( DataRow CurrentRow in ViewsTable.Rows )
+                {
+                    if( CurrentRow.RowState != DataRowState.Deleted )
+                    {
+                        CswNbtView CurrentView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
+                        CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
+                        CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
+
+                        if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
+                            CurrentView.Delete();
+                    }
+                }
+                ViewsUpdate.update( ViewsTable );
+
+                // BZ 8745
+                // Update nodename template
+                CswNbtMetaDataNodeType UpdateNodeType = NodeTypeProp.getNodeType();
+
+                string NodeTypeTemp = UpdateNodeType.NameTemplateValue;
+                NodeTypeTemp = NodeTypeTemp.Replace( " " + MakeTemplateEntry( NodeTypeProp.PropId.ToString() ), "" );
+                NodeTypeTemp = NodeTypeTemp.Replace( MakeTemplateEntry( NodeTypeProp.PropId.ToString() ), "" );
+                UpdateNodeType.NameTemplateValue = NodeTypeTemp;
+
+                if( OnDeleteNodeTypeProp != null )
+                    OnDeleteNodeTypeProp( NodeTypeProp );
+
+                // Update MetaData
+                _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
+
+                // Delete NodeType Prop record
+                NodeTypeProp._DataRow.Delete();
+                _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NodeTypeProp._DataRow.Table );
+
+                if( !Internal && null != ret )
+                {
+                    _CswNbtMetaDataResources.RecalculateQuestionNumbers( ret.getNodeType() );
+                }
+
+                //refresh the views
+                _RefreshViewForNodetypeId.Add( UpdateNodeType.NodeTypeId );
+
+                refreshAll();
             }
-            ViewsUpdate.update( ViewsTable );
-
-            // BZ 8745
-            // Update nodename template
-            CswNbtMetaDataNodeType UpdateNodeType = NodeTypeProp.getNodeType();
-
-            string NodeTypeTemp = UpdateNodeType.NameTemplateValue;
-            NodeTypeTemp = NodeTypeTemp.Replace( " " + MakeTemplateEntry( NodeTypeProp.PropId.ToString() ), "" );
-            NodeTypeTemp = NodeTypeTemp.Replace( MakeTemplateEntry( NodeTypeProp.PropId.ToString() ), "" );
-            UpdateNodeType.NameTemplateValue = NodeTypeTemp;
-
-            if( OnDeleteNodeTypeProp != null )
-                OnDeleteNodeTypeProp( NodeTypeProp );
-
-            // Update MetaData
-            _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
-
-            // Delete NodeType Prop record
-            NodeTypeProp._DataRow.Delete();
-            _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( NodeTypeProp._DataRow.Table );
-
-            if( !Internal )
-                _CswNbtMetaDataResources.RecalculateQuestionNumbers( ret.getNodeType() );
-
-            //refresh the views
-            _RefreshViewForNodetypeId.Add( UpdateNodeType.NodeTypeId );
-
-            refreshAll();
             return ret;
         } // DeleteNodeTypeProp()
 

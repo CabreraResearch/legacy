@@ -167,7 +167,7 @@
                 relatednodetypeid: '',
                 relatedobjectclassid: '',
                 onAddNode: function () { },
-                onSaveImmediate: function () {},
+                onSaveImmediate: function () { },
                 propertyData: null
             };
 
@@ -199,7 +199,58 @@
                 ShowAsReport: false
             });
 
-        }, // AddNodeDialog
+        },
+        AddFeedbackDialog: function (options) {
+            var o = {
+                text: '',
+                nodetypeid: '',
+                onAddNode: function () { }
+            };
+
+            if (options) {
+                $.extend(o, options);
+            }
+
+            var div = Csw.literals.div(),
+                title = 'New ' + o.text;
+
+            //            div.$.CswNodeTabs({
+            Csw.layouts.tabsAndProps(div, {
+                nodetypeid: o.nodetypeid,
+                EditMode: Csw.enums.editMode.Add,
+                ReloadTabOnSave: false,
+                onSave: function (nodeid, cswnbtnodekey, tabcount, nodename) {
+                    Csw.ajax.post({
+                        urlMethod: 'GetFeedbackCaseNumber',
+                        data: { nodeId: nodeid },
+                        success: function (result) {
+
+                            var closeDialog = function () { div.$.dialog('close'); };
+
+                            div.$.empty();
+                            //div.text('Your feedback has been submitted. Your case number is ' + result.casenumber + '.');
+                            div.nodeLink({
+                                text: 'Your feedback has been submitted. Your case number is ' + result.noderef + '.',
+                                onClick: closeDialog
+                            });
+
+                            div.br();
+                            div.button({
+                                ID: '_feedbackOk',
+                                enabledText: 'Ok',
+                                onClick: closeDialog
+                            });
+                            Csw.tryExec(o.onAddNode, nodeid, cswnbtnodekey, nodename);
+                        }
+                    });
+                },
+                onInitFinish: function () {
+                    openDialog(div, 800, 600, null, title);
+                },
+                ShowAsReport: false
+            });
+
+        }, // AddFeedbackDialog
         AddNodeClientSideDialog: function (options) {
             var o = {
                 ID: '',
@@ -401,7 +452,7 @@
                 onEditView: null, // function (viewid) {}
                 onRefresh: null,
                 onClose: null,
-                onAfterButtonClick: null,   
+                onAfterButtonClick: null,
                 date: ''     // viewing audit records
             };
             if (options) $.extend(o, options);
@@ -947,18 +998,20 @@
 
         GenericDialog: function (options) {
             var o = {
-                div: null,
+                div: Csw.literals.div(),
                 title: '',
                 onOk: null,
                 onCancel: null,
                 onClose: null,
                 height: 400,
-                width: 600
+                width: 600,
+                okText: 'Ok',
+                cancelText: 'Cancel'
             };
             if (options) $.extend(o, options);
 
             o.div.button({
-                enabledText: 'OK',
+                enabledText: o.okText,
                 onClick: function () {
                     Csw.tryExec(o.onOk);
                     o.div.$.dialog('close');
@@ -966,7 +1019,7 @@
             });
 
             o.div.button({
-                enabledText: 'Cancel',
+                enabledText: o.cancelText,
                 onClick: function () {
                     Csw.tryExec(o.onCancel);
                     o.div.$.dialog('close');

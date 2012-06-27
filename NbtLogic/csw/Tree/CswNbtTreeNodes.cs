@@ -181,7 +181,7 @@ namespace ChemSW.Nbt
                                       CswNbtMetaDataFieldType.NbtFieldType FieldType,
                                       string Field1,
                                       Int32 Field1_Fk,
-                                      Int32 Field1_Numeric )
+                                      double Field1_Numeric )
         {
             // BZ 7135 - write dates in XML format
             string PropValue = Gestalt;
@@ -811,7 +811,7 @@ namespace ChemSW.Nbt
             return _getChildProps();
         }
 
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, Int32 Field1_Numeric )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, double Field1_Numeric )
         {
             _checkCurrentNode();
             _makePropJObject( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field1_Fk, Field1_Numeric );

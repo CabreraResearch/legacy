@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.WebServices
             Ret.Visibility = NbtViewVisibility.User;
             Ret.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
             CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( _MaterialNt, false );
-            CswNbtMetaDataNodeTypeProp TradeNameNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropName );
+            CswNbtMetaDataNodeTypeProp TradeNameNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.TradenamePropertyName );
             CswNbtMetaDataNodeTypeProp SupplierNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.SupplierPropertyName );
             CswNbtMetaDataNodeTypeProp PartNoNtp = _MaterialNt.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PartNumberPropertyName );
 

@@ -1,8 +1,5 @@
-﻿using ChemSW.Config;
-using ChemSW.Log;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -13,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     {
         public override void update()
         {
-            CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtSchemaModTrnsctn.createObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass, "docs.gif", true, false );
+            CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.InventoryLevelClass );
             CswNbtMetaDataObjectClass LocationOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp IlMaterialOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
             CswNbtMetaDataObjectClassProp IlLocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
@@ -21,7 +18,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp IlLevelOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Level );
             CswNbtMetaDataObjectClassProp IlStatusOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Status );
             CswNbtMetaDataObjectClassProp IlCurrentQuantityOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.CurrentQuantity );
-            
+
             foreach( CswNbtMetaDataNodeType LocationNt in LocationOc.getLatestVersionNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab LevelTab = LocationNt.getNodeTypeTab( "Inventory Levels" );
@@ -58,7 +55,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtView AboveMinimumInventoryView = _CswNbtSchemaModTrnsctn.makeView();
             AboveMinimumInventoryView.makeNew( "Above Minimum Inventory", NbtViewVisibility.Global );
             AboveMinimumInventoryView.ViewMode = NbtViewRenderingMode.Grid;
-            AboveMinimumInventoryView.Visibility = NbtViewVisibility.Property;
             AboveMinimumInventoryView.Category = "Materials";
             CswNbtViewRelationship AmivRel = AboveMinimumInventoryView.AddViewRelationship( InventoryLevelOc, true );
             AboveMinimumInventoryView.AddViewProperty( AmivRel, IlMaterialOcp );
@@ -72,7 +68,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtView BelowMinimumInventoryView = _CswNbtSchemaModTrnsctn.makeView();
             BelowMinimumInventoryView.makeNew( "Below Minimum Inventory", NbtViewVisibility.Global );
             BelowMinimumInventoryView.ViewMode = NbtViewRenderingMode.Grid;
-            BelowMinimumInventoryView.Visibility = NbtViewVisibility.Property;
             BelowMinimumInventoryView.Category = "Materials";
             CswNbtViewRelationship BmivRel = BelowMinimumInventoryView.AddViewRelationship( InventoryLevelOc, true );
             BelowMinimumInventoryView.AddViewProperty( BmivRel, IlMaterialOcp );
