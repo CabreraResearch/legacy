@@ -8,13 +8,11 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Logic;
+using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Grid;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -148,7 +146,7 @@ namespace ChemSW.Nbt.WebServices
             if( User != null )
             {
                 CswNbtNode UserNode = _CswNbtResources.Nodes[User.UserId];
-                CswNbtObjClassUser UserOc = (CswNbtObjClassUser) UserNode; 
+                CswNbtObjClassUser UserOc = (CswNbtObjClassUser) UserNode;
 
                 // Recent
                 if( IncludeRecent )
@@ -254,8 +252,8 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    Views = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, 
-                                                                         true, false, false, NbtViewRenderingMode.Any, 
+                    Views = _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser,
+                                                                         true, false, false, NbtViewRenderingMode.Any,
                                                                          out ViewsTable, null );
                 }
             }
@@ -315,7 +313,7 @@ namespace ChemSW.Nbt.WebServices
             //}
             //else
             //{
-            if(ViewsTable != null)
+            if( ViewsTable != null )
             {
                 if( ViewsTable.Columns.Contains( "viewxml" ) )
                     ViewsTable.Columns.Remove( "viewxml" );
@@ -416,7 +414,7 @@ namespace ChemSW.Nbt.WebServices
                                 } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
                             } // foreach( CswNbtViewRelationship R in Relationships )
                         } // if( StepNo == 3)
-                        else if (StepNo == 4 )
+                        else if( StepNo == 4 )
                         {
                             // Potential child properties
 
@@ -492,9 +490,15 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
 
-                        foreach( CswNbtMetaDataObjectClass ObjectClass in from CswNbtMetaDataObjectClass _ObjectClass in _CswNbtResources.MetaData.getObjectClasses() orderby _ObjectClass.ObjectClass select _ObjectClass )
+                        foreach( CswNbtMetaDataObjectClass ObjectClass in
+                            from CswNbtMetaDataObjectClass _ObjectClass
+                                in _CswNbtResources.MetaData.getObjectClasses()
+                            orderby _ObjectClass.ObjectClass
+                            where _ObjectClass.ObjectClass != CswNbtMetaDataObjectClass.NbtObjectClass.Unknown
+                            select _ObjectClass )
                         {
                             // This is purposefully not the typical way of creating CswNbtViewRelationships.
+
                             CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, ObjectClass, false );
                             R.Parent = SelectedViewNode;
 
@@ -538,7 +542,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         // case 26166 - collapse redundant filters
                         bool foundMatch = false;
-                        foreach(JProperty OtherPropertyJson in ret.Properties())
+                        foreach( JProperty OtherPropertyJson in ret.Properties() )
                         {
                             if( PropertyJson.Value["name"].ToString() == OtherPropertyJson.Value["name"].ToString() &&
                                 PropertyJson.Value["fieldtype"].ToString() == OtherPropertyJson.Value["fieldtype"].ToString() )
@@ -546,7 +550,7 @@ namespace ChemSW.Nbt.WebServices
                                 foundMatch = true;
                             }
                         }
-                        if(false == foundMatch)
+                        if( false == foundMatch )
                         {
                             ret.Add( PropertyJson );
                         }
@@ -558,7 +562,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject updateRuntimeViewFilters( CswNbtView View, JObject NewFiltersJson )
         {
-            foreach(JProperty NewFilterProp in NewFiltersJson.Properties())
+            foreach( JProperty NewFilterProp in NewFiltersJson.Properties() )
             {
                 string FilterArbitraryId = NewFilterProp.Name;
                 JObject NewFilter = (JObject) NewFilterProp.Value;
