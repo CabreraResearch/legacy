@@ -93,10 +93,12 @@
     <Compile Include="csw\Actions\CswNbtActDispenseContainer.cs" />
     <Compile Include="csw\Actions\CswNbtActSubmitRequest.cs" />
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26887.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24446Action.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26758RequestButton.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26806.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26731.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26833.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26835.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26757.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26834.cs" />
@@ -144,9 +146,7 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514Action.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514NodeType.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514RequestButton.cs">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24514RequestButton.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25449.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24645.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26111.cs" />

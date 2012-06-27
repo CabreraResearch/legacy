@@ -32,7 +32,9 @@
                                     $newmessagediv.text(data.message);
                                 }
                                 var actionJson = Csw.deserialize(data.actiondata);
-                                actionJson.action = data.action;
+                                if (Csw.contains(data, 'action')) {
+                                    actionJson.action = data.action;
+                                }
                                 switch (data.action) {
                                     case Csw.enums.nbtButtonAction.reauthenticate:
                                         if (Csw.clientChanges.manuallyCheckChanges()) {
@@ -98,7 +100,7 @@
                                         Csw.openPopup(data.actiondata, 600, 800);
                                         break;
                                     case Csw.enums.nbtButtonAction.loadView:
-                                        var actionJson = JSON.parse(data.actiondata);
+
                                         Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
                                         break;
                                     default:

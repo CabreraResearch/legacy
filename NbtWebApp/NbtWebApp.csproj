@@ -1135,6 +1135,12 @@
     <Content Include="js\thirdparty\extjs-4.1.0\resources\themes\images\default\window-header\window-header-default-top-sides.gif" />
     <Content Include="js\thirdparty\extjs-4.1.0\resources\themes\images\default\window\window-default-corners.gif" />
     <Content Include="js\thirdparty\extjs-4.1.0\resources\themes\images\default\window\window-default-sides.gif" />
+    <Content Include="js\thirdparty\extjs-4.1.0\ux\data\PagingMemoryProxy.js" />
+    <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\example.html" />
+    <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\gridPrinterCss\cross.png" />
+    <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\gridPrinterCss\print.css" />
+    <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\gridPrinterCss\printer.png" />
+    <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\Printer.js" />
     <Content Include="js\thirdparty\jmol\CHANGES.txt" />
     <Content Include="js\thirdparty\jmol\COPYRIGHT.txt" />
     <Content Include="js\thirdparty\jmol\Jmol.jar" />
@@ -2055,6 +2061,7 @@
     <None Include="Images\buttons\Buttons.pspimage" />
     <None Include="Images\buttons\Buttons18.pspimage" />
     <Content Include="packages.config" />
+    <None Include="js\thirdparty\extjs-4.1.0\ux\grid\README.textile" />
     <None Include="js\thirdparty\jmol\aspirina.mol" />
     <None Include="js\thirdparty\jmol\jmol" />
     <None Include="js\thirdparty\jmol\jmol.bat" />
