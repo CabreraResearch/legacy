@@ -16,18 +16,34 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
+            //Update the Supply nodetype
             CswNbtMetaDataNodeType supplyNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Supply" );
 
             if( null != supplyNT )
             {
-                CswNbtMetaDataNodeTypeProp pictureNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( supplyNT.NodeTypeId, "Picture" );
-                if( null != pictureNTP )
+                CswNbtMetaDataNodeTypeProp pictureNTPSupply = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( supplyNT.NodeTypeId, "Picture" );
+                if( null != pictureNTPSupply )
                 {
-                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( pictureNTP );
-                    CswNbtMetaDataNodeTypeTab tabToAddImagePropTo = _getTab( supplyNT, "Picture", 1 );
-                    CswNbtMetaDataNodeTypeProp imageNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( supplyNT, CswNbtMetaDataFieldType.NbtFieldType.Image, "Picture", tabToAddImagePropTo.TabId );
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( pictureNTPSupply );
                 }
+                CswNbtMetaDataNodeTypeTab tabSupplyPic = _getTab( supplyNT, "Picture", 1 );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( supplyNT, CswNbtMetaDataFieldType.NbtFieldType.Image, "Picture", tabSupplyPic.TabId );
             }
+
+            //Update the Biological nodetype
+            CswNbtMetaDataNodeType biologicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Biological" );
+
+            if( null != biologicalNT )
+            {
+                CswNbtMetaDataNodeTypeProp pictureNTPBio = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( biologicalNT.NodeTypeId, "Picture" );
+                if( null != pictureNTPBio )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( pictureNTPBio );
+                }
+                CswNbtMetaDataNodeTypeTab tabBioPic = _getTab( biologicalNT, "Picture", 3 );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( biologicalNT, CswNbtMetaDataFieldType.NbtFieldType.Image, "Picture", tabBioPic.TabId );
+            }
+
 
         }//Update()
 
