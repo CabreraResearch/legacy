@@ -56,8 +56,8 @@ namespace ChemSW.Nbt.csw.Actions
             {
                 throw new CswDniException( ErrorType.Error, "Failed to dispense container: Dispense type not supported.", "Invalid Dispense Type." );
             }
-            CswNbtViewId ViewId = _getViewForAllDispenseContainers();
-            ret["viewId"] = ViewId.ToString();
+            string ViewId = _getViewForAllDispenseContainers();
+            ret["viewId"] = ViewId;
 
             return ret;
         }
@@ -67,8 +67,8 @@ namespace ChemSW.Nbt.csw.Actions
             JObject ret = new JObject();
             JArray GridArray = JArray.Parse( DesignGrid );
             //TODO - create distination containers with respective quantities, create transaction nodes for each dispense instance, update source container
-            CswNbtViewId ViewId = _getViewForAllDispenseContainers();
-            ret["viewId"] = ViewId.ToString();
+            string ViewId = _getViewForAllDispenseContainers();
+            ret["viewId"] = ViewId;
 
             return new JObject();
         }
@@ -123,12 +123,11 @@ namespace ChemSW.Nbt.csw.Actions
             }
         }
 
-        private CswNbtViewId _getViewForAllDispenseContainers()
+        private string _getViewForAllDispenseContainers()
         {
             Collection<CswPrimaryKey> SourceContainerRoot = new Collection<CswPrimaryKey>();
             SourceContainerRoot.Add( _SourceContainer.NodeId );
             CswNbtView DispenseContainerView = new CswNbtView( _CswNbtResources );
-            DispenseContainerView.makeNew( "Containers Dispensed - " + DateTime.Now.ToString(), NbtViewVisibility.User, null, _CswNbtResources.CurrentNbtUser.UserId, null );
 
             CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             CswNbtViewRelationship RootRelationship = DispenseContainerView.AddViewRelationship( ContainerOc, false );
@@ -141,8 +140,8 @@ namespace ChemSW.Nbt.csw.Actions
                 ChildRelationship.NodeIdsToFilterIn = _ContainersToView;
             }
 
-            DispenseContainerView.save();
-            return DispenseContainerView.ViewId;
+            DispenseContainerView.SaveToCache( false );
+            return DispenseContainerView.SessionViewId.ToString();
         }
 
         #endregion Public Methods
