@@ -70,12 +70,12 @@
 
                                     case Csw.enums.nbtButtonAction.dispense:
                                         $btn.button({ disabled: false });
-                                        Csw.publish(Csw.enums.events.DispenseContainer, data.actiondata);
+                                        Csw.publish(Csw.enums.events.objectClassButtonClick, data);
                                         break;
 
                                     case Csw.enums.nbtButtonAction.request:
                                         $btn.button({ disabled: false });
-                                        
+
                                         switch (actionJson.requestaction) {
                                             case 'Dispose':
                                                 Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
@@ -99,7 +99,7 @@
                                         break;
                                     case Csw.enums.nbtButtonAction.loadView:
                                         var actionJson = JSON.parse(data.actiondata);
-                                         Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
+                                        Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
                                         break;
                                     default:
                                         Csw.debug.error('No event has been defined for button click ' + data.action);

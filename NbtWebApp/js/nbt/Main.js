@@ -42,6 +42,11 @@ window.initMain = window.initMain || function (undefined) {
                 data.actionname = 'Receiving';
                 handleAction(data);
                 break;
+            case Csw.enums.nbtButtonAction.dispense:
+                //TODO - close open Container dialog when entering wizard
+                //TODO - get rid of the Containers grid & Welcomeitems showing underneath the wizard
+                handleAction({ actionname: 'DispenseContainer', ActionOptions: data.actiondata });
+                break;
         }
     }
     Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
@@ -122,12 +127,6 @@ window.initMain = window.initMain || function (undefined) {
     } else {
         initAll();
     }
-
-    Csw.subscribe(Csw.enums.events.DispenseContainer, function (eventObj, data) {
-        //TODO - close open Container dialog when entering wizard
-        //TODO - get rid of the Containers grid & Welcomeitems showing underneath the wizard
-        handleAction({ actionname: 'DispenseContainer', ActionOptions: data });
-    });
 
     function handleImpersonation(userid, username, onSuccess) {
         var u = Csw.cookie.get(Csw.cookie.cookieNames.Username);
