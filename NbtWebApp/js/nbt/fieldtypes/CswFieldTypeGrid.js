@@ -160,16 +160,7 @@
                     cswGrid.print();
                 },
                 onMultiEdit: function () {
-//                    var multi = (false === cswGrid.isMulti());
-//                    var g = {
-//                        canEdit: multi,
-//                        canDelete: multi,
-//                        gridOpts: {
-//                            multiselect: multi
-//                        }
-//                    };
-//                    cswGrid.changeGridOpts(g, ['Action', 'Delete']);
-//                    cswGrid.setWidth(600);
+                    cswGrid.toggleShowCheckboxes();
                 },
                 onEditView: function () {
                     if (Csw.isFunction(o.onEditView)) {
