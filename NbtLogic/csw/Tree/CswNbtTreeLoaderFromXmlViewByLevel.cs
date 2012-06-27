@@ -183,7 +183,7 @@ namespace ChemSW.Nbt
                                                      CswConvert.ToString( NodesRow["fieldtype"] ),
                                                      CswConvert.ToString( NodesRow["field1"] ),
                                                      CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                     CswConvert.ToInt32( NodesRow["field1_numeric"] ) );
+                                                     CswConvert.ToDouble( NodesRow["field1_numeric"] ) );
 
                         } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                         if( ParentNodeKeys.Count > 0 )

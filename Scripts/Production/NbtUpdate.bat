@@ -8,7 +8,7 @@ echo "Services stopped."
 
 echo "Compiling new code..."
 
-msbuild D:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release
+msbuild D:\kiln\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64"
 
 echo "Compile Finished."
 

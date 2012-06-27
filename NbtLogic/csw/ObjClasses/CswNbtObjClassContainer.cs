@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( Location.WasModified &&
                     false == string.IsNullOrEmpty( Location.CachedNodeName ) &&
-                    Location.CachedNodeName != CswNbtNodePropLocation.ViewRoot )
+                    Location.CachedNodeName != CswNbtNodePropLocation.TopLevelName )
                 {
                     if( CswConvert.ToInt32( Quantity.Quantity ) != 0 )
                     {

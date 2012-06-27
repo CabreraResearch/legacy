@@ -55,10 +55,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26584() ) );                     //01P-28
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26763() ) );                     //01P-29
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24517InventoryLevelsViews() ) ); //01P-30
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24508C() ) );                    //01P-31
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase9111() ) );                      //01P-32
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609() ) );                     //01P-33
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25898() ) );                     //01P-34
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase9111() ) );                      //01P-31
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26758RequestButton() ) );        //01P-32
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase24508C() ) );                    //01P-33
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26609() ) );                     //01P-34
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase25898() ) );                     //01P-35
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchemaCase26834() ) );                     //01P-35
 
 
