@@ -74,14 +74,12 @@ namespace NbtLogic.Test
             return UnitOfMeasureNode;
         }
 
-        internal CswNbtNode createMaterialNode( string NodeTypeName, string State, double SpecificGravityBase, int SpecificGravityExponent )
+        internal CswNbtNode createMaterialNode( string NodeTypeName, string State, double SpecificGravity )
         {
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
             CswNbtObjClassMaterial NodeAsMaterial = MaterialNode;
-            if( SpecificGravityBase != Int32.MinValue )
-                NodeAsMaterial.SpecificGravity.Base = SpecificGravityBase;
-            if( SpecificGravityExponent != Int32.MinValue )
-                NodeAsMaterial.SpecificGravity.Exponent = SpecificGravityExponent;
+            if( CswTools.IsDouble( SpecificGravity ) )
+                NodeAsMaterial.SpecificGravity.Value = SpecificGravity;
             NodeAsMaterial.PhysicalState.Value = State;
             NodeAsMaterial.postChanges( true );
 

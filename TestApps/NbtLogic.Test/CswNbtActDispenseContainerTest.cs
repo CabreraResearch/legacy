@@ -83,7 +83,7 @@ namespace NbtLogic.Test
         {
             double Expected = 1.0;
             CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
-            CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", 1, -1 );
+            CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", .1 );
             CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, LiterNode, ChemicalNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Add";
@@ -100,7 +100,7 @@ namespace NbtLogic.Test
         {
             double Expected = 1.0;
             CswNbtNode KilogramNode = TestData.createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, Tristate.True );
-            CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", 1, -1 );
+            CswNbtNode ChemicalNode = TestData.createMaterialNode( "Chemical", "Liquid", .1 );
             CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 0.5, KilogramNode, ChemicalNode );
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
             string DispenseType = "Add";

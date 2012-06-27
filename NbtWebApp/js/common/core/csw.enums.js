@@ -67,7 +67,7 @@
             },
             Submit_Request: 'Submit_Request',
             objectClassButtonClick: 'objectClassButtonClick',
-            RestoreViewContext: 'RestoreViewContext'
+            RestoreViewContext: 'RestoreViewContext',
             DispenseContainer: 'DispenseContainer'
         });
 
