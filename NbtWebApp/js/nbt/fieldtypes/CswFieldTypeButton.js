@@ -32,7 +32,9 @@
                                     $newmessagediv.text(data.message);
                                 }
                                 var actionJson = Csw.deserialize(data.actiondata);
-                                actionJson.action = data.action;
+                                if (Csw.contains(data, 'action')) {
+                                    actionJson.action = data.action;
+                                }
                                 switch (data.action) {
                                     case Csw.enums.nbtButtonAction.reauthenticate:
                                         if (Csw.clientChanges.manuallyCheckChanges()) {
@@ -69,7 +71,7 @@
                                         break;
                                     case Csw.enums.nbtButtonAction.request:
                                         $btn.button({ disabled: false });
-                                        
+
                                         switch (actionJson.requestaction) {
                                             case 'Dispose':
                                                 Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
@@ -91,8 +93,8 @@
                                         Csw.openPopup(data.actiondata, 600, 800);
                                         break;
                                     case Csw.enums.nbtButtonAction.loadView:
-                                        var actionJson = JSON.parse(data.actiondata);
-                                         Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
+
+                                        Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
                                         break;
                                     default:
                                         Csw.debug.error('No event has been defined for button click ' + data.action);
