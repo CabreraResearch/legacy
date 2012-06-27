@@ -96,6 +96,9 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26758RequestButton.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26806.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26731.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26833.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26835.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26757.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26834.cs" />
