@@ -20,7 +20,7 @@
                 wizardSteps: {
                     1: 'Select a Dispense Type',
                     2: 'Select a Destination Container NodeType',
-                    3: 'Select Amount',
+                    3: 'Select Amount'
                 },
                 buttons: {
                     next: 'next',
