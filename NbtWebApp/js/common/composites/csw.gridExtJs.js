@@ -14,6 +14,7 @@
                 //readonly: false,
                 stateId: '',
                 usePaging: true,
+                forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                 ajax: {
                     urlMethod: '',
@@ -111,7 +112,7 @@
                     resizable: true,               // client side grid resizing
                     stateful: true,
                     stateId: cswPrivate.stateId,
-                    forceFit: false,               // expand all columns to fill width (makes column resizing weird)
+                    forceFit: cswPrivate.forceFit,
                     viewConfig: {
                         deferEmptyText: false,
                         emptyText: 'No Results'
