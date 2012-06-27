@@ -599,6 +599,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ret["nodeid"] = RetNodeId;
                     ret["cswnbtnodekey"] = RetNodeKey;
                     ret["nodename"] = Node.NodeName;
+                    ret["action"] = _determineAction( Node.ObjClass.ObjectClass.ObjectClass );
+
                 } //if( AllSucceeded && null != RetNbtNodeKey )
                 else
                 {
@@ -626,6 +628,21 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             return ret;
         } // saveProps()
+
+        private string _determineAction( CswNbtMetaDataObjectClass.NbtObjectClass objectClass )
+        {
+            CswNbtObjClass.NbtButtonAction ret;
+            switch( objectClass )
+            {
+                case CswNbtMetaDataObjectClass.NbtObjectClass.FeedbackClass:
+                    ret = CswNbtObjClass.NbtButtonAction.loadView;
+                    break;
+                default:
+                    ret = CswNbtObjClass.NbtButtonAction.refresh;
+                    break;
+            }
+            return ret.ToString();
+        }
 
         private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
         {

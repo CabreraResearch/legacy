@@ -1,7 +1,7 @@
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.PropTypes;
-
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -51,6 +51,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( null != Mixture.RelatedNodeId && null != Constituent.RelatedNodeId )
+            {
+                if( Mixture.RelatedNodeId == Constituent.RelatedNodeId )
+                {
+                    throw new CswDniException( ErrorType.Warning, "Mixture material and Constituent material cannot be the same", "Mixture material and Constituent material cannot be the same" );
+                }
+            }
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -59,9 +66,9 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
-        public override void beforeDeleteNode(bool DeleteAllRequiredRelatedNodes = false)
+        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _CswNbtObjClassDefault.beforeDeleteNode(DeleteAllRequiredRelatedNodes);
+            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
 
         }//beforeDeleteNode()
 
@@ -97,6 +104,22 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[PercentagePropertyName].AsNumber );
+            }
+        }
+
+        public CswNbtNodePropRelationship Mixture
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[MixturePropertyName].AsRelationship );
+            }
+        }
+
+        public CswNbtNodePropRelationship Constituent
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[ConstituentPropertyName] );
             }
         }
 

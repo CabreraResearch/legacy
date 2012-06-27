@@ -761,6 +761,7 @@
     <Content Include="Images\quota\half.gif" />
     <Content Include="Images\quota\lock.gif" />
     <Content Include="Images\view\viewtable.gif" />
+    <Content Include="js\thirdparty\extjs-4.1.0\ext-all-debug.js" />
     <Content Include="js\thirdparty\extjs-4.1.0\ext-all.js" />
     <Content Include="js\thirdparty\extjs-4.1.0\resources\css\ext-all-scoped-debug.css" />
     <Content Include="js\thirdparty\extjs-4.1.0\resources\css\ext-all-scoped.css" />

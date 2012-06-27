@@ -144,9 +144,10 @@
                     columns: cswPrivate.columns,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
+                    resizable: true,               // client side grid resizing
                     stateful: true,
                     stateId: cswPrivate.stateId,
-                    forceFit: true,               // expand columns to fill width
+                    forceFit: false,               // expand all columns to fill width (makes column resizing weird)
                     viewConfig: {
                         deferEmptyText: false,
                         emptyText: 'No Results'
@@ -160,10 +161,10 @@
                         }
                     }
                 };
-                if(false === Csw.isNullOrEmpty(renderTo))
-                {
-                    gridopts.renderTo = renderTo;
-                }
+//                if(false === Csw.isNullOrEmpty(renderTo))
+//                {
+//                    gridopts.renderTo = renderTo;
+//                }
                 if (Csw.bool(cswPrivate.usePaging)) {
                     gridopts.dockedItems = [{
                         xtype: 'pagingtoolbar',
@@ -173,14 +174,29 @@
                     }];
                     
                     var rows = cswPrivate.data.items.length;
-                    if(rows <= cswPrivate.pageSize) {
+                    if(rows === 0){
+                        gridopts.height = cswPrivate.calculateHeight(1);
+                    } else if( rows <= cswPrivate.pageSize) {
                         gridopts.height = cswPrivate.calculateHeight(rows);
                     } else {
                         gridopts.height = cswPrivate.calculateHeight(cswPrivate.pageSize);
                     }
                 }
 
-                return Ext.create('Ext.grid.Panel', gridopts);
+                var grid = Ext.create('Ext.grid.Panel', gridopts);
+
+                setTimeout(function() {   // this delay solves case 26792
+                    // This should make the grid fill the parent container, but doesn't seem to work
+                    if(false === Csw.isNullOrEmpty(renderTo))
+                    {
+                        Ext.create('Ext.container.Container', {
+                            layout: 'fit',
+                            renderTo: renderTo,
+                            items: [ grid ]
+                        });
+                    }
+                }, 200);
+                return grid;
             }; // makeGrid()
 
 

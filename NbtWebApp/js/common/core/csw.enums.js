@@ -66,7 +66,8 @@
                 globalAjaxStop: 'globalAjaxStop'
             },
             Submit_Request: 'Submit_Request',
-            objectClassButtonClick: 'objectClassButtonClick'
+            objectClassButtonClick: 'objectClassButtonClick',
+            RestoreViewContext: 'RestoreViewContext'
             DispenseContainer: 'DispenseContainer'
         });
 
@@ -109,7 +110,8 @@
             receive: 'receive',
             refresh: 'refresh',
             popup: 'popup',
-            request: 'request'
+            request: 'request',
+            loadView: 'loadView'
         });
 
     Csw.enums.inputTypes = Csw.enums.inputTypes ||

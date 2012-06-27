@@ -119,41 +119,56 @@
                     rulesGridDiv = rulesGridDiv || cswPrivate.divStep2.div({ID: rulesGridId });
                     rulesGridDiv.empty();
 
-                    cswPrivate.gridOptions = {
-                        ID: cswPrivate.makeStepId('rulesGrid'),
-                        pagermode: 'default',
-                        gridOpts: {
-                            autowidth: true,
-                            height: '200'
-                        },
-                        optNav: {
-                            add: false,
-                            del: false,
-                            edit: true,
-                            view: false,
-                            editfunc: function(rowid) {
-                                var onEdit = {
-                                    url: '/NbtWebApp/wsNBT.asmx/updateScheduledRule',
-                                    editData: { AccessId: cswPrivate.selectedCustomerId },
-                                    reloadAfterSubmit: false,
-                                    checkOnSubmit: true,
-                                    closeAfterEdit: true,
-                                    afterComplete: makeRulesGrid
-                                };
-                                return cswPrivate.scheduledRulesGrid.gridTable.$.jqGrid('editGridRow', rowid, onEdit);
-                            }
-                        }
-                    };
+//                    cswPrivate.gridOptions = {
+//                        ID: cswPrivate.makeStepId('rulesGrid'),
+//                        pagermode: 'default',
+//                        gridOpts: {
+//                            autowidth: true,
+//                            height: '200'
+//                        },
+//                        optNav: {
+//                            add: false,
+//                            del: false,
+//                            edit: true,
+//                            view: false,
+//                            editfunc: function(rowid) {
+//                                var onEdit = {
+//                                    url: '/NbtWebApp/wsNBT.asmx/updateScheduledRule',
+//                                    editData: { AccessId: cswPrivate.selectedCustomerId },
+//                                    reloadAfterSubmit: false,
+//                                    checkOnSubmit: true,
+//                                    closeAfterEdit: true,
+//                                    afterComplete: makeRulesGrid
+//                                };
+//                                return cswPrivate.scheduledRulesGrid.gridTable.$.jqGrid('editGridRow', rowid, onEdit);
+//                            }
+//                        }
+//                    };
 
-                    Csw.ajax.post({
-                        url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
-                        data: { AccessId: cswPrivate.selectedCustomerId },
-                        success: function(data) {
-                            $.extend(cswPrivate.gridOptions.gridOpts, data);
-                            cswPrivate.scheduledRulesGrid = rulesGridDiv.grid(cswPrivate.gridOptions);
+//                    Csw.ajax.post({
+//                        url: '/NbtWebApp/wsNBT.asmx/getScheduledRulesGrid',
+//                        data: { AccessId: cswPrivate.selectedCustomerId },
+//                        success: function(data) {
+//                            $.extend(cswPrivate.gridOptions.gridOpts, data);
+//                            cswPrivate.scheduledRulesGrid = rulesGridDiv.grid(cswPrivate.gridOptions);
+//                        }
+//                    });
+                    var gridId = cswPrivate.makeStepId('rulesGrid');
+
+                    cswPrivate.scheduledRulesGrid = rulesGridDiv.grid({
+                        ID: gridId,
+                        storeId: gridId,
+                        title: 'Scheduled Rules',
+                        stateId: gridId,
+                        usePaging: false,
+                        showActionColumn: false,
+                        canSelectRow: false,
+                        ajax: {
+                            urlMethod: 'getScheduledRulesGrid',
+                            data: { AccessId: cswPrivate.selectedCustomerId }
                         }
                     });
-                };
+                }; // makeRulesGrid()
 
                 cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(Csw.enums.wizardSteps_ScheduleRulesGrid.step2.step);
                 cswPrivate.divStep2.empty();

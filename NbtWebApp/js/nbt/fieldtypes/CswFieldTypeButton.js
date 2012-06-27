@@ -97,7 +97,10 @@
                                         $btn.button({ disabled: false });
                                         Csw.openPopup(data.actiondata, 600, 800);
                                         break;
-
+                                    case Csw.enums.nbtButtonAction.loadView:
+                                        var actionJson = JSON.parse(data.actiondata);
+                                         Csw.publish(Csw.enums.events.RestoreViewContext, actionJson);
+                                        break;
                                     default:
                                         Csw.debug.error('No event has been defined for button click ' + data.action);
                                         $btn.button({ disabled: false });

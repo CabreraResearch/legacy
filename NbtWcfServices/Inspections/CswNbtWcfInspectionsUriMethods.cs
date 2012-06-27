@@ -26,14 +26,22 @@ namespace NbtWebAppServices.WebServices
         {
             CswNbtWcfInspectionsGet WcfInspectionsGet = new CswNbtWcfInspectionsGet( _Context, CswNbtActSystemViews.SystemViewName.SIInspectionsbyDate );
             DateTime Start = CswConvert.ToDateTime( StartingDate );
+            DateTime Now = DateTime.Now;
             if( DateTime.MinValue == Start )
             {
-                Start = DateTime.Now;
+                Start = Now;
             }
             DateTime End = CswConvert.ToDateTime( EndingDate );
             if( DateTime.MinValue == End )
             {
-                End = DateTime.Now.AddDays( 2 );
+                if( Start >= Now )
+                {
+                    End = Start.AddDays( 2 );
+                }
+                else
+                {
+                    End = Now.AddDays( 2 );
+                }
             }
             if( Start > End )
             {

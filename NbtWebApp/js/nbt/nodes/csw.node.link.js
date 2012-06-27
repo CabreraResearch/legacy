@@ -9,7 +9,8 @@
             'use strict';
             var cswPrivate = {
                 ID: '',
-                text: ''
+                text: '',
+                onClick: null
             };
             var cswPublic = {};
 
@@ -43,6 +44,7 @@
                     ID: Csw.makeId(cswPrivate.ID, nodeid),
                     text: nodename,
                     onClick: function () {
+                        cswPrivate.onClick();
                         $.CswDialog('EditNodeDialog', {
                             nodeids: [nodeid],
                             nodenames: [nodename]

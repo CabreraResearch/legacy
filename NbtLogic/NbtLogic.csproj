@@ -95,7 +95,10 @@
     <Compile Include="csw\Actions\CswNbtActSystemViews.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24446Action.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26758RequestButton.cs" />
-    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26758RequestButton.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26806.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26731.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26835.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26757.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26834.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26763.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25898.cs" />
@@ -103,7 +106,9 @@
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26609.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26584.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26575.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassFeedback.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24508C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24523.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase24507.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase26665.cs" />
     <Compile Include="csw\Schema\scripts\prod\CswUpdateSchemaCase25814.cs" />
@@ -296,7 +301,6 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassLocation.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMailReport.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterial.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSubclass.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSynonym.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassInspectionTarget.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassNotification.cs" />
