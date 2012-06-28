@@ -205,9 +205,27 @@
                 } else {
                     cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
                 }
-            };
+            }; // getProps()
 
-            // getProps()
+            cswPrivate.validate = function () {
+                // Validation
+                 cswPublic.validator = cswPrivate.form.$.validate({
+                    highlight: function (element) {
+                        var $elm = $(element);
+                        $elm.attr('csw_invalid', '1');
+                        $elm.animate({ backgroundColor: '#ff6666' });
+                    },
+                    unhighlight: function (element) {
+                        var $elm = $(element);
+                        if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+                        {
+                            $elm.css('background-color', '#66ff66');
+                            $elm.attr('csw_invalid', '0');
+                            setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                        }
+                    }
+                });
+            }; // validate()
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
@@ -241,6 +259,7 @@
 
                     cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable({
                         ID: cswPrivate.ID + '_props',
+                        width: null,
                         OddCellRightAlign: true,
                         ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                         cellSet: {
@@ -317,23 +336,8 @@
                             false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                     }
-                    // Validation
-                    cswPrivate.form.$.validate({
-                        highlight: function (element) {
-                            var $elm = $(element);
-                            $elm.attr('csw_invalid', '1');
-                            $elm.animate({ backgroundColor: '#ff6666' });
-                        },
-                        unhighlight: function (element) {
-                            var $elm = $(element);
-                            if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
-                            {
-                                $elm.css('background-color', '#66ff66');
-                                $elm.attr('csw_invalid', '0');
-                                setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
-                            }
-                        }
-                    }); // validate()
+
+                    cswPrivate.validate();
 
                     if (Csw.bool(cswPrivate.Config)) {
                         cswPrivate.layoutTable.configOn();
@@ -762,11 +766,15 @@
                 return cswPrivate.propertyData;
             };
 
+            cswPublic.isValid = function () {
+                return cswPrivate.form.$.valid();
+            };
+
             cswPublic.save = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 Csw.tryExec(function () {
 
-                    if (cswPrivate.form.$.valid()) {
+                    if (cswPublic.isValid()) {
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);
