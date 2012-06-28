@@ -13,7 +13,8 @@
                 reinitGrid: null,
                 viewid: '',
                 canSelectRow: true,
-                onSelect: null
+                onSelect: null,
+                forceFit: true
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -59,6 +60,7 @@
                     cswnbtnodekey: cswPrivate.cswnbtnodekey,
                     readonly: cswPrivate.ReadOnly,
                     canSelectRow: cswPrivate.canSelectRow,
+                    forceFit: cswPrivate.forceFit,
                     onSelect: cswPrivate.onSelect,
                     reinit: false,
                     onEditNode: function () {
