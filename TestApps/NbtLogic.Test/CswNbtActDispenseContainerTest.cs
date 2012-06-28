@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Actions;
 using ChemSW.Nbt.MetaData;
@@ -29,6 +30,8 @@ namespace NbtLogic.Test
         }
 
         #endregion
+
+        #region dispenseSourceContainer Test
 
         [TestMethod]
         public void dispenseSourceContainerTestInvalidDispenseType()
@@ -119,6 +122,10 @@ namespace NbtLogic.Test
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
         }
 
+        #endregion
+
+        #region dispenseIntoChildContainers Tests
+
         [TestMethod]
         public void dispenseIntoChildContainersTestWasteOne()
         {
@@ -193,8 +200,35 @@ namespace NbtLogic.Test
 
             JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
 
+            List<CswNbtObjClassContainer> NewContainers = _getNewContainers( ContainerNode.NodeId );
+            foreach( CswNbtObjClassContainer NewContainer in NewContainers )
+            {
+                Assert.IsTrue( ( NewContainer.Quantity.Quantity == 500 && NewContainer.Quantity.UnitId == MilliliterNode.NodeId ) ||
+                   ( NewContainer.Quantity.Quantity == 0.5 && NewContainer.Quantity.UnitId == LiterNode.NodeId ) );
+            }
+            Assert.AreEqual( 2, NewContainers.Count );
             Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
-            Assert.AreEqual( 2, _getNewContainerCount( ContainerNode.NodeId ) );
+        }
+
+        [TestMethod]
+        public void dispenseIntoChildContainersTestDispenseOneWasteOne()
+        {
+            double Expected = 1.0;
+            CswNbtMetaDataNodeType ContainerNT = TestData.CswNbtResources.MetaData.getNodeType( "Container" );
+            string ContainerNodeTypeId = ContainerNT.NodeTypeId.ToString();
+
+            CswNbtNode LiterNode = TestData.createUnitOfMeasureNode( "Volume", "Liters", 1.0, 0, Tristate.True );
+            CswNbtNode MilliliterNode = TestData.createUnitOfMeasureNode( "Volume", "Milliliters", 1.0, 3, Tristate.True );
+            CswNbtNode ContainerNode = TestData.createContainerNode( "Container", 2.0, LiterNode );
+            CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( TestData.CswNbtResources, ContainerNode.NodeId.ToString() );
+            string DispenseRow1 = "{ \"numOfContainers\":\"1\", \"quantityToDispense\":\"0.5\", \"unitId\":\"" + LiterNode.NodeId.ToString() + "\" }";
+            string DispenseRow2 = "{ \"numOfContainers\":\"0\", \"quantityToDispense\":\"500\", \"unitId\":\"" + MilliliterNode.NodeId.ToString() + "\" }";
+            string DispenseGrid = "[" + DispenseRow1 + "," + DispenseRow2 + "]";
+
+            JObject obj = wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DispenseGrid );
+
+            Assert.AreEqual( Expected, _getNewSourceContainerQuantity( ContainerNode.NodeId ) );
+            Assert.AreEqual( 1, _getNewContainerCount( ContainerNode.NodeId ) );
         }
 
         [TestMethod]
@@ -216,6 +250,8 @@ namespace NbtLogic.Test
             Assert.AreEqual( 3, _getNewContainerCount( ContainerNode.NodeId ) );
         }
 
+        #endregion
+
         #region Private Helper Methods
 
         private double _getNewSourceContainerQuantity( CswPrimaryKey SourceContainerId )
@@ -227,7 +263,13 @@ namespace NbtLogic.Test
 
         private int _getNewContainerCount( CswPrimaryKey SourceContainerId )
         {
-            int NewContainerCount = 0;
+            List<CswNbtObjClassContainer> NewContainers = _getNewContainers( SourceContainerId );
+            return NewContainers.Count;
+        }
+
+        private List<CswNbtObjClassContainer> _getNewContainers( CswPrimaryKey SourceContainerId )
+        {
+            List<CswNbtObjClassContainer> NewContainers = new List<CswNbtObjClassContainer>();
             CswNbtMetaDataObjectClass ContainerOc = TestData.CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             IEnumerator CurrentNodes = TestData.CswNbtResources.Nodes.GetEnumerator();
             while( CurrentNodes.MoveNext() )
@@ -239,11 +281,11 @@ namespace NbtLogic.Test
                     CswNbtObjClassContainer NewContainer = CurrentNode;
                     if( NewContainer.SourceContainer.RelatedNodeId == SourceContainerId )
                     {
-                        NewContainerCount++;
+                        NewContainers.Add( NewContainer );
                     }
                 }
             }
-            return NewContainerCount;
+            return NewContainers;
         }
 
         #endregion
