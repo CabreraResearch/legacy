@@ -126,8 +126,7 @@ namespace ChemSW.Nbt.csw.Actions
                 for( Int32 i = 0; i < NumOfContainers; i += 1 )
                 {
                     double SourceQuantityDispensed = _getDispenseAmountInProperUnits( QuantityToDispense, UnitId, _SourceContainer.Quantity.UnitId );
-                    double NewContainerQuantity = _getDispenseAmountInProperUnits( QuantityToDispense, _SourceContainer.Quantity.UnitId, UnitId );
-                    CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId, NewContainerQuantity, UnitId );
+                    CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId, QuantityToDispense, UnitId );
                     _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity - SourceQuantityDispensed;
                     _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, SourceQuantityDispensed, ChildContainer.NodeId );
                 }
@@ -186,8 +185,6 @@ namespace ChemSW.Nbt.csw.Actions
             Collection<CswPrimaryKey> SourceContainerRoot = new Collection<CswPrimaryKey>();
             SourceContainerRoot.Add( _SourceContainer.NodeId );
             CswNbtView DispenseContainerView = new CswNbtView( _CswNbtResources );
-            //DispenseContainerView.makeNew( "Containers Dispensed on " + DateTime.Now.ToString(), NbtViewVisibility.User, null, _CswNbtResources.CurrentNbtUser.UserId, null );
-            //DispenseContainerView.Category = "Dispensed Containers";
 
             CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             CswNbtViewRelationship RootRelationship = DispenseContainerView.AddViewRelationship( ContainerOc, false );
