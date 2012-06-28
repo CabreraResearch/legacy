@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -23,6 +24,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp ownerOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.OwnerPropertyName );
             CswNbtMetaDataObjectClassProp locationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
 
+            //get the sizeOC and the props we're going to add to the material 
+
             //Update Chemical
             CswNbtMetaDataNodeType chemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
             if( null != chemicalNT )
@@ -30,7 +33,8 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab chemContainerTab = chemicalNT.getNodeTypeTab( "Containers" );
                 if( null != chemContainerTab )
                 {
-                    CswNbtMetaDataNodeTypeProp chemContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Containers", chemContainerTab.TabId );
+                    //create the chemical containers grid
+                    CswNbtMetaDataNodeTypeProp chemContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Chemical Containers", chemContainerTab.TabId );
 
                     CswNbtView chemContainersView = _CswNbtSchemaModTrnsctn.restoreView( chemContainersGridNTP.ViewId );
                     if( null == chemContainersView )
@@ -71,6 +75,22 @@ namespace ChemSW.Nbt.Schema
 
                     chemContainersView.save();
 
+                    //create the chemical sizes grid
+                    //CswNbtMetaDataNodeTypeProp chemSizesGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Chemical Sizes", chemContainerTab.TabId );
+                    //CswNbtView chemSizesView = _CswNbtSchemaModTrnsctn.restoreView( chemContainersGridNTP.ViewId );
+                    //if( null == chemSizesView )
+                    //{
+                    //    chemSizesView = _CswNbtSchemaModTrnsctn.makeView();
+                    //    chemSizesGridNTP.ViewId = chemSizesView.ViewId;
+                    //}
+                    //chemSizesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(); //make it a link grid
+
+                    //chemSizesView.Root.ChildRelationships.Clear();
+                    //chemSizesView.ViewMode = NbtViewRenderingMode.Grid;
+                    //chemSizesView.Visibility = NbtViewVisibility.Property;
+
+
+
                 }
             }
 
@@ -81,7 +101,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab bioContainerTab = biologicalNT.getNodeTypeTab( "Containers" );
                 if( null != bioContainerTab )
                 {
-                    CswNbtMetaDataNodeTypeProp bioContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( biologicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Containers", bioContainerTab.TabId );
+                    CswNbtMetaDataNodeTypeProp bioContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( biologicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Biological Containers", bioContainerTab.TabId );
 
                     CswNbtView bioContainersView = _CswNbtSchemaModTrnsctn.restoreView( bioContainersGridNTP.ViewId );
                     if( null == bioContainersView )
@@ -109,16 +129,14 @@ namespace ChemSW.Nbt.Schema
                     CswNbtViewProperty bioBarcodeVP = bioContainersView.AddViewProperty( bioChildRelationship, barcodeOCP );
                     CswNbtViewProperty bioQuantityVP = bioContainersView.AddViewProperty( bioChildRelationship, quantityOCP );
                     CswNbtViewProperty bioStatusVP = bioContainersView.AddViewProperty( bioChildRelationship, statusOCP );
-                    CswNbtViewProperty bioExpireDateVP = bioContainersView.AddViewProperty( bioChildRelationship, expirationDateOCP );
                     CswNbtViewProperty bioOwnerVP = bioContainersView.AddViewProperty( bioChildRelationship, ownerOCP );
                     CswNbtViewProperty bioLocationVP = bioContainersView.AddViewProperty( bioChildRelationship, locationOCP );
 
                     bioBarcodeVP.Order = 1;
                     bioQuantityVP.Order = 2;
                     bioStatusVP.Order = 3;
-                    bioExpireDateVP.Order = 4;
-                    bioOwnerVP.Order = 5;
-                    bioLocationVP.Order = 6;
+                    bioOwnerVP.Order = 4;
+                    bioLocationVP.Order = 5;
 
                     bioContainersView.save();
 
@@ -132,7 +150,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab supplyContainerTab = supplyNT.getNodeTypeTab( "Containers" );
                 if( null != supplyContainerTab )
                 {
-                    CswNbtMetaDataNodeTypeProp supplyContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( supplyNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Containers", supplyContainerTab.TabId );
+                    CswNbtMetaDataNodeTypeProp supplyContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( supplyNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Supply Containers", supplyContainerTab.TabId );
 
                     CswNbtView supplyContainersView = _CswNbtSchemaModTrnsctn.restoreView( supplyContainersGridNTP.ViewId );
                     if( null == supplyContainersView )
@@ -160,27 +178,19 @@ namespace ChemSW.Nbt.Schema
                     CswNbtViewProperty supplyBarcodeVP = supplyContainersView.AddViewProperty( supplyChildRelationship, barcodeOCP );
                     CswNbtViewProperty supplyQuantityVP = supplyContainersView.AddViewProperty( supplyChildRelationship, quantityOCP );
                     CswNbtViewProperty supplyStatusVP = supplyContainersView.AddViewProperty( supplyChildRelationship, statusOCP );
-                    CswNbtViewProperty supplyExpireDateVP = supplyContainersView.AddViewProperty( supplyChildRelationship, expirationDateOCP );
                     CswNbtViewProperty supplyOwnerVP = supplyContainersView.AddViewProperty( supplyChildRelationship, ownerOCP );
                     CswNbtViewProperty supplyLocationVP = supplyContainersView.AddViewProperty( supplyChildRelationship, locationOCP );
 
                     supplyBarcodeVP.Order = 1;
                     supplyQuantityVP.Order = 2;
                     supplyStatusVP.Order = 3;
-                    supplyExpireDateVP.Order = 4;
-                    supplyOwnerVP.Order = 5;
-                    supplyLocationVP.Order = 6;
+                    supplyOwnerVP.Order = 4;
+                    supplyLocationVP.Order = 5;
 
                     supplyContainersView.save();
 
                 }
             }
-
-            //Add link grid called 'Sizes'
-
-            /*
-             * TO DO
-             */
 
         }//Update()
 
