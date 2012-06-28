@@ -4910,6 +4910,45 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Inspection Design
 
+        #region Dispense Container
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string finalizeDispenseContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string UnitId, string ContainerNodeTypeId, string DesignGrid )
+        {
+            JObject ReturnVal = new JObject();
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
+                    if( DispenseType == CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() )
+                    {
+                        ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid );
+                    }
+                    else
+                    {
+                        ReturnVal = ws.updateDispensedContainer( SourceContainerNodeId, DispenseType, Quantity, UnitId );
+                    }
+
+                    ReturnVal["success"] = "true";
+
+                } // if (AuthenticationStatus.Authenticated == AuthenticationStatus)
+                _deInitResources();
+            } // try
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+            return ReturnVal.ToString();
+        } // finalizeDispenseContainer()
+
+        #endregion Dispense Container
+
         #endregion Web Methods
 
         #region Private

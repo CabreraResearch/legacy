@@ -426,7 +426,7 @@
 //                }
 //                cswPrivate.inspectionGrid = cswPrivate.inspectionGridDiv.grid(cswPrivate.gridOptions);
 
-                if (false === Csw.contains(grid, 'data') || false === Csw.contains(grid, 'columns') || grid.columns.length === 0) {
+                if (false === Csw.contains(gridJson, 'data') || false === Csw.contains(gridJson, 'columns') || gridJson.columns.length === 0) {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Inspection Design upload failed. Please check your design and try again.'));
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);

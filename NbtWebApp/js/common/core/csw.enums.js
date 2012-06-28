@@ -65,8 +65,10 @@
                 globalAjaxStart: 'globalAjaxStart',
                 globalAjaxStop: 'globalAjaxStop'
             },
+            Submit_Request: 'Submit_Request',
             objectClassButtonClick: 'objectClassButtonClick',
-            RestoreViewContext: 'RestoreViewContext'
+            RestoreViewContext: 'RestoreViewContext',
+            DispenseContainer: 'DispenseContainer'
         });
 
     Csw.enums.wizardSteps_InspectionDesign = Csw.enums.wizardSteps_InspectionDesign ||
@@ -102,6 +104,7 @@
 
     Csw.enums.nbtButtonAction = Csw.enums.nbtButtonAction ||
         Csw.enums.register('nbtButtonAction', {
+            dispense: 'dispense',
             reauthenticate: 'reauthenticate',
             //home: 'home',
             receive: 'receive',

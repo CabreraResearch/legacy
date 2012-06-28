@@ -4,6 +4,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 
+enum MailRptFormatOptions { Link, CSV };
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -89,6 +90,16 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
             _checkView();
+
+            if( Type.Value == TypeOptionView )
+            {
+                OutputFormat.Value = MailRptFormatOptions.Link.ToString();
+                OutputFormat.ReadOnly = true;
+            }
+            else if( Type.Value == TypeOptionReport )
+            {
+                OutputFormat.ReadOnly = false;
+            }
         }
 
         private void _checkView()
@@ -264,7 +275,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties["OutputFormatPropertyName"].AsList );
+                return ( _CswNbtNode.Properties[OutputFormatPropertyName].AsList );
             }
         }
 

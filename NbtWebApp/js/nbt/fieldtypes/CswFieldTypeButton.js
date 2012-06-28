@@ -69,6 +69,12 @@
                                             })(messagediv.getId())
                                         ));
                                         break;
+
+                                    case Csw.enums.nbtButtonAction.dispense:
+                                        $btn.button({ disabled: false });
+                                        Csw.publish(Csw.enums.events.objectClassButtonClick, actionJson);
+                                        break;
+
                                     case Csw.enums.nbtButtonAction.request:
                                         $btn.button({ disabled: false });
 
@@ -88,6 +94,7 @@
                                                 break;
                                         }
                                         break;
+
                                     case Csw.enums.nbtButtonAction.popup:
                                         $btn.button({ disabled: false });
                                         Csw.openPopup(data.actiondata, 600, 800);

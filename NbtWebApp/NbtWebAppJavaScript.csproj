@@ -91,6 +91,7 @@
     <Content Include="js\nbt\wizards\csw.wizard.addlayout.js" />
     <Content Include="js\nbt\wizards\csw.wizard.nodetypeselect.js" />
     <Content Include="js\nbt\wizards\csw.wizard.nodegrid.js" />
+    <Content Include="js\nbt\wizards\csw.dispensecontainer.js" />
     <Content Include="js\nbt\wizards\csw.receivematerial.js" />
     <Content Include="MainCswIncludes.html" />
     <Content Include="JavaScriptTest.html" />

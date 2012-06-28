@@ -14,12 +14,14 @@
                 //readonly: false,
                 stateId: '',
                 usePaging: true,
+                forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                 ajax: {
                     urlMethod: '',
                     data: {}
                 },
-
+                
+                showCheckboxes: false,
                 showActionColumn: true,
                 showView: true,
                 showLock: true,
@@ -29,8 +31,8 @@
                 canSelectRow: false,
 
                 onLoad: null,   // function()
-                onEdit: null,   // function(row)
-                onDelete: null, // function(row)
+                onEdit: null,   // function(rows)
+                onDelete: null, // function(rows)
                 onSelect: null, // function(row)
                 onDeselect: null, // function(row)
 
@@ -40,7 +42,9 @@
                 fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
                 columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
                 data: {},     // { items: [ { col1: val, col2: val ... }, ... ]
-                pageSize: ''  // overridden by webservice
+                pageSize: '',  // overridden by webservice
+
+                actionDataIndex: 'action'
             };
             var cswPublic = {};
 
@@ -60,7 +64,7 @@
                     if (false === Csw.isNullOrEmpty(clickFunc)) {
                         iconopts.isButton = true;
                         iconopts.onClick = function () {
-                            Csw.tryExec(clickFunc, record.data);
+                            Csw.tryExec(clickFunc, [ record.data ]);
                         };
                     }
                     cell.icon(iconopts);
@@ -68,14 +72,65 @@
             }; // makeActionButton()
 
 
-            cswPrivate.addActionColumn = function () {
-                if (cswPrivate.showActionColumn) {
-                    var newfld = { name: 'action' };
+            cswPrivate.makeStore = function(storeId, usePaging) {
+                var fields = $.extend([], cswPrivate.fields);
+
+                var storeopts = {
+                    storeId: storeId,
+                    fields: fields,
+                    data: cswPrivate.data,
+                    proxy: {
+                        type: 'memory',
+                        reader: {
+                            type: 'json',
+                            root: 'items'
+                        }
+                    }
+                };
+                if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
+                    var newfld = { name: cswPrivate.actionDataIndex };
+                    storeopts.fields.splice(0, 0, newfld);
+                }
+                if (Csw.bool(usePaging)) {
+                    storeopts.pageSize = cswPrivate.pageSize;
+                    storeopts.proxy.type = 'pagingmemory';
+                }
+
+                return Ext.create('Ext.data.Store', storeopts);
+            }; // makeStore()
+
+            
+            cswPrivate.makeGrid = function (renderTo, store) {
+                var columns = $.extend([], cswPrivate.columns);
+
+                var gridopts = {
+                    title: cswPrivate.title,
+                    store: store,
+                    columns: columns,
+                    height: cswPrivate.height,
+                    width: cswPrivate.width,
+                    resizable: true,               // client side grid resizing
+                    stateful: true,
+                    stateId: cswPrivate.stateId,
+                    forceFit: cswPrivate.forceFit,
+                    viewConfig: {
+                        deferEmptyText: false,
+                        emptyText: 'No Results'
+                    },
+                    listeners: {
+                        viewready: function () {
+                            Csw.tryExec(cswPrivate.onLoad, cswPublic);
+                        }
+                    }
+                };
+
+                // Action column
+                if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
                     var newcol = {
                         header: 'Action',
-                        dataIndex: 'action',
-                        flex: false,
+                        dataIndex: cswPrivate.actionDataIndex,
                         width: 60,
+                        flex: false,
                         resizable: false,
                         xtype: 'actioncolumn',
                         renderer: function (value, metaData, record, rowIndex, colIndex, store, view) {
@@ -108,63 +163,26 @@
                             }
                             return ret;
                         } // renderer()
+                    }; // newcol
+                    gridopts.columns.splice(0, 0, newcol);
+                } // if(cswPrivate.showActionColumn && false === cswPrivate.showCheckboxes) {
+
+                // Selection mode
+                if(cswPrivate.showCheckboxes){
+                    gridopts.selType = 'checkboxmodel';
+                    gridopts.selModel = { mode: 'Simple' };
+                    gridopts.listeners.selectionchange = function () {
+                        cswPrivate.editAllButton.enable();
+                        cswPrivate.deleteAllButton.enable();
                     };
-                    cswPrivate.fields.splice(0, 0, newfld);
-                    cswPrivate.columns.splice(0, 0, newcol);
-                } // if (cswPrivate.showActionColumn)
-            }; //addActionColumn()
-
-
-            cswPrivate.makeStore = function(storeId, usePaging) {
-                var storeopts = {
-                    storeId: storeId,
-                    fields: cswPrivate.fields,
-                    data: cswPrivate.data,
-                    proxy: {
-                        type: 'memory',
-                        reader: {
-                            type: 'json',
-                            root: 'items'
-                        }
-                    }
-                };
-                if (Csw.bool(usePaging)) {
-                    storeopts.pageSize = cswPrivate.pageSize;
-                    storeopts.proxy.type = 'pagingmemory';
+                } else {
+                    gridopts.selType = 'rowmodel';
+                    gridopts.listeners.beforeselect = function () {
+                        return Csw.bool(cswPrivate.canSelectRow);
+                    };
                 }
 
-                return Ext.create('Ext.data.Store', storeopts);
-            }; // makeStore()
-
-            
-            cswPrivate.makeGrid = function (renderTo, store) {
-                var gridopts = {
-                    title: cswPrivate.title,
-                    store: store,
-                    columns: cswPrivate.columns,
-                    height: cswPrivate.height,
-                    width: cswPrivate.width,
-                    resizable: true,               // client side grid resizing
-                    stateful: true,
-                    stateId: cswPrivate.stateId,
-                    forceFit: false,               // expand all columns to fill width (makes column resizing weird)
-                    viewConfig: {
-                        deferEmptyText: false,
-                        emptyText: 'No Results'
-                    },
-                    listeners: {
-                        beforeselect: function () {
-                            return Csw.bool(cswPrivate.canSelectRow);
-                        },
-                        viewready: function () {
-                            Csw.tryExec(cswPrivate.onLoad, cswPublic);
-                        }
-                    }
-                };
-//                if(false === Csw.isNullOrEmpty(renderTo))
-//                {
-//                    gridopts.renderTo = renderTo;
-//                }
+                // Paging
                 if (Csw.bool(cswPrivate.usePaging)) {
                     gridopts.dockedItems = [{
                         xtype: 'pagingtoolbar',
@@ -182,30 +200,67 @@
                         gridopts.height = cswPrivate.calculateHeight(cswPrivate.pageSize);
                     }
                 }
-
+  
                 var grid = Ext.create('Ext.grid.Panel', gridopts);
 
                 setTimeout(function() {   // this delay solves case 26792
                     // This should make the grid fill the parent container, but doesn't seem to work
                     if(false === Csw.isNullOrEmpty(renderTo))
                     {
-                        Ext.create('Ext.container.Container', {
+                        var panelopts = {
                             layout: 'fit',
                             renderTo: renderTo,
                             items: [ grid ]
-                        });
-                    }
-                }, 200);
+                        };
+                        if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
+                        {
+                            cswPrivate.editAllButton = Ext.create('Ext.button.Button', {
+                                                                                        xtype: 'button',
+                                                                                        text: 'Edit Selected',
+                                                                                        icon: 'Images/newicons/16/pencil.png',
+                                                                                        disabled: true,
+                                                                                        handler: function() {
+                                                                                            var rows = [];
+                                                                                            Csw.each(grid.getSelectionModel().getSelection(), function(selectedRow) {
+                                                                                                rows.push(selectedRow.raw);
+                                                                                            });
+                                                                                            cswPrivate.onEdit(rows);
+                                                                                        } // edit handler
+                                                                                    });
+                            cswPrivate.deleteAllButton = Ext.create('Ext.button.Button', {
+                                                                                        xtype: 'button',
+                                                                                        text: 'Delete Selected',
+                                                                                        icon: 'Images/newicons/16/trash.png',
+                                                                                        disabled: true,
+                                                                                        handler: function() {
+                                                                                            var rows = [];
+                                                                                            Csw.each(grid.getSelectionModel().getSelection(), function(selectedRow) {
+                                                                                                rows.push(selectedRow.raw);
+                                                                                            });
+                                                                                            cswPrivate.onDelete(rows);
+                                                                                        } // delete handler
+                                                                                    });
+                            panelopts.dockedItems = [{
+                                xtype: 'toolbar',
+                                dock: 'top',
+                                items: [cswPrivate.editAllButton, cswPrivate.deleteAllButton]
+                            }]; // panelopts.dockedItems
+                        } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
+                        cswPrivate.panel = Ext.create('Ext.panel.Panel', panelopts);
+                    } // if(false === Csw.isNullOrEmpty(renderTo))
+                }, 200); // setTimeout
+
                 return grid;
             }; // makeGrid()
 
 
             cswPrivate.init = function () {
-                cswPrivate.addActionColumn();
+                cswParent.empty();
+                
                 cswPrivate.store = cswPrivate.makeStore(cswPrivate.ID + '_store', cswPrivate.usePaging);
-                cswPrivate.gridPanel = cswPrivate.makeGrid(cswParent.getId(), cswPrivate.store);
+                cswPrivate.grid = cswPrivate.makeGrid(cswParent.getId(), cswPrivate.store);
 
-                cswPrivate.gridPanel.on({
+                cswPrivate.grid.on({
                     select: function (rowModel, record, index, eOpts) {
                         Csw.tryExec(cswPrivate.onSelect, record.data);
                     },
@@ -226,7 +281,7 @@
             };
 
             cswPublic.getSelectedRowId = function () {
-                return cswPrivate.store.indexOf(cswPrivate.gridPanel.getSelectionModel().getSelection()[0]);
+                return cswPrivate.store.indexOf(cswPrivate.grid.getSelectionModel().getSelection()[0]);
             };
 
             cswPublic.scrollToRow = function (rowindex) {
@@ -236,7 +291,7 @@
                 if (Csw.isNullOrEmpty(rowindex)) {
                     rowindex = cswPublic.getSelectedRowId();
                 }
-                cswPrivate.gridPanel.getView().focusRow(rowindex);
+                cswPrivate.grid.getView().focusRow(rowindex);
             };
 
             cswPublic.getRowIdForVal = function (column, value) {
@@ -262,7 +317,7 @@
             cswPublic.setSelection = function (rowindex) {
                 ///<summary>Sets the selected row by index</summary>
                 if (rowindex > -1) {
-                    cswPrivate.gridPanel.getSelectionModel().select(rowindex);
+                    cswPrivate.grid.getSelectionModel().select(rowindex);
                 }
             };
 
@@ -279,8 +334,9 @@
                 Ext.ux.grid.Printer.print(printGrid);
             };
 
-            cswPublic.isMulti = function () {
-                return cswPrivate.multiEdit;
+            cswPublic.toggleShowCheckboxes = function (val) {
+                cswPrivate.showCheckboxes = (false === cswPrivate.showCheckboxes);
+                cswPrivate.init();
             };
 
             cswPrivate.calculateHeight = function(rows) {
