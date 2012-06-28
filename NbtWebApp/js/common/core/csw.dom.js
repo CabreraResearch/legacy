@@ -137,6 +137,30 @@
                 return cswPublic;
             };
 
+            cswPublic.setLabelText = function (propName, isRequired) {
+                /// <summary>Append a property name to a dom element. Appends a '*' if it's a required property</summary>
+                /// <param name="propName" type="Object">the property name to display</param>
+                /// <param name="isRequired" type="Object">whether or not this property is required</param>
+                /// <returns type="Object">The parent Csw object (for chaining)</returns> 
+                try {
+                    if (isRequired === 'true') {
+                        cswPublic.$.append(propName + "*");
+                    } else {
+                        cswPublic.$.append(propName);
+                    }
+                } catch (e) {
+                    Csw.debug.log('Warning: append() failed, text() was used instead.', true);
+                    if (Csw.isString(propName)) {
+                        if (isRequired === 'true') {
+                            cswPublic.$.text(propName + "*");
+                        } else {
+                            cswPublic.$.text(propName);
+                        }
+                    }
+                }
+                return cswPublic;
+            };
+
             cswPublic.attach = function (object) {
                 /// <summary>Attach an object to this element.</summary>
                 /// <param name="object" type="Object">Raw HTML. Warning: Do not pass a selector to this method!</param>
@@ -181,7 +205,7 @@
                 return cswPublic;
             };
 
-            cswPublic.css = function(param1, param2) {
+            cswPublic.css = function (param1, param2) {
                 /// <param name="param1" type="Object">Either a single JSON object with CSS to apply, or a single CSS name</param>
                 /// <param name="param2" type="string">single CSS value</param>
                 if (arguments.length === 1) {
@@ -472,10 +496,10 @@
             if (false === Csw.isNullOrEmpty(cswPrivate.suffix)) {
                 elementId.push(cswPrivate.suffix);
             }
-//            if (Csw.bool(isUnique, true)) {
-//                Csw.setGlobalProp('uniqueIdCount', cswPrivate.idCount);
-//                elementId.push(cswPrivate.idCount);
-//            }
+            //            if (Csw.bool(isUnique, true)) {
+            //                Csw.setGlobalProp('uniqueIdCount', cswPrivate.idCount);
+            //                elementId.push(cswPrivate.idCount);
+            //            }
             return elementId.join(cswPrivate.Delimiter);
         });
 
