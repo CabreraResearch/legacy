@@ -74,6 +74,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="ConnectTest.html" />
+    <Content Include="js\common\composites\csw.quantity.js" />
     <Content Include="js\nbt\nodes\csw.node.link.js" />
     <Content Include="js\nbt\nodes\CswNodeGridNew.js" />
     <Content Include="DevHeader.html" />
@@ -86,6 +87,9 @@
     <Content Include="js\common\controls\csw.buttongroup.js" />
     <Content Include="js\common\layouts\csw.action.js" />
     <Content Include="js\nbt\actions\csw.submitrequest.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.nodethingrid.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.addlayout.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.nodetypeselect.js" />
     <Content Include="js\nbt\wizards\csw.wizard.nodegrid.js" />
     <Content Include="js\nbt\wizards\csw.receivematerial.js" />
     <Content Include="MainCswIncludes.html" />
