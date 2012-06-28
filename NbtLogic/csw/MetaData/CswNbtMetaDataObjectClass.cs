@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.MetaData
             //bz # 7815 -- Should not care if the requested object class doesn't exist anymore
             if( Enum.IsDefined( typeof( NbtObjectClass ), ObjectClassName ) )
             {
-                ReturnVal = (CswNbtMetaDataObjectClass.NbtObjectClass) Enum.Parse( typeof( CswNbtMetaDataObjectClass.NbtObjectClass ), ObjectClassName, true );
+                Enum.TryParse( ObjectClassName, true, out ReturnVal );
             }
             return ( ReturnVal );
         }
