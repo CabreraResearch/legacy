@@ -4,9 +4,9 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
 using Newtonsoft.Json.Linq;
@@ -106,6 +106,19 @@ namespace ChemSW.Nbt.WebServices
             _NodeSd.addSingleNodeProp( Node, PropObj, Tab );
 
         } // _applyPropJson
+
+        public JObject getQuantityFromSize( CswPrimaryKey SizeId )
+        {
+            JObject Ret = new JObject();
+
+            CswNbtObjClassSize Size = _CswNbtResources.Nodes.GetNode( SizeId );
+            if( null != Size )
+            {
+                CswNbtNodePropQuantity Capacity = Size.Capacity;
+                Capacity.ToJSON( Ret );
+            }
+            return Ret;
+        }
 
     } // class CswNbtWebServiceNode
 
