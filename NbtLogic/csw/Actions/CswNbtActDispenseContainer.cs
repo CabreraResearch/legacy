@@ -89,6 +89,7 @@ namespace ChemSW.Nbt.csw.Actions
 
             string ViewId = _getViewForAllDispenseContainers();
             ret["viewId"] = ViewId;
+            ret["barcodeId"] = _SourceContainer.NodeId.ToString() + "_" + _SourceContainer.Barcode.NodeTypePropId.ToString();
 
             return new JObject();
         }
@@ -185,6 +186,7 @@ namespace ChemSW.Nbt.csw.Actions
             Collection<CswPrimaryKey> SourceContainerRoot = new Collection<CswPrimaryKey>();
             SourceContainerRoot.Add( _SourceContainer.NodeId );
             CswNbtView DispenseContainerView = new CswNbtView( _CswNbtResources );
+            DispenseContainerView.ViewName = "Containers Dispensed at " + DateTime.Now.ToShortTimeString();
 
             CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ContainerClass );
             CswNbtViewRelationship RootRelationship = DispenseContainerView.AddViewRelationship( ContainerOc, false );

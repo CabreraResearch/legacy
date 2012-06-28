@@ -1160,7 +1160,7 @@ window.initMain = window.initMain || function (undefined) {
             case 'DispenseContainer':
                 var designOpt = {
                     ID: 'cswDispenseContainerWizard',
-                    nodeId: o.nodeId,
+                    sourceContainerNodeId: o.sourceContainerNodeId,
                     currentQuantity: o.currentQuantity,
                     currentUnitName: o.currentUnitName,
                     onCancel: function () {
