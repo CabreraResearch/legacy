@@ -81,10 +81,6 @@ namespace ChemSW.Nbt.csw.Actions
                     _dispenseMaterialFromContainer( ContainerNodeTypeId, NumOfContainers, QuantityToDispense, UnitOfMeasurePK );
                 }
             }
-            if( _SourceContainer.Quantity.Quantity < 0 )
-            {
-                _SourceContainer.Quantity.Quantity = 0;
-            }
             _SourceContainer.postChanges( false );
 
             string ViewId = _getViewForAllDispenseContainers();
@@ -106,10 +102,6 @@ namespace ChemSW.Nbt.csw.Actions
         {
             double QuantityToWaste = _getDispenseAmountInProperUnits( Quantity, UnitId, _SourceContainer.Quantity.UnitId );
             _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity - QuantityToWaste;
-            if( _SourceContainer.Quantity.Quantity < 0 )
-            {
-                _SourceContainer.Quantity.Quantity = 0;
-            }
             _SourceContainer.postChanges( false );
             _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste, QuantityToWaste );
         }
@@ -118,9 +110,9 @@ namespace ChemSW.Nbt.csw.Actions
         {
             if( NumOfContainers == 0 )
             {
-                double QuantityWasted = _getDispenseAmountInProperUnits( QuantityToDispense, UnitId, _SourceContainer.Quantity.UnitId );
-                _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity - QuantityWasted;
-                _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste, QuantityWasted );
+                double QuantityDispensed = _getDispenseAmountInProperUnits( QuantityToDispense, UnitId, _SourceContainer.Quantity.UnitId );
+                _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity - QuantityDispensed;
+                _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityDispensed );
             }
             else
             {
