@@ -21,6 +21,7 @@
                 nodeid: '',
                 cswnbtnodekey: '',
                 reinit: false,
+                forceFit: false,
                 EditMode: Csw.enums.editMode.Edit,
                 onEditNode: null,
                 onDeleteNode: null,
@@ -56,6 +57,7 @@
                                             ForReport: forReporting
                                         }
                                     },
+                                    forceFit: o.forceFit,
                                     readonly: forReporting,
                                     usePaging: false === forReporting,
                                     showActionColumn: true,
