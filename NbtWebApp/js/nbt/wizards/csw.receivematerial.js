@@ -2,11 +2,7 @@
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
-
-    var _internal = {
-        lastReceivingMaterialId: 'lastReceivingMaterialId',
-        lastReceivingViewId: 'lastReceivingViewId'
-    };
+    var cswReceiveMaterialWizardState = 'cswReceiveMaterialWizardState';
 
     Csw.nbt.receiveMaterialWizard = Csw.nbt.receiveMaterialWizard ||
         Csw.nbt.register('receiveMaterialWizard', function (cswParent, options) {
@@ -25,6 +21,9 @@
                 },
                 divStep1: '', divStep2: '', divStep3: '',
                 materialId: null,
+                materialNodeTypeId: '',
+                containerNodeTypeId: '',
+                containerAddLayout: {},
                 tradeName: '',
                 sizesViewId: '',
                 selectedSizeId: '',
@@ -58,26 +57,19 @@
                 if (Csw.isNullOrEmpty(cswParent)) {
                     Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a parent.', '', 'csw.receivematerial.js', 57));
                 }
-                if (Csw.isNullOrEmpty(cswPrivate.materialId)) {
-                    cswPrivate.materialId = Csw.clientDb.getItem(_internal.lastReceivingMaterialId);
+                if (Csw.isNullOrEmpty(cswPrivate.materialId) || Csw.isNullOrEmpty(cswPrivate.sizesViewId)) {
+                    var _internal = Csw.clientDb.getItem(cswReceiveMaterialWizardState);
+                    $.extend(true, cswPrivate, _internal);
                     if (Csw.isNullOrEmpty(cswPrivate.materialId)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a Material ID.', '', 'csw.receivematerial.js', 60));
                     }
                 }
-                Csw.clientDb.setItem(_internal.lastReceivingMaterialId, cswPrivate.materialId);
-
-                if (Csw.isNullOrEmpty(cswPrivate.sizesViewId)) {
-                    cswPrivate.sizesViewId = Csw.clientDb.getItem(_internal.lastReceivingViewId);
-                    if (Csw.isNullOrEmpty(cswPrivate.sizesViewId)) {
-                        Csw.error.throwException(Csw.error.exception('Cannot create a Material Receiving wizard without a Sizes View.', '', 'csw.receivematerial.js', 68));
-                    }
-                }
-                Csw.clientDb.setItem(_internal.lastReceivingViewId, cswPrivate.sizesViewId);
+                Csw.clientDb.setItem(cswReceiveMaterialWizardState, cswPrivate);
 
                 cswPrivate.wizardSteps = {
-                    1: 'Size',
-                    2: 'Property',
-                    3: 'Amout'
+                    1: 'Select a Size',
+                    2: 'Define Properties',
+                    3: 'Set Amounts'
                 };
 
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
@@ -87,11 +79,45 @@
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
+                        //Csw.clientDb.setItem(cswReceiveMaterialWizardState, cswPrivate);
                     }
                 };
 
-                cswPrivate.finalize = function () {
+                cswPrivate.getQuantity = function (async) {
+                    var ret = Csw.bool(async);
+                    Csw.ajax.post({
+                        urlMethod: 'getQuantity',
+                        async: Csw.bool(async),
+                        data: { SizeId: cswPrivate.selectedSizeId },
+                        success: function (data) {
+                            cswPrivate.quantity = data.quantity;
+                            ret = false === Csw.isNullOrEmpty(cswPrivate.quantity);
+                        }
+                    });
+                    return ret;
+                };
 
+                cswPrivate.onBeforeNext = function (currentStepNo) {
+                    var isNotStepTwoOrIsValid = currentStepNo !== 2 || cswPrivate.tabsAndProps.isValid();
+                    var isStepTwoAndHasQuantity = false;
+                    if (currentStepNo === 2) {
+                        if (false === Csw.isNullOrEmpty(cswPrivate.quantity)) {
+                            isStepTwoAndHasQuantity = true;
+                        } else {
+                            isStepTwoAndHasQuantity = cswPrivate.getQuantity(false);
+                        }
+                    }
+                    return isNotStepTwoOrIsValid || isStepTwoAndHasQuantity;
+                };
+
+                cswPrivate.finalize = function () {
+                    var container = {
+                        materialid: cswPrivate.materialId,
+                        sizeid: cswPrivate.selectedSizeId,
+                        props: cswPrivate.tabsAndProps.getPropJson(),
+                        amounts: cswPrivate.amounts
+                    };
+                    //AJAX post
                 };
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {
@@ -103,6 +129,7 @@
                     FinishText: 'Finish',
                     onNext: cswPrivate.handleStep,
                     onPrevious: cswPrivate.handleStep,
+                    onBeforeNext: cswPrivate.onBeforeNext,
                     onCancel: cswPrivate.onCancel,
                     onFinish: cswPrivate.finalize,
                     doNextOnInit: false
@@ -139,66 +166,103 @@
                     if (false === cswPrivate.stepOneComplete) {
                         cswPrivate.divStep1 = cswPrivate.divStep1 || cswPrivate.wizard.div(1);
                         cswPrivate.divStep1.empty();
-                        cswPrivate.divStep1.span({ text: 'Select a Size to Receive' });
+                        cswPrivate.divStep1.span({ text: 'Select a Size to Receive.' });
                         cswPrivate.divStep1.br({ number: 2 });
 
-                        var sizeGrid = Csw.nbt.wizardNodeGrid(cswPrivate.divStep1, {
+                        var sizeGrid = Csw.nbt.wizard.nodeGrid(cswPrivate.divStep1, {
                             nodeid: cswPrivate.materialId,
                             viewid: cswPrivate.sizesViewId,
                             onSelect: function () {
+                                if (cswPrivate.selectedSizeId !== sizeGrid.getSelectedNodeId()) {
+                                    cswPrivate.reinitSteps(2);
+                                }
                                 cswPrivate.selectedSizeId = sizeGrid.getSelectedNodeId();
                                 cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                                //We are NOT fetching quantity here, because the user could be clicking back and forth between grid rows.
                             }
                         });
 
-                        //var containerDiv = cswPrivate.divStep1.div().hide();
-                        //var containerSelect = containerDiv.nodeTypeSelect();
+                        cswPrivate.container = {};
+                        var containerSelect = Csw.nbt.wizard.nodeTypeSelect(cswPrivate.divStep1, {
+                            labelText: 'Select a Container: ',
+                            objectClassName: 'ContainerClass',
+                            data: cswPrivate.container,
+                            onSelect: function () {
+                                if (cswPrivate.containerNodeTypeId !== containerSelect.selectedNodeTypeId) {
+                                    cswPrivate.reinitSteps(2);
+                                    cswPrivate.containerAddLayout = null;
+                                }
+                                cswPrivate.containerNodeTypeId = containerSelect.selectedNodeTypeId;
+                            }
+                        });
 
                         cswPrivate.stepOneComplete = true;
                     }
                 };
             } ());
 
-            //Step 2: 
+            //Step 2: Add Layout
             cswPrivate.makeStep2 = (function () {
 
                 return function () {
-                    var nextBtnEnabled = function () {
-                        //return false === Csw.isNullOrEmpty(cswPrivate.tradeName) && false === Csw.isNullOrEmpty(cswPrivate.supplier.val);
-                    };
-
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, nextBtnEnabled());
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                     if (false === cswPrivate.stepTwoComplete) {
+                        //We're fetching quantity here so that it will be ready (hopefully) by the time we click next. 
+                        //This does create a race condition, so we need to validate this on onBeforeClickNext
+                        cswPrivate.getQuantity(true);
                         cswPrivate.divStep2 = cswPrivate.divStep2 || cswPrivate.wizard.div(2);
                         cswPrivate.divStep2.empty();
-
+                        cswPrivate.divStep2.span({ text: 'Configure the new Container: ' });
                         cswPrivate.divStep2.br({ number: 2 });
+
+                        cswPrivate.tabsAndProps = Csw.nbt.wizard.addLayout(cswPrivate.divStep2, {
+                            ID: cswPrivate.containerNodeTypeId + 'add_layout',
+                            nodetypeid: cswPrivate.containerNodeTypeId,
+                            propertyData: cswPrivate.containerAddLayout
+                        });
 
                         cswPrivate.stepTwoComplete = true;
                     }
                 };
             } ());
 
+            //Step 3: Amounts
             cswPrivate.makeStep3 = (function () {
 
                 return function () {
+                    if (cswPrivate.tabsAndProps.isValid()) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
-                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                        if (false === cswPrivate.stepThreeComplete) {
+                            if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
+                                Csw.error.throwException(Csw.error.exception('Cannot create a Container quantities without the Capacity if a Size.', '', 'csw.receivematerial.js', 244));
+                            }
+                            cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
+                            cswPrivate.divStep3.empty();
+                            cswPrivate.divStep3.span({ text: 'Enter the Amounts to Receive.' });
+                            cswPrivate.divStep3.br({ number: 2 });
 
-                    if (false === cswPrivate.stepThreeComplete) {
-                        cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
-                        cswPrivate.divStep3.empty();
+                            cswPublic.thinGrid = cswPrivate.divStep3.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Barcode(s)']] });
+                            cswPrivate.divStep3.br();
+                            cswPrivate.amountsTable = cswPrivate.divStep3.table();
+                            
+                            //# of containers
+                            
+                            //Quantity
 
-                        cswPrivate.divStep3.br({ number: 2 });
+                            //Barcodes
 
-                        cswPrivate.stepThreeComplete = true;
+                            cswPrivate.stepThreeComplete = true;
+                        }
+                    } else {
+                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                     }
                 };
 
