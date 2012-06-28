@@ -207,9 +207,8 @@
                 }
             }; // getProps()
 
-            cswPrivate.validate = function () {
-                // Validation
-                 cswPublic.validator = cswPrivate.form.$.validate({
+            cswPrivate.initValidator = function () {
+                cswPublic.validator = cswPrivate.form.$.validate({
                     highlight: function (element) {
                         var $elm = $(element);
                         $elm.attr('csw_invalid', '1');
@@ -224,8 +223,8 @@
                             setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
                         }
                     }
-                });
-            }; // validate()
+                }); // validate()
+            };
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
@@ -255,11 +254,8 @@
                     });
                     //var formTblCell11 = formTable.cell(1, 1);
                     //var formTblCell12 = formTable.cell(1, 2);
-
-
-                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable({
+                    var layoutOpts = {
                         ID: cswPrivate.ID + '_props',
-                        width: null,
                         OddCellRightAlign: true,
                         ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
                         cellSet: {
@@ -282,7 +278,12 @@
                         onRemove: function (event, onRemoveData) {
                             cswPrivate.onRemove(tabid, onRemoveData);
                         } // onRemove
-                    }); // Csw.literals.layoutTable()
+                    };
+                    if (false === Csw.bool(cswPrivate.showSaveButton)) {
+                        layoutOpts.width = null;
+                    }
+
+                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); // Csw.literals.layoutTable()
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
@@ -336,8 +337,8 @@
                             false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                     }
-
-                    cswPrivate.validate();
+                    // Validation
+                    cswPrivate.initValidator();
 
                     if (Csw.bool(cswPrivate.Config)) {
                         cswPrivate.layoutTable.configOn();
@@ -766,7 +767,7 @@
                 return cswPrivate.propertyData;
             };
 
-            cswPublic.isValid = function () {
+            cswPublic.isFormValid = function () {
                 return cswPrivate.form.$.valid();
             };
 
@@ -774,7 +775,7 @@
                 'use strict';
                 Csw.tryExec(function () {
 
-                    if (cswPublic.isValid()) {
+                    if (cswPublic.isFormValid()) {
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);
