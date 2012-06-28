@@ -188,16 +188,27 @@
             //Select a Quantity :
             //Select the number of destination containers and their quantities.
             cswPrivate.makeStepThree = (function () {
-                var stepThreeComplete = false;
+                var stepThreeDispenseComplete = false;
+                var stepThreeAddWasteComplete = false;
                 return function () {
-                    if (false === stepThreeComplete) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                        if (cswPrivate.dispenseType === 'Dispense') {
-                            //TODO - step 3B - container/quantity grid
-                            var temp = ''; //delete me
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    if (cswPrivate.dispenseType === 'Dispense') {
+                        if (false === stepThreeDispenseComplete) {
+                            if (stepThreeAddWasteComplete) {
+                                cswPrivate.divStep3.empty();
+                                stepThreeAddWasteComplete = false;
+                            }
+                            //TODO - step 3B - container/quantity grid                            
                             //TODO - if a user goes back and changes the dispense type, this step needs to be refreshed
+                            stepThreeDispenseComplete = true;
                         }
-                        else {
+                    }
+                    else {
+                        if (false === stepThreeAddWasteComplete) {
+                            if (stepThreeDispenseComplete) {
+                                cswPrivate.divStep3.empty();
+                                stepThreeDispenseComplete = false;
+                            }
                             var quantityTable = '',
                             blankText = '[Select One]';
 
@@ -258,9 +269,8 @@
                                     }
                                 }
                             });
-
+                            stepThreeAddWasteComplete = true;
                         }
-                        stepThreeComplete = true;
                     }
                 };
             } ());
