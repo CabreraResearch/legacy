@@ -66,7 +66,7 @@
             if (cswPrivate.type.autocomplete === true && cswPrivate.autocomplete === 'on') {
                 attr.add('autocomplete', 'on');
             }
-            cswPrivate.canCheck = cswPrivate.type === Csw.enums.inputTypes.checkbox || cswPrivate.type === Csw.enums.inputTypes.radio
+            cswPrivate.canCheck = cswPrivate.type === Csw.enums.inputTypes.checkbox || cswPrivate.type === Csw.enums.inputTypes.radio;
             if (cswPrivate.canCheck) {
                 if (Csw.bool(cswPrivate.checked) || cswPrivate.checked === 'checked') {
                     attr.add('checked', true);
@@ -80,17 +80,18 @@
             $input = $(html);
             Csw.literals.factory($input, cswPublic);
 
-            cswPublic.propDom('value', cswPrivate.value);//case 26109
-            
+            cswPublic.propDom('value', cswPrivate.value); //case 26109
+
             if (Csw.isJQuery(cswPrivate.$parent)) {
                 cswPrivate.$parent.append(cswPublic.$);
             }
-            if (Csw.isFunction(cswPrivate.onChange)) {
-                cswPublic.bind('change', cswPrivate.onChange);
-            }
-            if (Csw.isFunction(cswPrivate.onClick)) {
-                cswPublic.bind('click', cswPrivate.onClick);
-            }
+            cswPublic.bind('change', function () {
+                Csw.tryExec(cswPrivate.onChange, cswPublic.val());
+            });
+
+            cswPublic.bind('click', function () {
+                Csw.tryExec(cswPrivate.onClick, cswPublic.val());
+            });
         } ());
 
         cswPublic.change = function (func) {
@@ -117,7 +118,7 @@
                         cswPublic.propDom({ 'checked': true });
                     } else {
                         //if (window.internetExplorerVersionNo !== -1) {
-                            cswPublic.$.removeAttr('checked');
+                        cswPublic.$.removeAttr('checked');
                         //}
                     }
                 } else {
