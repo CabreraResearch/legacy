@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.nbt.wizardNodeGrid = Csw.nbt.wizardNodeGrid ||
-        Csw.nbt.register('wizardNodeGrid', function (cswParent, options) {
+    Csw.nbt.wizard.nodeGrid = Csw.nbt.wizard.nodeGrid ||
+        Csw.nbt.wizard.register('nodeGrid', function (cswParent, options) {
             'use strict';
             ///<summary>Creates a basic grid with an Add menu.</summary>
 
@@ -17,7 +17,7 @@
             };
             if (options) $.extend(cswPrivate, options);
 
-            var cswPublic = cswParent.div();
+            var cswPublic = { };
 
             (function _pre() {
                 if (Csw.isNullOrEmpty(cswParent)) {
@@ -87,7 +87,7 @@
                 }); // CswMenuMain
             };
 
-            cswPublic.getSelectedNodeId = function() {
+            cswPublic.getSelectedNodeId = function () {
                 if (cswPublic.grid) {
                     var rowid = cswPublic.grid.getSelectedRowId();
                     return cswPublic.grid.getValueForColumn('nodeid', rowid);
