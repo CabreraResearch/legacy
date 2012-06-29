@@ -37,7 +37,8 @@
                 onDeselect: null, // function(row)
 
                 height: '',  // overridden by webservice if paging is on
-                width: '100%',
+                //width: '100%',
+                width: '',
 
                 fields: [],   // [ { name: 'col1', type: 'string' }, ... ]
                 columns: [],  // [ { header: 'Col1', dataIndex: 'col1', ... }, ... ]
