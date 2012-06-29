@@ -112,7 +112,25 @@ namespace ChemSW.Nbt.Grid
                             case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
                                 fld.type = "date";
                                 col.xtype = extJsXType.datecolumn;
-                                col.dateformat = "m/d/Y";
+
+                                // case 26782 - Set dateformat as client date format
+                                string dateformat = string.Empty;
+                                if( ViewProp.NodeTypeProp.Extended == string.Empty ||
+                                    ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
+                                    ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                {
+                                    dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.DateFormat );
+                                    if( ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                    {
+                                        dateformat += " ";
+                                    }
+                                }
+                                if( ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
+                                    ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                {
+                                    dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.TimeFormat );
+                                }
+                                col.dateformat = dateformat;
                                 break;
                         }
                         if( ViewProp.Width > 0 )

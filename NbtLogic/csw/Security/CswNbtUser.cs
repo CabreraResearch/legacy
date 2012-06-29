@@ -153,13 +153,29 @@ namespace ChemSW.Nbt.Security
 
         public string DateFormat
         {
-            get { return _UserPropDict[CswNbtObjClassUser.DateFormatPropertyName]; }
-        }
+            get
+            {
+                string ret = _UserPropDict[CswNbtObjClassUser.DateFormatPropertyName];
+                if( string.Empty == ret )
+                {
+                    ret = CswDateTime.DefaultDateFormat.ToString();
+                }
+                return ret;
+            }
+        } // DateFormat
 
         public string TimeFormat
         {
-            get { return _UserPropDict[CswNbtObjClassUser.TimeFormatPropertyName]; }
-        }
+            get
+            {
+                string ret = _UserPropDict[CswNbtObjClassUser.TimeFormatPropertyName];
+                if( string.Empty == ret )
+                {
+                    ret = CswDateTime.DefaultTimeFormat.ToString();
+                }
+                return ret;
+            }
+        } // TimeFormat
 
         public CswPrimaryKey DefaultLocationId
         {
