@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClass RptOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.ReportClass );
 
-            Collection<CswNbtNode> CurrentReportNodes = RptOC.getNodes();
+            Collection<CswNbtNode> CurrentReportNodes = RptOC.getNodes( false, true );
             foreach( CswNbtNode CurrentNode in CurrentReportNodes )
             {
                 CurrentNode.Properties[CswNbtObjClassReport.ReportUserNamePropertyName].Hidden = true;
