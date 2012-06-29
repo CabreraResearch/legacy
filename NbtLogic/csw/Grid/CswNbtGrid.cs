@@ -115,18 +115,27 @@ namespace ChemSW.Nbt.Grid
 
                                 // case 26782 - Set dateformat as client date format
                                 string dateformat = string.Empty;
-                                if( ViewProp.NodeTypeProp.Extended == string.Empty ||
-                                    ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
-                                    ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
+                                if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
+                                {
+                                    DateDisplayMode = ViewProp.NodeTypeProp.Extended.ToString();
+                                }
+                                else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
+                                {
+                                    DateDisplayMode = ViewProp.ObjectClassProp.Extended.ToString();
+                                }
+                                if( DateDisplayMode == string.Empty ||
+                                    DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
+                                    DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
                                 {
                                     dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.DateFormat );
-                                    if( ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                    if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
                                     {
                                         dateformat += " ";
                                     }
                                 }
-                                if( ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
-                                    ViewProp.NodeTypeProp.Extended == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
+                                    DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
                                 {
                                     dateformat += CswTools.DateFormatToExtJsDateFormat( _CswNbtResources.CurrentNbtUser.TimeFormat );
                                 }
