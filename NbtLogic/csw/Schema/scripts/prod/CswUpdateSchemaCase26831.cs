@@ -25,6 +25,10 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp locationOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.LocationPropertyName );
 
             //get the sizeOC and the props we're going to add to the material 
+            CswNbtMetaDataObjectClass sizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswNbtMetaDataObjectClass.NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClassProp sizeCapacityOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.CapacityPropertyName );
+            CswNbtMetaDataObjectClassProp sizeQuantityEditableOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.QuantityEditablePropertyName );
+            CswNbtMetaDataObjectClassProp sizeCatalogNoOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.CatalogNoPropertyName );
 
             //Update Chemical
             CswNbtMetaDataNodeType chemicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Chemical" );
@@ -74,23 +78,35 @@ namespace ChemSW.Nbt.Schema
                     locationVP.Order = 6;
 
                     chemContainersView.save();
+                    // end making chemical containers grid
 
                     //create the chemical sizes grid
-                    //CswNbtMetaDataNodeTypeProp chemSizesGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Chemical Sizes", chemContainerTab.TabId );
-                    //CswNbtView chemSizesView = _CswNbtSchemaModTrnsctn.restoreView( chemContainersGridNTP.ViewId );
-                    //if( null == chemSizesView )
-                    //{
-                    //    chemSizesView = _CswNbtSchemaModTrnsctn.makeView();
-                    //    chemSizesGridNTP.ViewId = chemSizesView.ViewId;
-                    //}
-                    //chemSizesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(); //make it a link grid
+                    CswNbtMetaDataNodeTypeProp chemSizesGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Chemical Sizes", chemContainerTab.TabId );
+                    CswNbtView chemSizesView = _CswNbtSchemaModTrnsctn.restoreView( chemSizesGridNTP.ViewId );
+                    if( null == chemSizesView )
+                    {
+                        chemSizesView = _CswNbtSchemaModTrnsctn.makeView();
+                        chemSizesGridNTP.ViewId = chemSizesView.ViewId;
+                    }
+                    chemSizesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(); //make it a link grid
 
-                    //chemSizesView.Root.ChildRelationships.Clear();
-                    //chemSizesView.ViewMode = NbtViewRenderingMode.Grid;
-                    //chemSizesView.Visibility = NbtViewVisibility.Property;
+                    chemSizesView.Root.ChildRelationships.Clear();
+                    chemSizesView.ViewMode = NbtViewRenderingMode.Grid;
+                    chemSizesView.Visibility = NbtViewVisibility.Property;
 
+                    CswNbtViewRelationship chemSizesPR = chemSizesView.AddViewRelationship( chemicalNT, true ); //PR = "parent relationship", CR = "child relationship
+                    CswNbtViewRelationship chemSizesCR = chemSizesView.AddViewRelationship( chemSizesPR, NbtViewPropOwnerType.Second, sizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName ), true );
 
+                    CswNbtViewProperty chemCapacityVP = chemSizesView.AddViewProperty( chemSizesCR, sizeCapacityOCP );
+                    CswNbtViewProperty chemQuantityEditableVP = chemSizesView.AddViewProperty( chemSizesCR, sizeQuantityEditableOCP );
+                    CswNbtViewProperty chemCatalogNoVP = chemSizesView.AddViewProperty( chemSizesCR, sizeCatalogNoOCP );
 
+                    chemCapacityVP.Order = 1;
+                    chemQuantityEditableVP.Order = 2;
+                    chemCatalogNoVP.Order = 3;
+
+                    chemSizesView.save();
+                    //end making chemical sizes link grid
                 }
             }
 
