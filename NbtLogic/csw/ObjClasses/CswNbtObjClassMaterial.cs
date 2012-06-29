@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
@@ -121,7 +122,8 @@ namespace ChemSW.Nbt.ObjClasses
                         ActionDataObj["tradeName"] = TradeName.Text;
                         CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
                         ActionDataObj["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
-
+                        Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.container_receipt_limit.ToString() ) );
+                        ActionDataObj["containerlimit"] = ContainerLimit;
                         CswNbtObjClassContainer Container = Act.makeContainer();
                         ActionDataObj["containerNodeTypeId"] = Container.NodeTypeId;
                         ActionDataObj["containerAddLayout"] = Act.getContainerAddProps( Container );
