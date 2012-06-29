@@ -748,7 +748,7 @@
                 paramName: 'fileupload',
                 done: function (e, data) {
                     molTxtArea.text(data.molData);
-                    div.dialog('close');
+                    div.$.dialog('close');
                     o.onSuccess();
                 }
             });

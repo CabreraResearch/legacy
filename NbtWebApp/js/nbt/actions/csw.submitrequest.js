@@ -50,91 +50,97 @@
                 cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({ ID: cswPrivate.ID + '_tbl' }).css('width', '100%');
 
                 cswPrivate.gridId = cswPrivate.ID + '_csw_requestGrid_outer';
-                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 1).div({ ID: cswPrivate.gridId, align: 'center' });
+                cswPublic.gridParent = cswPrivate.actionTbl.cell(1, 1).div({ ID: cswPrivate.gridId }); //, align: 'center' });
 
-                cswPrivate.populateGridRows = function (rows) {
-                    if (false === Csw.isNullOrEmpty(cswPublic.grid)) {
-                        cswPublic.grid.clearGridRows();
-                        cswPublic.grid.addRowsToGrid(rows);
-                        Csw.nbt.gridViewMethods.makeActionColumnButtons(cswPublic.grid);
+                cswPrivate.initGrid = function (ajax) {
+
+                    if (Csw.isNullOrEmpty(ajax)) {
+                        ajax = {
+                            urlMethod: 'getCurrentRequest',
+                            data: {}
+                        };
                     }
-                };
 
-                cswPrivate.initGrid = function () {
+                    // This really ought to be a CswNodeGrid
 
-                    Csw.ajax.post({
-                        urlMethod: 'getCurrentRequest',
-                        data: {},
-                        success: function (json) {
-                            if (Csw.isNullOrEmpty(json.jqGridOpt)) {
-                                Csw.error.throwException('The Submit Request action encountered an error attempting to render the grid.', 'Csw.actions.submitRequest', 'csw.submitrequest.js', 68);
-                            }
-                            Csw.tryExec(function () {
-                                cswPrivate.cartnodeid = json.cartnodeid;
-                                cswPrivate.cartviewid = json.cartviewid;
+                    var gridId = Csw.makeId(cswPrivate.ID, '_srgrid');
+                    cswPublic.grid = cswPublic.gridParent.grid({
+                        ID: gridId,
+                        storeId: gridId + '_store',
+                        stateId: gridId,
+                        title: 'Your Cart',
+                        usePaging: true,
+                        height: 180,
 
-                                $.extend(true, cswPrivate.gridOpts, json.jqGridOpt);
-//                                cswPrivate.resizeWithParent = true;
-//                                cswPrivate.resizeWithParentElement = cswPrivate.action.actionDiv.$;
-                                cswPrivate.gridOpts.rowNum = 10;
-                                cswPrivate.gridOpts.height = 180;
-                                cswPrivate.gridOpts.caption = 'Your Cart';
-                                cswPrivate.gridOpts.pagermode = 'default';
-                                cswPrivate.gridOpts.optNav = {
-                                    add: false,
-                                    view: false,
-                                    del: false,
-                                    refresh: false,
-                                    edit: false
-                                };
+                        ajax: ajax,
 
-                                // just need to set 
-//                                cswPrivate.gridOpts.onSelectRow = function () {
-//                                    cswPublic.grid.resetSelection();
-//                                };  
-                                cswPrivate.gridOpts.canSelectRow = false;
-                                
-                                cswPrivate.gridOpts.beforeSelectRow = function (rowid, eventObj) {
-                                    cswPrivate.selectedRowId = rowid;
-                                    return Csw.nbt.gridViewMethods.bindActionEvents({
-                                        rowid: rowid,
-                                        eventObj: eventObj,
-                                        grid: cswPublic.grid,
-                                        onDeleteNode: function () {
-                                            cswPublic.grid.deleteRow(rowid);
-                                        },
-                                        onEditNode: cswPrivate.initGrid,
-                                        onCopyNode: cswPrivate.initGrid
+                        showCheckboxes: false,
+                        showActionColumn: true,
+                        canSelectRow: false,
 
-                                    });
-                                };
+                        onLoad: function (grid, json) {
+                            cswPrivate.cartnodeid = json.cartnodeid;
+                            cswPrivate.cartviewid = json.cartviewid;
+                        },
+                        onEdit: function (rows) {
+                            // this works for both Multi-edit and regular
+                            var cswnbtnodekeys = [],
+                                nodeids = [],
+                                nodenames = [];
 
-                                cswPublic.grid = cswPublic.gridParent.grid(cswPrivate);
-                                cswPublic.grid.gridPager.css({ width: '100%', height: '20px' });
-
-                                cswPrivate.populateGridRows(json.data.rows);
+                            Csw.each(rows, function (row) {
+                                cswnbtnodekeys.push(row.nodekey);
+                                nodeids.push(row.nodeid);
+                                nodenames.push(row.nodename);
                             });
-                        } // success
+
+                            $.CswDialog('EditNodeDialog', {
+                                nodeids: nodeids,
+                                nodepks: nodeids,
+                                nodekeys: cswnbtnodekeys,
+                                nodenames: nodenames,
+                                Multi: (nodeids.length > 1),
+                                onEditNode: cswPrivate.initGrid
+                            });
+                        }, // onEdit
+                        onDelete: function (rows) {
+                            // this works for both Multi-edit and regular
+                            var cswnbtnodekeys = [],
+                                nodeids = [],
+                                nodenames = [];
+
+                            Csw.each(rows, function (row) {
+                                cswnbtnodekeys.push(row.nodekey);
+                                nodeids.push(row.nodeid);
+                                nodenames.push(row.nodename);
+                            });
+
+                            $.CswDialog('DeleteNodeDialog', {
+                                nodeids: nodeids,
+                                nodepks: nodeids,
+                                nodekeys: cswnbtnodekeys,
+                                nodenames: nodenames,
+                                onDeleteNode: cswPrivate.initGrid,
+                                Multi: (nodeids.length > 1),
+                                publishDeleteEvent: false
+                            });
+                        }, // onDelete
+                        onSelect: null, // function(row)
+                        onDeselect: null // function(row)
                     });
-                };
+                }; // initGrid()
 
                 cswPrivate.initGrid();
 
                 cswPrivate.copyRequest = function () {
-                    if (false === Csw.isNullOrEmpty(cswPrivate.copyFromNodeId)) {
-                        Csw.ajax.post({
-                            urlMethod: 'copyRequest',
-                            data: {
-                                CopyFromRequestId: cswPrivate.copyFromNodeId,
-                                CopyToRequestId: cswPrivate.cartnodeid
-                            },
-                            success: function (json) {
-                                cswPrivate.populateGridRows(json.data.rows);
-                            }
-                        });
-                    }
-                    return true;
-                };
+                    cswPrivate.initGrid({
+                        urlMethod: 'copyRequest',
+                        data: {
+                            CopyFromRequestId: cswPrivate.copyFromNodeId,
+                            CopyToRequestId: cswPrivate.cartnodeid
+                        }
+                    });
+                }; // copyRequest()
 
                 cswPrivate.historyTbl = cswPrivate.actionTbl.cell(3, 1).table({ align: 'left', cellvalign: 'middle' });
                 Csw.ajax.post({

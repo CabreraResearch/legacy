@@ -100,6 +100,7 @@ namespace ChemSW.Nbt
                                                          NodesRow["gestalt"].ToString(),
                                                          CswConvert.ToString( NodesRow["fieldtype"] ),
                                                          CswConvert.ToString( NodesRow["field1"] ),
+                                                         CswConvert.ToString( NodesRow["field2"] ),
                                                          CswConvert.ToInt32( NodesRow["field1_fk"] ),
                                                          CswConvert.ToInt32( NodesRow["field1_numeric"] ) );
 
@@ -175,7 +176,7 @@ namespace ChemSW.Nbt
             string SafeLikeClause = CswTools.SafeSqlLikeClause( _SearchTerm, CswTools.SqlLikeMode.Contains, true );
 
             // Properties
-            Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt, propval.field1, propval.field1_fk, propval.field1_numeric   ";
+            Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric   ";
 
             From += @" left outer join (select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row
                                                   from nodetype_props p
