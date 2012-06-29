@@ -1,6 +1,6 @@
 using System.Globalization;
 using System.Threading;
-using ChemSW.Nbt.csw.Actions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -30,13 +30,13 @@ namespace ChemSW.Nbt.WebServices
         public JObject upsertDispenseContainers( string SourceContainerNodeId, string ContainerNodeTypeId, string DesignGrid )
         {
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId );
-            return ( wiz.upsertDispenseContainers( ContainerNodeTypeId, DesignGrid ) );
+            return ( wiz.dispenseIntoChildContainers( ContainerNodeTypeId, DesignGrid ) );
         }
 
         public JObject updateDispensedContainer( string SourceContainerNodeId, string DispenseType, string Quantity, string UnitId )
         {
             CswNbtActDispenseContainer wiz = new CswNbtActDispenseContainer( _CswNbtResources, SourceContainerNodeId );
-            return ( wiz.updateDispensedContainer( DispenseType, Quantity, UnitId ) );
+            return ( wiz.dispenseSourceContainer( DispenseType, Quantity, UnitId ) );
         }
 
         #endregion Public

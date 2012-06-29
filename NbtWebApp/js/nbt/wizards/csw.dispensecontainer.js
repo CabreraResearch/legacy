@@ -10,7 +10,7 @@
             //#region Variable Declaration
             var cswPrivate = {
                 ID: 'cswDispenseContainerWizard',
-                nodeId: 'Unknown',
+                sourceContainerNodeId: '',
                 currentQuantity: '',
                 currentUnitName: '',
                 onCancel: null,
@@ -30,9 +30,6 @@
                 },
                 divStep1: '', divStep2: '', divstep3: '',
                 //TODO - fill with necessary variables
-                gridIsPopulated: false,
-                dispensedContainerGrid: '',
-                gridOptions: {},
                 dispenseType: 'Unknown',
                 quantity: 'Unknown',
                 unitId: 'Unknown',
@@ -71,6 +68,12 @@
             cswPrivate.makeStepOne = (function () {
                 var stepOneComplete = false;
                 return function () {
+                    if (Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
+                        //cswPrivate.onCancel();//If we don't have a sourceContainerNodeId, we shouldn't execute this wizard,
+                        //but because of the 'welcomeItems at the bottom of the page' bug, explicitly executing onCancel logic creates two sets of welcomeItems,
+                        //which is much worse than having access to a broken wizard.
+                    }
+
                     var dispenseTypeTable = '',
                         dispenseTypes = {
                             0: '',
@@ -88,16 +91,14 @@
                         cswPrivate.divStep1.br();
 
                         dispenseTypeTable = cswPrivate.divStep1.table({
-                            ID: cswPrivate.makeStepId('setDispenseTypeTable')
+                            ID: cswPrivate.makeStepId('setDispenseTypeTable'),
+                            cellpadding: '1px',
+                            cellvalign: 'middle'
                         });
 
-                        dispenseTypeTable.cell(1, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ text: 'What kind of dispense would you like to do?' });
+                        dispenseTypeTable.cell(1, 1).span({ text: 'What kind of dispense would you like to do?' });
 
-                        var dispenseTypeDiv = dispenseTypeTable.cell(1, 2)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .div();
+                        var dispenseTypeDiv = dispenseTypeTable.cell(1, 2).div();
 
                         var dispenseTypeSelect = dispenseTypeDiv.select({
                             ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
@@ -136,17 +137,14 @@
                         cswPrivate.divStep2.br();
 
                         containerTypeTable = cswPrivate.divStep2.table({
-                            ID: cswPrivate.makeStepId('setContainerTypeTable')
-                        });
+                            ID: cswPrivate.makeStepId('setContainerTypeTable'),
+                            cellpadding: '1px',
+                            cellvalign: 'middle'
+                        }).hide();
 
-                        var containerTypeText = containerTypeTable.cell(1, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ text: 'What kind of container would you like to use?' })
-                            .hide();
+                        var containerTypeText = containerTypeTable.cell(1, 1).span({ text: 'What kind of container would you like to use?' });
 
-                        var containerTypeDiv = containerTypeTable.cell(1, 2)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .div().hide();
+                        var containerTypeDiv = containerTypeTable.cell(1, 2).div();
 
                         var containerTypeSelect = containerTypeDiv.nodeTypeSelect({
                             ID: Csw.makeSafeId('nodeTypeSelect'),
@@ -163,8 +161,7 @@
                             },
                             onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
                                 if (Csw.number(nodeTypeCount) > 1) {
-                                    containerTypeText.show();
-                                    containerTypeDiv.show();
+                                    containerTypeTable.show();
                                 }
                                 else {
                                     cswPrivate.containerNodeTypeId = lastNodeTypeId;
@@ -188,16 +185,27 @@
             //Select a Quantity :
             //Select the number of destination containers and their quantities.
             cswPrivate.makeStepThree = (function () {
-                var stepThreeComplete = false;
+                var stepThreeDispenseComplete = false;
+                var stepThreeAddWasteComplete = false;
                 return function () {
-                    if (false === stepThreeComplete) {
-                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                        if (cswPrivate.dispenseType === 'Dispense') {
-                            //TODO - step 3B - container/quantity grid
-                            var temp = ''; //delete me
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                    if (cswPrivate.dispenseType === 'Dispense') {
+                        if (false === stepThreeDispenseComplete) {
+                            if (stepThreeAddWasteComplete) {
+                                cswPrivate.divStep3.empty();
+                                stepThreeAddWasteComplete = false;
+                            }
+                            //TODO - step 3B - container/quantity grid                            
                             //TODO - if a user goes back and changes the dispense type, this step needs to be refreshed
+                            stepThreeDispenseComplete = true;
                         }
-                        else {
+                    }
+                    else {
+                        if (false === stepThreeAddWasteComplete) {
+                            if (stepThreeDispenseComplete) {
+                                cswPrivate.divStep3.empty();
+                                stepThreeDispenseComplete = false;
+                            }
                             var quantityTable = '',
                             blankText = '[Select One]';
 
@@ -205,20 +213,16 @@
                             cswPrivate.divStep3.br();
 
                             quantityTable = cswPrivate.divStep3.table({
-                                ID: cswPrivate.makeStepId('setQuantityTable')
+                                ID: cswPrivate.makeStepId('setQuantityTable'),
+                                cellpadding: '1px',
+                                cellvalign: 'middle'
                             });
 
-                            quantityTable.cell(1, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
+                            quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
 
-                            quantityTable.cell(2, 1)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .span({ text: 'Select the quantity you wish to dispense:' });
+                            quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
 
-                            var quantityNumDiv = quantityTable.cell(2, 2)
-                            .css({ 'padding': '1px', 'vertical-align': 'middle' })
-                            .div();
+                            var quantityNumDiv = quantityTable.cell(2, 2).div();
 
                             var quantityNumBox = quantityNumDiv.numberTextBox({
                                 ID: cswPrivate.makeStepId('setQuantityNumBox'),
@@ -240,9 +244,7 @@
                                 }
                             });
 
-                            var quantityUnitDiv = quantityTable.cell(2, 3)
-                            .css({ 'padding': '1px' })
-                            .div();
+                            var quantityUnitDiv = quantityTable.cell(2, 3).div();
 
                             var quantityUnitSelect = quantityUnitDiv.nodeSelect({
                                 ID: Csw.makeSafeId('nodeSelect'),
@@ -258,9 +260,8 @@
                                     }
                                 }
                             });
-
+                            stepThreeAddWasteComplete = true;
                         }
-                        stepThreeComplete = true;
                     }
                 };
             } ());
@@ -305,15 +306,10 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                var designGrid = 'unknown';
+                var designGrid = 'Unknown';//TODO - fill with numOfContainers/quantity/unit data (for Dispense)
 
-                if (false === Csw.isNullOrEmpty(cswPrivate.dispensedContainerGrid)) {
-                    designGrid = JSON.stringify(cswPrivate.dispensedContainerGrid.getAllGridRows());
-                }
-
-                //TODO - fill with new Container quantity/grid data, etc.
                 var jsonData = {
-                    SourceContainerNodeId: cswPrivate.nodeId,
+                    SourceContainerNodeId: cswPrivate.sourceContainerNodeId,
                     DispenseType: cswPrivate.dispenseType,
                     Quantity: cswPrivate.quantity,
                     UnitId: cswPrivate.unitId,
@@ -327,23 +323,31 @@
                     success: function (data) {
                         var viewId = data.viewId;
                         Csw.tryExec(cswPrivate.onFinish, viewId);
-                        //TODO - make a printLabel dialog to show after confirmFinish
-
+                        if (false === Csw.isNullOrEmpty(data.barcodeId)) {
+                            $.CswDialog('GenericDialog', {
+                                'div': Csw.literals.div().span({ text: 'Would you like to print Labels for the new Containers?' }),
+                                'title': 'Print Labels?',
+                                'onOk': function () {
+                                    $.CswDialog('PrintLabelDialog', { 'nodeid': cswPrivate.sourceContainerNodeId, 'propid': data.barcodeId });
+                                },
+                                'okText': 'Yes',
+                                'cancelText': 'No'
+                            }); 
+                            
+                        }
                     },
                     error: function () {
                         cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     }
-                }); //Csw.ajax                
+                });               
             };
-
-            //TODO - parse, refactor, and rebuild makeGrid for dispensedContainers
 
             (function () {
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswPublic, {
                     ID: Csw.makeId({ ID: cswPrivate.ID, suffix: 'wizard' }),
-                    nodeId: cswPrivate.nodeId,
+                    sourceContainerNodeId: cswPrivate.sourceContainerNodeId,
                     currentQuantity: cswPrivate.currentQuantity,
                     currentUnitName: cswPrivate.currentUnitName,
                     Title: 'Create New Inspection',
