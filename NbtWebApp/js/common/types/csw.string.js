@@ -39,45 +39,54 @@
                 newLineToDelimiter: true,
                 spaceToDelimiter: true,
                 removeDuplicates: true,
-                delimiter: ','
+                delimiter: ',',
+                string: Csw.string(string)
             };
             if (opts) $.extend(cswPrivate, opts);
             var cswPublic = {
-                string: Csw.string(string),
                 array: [],
-                delimited: ''
-            };
-            cswPublic.delimited = cswPublic.string;
-            if (cswPrivate.newLineToDelimiter) {
-                while (cswPublic.delimited.indexOf('\n') !== -1) {
-                    cswPublic.delimited = cswPublic.delimited.replace(/\n/g, cswPrivate.delimiter);
-                }
-            }
-            if (cswPrivate.spaceToDelimiter) {
-                while (cswPublic.delimited.indexOf(' ') !== -1) {
-                    cswPublic.delimited = cswPublic.delimited.replace(/ /g, cswPrivate.delimiter);
-                }
-            }
-            while (cswPublic.delimited.indexOf(',,') !== -1) {
-                cswPublic.delimited = cswPublic.delimited.replace(/,,/g, cswPrivate.delimiter);
-            }
-            cswPublic.array = cswPublic.delimited.split(cswPrivate.delimiter);
-            if (cswPrivate.removeDuplicates) {
-                (function() {
-                
-                    var unique = function (array) {
-                        var seen = new Set;
-                        return array.filter(function (item) {
-                            if (false === seen.has(item)) {
-                                seen.add(item);
-                                return true;
+                delimited: '',
+                string: {
+                    get: function () {
+                        return cswPrivate.string;
+                    },
+                    set: function (str) {
+                        cswPrivate.string = str;
+                        cswPublic.delimited = cswPrivate.string;
+                        if (cswPrivate.newLineToDelimiter) {
+                            while (cswPublic.delimited.indexOf('\n') !== -1) {
+                                cswPublic.delimited = cswPublic.delimited.replace(/\n/g, cswPrivate.delimiter);
                             }
-                        });
-                    };
+                        }
+                        if (cswPrivate.spaceToDelimiter) {
+                            while (cswPublic.delimited.indexOf(' ') !== -1) {
+                                cswPublic.delimited = cswPublic.delimited.replace(/ /g, cswPrivate.delimiter);
+                            }
+                        }
+                        while (cswPublic.delimited.indexOf(',,') !== -1) {
+                            cswPublic.delimited = cswPublic.delimited.replace(/,,/g, cswPrivate.delimiter);
+                        }
+                        cswPublic.array = cswPublic.delimited.split(cswPrivate.delimiter);
+                        if (cswPrivate.removeDuplicates) {
+                            (function () {
 
-                    cswPublic.array = unique(cswPublic.array);
-                } ());
-            }
+                                var unique = function (array) {
+                                    var seen = new Set;
+                                    return array.filter(function (item) {
+                                        if (false === seen.has(item)) {
+                                            seen.add(item);
+                                            return true;
+                                        }
+                                    });
+                                };
+
+                                cswPublic.array = unique(cswPublic.array);
+                            } ());
+                        }
+                    }
+                }
+            };
+            cswPublic.string.set(cswPrivate.string);
             return cswPublic;
         });
 

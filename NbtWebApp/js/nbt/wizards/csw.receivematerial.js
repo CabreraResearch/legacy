@@ -243,9 +243,6 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                         if (false === cswPrivate.stepThreeComplete) {
-                            if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
-                                Csw.error.throwException(Csw.error.exception('Cannot create a Container quantities without the Capacity of a Size.', '', 'csw.receivematerial.js', 244));
-                            }
                             cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.empty();
 
