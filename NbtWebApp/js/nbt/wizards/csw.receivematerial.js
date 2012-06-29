@@ -248,89 +248,17 @@
                             }
                             cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.empty();
-                            cswPrivate.divStep3.span({ text: 'Enter the Amounts to Receive.' });
-                            cswPrivate.divStep3.br({ number: 2 });
 
-                            cswPublic.thinGrid = cswPrivate.divStep3.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']] });
-                            cswPrivate.divStep3.br();
-                            cswPrivate.amountForm = cswPrivate.divStep3.form();
-                            cswPrivate.amountsTable = cswPrivate.amountForm.table();
-                            var count = 0;
-                            var barcodes = [];
-                            var makeAddAmount = function () {
-                                cswPrivate.amountsTable.empty();
+                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.divStep3, {
+                                ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
+                                onAdd: function () {
+                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                },
+                                quantity: cswPrivate.quantity,
+                                containerlimit: cswPrivate.containerlimit,
+                                makeId: cswPrivate.wizard.makeStepId
+                            });
 
-                                var thisAmount = {
-                                    containerNo: 1,
-                                    quantity: '',
-                                    unit: '',
-                                    unitid: '',
-                                    barcodes: ''
-                                };
-                                //# of containers
-                                cswPrivate.amountsTable.cell(1, 1).numberTextBox({
-                                    ID: cswPrivate.wizard.makeStepId('containerCount'),
-                                    labelText: 'Number: ',
-                                    value: thisAmount.containerNo,
-                                    MinValue: 1,
-                                    //MaxValue: 9999, //we probably shouldn't allow customers to create 10,000 container nodes
-                                    //ceilingVal: 9999,
-                                    Precision: 6,
-                                    Required: true,
-                                    onChange: function (value) {
-                                        thisAmount.containerNo = value;
-                                    }
-                                });
-
-                                //Quantity
-                                cswPrivate.quantity.labelText = 'Quantity: ';
-                                cswPrivate.quantity.ID = cswPrivate.wizard.makeStepId('containerQuantity');
-                                cswPrivate.qtyControl = cswPrivate.amountsTable.cell(2, 1).quantity(cswPrivate.quantity);
-
-                                //Barcodes
-                                cswPrivate.amountsTable.cell(3, 1).textArea({
-                                    ID: cswPrivate.wizard.makeStepId('containerBarcodes'),
-                                    labelText: 'Barcodes: ',
-                                    onChange: function (value) {
-                                        thisAmount.barcodes = value;
-                                    }
-                                });
-
-                                //Add
-                                cswPrivate.amountsTable.cell(4, 1).button({
-                                    ID: cswPrivate.wizard.makeStepId('addBtn'),
-                                    enabledText: 'Add',
-                                    disableOnClick: false,
-                                    onClick: function () {
-                                        var newCount = count + Csw.number(thisAmount.containerNo);
-                                        if (newCount <= cswPrivate.containerlimit) {
-                                            count = newCount;
-
-                                            var parseBarcodes = function (anArray) {
-                                                if (anArray.length > thisAmount.containerNo) {
-                                                    anArray.splice(0, anArray.length - thisAmount.containerNo);
-                                                }
-                                                thisAmount.barcodes = barcodeToParse.join(',');
-                                            };
-                                            var barcodeToParse = Csw.delimitedString(thisAmount.barcodes).array;
-                                            parseBarcodes(barcodeToParse);
-
-                                            if (cswPrivate.amountForm.isFormValid()) {
-                                                thisAmount.quantity = cswPrivate.qtyControl.quantityValue;
-                                                thisAmount.unit = cswPrivate.qtyControl.unitText;
-                                                thisAmount.unitid = cswPrivate.qtyControl.unitVal;
-                                                cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
-                                                cswPrivate.quantities.push(thisAmount);
-                                                cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                                                makeAddAmount();
-                                            }
-                                        } else {
-                                            $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + count + '] containers.', 'Cannot add [' + newCount + '] containers.');
-                                        }
-                                    }
-                                });
-                            };
-                            makeAddAmount();
                             cswPrivate.stepThreeComplete = true;
                         }
                     } else {
