@@ -708,7 +708,7 @@
                 /// <param name="propData" type="Object">(Optional) an object representing CswNbt node properties.</param>
                 /// <returns type="Array">An array of propIds</returns>
                 'use strict';
-                Csw.tryExec(function () {
+                return Csw.tryExec(function () {
 
                     layoutTable = layoutTable || cswPrivate.layoutTable;
                     propData = propData || cswPrivate.propertyData;

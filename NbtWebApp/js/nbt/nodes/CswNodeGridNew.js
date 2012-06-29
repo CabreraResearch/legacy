@@ -76,7 +76,7 @@
                                         $.CswDialog('EditNodeDialog', {
                                             nodeids: nodeids,
                                             nodepks: nodeids,
-                                            cswnbtnodekeys: cswnbtnodekeys,
+                                            nodekeys: cswnbtnodekeys,
                                             nodenames: nodenames,
                                             Multi: (nodeids.length > 1),
                                             onEditNode: o.onEditNode,
@@ -99,7 +99,7 @@
                                         $.CswDialog('DeleteNodeDialog', {
                                             nodeids: nodeids,
                                             nodepks: nodeids,
-                                            cswnbtnodekeys: cswnbtnodekeys,
+                                            nodekeys: cswnbtnodekeys,
                                             nodenames: nodenames,
                                             onDeleteNode: o.onDeleteNode,
                                             Multi: (nodeids.length > 1),
