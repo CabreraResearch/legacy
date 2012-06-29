@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
@@ -74,8 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeCreateNode( OverrideUniqueValidation );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
-            _checkView();
-
+            _assertMailReportIsValid();
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
             _CswNbtPropertySetSchedulerImpl.updateNextDueDate();
 
-            _checkView();
+            _assertMailReportIsValid();
 
             if( Type.Value == TypeOptionView )
             {
@@ -102,35 +102,36 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private void _checkView()
+        private void _assertMailReportIsValid()
         {
-            // BZ 7845
+            string mailReportError = _getMailReportError();
+            if( Enabled.Checked == Tristate.True && false == String.IsNullOrEmpty( mailReportError ) )
+            {
+                Enabled.Checked = Tristate.False;
+                throw new CswDniException( ErrorType.Warning, "Cannot Enable Mail Report: No " + mailReportError + " Selected.", "No " + mailReportError + " Selected." );
+            }
+        }
+
+        private string _getMailReportError()
+        {
+            string mailReportError = String.Empty;
             if( Type.Empty )
             {
-                RunStatus.AddComment( "Cannot Enable Mail Report: No Type Selected" );
-                Enabled.Checked = Tristate.False;
+                mailReportError = "Type";
             }
             else
             {
                 if( Type.Value == TypeOptionReport && Report.Empty )
                 {
-                    RunStatus.AddComment( "Cannot Enable Mail Report: No Report Selected" );
-                    Enabled.Checked = Tristate.False;
+                    mailReportError = "Report";
                 }
                 else if( Type.Value == TypeOptionView && ReportView.Empty )
                 {
-                    RunStatus.AddComment( "Cannot Enable Mail Report: No View Selected" );
-                    Enabled.Checked = Tristate.False;
-                }
-                else
-                {
-                    //case 25702 - Since the comments are logged, we don't need to clear the status
-                    //if( RunStatus.StaticText.StartsWith( "Cannot Enable Mail Report" ) )
-                    //    RunStatus.StaticText = string.Empty;
+                    mailReportError = "View";
                 }
             }
-
-        }//beforeWriteNode()
+            return mailReportError;
+        }
 
         public override void afterWriteNode()
         {
@@ -197,15 +198,6 @@ namespace ChemSW.Nbt.ObjClasses
                 return ( _CswNbtNode.Properties[ReportPropertyName].AsRelationship );
             }
         }
-
-        //public CswNbtNodePropMemo Status
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[StatusPropertyName].AsMemo );
-        //    }
-
-        //}
 
         public CswNbtNodePropMemo Message
         {
