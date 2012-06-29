@@ -4480,7 +4480,7 @@ tr.x-container:before {
   /* line 7, ../themes/stylesheets/ext4/default/widgets/_panel.scss */
   .x-reset .x-panel,
   .x-reset .x-plain {
-    overflow: hidden;
+    /*overflow: hidden;*/
     position: relative; }
   /* line 24, ../themes/stylesheets/ext4/default/widgets/_panel.scss */
   .x-reset .x-ie .x-panel-header,
@@ -4553,7 +4553,7 @@ tr.x-container:before {
     left: -3px !important; }
   /* line 106, ../themes/stylesheets/ext4/default/widgets/_panel.scss */
   .x-reset .x-panel-body {
-    overflow: hidden;
+    /* overflow: hidden; */
     position: relative;
     font-size: 12px; }
   /* line 114, ../themes/stylesheets/ext4/default/widgets/_panel.scss */
