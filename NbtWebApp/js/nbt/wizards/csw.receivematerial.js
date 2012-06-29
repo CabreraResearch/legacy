@@ -72,7 +72,7 @@
                     2: 'Define Properties',
                     3: 'Set Amounts'
                 };
-
+                cswPrivate.containerlimit = Csw.number(cswPrivate.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.handleStep = function (newStepNo) {
@@ -100,7 +100,7 @@
                 };
 
                 cswPrivate.onBeforeNext = function (currentStepNo) {
-                    var isNotStepTwoOrIsValid = currentStepNo !== 2 || cswPrivate.tabsAndProps.isValid();
+                    var isNotStepTwoOrIsValid = currentStepNo !== 2 || cswPrivate.tabsAndProps.isFormValid();
                     var isStepTwoAndHasQuantity = false;
                     if (currentStepNo === 2) {
                         if (false === Csw.isNullOrEmpty(cswPrivate.quantity)) {
@@ -236,7 +236,7 @@
             cswPrivate.makeStep3 = (function () {
 
                 return function () {
-                    if (cswPrivate.tabsAndProps.isValid()) {
+                    if (cswPrivate.tabsAndProps.isFormValid()) {
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
@@ -255,7 +255,8 @@
                             cswPrivate.divStep3.br();
                             cswPrivate.amountForm = cswPrivate.divStep3.form();
                             cswPrivate.amountsTable = cswPrivate.amountForm.table();
-
+                            var count = 0;
+                            var barcodes = [];
                             var makeAddAmount = function () {
                                 cswPrivate.amountsTable.empty();
 
@@ -272,7 +273,7 @@
                                     labelText: 'Number: ',
                                     value: thisAmount.containerNo,
                                     MinValue: 1,
-                                    //MaxValue: 9999,
+                                    //MaxValue: 9999, //we probably shouldn't allow customers to create 10,000 container nodes
                                     //ceilingVal: 9999,
                                     Precision: 6,
                                     Required: true,
@@ -299,19 +300,35 @@
                                 cswPrivate.amountsTable.cell(4, 1).button({
                                     ID: cswPrivate.wizard.makeStepId('addBtn'),
                                     enabledText: 'Add',
+                                    disableOnClick: false,
                                     onClick: function () {
-                                        if (cswPrivate.amountForm.isValid()) {
-                                            thisAmount.quantity = cswPrivate.qtyControl.quantityValue;
-                                            thisAmount.unit = cswPrivate.qtyControl.unitText;
-                                            thisAmount.unitid = cswPrivate.qtyControl.unitVal;
-                                            cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
-                                            cswPrivate.quantities.push(thisAmount);
-                                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                                            makeAddAmount();
+                                        var newCount = count + Csw.number(thisAmount.containerNo);
+                                        if (newCount <= cswPrivate.containerlimit) {
+                                            count = newCount;
+
+                                            var parseBarcodes = function (anArray) {
+                                                if (anArray.length > thisAmount.containerNo) {
+                                                    anArray.splice(0, anArray.length - thisAmount.containerNo);
+                                                }
+                                                thisAmount.barcodes = barcodeToParse.join(',');
+                                            };
+                                            var barcodeToParse = Csw.delimitedString(thisAmount.barcodes).array;
+                                            parseBarcodes(barcodeToParse);
+
+                                            if (cswPrivate.amountForm.isFormValid()) {
+                                                thisAmount.quantity = cswPrivate.qtyControl.quantityValue;
+                                                thisAmount.unit = cswPrivate.qtyControl.unitText;
+                                                thisAmount.unitid = cswPrivate.qtyControl.unitVal;
+                                                cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
+                                                cswPrivate.quantities.push(thisAmount);
+                                                cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                                makeAddAmount();
+                                            }
+                                        } else {
+                                            $.CswDialog('AlertDialog', 'The limit for containers created at receipt is [' + cswPrivate.containerlimit + ']. You have already added [' + count + '] containers.', 'Cannot add [' + newCount + '] containers.');
                                         }
                                     }
                                 });
-                                cswPrivate.amountForm.validate();
                             };
                             makeAddAmount();
                             cswPrivate.stepThreeComplete = true;
