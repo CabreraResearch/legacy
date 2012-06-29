@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.Nbt.csw.Actions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

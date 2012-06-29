@@ -7,7 +7,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.csw.Actions
+namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActDispenseContainer
     {
