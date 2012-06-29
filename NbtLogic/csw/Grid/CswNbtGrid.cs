@@ -11,6 +11,8 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
 using ChemSW.Nbt.Grid.ExtJs;
+using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.Grid
 {
@@ -165,8 +167,57 @@ namespace ChemSW.Nbt.Grid
                 // If the view defines the property by objectclass propname, but the nodetype propname differs, this might break
                 CswNbtGridExtJsDataIndex dataIndex = new CswNbtGridExtJsDataIndex( Prop[CswNbtTreeNodes._AttrName_NodePropName].ToString() );
 
-                string value = Prop[CswNbtTreeNodes._AttrName_NodePropGestalt].ToString();
-                gridrow.data[dataIndex] = value;
+                CswPrimaryKey NodeId = Tree.getNodeIdForCurrentPosition();
+                CswNbtMetaDataFieldType.NbtFieldType FieldType = Prop[CswNbtTreeNodes._AttrName_NodePropFieldType].ToString();
+                Int32 JctNodePropId = CswConvert.ToInt32( Prop[CswNbtTreeNodes._AttrName_JctNodePropId] );
+                Int32 NodeTypePropId = CswConvert.ToInt32( Prop[CswNbtTreeNodes._AttrName_NodePropId] );
+                string PropName = CswConvert.ToString( Prop[CswNbtTreeNodes._AttrName_NodePropName] );
+
+                string oldValue = Prop[CswNbtTreeNodes._AttrName_NodePropGestalt].ToString();
+                string newValue = string.Empty;
+                switch( FieldType )
+                {
+                    case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                    // This will require significant work on the client to rearrange how we handle ajax events
+                    //CswPropIdAttr PropAttr=new CswPropIdAttr(NodeId, NodeTypePropId);
+                    //string url = "wsNBT.asmx/onObjectClassButtonClick?NodeTypePropAttr=" + PropAttr.ToString();
+                    //newValue = "<a href='" + url + "'>" + ( oldValue ?? PropName ) + "</a>";
+                    //break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.File:
+                        string LinkUrl = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                        if( false == string.IsNullOrEmpty( LinkUrl ) )
+                        {
+                            newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ?? "File" ) + "</a>";
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                        string ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, NodeTypePropId );
+                        if( false == string.IsNullOrEmpty( ImageUrl ) )
+                        {
+                            newValue = "<a target=\"blank\" href=\"" + ImageUrl + "\">" + ( oldValue ?? "Image" ) + "</a>";
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                        CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                        CswNbtSubField.PropColumn HrefColumn = MetaDataProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Href].Column;
+                        string Href = string.Empty;
+                        if( null != Prop[HrefColumn.ToString().ToLower()] )
+                        {
+                            Href = Prop[HrefColumn.ToString().ToLower()].ToString();
+                            if( false == string.IsNullOrEmpty( Href ) )
+                            {
+                                newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";
+                            }
+                        }
+                        break;
+                    case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        newValue = CswConvert.ToDisplayString( CswConvert.ToTristate( oldValue ) );
+                        break;
+                    default:
+                        newValue = oldValue;
+                        break;
+                }
+                gridrow.data[dataIndex] = newValue;
             } // foreach( JObject Prop in ChildProps )
 
             // Recurse, but add properties of child nodes to the same gridrow
