@@ -37,6 +37,36 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab chemContainerTab = chemicalNT.getNodeTypeTab( "Containers" );
                 if( null != chemContainerTab )
                 {
+                    //create the chemical sizes grid
+                    CswNbtMetaDataNodeTypeProp chemSizesGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Chemical Sizes", chemContainerTab.TabId );
+                    CswNbtView chemSizesView = _CswNbtSchemaModTrnsctn.restoreView( chemSizesGridNTP.ViewId );
+                    if( null == chemSizesView )
+                    {
+                        chemSizesView = _CswNbtSchemaModTrnsctn.makeView();
+                        chemSizesGridNTP.ViewId = chemSizesView.ViewId;
+                    }
+                    chemSizesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(); //make it a link grid
+
+                    chemSizesView.Root.ChildRelationships.Clear();
+                    chemSizesView.ViewMode = NbtViewRenderingMode.Grid;
+                    chemSizesView.Visibility = NbtViewVisibility.Property;
+
+                    CswNbtViewRelationship chemSizesPR = chemSizesView.AddViewRelationship( chemicalNT, true ); //PR = "parent relationship", CR = "child relationship
+                    CswNbtViewRelationship chemSizesCR = chemSizesView.AddViewRelationship( chemSizesPR, NbtViewPropOwnerType.Second, sizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName ), true );
+
+                    CswNbtViewProperty chemCapacityVP = chemSizesView.AddViewProperty( chemSizesCR, sizeCapacityOCP );
+                    CswNbtViewProperty chemQuantityEditableVP = chemSizesView.AddViewProperty( chemSizesCR, sizeQuantityEditableOCP );
+                    CswNbtViewProperty chemCatalogNoVP = chemSizesView.AddViewProperty( chemSizesCR, sizeCatalogNoOCP );
+
+                    chemCapacityVP.Order = 1;
+                    chemQuantityEditableVP.Order = 2;
+                    chemCatalogNoVP.Order = 3;
+
+                    chemSizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, chemContainerTab.TabId, 2, 2 );
+
+                    chemSizesView.save();
+                    //end making chemical sizes link grid
+
                     //create the chemical containers grid
                     CswNbtMetaDataNodeTypeProp chemContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Chemical Containers", chemContainerTab.TabId );
 
@@ -79,34 +109,6 @@ namespace ChemSW.Nbt.Schema
 
                     chemContainersView.save();
                     // end making chemical containers grid
-
-                    //create the chemical sizes grid
-                    CswNbtMetaDataNodeTypeProp chemSizesGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( chemicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Chemical Sizes", chemContainerTab.TabId );
-                    CswNbtView chemSizesView = _CswNbtSchemaModTrnsctn.restoreView( chemSizesGridNTP.ViewId );
-                    if( null == chemSizesView )
-                    {
-                        chemSizesView = _CswNbtSchemaModTrnsctn.makeView();
-                        chemSizesGridNTP.ViewId = chemSizesView.ViewId;
-                    }
-                    chemSizesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(); //make it a link grid
-
-                    chemSizesView.Root.ChildRelationships.Clear();
-                    chemSizesView.ViewMode = NbtViewRenderingMode.Grid;
-                    chemSizesView.Visibility = NbtViewVisibility.Property;
-
-                    CswNbtViewRelationship chemSizesPR = chemSizesView.AddViewRelationship( chemicalNT, true ); //PR = "parent relationship", CR = "child relationship
-                    CswNbtViewRelationship chemSizesCR = chemSizesView.AddViewRelationship( chemSizesPR, NbtViewPropOwnerType.Second, sizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName ), true );
-
-                    CswNbtViewProperty chemCapacityVP = chemSizesView.AddViewProperty( chemSizesCR, sizeCapacityOCP );
-                    CswNbtViewProperty chemQuantityEditableVP = chemSizesView.AddViewProperty( chemSizesCR, sizeQuantityEditableOCP );
-                    CswNbtViewProperty chemCatalogNoVP = chemSizesView.AddViewProperty( chemSizesCR, sizeCatalogNoOCP );
-
-                    chemCapacityVP.Order = 1;
-                    chemQuantityEditableVP.Order = 2;
-                    chemCatalogNoVP.Order = 3;
-
-                    chemSizesView.save();
-                    //end making chemical sizes link grid
                 }
             }
 
@@ -117,6 +119,34 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab bioContainerTab = biologicalNT.getNodeTypeTab( "Containers" );
                 if( null != bioContainerTab )
                 {
+                    //create the biologcal sizes grid
+                    CswNbtMetaDataNodeTypeProp bioSizesGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( biologicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Biological Sizes", bioContainerTab.TabId );
+                    CswNbtView bioSizesView = _CswNbtSchemaModTrnsctn.restoreView( bioSizesGridNTP.ViewId );
+                    if( null == bioSizesView )
+                    {
+                        bioSizesView = _CswNbtSchemaModTrnsctn.makeView();
+                        bioSizesGridNTP.ViewId = bioSizesView.ViewId;
+                    }
+                    bioSizesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(); //make it a link grid
+
+                    bioSizesView.Root.ChildRelationships.Clear();
+                    bioSizesView.ViewMode = NbtViewRenderingMode.Grid;
+                    bioSizesView.Visibility = NbtViewVisibility.Property;
+
+                    CswNbtViewRelationship bioSizesPR = bioSizesView.AddViewRelationship( biologicalNT, true ); //PR = "parent relationship", CR = "child relationship
+                    CswNbtViewRelationship bioSizesCR = bioSizesView.AddViewRelationship( bioSizesPR, NbtViewPropOwnerType.Second, sizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName ), true );
+
+                    CswNbtViewProperty bioCapacityVP = bioSizesView.AddViewProperty( bioSizesCR, sizeCapacityOCP );
+                    CswNbtViewProperty bioQuantityEditableVP = bioSizesView.AddViewProperty( bioSizesCR, sizeQuantityEditableOCP );
+                    CswNbtViewProperty bioCatalogNoVP = bioSizesView.AddViewProperty( bioSizesCR, sizeCatalogNoOCP );
+
+                    bioCapacityVP.Order = 1;
+                    bioQuantityEditableVP.Order = 2;
+                    bioCatalogNoVP.Order = 3;
+
+                    bioSizesView.save();
+                    //end making biological sizes link grid
+
                     CswNbtMetaDataNodeTypeProp bioContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( biologicalNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Biological Containers", bioContainerTab.TabId );
 
                     CswNbtView bioContainersView = _CswNbtSchemaModTrnsctn.restoreView( bioContainersGridNTP.ViewId );
@@ -154,6 +184,8 @@ namespace ChemSW.Nbt.Schema
                     bioOwnerVP.Order = 4;
                     bioLocationVP.Order = 5;
 
+                    bioSizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, bioContainerTab.TabId, 2, 2 );
+
                     bioContainersView.save();
 
                 }
@@ -166,6 +198,37 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeTab supplyContainerTab = supplyNT.getNodeTypeTab( "Containers" );
                 if( null != supplyContainerTab )
                 {
+
+                    //create the supply sizes grid
+                    CswNbtMetaDataNodeTypeProp supplySizesGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( supplyNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Supply Sizes", supplyContainerTab.TabId );
+                    CswNbtView supplySizesView = _CswNbtSchemaModTrnsctn.restoreView( supplySizesGridNTP.ViewId );
+                    if( null == supplySizesView )
+                    {
+                        supplySizesView = _CswNbtSchemaModTrnsctn.makeView();
+                        supplySizesGridNTP.ViewId = supplySizesView.ViewId;
+                    }
+                    supplySizesGridNTP.Extended = CswNbtNodePropGrid.GridPropMode.Link.ToString(); //make it a link grid
+
+                    supplySizesView.Root.ChildRelationships.Clear();
+                    supplySizesView.ViewMode = NbtViewRenderingMode.Grid;
+                    supplySizesView.Visibility = NbtViewVisibility.Property;
+
+                    CswNbtViewRelationship supplySizesPR = supplySizesView.AddViewRelationship( supplyNT, true ); //PR = "parent relationship", CR = "child relationship
+                    CswNbtViewRelationship supplySizesCR = supplySizesView.AddViewRelationship( supplySizesPR, NbtViewPropOwnerType.Second, sizeOC.getObjectClassProp( CswNbtObjClassSize.MaterialPropertyName ), true );
+
+                    CswNbtViewProperty supplyCapacityVP = supplySizesView.AddViewProperty( supplySizesCR, sizeCapacityOCP );
+                    CswNbtViewProperty supplyQuantityEditableVP = supplySizesView.AddViewProperty( supplySizesCR, sizeQuantityEditableOCP );
+                    CswNbtViewProperty supplyCatalogNoVP = supplySizesView.AddViewProperty( supplySizesCR, sizeCatalogNoOCP );
+
+                    supplyCapacityVP.Order = 1;
+                    supplyQuantityEditableVP.Order = 2;
+                    supplyCatalogNoVP.Order = 3;
+
+                    supplySizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, supplyContainerTab.TabId, 2, 2 );
+
+                    supplySizesView.save();
+                    //end making supply sizes link grid
+
                     CswNbtMetaDataNodeTypeProp supplyContainersGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( supplyNT, CswNbtMetaDataFieldType.NbtFieldType.Grid, "Supply Containers", supplyContainerTab.TabId );
 
                     CswNbtView supplyContainersView = _CswNbtSchemaModTrnsctn.restoreView( supplyContainersGridNTP.ViewId );
