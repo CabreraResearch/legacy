@@ -30,7 +30,7 @@
 
                 canSelectRow: false,
 
-                onLoad: null,   // function()
+                onLoad: null,   // function(grid, ajaxResult)
                 onEdit: null,   // function(rows)
                 onDelete: null, // function(rows)
                 onSelect: null, // function(row)
@@ -120,7 +120,7 @@
                     },
                     listeners: {
                         viewready: function () {
-                            Csw.tryExec(cswPrivate.onLoad, cswPublic);
+                            Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
                         }
                     }
                 };
@@ -367,6 +367,7 @@
                                 cswPrivate.fields = result.grid.fields;
                                 cswPrivate.columns = result.grid.columns;
                                 cswPrivate.data = result.grid.data;
+                                cswPrivate.ajaxResult = result;
                                 cswPrivate.init();
 
                             } // if(false === Csw.isNullOrEmpty(data.griddata)) {
