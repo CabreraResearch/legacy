@@ -143,7 +143,7 @@
                 /// <param name="isRequired" type="Object">whether or not this property is required</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 try {
-                    if (isRequired === 'true') {
+                    if (Csw.bool(isRequired)) {
                         cswPublic.$.append(propName + "*");
                     } else {
                         cswPublic.$.append(propName);
@@ -151,7 +151,7 @@
                 } catch (e) {
                     Csw.debug.log('Warning: append() failed, text() was used instead.', true);
                     if (Csw.isString(propName)) {
-                        if (isRequired === 'true') {
+                        if (Csw.bool(isRequired)) {
                             cswPublic.$.text(propName + "*");
                         } else {
                             cswPublic.$.text(propName);
