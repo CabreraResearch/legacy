@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
         //public static string ViewPropertyName { get { return "View"; } }
         public static string SqlPropertyName { get { return "SQL"; } }
         public static string btnRunPropertyName { get { return "Run"; } }
+        public static string ReportUserNamePropertyName { get { return "ReportUserName"; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -87,6 +88,10 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+
+
+            _CswNbtNode.Properties[ReportUserNamePropertyName].Hidden = true;
+
         }//beforeWriteNode()
 
         public override void afterWriteNode()
@@ -164,6 +169,14 @@ namespace ChemSW.Nbt.ObjClasses
             get
             {
                 return ( _CswNbtNode.Properties[CategoryPropertyName].AsText );
+            }
+        }
+
+        public CswNbtNodePropText ReportUserName
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[ReportUserNamePropertyName] );
             }
         }
 
