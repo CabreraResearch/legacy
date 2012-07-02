@@ -382,7 +382,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ContDispTransNode.QuantityDispensed.Quantity = this.Quantity.Quantity;
                 ContDispTransNode.QuantityDispensed.UnitId = this.Quantity.UnitId;
                 ContDispTransNode.Type.Value = DispenseType.ToString();
-                ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Today;
+                ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Now;
                 ContDispTransNode.RemainingSourceContainerQuantity.Quantity = RemainingSourceContainerQuantity;
                 ContDispTransNode.RemainingSourceContainerQuantity.UnitId = this.Quantity.UnitId;
 
