@@ -143,7 +143,7 @@
                 /// <param name="isRequired" type="Object">whether or not this property is required</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
                 if (Csw.bool(isRequired)) {
-                    propName += " *";
+                    propName = Csw.makeRequiredName(propName);
                 }
                 try {
                     cswPublic.$.append(propName);
@@ -155,6 +155,14 @@
                 }
                 return cswPublic;
             };
+
+            Csw.makeRequiredName = Csw.makeRequiredName ||
+                Csw.register('makeRequiredName', function (propName) {
+                    /// <summary>Returns the property name with the required symbol next to it</summary>
+                    /// <param name="propName" type="Object">the property name to display</param>
+                    /// <returns type="string">The label name for a required property</returns> 
+                    return propName + " *";
+                });
 
             cswPublic.attach = function (object) {
                 /// <summary>Attach an object to this element.</summary>

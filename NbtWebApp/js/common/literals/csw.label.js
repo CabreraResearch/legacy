@@ -26,6 +26,7 @@
                 text: '',
                 useWide: false,
                 onClick: null //function () {}
+                isRequired: ''
             };
             var cswPublic = {};
 
@@ -56,7 +57,13 @@
 
                 html += '>';
 
-                html += Csw.string(cswPrivate.text, cswPrivate.value);
+                var labelText = cswPrivate.value;
+                if(Csw.bool(cswPrivate.isRequired)){
+                    labelText = Csw.makeRequiredName(labelText);
+                }
+
+                //html += Csw.string(cswPrivate.text, cswPrivate.value);
+                html += Csw.string(cswPrivate.text, labelText);
 
                 html += '</label>';
                 $label = $(html);
