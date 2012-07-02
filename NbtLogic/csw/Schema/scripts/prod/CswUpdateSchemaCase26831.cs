@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Schema
                     chemQuantityEditableVP.Order = 2;
                     chemCatalogNoVP.Order = 3;
 
-                    chemSizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, chemContainerTab.TabId, 2, 2 );
+                    chemSizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, chemContainerTab.TabId, 1, 1 );
 
                     chemSizesView.save();
                     //end making chemical sizes link grid
@@ -107,7 +107,15 @@ namespace ChemSW.Nbt.Schema
                     ownerVP.Order = 5;
                     locationVP.Order = 6;
 
+                    chemContainersGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, chemContainerTab.TabId, 2, 1 );
+
                     chemContainersView.save();
+
+                    CswNbtMetaDataNodeTypeProp chemInventoryLevelsGridNTP = chemicalNT.getNodeTypeProp( "Inventory Levels" );
+                    if( null != chemInventoryLevelsGridNTP )
+                    {
+                        chemInventoryLevelsGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, chemContainerTab.TabId, 2, 1 );
+                    }
                     // end making chemical containers grid
                 }
             }
@@ -143,6 +151,8 @@ namespace ChemSW.Nbt.Schema
                     bioCapacityVP.Order = 1;
                     bioQuantityEditableVP.Order = 2;
                     bioCatalogNoVP.Order = 3;
+
+                    bioSizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, bioContainerTab.TabId, 1, 1 );
 
                     bioSizesView.save();
                     //end making biological sizes link grid
@@ -184,9 +194,15 @@ namespace ChemSW.Nbt.Schema
                     bioOwnerVP.Order = 4;
                     bioLocationVP.Order = 5;
 
-                    bioSizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, bioContainerTab.TabId, 2, 2 );
+                    bioSizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, bioContainerTab.TabId, 2, 1 );
 
                     bioContainersView.save();
+
+                    CswNbtMetaDataNodeTypeProp bioInventoryLevelsGridNTP = biologicalNT.getNodeTypeProp( "Inventory Levels" );
+                    if( null != bioInventoryLevelsGridNTP )
+                    {
+                        bioInventoryLevelsGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, bioContainerTab.TabId, 2, 1 );
+                    }
 
                 }
             }
@@ -224,7 +240,7 @@ namespace ChemSW.Nbt.Schema
                     supplyQuantityEditableVP.Order = 2;
                     supplyCatalogNoVP.Order = 3;
 
-                    supplySizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, supplyContainerTab.TabId, 2, 2 );
+                    supplySizesGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, supplyContainerTab.TabId, 1, 1 );
 
                     supplySizesView.save();
                     //end making supply sizes link grid
@@ -266,7 +282,15 @@ namespace ChemSW.Nbt.Schema
                     supplyOwnerVP.Order = 4;
                     supplyLocationVP.Order = 5;
 
+                    supplyContainersGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, supplyContainerTab.TabId, 2, 1 );
+
                     supplyContainersView.save();
+
+                    CswNbtMetaDataNodeTypeProp supplyInventoryLevelsGridNTP = supplyNT.getNodeTypeProp( "Inventory Levels" );
+                    if( null != supplyInventoryLevelsGridNTP )
+                    {
+                        supplyInventoryLevelsGridNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, supplyContainerTab.TabId, 2, 1 );
+                    }
 
                 }
             }
