@@ -25,7 +25,7 @@
                 form: '',
                 text: '',
                 useWide: false,
-                onClick: null //function () {}
+                onClick: null, //function () {}
                 isRequired: ''
             };
             var cswPublic = {};
