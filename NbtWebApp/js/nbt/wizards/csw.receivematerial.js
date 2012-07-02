@@ -72,7 +72,7 @@
                     2: 'Define Properties',
                     3: 'Set Amounts'
                 };
-
+                cswPrivate.containerlimit = Csw.number(cswPrivate.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.handleStep = function (newStepNo) {
@@ -100,7 +100,7 @@
                 };
 
                 cswPrivate.onBeforeNext = function (currentStepNo) {
-                    var isNotStepTwoOrIsValid = currentStepNo !== 2 || cswPrivate.tabsAndProps.isValid();
+                    var isNotStepTwoOrIsValid = currentStepNo !== 2 || cswPrivate.tabsAndProps.isFormValid();
                     var isStepTwoAndHasQuantity = false;
                     if (currentStepNo === 2) {
                         if (false === Csw.isNullOrEmpty(cswPrivate.quantity)) {
@@ -236,84 +236,26 @@
             cswPrivate.makeStep3 = (function () {
 
                 return function () {
-                    if (cswPrivate.tabsAndProps.isValid()) {
+                    if (cswPrivate.tabsAndProps.isFormValid()) {
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                         if (false === cswPrivate.stepThreeComplete) {
-                            if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
-                                Csw.error.throwException(Csw.error.exception('Cannot create a Container quantities without the Capacity of a Size.', '', 'csw.receivematerial.js', 244));
-                            }
                             cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.empty();
-                            cswPrivate.divStep3.span({ text: 'Enter the Amounts to Receive.' });
-                            cswPrivate.divStep3.br({ number: 2 });
 
-                            cswPublic.thinGrid = cswPrivate.divStep3.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']] });
-                            cswPrivate.divStep3.br();
-                            cswPrivate.amountForm = cswPrivate.divStep3.form();
-                            cswPrivate.amountsTable = cswPrivate.amountForm.table();
+                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.divStep3, {
+                                ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
+                                onAdd: function () {
+                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                },
+                                quantity: cswPrivate.quantity,
+                                containerlimit: cswPrivate.containerlimit,
+                                makeId: cswPrivate.wizard.makeStepId
+                            });
 
-                            var makeAddAmount = function () {
-                                cswPrivate.amountsTable.empty();
-
-                                var thisAmount = {
-                                    containerNo: 1,
-                                    quantity: '',
-                                    unit: '',
-                                    unitid: '',
-                                    barcodes: ''
-                                };
-                                //# of containers
-                                cswPrivate.amountsTable.cell(1, 1).numberTextBox({
-                                    ID: cswPrivate.wizard.makeStepId('containerCount'),
-                                    labelText: 'Number: ',
-                                    value: thisAmount.containerNo,
-                                    MinValue: 1,
-                                    //MaxValue: 9999,
-                                    //ceilingVal: 9999,
-                                    Precision: 6,
-                                    Required: true,
-                                    onChange: function (value) {
-                                        thisAmount.containerNo = value;
-                                    }
-                                });
-
-                                //Quantity
-                                cswPrivate.quantity.labelText = 'Quantity: ';
-                                cswPrivate.quantity.ID = cswPrivate.wizard.makeStepId('containerQuantity');
-                                cswPrivate.qtyControl = cswPrivate.amountsTable.cell(2, 1).quantity(cswPrivate.quantity);
-
-                                //Barcodes
-                                cswPrivate.amountsTable.cell(3, 1).textArea({
-                                    ID: cswPrivate.wizard.makeStepId('containerBarcodes'),
-                                    labelText: 'Barcodes: ',
-                                    onChange: function (value) {
-                                        thisAmount.barcodes = value;
-                                    }
-                                });
-
-                                //Add
-                                cswPrivate.amountsTable.cell(4, 1).button({
-                                    ID: cswPrivate.wizard.makeStepId('addBtn'),
-                                    enabledText: 'Add',
-                                    onClick: function () {
-                                        if (cswPrivate.amountForm.isValid()) {
-                                            thisAmount.quantity = cswPrivate.qtyControl.quantityValue;
-                                            thisAmount.unit = cswPrivate.qtyControl.unitText;
-                                            thisAmount.unitid = cswPrivate.qtyControl.unitVal;
-                                            cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
-                                            cswPrivate.quantities.push(thisAmount);
-                                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                                            makeAddAmount();
-                                        }
-                                    }
-                                });
-                                cswPrivate.amountForm.validate();
-                            };
-                            makeAddAmount();
                             cswPrivate.stepThreeComplete = true;
                         }
                     } else {

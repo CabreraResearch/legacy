@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using ChemSW;
 using ChemSW.Config;
@@ -17,25 +18,68 @@ namespace NbtLogic.Test
         private CswNbtResources _CswNbtResources = null;
         private ICswDbCfgInfo _CswDbCfgInfoNbt = null;
         private string UserName = "TestUser";
-        private List<CswPrimaryKey> TestNodeIds = new List<CswPrimaryKey>();
+        private CswPrimaryKey _HighWaterMark = null;
 
-        public TestData()
+        internal TestData()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false );
             _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
-            _CswNbtResources.InitCurrentUser = InitUser;
+            _CswNbtResources.InitCurrentUser = _InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
+            _setHighWaterMark();
         }
 
-        public ICswUser InitUser( ICswResources Resources )
+        internal CswNbtResources CswNbtResources
+        {
+            get { return _CswNbtResources; }
+        }
+
+        #region Setup and Teardown
+
+        private ICswUser _InitUser( ICswResources Resources )
         {
             return new CswNbtSystemUser( Resources, UserName );
         }
 
-        public CswNbtResources CswNbtResources
+        private void _setHighWaterMark()
         {
-            get { return _CswNbtResources; }
+            CswNbtNode PlaceHolderNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( "Report" ), CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            _HighWaterMark = PlaceHolderNode.NodeId;
         }
+
+        private List<Int32> _getNodesAboveHighWaterMark()
+        {
+            List<Int32> TestNodeIds = new List<Int32>();
+            TestNodeIds.Add( _HighWaterMark.PrimaryKey );
+
+            IEnumerator CurrentNodes = _CswNbtResources.Nodes.GetEnumerator();
+            while( CurrentNodes.MoveNext() )
+            {
+                DictionaryEntry dentry = (DictionaryEntry) CurrentNodes.Current;
+                CswNbtNode CurrentNode = (CswNbtNode) dentry.Value;
+                if( CurrentNode.NodeId.PrimaryKey > _HighWaterMark.PrimaryKey )
+                {
+                    TestNodeIds.Add( CurrentNode.NodeId.PrimaryKey );
+                }
+            }
+
+            return TestNodeIds;
+        }
+
+        internal void DeleteTestNodes()
+        {
+            List<Int32> TestNodePKs = _getNodesAboveHighWaterMark();
+            TestNodePKs.Sort();
+            TestNodePKs.Reverse();
+            foreach( Int32 NodePK in TestNodePKs )
+            {
+                CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", NodePK );
+                CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId );
+                Node.delete();
+            }
+        }
+
+        #endregion
 
         #region Nodes
 
@@ -50,8 +94,6 @@ namespace NbtLogic.Test
                 NodeAsContianer.Material.RelatedNodeId = Material.NodeId;
             }
             NodeAsContianer.postChanges( true );
-
-            TestNodeIds.Add( NodeAsContianer.NodeId );
 
             return ContainerNode;
         }
@@ -69,8 +111,6 @@ namespace NbtLogic.Test
             NodeAsUnitOfMeasure.UnitType.Value = NodeTypeName;
             NodeAsUnitOfMeasure.postChanges( true );
 
-            TestNodeIds.Add( NodeAsUnitOfMeasure.NodeId );
-
             return UnitOfMeasureNode;
         }
 
@@ -83,8 +123,6 @@ namespace NbtLogic.Test
             NodeAsMaterial.PhysicalState.Value = State;
             NodeAsMaterial.postChanges( true );
 
-            TestNodeIds.Add( NodeAsMaterial.NodeId );
-
             return MaterialNode;
         }
 
@@ -96,27 +134,6 @@ namespace NbtLogic.Test
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
             return NodeType.NodeTypeId;
-        }
-
-        private void _addContDispTransNodesToTestNodeList()
-        {
-            //TODO - is this easier than setting a high watermark?
-            //iterate TestNodeIds - for each Container node, get all related transaction nodes and add them to delete list
-        }
-
-        #endregion
-
-        #region Cleanup
-
-        internal void DeleteTestNodes()
-        {
-            _addContDispTransNodesToTestNodeList();
-            TestNodeIds.Reverse();//Act like a stack
-            foreach( CswPrimaryKey NodeId in TestNodeIds )
-            {
-                CswNbtNode Node = _CswNbtResources.Nodes.GetNode( NodeId );
-                Node.delete();
-            }
         }
 
         #endregion

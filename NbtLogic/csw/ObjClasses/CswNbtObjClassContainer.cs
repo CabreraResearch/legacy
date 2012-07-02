@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ActionData = this.NodeId.ToString();
                     JObject ActionDataObj = new JObject();
-                    ActionDataObj["nodeId"] = this.NodeId.ToString();
+                    ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
                     ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
                     CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
                     ActionDataObj["currentUnitName"] = unitNode.Name.Text;

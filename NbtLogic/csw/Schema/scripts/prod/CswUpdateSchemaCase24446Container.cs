@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Schema
                                                                                                                         IsRequired = true,
                                                                                                                         SetValOnAdd = true
                                                                                                                     } );
-
+            _CswNbtSchemaModTrnsctn.createConfigurationVariable( CswNbtResources.ConfigurationVariables.container_receipt_limit, "Limit the number of containers allowed at receipt.", "25", false );
         }//Update()
 
     }//class CswUpdateSchemaCase24446Container

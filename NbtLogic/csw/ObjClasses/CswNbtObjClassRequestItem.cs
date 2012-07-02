@@ -107,37 +107,37 @@ namespace ChemSW.Nbt.ObjClasses
 
         private string _makeNotificationMessage()
         {
-            string MessageText = "The Status for this Request Item has changed to: " + Status.Value + ". /n";
+            string MessageText = "The Status for this Request Item has changed to: " + Status.Value + ". \n";
 
             CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( null != NodeAsMaterial )
             {
-                MessageText += "Material: " + NodeAsMaterial.TradeName.Text + "/n";
+                MessageText += "Material: " + NodeAsMaterial.TradeName.Text + "\n";
             }
 
             CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
             if( null != NodeAsContainer )
             {
-                MessageText += "Container: " + NodeAsContainer.Node.NodeName + "/n";
+                MessageText += "Container: " + NodeAsContainer.Node.NodeName + "\n";
             }
 
             if( Quantity.Quantity > 0 )
             {
-                MessageText += "Quantity: " + Quantity.Quantity + ", Unit: " + Quantity.CachedUnitName + "/n";
+                MessageText += "Quantity: " + Quantity.Quantity + ", Unit: " + Quantity.CachedUnitName + "\n";
             }
             if( false == string.IsNullOrEmpty( Size.CachedNodeName ) )
             {
-                MessageText += "Size: " + Size.CachedNodeName + "/n";
+                MessageText += "Size: " + Size.CachedNodeName + "\n";
             }
             if( Count.Value > 0 )
             {
-                MessageText += "Count: " + Count.Value + "/n";
+                MessageText += "Count: " + Count.Value + "\n";
             }
             CswNbtObjClassLocation NodeAsLocation = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
             if( null != NodeAsLocation )
             {
                 MessageText += "Location: " + NodeAsLocation.Location + CswNbtNodePropLocation.PathDelimiter +
-                                NodeAsLocation.Name + "/n";
+                                NodeAsLocation.Name + "\n";
             }
 
 

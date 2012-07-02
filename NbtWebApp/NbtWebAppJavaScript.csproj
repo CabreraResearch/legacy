@@ -87,6 +87,7 @@
     <Content Include="js\common\controls\csw.buttongroup.js" />
     <Content Include="js\common\layouts\csw.action.js" />
     <Content Include="js\nbt\actions\csw.submitrequest.js" />
+    <Content Include="js\nbt\wizards\csw.wizard.amountsgrid.js" />
     <Content Include="js\nbt\wizards\csw.wizard.nodethingrid.js" />
     <Content Include="js\nbt\wizards\csw.wizard.addlayout.js" />
     <Content Include="js\nbt\wizards\csw.wizard.nodetypeselect.js" />

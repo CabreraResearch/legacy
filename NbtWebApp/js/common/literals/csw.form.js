@@ -44,7 +44,7 @@
         } ());
 
         cswPublic.validator = { };
-        cswPublic.validate = function () {
+        cswPublic.initValidator = function () {
             // Validation
             cswPublic.validator = cswPublic.$.validate({
                 highlight: function (element) {
@@ -62,9 +62,9 @@
                     }
                 }
             });
-        }; // validate()
+        }; // initValidator()
 
-        cswPublic.isValid = function () {
+        cswPublic.isFormValid = function () {
             return cswPublic.$.valid();
         };
 

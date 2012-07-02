@@ -563,13 +563,9 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Adds a Property value to a node.  This is the uncommon way to fill property data in for nodes.
         /// </summary>
-        /// <param name="NodeTypePropId">Primary key of property</param>
-        /// <param name="Name">Name of Property</param>
-        /// <param name="Gestalt">Text representation of the value of the property</param>
-        /// <param name="FieldType">FieldType of the property</param>
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, Int32 Field1_Fk, double Field1_Numeric )
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric )
         {
-            _CswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field1_Fk, Field1_Numeric );
+            _CswNbtTreeNodes.addProperty( NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2, Field1_Fk, Field1_Numeric );
         }//addProperty
 
 
