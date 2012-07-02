@@ -40,53 +40,55 @@
                 spaceToDelimiter: true,
                 removeDuplicates: true,
                 delimiter: ',',
-                string: Csw.string(string)
+                initString: Csw.string(string)
             };
             if (opts) $.extend(cswPrivate, opts);
+            
             var cswPublic = {
                 array: [],
-                delimited: '',
-                string: {
-                    get: function () {
-                        return cswPrivate.string;
-                    },
-                    set: function (str) {
-                        cswPrivate.string = str;
-                        cswPublic.delimited = cswPrivate.string;
-                        if (cswPrivate.newLineToDelimiter) {
-                            while (cswPublic.delimited.indexOf('\n') !== -1) {
-                                cswPublic.delimited = cswPublic.delimited.replace(/\n/g, cswPrivate.delimiter);
-                            }
-                        }
-                        if (cswPrivate.spaceToDelimiter) {
-                            while (cswPublic.delimited.indexOf(' ') !== -1) {
-                                cswPublic.delimited = cswPublic.delimited.replace(/ /g, cswPrivate.delimiter);
-                            }
-                        }
-                        while (cswPublic.delimited.indexOf(',,') !== -1) {
-                            cswPublic.delimited = cswPublic.delimited.replace(/,,/g, cswPrivate.delimiter);
-                        }
-                        cswPublic.array = cswPublic.delimited.split(cswPrivate.delimiter);
-                        if (cswPrivate.removeDuplicates) {
-                            (function () {
-
-                                var unique = function (array) {
-                                    var seen = new Set;
-                                    return array.filter(function (item) {
-                                        if (false === seen.has(item)) {
-                                            seen.add(item);
-                                            return true;
-                                        }
-                                    });
-                                };
-
-                                cswPublic.array = unique(cswPublic.array);
-                            } ());
-                        }
-                    }
+                delimited: function () {
+                    return cswPublic.array.join(cswPrivate.delimiter);
+                },
+                string: function () {
+                    return cswPublic.array.toString();
                 }
             };
-            cswPublic.string.set(cswPrivate.string);
+
+            (function () { //ctor
+                var delimitedString = string;
+                cswPrivate.initString = delimitedString;
+
+                if (cswPrivate.newLineToDelimiter) {
+                    while (delimitedString.indexOf('\n') !== -1) {
+                        delimitedString = delimitedString.replace(/\n/g, cswPrivate.delimiter);
+                    }
+                }
+                if (cswPrivate.spaceToDelimiter) {
+                    while (delimitedString.indexOf(' ') !== -1) {
+                        delimitedString = delimitedString.replace(/ /g, cswPrivate.delimiter);
+                    }
+                }
+                while (delimitedString.indexOf(',,') !== -1) {
+                    delimitedString = delimitedString.replace(/,,/g, cswPrivate.delimiter);
+                }
+                cswPublic.array = delimitedString.split(cswPrivate.delimiter);
+                if (cswPrivate.removeDuplicates) {
+                    (function () {
+
+                        var unique = function (array) {
+                            var seen = new Set;
+                            return array.filter(function (item) {
+                                if (false === seen.has(item)) {
+                                    seen.add(item);
+                                    return true;
+                                }
+                            });
+                        };
+
+                        cswPublic.array = unique(cswPublic.array);
+                    } ());
+                }
+            } ());
             return cswPublic;
         });
 
