@@ -44,7 +44,14 @@
 //                    opts = cswPrivate.controlPreProcessing(opts, 'table');
 //                    return Csw.composites.table(cswParent, opts);
 //                };
-
+                
+                cswParent.quantity = function (opts) {
+                    /// <summary> Creates a Csw.quantity on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the quantity.</param>
+                    /// <returns type="Csw.composites.quantity">A Csw.composites.quantity</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'quantity');
+                    return Csw.composites.quantity(cswParent, opts);
+                };
 
                 cswParent.thinGrid = function (opts) {
                     /// <summary> Creates a Csw.thinGrid on this element</summary>

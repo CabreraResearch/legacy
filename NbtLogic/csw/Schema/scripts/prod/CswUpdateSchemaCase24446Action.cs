@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtMetaDataObjectClassProp CapacityProp = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassProp( SizeOc.ObjectClassId, CswNbtObjClassSize.CapacityPropertyName );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CapacityProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd, true );
-
+            
         }//Update()
 
     }//class CswUpdateSchemaCase24446Action

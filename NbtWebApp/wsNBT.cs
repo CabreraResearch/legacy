@@ -2361,6 +2361,37 @@ namespace ChemSW.Nbt.WebServices
         } // getBlob()	
 
 
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getQuantity( string SizeId )
+        {
+            JObject ReturnVal = new JObject();
+
+            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh( true );
+
+                CswPrimaryKey SizePk = _getNodeId( SizeId );
+                if( null != SizePk )
+                {
+                    var ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
+                    ReturnVal = ws.getQuantityFromSize( SizePk );
+                }
+                _deInitResources();
+
+            }
+            catch( Exception ex )
+            {
+                ReturnVal = jError( ex );
+            }
+
+            _jAddAuthenticationStatus( ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getBlob()	
 
         #endregion Tabs and Props
 

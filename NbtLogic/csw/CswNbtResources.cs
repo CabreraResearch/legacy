@@ -119,7 +119,11 @@ namespace ChemSW.Nbt
             /// <summary>
             /// Limit at which relationship values must be searched for
             /// </summary>
-            relationshipoptionlimit
+            relationshipoptionlimit,
+            /// <summary>
+            /// Limit the number of containers allowed to receive in a single operation
+            /// </summary>
+            container_receipt_limit
         }
 
         /// <summary>

@@ -1,37 +1,94 @@
 ﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
-(function() {
+(function () {
     'use strict';
 
-    function string(inputStr, defaultStr) {
-        /// <summary> Get a valid string literal based on input</summary>
-        /// <param name="inputStr" type="String"> String to parse </param>
-        /// <param name="defaultStr" type="String"> Default value if null or empty </param>
-        /// <returns type="String">String literal value</returns>
-        function tryParseString() {
-            /// <summary> Returns the inputStr if !isNullOrEmpty, else returns the defaultStr</summary>
-            /// <returns type="String" />
-            var ret = '';
-            if (false === Csw.isPlainObject(inputStr) &&
-                false === Csw.isFunction(inputStr) &&
-                    false === Csw.isNullOrEmpty(inputStr)) {
-                ret = inputStr.toString();
-            } else if (false === Csw.isPlainObject(defaultStr) &&
-                false === Csw.isFunction(defaultStr) &&
-                    false === Csw.isNullOrEmpty(defaultStr)) {
-                ret = defaultStr.toString();
+    Csw.string = Csw.string ||
+        Csw.register('string', function (inputStr, defaultStr) {
+            /// <summary> Get a valid string literal based on input</summary>
+            /// <param name="inputStr" type="String"> String to parse </param>
+            /// <param name="defaultStr" type="String"> Default value if null or empty </param>
+            /// <returns type="String">String literal value</returns>
+
+            function tryParseString() {
+                /// <summary> Returns the inputStr if !isNullOrEmpty, else returns the defaultStr</summary>
+                /// <returns type="String" />
+                var ret = '';
+                if (false === Csw.isPlainObject(inputStr) &&
+                    false === Csw.isFunction(inputStr) &&
+                        false === Csw.isNullOrEmpty(inputStr)) {
+                    ret = inputStr.toString();
+                } else if (false === Csw.isPlainObject(defaultStr) &&
+                    false === Csw.isFunction(defaultStr) &&
+                        false === Csw.isNullOrEmpty(defaultStr)) {
+                    ret = defaultStr.toString();
+                }
+                return ret;
             }
-            return ret;
-        }
 
-        var retObj = tryParseString();
+            var retObj = tryParseString();
 
-        return retObj;
+            return retObj;
 
-    }
-    Csw.register('string', string);
-    Csw.string = Csw.string || string;
+        });
+
+    Csw.delimitedString = Csw.delimitedString ||
+        Csw.register('delimitedString', function (string, opts) {
+            var cswPrivate = {
+                newLineToDelimiter: true,
+                spaceToDelimiter: true,
+                removeDuplicates: true,
+                delimiter: ',',
+                string: Csw.string(string)
+            };
+            if (opts) $.extend(cswPrivate, opts);
+            var cswPublic = {
+                array: [],
+                delimited: '',
+                string: {
+                    get: function () {
+                        return cswPrivate.string;
+                    },
+                    set: function (str) {
+                        cswPrivate.string = str;
+                        cswPublic.delimited = cswPrivate.string;
+                        if (cswPrivate.newLineToDelimiter) {
+                            while (cswPublic.delimited.indexOf('\n') !== -1) {
+                                cswPublic.delimited = cswPublic.delimited.replace(/\n/g, cswPrivate.delimiter);
+                            }
+                        }
+                        if (cswPrivate.spaceToDelimiter) {
+                            while (cswPublic.delimited.indexOf(' ') !== -1) {
+                                cswPublic.delimited = cswPublic.delimited.replace(/ /g, cswPrivate.delimiter);
+                            }
+                        }
+                        while (cswPublic.delimited.indexOf(',,') !== -1) {
+                            cswPublic.delimited = cswPublic.delimited.replace(/,,/g, cswPrivate.delimiter);
+                        }
+                        cswPublic.array = cswPublic.delimited.split(cswPrivate.delimiter);
+                        if (cswPrivate.removeDuplicates) {
+                            (function () {
+
+                                var unique = function (array) {
+                                    var seen = new Set;
+                                    return array.filter(function (item) {
+                                        if (false === seen.has(item)) {
+                                            seen.add(item);
+                                            return true;
+                                        }
+                                    });
+                                };
+
+                                cswPublic.array = unique(cswPublic.array);
+                            } ());
+                        }
+                    }
+                }
+            };
+            cswPublic.string.set(cswPrivate.string);
+            return cswPublic;
+        });
 
     function isString(obj) {
         /// <summary> Returns true if the object is a String object. </summary>
@@ -82,4 +139,4 @@
     Csw.register('getTimeString', getTimeString);
     Csw.getTimeString = Csw.getTimeString || getTimeString;
 
-}());
+} ());

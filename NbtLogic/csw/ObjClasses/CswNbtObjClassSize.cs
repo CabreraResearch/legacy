@@ -1,4 +1,3 @@
-using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -74,13 +73,13 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterPopulateProps()
         {
             //case 25759 - set capacity unittype view based on related material physical state
-            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( this.Material.RelatedNodeId );
+            CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
             if( MaterialNode != null )
             {
-                CswNbtObjClassMaterial MaterialNodeAsMaterial = (CswNbtObjClassMaterial) MaterialNode;
-                if( false == String.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
+                CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
+                if( false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) )
                 {
-                    this.Capacity.View = _getQuantityUnitOfMeasureView( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() );
+                    Capacity.View = _getQuantityUnitOfMeasureView( MaterialNodeAsMaterial.PhysicalState.Value.ToLower() );
                 }
             }
 

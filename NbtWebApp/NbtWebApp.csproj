@@ -1141,6 +1141,8 @@
     <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\gridPrinterCss\print.css" />
     <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\gridPrinterCss\printer.png" />
     <Content Include="js\thirdparty\extjs-4.1.0\ux\grid\Printer.js" />
+    <Content Include="js\thirdparty\harmony-collections.browser.min.js" />
+    <Content Include="js\thirdparty\harmony-collections.js" />
     <Content Include="js\thirdparty\jmol\CHANGES.txt" />
     <Content Include="js\thirdparty\jmol\COPYRIGHT.txt" />
     <Content Include="js\thirdparty\jmol\Jmol.jar" />

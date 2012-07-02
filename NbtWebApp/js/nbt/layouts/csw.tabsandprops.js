@@ -205,9 +205,26 @@
                 } else {
                     cswPrivate.getPropsImpl(tabContentDiv, tabid, onSuccess);
                 }
-            };
+            }; // getProps()
 
-            // getProps()
+            cswPrivate.initValidator = function () {
+                cswPublic.validator = cswPrivate.form.$.validate({
+                    highlight: function (element) {
+                        var $elm = $(element);
+                        $elm.attr('csw_invalid', '1');
+                        $elm.animate({ backgroundColor: '#ff6666' });
+                    },
+                    unhighlight: function (element) {
+                        var $elm = $(element);
+                        if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
+                        {
+                            $elm.css('background-color', '#66ff66');
+                            $elm.attr('csw_invalid', '0');
+                            setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
+                        }
+                    }
+                }); // validate()
+            };
 
             cswPrivate.getPropsImpl = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
@@ -237,9 +254,7 @@
                     });
                     //var formTblCell11 = formTable.cell(1, 1);
                     //var formTblCell12 = formTable.cell(1, 2);
-
-
-                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable({
+                    var layoutOpts = {
                         ID: cswPrivate.ID + '_props',
                         OddCellRightAlign: true,
                         ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
@@ -263,7 +278,12 @@
                         onRemove: function (event, onRemoveData) {
                             cswPrivate.onRemove(tabid, onRemoveData);
                         } // onRemove
-                    }); // Csw.literals.layoutTable()
+                    };
+                    if (false === Csw.bool(cswPrivate.showSaveButton)) {
+                        layoutOpts.width = null;
+                    }
+
+                    cswPrivate.layoutTable = formTable.cell(1, 1).layoutTable(layoutOpts); // Csw.literals.layoutTable()
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
@@ -318,22 +338,7 @@
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
                     }
                     // Validation
-                    cswPrivate.form.$.validate({
-                        highlight: function (element) {
-                            var $elm = $(element);
-                            $elm.attr('csw_invalid', '1');
-                            $elm.animate({ backgroundColor: '#ff6666' });
-                        },
-                        unhighlight: function (element) {
-                            var $elm = $(element);
-                            if ($elm.attr('csw_invalid') === '1')  // only unhighlight where we highlighted
-                            {
-                                $elm.css('background-color', '#66ff66');
-                                $elm.attr('csw_invalid', '0');
-                                setTimeout(function () { $elm.animate({ backgroundColor: 'transparent' }); }, 500);
-                            }
-                        }
-                    }); // validate()
+                    cswPrivate.initValidator();
 
                     if (Csw.bool(cswPrivate.Config)) {
                         cswPrivate.layoutTable.configOn();
@@ -807,11 +812,15 @@
                 return cswPrivate.propertyData;
             };
 
+            cswPublic.isFormValid = function () {
+                return cswPrivate.form.$.valid();
+            };
+
             cswPublic.save = function (tabContentDiv, tabid, onSuccess) {
                 'use strict';
                 Csw.tryExec(function () {
 
-                    if (cswPrivate.form.$.valid()) {
+                    if (cswPublic.isFormValid()) {
                         var propIds = cswPrivate.updatePropJsonFromLayoutTable();
                         var sourcenodeid = Csw.tryParseObjByIdx(cswPrivate.nodeids, 0);
                         var sourcenodekey = Csw.tryParseObjByIdx(cswPrivate.nodekeys, 0);

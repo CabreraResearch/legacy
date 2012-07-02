@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public const string DispensePropertyName = "Dispense";
         public const string DisposePropertyName = "Dispose";
         public const string UndisposePropertyName = "Undispose";
+        public const string OwnerPropertyName = "Owner";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -405,6 +406,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Dispense { get { return ( _CswNbtNode.Properties[DispensePropertyName] ); } }
         public CswNbtNodePropButton Dispose { get { return ( _CswNbtNode.Properties[DisposePropertyName] ); } }
         public CswNbtNodePropButton Undispose { get { return ( _CswNbtNode.Properties[UndisposePropertyName] ); } }
+        public CswNbtNodePropRelationship Owner { get { return ( _CswNbtNode.Properties[OwnerPropertyName] ); } }
         #endregion
 
 
