@@ -493,6 +493,7 @@
             if (false === Csw.isNullOrEmpty(cswPrivate.id)) {
                 elementId.push(cswPrivate.id);
             }
+
             if (false === Csw.isNullOrEmpty(cswPrivate.suffix)) {
                 elementId.push(cswPrivate.suffix);
             }
@@ -528,7 +529,8 @@
             }
 
             elementId = o.ID;
-            toReplace = [/'/gi, / /gi, /\//g];
+            //toReplace = [/'/gi, / /gi, /\//g];
+            toReplace = [/\(/g, /\)/g, /'/gi, / /gi, /\//g];
             if (false === Csw.isNullOrEmpty(o.prefix) && false === Csw.isNullOrEmpty(elementId)) {
                 elementId = o.prefix + o.Delimiter + elementId;
             }
