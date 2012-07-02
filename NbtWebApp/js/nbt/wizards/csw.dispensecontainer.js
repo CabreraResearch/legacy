@@ -13,6 +13,7 @@
                 sourceContainerNodeId: '',
                 currentQuantity: '',
                 currentUnitName: '',
+                capacity: '',
                 onCancel: null,
                 onFinish: null,
                 startingStep: 1,
@@ -69,9 +70,7 @@
                 var stepOneComplete = false;
                 return function () {
                     if (Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
-                        //cswPrivate.onCancel();//If we don't have a sourceContainerNodeId, we shouldn't execute this wizard,
-                        //but because of the 'welcomeItems at the bottom of the page' bug, explicitly executing onCancel logic creates two sets of welcomeItems,
-                        //which is much worse than having access to a broken wizard.
+                        cswPrivate.onCancel();//If you don't have a sourceContainerNodeId, go home
                     }
 
                     var dispenseTypeTable = '',
@@ -195,8 +194,30 @@
                                 cswPrivate.divStep3.empty();
                                 stepThreeAddWasteComplete = false;
                             }
-                            //TODO - step 3B - container/quantity grid                            
-                            //TODO - if a user goes back and changes the dispense type, this step needs to be refreshed
+
+                            cswPrivate.divStep3 = cswPrivate.wizard.div(3);
+                            cswPrivate.divStep3.br();
+
+                            quantityTable = cswPrivate.divStep3.table({
+                                ID: cswPrivate.makeStepId('setQuantityTable'),
+                                cellpadding: '1px',
+                                cellvalign: 'middle'
+                            });
+
+                            quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br({ number: 2 });
+
+                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.divStep3, {
+                                ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
+                                onAdd: function () {
+                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                },
+                                quantity: cswPrivate.capacity,
+                                containerlimit: cswPrivate.containerlimit,
+                                makeId: cswPrivate.wizard.makeStepId,
+                                containerMinimum: 0,
+                                action: 'Dispense'
+                            });
+
                             stepThreeDispenseComplete = true;
                         }
                     }
@@ -306,7 +327,10 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                var designGrid = 'Unknown';//TODO - fill with numOfContainers/quantity/unit data (for Dispense)
+                var designGrid = 'Unknown';
+                if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
+                    designGrid = JSON.stringify(cswPrivate.amountsGrid.quantities);
+                }
 
                 var jsonData = {
                     SourceContainerNodeId: cswPrivate.sourceContainerNodeId,
@@ -350,6 +374,7 @@
                     sourceContainerNodeId: cswPrivate.sourceContainerNodeId,
                     currentQuantity: cswPrivate.currentQuantity,
                     currentUnitName: cswPrivate.currentUnitName,
+                    capacity: cswPrivate.capacity,
                     Title: 'Create New Inspection',
                     StepCount: 3,
                     Steps: cswPrivate.wizardSteps,

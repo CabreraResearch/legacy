@@ -245,11 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
                 else if( OCP.PropName == DispensePropertyName )
                 {
                     ActionData = this.NodeId.ToString();
-                    JObject ActionDataObj = new JObject();
-                    ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
-                    ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
-                    CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
-                    ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+                    JObject ActionDataObj = _getDispenseActionData();
                     ActionData = ActionDataObj.ToString();
                     ButtonAction = NbtButtonAction.dispense;
                 }
@@ -289,6 +285,30 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion
 
         #region Private Helper Methods
+
+        private JObject _getDispenseActionData()
+        {
+            JObject ActionDataObj = new JObject();
+            ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
+            ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
+            CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
+            ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+            JObject CapacityObj = _getCapacityJSON();
+            ActionDataObj["capacity"] = CapacityObj.ToString();
+            return ActionDataObj;
+        }
+
+        private JObject _getCapacityJSON()
+        {
+            JObject CapacityObj = new JObject();
+            CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.GetNode( this.Size.RelatedNodeId );
+            if( null != sizeNode )
+            {
+                CswNbtNodePropQuantity Capacity = sizeNode.Capacity;
+                Capacity.ToJSON( CapacityObj );
+            }
+            return CapacityObj;
+        }
 
         private void _DisposeContainer()
         {

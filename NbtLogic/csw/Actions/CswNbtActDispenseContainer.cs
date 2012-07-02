@@ -73,12 +73,13 @@ namespace ChemSW.Nbt.Actions
                 if( GridArray[i].Type == JTokenType.Object )
                 {
                     JObject CurrentRow = (JObject) GridArray[i];
-                    int NumOfContainers = CswConvert.ToInt32( CurrentRow["numOfContainers"] );
-                    double QuantityToDispense = CswConvert.ToDouble( CurrentRow["quantityToDispense"] );
-                    string UnitId = CswConvert.ToString( CurrentRow["unitId"] );
+                    int NumOfContainers = CswConvert.ToInt32( CurrentRow["containerNo"] );
+                    double QuantityToDispense = CswConvert.ToDouble( CurrentRow["quantity"] );
+                    string UnitId = CswConvert.ToString( CurrentRow["unitid"] );
+                    string Barcode = CswConvert.ToString( CurrentRow["barcodes"] );
                     CswPrimaryKey UnitOfMeasurePK = new CswPrimaryKey();
                     UnitOfMeasurePK.FromString( UnitId );
-                    _dispenseMaterialFromContainer( ContainerNodeTypeId, NumOfContainers, QuantityToDispense, UnitOfMeasurePK );
+                    _dispenseMaterialFromContainer( ContainerNodeTypeId, NumOfContainers, QuantityToDispense, UnitOfMeasurePK, Barcode );
                 }
             }
             _SourceContainer.postChanges( false );
@@ -87,7 +88,7 @@ namespace ChemSW.Nbt.Actions
             ret["viewId"] = ViewId;
             ret["barcodeId"] = _SourceContainer.NodeId.ToString() + "_" + _SourceContainer.Barcode.NodeTypePropId.ToString();
 
-            return new JObject();
+            return ret;
         }
 
         private void _addMaterialToContainer( double Quantity, CswPrimaryKey UnitId )
@@ -106,7 +107,7 @@ namespace ChemSW.Nbt.Actions
             _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste, QuantityToWaste );
         }
 
-        private void _dispenseMaterialFromContainer( string ContainerNodeTypeId, int NumOfContainers, double QuantityToDispense, CswPrimaryKey UnitId )
+        private void _dispenseMaterialFromContainer( string ContainerNodeTypeId, int NumOfContainers, double QuantityToDispense, CswPrimaryKey UnitId, string Barcode )
         {
             if( NumOfContainers == 0 )
             {
@@ -119,7 +120,7 @@ namespace ChemSW.Nbt.Actions
                 for( Int32 i = 0; i < NumOfContainers; i += 1 )
                 {
                     double SourceQuantityDispensed = _getDispenseAmountInProperUnits( QuantityToDispense, UnitId, _SourceContainer.Quantity.UnitId );
-                    CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId, QuantityToDispense, UnitId );
+                    CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId, QuantityToDispense, UnitId, Barcode );
                     _SourceContainer.Quantity.Quantity = _SourceContainer.Quantity.Quantity - SourceQuantityDispensed;
                     _createContainerTransactionNode( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, SourceQuantityDispensed, ChildContainer.NodeId );
                 }
@@ -135,7 +136,7 @@ namespace ChemSW.Nbt.Actions
             return convertedValue;
         }
 
-        private CswNbtObjClassContainer _createChildContainer( string ContainerNodeTypeId, double QuantityDispensed, CswPrimaryKey UnitId )
+        private CswNbtObjClassContainer _createChildContainer( string ContainerNodeTypeId, double QuantityDispensed, CswPrimaryKey UnitId, string Barcode )
         {
             CswNbtObjClassContainer ChildContainer = null;
             CswNbtMetaDataNodeType ContainerNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ContainerNodeTypeId ) );
@@ -144,11 +145,19 @@ namespace ChemSW.Nbt.Actions
                 CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
                 CopyNode.copyPropertyValues( _SourceContainer.Node );
                 ChildContainer = CopyNode;
-                ChildContainer.Barcode.setBarcodeValue();
+                if( false == String.IsNullOrEmpty( Barcode ) )
+                {
+                    ChildContainer.Barcode.setBarcodeValueOverride( Barcode, false );
+                }
+                else
+                {
+                    ChildContainer.Barcode.setBarcodeValue();
+                }
                 ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 ChildContainer.Quantity.Quantity = QuantityDispensed;
                 ChildContainer.Quantity.UnitId = UnitId;
                 ChildContainer.postChanges( false );
+                _ContainersToView.Add( ChildContainer.NodeId );
             }
             return ChildContainer;
         }
