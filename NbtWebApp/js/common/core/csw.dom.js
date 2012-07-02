@@ -142,20 +142,15 @@
                 /// <param name="propName" type="Object">the property name to display</param>
                 /// <param name="isRequired" type="Object">whether or not this property is required</param>
                 /// <returns type="Object">The parent Csw object (for chaining)</returns> 
+                if (Csw.bool(isRequired)) {
+                    propName += " *";
+                }
                 try {
-                    if (Csw.bool(isRequired)) {
-                        cswPublic.$.append(propName + "*");
-                    } else {
-                        cswPublic.$.append(propName);
-                    }
+                    cswPublic.$.append(propName);
                 } catch (e) {
                     Csw.debug.log('Warning: append() failed, text() was used instead.', true);
                     if (Csw.isString(propName)) {
-                        if (Csw.bool(isRequired)) {
-                            cswPublic.$.text(propName + "*");
-                        } else {
-                            cswPublic.$.text(propName);
-                        }
+                        cswPublic.$.text(propName);
                     }
                 }
                 return cswPublic;
