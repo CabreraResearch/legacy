@@ -29,6 +29,15 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
+            //get all nodetypes with a category of 'Labe Safety' and add '(demo)' to 'category' and 'nodetypename'
+            CswTableUpdate nodetypeTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "select_nt_category_26772", "nodetypes" );
+            DataTable nodeTypes = nodetypeTU.getTable( "where category = 'Lab Safety'" );
+            foreach( DataRow row in nodeTypes.Rows )
+            {
+                row["nodetypename"] += " (demo)";
+                row["category"] += " (demo)";
+            }
+            nodetypeTU.update( nodeTypes );
 
         }//Update()
 
