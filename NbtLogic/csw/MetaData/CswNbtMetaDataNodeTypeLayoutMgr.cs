@@ -14,14 +14,30 @@ namespace ChemSW.Nbt.MetaData
     /// </summary>
     public class CswNbtMetaDataNodeTypeLayoutMgr // : ICswNbtMetaDataObject
     {
-        public enum LayoutType
+        public sealed class LayoutType : CswEnum<LayoutType>
         {
-            Unknown,
-            Add,
-            Edit,
-            Preview,
-            Table
+            private LayoutType( String Name ) : base( Name ) { }
+            public static IEnumerable<LayoutType> _All { get { return CswEnum<LayoutType>.All; } }
+            public static implicit operator LayoutType( string str )
+            {
+                LayoutType ret = Parse( str );
+                return ( ret != null ) ? ret : LayoutType.Unknown;
+            }
+            public static readonly LayoutType Unknown = new LayoutType( "Unknown" );
+            public static readonly LayoutType Add = new LayoutType( "Add" );
+            public static readonly LayoutType Edit = new LayoutType( "Edit" );
+            public static readonly LayoutType Preview = new LayoutType( "Preview" );
+            public static readonly LayoutType Table = new LayoutType( "Table" );
         }
+
+        //public enum LayoutType
+        //{
+        //    Unknown,
+        //    Add,
+        //    Edit,
+        //    Preview,
+        //    Table
+        //}
 
         public LayoutType LayoutTypeForEditMode( string EditMode )
         {
