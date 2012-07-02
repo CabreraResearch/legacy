@@ -20,7 +20,7 @@
                 wizard: '',
                 wizardSteps: {
                     1: 'Select a Dispense Type',
-                    2: 'Select a Destination Container NodeType',
+                    2: 'Select a Destination Container Type',
                     3: 'Select Amount'
                 },
                 buttons: {
@@ -29,8 +29,14 @@
                     finish: 'finish',
                     cancel: 'cancel'
                 },
+                dispenseTypes: {
+                    0: '',
+                    1: 'Dispense into a Child Container',
+                    2: 'Dispense for Use',
+                    3: 'Waste Material',
+                    4: 'Add Material to Container'
+                },
                 divStep1: '', divStep2: '', divstep3: '',
-                //TODO - fill with necessary variables
                 dispenseType: 'Unknown',
                 quantity: 'Unknown',
                 unitId: 'Unknown',
@@ -70,16 +76,10 @@
                 var stepOneComplete = false;
                 return function () {
                     if (Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
-                        cswPrivate.onCancel();//If you don't have a sourceContainerNodeId, go home
+                        cswPrivate.onCancel();
                     }
 
-                    var dispenseTypeTable = '',
-                        dispenseTypes = {
-                            0: '',
-                            1: 'Add',
-                            2: 'Waste',
-                            3: 'Dispense'
-                        };
+                    var dispenseTypeTable = '';
 
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
@@ -102,7 +102,7 @@
                         var dispenseTypeSelect = dispenseTypeDiv.select({
                             ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
                             cssclass: 'selectinput',
-                            values: dispenseTypes,
+                            values: cswPrivate.dispenseTypes,
                             onChange: function () {
                                 if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
                                     cswPrivate.dispenseType = dispenseTypeSelect.val();
@@ -112,7 +112,7 @@
                                     cswPrivate.wizard.next.disable();
                                 }
                             },
-                            selected: dispenseTypes[0]
+                            selected: cswPrivate.dispenseTypes[0]
                         });
 
                         stepOneComplete = true;
@@ -188,7 +188,7 @@
                 var stepThreeAddWasteComplete = false;
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    if (cswPrivate.dispenseType === 'Dispense') {
+                    if (cswPrivate.dispenseType === cswPrivate.dispenseTypes[1]) {
                         if (false === stepThreeDispenseComplete) {
                             if (stepThreeAddWasteComplete) {
                                 cswPrivate.divStep3.empty();
@@ -240,47 +240,9 @@
                             });
 
                             quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
-
                             quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
+                            quantityTable.cell(2, 2).quantity(cswPrivate.capacity);
 
-                            var quantityNumDiv = quantityTable.cell(2, 2).div();
-
-                            var quantityNumBox = quantityNumDiv.numberTextBox({
-                                ID: cswPrivate.makeStepId('setQuantityNumBox'),
-                                value: '',
-                                MinValue: 0,
-                                MaxValue: 999999999,
-                                Precision: 6,
-                                Required: true,
-                                onChange: function () {
-                                    cswPrivate.quantity = quantityNumBox.val();
-                                    cswPrivate.unitId = quantityUnitSelect.val();
-                                    if (false === Csw.isNullOrEmpty(quantityNumBox.val())
-                                    && false === Csw.isNullOrEmpty(quantityUnitSelect.val())) {
-                                        cswPrivate.wizard.finish.enable();
-                                    }
-                                    else {
-                                        cswPrivate.wizard.finish.disable();
-                                    }
-                                }
-                            });
-
-                            var quantityUnitDiv = quantityTable.cell(2, 3).div();
-
-                            var quantityUnitSelect = quantityUnitDiv.nodeSelect({
-                                ID: Csw.makeSafeId('nodeSelect'),
-                                objectClassName: 'UnitOfMeasureClass',
-                                onSelect: function (data, nodeTypeCount) {
-                                    cswPrivate.unitId = quantityUnitSelect.val();
-                                    if (false === Csw.isNullOrEmpty(quantityNumBox.val())
-                                    && false === Csw.isNullOrEmpty(quantityUnitSelect.val())) {
-                                        cswPrivate.wizard.finish.enable();
-                                    }
-                                    else {
-                                        cswPrivate.wizard.finish.disable();
-                                    }
-                                }
-                            });
                             stepThreeAddWasteComplete = true;
                         }
                     }
@@ -356,15 +318,15 @@
                                 },
                                 'okText': 'Yes',
                                 'cancelText': 'No'
-                            }); 
-                            
+                            });
+
                         }
                     },
                     error: function () {
                         cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     }
-                });               
+                });
             };
 
             (function () {
@@ -375,7 +337,7 @@
                     currentQuantity: cswPrivate.currentQuantity,
                     currentUnitName: cswPrivate.currentUnitName,
                     capacity: cswPrivate.capacity,
-                    Title: 'Create New Inspection',
+                    Title: 'Dispense Container',
                     StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,

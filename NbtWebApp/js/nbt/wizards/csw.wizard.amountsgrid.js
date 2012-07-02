@@ -39,7 +39,7 @@
                     if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Capacity of a Size.', '', 'csw.wizard.amountsgrid.js', 34));
                     }
-                    cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action });
+                    cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
                     cswParent.br({ number: 2 });
 
                     cswPublic.thinGrid = cswParent.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']] });
