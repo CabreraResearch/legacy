@@ -486,17 +486,62 @@
                     }
                 }
                 return cswPrivate.atLeastOne;
-            };
+            }; // _handleProperties()
 
-            // _handleProperties()
+            cswPrivate.getCellSetForTabGroup = function(layoutTable, tabgroup, displayrow, displaycol) {
+
+                if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables)) {
+                    cswPrivate.tabgrouptables = [];
+                }
+                if(Csw.isNullOrEmpty(cswPrivate.tabgrouptables[tabgroup])) {
+                    var cellSet = layoutTable.cellSet(displayrow, displaycol);
+                    var propCell = cswPrivate.getPropertyCell(cellSet);
+
+                    var $fieldset = $('<fieldset>');
+                    $fieldset.append('<legend>' + tabgroup + '</legend>');
+                    propCell.append($fieldset);
+
+                    var div = Csw.literals.div({
+                        $parent: $fieldset
+                    });
+
+                    var tabgroupLayoutTable = div.layoutTable({
+                        ID: tabgroup,
+                        OddCellRightAlign: true,
+                        ReadOnly: (cswPrivate.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.ReadOnly),
+                        cellSet: {
+                            rows: 1,
+                            columns: 2
+                        },
+                        onSwap: function (e, onSwapData) {
+                            cswPrivate.onSwap(tabid, onSwapData);
+                        },
+                        showConfigButton: false,
+                        showExpandRowButton: false,
+                        showExpandColButton: false,
+                        showRemoveButton: false
+                    });
+                    cswPrivate.tabgrouptables[tabgroup] = tabgroupLayoutTable;
+                }
+
+                return cswPrivate.tabgrouptables[tabgroup].cellSet(displayrow, displaycol);
+
+            }; // getCellSetForTabGroup()
+
 
             cswPrivate.handleProp = function (layoutTable, propData, tabContentDiv, tabid, configMode) {
                 'use strict';
                 var propid = propData.id,
-                    cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol),
+                    cellSet,
                     helpText = Csw.string(propData.helptext),
                     propName = Csw.string(propData.name),
                     labelCell = {};
+
+                if(false === Csw.isNullOrEmpty(propData.tabgroup)) {
+                    cellSet = cswPrivate.getCellSetForTabGroup(layoutTable, propData.tabgroup, propData.displayrow, propData.displaycol);
+                } else {
+                    cellSet = layoutTable.cellSet(propData.displayrow, propData.displaycol);
+                }
 
                 layoutTable.addCellSetAttributes(cellSet, { propId: propid });
 

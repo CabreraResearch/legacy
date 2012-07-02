@@ -328,18 +328,11 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private void _addProp( JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 TabId )
         {
-            //if( _CswNbtResources.EditMode == NodeEditMode.Add )
-            //{
-            //    ParentObj.Add( makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Prop.AddLayout.DisplayRow, Prop.AddLayout.DisplayColumn ) );
-            //}
-            //else
-            //{
             CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType = _CswNbtResources.MetaData.NodeTypeLayout.LayoutTypeForEditMode( _CswNbtResources.EditMode );
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
             if( false == Node.Properties[Prop].Hidden )
             {
-                JProperty JpProp = makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow,
-                                                Layout.DisplayColumn );
+                JProperty JpProp = makePropJson( Node.NodeId, TabId, Prop, Node.Properties[Prop], Layout.DisplayRow, Layout.DisplayColumn, Layout.TabGroup );
                 ParentObj.Add( JpProp );
                 JObject PropObj = (JObject) JpProp.Value;
 
@@ -348,10 +341,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                 JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
                 PropObj.Add( SubPropsJProp );
                 bool HasSubProps = false;
-                foreach(
-                    CswNbtMetaDataNodeTypeProp FilterProp in
-                        _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId,
-                                                                                  LayoutType ) )
+                foreach( CswNbtMetaDataNodeTypeProp FilterProp in
+                        _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId, LayoutType ) )
                 {
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
@@ -359,9 +350,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                         CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout =
                             _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
                         JProperty JPFilterProp = makePropJson( Node.NodeId, TabId, FilterProp,
-                                                              Node.Properties[FilterProp],
-                                                              FilterPropLayout.DisplayRow,
-                                                              FilterPropLayout.DisplayColumn );
+                                                               Node.Properties[FilterProp],
+                                                               FilterPropLayout.DisplayRow,
+                                                               FilterPropLayout.DisplayColumn,
+                                                               FilterPropLayout.TabGroup );
                         SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;
 
@@ -372,8 +364,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     } // if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                 } // foreach( CswNbtMetaDataNodeTypeProp FilterProp in Tab.NodeTypePropsByDisplayOrder )
                 PropObj["hassubprops"] = HasSubProps;
-            }
-            // } // if-else( _CswNbtResources.EditMode == NodeEditMode.Add )
+            } // if( false == Node.Properties[Prop].Hidden )
         } // addProp()
 
         private Dictionary<Int32, Collection<Int32>> _DisplayRowsAndCols = new Dictionary<Int32, Collection<Int32>>();
@@ -404,7 +395,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public JProperty makePropJson( CswPrimaryKey NodeId, Int32 TabId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, Int32 Row, Int32 Column )
+        public JProperty makePropJson( CswPrimaryKey NodeId, Int32 TabId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, Int32 Row, Int32 Column, string TabGroup )
         {
             CswPropIdAttr PropIdAttr = null;
             PropIdAttr = new CswPropIdAttr( NodeId, Prop.PropId );
@@ -426,6 +417,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             PropObj["displayrow"] = DisplayRow.ToString();
             PropObj["displaycol"] = Column.ToString();
+            PropObj["tabgroup"] = TabGroup.ToString();
             PropObj["required"] = Prop.IsRequired.ToString().ToLower();
             PropObj["copyable"] = Prop.IsCopyable().ToString().ToLower();
 
