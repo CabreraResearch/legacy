@@ -15,26 +15,19 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            //Get all views with a category of "Lab Safety"
-            //CswTableUpdate nodeViewsTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "select_by_category_26772", "node_views" );
-            //DataTable nodeViews = nodeViewsTU.getTable( "category" );
-            //foreach( DataRow row in nodeViews.Rows )
-            //{
-            //    if( row["category"].Equals( "Lab Safety" ) )
-            //    {
-            //        row["viewname"] = row["viewname"] + " (demo)";
-            //        row["category"] = "Lab Safety (demo)";
-            //    }
-            //}
-            //nodeViewsTU.update( nodeViews );
-
-            //CswTableUpdate nodesTU = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "select_demo_nodes_26772", "nodes" );
-            //DataTable demoNodes = nodesTU.getTable( "isdemo", 1 );
-            //foreach( DataRow row in demoNodes.Rows )
-            //{
-            //    row["nodename"] += " (demo)";
-            //}
-
+            //Get all views with a category of "Lab Safety" and add '(demo)' to 'viewname' and 'category'
+            CswTableSelect nodeViewsTS = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "select_by_category_26772", "node_views" );
+            DataTable nodeViews = nodeViewsTS.getTable( "where category = 'Lab Safety'" );
+            foreach( DataRow row in nodeViews.Rows )
+            {
+                CswNbtView curView = _CswNbtSchemaModTrnsctn.restoreView( row["viewname"].ToString() );
+                if( null != curView ) //paranoid
+                {
+                    curView.ViewName += " (demo)";
+                    curView.Category += " (demo)";
+                    curView.save();
+                }
+            }
 
 
         }//Update()
