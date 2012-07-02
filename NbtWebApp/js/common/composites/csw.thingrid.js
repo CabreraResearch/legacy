@@ -43,10 +43,20 @@
                 if (options) {
                     $.extend(cswPrivate, options);
                 }
-
-                cswPrivate.table = cswParent.table(cswPrivate);
+                cswPrivate.div = cswParent.div();
+                cswPrivate.table = cswPrivate.div.table(cswPrivate);
                 cswPublic = Csw.dom({}, cswPrivate.table);
             } ());
+
+            cswPublic.hide = function () {
+                cswPrivate.div.hide();
+                return cswPublic;
+            };
+
+            cswPublic.show = function () {
+                cswPrivate.div.show();
+                return cswPublic;
+            };
 
             cswPublic.addCell = function (value, row, col) {
                 var cssClass = '';

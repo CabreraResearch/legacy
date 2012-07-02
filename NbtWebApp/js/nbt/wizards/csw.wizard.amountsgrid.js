@@ -9,11 +9,11 @@
             ///<summary>Creates an amounts thin grid with an Add form.</summary>
             var cswPublic = {
                 quantities: [],
-                countControl: {},
-                qtyControl: {},
-                barcodeControl: {},
-                amountForm: {},
-                thinGrid: {}
+                countControl: null,
+                qtyControl: null,
+                barcodeControl: null,
+                amountForm: null,
+                thinGrid: null
             };
 
             Csw.tryExec(function () {
@@ -21,9 +21,9 @@
                 var cswPrivate = {
                     ID: 'wizardAmountsThinGrid',
                     onAdd: null,
-                    quantity: { },
+                    quantity: {},
                     containerlimit: 25,
-                    makeId: function(text) {
+                    makeId: function (text) {
                         return text;
                     }
                 };
@@ -40,15 +40,16 @@
                     cswParent.span({ text: 'Enter the Amounts to Receive.' });
                     cswParent.br({ number: 2 });
 
-                    cswPublic.thinGrid = cswParent.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']] });
                     cswParent.br();
                     cswPublic.amountForm = cswParent.form();
                     cswPrivate.amountsTable = cswPublic.amountForm.table();
                     cswPrivate.count = 0;
+                    cswPublic.amountForm.br({ number: 2 });
+                    cswPublic.thinGrid = cswPublic.amountForm.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']] });
+                    cswPublic.thinGrid.hide();
+                } ());
 
-                }());
-
-                cswPrivate.makeAddAmount = function() {
+                cswPrivate.makeAddAmount = function () {
                     'use strict';
                     cswPrivate.amountsTable.empty();
 
@@ -69,7 +70,7 @@
                         ceilingVal: cswPrivate.containerlimit,
                         Precision: 6,
                         Required: true,
-                        onChange: function(value) {
+                        onChange: function (value) {
                             thisAmount.containerNo = value;
                         }
                     });
@@ -83,7 +84,7 @@
                     cswPublic.barcodeControl = cswPrivate.amountsTable.cell(3, 1).textArea({
                         ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
                         labelText: 'Barcodes: ',
-                        onChange: function(value) {
+                        onChange: function (value) {
                             thisAmount.barcodes = value;
                         }
                     });
@@ -93,12 +94,15 @@
                         ID: Csw.tryExec(cswPrivate.makeId, 'addBtn'),
                         enabledText: 'Add',
                         disableOnClick: false,
-                        onClick: function() {
+                        onClick: function () {
+
                             var newCount = cswPrivate.count + Csw.number(thisAmount.containerNo);
                             if (newCount <= cswPrivate.containerlimit) {
                                 cswPrivate.count = newCount;
-
-                                var parseBarcodes = function(anArray) {
+                                if (cswPrivate.count > 0) {
+                                    cswPublic.thinGrid.show();
+                                }
+                                var parseBarcodes = function (anArray) {
                                     if (anArray.length > thisAmount.containerNo) {
                                         anArray.splice(0, anArray.length - thisAmount.containerNo);
                                     }
@@ -125,7 +129,7 @@
 
                 (function _post() {
                     cswPrivate.makeAddAmount();
-                }());
+                } ());
 
             });
 

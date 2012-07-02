@@ -1,4 +1,4 @@
-/// <reference path="~/js/CswNbt-vsdoc.js" />
+﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
@@ -101,7 +101,7 @@
 
                 cswPrivate.onBeforeNext = function (currentStepNo) {
                     var isNotStepTwoOrIsValid = currentStepNo !== 2 || cswPrivate.tabsAndProps.isFormValid();
-                    var isStepTwoAndHasQuantity = false;
+                    var isStepTwoAndHasQuantity = isNotStepTwoOrIsValid;
                     if (currentStepNo === 2) {
                         if (false === Csw.isNullOrEmpty(cswPrivate.quantity)) {
                             isStepTwoAndHasQuantity = true;
@@ -239,10 +239,10 @@
                     if (cswPrivate.tabsAndProps.isFormValid()) {
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                         if (false === cswPrivate.stepThreeComplete) {
+                            cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                             cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.empty();
 
