@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
+/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
@@ -109,7 +109,7 @@
                             isStepTwoAndHasQuantity = cswPrivate.getQuantity(false);
                         }
                     }
-                    return isNotStepTwoOrIsValid || isStepTwoAndHasQuantity;
+                    return isNotStepTwoOrIsValid && isStepTwoAndHasQuantity;
                 };
 
                 cswPrivate.finalize = function () {
