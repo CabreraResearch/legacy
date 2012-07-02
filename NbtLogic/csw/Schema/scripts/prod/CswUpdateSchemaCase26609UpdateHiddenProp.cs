@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtNode CurrentNode in CurrentReportNodes )
             {
                 CurrentNode.Properties[CswNbtObjClassReport.ReportUserNamePropertyName].Hidden = true;
+                CurrentNode.Properties[CswNbtObjClassReport.FormattedSqlPropertyName].Hidden = true;
             }
 
         }//Update()

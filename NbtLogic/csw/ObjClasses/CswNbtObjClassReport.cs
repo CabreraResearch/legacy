@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -12,6 +13,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static string CategoryPropertyName { get { return "Category"; } }
         //public static string ViewPropertyName { get { return "View"; } }
         public static string SqlPropertyName { get { return "SQL"; } }
+        public static string FormattedSqlPropertyName { get { return "FormattedSQL"; } }
         public static string btnRunPropertyName { get { return "Run"; } }
         public static string ReportUserNamePropertyName { get { return "ReportUserName"; } }
 
@@ -91,6 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             _CswNbtNode.Properties[ReportUserNamePropertyName].Hidden = true;
+            _CswNbtNode.Properties[FormattedSqlPropertyName].Hidden = true;
 
         }//beforeWriteNode()
 
@@ -136,9 +139,26 @@ namespace ChemSW.Nbt.ObjClasses
         {
             get
             {
-                return ( _CswNbtNode.Properties[SqlPropertyName].AsMemo );
+
+                CswTemplateTextFormatter CswTemplateTextFormatter = new Core.CswTemplateTextFormatter();
+                CswTemplateTextFormatter.addReplacementValue( "username", ReportUserName.Text );
+                string Message = string.Empty;
+                CswTemplateTextFormatter.setTemplateText( _CswNbtNode.Properties[SqlPropertyName].AsMemo.Text, ref Message );
+                FormattedSQL.Text = CswTemplateTextFormatter.getFormattedText();
+
+                return ( _CswNbtNode.Properties[FormattedSqlPropertyName] ); //sic.
             }
         }
+
+
+        public CswNbtNodePropMemo FormattedSQL
+        {
+            get
+            {
+                return ( _CswNbtNode.Properties[FormattedSqlPropertyName] );
+            }
+        }
+
 
         public CswNbtNodePropButton Run
         {

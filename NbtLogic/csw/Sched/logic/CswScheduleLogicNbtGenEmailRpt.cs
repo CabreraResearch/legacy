@@ -197,15 +197,10 @@ namespace ChemSW.Nbt.Sched
                                                                     ReportObjClass = (CswNbtObjClassReport) ReportNode;
 
 
-                                                                    CswTemplateTextFormatter CswTemplateTextFormatter = new Core.CswTemplateTextFormatter();
-                                                                    CswTemplateTextFormatter.addReplacementValue( "username", UserNodeAsUser.Username );
+                                                                    ReportObjClass.ReportUserName.Text = UserNodeAsUser.Username;
+                                                                    string ReportSql = ReportObjClass.SQL.Text;
 
-                                                                    string RawSelectSql = ReportObjClass.SQL.Text;
-                                                                    string Message = string.Empty;
-                                                                    CswTemplateTextFormatter.setTemplateText( RawSelectSql, ref Message );
-                                                                    string FormattedSql = CswTemplateTextFormatter.getFormattedText();
-
-                                                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", FormattedSql );
+                                                                    CswArbitrarySelect ReportSelect = _CswNbtResources.makeCswArbitrarySelect( "MailReport_" + ReportNode.NodeId.ToString() + "_Select", ReportSql );
                                                                     ReportTable = ReportSelect.getTable();
 
                                                                     EmailMessageSubject = CurrentMailReport.Type.Value + " Notification: " + ReportNode.NodeName;

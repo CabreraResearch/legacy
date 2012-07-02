@@ -29,6 +29,18 @@ namespace ChemSW.Nbt.Schema
                                                  }
                       );
 
+            CswNbtMetaDataObjectClassProp FormattedSqlProp =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( RptOC,
+                                                 new CswNbtWcfMetaDataModel.ObjectClassProp
+                                                 {
+                                                     PropName = CswNbtObjClassReport.FormattedSqlPropertyName.ToString(),
+                                                     FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                                                     SetValOnAdd = false,
+                                                     IsRequired = false,
+                                                     ServerManaged = true
+                                                 }
+                      );
+
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
 
