@@ -869,9 +869,10 @@ namespace ChemSW.Nbt.WebPages
                     Int32 DisplayColumn = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     Int32 DisplayRowAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayRowAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
                     Int32 DisplayColAdd = CswConvert.ToInt32( getPropAttributeValue( "EditProp_DisplayColAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) );
+                    string TabGroup = getPropAttributeValue( "EditProp_TabGroupValue" + OldSelectedNodeTypePropId.ToString(), typeof( string ), EditPropPlaceHolder );
                     bool SetValueOnAdd = Convert.ToBoolean( getPropAttributeValue( "EditProp_SetValueOnAddValue" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );
 
-                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow, DisplayColumn );
+                    PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow, DisplayColumn, TabGroup );
                     if( SetValueOnAdd )
                     {
                         PropToSave.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true, Int32.MinValue, DisplayRowAdd, DisplayColAdd );
@@ -1515,6 +1516,14 @@ namespace ChemSW.Nbt.WebPages
                     NameValue.Width = Unit.Parse( "400px" );
                     NameValue.MaxLength = 512;
                     NameRow.Cells[1].Controls.Add( NameValue );
+
+                    TableRow TabGroupRow = makeEditPropTableRow( EditPropPlaceHolder );
+                    ( (Literal) TabGroupRow.Cells[0].Controls[0] ).Text = LabelNodeTypeTab + " Group:";
+                    TextBox TabGroupValue = new TextBox();
+                    TabGroupValue.CssClass = "textinput";
+                    TabGroupValue.ID = "EditProp_TabGroupValue" + SelectedNodeTypeProp.PropId.ToString();
+                    TabGroupValue.Text = SelectedNodeTypeProp.FirstEditLayout.TabGroup.ToString();
+                    TabGroupRow.Cells[1].Controls.Add( TabGroupValue );
 
                     TableRow DisplayColRow = makeEditPropTableRow( EditPropPlaceHolder );
                     ( (Literal) DisplayColRow.Cells[0].Controls[0] ).Text = LabelNodeTypeTab + " Display Column:";

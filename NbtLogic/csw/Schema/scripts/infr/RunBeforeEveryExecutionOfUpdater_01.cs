@@ -31,6 +31,12 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.addBooleanColumn( "jct_nodes_props", "hidden", "Determines whether property displays.", true, false );
             }
+            
+            // case 26957
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_layout", "tabgroup" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodetype_layout", "tabgroup", "Assign properties into a group on a tab", false, false, 50 );
+            }
 
         }//Update()
 
