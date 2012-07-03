@@ -25,3 +25,4 @@ Csw*-vsdoc.js
 NbtWebApp/css/_dev.*.css
 NbtWebApp/MainCswIncludes.html
 glob:TestResults/*
+*.js.map
