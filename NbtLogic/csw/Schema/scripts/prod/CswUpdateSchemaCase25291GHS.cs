@@ -25,24 +25,24 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataFieldType RelationshipFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Relationship );
 
 
-            // Jurisdiction NodeType
-            CswNbtMetaDataNodeType JurisdictionNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( GenericOC )
-            {
-                NodeTypeName = "Jurisdiction",
-                Category = "System",
-                IconFileName = "globe.gif"
-            } );
-            CswNbtMetaDataNodeTypeProp JurisdictionNameNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( JurisdictionNT, TextFT, "Name" ) );
-            JurisdictionNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Name" ) );
+            //// Jurisdiction NodeType
+            //CswNbtMetaDataNodeType JurisdictionNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( GenericOC )
+            //{
+            //    NodeTypeName = "Jurisdiction",
+            //    Category = "System",
+            //    IconFileName = "globe.gif"
+            //} );
+            //CswNbtMetaDataNodeTypeProp JurisdictionNameNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( JurisdictionNT, TextFT, "Name" ) );
+            //JurisdictionNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( "Name" ) );
 
-            // Default Jurisdictions
-            CswNbtNode JurisNorthAmericaNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-            JurisNorthAmericaNode.Properties[JurisdictionNameNTP].AsText.Text = "North America";
-            JurisNorthAmericaNode.postChanges( false );
+            //// Default Jurisdictions
+            //CswNbtNode JurisNorthAmericaNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            //JurisNorthAmericaNode.Properties[JurisdictionNameNTP].AsText.Text = "North America";
+            //JurisNorthAmericaNode.postChanges( false );
 
-            CswNbtNode JurisEuropeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-            JurisEuropeNode.Properties[JurisdictionNameNTP].AsText.Text = "Europe";
-            JurisEuropeNode.postChanges( false );
+            //CswNbtNode JurisEuropeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( JurisdictionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            //JurisEuropeNode.Properties[JurisdictionNameNTP].AsText.Text = "Europe";
+            //JurisEuropeNode.postChanges( false );
 
 
             // GHS Phrase NodeType
@@ -75,12 +75,14 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp GHSTypeNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GHSNT, ListFT, "Type" ) { IsRequired = true } );
             CswNbtMetaDataNodeTypeProp GHSMaterialNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GHSNT, RelationshipFT, "Material" ) { IsRequired = true } );
             CswNbtMetaDataNodeTypeProp GHSGHSPhraseNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GHSNT, RelationshipFT, "GHS Phrase" ) { IsRequired = true } );
-            CswNbtMetaDataNodeTypeProp GHSJurisdictionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GHSNT, RelationshipFT, "Jurisdiction" ) { IsRequired = true } );
+            //CswNbtMetaDataNodeTypeProp GHSJurisdictionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GHSNT, RelationshipFT, "Jurisdiction" ) { IsRequired = true } );
+            CswNbtMetaDataNodeTypeProp GHSJurisdictionNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( GHSNT, ListFT, "Jurisdiction" ) { IsRequired = true } );
 
             GHSTypeNTP.ListOptions = "Class Code, Label Code";
             GHSMaterialNTP.SetFK( NbtViewRelatedIdType.ObjectClassId.ToString(), MaterialOC.ObjectClassId );
             GHSGHSPhraseNTP.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), GHSPhraseNT.NodeTypeId );
-            GHSJurisdictionNTP.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), JurisdictionNT.NodeTypeId );
+            //GHSJurisdictionNTP.SetFK( NbtViewRelatedIdType.NodeTypeId.ToString(), JurisdictionNT.NodeTypeId );
+            GHSJurisdictionNTP.ListOptions = "North America, China, Europe, Japan";
 
 
             // Chemical GHS Tab
@@ -203,13 +205,35 @@ namespace ChemSW.Nbt.Schema
                     "X"
                 };
                 CswDelimitedString PictoPaths = new CswDelimitedString( '\n' ) { 
-                    "Images/cispro/c.gif",
-                    "Images/cispro/e.gif",
-                    "Images/cispro/f.gif",
-                    "Images/cispro/n.gif",
-                    "Images/cispro/o.gif",
-                    "Images/cispro/t.gif",
-                    "Images/cispro/xi.gif"
+                    //"Images/cispro/1-1.gif",
+                    //"Images/cispro/1-2.gif",
+                    //"Images/cispro/1-3.gif",
+                    //"Images/cispro/1-4.gif",
+                    //"Images/cispro/1-5.gif",
+                    //"Images/cispro/1-6.gif",
+                    //"Images/cispro/5-2.gif",
+                    "Images/cispro/acide.gif",
+                    //"Images/cispro/acide2.gif",
+                    //"Images/cispro/blan-red.gif",
+                    //"Images/cispro/bleu4.gif",
+                    //"Images/cispro/bleu4-noir.gif",
+                    "Images/cispro/bottle.gif",
+                    "Images/cispro/exclam.gif",
+                    "Images/cispro/explos.gif",
+                    "Images/cispro/flamme.gif",
+                    //"Images/cispro/jaune5-1.gif",
+                    "Images/cispro/pollu.gif",
+                    "Images/cispro/rondflam.gif",
+                    //"Images/cispro/rouge2.gif",
+                    //"Images/cispro/rouge2_noir.gif",
+                    //"Images/cispro/rouge3.gif",
+                    //"Images/cispro/rouge3_noir.gif",
+                    "Images/cispro/silouete.gif",
+                    "Images/cispro/skull.gif"
+                    //"Images/cispro/skull_2.gif",
+                    //"Images/cispro/skull6.gif",
+                    //"Images/cispro/stripes.gif",
+                    //"Images/cispro/vert.gif"
                 };
                 ChemicalGHSPictosNTP.ListOptions = PictoNames.ToString();
                 ChemicalGHSPictosNTP.ValueOptions = PictoPaths.ToString();
