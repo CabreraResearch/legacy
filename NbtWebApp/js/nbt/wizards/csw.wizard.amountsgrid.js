@@ -1,8 +1,7 @@
-﻿/// <reference path="~/js/CswCommon-vsdoc.js" />
+/// <reference path="~/js/CswCommon-vsdoc.js" />
 /// <reference path="~/js/CswNbt-vsdoc.js" />
 
 (function () {
-
     Csw.nbt.wizard.amountsGrid = Csw.nbt.wizard.amountsGrid ||
         Csw.nbt.wizard.register('amountsGrid', function (cswParent, options) {
             'use strict';
@@ -45,7 +44,21 @@
                     cswPrivate.amountsTable = cswPublic.amountForm.table();
                     cswPrivate.count = 0;
                     cswPublic.amountForm.br({ number: 2 });
-                    cswPublic.thinGrid = cswPublic.amountForm.thinGrid({ linkText: '', hasHeader: true, rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']] });
+                    cswPublic.thinGrid = cswPublic.amountForm.thinGrid({
+                        linkText: '',
+                        hasHeader: true, 
+                        rows: [['#', 'Quantity', 'Unit', 'Barcode(s)']],
+                        allowDelete: true,
+                        onDelete: function (rowid) {
+                            Csw.debug.assert(false === Csw.isNullOrEmpty(rowid), 'Rowid is null.');
+                            var reducedQuantities = cswPublic.quantities.filter(function (quantity, index, array) { return quantity.rowid !== rowid; });
+                            Csw.debug.assert(reducedQuantities !== cswPublic.quantities, 'Rowid is null.');
+                            cswPublic.quantities = reducedQuantities;
+                            if(cswPublic.quantities.length < 1) {
+                                cswPublic.thinGrid.hide();
+                            }
+                        }
+                    });
                     cswPublic.thinGrid.hide();
                 } ());
 
@@ -54,6 +67,7 @@
                     cswPrivate.amountsTable.empty();
 
                     var thisAmount = {
+                        rowid: 1,
                         containerNo: 1,
                         quantity: '',
                         unit: '',
@@ -115,7 +129,7 @@
                                     thisAmount.quantity = cswPublic.qtyControl.quantityValue;
                                     thisAmount.unit = cswPublic.qtyControl.unitText;
                                     thisAmount.unitid = cswPublic.qtyControl.unitVal;
-                                    cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
+                                    thisAmount.rowid = cswPublic.thinGrid.addRows([thisAmount.containerNo, thisAmount.quantity, thisAmount.unit, thisAmount.barcodes]);
                                     cswPublic.quantities.push(thisAmount);
                                     Csw.tryExec(cswPrivate.onAdd);
                                     cswPrivate.makeAddAmount();

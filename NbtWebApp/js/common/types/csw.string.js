@@ -32,9 +32,15 @@
             return retObj;
 
         });
-
+    
     Csw.delimitedString = Csw.delimitedString ||
         Csw.register('delimitedString', function (string, opts) {
+        	/// <summary>
+        	/// Parses a string into an array using the specified delimiter.
+        	/// </summary>
+        	/// <param name="string"></param>
+        	/// <param name="opts"></param>
+            /// <returns type="delimitedString">A delimitedString object</returns>
             var cswPrivate = {
                 newLineToDelimiter: true,
                 spaceToDelimiter: true,

@@ -34,6 +34,9 @@
                 isControl: false,
                 hasHeader: false, /* Ignore the header row for now, by default */
                 rowCount: 0,
+                rowElements: [],
+                allowDelete: false,
+                onDelete: null,
                 TableCssClass: 'CswThinGridTable',
                 CellCssClass: 'CswThinGridCells'
             };
@@ -58,8 +61,12 @@
                 return cswPublic;
             };
 
-            cswPublic.addCell = function (value, row, col) {
-                var cssClass = '';
+            cswPrivate.isHeaderRow = function (rowid) {
+                return (rowid === 1 && cswPrivate.hasHeader);
+            };
+
+            cswPublic.addCell = Csw.method(function (value, row, col) {
+                var cssClass = '', thisCell;
                 if (row === 1) {
                     if (cswPrivate.hasHeader) {
                         cssClass = 'CswThinGridHeaderShow';
@@ -67,10 +74,28 @@
                         cssClass = 'CswThinGridHeaderHide';
                     }
                 }
-                cswPrivate.table.cell(row, col).append(Csw.string(value, '&nbsp;')).addClass(cssClass);
-            };
+                thisCell = cswPrivate.table.cell(row, col);
+                thisCell.append(Csw.string(value, '&nbsp;')).addClass(cssClass);
+                if (false === Csw.isArray(cswPrivate.rowElements[row])) {
+                    cswPrivate.rowElements[row] = [thisCell];
+                } else {
+                    cswPrivate.rowElements[row].push(thisCell);
+                }
+                return thisCell;
+            });
 
-            cswPublic.addRows = function (dataRows, row, col) {
+            cswPrivate.addDeleteBtn = Csw.method(function (row, col) {
+                var cell = cswPublic.addCell('', row, col);
+                cell.imageButton({
+                    ButtonType: Csw.enums.imageButton_ButtonType.Delete,
+                    AlternateText: 'Delete',
+                    onClick: function () {
+                        cswPublic.deleteRow(row);
+                    }
+                });
+            });
+
+            cswPublic.addRows = Csw.method(function(dataRows, row, col) {
                 col = col || 0;
                 row = row || cswPrivate.rowCount;
                 if (Csw.isArray(dataRows)) {
@@ -82,9 +107,24 @@
                             cswPublic.addCell(cellVal, cswPrivate.rowCount, col);
                         }
                     });
+                    if (false === cswPrivate.isHeaderRow(row) && cswPrivate.allowDelete) {
+                        col += 1;
+                        cswPrivate.addDeleteBtn(row, col);
+                    }
                 }
                 cswPrivate.rowCount += 1;
-            };
+                return row;
+            });
+            
+            cswPublic.deleteRow = Csw.method(function (rowid) {
+                Csw.debug.assert(Csw.contains(cswPrivate.rowElements, rowid), 'No such row exists.');
+                if (Csw.contains(cswPrivate.rowElements, rowid)) {
+                    Csw.each(cswPrivate.rowElements[rowid], function (cell) {
+                        cell.remove();
+                    });
+                    Csw.tryExec(cswPrivate.onDelete, rowid);
+                }
+            });
 
             (function () {
                 if (cswPrivate.rows.length > 0) {
