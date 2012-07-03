@@ -40,7 +40,8 @@
                 dispenseType: 'Unknown',
                 quantity: 'Unknown',
                 unitId: 'Unknown',
-                containerNodeTypeId: 'Unknown'
+                containerNodeTypeId: 'Unknown',
+                quantityControl: null
             };
             if (options) $.extend(cswPrivate, options);
 
@@ -229,10 +230,7 @@
                             blankText = '[Select One]';
 
                             cswPrivate.divStep3 = cswPrivate.wizard.div(3);
-                            cswPrivate.divStep3.br();
-
-                            cswPrivate.quantity = cswPrivate.capacity.value;
-                            cswPrivate.unitId = cswPrivate.capacity.nodeid;
+                            cswPrivate.divStep3.br();                            
 
                             quantityTable = cswPrivate.divStep3.table({
                                 ID: cswPrivate.makeStepId('setQuantityTable'),
@@ -242,7 +240,7 @@
 
                             quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
                             quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
-                            quantityTable.cell(2, 2).quantity(cswPrivate.capacity);
+                            cswPrivate.quantityControl = quantityTable.cell(2, 2).quantity(cswPrivate.capacity);
 
                             cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
 
@@ -295,6 +293,10 @@
                 var designGrid = 'Unknown';
                 if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
                     designGrid = Csw.serialize(cswPrivate.amountsGrid.quantities);
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.quantityControl)) {
+                    cswPrivate.quantity = cswPrivate.quantityControl.quantityValue;
+                    cswPrivate.unitId = cswPrivate.quantityControl.unitVal;
                 }
 
                 var jsonData = {
