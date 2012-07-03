@@ -24,6 +24,8 @@ namespace ChemSW.Nbt.Schema
             {
                 CurrentNode.Properties[CswNbtObjClassReport.ReportUserNamePropertyName].Hidden = true;
                 CurrentNode.Properties[CswNbtObjClassReport.FormattedSqlPropertyName].Hidden = true;
+
+                CurrentNode.postChanges( true );
             }
 
         }//Update()

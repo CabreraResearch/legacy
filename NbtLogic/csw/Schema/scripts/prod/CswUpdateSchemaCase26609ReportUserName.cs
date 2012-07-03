@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 26609
     /// </summary>
-    public class CswUpdateSchemaCase26609ReportUserName : CswUpdateSchemaTo
+    public class CswUpdateSchemaCase26609SetValOnAdd : CswUpdateSchemaTo
     {
         public override void update()
         {
@@ -22,10 +22,11 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RptOC,
                                                  new CswNbtWcfMetaDataModel.ObjectClassProp
                                                  {
-                                                     PropName = CswNbtObjClassReport.ReportUserNamePropertyName.ToString(),
+                                                     PropName = CswNbtObjClassReport.ReportUserNamePropertyName,
                                                      FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                                                      SetValOnAdd = false,
                                                      IsRequired = false,
+                                                     ServerManaged = true
                                                  }
                       );
 
@@ -33,7 +34,7 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( RptOC,
                                                  new CswNbtWcfMetaDataModel.ObjectClassProp
                                                  {
-                                                     PropName = CswNbtObjClassReport.FormattedSqlPropertyName.ToString(),
+                                                     PropName = CswNbtObjClassReport.FormattedSqlPropertyName,
                                                      FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                                                      SetValOnAdd = false,
                                                      IsRequired = false,
@@ -41,13 +42,18 @@ namespace ChemSW.Nbt.Schema
                                                  }
                       );
 
-            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
+            foreach( CswNbtMetaDataNodeType CurrentNodeType in RptOC.getLatestVersionNodeTypes() )
+            {
+
+                CswNbtMetaDataNodeTypeProp Prop = CurrentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassReport.ReportUserNamePropertyName );
+                Prop.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            }
 
 
 
         }//Update()
 
-    }//class CswUpdateSchemaCase26609ReportUserName
+    }//class CswUpdateSchemaCase26609SetValOnAdd
 
 }//namespace ChemSW.Nbt.Schema
