@@ -59,13 +59,13 @@
                     table.empty();
                     select.children(':not(:selected)').show();
                     selected.hide();
-                    hiddenValue.text(selected.val());
-                } else if (selected) {
-                    addValue(selected.val());
+                }
+                changeValue(selected.val());
+                if (allowMultiple && false === Csw.isNullOrEmpty(selected)) {
                     selected.remove();
                 }
                 addImage(name, href, doAnimation);
-            } // changeImage()
+            }
 
             function addImage(name, href, doAnimation) {
                 var imageCell = table.cell(1, currCol)
@@ -119,6 +119,14 @@
                     nameCell.$.fadeIn('fast');
                 }
             } // addImage()
+
+            function changeValue(valueToChange) {
+                if (false === allowMultiple) {
+                    hiddenValue.text(valueToChange);
+                } else {
+                    addValue(valueToChange);
+                }
+            }
 
             function addValue(valueToAdd) {
                 if (false === Csw.contains(selectedValues, valueToAdd) &&
