@@ -4,7 +4,7 @@ using ChemSW.Nbt.csw.Conversion;
 using ChemSW.Nbt.ObjClasses;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace NbtLogic.Test
+namespace ChemSw.Nbt.Test
 {
     [TestClass]
     public class CswNbtUnitConversionTest

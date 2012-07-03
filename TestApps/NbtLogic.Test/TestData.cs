@@ -11,7 +11,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
-namespace NbtLogic.Test
+namespace ChemSw.Nbt.Test
 {
     internal class TestData
     {
