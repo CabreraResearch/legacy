@@ -25,7 +25,9 @@
 
             if (false === o.ReadOnly) {
                 var select = propDiv.select({ id: o.ID });
-                select.option({ value: '', display: 'Select...' });
+                if (false === o.Required) {
+                    select.option({ value: '', display: 'Select...' });
+                }
                 if (o.Multi) {
                     select.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
                 }
@@ -63,7 +65,9 @@
                     selected.remove();
                 }
                 changeValue(selected.val());
-                addImage(name, href, doAnimation);
+                if (name != 'Select...') {
+                    addImage(name, href, doAnimation);
+                }
             }
 
             function addImage(name, href, doAnimation) {
@@ -96,7 +100,7 @@
                 if (name !== href) {
                     nameCell.a({ href: href, target: '_blank', text: name });
                 }
-                if (false === o.ReadOnly) {
+                if (false === o.ReadOnly && false === o.Required) {
                     nameCell.imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
@@ -104,10 +108,7 @@
                         onClick: function () {
                             nameCell.$.fadeOut('fast');
                             imageCell.$.fadeOut('fast');
-
                             removeValue(href);
-                            select.option({ value: href, display: name });
-
                             Csw.tryExec(o.onChange);
                         } // onClick
                     }); //
