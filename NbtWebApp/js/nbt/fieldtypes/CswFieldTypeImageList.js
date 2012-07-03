@@ -21,14 +21,14 @@
                 ID: Csw.makeId(o.ID, 'tbl'),
                 cellvalign: 'top'
             });
-            var imageTable = imageListTable.cell(2,1).table({
+            var imageTable = imageListTable.cell(1, 1).table({
                 ID: Csw.makeId(o.ID, 'tbl')
             });
             var imgTblCol = 1;
             var selectedValues = [];
 
             if (false === o.ReadOnly) {
-                var imageSelectList = imageListTable.cell(1, 1).select({ id: o.ID });
+                var imageSelectList = imageListTable.cell(1, 2).select({ id: o.ID });
                 if (false === o.Required) {
                     imageSelectList.option({ value: '', display: 'Select...' });
                 }
@@ -66,8 +66,9 @@
                     imageSelectList.children(':not(:selected)').show();
                     selected.hide();
                 } else if (selected) {
-                    selected.remove();
+                    selected.hide();
                 }
+
                 changeValue(selected.val());
                 if (name != 'Select...') {
                     addImage(name, href, doAnimation);
@@ -82,7 +83,7 @@
                 imageCell.a({
                     href: href,
                     target: '_blank'
-                    })
+                })
                     .img({
                         src: href,
                         alt: name,
@@ -91,8 +92,8 @@
                     });
                 var nameCell = imageTable.cell(2, imgTblCol)
                     .css({ 'text-align': 'center',
-                    'padding-left': '10px'
-                });
+                        'padding-left': '10px'
+                    });
                 imgTblCol += 1;
 
                 if (doAnimation) {
@@ -103,7 +104,7 @@
                 if (name !== href) {
                     nameCell.a({ href: href, target: '_blank', text: name });
                 }
-                if (false === o.ReadOnly && false === o.Required) {
+                if (false === o.ReadOnly && (false === o.Required || allowMultiple)) {
                     nameCell.imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
@@ -112,7 +113,9 @@
                             nameCell.$.fadeOut('fast');
                             imageCell.$.fadeOut('fast');
                             removeValue(href);
-
+                            if (allowMultiple) {
+                                imageSelectList.option({ value: href, display: name });
+                            }
                             Csw.tryExec(o.onChange);
                         } // onClick
                     }); //
