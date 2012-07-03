@@ -290,21 +290,9 @@ namespace ChemSW.Nbt.MetaData
         public bool IsLayoutCompatible( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
         {
             bool ret = true;
-            switch( LayoutType )
+            if( LayoutType != CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
             {
-                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add:
-                    ret = ( FieldType != NbtFieldType.Grid );
-                    break;
-                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit:
-                    break;
-                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview:
-                    ret = ( FieldType != NbtFieldType.Grid );
-                    break;
-                case CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table:
-                    ret = ( FieldType != NbtFieldType.Grid );
-                    break;
-                default:
-                    throw new CswDniException( ErrorType.Error, "Unrecognized Layout Type", "CswNbtMetaDataFieldType.IsLayoutCompatible has not been updated with the following layout: " + LayoutType.ToString() );
+                ret = ( FieldType != NbtFieldType.Grid );
             }
             return ret;
         } // IsLayoutCompatible()
