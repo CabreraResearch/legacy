@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Schema
         {
             set
             {
-                _CswUpdateSchemaTo.Description = value; 
+                _CswUpdateSchemaTo.Description = value;
             }
 
 
@@ -63,6 +63,8 @@ namespace ChemSW.Nbt.Schema
 
                 _CswUpdateSchemaTo.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
                 _CswUpdateSchemaTo.update();
+
+                _CswUpdateSchemaTo.CswNbtSchemaModTrnsctn = null;
 
                 _CswNbtSchemaModTrnsctn.commitTransaction();
             }
