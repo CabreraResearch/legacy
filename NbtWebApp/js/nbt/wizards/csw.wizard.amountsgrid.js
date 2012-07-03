@@ -84,7 +84,7 @@
                         MinValue: 1,
                         MaxValue: cswPrivate.containerlimit,
                         ceilingVal: cswPrivate.containerlimit,
-                        Precision: 6,
+                        Precision: 0,
                         Required: true,
                         onChange: function (value) {
                             thisAmount.containerNo = value;
@@ -115,9 +115,7 @@
                             var newCount = cswPrivate.count + Csw.number(thisAmount.containerNo);
                             if (newCount <= cswPrivate.containerlimit) {
                                 cswPrivate.count = newCount;
-                                if (cswPrivate.count > 0) {
-                                    cswPublic.thinGrid.show();
-                                }
+                                
                                 var parseBarcodes = function (anArray) {
                                     if (anArray.length > thisAmount.containerNo) {
                                         anArray.splice(0, anArray.length - thisAmount.containerNo);
@@ -128,6 +126,9 @@
                                 parseBarcodes(barcodeToParse);
 
                                 if (cswPublic.amountForm.isFormValid()) {
+                                    if (cswPrivate.count > 0) {
+                                        cswPublic.thinGrid.show();
+                                    }
                                     thisAmount.quantity = cswPublic.qtyControl.quantityValue;
                                     thisAmount.unit = cswPublic.qtyControl.unitText;
                                     thisAmount.unitid = cswPublic.qtyControl.unitVal;
