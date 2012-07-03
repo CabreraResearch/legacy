@@ -207,8 +207,22 @@ namespace ChemSW.Nbt.PropTypes
         virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
 
-            string valToCheck = _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].AsText.Field1;
-            if( false == valToCheck.Equals( "" ) ) //case 26545 - if entering a null string, we don't check to see if any other "unique" properties are null strings
+            /*case 26545
+            Check if the field type is text, then check if it's a null string
+            If it is not a null string, we can continue on to check if it is unique
+            if it IS a null string, we don't do the uniqueness check, as uniqueness does not apply to empty strings
+            */
+            bool fieldIsNotNull = true;
+            CswNbtMetaDataFieldType textFT = _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Text );
+            if( NodeTypeProp.getFieldType().FieldTypeId == textFT.FieldTypeId )
+            {
+                if( _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Field1.Equals( "" ) )
+                {
+                    fieldIsNotNull = false;
+                }
+            }
+
+            if( fieldIsNotNull )
             {
                 //bz # 6686
                 if( IsUnique() && WasModified && !OverrideUniqueValidation )
