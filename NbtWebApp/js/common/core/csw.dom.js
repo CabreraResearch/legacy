@@ -145,14 +145,7 @@
                 if (Csw.bool(isRequired)) {
                     propName = Csw.makeRequiredName(propName);
                 }
-                try {
-                    cswPublic.append(propName);
-                } catch (e) {
-                    Csw.debug.log('Warning: append() failed, text() was used instead.', true);
-                    if (Csw.isString(propName)) {
-                        cswPublic.text(propName);
-                    }
-                }
+                cswPublic.append(propName);
                 return cswPublic;
             };
 
