@@ -43,8 +43,6 @@ window.initMain = window.initMain || function (undefined) {
                 handleAction(data);
                 break;
             case Csw.enums.nbtButtonAction.dispense:
-                //TODO - close open Container dialog when entering wizard
-                //TODO - get rid of the Containers grid showing underneath the wizard
                 data.actionname = 'DispenseContainer';
                 handleAction(data);
                 break;

@@ -480,6 +480,16 @@
             function setupTabs(date) {
                 tabCell.empty();
                 //tabCell.$.CswNodeTabs({
+
+                function onObjectClassButtonClick(eventOj, data) {
+                    switch (Csw.string(data.action).toLowerCase()) {
+                        case Csw.enums.nbtButtonAction.dispense:
+                            div.$.dialog('close');
+                            break;
+                    }
+                }
+                Csw.subscribe(Csw.enums.events.objectClassButtonClick, onObjectClassButtonClick);
+
                 Csw.layouts.tabsAndProps(tabCell, {
                     nodeids: o.nodeids,
                     nodekeys: o.nodekeys,
