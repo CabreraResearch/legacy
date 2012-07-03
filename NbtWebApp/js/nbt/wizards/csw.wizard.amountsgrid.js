@@ -25,7 +25,9 @@
                     containerlimit: 25,
                     makeId: function (text) {
                         return text;
-                    }
+                    },
+                    containerMinimum: 1,
+                    action: 'Receive'
                 };
                 if (options) $.extend(cswPrivate, options);
 
@@ -37,7 +39,7 @@
                     if (Csw.isNullOrEmpty(cswPrivate.quantity)) {
                         Csw.error.throwException(Csw.error.exception('Cannot create a Wizard amounts grid without the Capacity of a Size.', '', 'csw.wizard.amountsgrid.js', 34));
                     }
-                    cswParent.span({ text: 'Enter the Amounts to Receive.' });
+                    cswParent.span({ text: 'Enter the Amounts to ' + cswPrivate.action + ':' });
                     cswParent.br({ number: 2 });
 
                     cswParent.br();
@@ -83,7 +85,7 @@
                         labelText: 'Number of Containers: ',
                         useWide: true,
                         value: thisAmount.containerNo,
-                        MinValue: 1,
+                        MinValue: cswPrivate.containerMinimum,
                         MaxValue: cswPrivate.containerlimit,
                         ceilingVal: cswPrivate.containerlimit,
                         Precision: 0,

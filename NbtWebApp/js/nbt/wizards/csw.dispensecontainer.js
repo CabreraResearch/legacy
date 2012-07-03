@@ -13,13 +13,14 @@
                 sourceContainerNodeId: '',
                 currentQuantity: '',
                 currentUnitName: '',
+                capacity: '',
                 onCancel: null,
                 onFinish: null,
                 startingStep: 1,
                 wizard: '',
                 wizardSteps: {
                     1: 'Select a Dispense Type',
-                    2: 'Select a Destination Container NodeType',
+                    2: 'Select a Destination Container Type',
                     3: 'Select Amount'
                 },
                 buttons: {
@@ -28,20 +29,25 @@
                     finish: 'finish',
                     cancel: 'cancel'
                 },
+                dispenseTypes: {
+                    Unknown: '',
+                    Dispense: 'Dispense into a Child Container',
+                    Use: 'Dispense for Use',
+                    Waste: 'Waste Material',
+                    Add: 'Add Material to Container'
+                },
                 divStep1: '', divStep2: '', divstep3: '',
-                //TODO - fill with necessary variables
                 dispenseType: 'Unknown',
                 quantity: 'Unknown',
                 unitId: 'Unknown',
-                containerNodeTypeId: 'Unknown'
+                containerNodeTypeId: 'Unknown',
+                quantityControl: null
             };
             if (options) $.extend(cswPrivate, options);
 
             var cswPublic = cswParent.div();
             cswPrivate.currentStepNo = cswPrivate.startingStep;
 
-
-            //TODO - refactor this
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
                 if (Csw.bool(isEnabled)) {
@@ -69,18 +75,10 @@
                 var stepOneComplete = false;
                 return function () {
                     if (Csw.isNullOrEmpty(cswPrivate.sourceContainerNodeId)) {
-                        //cswPrivate.onCancel();//If we don't have a sourceContainerNodeId, we shouldn't execute this wizard,
-                        //but because of the 'welcomeItems at the bottom of the page' bug, explicitly executing onCancel logic creates two sets of welcomeItems,
-                        //which is much worse than having access to a broken wizard.
+                        cswPrivate.onCancel();
                     }
 
-                    var dispenseTypeTable = '',
-                        dispenseTypes = {
-                            0: '',
-                            1: 'Add',
-                            2: 'Waste',
-                            3: 'Dispense'
-                        };
+                    var dispenseTypeTable = '';
 
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
@@ -103,7 +101,7 @@
                         var dispenseTypeSelect = dispenseTypeDiv.select({
                             ID: cswPrivate.makeStepId('setDispenseTypePicklist'),
                             cssclass: 'selectinput',
-                            values: dispenseTypes,
+                            values: cswPrivate.dispenseTypes,
                             onChange: function () {
                                 if (false === Csw.isNullOrEmpty(dispenseTypeSelect.val())) {
                                     cswPrivate.dispenseType = dispenseTypeSelect.val();
@@ -113,7 +111,7 @@
                                     cswPrivate.wizard.next.disable();
                                 }
                             },
-                            selected: dispenseTypes[0]
+                            selected: cswPrivate.dispenseTypes.Unknown
                         });
 
                         stepOneComplete = true;
@@ -186,28 +184,15 @@
             //Select the number of destination containers and their quantities.
             cswPrivate.makeStepThree = (function () {
                 var stepThreeDispenseComplete = false;
-                var stepThreeAddWasteComplete = false;
+                var stepThreeAddWasteUseComplete = false;
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    if (cswPrivate.dispenseType === 'Dispense') {
+                    if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                         if (false === stepThreeDispenseComplete) {
-                            if (stepThreeAddWasteComplete) {
+                            if (stepThreeAddWasteUseComplete) {
                                 cswPrivate.divStep3.empty();
-                                stepThreeAddWasteComplete = false;
+                                stepThreeAddWasteUseComplete = false;
                             }
-                            //TODO - step 3B - container/quantity grid                            
-                            //TODO - if a user goes back and changes the dispense type, this step needs to be refreshed
-                            stepThreeDispenseComplete = true;
-                        }
-                    }
-                    else {
-                        if (false === stepThreeAddWasteComplete) {
-                            if (stepThreeDispenseComplete) {
-                                cswPrivate.divStep3.empty();
-                                stepThreeDispenseComplete = false;
-                            }
-                            var quantityTable = '',
-                            blankText = '[Select One]';
 
                             cswPrivate.divStep3 = cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.br();
@@ -218,49 +203,48 @@
                                 cellvalign: 'middle'
                             });
 
+                            quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br({ number: 2 });
+
+                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(2, 1), {
+                                ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
+                                onAdd: function () {
+                                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                },
+                                quantity: cswPrivate.capacity,
+                                containerlimit: cswPrivate.containerlimit,
+                                makeId: cswPrivate.wizard.makeStepId,
+                                containerMinimum: 0,
+                                action: 'Dispense'
+                            });
+
+                            stepThreeDispenseComplete = true;
+                        }
+                    }
+                    else {
+                        if (false === stepThreeAddWasteUseComplete) {
+                            if (stepThreeDispenseComplete) {
+                                cswPrivate.divStep3.empty();
+                                stepThreeDispenseComplete = false;
+                            }
+                            var quantityTable = '',
+                            blankText = '[Select One]';
+
+                            cswPrivate.divStep3 = cswPrivate.wizard.div(3);
+                            cswPrivate.divStep3.br();                            
+
+                            quantityTable = cswPrivate.divStep3.table({
+                                ID: cswPrivate.makeStepId('setQuantityTable'),
+                                cellpadding: '1px',
+                                cellvalign: 'middle'
+                            });
+
                             quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br();
-
                             quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
+                            cswPrivate.quantityControl = quantityTable.cell(2, 2).quantity(cswPrivate.capacity);
 
-                            var quantityNumDiv = quantityTable.cell(2, 2).div();
+                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
 
-                            var quantityNumBox = quantityNumDiv.numberTextBox({
-                                ID: cswPrivate.makeStepId('setQuantityNumBox'),
-                                value: '',
-                                MinValue: 0,
-                                MaxValue: 999999999,
-                                Precision: 6,
-                                Required: true,
-                                onChange: function () {
-                                    cswPrivate.quantity = quantityNumBox.val();
-                                    cswPrivate.unitId = quantityUnitSelect.val();
-                                    if (false === Csw.isNullOrEmpty(quantityNumBox.val())
-                                    && false === Csw.isNullOrEmpty(quantityUnitSelect.val())) {
-                                        cswPrivate.wizard.finish.enable();
-                                    }
-                                    else {
-                                        cswPrivate.wizard.finish.disable();
-                                    }
-                                }
-                            });
-
-                            var quantityUnitDiv = quantityTable.cell(2, 3).div();
-
-                            var quantityUnitSelect = quantityUnitDiv.nodeSelect({
-                                ID: Csw.makeSafeId('nodeSelect'),
-                                objectClassName: 'UnitOfMeasureClass',
-                                onSelect: function (data, nodeTypeCount) {
-                                    cswPrivate.unitId = quantityUnitSelect.val();
-                                    if (false === Csw.isNullOrEmpty(quantityNumBox.val())
-                                    && false === Csw.isNullOrEmpty(quantityUnitSelect.val())) {
-                                        cswPrivate.wizard.finish.enable();
-                                    }
-                                    else {
-                                        cswPrivate.wizard.finish.disable();
-                                    }
-                                }
-                            });
-                            stepThreeAddWasteComplete = true;
+                            stepThreeAddWasteUseComplete = true;
                         }
                     }
                 };
@@ -270,7 +254,7 @@
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case 2:
-                        if ('Dispense' === cswPrivate.dispenseType) {
+                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                             cswPrivate.makeStepTwo(true);
                         }
                         else {
@@ -290,7 +274,7 @@
                         cswPrivate.makeStepOne();
                         break;
                     case 2:
-                        if ('Dispense' === cswPrivate.dispenseType) {
+                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                             cswPrivate.makeStepTwo(false);
                         }
                         else {
@@ -306,7 +290,14 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, false);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                var designGrid = 'Unknown';//TODO - fill with numOfContainers/quantity/unit data (for Dispense)
+                var designGrid = 'Unknown';
+                if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
+                    designGrid = Csw.serialize(cswPrivate.amountsGrid.quantities);
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.quantityControl)) {
+                    cswPrivate.quantity = cswPrivate.quantityControl.quantityValue;
+                    cswPrivate.unitId = cswPrivate.quantityControl.unitVal;
+                }
 
                 var jsonData = {
                     SourceContainerNodeId: cswPrivate.sourceContainerNodeId,
@@ -332,15 +323,15 @@
                                 },
                                 'okText': 'Yes',
                                 'cancelText': 'No'
-                            }); 
-                            
+                            });
+
                         }
                     },
                     error: function () {
                         cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     }
-                });               
+                });
             };
 
             (function () {
@@ -350,7 +341,8 @@
                     sourceContainerNodeId: cswPrivate.sourceContainerNodeId,
                     currentQuantity: cswPrivate.currentQuantity,
                     currentUnitName: cswPrivate.currentUnitName,
-                    Title: 'Create New Inspection',
+                    capacity: cswPrivate.capacity,
+                    Title: 'Dispense Container',
                     StepCount: 3,
                     Steps: cswPrivate.wizardSteps,
                     StartingStep: cswPrivate.startingStep,
