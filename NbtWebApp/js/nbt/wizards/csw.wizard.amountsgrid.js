@@ -20,6 +20,7 @@
                 var cswPrivate = {
                     ID: 'wizardAmountsThinGrid',
                     onAdd: null,
+                    onDelete: null, //function(quantities.length)
                     quantity: {},
                     containerlimit: 25,
                     makeId: function (text) {
@@ -57,6 +58,7 @@
                             if(cswPublic.quantities.length < 1) {
                                 cswPublic.thinGrid.hide();
                             }
+                            Csw.tryExec(cswPrivate.onDelete, cswPublic.quantities.length);
                         }
                     });
                     cswPublic.thinGrid.hide();

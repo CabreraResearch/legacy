@@ -1,4 +1,4 @@
-﻿/// <reference path="~/js/CswNbt-vsdoc.js" />
+/// <reference path="~/js/CswNbt-vsdoc.js" />
 /// <reference path="~/js/CswCommon-vsdoc.js" />
 
 (function () {
@@ -240,9 +240,9 @@
                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-
+                        cswPrivate.toggleButton(cswPrivate.buttons.finish, cswPrivate.amountsGrid && cswPrivate.amountsGrid.quantities.length > 0);
+                        
                         if (false === cswPrivate.stepThreeComplete) {
-                            cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
                             cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.empty();
 
@@ -250,6 +250,11 @@
                                 ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
                                 onAdd: function () {
                                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                },
+                                onDelete: function(qtyCnt) {
+                                    if(qtyCnt < 1) {
+                                        cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
+                                    }    
                                 },
                                 quantity: cswPrivate.quantity,
                                 containerlimit: cswPrivate.containerlimit,
