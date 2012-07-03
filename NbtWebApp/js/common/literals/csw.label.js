@@ -26,7 +26,7 @@
                 text: '',
                 useWide: false,
                 onClick: null, //function () {}
-                isRequired: ''
+                isRequired: false
             };
             var cswPublic = {};
 
