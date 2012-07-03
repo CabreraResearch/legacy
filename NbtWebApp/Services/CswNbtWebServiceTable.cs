@@ -223,7 +223,7 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
                             CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                            JProperty JpPropData = ws.makePropJson( NodeId, NodeTypeProp.FirstEditLayout.TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue );
+                            JProperty JpPropData = ws.makePropJson( NodeId, NodeTypeProp.FirstEditLayout.TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty );
                             JObject PropData = (JObject) JpPropData.Value;
 
                             JObject PropValues = new JObject();

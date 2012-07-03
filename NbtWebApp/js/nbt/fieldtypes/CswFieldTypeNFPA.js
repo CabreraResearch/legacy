@@ -69,6 +69,7 @@
                     FirstCellRightAlign: true
                 });
                 var selVals = [
+                    { value: '', display: '' },
                     { value: '0', display: '0' },
                     { value: '1', display: '1' },
                     { value: '2', display: '2' },
@@ -80,8 +81,8 @@
                 }
 
                 editTable.cell(1, 1).text('Flammability');
-                editTable.cell(2, 1).text('Health');
-                editTable.cell(3, 1).text('Reactivity');
+                editTable.cell(2, 1).text('Reactivity');
+                editTable.cell(3, 1).text('Health');
                 editTable.cell(4, 1).text('Special');
 
                 makeSelect(editTable.cell(1, 2), 'red', red, redDiv);
@@ -89,6 +90,7 @@
                 makeSelect(editTable.cell(3, 2), 'blue', blue, blueDiv);
 
                 var whiteVals = [
+                    { value: '', display: '' },
                     { value: 'ACID', display: 'ACID' },
                     { value: 'ALK', display: 'ALK' },
                     { value: 'BIO', display: 'BIO' },
@@ -104,7 +106,7 @@
                 }
                 var whiteSelect = editTable.cell(4, 2)
                                           .select({
-                                              ID: Csw.makeId({ ID: o.ID, suffix: 'white' }),
+                                              ID: Csw.makeId(o.ID, 'white'),
                                               selected: white,
                                               values: whiteVals,
                                               cssclass: '',

@@ -14,14 +14,30 @@ namespace ChemSW.Nbt.MetaData
     /// </summary>
     public class CswNbtMetaDataNodeTypeLayoutMgr // : ICswNbtMetaDataObject
     {
-        public enum LayoutType
+        public sealed class LayoutType : CswEnum<LayoutType>
         {
-            Unknown,
-            Add,
-            Edit,
-            Preview,
-            Table
+            private LayoutType( String Name ) : base( Name ) { }
+            public static IEnumerable<LayoutType> _All { get { return CswEnum<LayoutType>.All; } }
+            public static implicit operator LayoutType( string str )
+            {
+                LayoutType ret = Parse( str );
+                return ( ret != null ) ? ret : LayoutType.Unknown;
+            }
+            public static readonly LayoutType Unknown = new LayoutType( "Unknown" );
+            public static readonly LayoutType Add = new LayoutType( "Add" );
+            public static readonly LayoutType Edit = new LayoutType( "Edit" );
+            public static readonly LayoutType Preview = new LayoutType( "Preview" );
+            public static readonly LayoutType Table = new LayoutType( "Table" );
         }
+
+        //public enum LayoutType
+        //{
+        //    Unknown,
+        //    Add,
+        //    Edit,
+        //    Preview,
+        //    Table
+        //}
 
         public LayoutType LayoutTypeForEditMode( string EditMode )
         {
@@ -48,6 +64,17 @@ namespace ChemSW.Nbt.MetaData
             public Int32 TabId = Int32.MinValue;
             public Int32 DisplayRow = Int32.MinValue;
             public Int32 DisplayColumn = Int32.MinValue;
+            public string TabGroup = string.Empty;
+
+            public NodeTypeLayout( DataRow LayoutRow )
+            {
+                LayoutType = (LayoutType) LayoutRow["layouttype"].ToString();
+                PropId = CswConvert.ToInt32( LayoutRow["nodetypepropid"] );
+                TabId = CswConvert.ToInt32( LayoutRow["nodetypetabsetid"] );  // This is Int32.MinValue for non-Edit
+                DisplayRow = CswConvert.ToInt32( LayoutRow["display_row"] );
+                DisplayColumn = CswConvert.ToInt32( LayoutRow["display_column"] );
+                TabGroup = CswConvert.ToString( LayoutRow["tabgroup"] );
+            }
         }
 
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
@@ -75,13 +102,7 @@ namespace ChemSW.Nbt.MetaData
             DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
             foreach( DataRow LayoutRow in LayoutTable.Rows )
             {
-                NodeTypeLayout Layout = new NodeTypeLayout();
-                Layout.LayoutType = LayoutType;
-                Layout.PropId = PropId;
-                Layout.TabId = CswConvert.ToInt32( LayoutRow["nodetypetabsetid"] );  // This is Int32.MinValue for non-Edit
-                Layout.DisplayRow = CswConvert.ToInt32( LayoutRow["display_row"] );
-                Layout.DisplayColumn = CswConvert.ToInt32( LayoutRow["display_column"] );
-
+                NodeTypeLayout Layout = new NodeTypeLayout( LayoutRow );
                 LayoutByTab[Layout.TabId] = Layout;
             }
             return LayoutByTab;
@@ -112,18 +133,12 @@ namespace ChemSW.Nbt.MetaData
             if( LayoutTable.Rows.Count > 0 )
             {
                 DataRow LayoutRow = LayoutTable.Rows[0];
-
-                Layout = new NodeTypeLayout();
-                Layout.LayoutType = LayoutType;
-                Layout.PropId = PropId;
-                Layout.TabId = CswConvert.ToInt32( LayoutRow["nodetypetabsetid"] );  // This is Int32.MinValue for non-Edit
-                Layout.DisplayRow = CswConvert.ToInt32( LayoutRow["display_row"] );
-                Layout.DisplayColumn = CswConvert.ToInt32( LayoutRow["display_column"] );
+                Layout = new NodeTypeLayout( LayoutRow );
             }
             return Layout;
         }
 
-        public void updatePropLayout( LayoutType LayoutType, Int32 NodeTypeId, Int32 PropId, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue )
+        public void updatePropLayout( LayoutType LayoutType, Int32 NodeTypeId, Int32 PropId, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
         {
             if( LayoutType != LayoutType.Unknown && PropId != Int32.MinValue )
             {
@@ -175,6 +190,8 @@ namespace ChemSW.Nbt.MetaData
                     Row["display_row"] = CswConvert.ToDbVal( getCurrentMaxDisplayRow( NodeTypeId, TabId, LayoutType ) + 1 );
                     Row["display_column"] = CswConvert.ToDbVal( 1 );
                 }
+                Row["tabgroup"] = TabGroup;
+
                 LayoutUpdate.update( LayoutTable );
             } // if( Type != LayoutType.Unknown && Prop != null )
         } // updatePropLayout()
@@ -215,7 +232,7 @@ namespace ChemSW.Nbt.MetaData
                         LayoutUpdate.update( LayoutTable );
 
                         // Add new prop to the layout
-                        updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, false, TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn );
+                        updatePropLayout( LayoutType, Prop.NodeTypeId, Prop.PropId, false, TabId, InsertAfterPropLayout.DisplayRow + 1, InsertAfterPropLayout.DisplayColumn, InsertAfterPropLayout.TabGroup );
                         Added = true;
                     } // foreach( Int32 TabId in InsertAfterPropLayouts.Keys )
                 } // if( InsertAfterPropLayouts.Values.Count > 0 )
