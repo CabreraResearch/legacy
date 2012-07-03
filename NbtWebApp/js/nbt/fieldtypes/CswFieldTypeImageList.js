@@ -17,27 +17,31 @@
             var width = Csw.string(propVals.width);
             var height = Csw.string(propVals.height);
             var allowMultiple = Csw.bool(propVals.allowmultiple);
-            var table = propDiv.table({
+            var imageListTable = propDiv.table({
+                ID: Csw.makeId(o.ID, 'tbl'),
+                cellvalign: 'top'
+            });
+            var imageTable = imageListTable.cell(2,1).table({
                 ID: Csw.makeId(o.ID, 'tbl')
             });
-            var currCol = 1;
+            var imgTblCol = 1;
             var selectedValues = [];
 
             if (false === o.ReadOnly) {
-                var select = propDiv.select({ id: o.ID });
+                var imageSelectList = imageListTable.cell(1, 1).select({ id: o.ID });
                 if (false === o.Required) {
-                    select.option({ value: '', display: 'Select...' });
+                    imageSelectList.option({ value: '', display: 'Select...' });
                 }
                 if (o.Multi) {
-                    select.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
+                    imageSelectList.option({ value: Csw.enums.multiEditDefaultValue, display: Csw.enums.multiEditDefaultValue, isSelected: true });
                 }
                 var hiddenValue = propDiv.textArea({
                     ID: o.ID + '_value',
                     value: value
                 }).hide();
 
-                select.bind('change', function () {
-                    var selected = select.children(':selected');
+                imageSelectList.bind('change', function () {
+                    var selected = imageSelectList.children(':selected');
                     changeImage(selected.text(), selected.val(), true, selected);
                     o.onChange();
                 });
@@ -49,7 +53,7 @@
                             addImage(thisOpt.text, thisOpt.value, false);
                         } else {
                             if (false === o.ReadOnly) {
-                                select.option({ value: thisOpt.value, display: thisOpt.text });
+                                imageSelectList.option({ value: thisOpt.value, display: thisOpt.text });
                             }
                         }
                     },
@@ -58,8 +62,8 @@
 
             function changeImage(name, href, doAnimation, selected) {
                 if (false === allowMultiple) {
-                    table.empty();
-                    select.children(':not(:selected)').show();
+                    imageTable.empty();
+                    imageSelectList.children(':not(:selected)').show();
                     selected.hide();
                 } else if (selected) {
                     selected.remove();
@@ -71,31 +75,30 @@
             }
 
             function addImage(name, href, doAnimation) {
-                var imageCell = table.cell(1, currCol)
-                                    .css({ 'text-align': 'center',
-                                        'padding-left': '10px'
-                                    });
+                var imageCell = imageTable.cell(1, imgTblCol)
+                    .css({ 'text-align': 'center',
+                        'padding-left': '10px'
+                    });
                 imageCell.a({
                     href: href,
                     target: '_blank'
-                })
+                    })
                     .img({
                         src: href,
                         alt: name,
                         width: width,
                         height: height
                     });
-                var nameCell = table.cell(2, currCol)
-                                    .css({ 'text-align': 'center',
-                                        'padding-left': '10px'
-                                    });
-                currCol += 1;
+                var nameCell = imageTable.cell(2, imgTblCol)
+                    .css({ 'text-align': 'center',
+                    'padding-left': '10px'
+                });
+                imgTblCol += 1;
 
                 if (doAnimation) {
                     imageCell.hide();
                     nameCell.hide();
                 }
-
 
                 if (name !== href) {
                     nameCell.a({ href: href, target: '_blank', text: name });
@@ -104,11 +107,12 @@
                     nameCell.imageButton({
                         ButtonType: Csw.enums.imageButton_ButtonType.Delete,
                         AlternateText: 'Remove',
-                        ID: Csw.makeId('image', currCol, 'rembtn'),
+                        ID: Csw.makeId('image', imgTblCol, 'rembtn'),
                         onClick: function () {
                             nameCell.$.fadeOut('fast');
                             imageCell.$.fadeOut('fast');
                             removeValue(href);
+
                             Csw.tryExec(o.onChange);
                         } // onClick
                     }); //
