@@ -76,10 +76,12 @@
                         unitid: '',
                         barcodes: ''
                     };
+                    
                     //# of containers
                     cswPublic.countControl = cswPrivate.amountsTable.cell(1, 1).numberTextBox({
                         ID: Csw.tryExec(cswPrivate.makeId, 'containerCount'),
-                        labelText: 'Number: ',
+                        labelText: 'Number of Containers: ',
+                        useWide: true,
                         value: thisAmount.containerNo,
                         MinValue: 1,
                         MaxValue: cswPrivate.containerlimit,
@@ -92,14 +94,16 @@
                     });
 
                     //Quantity
-                    cswPrivate.quantity.labelText = 'Quantity: ';
+                    cswPrivate.quantity.labelText = 'Container Quantity: ';
+                    cswPrivate.quantity.useWide = true;
                     cswPrivate.quantity.ID = Csw.tryExec(cswPrivate.makeId, 'containerQuantity');
                     cswPublic.qtyControl = cswPrivate.amountsTable.cell(2, 1).quantity(cswPrivate.quantity);
 
                     //Barcodes
                     cswPublic.barcodeControl = cswPrivate.amountsTable.cell(3, 1).textArea({
                         ID: Csw.tryExec(cswPrivate.makeId, 'containerBarcodes'),
-                        labelText: 'Barcodes: ',
+                        labelText: 'Barcodes (Optional): ',
+                        useWide: true,
                         onChange: function (value) {
                             thisAmount.barcodes = value;
                         }
