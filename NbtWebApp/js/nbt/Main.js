@@ -1163,7 +1163,7 @@ window.initMain = window.initMain || function (undefined) {
                     sourceContainerNodeId: o.sourceContainerNodeId,
                     currentQuantity: o.currentQuantity,
                     currentUnitName: o.currentUnitName,
-                    capacity: Csw.deserialize(o.capacity),//??
+                    capacity: Csw.deserialize(o.capacity),
                     onCancel: function () {
                         clear({ 'all': true });
                         Csw.clientState.setCurrent(Csw.clientState.getLast());

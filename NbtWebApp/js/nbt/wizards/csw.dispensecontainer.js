@@ -30,11 +30,11 @@
                     cancel: 'cancel'
                 },
                 dispenseTypes: {
-                    0: '',
-                    1: 'Dispense into a Child Container',
-                    2: 'Dispense for Use',
-                    3: 'Waste Material',
-                    4: 'Add Material to Container'
+                    Unknown: '',
+                    Dispense: 'Dispense into a Child Container',
+                    Use: 'Dispense for Use',
+                    Waste: 'Waste Material',
+                    Add: 'Add Material to Container'
                 },
                 divStep1: '', divStep2: '', divstep3: '',
                 dispenseType: 'Unknown',
@@ -47,8 +47,6 @@
             var cswPublic = cswParent.div();
             cswPrivate.currentStepNo = cswPrivate.startingStep;
 
-
-            //TODO - refactor this
             cswPrivate.toggleButton = function (button, isEnabled, doClick) {
                 var btn;
                 if (Csw.bool(isEnabled)) {
@@ -112,7 +110,7 @@
                                     cswPrivate.wizard.next.disable();
                                 }
                             },
-                            selected: cswPrivate.dispenseTypes[0]
+                            selected: cswPrivate.dispenseTypes.Unknown
                         });
 
                         stepOneComplete = true;
@@ -185,14 +183,14 @@
             //Select the number of destination containers and their quantities.
             cswPrivate.makeStepThree = (function () {
                 var stepThreeDispenseComplete = false;
-                var stepThreeAddWasteComplete = false;
+                var stepThreeAddWasteUseComplete = false;
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    if (cswPrivate.dispenseType === cswPrivate.dispenseTypes[1]) {
+                    if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                         if (false === stepThreeDispenseComplete) {
-                            if (stepThreeAddWasteComplete) {
+                            if (stepThreeAddWasteUseComplete) {
                                 cswPrivate.divStep3.empty();
-                                stepThreeAddWasteComplete = false;
+                                stepThreeAddWasteUseComplete = false;
                             }
 
                             cswPrivate.divStep3 = cswPrivate.wizard.div(3);
@@ -206,7 +204,7 @@
 
                             quantityTable.cell(1, 1).span({ text: 'Current Quantity:    ' + cswPrivate.currentQuantity + ' ' + cswPrivate.currentUnitName }).br({ number: 2 });
 
-                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(cswPrivate.divStep3, {
+                            cswPrivate.amountsGrid = Csw.nbt.wizard.amountsGrid(quantityTable.cell(2, 1), {
                                 ID: cswPrivate.wizard.makeStepId('wizardAmountsThinGrid'),
                                 onAdd: function () {
                                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -222,7 +220,7 @@
                         }
                     }
                     else {
-                        if (false === stepThreeAddWasteComplete) {
+                        if (false === stepThreeAddWasteUseComplete) {
                             if (stepThreeDispenseComplete) {
                                 cswPrivate.divStep3.empty();
                                 stepThreeDispenseComplete = false;
@@ -232,6 +230,9 @@
 
                             cswPrivate.divStep3 = cswPrivate.wizard.div(3);
                             cswPrivate.divStep3.br();
+
+                            cswPrivate.quantity = cswPrivate.capacity.value;
+                            cswPrivate.unitId = cswPrivate.capacity.nodeid;
 
                             quantityTable = cswPrivate.divStep3.table({
                                 ID: cswPrivate.makeStepId('setQuantityTable'),
@@ -243,7 +244,9 @@
                             quantityTable.cell(2, 1).span({ text: 'Select the quantity you wish to dispense:' });
                             quantityTable.cell(2, 2).quantity(cswPrivate.capacity);
 
-                            stepThreeAddWasteComplete = true;
+                            cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+
+                            stepThreeAddWasteUseComplete = true;
                         }
                     }
                 };
@@ -253,7 +256,7 @@
                 cswPrivate.currentStepNo = newStepNo;
                 switch (newStepNo) {
                     case 2:
-                        if ('Dispense' === cswPrivate.dispenseType) {
+                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                             cswPrivate.makeStepTwo(true);
                         }
                         else {
@@ -273,7 +276,7 @@
                         cswPrivate.makeStepOne();
                         break;
                     case 2:
-                        if ('Dispense' === cswPrivate.dispenseType) {
+                        if (cswPrivate.dispenseType === cswPrivate.dispenseTypes.Dispense) {
                             cswPrivate.makeStepTwo(false);
                         }
                         else {
@@ -291,7 +294,7 @@
 
                 var designGrid = 'Unknown';
                 if (false === Csw.isNullOrEmpty(cswPrivate.amountsGrid)) {
-                    designGrid = JSON.stringify(cswPrivate.amountsGrid.quantities);
+                    designGrid = Csw.serialize(cswPrivate.amountsGrid.quantities);
                 }
 
                 var jsonData = {

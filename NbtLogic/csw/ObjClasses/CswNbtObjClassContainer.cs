@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -290,9 +291,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             JObject ActionDataObj = new JObject();
             ActionDataObj["sourceContainerNodeId"] = this.NodeId.ToString();
-            ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
             CswNbtObjClassUnitOfMeasure unitNode = _CswNbtResources.Nodes.GetNode( this.Quantity.UnitId );
-            ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+            if( null != unitNode )
+            {
+                ActionDataObj["currentQuantity"] = this.Quantity.Quantity;
+                ActionDataObj["currentUnitName"] = unitNode.Name.Text;
+            }
             JObject CapacityObj = _getCapacityJSON();
             ActionDataObj["capacity"] = CapacityObj.ToString();
             return ActionDataObj;
@@ -306,6 +310,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtNodePropQuantity Capacity = sizeNode.Capacity;
                 Capacity.ToJSON( CapacityObj );
+            }
+            else
+            {
+                throw new CswDniException( ErrorType.Error, "Cannot dispense container: Contianer's size is undefined.", "Dispense fail - null Size relationship." );
             }
             return CapacityObj;
         }
