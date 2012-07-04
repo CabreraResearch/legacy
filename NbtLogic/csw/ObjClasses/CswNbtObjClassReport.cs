@@ -8,14 +8,13 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReport : CswNbtObjClass
     {
-        public static string RPTFilePropertyName { get { return "RPT File"; } }
-        public static string ReportNamePropertyName { get { return "Report Name"; } }
-        public static string CategoryPropertyName { get { return "Category"; } }
-        //public static string ViewPropertyName { get { return "View"; } }
-        public static string SqlPropertyName { get { return "SQL"; } }
-        public static string FormattedSqlPropertyName { get { return "FormattedSQL"; } }
-        public static string btnRunPropertyName { get { return "Run"; } }
-        public static string ReportUserNamePropertyName { get { return "ReportUserName"; } }
+        public const string RPTFilePropertyName = "RPT File";
+        public const string ReportNamePropertyName = "Report Name";
+        public const string CategoryPropertyName = "Category";
+        public const string SqlPropertyName = "SQL";
+        public const string FormattedSqlPropertyName = "FormattedSQL";
+        public const string btnRunPropertyName = "Run";
+        public const string ReportUserNamePropertyName = "ReportUserName";
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
