@@ -25,8 +25,8 @@ namespace ChemSW.Nbt.Schema
                                                      PropName = CswNbtObjClassReport.ReportUserNamePropertyName,
                                                      FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
                                                      SetValOnAdd = false,
-                                                     IsRequired = false,
-                                                     ServerManaged = true
+                                                     IsRequired = false//,
+                                                     //ServerManaged = true
                                                  }
                       );
 
@@ -37,8 +37,8 @@ namespace ChemSW.Nbt.Schema
                                                      PropName = CswNbtObjClassReport.FormattedSqlPropertyName,
                                                      FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
                                                      SetValOnAdd = false,
-                                                     IsRequired = false,
-                                                     ServerManaged = true
+                                                     IsRequired = false//,
+                                                     //ServerManaged = true
                                                  }
                       );
 
