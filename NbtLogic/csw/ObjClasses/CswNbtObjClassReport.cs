@@ -151,6 +151,18 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
 
+        public CswNbtNodePropText ReportUserName
+        {
+            //set
+            //{
+            //    _CswNbtNode.Properties[ReportUserNamePropertyName].AsText.Text = value.Text; ;
+            //}
+            get
+            {
+                return ( _CswNbtNode.Properties[ReportUserNamePropertyName] );
+            }
+        }
+
         public CswNbtNodePropMemo FormattedSQL
         {
             get
@@ -192,13 +204,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public CswNbtNodePropText ReportUserName
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[ReportUserNamePropertyName] );
-            }
-        }
+
 
         //public CswNbtNodePropViewReference View
         //{
