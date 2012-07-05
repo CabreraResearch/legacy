@@ -78,8 +78,7 @@
                         url: Csw.enums.ajaxUrlPrefix + 'getThinGrid',
                         data: {
                             ViewId: viewid,
-                            IncludeNodeKey: o.cswnbtnodekey,
-                            MaxRows: maxRows
+                            IncludeNodeKey: o.cswnbtnodekey
                         },
                         success: function (data) {
                             propDiv.thinGrid({
