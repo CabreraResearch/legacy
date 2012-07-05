@@ -41,7 +41,7 @@
                 imageSelectList.bind('change', function () {
                     var selected = imageSelectList.children(':selected');
                     changeImage(selected.text(), selected.val(), true, selected);
-                    if (o.Required) {
+                    if (o.Required && false === allowMultiple) {
                         selectOption.remove();
                     }
                     o.onChange();
@@ -58,17 +58,24 @@
                             }
                         }
                     },
-                    false);
+                    false
+                );
+
+                if (o.Required) {
+                    $.validator.addMethod('imageRequired', function (value, element) {
+                        return (selectedValues.length > 0);
+                    }, 'An image is required.');
+                    imageSelectList.addClass('imageRequired');
+                }
             }
 
             function changeImage(name, href, doAnimation, selected) {
                 if (false === allowMultiple) {
                     imageTable.empty();
-                    imageSelectList.children(':not(:selected)').show();
-                    selected.hide();
+                    selectedValues = [];
                 }
-                changeValue(selected.val());
-                if (allowMultiple && false === Csw.isNullOrEmpty(selected)) {
+                addValue(selected.val());
+                if (allowMultiple) {
                     selected.remove();
                 }
                 if (name != 'Select...') {
@@ -128,14 +135,6 @@
                 }
             } // addImage()
 
-            function changeValue(valueToChange) {
-                if (false === allowMultiple) {
-                    hiddenValue.text(valueToChange);
-                } else {
-                    addValue(valueToChange);
-                }
-            }
-
             function addValue(valueToAdd) {
                 if (false === Csw.contains(selectedValues, valueToAdd) &&
                     false === Csw.isNullOrEmpty(valueToAdd)) {
@@ -151,7 +150,6 @@
                 }
                 hiddenValue.text(selectedValues.join('\n'));
             }
-
         },
         save: function (o) {
             var attributes = { value: null };
